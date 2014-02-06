@@ -1,0 +1,13 @@
+#! /bin/sh
+ALFRED_BASE=/fs/erewhon/group/systems/darsana_alfred
+DOMAIN=$ALFRED_BASE/domain/house
+HOSTFILE=$ALFRED_BASE/etc/domainhost.$LOGNAME
+LIGHTSFILE=$ALFRED_BASE/etc/lights.$LOGNAME
+STATESFILE=$ALFRED_BASE/etc/states.$LOGNAME
+APP=sys
+cp $DOMAIN/state.txt $STATESFILE
+cp $DOMAIN/lights.txt $LIGHTSFILE
+java -cp $DOMAIN $APP $HOSTFILE $LIGHTSFILE $STATESFILE
+
+
+

@@ -1,0 +1,226 @@
+/*
+Name: 		english_lexicon.alma
+Title: 		English Lexicon
+Author: 	Scott 
+
+Created: 	6/25/08
+Modified:
+		2/10/09 by Scott, changed entries to reflect new
+		understanding of forward-chaining in alma: RHS should
+		only contain one item (i.e., no conjunctions) and 
+		unique_id only works if it is the only thing on the
+		LHS. Thus, each rule must be split up with a dummy
+		predicate to carry over the unique ID's.
+
+Description: 	This file contains Alfred's initial knowledge 
+		of English words. It is loaded into Alfred's
+		knowledge base via a 'load' command in the file
+		"/fs/qubit/scott/jalma/AlfredJr/alfred.alma".
+
+
+
+To-Do:		
+
+Calls:
+
+*/ 
+
+
+
+
+// Verbs:
+
+	// First, use the unique_ID call to generate an ID for
+	// each lexeme and its forms. Then use the IDs as the 
+	// names of the lexeme L and its sub-forms.
+
++unique_id(ID1) & unique_id(ID2) & unique_id(ID3)
+	->	lexeme1(ID1, ID2, ID3).
+
++lexeme(ID1, ID2, ID3)
+	->	isa(ID1, lexeme).
+
++lexeme(ID1, ID2, ID3)
+	->	has(english, lexeme, ID1).
+
++lexeme(ID1, ID2, ID3)
+	->	has(ID1, part_of_speech, verb).
+	
++lexeme(ID1, ID2, ID3)
+	->	has(ID1, form, ID2).
+	
++lexeme(ID1, ID2, ID3)
+	->	has(ID1, form, ID3).
+	
++lexeme(ID1, ID2, ID3)
+	->	has(ID2, spelling, "recharge").
+
++lexeme(ID1, ID2, ID3)
+	->	has(ID3, spelling, "recharged").
+	
++lexeme(ID1, ID2, ID3)
+	->	isa(ID2, nonfinite).
+	
++lexeme(ID1, ID2, ID3)
+	->	isa(ID3, finite).
+
+// Nouns: 
+
+	// Pronouns:
++unique_id(ID1) & unique_id(ID2)
+	-> 	lexeme2(ID1, ID2).
+	
++lexeme2(ID1, ID2)
+	->	isa(ID1, lexeme).
+	
++lexeme2(ID1, ID2)
+	->	has(english, lexeme, ID1).
+	
++lexeme2(ID1, ID2)
+	->	has(ID1, part_of_speech, noun).
+
++lexeme2(ID1, ID2)
+	->	isa(ID1, pronoun).
+
++lexeme2(ID1, ID2)
+	->	isa(ID1, little_pro).
+
++lexeme2(ID1, ID2)
+	->	has(ID1, form, ID2).
+
++lexeme2(ID1, ID2)
+	->	has(ID2, spelling, NULL).
+
++lexeme2(ID1, ID2)
+	->	isa(ID2, silent).
+
+	// Names:
++unique_id(ID1) & unique_id(ID2) & unique_id(ID3)
+	-> 	lexeme3(ID1, ID2, ID3).
+
++lexeme3(ID1, ID2, ID3)
+	->	isa(ID1, lexeme).
+
++lexeme3(ID1, ID2, ID3)
+	->	has(english, lexeme, ID1).
+
++lexeme3(ID1, ID2, ID3)
+	->	has(ID1, part_of_speech, noun).
+
++lexeme3(ID1, ID2, ID3)
+	->	isa(ID1, name).
+
++lexeme3(ID1, ID2, ID3)
+	->	has(ID1, form, ID2).
+
++lexeme3(ID1, ID2, ID3)
+	->	has(ID2, spelling, "six").
+	
++lexeme3(ID1, ID2, ID3)
+	->	has(ID1, form, ID3).
+
++lexeme3(ID1, ID2, ID3)
+	->	has(ID3, spelling, "6").
+
+
+	// Common Nouns:
+
+
+// Prepositions:
++unique_id(ID1) & unique_id(ID2)
+	->	lexeme4(ID1, ID2).
+
++lexeme4(ID1, ID2)
+	->	isa(ID1, lexeme).
+
++lexeme4(ID1, ID2)
+	->	has(english, lexeme, ID1).
+
++lexeme4(ID1, ID2)
+	->	has(ID1, part_of_speech, preposition).
+
++lexeme4(ID1, ID2)
+	->	has(ID1, form, ID2).
+
++lexeme4(ID1, ID2)
+	->	has(ID2, spelling, "at").
+
++lexeme4(ID1, ID2)
+	->	has(ID1, theta_assignment, loc).
+
++unique_id(ID1) & unique_id(ID2)
+	->	lexeme5(ID1, ID2).
+
++lexeme5(ID1, ID2)
+	->	isa(ID1, lexeme).
+
++lexeme5(ID1, ID2)
+	->	has(english, lexeme, ID1).
+
++lexeme5(ID1, ID2)
+	->	has(ID1, part_of_speech, preposition).
+
++lexeme5(ID1, ID2)
+	->	has(ID1, theta_assignment, dest).
+
++lexeme5(ID1, ID2)
+	->	has(ID1, form, ID2).
+
++lexeme5(ID1, ID2)
+	->	has(ID2, spelling, "to").	
+
+
+// Determiners:
+	
+// Adjectives:
+
+// Theta-roles:
++unique_id(ID)
+	->	lexeme6(ID).
+
++lexeme6(ID)
+	->	has(english,lexeme, ID).
+
++lexeme6(ID)
+	->	isa(ID, theta_role).
+
++lexeme6(ID)
+	->	isa(ID, ag).
+
++unique_id(ID)
+	->	lexeme7(ID).
+
++lexeme7(ID)
+	->	has(english,lexeme, ID).
+
++lexeme7(ID)
+	->	isa(ID, theta_role).
+
++lexeme7(ID)
+	->	isa(ID, th).
+
++unique_id(ID)
+	->	lexeme8(ID).
+
++lexeme8(ID)
+	->	has(english,lexeme, ID).
+
++lexeme8(ID)
+	->	isa(ID, theta_role).
+
++lexeme8(ID)
+	->	isa(ID, loc).
+
++unique_id(ID)
+	->	lexeme9(ID).
+
++lexeme9(ID)
+	->	has(english,lexeme, ID).
+
++lexeme9(ID)
+	->	isa(ID, theta_role).
+
++lexeme9(ID)
+	->	isa(ID, dest).
+
+

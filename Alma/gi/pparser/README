@@ -1,0 +1,191 @@
+
+Here is hte ocde that will parse prolog clauses, or terms at least. 
+This should be exmapdable later.
+
+
+Try to do this as a recursive descent parser. <This shoulf be in the
+main parser file>
+
+
+<legalchars> = A-Za-z0-9_
+in Global
+
+<int>	      = <sequence of digits>
+
+<constants>   =	' <string of ascii> '
+	      =	" <string of ascii> "
+	      <lowercase> <list of legalchars>
+	      <int>
+
+<vars>	      = _ <list of legalchars>
+	      <uppercase> <list of legalchars>
+
+
+<list>	      = [ <list of terms> ]
+	      [ ]
+
+<cterm>	      = <constant> ( <listofterms> )
+	      = + ( <int> , <int> )
+	      = - ( <int> , <int> )
+	      = * ( <int> , <int> )
+	      = / ( <int> , <int> )
+
+<term>	      = <cterm>
+	      <constant>
+	      <var>
+	      <list>
+
+
+<listofterms> = <term>
+	      <term> , <listofterms>
+
+
+
+This should be sufficient.
+
+Right now all I need is to parse these and perhaps have some way to
+store the strings. But for some of them, I need to have a better
+parse, for example, the list of parents. So, lets parse everything and
+have references. All parts will have a string representation. No
+symtab, no special treatment of vars.
+
+Question now: does each of these nonterminal get its own class? Looks
+rather expensive.
+
+THe general way this will go:
+given a string a constructor will create the appropriate object and set a 
+pointer to the end of its part. Need a class with the sting and an index 
+into it: class parseme
+
+How do I fail? If I use constructors, how do I know that I have
+constructed the right thing?? For each nonterm I could have a static
+parse function that if it succeeds returns something of the right type
+else null. So if I am looking ofr a constant:
+Constant const = Constant.parse(theInput);
+if(const != null)...
+
+
+What if there are syntax errors??? I need to have some way to fail
+through. use exceptions of some sort?
+
+ignored the operations for now. what else do I need? clauses. what are
+these? just a term followed by a '.' But the term has to be a Cterm. 
+Could be a constant too.
+
+So:
+
+<clause> = <cterm> .
+	   <constant> .
+
+Do that later. How about the syntax errors?? dont care. just say "not
+parsed"
+
+
+How do I use this in the history thing now?
+
+the history output from alma shoud now be for each formula:
+
+add(node(...)), or
+delete(node(...))
+
+Do i throw in a time thing too?
+
+or i could just have 
+
+add node(..)
+
+but the other is more prologlike. 
+
+I can parse the thing and I will get a Cterm strucutre, see if the first 
+thing is an "add" or a "delete", then store the node somewhere. Should
+the node be split or not? Maybe it should go into a class with access
+functions. Aha, I will need the printable version too. so maybe:
+
+add("printable", node(..)).
+
+The prinable version shoudl perhaps go with the node in the
+calss. eventually the java should know how to pretty print these
+things. 
+
+I will need functions to access the nth componenet of a Cterm or a
+list. That is trivial.
+
+Add this node ti the Formula class in the gui.
+I might still want a node class separate from the Formula and have the
+Formula include a node object. the printable will not then be in the
+node class.
+
+The name will be gotten from the node as a string.
+
+All I need now is the node name and the printable. Later there will be
+need for other things.
+
+Db.java seems to do the parsing and instantiates a FOrmula. that looks
+reasonable enough. Right now the alma output looks like:
+
+step(1)
+add(now(1))  2  []
+add(p(X1) ---> q(X1))  1  []
+add(p(a))  0  []
+End of Step----------------------------------
+
+I want it to look like:
+
+step(1).
+add("now(1)", node(2, ..)).
+add("p(X1) ---> q(X1)", node(1, ...)).
+... and so on ...
+end.
+
+
+each line will be parsed by the prolog parser
+
+REMEMBER TO PARSE (SKIP) EMPTY LINES!
+
+
+Interface to the parser will be strings. Have a function "parse
+string" that returns a what? clause or term? well a term. the clause
+only adds a '.'. thats strainge.
+Why not drop the '. ' and just parse terms? not very good for regular
+prolog. 
+
+so have a Clause class that just has terms. parseClause throws out hte
+period and parses the term and returns that.
+
+once we get the node we stick it in the node class. this will have all
+the access functions. and the node will be in the formula object. 
+
+the list and term will need access fintions: getPred getArg
+getElement.
+
+That looks like all that is needed ot keep things the same as now.
+
+
+well, for now, forget about the clause thing. Just parse terms
+as terms or terms followed by '.'
+
+ignore special operators. iso p :- q. we have :-(p, q). but :- does not
+get parsed. need to do something about this later. for now, get terms to
+accept '.' too Not all terms but just Cterms.
+
+
+
+I have the alma outputting the history without the "."s now.
+Looks like:
+
+step(29)
+add("now(29)", node(50, [now(29)], fc, [], [], 29, 1, [], [], [if]))
+delete("now(28)", node(49, [now(28)], fc, [], [], 28, 1, [], [], [if]))
+end
+
+step(30)
+add("now(30)", node(51, [now(30)], fc, [], [], 30, 1, [], [], [if]))
+delete("now(29)", node(50, [now(29)], fc, [], [], 29, 1, [], [], [if]))
+end
+
+Next, parse this in Db.java
+
+everything is parsed as a term.
+cases: pred = step; add; delete; end
+need to store the string and the node in the appropriate ds.
+add the getpred etc to the cterm thing.

@@ -1,0 +1,58 @@
+/*
+Name: 		alfred_strawman.alma
+Title: 		Simple Alfred: takes a string and transforms it to a command, calls socket
+
+Created: 	1/30/09
+*/
+
+// Load calls:
+loadcall "get_utterance" "alma.callfile.GetUtterance".
+loadcall "tokenize_string_into_words" "alma.callfile.Tokenize".
+
+// First get the utterance from the user.
+
+#{isa(ID, utterance) & has(ID, spelling, X)}[1] get_utterance(X,ID).
+
++isa(U, utterance) &
+has(U, spelling, Sp) &
+tokenize_string_into_words(Sp, L)
+	->	has(U, word_token_list, L).
+
+/*
+?{needs_to_be_broken_up(U,L)}[1] has(U, word_token_list, L).		// Works.
+*/
+
++needs_to_be_broken_up(U, [X.Y])
+	->	first_head(X).
+
++needs_to_be_broken_up(U, [X.Y])
+	-> first_tail(Y).
+
+
+//?{ans4(X)}[1] first_head(X).
+//?{ans4(X,Y)}[1] head_tail(X,Y).
+//?{ans4(X)}[1] head_tail(X,Y).
+
++first_head(X)
+	->	Utterance(u0, start_sequence, X).
+
+//?{ans1(X)}[1] Utterance(u0, start_sequence, X).
+
++first_head(X) & first_tail([Y.Z])
+	->	Utterance(u0, X, Y).
+
+//?{ans2(X,Y)}[1] Utterance(u0, X, Y).
+
++first_tail([Y.Z])
+	->	head(Y).
+
++first_tail([Y.Z])
+	->	last_tail(Z).
+
++head(Y) & last_tail([Z.NULL])
+	->	Utterance(u0, Y, Z).
+
++last_tail([Z.NULL])
+	->	Utterance(u0, Z, stop_sequence).
+
+//?{ans3(Z)}[1] Utterance(u0, Z, stop_sequence).

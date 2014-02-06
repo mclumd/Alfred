@@ -1,0 +1,12 @@
+#! /bin/sh
+ALFRED_BASE=/fs/erewhon/anhan/linAlfred
+DOMAIN=$ALFRED_BASE/domain/movies
+MOVIEBASE=$DOMAIN/movies
+VLCPATH=/fs/disco/geoffr/vlc/INST
+PATH=$VLCPATH/bin:$PATH
+export PATH
+LD_LIBRARY_PATH=$VLCPATH/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
+HOSTFILE=$ALFRED_BASE/etc/domainhost.$LOGNAME
+java -cp $DOMAIN PlayMovie $MOVIEBASE $HOSTFILE
+

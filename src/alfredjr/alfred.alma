@@ -1,0 +1,49 @@
+/*
+Name: 		alfred.alma
+Title: 		Alfred Start-Up File
+Author: 	Scott
+
+Created: 	6/25/08
+Modified:
+		6/25/08 by Scott, added new load file commands
+
+Description:	This file is the main start-up file for ALFRED.
+		It contains 'load' commands that point to the
+		various files containing all of the knowledge that
+		ALFRED should have at startup. To start ALFRED with
+		this file, in '/fs/qubit/scott/jalma/' enter:
+
+		java -jar JAlmaStable.jar alfred.alma
+
+To-Do:		
+
+*/
+
+// Load calls.
+loadcall "unique_id" "alma.callfile.UniqueID".
+loadcall "get_utterance" "alma.callfile.GetUtterance".
+loadcall "tokenize_string_into_words" "alma.callfile.Tokenize".
+
+// Load main loop file
+
+load "AlfredJr/main.alma".
+
+// Load functions file
+
+load "AlfredJr/functions/functions.alma".
+ 
+// Load English language knowledge
+
+load "AlfredJr/english_knowledge/english_lexicon.alma".
+load "AlfredJr/english_knowledge/english_rules.alma".
+
+// Load domain language knowledge
+// 1. Mars Rover domain
+//load "AlfredJr/domain_lang_knowledge/mars_domain/mars_roverese_lexicon.alma".
+//load "AlfredJr/domain_lang_knowledge/mars_domain/mars_roverese_rules.alma".
+
+// 2. AfghanWorld domain
+
+// Load non-linguistic conceptual knowledge
+//load "AlfredJr/concept_knowledge/conceptual_lexicon.alma".
+//load "AlfredJr/concept_knowledge/conceptual_rules.alma".

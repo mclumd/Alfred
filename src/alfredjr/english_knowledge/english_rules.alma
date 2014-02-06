@@ -1,0 +1,314 @@
+/*
+Name: 		english_rules.alma
+Title: 		English Rules
+Author: 	Scott
+
+Created:	6/25/08
+Modified:	
+		6/25/08 by SF, created tokenization rules
+		7/18/08 by SF, revised tokenization rules
+		
+Description:	This file contains Alfred's initial knowledge 
+		of English rules, including rules that govern 
+		tokenization of utterances into words, looking 
+		up words in the lexicon, assigning theta-roles, 
+		building syntactic structure, and building a 
+		logical form.
+		
+		The rules are organized as follows:
+			1) 
+			2) Tokenization Rules
+			3) Lexical Lookup Rules
+			4) Syntax Rules
+			5) Compositional Semantics Rules
+
+
+To-Do:		
+
+
+
+Calls: 	tokenize(STRING, LIST) -	LIST is an ordered list of all words
+					found in STRING.
+	unique_ID(X) - 			X is a unique number.
+	get_placement(WORD, LIST, X) -	WORD is an item in LIST at position X.
+*/ 
+
+// Load calls.
+//loadcall "get_placement" "alma.callfile.GetPlacement".
+
+/*Get-utterance:
+	Take new utterances and make them current utterances only if
+	there are no other current utterances. Current utterances are 
+	being worked on.
+*/
+
+/*
+Tokenization Rules:
+	Use the 'tokenize' call to return L, an ordered list of words
+	from the utterance U. 
+*/
+
+
++isa(U, utterance) &
+has(U, spelling, Sp) &
+tokenize_string_into_words(Sp, L)
+	->	utt_needs_tokenizing(U,L).
+	
+// Run query to get utterance tokenized, then forward
+// chaining starts (see functions, member-of.)
+//?{has(U, word_token_list, L)}[1] utt_needs_tokenizing(U,L).
+
++utt_needs_tokenizing(U,L)
+	->	isa(L, list).
+
++utt_needs_tokenizing(U,L)
+	->	has(U, word_token_list, L).
+
+/*	Find each member W of list L. Each W receives a random
+	ID number from 'unique_id' call, which is then used as the name
+	of the word. Each ID is then stated to have spelling W.
+*/
+
++has(U, word_token_list, L) &
+has(L, member, W)
+	-> isa(W, word).
+
++has(U, word_token_list, L) &
+has(L, member, W)
+	-> has(U, word, W).
+
++has(U, word_token_list, L) &
+has(L, member, W)
+	-> has(W, spelling, W).
+
+
+// Lexical Look-Up Rules:
+
+/*	+isa(U, utterance) & 
+	has(U, word, W) & 
+	has(W, spelling, Sp) & 
+	isa(L, lexeme) & 
+	has(L, form, L1) & 
+	has(L1, spelling, Sp) 
+		-> has(L1, token, W).
+*/
+/*999
+
+	+isa(L, lexeme) &
+	has(L, token, X) &
+	has(L, part_of_speech, Y)
+		-> has(X, part_of_speech, Y).
+	
+	+isa(L, lexeme) &
+	has(L, form, L1) &
+	has(L1, token, X) &
+	isa(L1, nonfinite)
+		-> isa(X, nonfinite).
+
+	+isa(L, lexeme) &
+	has(L, form, L1) &
+	has(L1, token, X) &
+	isa(L1, finite)
+		-> isa(X, finite).
+
+// Syntax Rules:
+
+
+	// If the sentence is in the imperative (command) form, then
+	// add the silent pronoun to the beginning. A sentence is
+	// imperative if it has a verb in the nonfinite form and
+	// this verb is at the beginning of the sentence.
+	// The silent pronoun, little_pro, is added to the sentence
+	// word list at the beginning, made a token of the lexeme
+	// little_pro, and given the same (silent) spelling as
+	// the lexeme little_pro, so that the above part-of-speech
+	// tagging takes place (it should be labeled a noun). It is then
+	// appended to the beginning of the tokenized_word_list of 
+	// the utterance (its spelling is, not the ID).
+	// To-Do: definition of imperative must be more sophisticated.
+	
+	+isa(U, utterance) &
+	has(U, word, X) &
+	has(X, part_of_speech, verb) &
+	isa(X, nonfinite) &
+	has(U, tokenized_word_list, L) &
+	get_placement(X, L, 0) &
+	unique_id(ID) &
+	isa(Y, lexeme) &
+	isa(Y, little_pro) & 
+	has(Y, form, Y1) &
+	has(Y1, spelling, Z)
+		-> isa(ID, word) &
+		has(U, word, ID) &
+		has(Y1, token, ID) &
+		has(ID, spelling, Z) &
+		has(U, tokenized_word_list, [Z.L]).
+
+	// If a word is a noun, then there is another constituent 
+	// of the utterance, labeled N, which has the word as its 
+	// terminal/daughter.
+	+isa(U, utterance) &
+	has(U, word, X) &
+	has(X, part_of_speech, noun) &
+	has(X, spelling, Sp) &
+	unique_id(ID)
+		-> isa(ID, n) &
+		has(U, constituent, ID) &
+		has(ID, terminal, X) &
+		has(ID, daughter, X) &
+		has(ID, spelling, Sp).
+
+	// If a word is a verb, then then there is another constituent 
+	// of the utterance and it is a V. This has the word as its 
+	// terminal/daughter.
+	+isa(U, utterance) &
+	has(U, word, X) &
+	has(X, part_of_speech, verb) &
+	has(X, spelling, Sp) &
+	unique_id(ID)
+		-> isa(ID, v) &
+		has(U, constituent, ID) &
+		has(ID, terminal, X) &
+		has(ID, daughter, X) &
+		has(ID, spelling, Sp).
+
+	// If a word is a preposition, then then there is another 
+	// constituent of the utterance and it is a P. This has the 
+	// word as its terminal/daughter.
+	+isa(U, utterance) &
+	has(U, word, X) &
+	has(X, part_of_speech, preposition) &
+	has(X, spelling, Sp) &
+	unique_id(ID)
+		-> isa(ID, p) &
+		has(U, constituent, ID) &
+		has(ID, terminal, X) &
+		has(ID, daughter, X) &
+		has(ID, spelling, Sp).
+
+	// NP -> N
+	+isa(U, utterance) &
+	has(U, constituent, X) &
+	isa(X, n) &
+	has(X, spelling, Sp) &
+	unique_id(ID)
+		-> isa(ID, np) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, spelling, Sp).
+
+	// VP -> V
+	+isa(U, utterance) &
+	has(U, constituent, X) &
+	isa(X, v) &
+	has(X, spelling, Sp) &
+	unique_id(ID)
+		-> isa(ID, vp) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, spelling, Sp).
+
+	// PP -> P NP
+	+isa(U, utterance) &
+	has(U, constituent, X) &
+	isa(X, p) &
+	has(X, spelling, Sp1) &
+	has(U, constituent, Y) &
+	isa(Y, np) &
+	has(Y, spelling, Sp2) &
+	combine(Sp1, Sp2, Sp3) &
+	unique_id(ID)
+		-> isa(ID, pp) &
+		isa(ID, phrase) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, daughter, Y) &
+		has(X, complement, Y) &
+		has(ID, spelling, Sp3).
+
+	// VP -> VP PP
+	+isa(U, utterance) &
+	has(U, constituent, X) &
+	isa(X, vp) &
+	has(X, spelling, Sp1) &
+	has(U, constituent, Y) &
+	isa(Y, pp) &
+	has(Y, spelling, Sp2) &
+	combine(Sp1, Sp2, Sp3) &
+	unique_id(ID)
+		-> isa(ID, vp) &
+		isa(ID, phrase) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, daughter, Y) &
+		has(ID, spelling, Sp3).
+	
+	// S -> NP VP
+	+isa(U, utterance) &
+	has(U, spelling, Sp1) &
+	has(U, constituent, X) &
+	isa(X, np) &
+	has(X, spelling, Sp2) &
+	has(U, constituent, Y) &
+	isa(Y, vp) &
+	has(Y, spelling, Sp3) &
+	combine(Sp2, Sp3, Sp4) &
+	unique_id(ID)
+		-> isa(ID, s) &
+		has(U, constituent, ID)
+		has(ID, daughter, X)
+		has(ID, daughter, Y)
+		has(Y, specifier, X)
+		has(ID, spelling, Sp4)
+		has(U, subject, X) &
+		has(U, predicate, Y).
+
+
+// Getting it all moving:
+// The following rule *should* require that a path to S
+// be found that results in a successful parse, i.e., 
+// the final string should be combined to equal the 
+// utterance.
+
+	+isa(U, utterance) &
+	has(U, spelling, Sp)
+		-> ?{has(U, parse_tree, ID)}[1] isa(ID,s).
+
+
+// Theta-Role Rules:
+// These should be a simple version of UTAH: agent >> theme >> else.
+// Currently, subject gets agent, and...
+
+	+isa(U, utterance) &
+	isa(U, current) &
+	isa(U, parsed) &
+	has(U, subject, X)
+	-> isa(X, agent).
+
+
+// ...any theta-role assigner assigns its theta-role to its complement.
+	+isa(U, utterance) &
+	isa(U, current) &
+	has(U, constituent, X) &
+	has(X, daughter, Y) &
+	has(X, daughter, Z) &
+	has(Y, theta_assignment, Theta)
+		-> isa(Z, Theta).
+
+
+// Logical Form Rules:
+// If X has a Theta, then X participates in E as the Theta.
+
+/*	+isa(U, utterance) &
+	isa(U, current) &
+	has(U, constituent, X) &
+	has(X, assignemnt, Theta) &
+	isa(Theta, theta_role) &
+	isa(Y, concept) &
+	has(Y, label, X)
+		->	has(E, Theta, ).
+*/
+
+
+
+999*/

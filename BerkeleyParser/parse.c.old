@@ -1,0 +1,306 @@
+/*/usr/local/quintus3.2-sol26/generic/qplib3.2/IPC/TCP/demo */
+
+#include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include "tcp.h"
+//#include "api-structures.h"
+
+#define MAXINPUT 1024
+#define DISPLAY_MAX 1024
+#define COMMENT_CHAR '%'  /* input lines beginning with this are ignored */
+#define TRUE 1
+#define FALSE 0 
+
+#define MAX_WORD 60           /* maximum number of chars in a word */
+#define MAX_LINE 1500         /* maximum number of chars in a sentence */
+#define MAX_SENTENCE 250      /* maximum number of words in a sentence */
+
+#define assert(ex,string) {                                               \
+    if (!(ex)) {							  \
+	printf("Assertion failed: %s\n", string); 		          \
+	exit(1);                            				  \
+    }									  \
+}
+
+typedef struct Word_struct Word;
+struct Word_struct {
+    char * string;
+    char * tag;    /* eventually these get generated */
+};
+
+typedef struct Sentence_s * Sentence;
+struct Sentence_s {
+    //Dictionary  dict;           /* words are defined from this dictionary */
+    int    length;              /* number of words */
+    Word   word[MAX_SENTENCE];  /* array of words after tokenization */
+    
+    //Parse_info *   parse_info;  /* set of parses for the sentence */
+    //String_set *   string_set;  /* used for word names, not connectors */
+  
+};
+
+/*added by Darsana to connect to Alfred*/
+int connect_alfred(char *ServerFile) {
+    int Port, Service;
+    char *Host;
+   
+    Service = tcp_listen(ServerFile, &Port, &Host);
+    if (Service == -1){
+		fprintf(stderr, "Error in creating a channel.\n");
+    }
+
+    return Service;
+}
+
+void print_usage(char *str) {
+    fprintf(stderr, 
+	    "Usage: %s [dict_file] [-pp pp_knowledge_file] [-alma alma_host_file]\n"
+	    "          [-c constituent_knowledge_file] [-a affix_file]\n"
+	    "          [-ppoff] [-coff] [-aoff] [-batch] [-<special \"!\" command>]\n", str);
+    exit(-1);
+}
+
+int fget_input_string(char *input_string, FILE *in, FILE *out) {
+    fprintf(out, "BerkeleyParser> ");
+    fflush(out);
+    if (fgets(input_string, MAXINPUT, in)) return 1;
+    else return 0;
+}
+
+int main(int argc, char * argv[]) {
+  //  Dictionary      dict;
+    Sentence        sent;
+    char            *dictionary_file=NULL;
+    char            *post_process_knowledge_file=NULL;
+    char            *constituent_knowledge_file=NULL;
+    char            *affix_file=NULL;
+    char 	    	*sfile = NULL;
+    int             pp_on=TRUE;
+    int             af_on=TRUE;
+    int             cons_on=TRUE;
+    int             num_linkages, i;
+    char            input_string[MAXINPUT];
+  //  Label           label = NO_LABEL;  
+    int             parsing_space_leaked, reported_leak, dictionary_and_option_space;
+    int             PassiveSocket = -1;
+    int 	    	FD = -1;
+    int             SentNum = 0;
+    char 	    	alma_str[100];
+
+    i = 1;
+    if ((argc > 1) && (argv[1][0] != '-')) {
+		/* the dictionary is the first argument if it doesn't begin with "-" */
+		dictionary_file = argv[1];	
+		i++;
+    }
+
+    for (; i<argc; i++) {
+		if (argv[i][0] == '-') {
+			if (strcmp("-pp", argv[i])==0) {
+				if ((post_process_knowledge_file != NULL) || (i+1 == argc)) 
+					print_usage(argv[0]);
+				post_process_knowledge_file = argv[i+1];
+				i++;
+			} else 
+			if (strcmp("-c", argv[i])==0) {
+				if ((constituent_knowledge_file != NULL) || (i+1 == argc)) 
+				  print_usage(argv[0]);
+				constituent_knowledge_file = argv[i+1];
+				i++;
+			} else 
+			if (strcmp("-alma", argv[i])==0) {
+					if ((sfile != NULL) || (i+1 == argc))
+						print_usage(argv[0]);
+					sfile = argv[i+1];
+					i++;
+				} else
+			if (strcmp("-a", argv[i])==0) {
+				if ((affix_file != NULL) || (i+1 == argc))
+					print_usage(argv[0]);
+				affix_file = argv[i+1];
+				i++;
+			} else if (strcmp("-ppoff", argv[i])==0) {
+				pp_on = FALSE;
+			} else if (strcmp("-coff", argv[i])==0) {
+				cons_on = FALSE;
+			} else if (strcmp("-aoff", argv[i])==0) {
+				af_on = FALSE;
+			} else if (strcmp("-batch", argv[i])==0) {
+			} else if (strncmp("-!", argv[i],2)==0) {
+			} else {
+				print_usage(argv[0]);		
+			}
+		} else {
+			print_usage(argv[0]);
+		}
+    }
+
+    if (!pp_on && post_process_knowledge_file != NULL) print_usage(argv[0]);
+
+    if (sfile == NULL){ 
+		fprintf(stderr, "No alma host file specified. Running Parser independently.\n");
+		fprintf(stdout, "No alma host file specified. Running Parser independently.\n");
+    }
+    else
+      	PassiveSocket = connect_alfred(sfile);
+
+    if (dictionary_file == NULL) {
+		dictionary_file = "4.0.dict";
+        fprintf(stderr, "No dictionary file specified.  Using %s.\n", 
+		dictionary_file);
+    }
+
+    if (af_on && affix_file == NULL) {
+		affix_file = "4.0.affix";
+        fprintf(stderr, "No affix file specified.  Using %s.\n", affix_file);
+    }
+
+    if (pp_on && post_process_knowledge_file == NULL) {
+		post_process_knowledge_file = "4.0.knowledge";
+        fprintf(stderr, "No post process knowledge file specified.  Using %s.\n",
+		post_process_knowledge_file);
+    }
+
+    if (cons_on && constituent_knowledge_file == NULL) {
+        constituent_knowledge_file = "4.0.constituent-knowledge"; 
+		fprintf(stderr, "No constituent knowledge file specified.  Using %s.\n", 
+		constituent_knowledge_file);
+    }
+
+    /* Darsana added Code here to get Alma tag once Alma has started up */
+    if (PassiveSocket != -1) {
+       switch (tcp_select(tcp_BLOCK, 0.0, &FD)) {
+          case tcp_ERROR:
+			fprintf(stdout, "tcp_ERROR.\n");
+            exit(errno);
+          case tcp_SUCCESS:
+			fprintf(stdout, "tcp_SUCCESS.\n");
+            if (FD == PassiveSocket) {
+				fprintf(stdout, "PassiveSocket.\n");
+                if((FD = tcp_accept(PassiveSocket)) == -1){
+					fprintf(stdout, "tcp_accept(PassiveSocket)==-1.\n");
+					exit(errno);
+				}
+                printf("Connection to %d accepted\n", FD);
+				fprintf(stdout, "connection accepted.\n");
+			}
+		}
+	}
+
+	/* parsing each sentence until user promts either "quit" or "exit"*/
+	while (fget_input_string(input_string, stdin, stdout)) {
+		if ((strcmp(input_string, "quit\n")==0) || (strcmp(input_string, "exit\n")==0)) {
+			/* Darsana added code here to send quit/exit command to alfred*/
+			sprintf(alma_str, "%s", "term(quit).");
+			/*	printf("%s", alma_str);*/
+			if (FD != -1) write(FD, alma_str, strlen(alma_str));
+
+			break;
+		}
+
+		char buf[MAXINPUT];
+		FILE *fp;
+		char out[MAXINPUT];
+		char parsed[MAXINPUT];
+		strncpy(out, input_string, strlen(input_string)-1);
+		out[strlen(input_string)-1] = '\0';
+		sent = malloc(MAXINPUT*sizeof(Sentence));
+		sent->length=0;
+
+		char * word;
+		word = strtok (input_string," \n");
+		int val = 0;
+		SentNum++;
+
+		//insert every word in a sentence with its corresponding sentence number
+		sprintf(alma_str, "%s%d%s\n", "term(af(utterance(s", SentNum, "))).");
+		if (FD != -1) write(FD, alma_str, strlen(alma_str));
+
+		while (word != NULL)
+		{	
+			sent->length++;
+			sent->word[val].string=word;
+			sprintf(alma_str,"%s%d%s%d%s%s%s\n", "term(af(value_of(s", SentNum, 
+				", val", val++, ", '", word, "')))." );
+			
+			if (FD != -1) write(FD, alma_str, strlen(alma_str));		
+
+			word = strtok (NULL, " \n");
+		}
+
+		//run Berkeley parser to get the part of speech tag(POS) and the parse tree
+		sprintf(buf,"/bin/echo %s | java -Xmx1024m -jar ../BerkeleyParser/berkeleyParser.jar -gr ../BerkeleyParser/eng_sm6.gr",out);
+		fp = popen(buf,"r");
+		while(fgets(parsed,MAXINPUT,fp)!= NULL)
+			fprintf(stdout, parsed);
+		pclose(fp);
+
+		char * pch1,*pch2;
+		char * main_verb=NULL;
+		pch1 = strtok (parsed," ()\n");
+		pch2 = NULL;
+		int j=0;
+
+		/*For every word in a sentence, send each word to alfred with its corresponding POS tag. 
+		  Then, call alma to find the main_verb, not here. 
+			 (I found the main verb here and send that to alfread here, but you should make this change)
+		  You can assume that each sentence has only one verb so that you can assume that is the main verb.
+		*/
+		while (pch1 != NULL && j<sent->length)
+		{    	
+			if(strstr(sent->word[j].string,pch1) != NULL){
+				sent->word[j].tag=pch2;
+				if((strcmp(sent->word[j].tag,"VB")==0 || strcmp(sent->word[j].tag,"VBP")==0) && main_verb ==NULL) {
+					main_verb=sent->word[j].string;
+					sprintf(alma_str, "%s%d%s%d%s\n","term(af(verb(s", SentNum,", val",j,"))).");
+					if (FD != -1) write(FD, alma_str, strlen(alma_str));		
+				}
+				sprintf(alma_str, "%s%s%s%s%s\n", "term(af(",sent->word[j].tag,"(",
+						sent->word[j].string, "))).");
+				printf("%s%s%s%s%s\n", "term(af(",sent->word[j].tag,"(",
+						sent->word[j].string, "))).");
+				if (FD != -1) write(FD, alma_str, strlen(alma_str));
+				j++;				
+				if(j==sent->length) break;
+			}
+			pch2 = strtok (NULL, " ()\n");			
+			if(strstr(sent->word[j].string,pch2) != NULL){
+				sent->word[j].tag=pch1;
+				if((strcmp(sent->word[j].tag,"VB")==0 || strcmp(sent->word[j].tag,"VBP")==0) && main_verb ==NULL) {
+					main_verb=sent->word[j].string;
+					sprintf(alma_str, "%s%d%s%d%s\n","term(af(verb(s", SentNum,", val",j,"))).");
+					if (FD != -1) write(FD, alma_str, strlen(alma_str));		
+				}
+				sprintf(alma_str, "%s%s%s%s%s\n", "term(af(",sent->word[j].tag,"(",
+						sent->word[j].string, "))).");
+				printf("%s%s%s%s%s\n", "term(af(",sent->word[j].tag,"(",
+						sent->word[j].string, "))).");
+				if (FD != -1) write(FD, alma_str, strlen(alma_str));
+				j++;
+				if(j==sent->length) break;				
+			}
+			pch1 = strtok (NULL, " ()\n");
+		}
+
+		free(sent);
+		sent=NULL;
+		
+		//insert utterance, you can leave this part as the way it is.
+		sprintf(alma_str, "%s%d%s\n", "term(af(utterance(s", SentNum, "))).");
+		if (FD != -1) write(FD, alma_str, strlen(alma_str));
+		
+		//send the main verb to Alma. Again, send the main_verb in "main.al", not here.
+		sprintf(alma_str, "%s%d,%s%s\n","term(af(verb(s", SentNum,main_verb,"))).");
+		if (FD != -1) write(FD, alma_str, strlen(alma_str));
+
+		//end of parse, you can start working on this later when everything else is done.
+		sprintf(alma_str, "%s%d%s\n","term(af(end_of_parse(s" , SentNum, "))).");
+		if (FD != -1) write(FD, alma_str, strlen(alma_str));
+		// TODO: fix above
+		
+		//dictionary_delete(dict);
+	}
+    return 0;
+}

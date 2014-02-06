@@ -1,0 +1,88 @@
+//test file
+
+//loadcall "unique_id" "alma.callfile.UniqueID".
+
+
++isa(1, utterance) & has(1, spelling, "recharge at six").
+
++isa(U, utterance) &
+has(U, spelling, Sp) &
+tokenize_string_into_words(Sp, L)
+	->	utt_needs_tokenizing(U,L).
+
+//+isa([a,b,c], list) & b(d).
+
++utt_needs_tokenizing(U,L)
+	->	isa(L, list).
+
+	+has(L, rest_of_list, [X.Y])
+		-> 	has(L, member, X).
+
+	+has(L, rest_of_list, [X.Y])
+		->	has(L, dummy, [X.Y]).
+
+	+has(L, dummy, [X.Y])
+		->	has(L, rest_of_list, Y).
+
+	+isa([X.Y],list)
+		->	has([X.Y], member, X).
+
+	+isa([X.Y],list)
+		->	has([X.Y], rest_of_list, Y).
+
+step 5.
+
+
+
+step 5.
+
+/*
+?{ans1(U,L)}[1] utt_needs_tokenizing(U,L).
+?{ans2(L)}[1] isa(L, list).
+?{ans3(L,X)}[3] has(L, member, X).
+?{ans4(X)}[3] has([X.Y], member, X).
+?{ans5(X)}[3] has([a,b,c], member, X).
+*/
+
+/*+a(X) -> (unique_id(ID)-> b(ID)).
+step 2.
++a(1).
+step 10.
+*/
+
+
+/*
++a(X) -> unique_id(ID). //& b(X,ID).
+step 10.
+//+b(X,ID) -> found(X,ID).
+//step 10.
+*/
+
+/*
+//+unique_id(ID) -> a(ID).
+
++c(f).
+
+step 10.
+
++c(X) & unique_id(ID) -> b(X,ID).
+step 2.
+
+step 10.
+*/
+
+/*
++a(h).
+step 2.
+-a(h).			//works.
+step 2.
+
++a(j).
++b(j).
+step 2.
+
++a(X) -> -b(X).		//no.  takes four steps and "CommandNodes do not unify"
+
+step 2.
+
+*/

@@ -1,0 +1,117 @@
+/*
+Name: 		conceptual_lexicon.alma
+Title:		Non-linguistic Conceptual Lexicon
+Author: 	Scott
+
+Created: 	9/18/08
+Modified:
+		9/18/08 by Scott, added new entries
+
+Description: 	This file contains Alfred's initial knowledge 
+		of non-linguistic concepts. It is loaded into Alfred's
+		knowledge base via a 'load' command in the file
+		"/fs/qubit/scott/jalma/AlfredJr/alfred.alma".
+
+
+
+To-Do:		
+
+Calls:
+*/ 
+
+
+// Events:
+
++has(concept, type, event).
+
++has(english, lexeme, X) &
+has(X, part_of_speech, verb) &
+has(X, form, Y) &
+has(Y, spelling, "recharge") &
+has(roverese, lexeme, Z) &
+has(Z, category, action) &
+has(Z, spelling, "charge") &
+unique_id(ID)
+	-> isa(ID, concept) &
+	isa(ID, event) &
+	has(ID, participant, agent) &
+	has(ID, participant, location) &
+	has(ID, english_signifier, X) &
+	has(ID, roverese_signifier, Z).
+
+
+// Locations:
+
++has(concept, type, location).
+
++has(english, lexeme, X) &
+has(X, part_of_speech, noun) &
+isa(X, name) &
+has(X, form, Y) &
+has(Y, spelling, "six") &
+has(roverese, lexeme, Z) &
+has(Z, category, dest) &
+has(Z, spelling, "6") &
+unique_id(ID)
+	-> isa(ID, concept) &
+	isa(ID, location) &
+	has(ID, english_signifier, X) &
+	has(ID, roverese_signifier, Z).
+
+// Entities:
+
++has(english, lexeme, X) &
+has(X, part_of_speech, noun) &
+isa(X, name) &
+has(X, form, Y) &
+has(Y, spelling, " ") &
+has(roverese, lexeme, Z) &
+has(Z, category, dest) &
+has(Z, spelling, "rover1") &
+unique_id(ID)
+	-> isa(ID, concept) &
+	isa(ID, agent) &
+	has(ID, english_signifier, X) &
+	has(ID, roverese_signifier, Z).
+
+
+// Thematic-roles:
+
++has(concept, type, thematic_role).
+
++unique_id(ID) &
+has(english, lexeme, ID2) &
+isa(ID2, theta_role) &
+isa(ID2, ag)
+	-> isa(ID, concept) &
+	isa(ID, thematic_role) &
+	isa(ID, agent) &
+	has(ID, label, ID2).
+
+	+unique_id(ID) &
+has(english, lexeme, ID2) &
+isa(ID2, theta_role) &
+isa(ID2, th)
+	-> isa(ID, concept) &
+	isa(ID, thematic_role) &
+	isa(ID, theme) &
+	has(ID, label, ID2).
+	
+	+unique_id(ID) &
+has(english, lexeme, ID2) &
+isa(ID2, theta_role) &
+isa(ID2, loc)
+	-> isa(ID, concept) &
+	isa(ID, thematic_role) &
+	isa(ID, location) &
+	has(ID, label, ID2).
+	
+	+unique_id(ID) &
+has(english, lexeme, ID2) &
+isa(ID2, theta_role) &
+isa(ID2, dest)
+	-> isa(ID, concept) &
+	isa(ID, thematic_role) &
+	isa(ID, destination) &
+	has(ID, label, ID2).
+	

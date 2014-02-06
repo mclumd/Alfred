@@ -1,0 +1,38 @@
+/*
+Name: 		conceptual_rules.alma
+Title:		Non-linguistic Conceptual Rules
+Author: 	Scott
+
+Created: 	9/18/08
+Modified:
+
+
+Description: 	This file contains Alfred's initial knowledge 
+		of non-linguistic concepts. It is loaded into Alfred's
+		knowledge base via a 'load' command in the file
+		"/fs/qubit/scott/jalma/AlfredJr/alfred.alma".
+
+
+
+To-Do:		
+
+Calls:
+*/ 
+
+//Concept Look-up Rules:
+
+	+isa(U, utterance) & 
+	isa(U, current) &
+	has(U, word, X) & 
+	has(X, spelling, Sp) & 
+	isa(L, lexeme) &
+	has(roverese, lexeme, L) &
+	has(L, spelling, Sp) 
+		-> has(L, token, X).
+
+	+isa(L, lexeme) &
+	has(roverese, lexeme, L) &
+	has(L, token, X) &
+	has(L, category, Y)
+		-> has(X, category, Y).
+

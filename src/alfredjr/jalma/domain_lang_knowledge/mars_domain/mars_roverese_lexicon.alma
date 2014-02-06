@@ -1,0 +1,61 @@
+/*
+Name: 		mars_roverese_lexicon.alma
+Title:		Mars Roverese Lexicon
+Author: 	Scott
+
+Created: 	9/12/08
+Modified:
+		9/12/08 by Scott, added new entries
+
+Description: 	This file contains Alfred's initial knowledge 
+		of Mars Roverese words. It is loaded into Alfred's
+		knowledge base via a 'load' command in the file
+		"/fs/qubit/scott/jalma/AlfredJr/alfred.alma".
+
+
+
+To-Do:		
+
+Calls:
+*/ 
+
+// tcp1c_commands:
+	// First, use the unique_ID call to generate an ID for
+	// each lexeme. Then use the IDs as the 
+	// names of the lexeme L and its sub-forms.
+
+	+unique_id(ID1)
+	->	isa(ID1, lexeme) &
+		has(roverese, lexeme, ID1) &
+		has(ID1, category, tcp1c) &
+		has(ID2, spelling, "send").
+
+// agents:
+	+unique_id(ID1)
+	->	isa(ID1, lexeme) &
+		has(roverese, lexeme, ID1) &
+		has(ID1, category, agent) &
+		has(ID2, spelling, "rover1").
+
+		
+// planner_commands:
+	+unique_id(ID1)
+	->	isa(ID1, lexeme) &
+		has(roverese, lexeme, ID1) &
+		has(ID1, category, plan) &
+		has(ID2, spelling, "action").
+
+// actions:
+	+unique_id(ID1)
+	->	isa(ID1, lexeme) &
+		has(roverese, lexeme, ID1) &
+		has(ID1, category, action) &
+		has(ID2, spelling, "charge").
+
+// destinations:
+	+unique_id(ID1)
+	->	isa(ID1, lexeme) &
+		has(roverese, lexeme, ID1) &
+		has(ID1, category, dest) &
+		has(ID2, spelling, "6").
+

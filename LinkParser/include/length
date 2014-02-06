@@ -1,0 +1,306 @@
+api.h: /*  Copyright (C) 1991-2000, all rights reserved                            */
+api.h:* Functions that allow special-purpose post-processing of linkages 
+api-structures.h: /*  Copyright (C) 1991-2000, all rights reserved                            */
+api-structures.h:    int    max_parse_time;  /* was double before --DS */
+api-structures.h:  int twopass_length;    /* min length for two-pass post processing */
+api-structures.h:  int batch_mode;               /* if true, process sentences non-interactively */
+api-structures.h:  int display_constituents;     /* if true, output treebank-style constituent structure */
+api-structures.h:				   the number post-processed might be fewer
+api-structures.h:				   because some are non-canonical */
+api-structures.h:				   because some may be non-canonical. */
+api-structures.h:  int *relevant_contains_one_rules;        /* -1-terminated list of indices  */
+api-structures.h:  int visited[MAX_SENTENCE];                   /* for the depth-first search */
+constituents.h:#include "link-includes.h"
+link-includes.h:#include "api-structures.h"
+link-includes.h:#include "analyze-linkage.h"
+link-includes.h:#include "build-disjuncts.h"
+link-includes.h:#include "extract-links.h"
+link-includes.h:#include "fast-match.h"
+link-includes.h:#include "post-process.h"
+link-includes.h:#include "print-util.h"
+link-includes.h:#include "read-dict.h"
+link-includes.h:#include "string-set.h"
+link-includes.h:#include "word-file.h"
+link-includes.h:--I commented this out to get it to compile  --*DS*
+link-includes.h.backup:#include "api-structures.h"
+link-includes.h.backup:#include "analyze-linkage.h"
+link-includes.h.backup:#include "build-disjuncts.h"
+link-includes.h.backup:#include "extract-links.h"
+link-includes.h.backup:#include "fast-match.h"
+link-includes.h.backup:#include "post-process.h"
+link-includes.h.backup:#include "print-util.h"
+link-includes.h.backup:#include "read-dict.h"
+link-includes.h.backup:#include "string-set.h"
+link-includes.h.backup:#include "word-file.h"
+link-includes.h.backup:#include "/afs/cs/project/link-8/translator/include/alink.h"
+link-includes.h.backup:#include "/afs/cs/project/link-8/translator/include/translator.h"
+linkset.h:/* --------------------------------------------------------------------
+linkset.h:--------------------------------------------------------------------- */
+phrase-parse.h:#include "link-includes.h"
+phrase-parse.h:#define DICTIONARY "/afs/cs/project/link-8/link-3.1/data/3.1.dict"
+phrase-parse.h:#define PP_KNOWLEDGE "/afs/cs/project/link-8/link-3.1/data/3.1.knowledge"
+phrase-parse.h:#define CONSTITUENT_KNOWLEDGE "/afs/cs/project/link-8/link-3.1/data/constituent.knowledge"
+post-process.h:     returns a handle, used for all subsequent calls to post-process.
+post-process.h:       - Do for each generated linkage of sentence:
+post-process.h:       - Do for each generated linkage of sentence:
+post-process.h:       - Call post_process_close_sentence() 
+post-process.h:/* Postprocessor * post_process_open(char *dictname, char *path);  this is in api-prototypes.h */
+quintus.h:#define QP_atomlength(s)	((unsigned short *)(s))[-1]
+quintus.h:#define QP_INT_MIN  ((-2147483647)-1) /* [PM] 3.5 avoid overflow */
+quintus.h:#define QP_FAILURE	-1
+quintus.h:#define QP_ERROR	-2
+quintus.h:#define QP_INVALID	-3
+quintus.h:#define QP_EOF		-1
+quintus.h:#define	QP_OV_ERROR	0	/* line overflow -> error signal */
+quintus.h:#define	QP_OV_TRUNCATE	1	/* line overflow -> discard excess */
+quintus.h:#define	QP_OV_FLUSH	2	/* line overflow -> write partial record */
+quintus.h:#define	QP_OV_WRAP	3	 * line overflow -> insert newline *
+quintus.h:#define	QP_NOLB		-1	/* no line border code should be returned */
+quintus.h:#define	QP_NOFB		-2	/* no file border code should be returned */
+quintus.h:/*  A QP_cookie is a set of co-ordinates which identifies the beginning
+quintus.h:	    int BlockNumber;	/* which 512-byte block in file? */
+quintus.h:    {				/* stream-position record */
+quintus.h:	int		(*read)();	/* + low-level read  function */
+quintus.h:	int		(*write)();	/* + low-level write function */
+quintus.h:	int		(*close)();	/* + low-level close function */
+quintus.h:	int		(*seek)();	/* + low-level seek  function */
+quintus.h:	int		(*flush)();	/* + low-level flush function */
+quintus.h:   n_char is -1 for line_border >= 0 and part_line == 0 or 
+quintus.h:#define	QP_getc(S)	(--(S)->n_char >= 0 ? (int)(*(S)->char_ptr++)	\
+quintus.h:			: (S)->n_char == -1 && (S)->line_border >= 0 &&	\
+quintus.h:				(S)->part_line == 0 ? (S)->line_border	\
+quintus.h:#define	QP_peekc(S)	((S)->n_char  > 0 ? (int)(*(S)->char_ptr)	\
+quintus.h:			:(S)->n_char == 0 && (S)->line_border >= 0 &&	\
+quintus.h:				(S)->part_line == 0 ? (S)->line_border	\
+quintus.h:#define	QP_eoln(S)	((S)->n_char <= 0 && (((S)->n_char == 0		\
+quintus.h:					&& (S)->part_line == 0)		\
+quintus.h:/* test non-necessary n_char <= 0 so it's fast for most cases */
+quintus.h:#define	QP_eof(S)	((S)->n_char <= 0 &&  ((S)->n_char < 0 ||	\
+quintus.h:			   (S)->part_line || (S)->line_border < 0) &&	\
+quintus.h:				(S)->eof_state != QP_NOT_EOF))
+quintus.h:#define	QP_pasteof(S)	((S)->eof_state == QP_CONSUMED_EOF)
+quintus.h:/* set n_char to -1 so we don't need to update the buffer,
+quintus.h:#define	QP_skipln(S)	if ((S)->n_char == -1)				\
+quintus.h:			while ((S)->part_line)				\
+quintus.h:			(S)->n_char = -1
+quintus.h:#define	QP_newln(S)	QI_output((S), -1)
+quintus.h:#define	QP_fastputc(C,S) ((C) == (S)->line_border ? QI_output((S), -1)	\
+quintus.h:			: --(S)->n_char >= 0				\
+quintus.h:				? (int)(*(S)->char_ptr++ = (C))		\
+quintus.h:				: ((S)->n_char++, QI_output((S), (C))))
+quintus.h:#define	QP_putc(C,S)	(--(S)->n_char >= 0 ?				\
+quintus.h:			 ((*((S)->char_ptr)=(C), C == (S)->line_border) \
+quintus.h:			  ? ((S)->n_char++, QI_output((S), -1))\
+quintus.h:			  : (int) *(S)->char_ptr++)			\
+quintus.h:			: ((S)->n_char++, QI_output((S), (C))))
+quintus.h:/* n_char == -1 && line_border < 0 is a special case */
+quintus.h:#define	QP_char_count(S) ((S)->eof_state != QP_NOT_EOF ? (S)->char_cnt	\
+quintus.h:			: (S)->char_cnt+(S)->line_len-((S)->n_char==-1	\
+quintus.h:			  && (S)->line_border < 0 ? 0 : (S)->n_char))
+quintus.h:/* n_char == -1 for an input stream just consumed line_border code */
+quintus.h:#define	QP_line_count(S) ((S)->record_cnt == 0 ? 1 : (S)->n_char == -1	\
+quintus.h:				? (S)->record_cnt+1 : (S)->record_cnt)
+quintus.h:#define	QP_line_position(S) ((S)->eof_state != QP_NOT_EOF ||		\
+quintus.h:			(S)->n_char < 0 ? 0		 		\
+quintus.h:			: (S)->xline_pos+(S)->line_len-(S)->n_char)
+quintus.h:#define	QP_E_CANT_READ	  1004	/* stream->read returned error code */
+quintus.h:#define	QP_E_CANT_WRITE	  1005	/* stream->write returned error code */
+quintus.h:#define	QP_E_CANT_FLUSH	  1006	/* stream->flush returned error code */
+quintus.h:#define	QP_E_CANT_SEEK	  1007	/* stream->seek returned error code */
+quintus.h:#define	QP_E_CANT_CLOSE	  1008	/* stream->close returned error code */
+quintus.h:#define	QP_E_BUFFERED	  1014	/* can't do operation with non-empty buffer */
+quintus.h:#define	QP_ECODE_INDEX(ecode)	(ecode - QP_START_ECODE)
+quintus.h:    Function used for I/O on Prolog streams and for embedding the low-level
+resources.h:#define MAX_PARSE_TIME_DEFAULT -1
+structures.h: /*  Copyright (C) 1991-2000, all rights reserved                            */
+structures.h:   (Or in linux when I compile with -ansi) */
+structures.h:  -- Most of these global variables have been eliminated.
+structures.h:     I've lefe this comment here for historical purposes --DS 4/98
+structures.h:#define NEGATIVECOST -1000000
+structures.h:#define LEFT_WALL_DISPLAY  ("LEFT-WALL")   /* the string to use to show the wall */
+structures.h:#define RIGHT_WALL_DISPLAY  ("RIGHT-WALL")   /* the string to use to show the wall */
+structures.h:#define LEFT_WALL_WORD   ("LEFT-WALL")
+structures.h:#define RIGHT_WALL_WORD  ("RIGHT-WALL")
+structures.h:#define ANDABLE_CONNECTORS_WORD ("ANDABLE-CONNECTORS")
+structures.h:#define UNLIMITED_CONNECTORS_WORD ("UNLIMITED-CONNECTORS")
+structures.h:OBS #define SEMICOLON_WORD   ("SEMI-COLON")
+structures.h:OBS #define PERCENT_WORD     ("PERCENT-SIGN")
+structures.h:OBS #define DOLLAR_WORD      ("DOLLAR-SIGN")
+structures.h:OBS #define LP_WORD          ("LEFT-PAREN")
+structures.h:OBS #define RP_WORD          ("RIGHT-PAREN")
+structures.h:#define PROPER_WORD      ("CAPITALIZED-WORDS")
+structures.h:#define PL_PROPER_WORD      ("PL-CAPITALIZED-WORDS")
+structures.h:#define HYPHENATED_WORD  ("HYPHENATED-WORDS")
+structures.h:#define ING_WORD         ("ING-WORDS")
+structures.h:#define S_WORD           ("S-WORDS")
+structures.h:#define ED_WORD          ("ED-WORDS")
+structures.h:#define LY_WORD          ("LY-WORDS")
+structures.h:#define UNKNOWN_WORD     ("UNKNOWN-WORD")
+structures.h:#define MAX_LINKS (2*MAX_SENTENCE-3) /* maximum number of links allowed */
+structures.h:#define NORMAL_LABEL  (-1) /* used for normal connectors            */
+structures.h:    char multi;   /* TRUE if this is a multi-connector */
+structures.h:			     Only used for non-terminals */
+structures.h:    char dir;   /* '-' means to the left, '+' means to right (for connector) */
+structures.h:    char multi; /* TRUE if a multi-connector (for connector)  */
+structures.h:	E_list * l;       /* only needed for non-terminals */
+structures.h:/* This is for building the graphs of links in post-processing and          */
+structures.h:    int dir;        /* 0: undirected, 1: away from me, -1: toward me */
+structures.h:/* from string-set.c */
+structures.h:  char *labels[PP_LEXER_MAX_LABELS];    /* array of labels (NULL-terminated) */
+structures.h:  int   domain;       /* domain which the link belongs to (-1: terminator)*/
+structures.h:  /* Holds a single post-processing rule. Since rules come in many 
+structures.h:  char  **link_array;   /* array containing the spelled-out names  */
+structures.h:   in post-process.c for a description of these. */
+word[:api.h: /*  Copyright (C) 1991-2000, all rights reserved                            */
+word[:api.h:* Functions that allow special-purpose post-processing of linkages 
+word[:api-structures.h: /*  Copyright (C) 1991-2000, all rights reserved                            */
+word[:api-structures.h:    int    max_parse_time;  /* was double before --DS */
+word[:api-structures.h:  int twopass_length;    /* min length for two-pass post processing */
+word[:api-structures.h:  int batch_mode;               /* if true, process sentences non-interactively */
+word[:api-structures.h:  int display_constituents;     /* if true, output treebank-style constituent structure */
+word[:api-structures.h:				   the number post-processed might be fewer
+word[:api-structures.h:				   because some are non-canonical */
+word[:api-structures.h:				   because some may be non-canonical. */
+word[:api-structures.h:  int *relevant_contains_one_rules;        /* -1-terminated list of indices  */
+word[:api-structures.h:  int visited[MAX_SENTENCE];                   /* for the depth-first search */
+word[:constituents.h:#include "link-includes.h"
+word[:link-includes.h:#include "api-structures.h"
+word[:link-includes.h:#include "analyze-linkage.h"
+word[:link-includes.h:#include "build-disjuncts.h"
+word[:link-includes.h:#include "extract-links.h"
+word[:link-includes.h:#include "fast-match.h"
+word[:link-includes.h:#include "post-process.h"
+word[:link-includes.h:#include "print-util.h"
+word[:link-includes.h:#include "read-dict.h"
+word[:link-includes.h:#include "string-set.h"
+word[:link-includes.h:#include "word-file.h"
+word[:link-includes.h:--I commented this out to get it to compile  --*DS*
+word[:link-includes.h.backup:#include "api-structures.h"
+word[:link-includes.h.backup:#include "analyze-linkage.h"
+word[:link-includes.h.backup:#include "build-disjuncts.h"
+word[:link-includes.h.backup:#include "extract-links.h"
+word[:link-includes.h.backup:#include "fast-match.h"
+word[:link-includes.h.backup:#include "post-process.h"
+word[:link-includes.h.backup:#include "print-util.h"
+word[:link-includes.h.backup:#include "read-dict.h"
+word[:link-includes.h.backup:#include "string-set.h"
+word[:link-includes.h.backup:#include "word-file.h"
+word[:link-includes.h.backup:#include "/afs/cs/project/link-8/translator/include/alink.h"
+word[:link-includes.h.backup:#include "/afs/cs/project/link-8/translator/include/translator.h"
+word[:linkset.h:/* --------------------------------------------------------------------
+word[:linkset.h:--------------------------------------------------------------------- */
+word[:phrase-parse.h:#include "link-includes.h"
+word[:phrase-parse.h:#define DICTIONARY "/afs/cs/project/link-8/link-3.1/data/3.1.dict"
+word[:phrase-parse.h:#define PP_KNOWLEDGE "/afs/cs/project/link-8/link-3.1/data/3.1.knowledge"
+word[:phrase-parse.h:#define CONSTITUENT_KNOWLEDGE "/afs/cs/project/link-8/link-3.1/data/constituent.knowledge"
+word[:post-process.h:     returns a handle, used for all subsequent calls to post-process.
+word[:post-process.h:       - Do for each generated linkage of sentence:
+word[:post-process.h:       - Do for each generated linkage of sentence:
+word[:post-process.h:       - Call post_process_close_sentence() 
+word[:post-process.h:/* Postprocessor * post_process_open(char *dictname, char *path);  this is in api-prototypes.h */
+word[:quintus.h:#define QP_atomlength(s)	((unsigned short *)(s))[-1]
+word[:quintus.h:#define QP_INT_MIN  ((-2147483647)-1) /* [PM] 3.5 avoid overflow */
+word[:quintus.h:#define QP_FAILURE	-1
+word[:quintus.h:#define QP_ERROR	-2
+word[:quintus.h:#define QP_INVALID	-3
+word[:quintus.h:#define QP_EOF		-1
+word[:quintus.h:#define	QP_OV_ERROR	0	/* line overflow -> error signal */
+word[:quintus.h:#define	QP_OV_TRUNCATE	1	/* line overflow -> discard excess */
+word[:quintus.h:#define	QP_OV_FLUSH	2	/* line overflow -> write partial record */
+word[:quintus.h:#define	QP_OV_WRAP	3	 * line overflow -> insert newline *
+word[:quintus.h:#define	QP_NOLB		-1	/* no line border code should be returned */
+word[:quintus.h:#define	QP_NOFB		-2	/* no file border code should be returned */
+word[:quintus.h:/*  A QP_cookie is a set of co-ordinates which identifies the beginning
+word[:quintus.h:	    int BlockNumber;	/* which 512-byte block in file? */
+word[:quintus.h:    {				/* stream-position record */
+word[:quintus.h:	int		(*read)();	/* + low-level read  function */
+word[:quintus.h:	int		(*write)();	/* + low-level write function */
+word[:quintus.h:	int		(*close)();	/* + low-level close function */
+word[:quintus.h:	int		(*seek)();	/* + low-level seek  function */
+word[:quintus.h:	int		(*flush)();	/* + low-level flush function */
+word[:quintus.h:   n_char is -1 for line_border >= 0 and part_line == 0 or 
+word[:quintus.h:#define	QP_getc(S)	(--(S)->n_char >= 0 ? (int)(*(S)->char_ptr++)	\
+word[:quintus.h:			: (S)->n_char == -1 && (S)->line_border >= 0 &&	\
+word[:quintus.h:				(S)->part_line == 0 ? (S)->line_border	\
+word[:quintus.h:#define	QP_peekc(S)	((S)->n_char  > 0 ? (int)(*(S)->char_ptr)	\
+word[:quintus.h:			:(S)->n_char == 0 && (S)->line_border >= 0 &&	\
+word[:quintus.h:				(S)->part_line == 0 ? (S)->line_border	\
+word[:quintus.h:#define	QP_eoln(S)	((S)->n_char <= 0 && (((S)->n_char == 0		\
+word[:quintus.h:					&& (S)->part_line == 0)		\
+word[:quintus.h:/* test non-necessary n_char <= 0 so it's fast for most cases */
+word[:quintus.h:#define	QP_eof(S)	((S)->n_char <= 0 &&  ((S)->n_char < 0 ||	\
+word[:quintus.h:			   (S)->part_line || (S)->line_border < 0) &&	\
+word[:quintus.h:				(S)->eof_state != QP_NOT_EOF))
+word[:quintus.h:#define	QP_pasteof(S)	((S)->eof_state == QP_CONSUMED_EOF)
+word[:quintus.h:/* set n_char to -1 so we don't need to update the buffer,
+word[:quintus.h:#define	QP_skipln(S)	if ((S)->n_char == -1)				\
+word[:quintus.h:			while ((S)->part_line)				\
+word[:quintus.h:			(S)->n_char = -1
+word[:quintus.h:#define	QP_newln(S)	QI_output((S), -1)
+word[:quintus.h:#define	QP_fastputc(C,S) ((C) == (S)->line_border ? QI_output((S), -1)	\
+word[:quintus.h:			: --(S)->n_char >= 0				\
+word[:quintus.h:				? (int)(*(S)->char_ptr++ = (C))		\
+word[:quintus.h:				: ((S)->n_char++, QI_output((S), (C))))
+word[:quintus.h:#define	QP_putc(C,S)	(--(S)->n_char >= 0 ?				\
+word[:quintus.h:			 ((*((S)->char_ptr)=(C), C == (S)->line_border) \
+word[:quintus.h:			  ? ((S)->n_char++, QI_output((S), -1))\
+word[:quintus.h:			  : (int) *(S)->char_ptr++)			\
+word[:quintus.h:			: ((S)->n_char++, QI_output((S), (C))))
+word[:quintus.h:/* n_char == -1 && line_border < 0 is a special case */
+word[:quintus.h:#define	QP_char_count(S) ((S)->eof_state != QP_NOT_EOF ? (S)->char_cnt	\
+word[:quintus.h:			: (S)->char_cnt+(S)->line_len-((S)->n_char==-1	\
+word[:quintus.h:			  && (S)->line_border < 0 ? 0 : (S)->n_char))
+word[:quintus.h:/* n_char == -1 for an input stream just consumed line_border code */
+word[:quintus.h:#define	QP_line_count(S) ((S)->record_cnt == 0 ? 1 : (S)->n_char == -1	\
+word[:quintus.h:				? (S)->record_cnt+1 : (S)->record_cnt)
+word[:quintus.h:#define	QP_line_position(S) ((S)->eof_state != QP_NOT_EOF ||		\
+word[:quintus.h:			(S)->n_char < 0 ? 0		 		\
+word[:quintus.h:			: (S)->xline_pos+(S)->line_len-(S)->n_char)
+word[:quintus.h:#define	QP_E_CANT_READ	  1004	/* stream->read returned error code */
+word[:quintus.h:#define	QP_E_CANT_WRITE	  1005	/* stream->write returned error code */
+word[:quintus.h:#define	QP_E_CANT_FLUSH	  1006	/* stream->flush returned error code */
+word[:quintus.h:#define	QP_E_CANT_SEEK	  1007	/* stream->seek returned error code */
+word[:quintus.h:#define	QP_E_CANT_CLOSE	  1008	/* stream->close returned error code */
+word[:quintus.h:#define	QP_E_BUFFERED	  1014	/* can't do operation with non-empty buffer */
+word[:quintus.h:#define	QP_ECODE_INDEX(ecode)	(ecode - QP_START_ECODE)
+word[:quintus.h:    Function used for I/O on Prolog streams and for embedding the low-level
+word[:resources.h:#define MAX_PARSE_TIME_DEFAULT -1
+word[:structures.h: /*  Copyright (C) 1991-2000, all rights reserved                            */
+word[:structures.h:   (Or in linux when I compile with -ansi) */
+word[:structures.h:  -- Most of these global variables have been eliminated.
+word[:structures.h:     I've lefe this comment here for historical purposes --DS 4/98
+word[:structures.h:#define NEGATIVECOST -1000000
+word[:structures.h:#define LEFT_WALL_DISPLAY  ("LEFT-WALL")   /* the string to use to show the wall */
+word[:structures.h:#define RIGHT_WALL_DISPLAY  ("RIGHT-WALL")   /* the string to use to show the wall */
+word[:structures.h:#define LEFT_WALL_WORD   ("LEFT-WALL")
+word[:structures.h:#define RIGHT_WALL_WORD  ("RIGHT-WALL")
+word[:structures.h:#define ANDABLE_CONNECTORS_WORD ("ANDABLE-CONNECTORS")
+word[:structures.h:#define UNLIMITED_CONNECTORS_WORD ("UNLIMITED-CONNECTORS")
+word[:structures.h:OBS #define SEMICOLON_WORD   ("SEMI-COLON")
+word[:structures.h:OBS #define PERCENT_WORD     ("PERCENT-SIGN")
+word[:structures.h:OBS #define DOLLAR_WORD      ("DOLLAR-SIGN")
+word[:structures.h:OBS #define LP_WORD          ("LEFT-PAREN")
+word[:structures.h:OBS #define RP_WORD          ("RIGHT-PAREN")
+word[:structures.h:#define PROPER_WORD      ("CAPITALIZED-WORDS")
+word[:structures.h:#define PL_PROPER_WORD      ("PL-CAPITALIZED-WORDS")
+word[:structures.h:#define HYPHENATED_WORD  ("HYPHENATED-WORDS")
+word[:structures.h:#define ING_WORD         ("ING-WORDS")
+word[:structures.h:#define S_WORD           ("S-WORDS")
+word[:structures.h:#define ED_WORD          ("ED-WORDS")
+word[:structures.h:#define LY_WORD          ("LY-WORDS")
+word[:structures.h:#define UNKNOWN_WORD     ("UNKNOWN-WORD")
+word[:structures.h:#define MAX_LINKS (2*MAX_SENTENCE-3) /* maximum number of links allowed */
+word[:structures.h:#define NORMAL_LABEL  (-1) /* used for normal connectors            */
+word[:structures.h:    char multi;   /* TRUE if this is a multi-connector */
+word[:structures.h:			     Only used for non-terminals */
+word[:structures.h:    char dir;   /* '-' means to the left, '+' means to right (for connector) */
+word[:structures.h:    char multi; /* TRUE if a multi-connector (for connector)  */
+word[:structures.h:	E_list * l;       /* only needed for non-terminals */
+word[:structures.h:/* This is for building the graphs of links in post-processing and          */
+word[:structures.h:    int dir;        /* 0: undirected, 1: away from me, -1: toward me */
+word[:structures.h:/* from string-set.c */
+word[:structures.h:  char *labels[PP_LEXER_MAX_LABELS];    /* array of labels (NULL-terminated) */
+word[:structures.h:  int   domain;       /* domain which the link belongs to (-1: terminator)*/
+word[:structures.h:  /* Holds a single post-processing rule. Since rules come in many 
+word[:structures.h:  char  **link_array;   /* array containing the spelled-out names  */
+word[:structures.h:   in post-process.c for a description of these. */

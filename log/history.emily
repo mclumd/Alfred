@@ -1,0 +1,901 @@
+
+step(1)
+add(now(1))  110  []
+add(contra(X1, X2, X3) & eval_bound(name_to_time(X2, X4), [X2]) & eval_bound(name_to_time(X1, X5), [X1]) & eval_bound(;(->(>(X4, X5), =(X6, X1)), =(X6, X2)), [X5, X4, X1, X2]) -f-> conclusion(reinstate(X6)))  109  []
+add(done(ac_think(X7, X8), X9, X7) & eval_bound(member(equil(X10, X11), X9), [X9, X11, X10]) & eval_bound(=(X8, [equil, X11, X12]), [X8]) & eval_bound(\+(matchwords(X10, X13, X14)), [X10]) & eval_bound(\+(pos_int(satisfied(X7, X8))), [X7, X8]) & equil(X10, X11) -f-> conclusion(need(X7, [equil, X10, X12])))  108  []
+add(done(ac_think(X15, X16), X17, X15) & eval_bound(member(equil(X18, X19), X17), [X17, X18, X19]) & eval_bound(=(X16, [equil, X18, X20]), [X16]) & eval_bound(\+(matchwords(X19, X21, X22)), [X19]) & eval_bound(\+(pos_int(satisfied(X15, X16))), [X15, X16]) & equil(X18, X19) -f-> conclusion(need(X15, [equil, X19, X20])))  107  []
+add(update_expect_list(X23, X24) & eval_bound(df(update_expect_list(X23, X24)), [X23, X24]) & eval_bound(delete_expect_lists(X23), [X23]) -f-> conclusion(expect_list(X24)))  106  []
+add(eval_bound(union(X25, X26, X27), [X25, X26]) & eval_bound(\==(X25, X26), [X25, X26]) & expect_list(X26) & expect_list(X25) -f-> conclusion(update_expect_lists([X25, X26], X27)))  105  []
+add(satisfied(X28, X29) & expect(X28, X29) & eval_bound(delete(X30, [X28, X29], X31), [X28, X29, X30]) & eval_bound(member([X28, X29], X30), [X28, X29, X30]) & expect_list(X30) -f-> conclusion(update_expect_list([X30], X31)))  104  []
+add(expect(X32, X33) & eval_bound(\+(member([X32, X33], X34)), [X32, X33, X34]) & eval_bound(\+(pos_int_u(update_expect_list(X35, X36))), ) & eval_bound(\+(pos_int_u(satisfied(X32, X33))), [X32, X33]) & expect_list(X34) -f-> conclusion(update_expect_list([X34], [[X32, X33], X34])))  103  []
+add(done(ac_ask(X37, X38), X39, X40) -f-> conclusion(expect(X37, X38)))  102  []
+add(failed(ac_ask(X41, X42), X43, X44) -f-> conclusion(call(ac_report_fail(X41, [ask, X42]), , X41)))  101  []
+add(eval_bound(idling_for_steps(100), ) & eval_bound(\+(asking(X45, X46, )), [X45, X46]) & idling(X47) & expect_list([[X45, X46], X48]) -f-> conclusion(call(ac_ask(X45, X46), , X45)))  100  []
+add(done(ac_think(X49, X50), X51, X49) & eval_bound(=(X50, [equil, X52]), [X50]) & eval_bound(\+(asking(X49, X50, )), [X49, X50]) & eval_bound(\+(pos_int_u(satisfied(X53, X50))), [X50]) & eval_bound(\+(pos_int_u(expect(X54, X50))), [X50]) -f-> conclusion(call(ac_ask(X49, X50), , X49)))  99  []
+add(done(ac_think(X55, X56), X57, X55) & eval_bound(=(X56, [disambiguate, X59, X58]), [X56]) & eval_bound(\+(pos_int(satisfied(X55, X56))), [X55, X56]) -f-> conclusion(need(X55, [equil, X59, X58])))  98  []
+add(failed(ac_think(X60, X61), X62, X60) -f-> conclusion(call(ac_report_fail(X60, [think, X61]), , X60)))  97  []
+add(need(X63, X64) & eval_bound(sort(X65, X66), [X65]) & eval_bound(mult_gather_all([equil(X83, X84), isa(X81, X82), structure(X77, X78, X79, X80), value_of(X63, X75, X76), verb(X63, X74), val(X63, X72, X73), link(X63, X69, X70, X71), type(X63, X67, X68)], X65), [X63]) & eval_bound(\+(thought(X63, X64, X66)), [X63, X64, X66]) & eval_bound(\+(thinking(X63, X64, X66)), [X63, X64, X66]) & eval_bound(\+(pos_int_u(satisfied(X63, X64))), [X63, X64]) & equil(X85, X86) -f-> conclusion(call(ac_think(X63, X64), X66, X63)))  96  []
+add(need(X87, X88) & isa(X89, X90) & eval_bound(sort(X91, X92), [X91]) & eval_bound(mult_gather_all([equil(X109, X110), isa(X107, X108), structure(X103, X104, X105, X106), value_of(X87, X101, X102), verb(X87, X100), val(X87, X98, X99), link(X87, X95, X96, X97), type(X87, X93, X94)], X91), [X87]) & eval_bound(\+(thought(X87, X88, X92)), [X87, X88, X92]) & eval_bound(\+(thinking(X87, X88, X92)), [X87, X88, X92]) & eval_bound(\+(pos_int_u(satisfied(X87, X88))), [X87, X88]) -f-> conclusion(call(ac_think(X87, X88), X92, X87)))  95  []
+add(done(ac_think(X111, X112), X113, X111) & need(X111, X114) & eval_bound(sort(X115, X116), [X115]) & eval_bound(mult_gather_all([equil(X133, X134), isa(X131, X132), structure(X127, X128, X129, X130), value_of(X111, X125, X126), verb(X111, X124), val(X111, X122, X123), link(X111, X119, X120, X121), type(X111, X117, X118)], X115), [X111]) & eval_bound(\+(thought(X111, X114, X116)), [X111, X114, X116]) & eval_bound(\+(thinking(X111, X114, X116)), [X111, X114, X116]) & eval_bound(\+(pos_int_u(satisfied(X111, X114))), [X111, X114]) -f-> conclusion(call(ac_think(X111, X114), X116, X111)))  94  []
+add(sent_to_domain(X135, X136, X137) -f-> conclusion(call(ac_report_action(X137), , X135)))  93  []
+add(sent_to_domain(X138, X139, X140) & eval_bound(mult_gather_all([result(X144, X145), isa(X142, X143), domain_list(X141)], X146), ) -f-> conclusion(call(ac_post_process(X138, X140), X146, X138)))  92  []
+add(send_to_domain(X147, X148, X149) & eval_bound(sending_to_domain(X148, X149), [X148, X149]) -f-> conclusion(sent_to_domain(X147, X148, X149)))  91  []
+add(failed(ac_action(X150, X151, X152), X153, X150) -f-> conclusion(call(ac_report_fail(X150, [action, X152]), , X150)))  90  []
+add(desire(update, X154, X155) & eval_bound(mult_gather_all([equil(X162, X163), isa(X160, X161), structure(X156, X157, X158, X159)], X164), ) & equil(X165, X155) -f-> conclusion(call(ac_action(a, alfred, [update, X154, X155, X165]), X164, a)))  89  []
+add(desire(update, X166, X167) & eval_bound(mult_gather_all([equil(X174, X175), isa(X172, X173), structure(X168, X169, X170, X171)], X176), ) & equil(X167, X177) -f-> conclusion(call(ac_action(a, alfred, [update, X166, X167, X177]), X176, a)))  88  []
+add(intention(X178, domain, X179) & eval_bound(domain_tag(X180), ) -f-> conclusion(call(ac_action(X178, domain, [X180, X179]), , X178)))  87  []
+add(intention(X181, alfred, X182) & eval_bound(mult_gather_all([equil(X189, X190), isa(X187, X188), structure(X183, X184, X185, X186)], X191), ) & eval_bound(clause(step_number(X192), true), ) & eval_bound(\==(X182, [undo]), [X182]) -f-> conclusion(call(ac_action(X181, alfred, X182, X192), X191, X181)))  86  []
+add(intention(X193, alfred, [undo]) & eval_bound(pos_int_u(intention(X194, domain, X195)), [X194]) & eval_bound(pos_int_u(belief(domain, X195)), [X195]) & eval_bound(domain_tag(X196), ) & utt_list([X193, X194, X197]) -f-> conclusion(call(ac_action(X193, domain, [X196, undo, X195]), , X193)))  85  []
+add(intention(X198, alfred, [undo]) & eval_bound(pos_int_u(intention(X199, alfred, X200)), [X199]) & eval_bound(pos_int_u(belief(alfred, X200)), [X200]) & utt_list([X198, X199, X201]) -f-> conclusion(call(ac_action(X198, alfred, [undo, X200]), , X198)))  84  []
+add(intention(X202, X203, X204) | conclusion(not(belief(X203, X204))))  83  []
+add(intention(X205, X206, X207) -f-> conclusion(belief(X206, X207)))  82  []
+add(need(X208, X209) & eval_bound(\+(pos_int_u(satisfied(X208, X209))), [X208, X209]) & satisfiedallneeds(X208) -f-> conclusion(not(satisfiedallneeds(X208))))  81  []
+add(satisfied(X210, X211) & eval_bound(satisfied_needs(X210), [X210]) & eval_bound(pos_int_u(done(ac_think(X210, X212), X213, X210)), [X210]) & eval_bound(\+(pos_int_u(doing(ac_think(X210, X214), X215, X210))), [X210]) -f-> conclusion(satisfiedallneeds(X210)))  80  []
+add(done(ac_think(X216, X217), X218, X216) & eval_bound(satisfied_needs(X216), [X216]) & eval_bound(pos_int_u(done(ac_think(X216, X219), X220, X216)), [X216]) & eval_bound(\+(pos_int_u(doing(ac_think(X216, X221), X222, X216))), [X216]) -f-> conclusion(satisfiedallneeds(X216)))  79  []
+add(error(X223, EXTRA_LINK, [X226, X225, X224]) -f-> conclusion(need(X223, [fix_xlink, X226, X225, X224])))  78  []
+add(error(X227, LINK_NF, [X228]) -f-> conclusion(need(X227, [fix_mlink, X228])))  77  []
+add(error(X229, Item_NF, [X231, X230]) -f-> conclusion(need(X229, [disambiguate, X230, X231])))  76  []
+add(error(X232, Verb_NF_in_DD, [X233]) -f-> conclusion(need(X232, [equil, X233, dcommand])))  75  []
+add(failed(ac_find_intention(X234, X235, X236), X237, X234) -f-> conclusion(call(ac_report_fail(X234, [find_intention]), , X234)))  74  []
+add(complex_command(X238, X239, X240) & eval_bound(mult_gather_all([isa(X249, X250), structure(X240, X246, X247, X248), link(X238, X243, X244, X245), value_of(X238, X241, X242)], X251), [X238, X240]) & eval_bound(\+(pos_int_u(intention(X238, X252, X253))), [X238]) & eval_bound(\+(pos_int_u(doing(ac_think(X238, X254), X255, X238))), [X238]) & satisfiedallneeds(X238) -f-> conclusion(call(ac_find_intention(X238, complex, X240), X251, X238)))  73  []
+add(alfred_command(X256, X257, X258) & eval_bound(mult_gather_all([isa(X268, X269), structure(X258, X265, X266, X267), link(X256, X262, X263, X264), value_of(X256, X260, X261), verb(X256, X259)], X270), [X256, X258]) & eval_bound(\+(pos_int_u(intention(X256, X271, X272))), [X256]) & eval_bound(\+(pos_int_u(doing(ac_think(X256, X273), X274, X256))), [X256]) & satisfiedallneeds(X256) -f-> conclusion(call(ac_find_intention(X256, alfred, X258), X270, X256)))  72  []
+add(domain_command(X275, X276, X277) & eval_bound(mult_gather_all([isa(X288, X289), domain_list(X287), structure(X277, X284, X285, X286), link(X275, X281, X282, X283), value_of(X275, X279, X280), verb(X275, X278)], X290), [X275, X277]) & eval_bound(\+(pos_int_u(intention(X275, X291, X292))), [X275]) & eval_bound(\+(pos_int_u(doing(ac_think(X275, X293), X294, X275))), [X275]) & satisfiedallneeds(X275) -f-> conclusion(call(ac_find_intention(X275, domain, X277), X290, X275)))  71  []
+add(failed(ac_find_command(X295), X296, X295) -f-> conclusion(call(ac_report_fail(X295, [find_command]), , X295)))  70  []
+add(done(ac_find_command(X297), X298, X297) -f-> conclusion(satisfiedallneeds(X297)))  69  []
+add(eval_bound(mult_gather_all([isa(X305, X306), value_of(X299, X303, X304), equil(X301, X302), main_verb(X299, X300)], X307), [X299]) & eval_bound(\+(pos_int_u(domain_command(X299, X308, X309))), [X299]) & eval_bound(\+(pos_int_u(doing(ac_think(X299, X310), X311, X299))), [X299]) & eval_bound(\+(pos_int_u(complex_command(X299, X312, X313))), [X299]) & eval_bound(\+(pos_int_u(alfred_command(X299, X314, X315))), [X299]) & satisfiedallneeds(X299) -f-> conclusion(call(ac_find_command(X299), X307, X299)))  68  []
+add(main_verb(X316, X317) & eval_bound(mult_gather_all([isa(X323, X324), value_of(X316, X321, X322), equil(X319, X320), main_verb(X316, X318)], X325), [X316]) & eval_bound(\+(pos_int_u(domain_command(X316, X326, X327))), [X316]) & eval_bound(\+(pos_int_u(doing(ac_think(X316, X328), X329, X316))), [X316]) & eval_bound(\+(pos_int_u(complex_command(X316, X330, X331))), [X316]) & eval_bound(\+(pos_int_u(alfred_command(X316, X332, X333))), [X316]) -f-> conclusion(call(ac_find_command(X316), X325, X316)))  67  []
+add(failed(ac_main_verb(X334), X335, X334) -f-> conclusion(call(ac_report_fail(X334, [main_verb]), , X334)))  66  []
+add(verb(X336, X337) & eval_bound(mult_gather_all([verb(X336, X340), value_of(X336, X338, X339)], X341), [X336]) & parsed(X336) -f-> conclusion(call(ac_main_verb(X336), X341, X336)))  65  []
+add(unused_cost(X342, X343, 0) -f-> conclusion(parsed(X342)))  64  []
+add(done(ac_fix_linkage(X344, X345), X346, X344) & eval_bound(mult_gather_all([value_of(X344, X352, X353), link(X344, X349, X350, X351), unused_cost(X344, X347, X348)], X354), [X344]) -f-> conclusion(call(ac_find_unused_cost(X344), X354, X344)))  63  []
+add(failed(ac_fix_linkage(X355, 5), X356, X355) -f-> conclusion(call(ac_report_fail(X355, [fix_linkage]), , X355)))  62  []
+add(failed(ac_fix_linkage(X357, X358), X359, X357) & fix_link_length(X357, X358) & eval_bound(is(X360, +(X358, 1)), [X358]) & eval_bound(\==(X358, 5), [X358]) & eval_bound(df(fix_link_length(X357, X358)), [X357, X358]) -f-> conclusion(fix_link_length(X357, X360)))  61  []
+add(fix_link_length(X361, X362) & eval_bound(mult_gather_all([value_of(X361, X373, X374), verb(X361, X372), isa(X370, X371), structure(X366, X367, X368, X369), link(X361, X363, X364, X365)], X375), [X361]) & eval_bound(\+(pos_int_u(done(ac_fix_linkage(X361, X362), X376, X361))), [X361, X362]) & eval_bound(\+(pos_int_u(doing(ac_fix_linkage(X361, X362), X377, X361))), [X361, X362]) -f-> conclusion(call(ac_fix_linkage(X361, X362), X375, X361)))  60  []
+add(link(X378, X379, X380, X381) & unused_cost(X378, X382, X383) & done(ac_find_links(X378), X384, X378) & eval_bound(\==(X383, 0), [X383]) & eval_bound(\+(pos_int_u(fix_link_length(X378, X385))), [X378]) -f-> conclusion(fix_link_length(X378, 2)))  59  []
+add(failed(ac_parse_phrase(X386, X387), X388, X386) -f-> conclusion(fix_link_length(X386, 2)))  58  []
+add(done(ac_find_links(X389), X390, X389) & eval_bound(mult_gather_all([value_of(X389, X395, X396), isa(X393, X394), equil(X391, X392)], X397), [X389]) & eval_bound(\+(pos_int_u(link(X389, X398, X399, X400))), [X389]) & eval_bound(\+(pos_int_u(response(X401, X402, X389))), [X389]) -f-> conclusion(call(ac_parse_phrase(X389, ), X397, X389)))  57  []
+add(response(X403, X404, X405) & done(ac_find_links(X405), X406, X405) & eval_bound(mult_gather_all([value_of(X405, X411, X412), isa(X409, X410), equil(X407, X408)], X413), [X405]) & eval_bound(\+(pos_int_u(link(X405, X414, X415, X416))), [X405]) -f-> conclusion(call(ac_parse_phrase(X405, X404), X413, X405)))  56  []
+add(eval_bound(mult_gather_all([links(X417, X420, X421, X422, X423), value_of(X417, X418, X419)], X424), [X417]) & end_of_parse(X417) -f-> conclusion(call(ac_find_links(X417), X424, X417)))  55  []
+add(expect(X425, X426) & eval_bound(compare(>, X427, X425), [X427, X425]) & eval_bound(\+(pos_int_u(response(X425, X426, X428))), [X425, X426]) & utterance(X427) -f-> conclusion(response(X425, X426, X427)))  54  []
+add(update_utt_list(X429, X430) & eval_bound(update_current_utterance(X429, X431), [X429, X431]) & eval_bound(update_global_violations(X431), [X431]) & eval_bound(pos_int_u(now(X431)), ) & eval_bound(df(utt_list(X430)), [X430]) -f-> conclusion(utt_list([X429, X430])))  53  []
+add(eval_bound(pos_int_u(now(X432)), ) & eval_bound(\+(member(X433, X434)), [X433, X434]) & utterance(X433) & utt_list(X434) -f-> conclusion(update_utt_list(X433, X434)))  52  []
+add(done(ac_report_observation(X435, X436, X437), X438, X435) & desire(X435, [inform, X436, X439]) -f-> conclusion(satisfied(X435, [inform, X436, X439])))  51  []
+add(observation(X440, X441, X442) & eval_bound(mult_gather_all([observation(X440, X447, X448), isa(X445, X446), equil(X443, X444)], X449), [X440]) & eval_bound(\+(pos_int_u(satisfied(X450, [inform, X440, X451]))), [X450, X440, X451]) & desire(X450, [inform, X440, X451]) -f-> conclusion(call(ac_report_observation(X450, X440, X451), X449, X450)))  50  []
+add(observation(X452, X453, X454) & eval_bound(\+(pos_int_u(satisfied(X455, [observation, X452]))), [X455, X452]) & domain_expect(X455, [observation, X452]) -f-> conclusion(satisfied(X455, [observation, X452])))  49  []
+add(observation(X456, X457) & eval_bound(pos_int_u(now(X458)), ) & eval_bound(df(observation(X456, X457)), [X456, X457]) -f-> conclusion(observation(X456, X457, X458)))  48  []
+add(global_violations(X459, X460, X461) & eval_bound(revise_expectation(X462, X463, X460, X459, X461), [X462, X463, X460, X459, X461]) & currUtt(X464, X461) & max_violations(X462) & idling(X465) & expected_pause(X463) -f-> conclusion(exp_revised(X465)))  47  []
+add(eval_bound(update_wait_time(X466, X467, X468, X469, X470, X471), [X466, X467, X468, X469, X470, X471]) & currUtt(X472, X467) & prompt_step(X468) & local_violations(X471) & idling(X466) & expected_pause(X469) & curr_wait_time(X470) -f-> conclusion(call(ac_prompt(X466, X468), X466)))  46  []
+add(utt_on_time(0))  45  []
+add(violation_density(0))  44  []
+add(curr_wait_time(0))  43  []
+add(prev_prompt_time(0))  42  []
+add(prev_utt_time(0))  41  []
+add(local_violations(0))  40  []
+add(global_violations(0, 0, 0))  39  []
+add(max_violations(3))  38  []
+add(prompt_step(0))  37  []
+add(currUtt(0, 0))  36  []
+add(expected_pause(130))  35  []
+add(domain_list())  34  []
+add(utt_list())  33  []
+add(expect_list())  32  []
+add(domain_tag(5))  31  []
+add(isa(end, to))  30  []
+add(isa(start, from))  29  []
+add(isa(city, Atlanta))  28  []
+add(isa(city, Newark))  27  []
+add(isa(city, Washington))  26  []
+add(isa(city, Pittsburgh))  25  []
+add(isa(city, Richmond))  24  []
+add(isa(city, Buffalo))  23  []
+add(isa(city, Baltimore))  22  []
+add(isa(train, NorthStar))  21  []
+add(isa(train, Bullet))  20  []
+add(isa(train, Metroliner))  19  []
+add(isa(domain, trains))  18  []
+add(result(find, location))  17  []
+add(syntax(location, [v0, city]))  16  []
+add(isa(observation, location))  15  []
+add(structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]))  14  []
+add(isa(dcommand, find))  13  []
+add(structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]))  12  []
+add(structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]))  11  []
+add(isa(dcommand, send))  10  []
+add(structure(no, , , [undo]))  9  []
+add(isa(conjunct, and))  8  []
+add(isa(acommand, no))  7  []
+add(isa(lw, LEFT-WALL))  6  []
+add(isa(qnmark, ?))  5  []
+add(isa(qnword, what))  4  []
+add(structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]))  3  []
+add(structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]))  2  []
+add(structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]))  1  []
+add(isa(acommand, is))  0  []
+End of Step----------------------------------
+
+step(2)
+add(idling(2))  112  []
+add(now(2))  111  []
+delete(curr_wait_time(0))  43  []
+delete(now(1))  110  []
+End of Step----------------------------------
+
+step(3)
+add(now(3))  114  []
+add(curr_wait_time(1))  113  []
+delete(now(2))  111  []
+End of Step----------------------------------
+
+step(4)
+add(idling(4))  116  []
+add(now(4))  115  []
+delete(curr_wait_time(1))  113  []
+delete(now(3))  114  []
+End of Step----------------------------------
+
+step(5)
+add(now(5))  118  []
+add(curr_wait_time(2))  117  []
+delete(now(4))  115  []
+End of Step----------------------------------
+
+step(6)
+add(idling(6))  120  []
+add(now(6))  119  []
+delete(curr_wait_time(2))  117  []
+delete(now(5))  118  []
+End of Step----------------------------------
+
+step(7)
+add(now(7))  122  []
+add(curr_wait_time(3))  121  []
+delete(now(6))  119  []
+End of Step----------------------------------
+
+step(8)
+add(idling(8))  124  []
+add(now(8))  123  []
+delete(curr_wait_time(3))  121  []
+delete(now(7))  122  []
+End of Step----------------------------------
+
+step(9)
+add(now(9))  126  []
+add(curr_wait_time(4))  125  []
+delete(now(8))  123  []
+End of Step----------------------------------
+
+step(10)
+add(idling(10))  128  []
+add(now(10))  127  []
+delete(curr_wait_time(4))  125  []
+delete(now(9))  126  []
+End of Step----------------------------------
+
+step(11)
+add(now(11))  130  []
+add(curr_wait_time(5))  129  []
+delete(now(10))  127  []
+End of Step----------------------------------
+
+step(12)
+add(idling(12))  132  []
+add(now(12))  131  []
+delete(curr_wait_time(5))  129  []
+delete(now(11))  130  []
+End of Step----------------------------------
+
+step(13)
+add(now(13))  134  []
+add(curr_wait_time(6))  133  []
+delete(now(12))  131  []
+End of Step----------------------------------
+
+step(14)
+add(idling(14))  136  []
+add(now(14))  135  []
+delete(curr_wait_time(6))  133  []
+delete(now(13))  134  []
+End of Step----------------------------------
+
+step(15)
+add(now(15))  138  []
+add(curr_wait_time(7))  137  []
+delete(now(14))  135  []
+End of Step----------------------------------
+
+step(16)
+add(idling(16))  140  []
+add(now(16))  139  []
+delete(curr_wait_time(7))  137  []
+delete(now(15))  138  []
+End of Step----------------------------------
+
+step(17)
+add(now(17))  142  []
+add(curr_wait_time(8))  141  []
+delete(now(16))  139  []
+End of Step----------------------------------
+
+step(18)
+add(idling(18))  144  []
+add(now(18))  143  []
+delete(curr_wait_time(8))  141  []
+delete(now(17))  142  []
+End of Step----------------------------------
+
+step(19)
+add(now(19))  146  []
+add(curr_wait_time(9))  145  []
+delete(now(18))  143  []
+End of Step----------------------------------
+
+step(20)
+add(idling(20))  148  []
+add(now(20))  147  []
+delete(curr_wait_time(9))  145  []
+delete(now(19))  146  []
+End of Step----------------------------------
+
+step(21)
+add(now(21))  150  []
+add(curr_wait_time(10))  149  []
+delete(now(20))  147  []
+End of Step----------------------------------
+
+step(22)
+add(idling(22))  152  []
+add(now(22))  151  []
+delete(curr_wait_time(10))  149  []
+delete(now(21))  150  []
+End of Step----------------------------------
+
+step(23)
+add(now(23))  154  []
+add(curr_wait_time(11))  153  []
+delete(now(22))  151  []
+End of Step----------------------------------
+
+step(24)
+add(idling(24))  156  []
+add(now(24))  155  []
+delete(curr_wait_time(11))  153  []
+delete(now(23))  154  []
+End of Step----------------------------------
+
+step(25)
+add(now(25))  158  []
+add(curr_wait_time(12))  157  []
+delete(now(24))  155  []
+End of Step----------------------------------
+
+step(26)
+add(idling(26))  160  []
+add(now(26))  159  []
+delete(curr_wait_time(12))  157  []
+delete(now(25))  158  []
+End of Step----------------------------------
+
+step(27)
+add(now(27))  162  []
+add(curr_wait_time(13))  161  []
+delete(now(26))  159  []
+End of Step----------------------------------
+
+step(28)
+add(idling(28))  164  []
+add(now(28))  163  []
+delete(curr_wait_time(13))  161  []
+delete(now(27))  162  []
+End of Step----------------------------------
+
+step(29)
+add(now(29))  166  []
+add(curr_wait_time(14))  165  []
+delete(now(28))  163  []
+End of Step----------------------------------
+
+step(30)
+add(idling(30))  168  []
+add(now(30))  167  []
+delete(curr_wait_time(14))  165  []
+delete(now(29))  166  []
+End of Step----------------------------------
+
+step(31)
+add(now(31))  170  []
+add(curr_wait_time(15))  169  []
+delete(now(30))  167  []
+End of Step----------------------------------
+
+step(32)
+add(idling(32))  172  []
+add(now(32))  171  []
+delete(curr_wait_time(15))  169  []
+delete(now(31))  170  []
+End of Step----------------------------------
+
+step(33)
+add(now(33))  174  []
+add(curr_wait_time(16))  173  []
+delete(now(32))  171  []
+End of Step----------------------------------
+
+step(34)
+add(idling(34))  176  []
+add(now(34))  175  []
+delete(curr_wait_time(16))  173  []
+delete(now(33))  174  []
+End of Step----------------------------------
+
+step(35)
+add(now(35))  178  []
+add(curr_wait_time(17))  177  []
+delete(now(34))  175  []
+End of Step----------------------------------
+
+step(36)
+add(idling(36))  180  []
+add(now(36))  179  []
+delete(curr_wait_time(17))  177  []
+delete(now(35))  178  []
+End of Step----------------------------------
+
+step(37)
+add(now(37))  182  []
+add(curr_wait_time(18))  181  []
+delete(now(36))  179  []
+End of Step----------------------------------
+
+step(38)
+add(idling(38))  184  []
+add(now(38))  183  []
+delete(curr_wait_time(18))  181  []
+delete(now(37))  182  []
+End of Step----------------------------------
+
+step(39)
+add(now(39))  186  []
+add(curr_wait_time(19))  185  []
+delete(now(38))  183  []
+End of Step----------------------------------
+
+step(40)
+add(idling(40))  188  []
+add(now(40))  187  []
+delete(curr_wait_time(19))  185  []
+delete(now(39))  186  []
+End of Step----------------------------------
+
+step(41)
+add(now(41))  190  []
+add(curr_wait_time(20))  189  []
+delete(now(40))  187  []
+End of Step----------------------------------
+
+step(42)
+add(idling(42))  192  []
+add(now(42))  191  []
+delete(curr_wait_time(20))  189  []
+delete(now(41))  190  []
+End of Step----------------------------------
+
+step(43)
+add(now(43))  194  []
+add(curr_wait_time(21))  193  []
+delete(now(42))  191  []
+End of Step----------------------------------
+
+step(44)
+add(idling(44))  196  []
+add(now(44))  195  []
+delete(curr_wait_time(21))  193  []
+delete(now(43))  194  []
+End of Step----------------------------------
+
+step(45)
+add(now(45))  198  []
+add(curr_wait_time(22))  197  []
+delete(now(44))  195  []
+End of Step----------------------------------
+
+step(46)
+add(idling(46))  200  []
+add(now(46))  199  []
+delete(curr_wait_time(22))  197  []
+delete(now(45))  198  []
+End of Step----------------------------------
+
+step(47)
+add(now(47))  202  []
+add(curr_wait_time(23))  201  []
+delete(now(46))  199  []
+End of Step----------------------------------
+
+step(48)
+add(idling(48))  204  []
+add(now(48))  203  []
+delete(curr_wait_time(23))  201  []
+delete(now(47))  202  []
+End of Step----------------------------------
+
+step(49)
+add(now(49))  206  []
+add(curr_wait_time(24))  205  []
+delete(now(48))  203  []
+End of Step----------------------------------
+
+step(50)
+add(idling(50))  208  []
+add(now(50))  207  []
+delete(curr_wait_time(24))  205  []
+delete(now(49))  206  []
+End of Step----------------------------------
+
+step(51)
+add(now(51))  210  []
+add(curr_wait_time(25))  209  []
+delete(now(50))  207  []
+End of Step----------------------------------
+
+step(52)
+add(idling(52))  212  []
+add(now(52))  211  []
+delete(curr_wait_time(25))  209  []
+delete(now(51))  210  []
+End of Step----------------------------------
+
+step(53)
+add(now(53))  214  []
+add(curr_wait_time(26))  213  []
+delete(now(52))  211  []
+End of Step----------------------------------
+
+step(54)
+add(idling(54))  216  []
+add(now(54))  215  []
+delete(curr_wait_time(26))  213  []
+delete(now(53))  214  []
+End of Step----------------------------------
+
+step(55)
+add(now(55))  218  []
+add(curr_wait_time(27))  217  []
+delete(now(54))  215  []
+End of Step----------------------------------
+
+step(56)
+add(idling(56))  220  []
+add(now(56))  219  []
+delete(curr_wait_time(27))  217  []
+delete(now(55))  218  []
+End of Step----------------------------------
+
+step(57)
+add(now(57))  222  []
+add(curr_wait_time(28))  221  []
+delete(now(56))  219  []
+End of Step----------------------------------
+
+step(58)
+add(idling(58))  224  []
+add(now(58))  223  []
+delete(curr_wait_time(28))  221  []
+delete(now(57))  222  []
+End of Step----------------------------------
+
+step(59)
+add(now(59))  226  []
+add(curr_wait_time(29))  225  []
+delete(now(58))  223  []
+End of Step----------------------------------
+
+step(60)
+add(idling(60))  228  []
+add(now(60))  227  []
+delete(curr_wait_time(29))  225  []
+delete(now(59))  226  []
+End of Step----------------------------------
+
+step(61)
+add(now(61))  230  []
+add(curr_wait_time(30))  229  []
+delete(now(60))  227  []
+End of Step----------------------------------
+
+step(62)
+add(idling(62))  232  []
+add(now(62))  231  []
+delete(curr_wait_time(30))  229  []
+delete(now(61))  230  []
+End of Step----------------------------------
+
+step(63)
+add(now(63))  234  []
+add(curr_wait_time(31))  233  []
+delete(now(62))  231  []
+End of Step----------------------------------
+
+step(64)
+add(idling(64))  236  []
+add(now(64))  235  []
+delete(curr_wait_time(31))  233  []
+delete(now(63))  234  []
+End of Step----------------------------------
+
+step(65)
+add(now(65))  238  []
+add(curr_wait_time(32))  237  []
+delete(now(64))  235  []
+End of Step----------------------------------
+
+step(66)
+add(end_of_parse(s1))  254  []
+add(verb(s1, val1))  253  []
+add(links(s1, l0, val3, val4, Js))  252  []
+add(links(s1, l0, val1, val2, Os))  251  []
+add(links(s1, l0, val1, val3, MVp))  250  []
+add(links(s1, l0, val0, val1, Wi))  249  []
+add(links(s1, l0, val0, val5, RW))  248  []
+add(value_of(s1, val5, RIGHT-WALL))  247  []
+add(value_of(s1, val4, Baltimore))  246  []
+add(value_of(s1, val3, to))  245  []
+add(value_of(s1, val2, Metroliner))  244  []
+add(value_of(s1, val1, send))  243  []
+add(value_of(s1, val0, LEFT-WALL))  242  []
+add(unused_cost(s1, l0, 0))  241  []
+add(utterance(s1))  240  []
+add(now(66))  239  []
+delete(now(65))  238  []
+End of Step----------------------------------
+
+step(67)
+add(now(67))  258  []
+add(call(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val1, Wi), links(s1, l0, val1, val3, MVp), links(s1, l0, val1, val2, Os), links(s1, l0, val3, val4, Js), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL)], s1))  257  [[55,254]]
+add(parsed(s1))  256  [[64,241]]
+add(update_utt_list(s1, ))  255  [[52,240,33]]
+delete(utt_on_time(0))  45  []
+delete(curr_wait_time(32))  237  []
+delete(currUtt(0, 0))  36  []
+delete(utt_list())  33  []
+delete(now(66))  239  []
+End of Step----------------------------------
+
+step(68)
+add(now(68))  266  []
+add(doing(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val1, Wi), links(s1, l0, val1, val3, MVp), links(s1, l0, val1, val2, Os), links(s1, l0, val3, val4, Js), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL)], s1))  265  []
+add(call(ac_main_verb(s1), [verb(s1, val1), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL)], s1))  264  [[65,256,253]]
+add(utt_list([s1]))  263  [[53,255]]
+add(utt_on_time(1))  262  []
+add(curr_wait_time(0))  261  []
+add(currUtt(s1, 67))  260  []
+delete(now(67))  258  []
+End of Step----------------------------------
+
+step(69)
+add(done(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val1, Wi), links(s1, l0, val1, val3, MVp), links(s1, l0, val1, val2, Os), links(s1, l0, val3, val4, Js), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL)], s1))  273  []
+add(link(s1, val3, val4, Js))  272  []
+add(link(s1, val1, val2, Os))  271  []
+add(link(s1, val1, val3, MVp))  270  []
+add(link(s1, val0, val1, Wi))  269  []
+add(now(69))  268  []
+add(doing(ac_main_verb(s1), [verb(s1, val1), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL)], s1))  267  []
+delete(doing(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val1, Wi), links(s1, l0, val1, val3, MVp), links(s1, l0, val1, val2, Os), links(s1, l0, val3, val4, Js), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL)], s1))  265  []
+delete(now(68))  266  []
+End of Step----------------------------------
+
+step(70)
+add(main_verb(s1, send))  275  []
+add(now(70))  274  []
+delete(now(69))  268  []
+End of Step----------------------------------
+
+step(71)
+add(now(71))  277  []
+add(call(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL), main_verb(s1, send)], s1))  276  [[67,275]]
+delete(now(70))  274  []
+End of Step----------------------------------
+
+step(72)
+add(now(72))  279  []
+add(doing(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL), main_verb(s1, send)], s1))  278  []
+delete(now(71))  277  []
+End of Step----------------------------------
+
+step(73)
+add(done(ac_main_verb(s1), [verb(s1, val1), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL)], s1))  281  []
+add(now(73))  280  []
+delete(doing(ac_main_verb(s1), [verb(s1, val1), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL)], s1))  267  []
+delete(now(72))  279  []
+End of Step----------------------------------
+
+step(74)
+add(done(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL), main_verb(s1, send)], s1))  284  []
+add(domain_command(s1, send, send))  283  []
+add(now(74))  282  []
+delete(doing(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL), main_verb(s1, send)], s1))  278  []
+delete(now(73))  280  []
+End of Step----------------------------------
+
+step(75)
+add(now(75))  286  []
+add(satisfiedallneeds(s1))  285  [[69,284]]
+delete(now(74))  282  []
+End of Step----------------------------------
+
+step(76)
+add(now(76))  288  []
+add(call(ac_find_intention(s1, domain, send), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list(), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), link(s1, val3, val4, Js), link(s1, val1, val3, MVp), link(s1, val1, val2, Os), link(s1, val0, val1, Wi), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL), verb(s1, val1)], s1))  287  [[71,285,283]]
+delete(now(75))  286  []
+End of Step----------------------------------
+
+step(77)
+add(now(77))  290  []
+add(doing(ac_find_intention(s1, domain, send), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list(), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), link(s1, val3, val4, Js), link(s1, val1, val3, MVp), link(s1, val1, val2, Os), link(s1, val0, val1, Wi), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL), verb(s1, val1)], s1))  289  []
+delete(now(76))  288  []
+End of Step----------------------------------
+
+step(78)
+add(val(s1, v0, val1))  292  []
+add(now(78))  291  []
+delete(now(77))  290  []
+End of Step----------------------------------
+
+step(79)
+add(done(ac_find_intention(s1, domain, send), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list(), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), link(s1, val3, val4, Js), link(s1, val1, val3, MVp), link(s1, val1, val2, Os), link(s1, val0, val1, Wi), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL), verb(s1, val1)], s1))  296  []
+add(intention(s1, domain, [send, Metroliner, Baltimore]))  295  []
+add(type(s1, v0, verb))  294  []
+add(now(79))  293  []
+delete(doing(ac_find_intention(s1, domain, send), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list(), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), link(s1, val3, val4, Js), link(s1, val1, val3, MVp), link(s1, val1, val2, Os), link(s1, val0, val1, Wi), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Baltimore), value_of(s1, val3, to), value_of(s1, val2, Metroliner), value_of(s1, val1, send), value_of(s1, val0, LEFT-WALL), verb(s1, val1)], s1))  289  []
+delete(now(78))  291  []
+End of Step----------------------------------
+
+step(80)
+add(now(80))  299  []
+add(call(ac_action(s1, domain, [5, [send, Metroliner, Baltimore]]), , s1))  298  [[87,295]]
+add(belief(domain, [send, Metroliner, Baltimore]))  297  [[82,295]]
+delete(now(79))  293  []
+End of Step----------------------------------
+
+step(81)
+add(now(81))  301  []
+add(doing(ac_action(s1, domain, [5, [send, Metroliner, Baltimore]]), , s1))  300  []
+delete(now(80))  299  []
+End of Step----------------------------------
+
+step(82)
+add(send_to_domain(s1, 5, [[send, Metroliner, Baltimore]]))  303  []
+add(now(82))  302  []
+delete(now(81))  301  []
+End of Step----------------------------------
+
+step(83)
+add(now(83))  305  []
+add(sent_to_domain(s1, 5, [[send, Metroliner, Baltimore]]))  304  [[91,303]]
+delete(now(82))  302  []
+End of Step----------------------------------
+
+step(84)
+add(now(84))  308  []
+add(call(ac_report_action([[send, Metroliner, Baltimore]]), , s1))  307  [[93,304]]
+add(call(ac_post_process(s1, [[send, Metroliner, Baltimore]]), [result(find, location), isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list()], s1))  306  [[92,304]]
+delete(now(83))  305  []
+End of Step----------------------------------
+
+step(85)
+add(now(85))  311  []
+add(doing(ac_post_process(s1, [[send, Metroliner, Baltimore]]), [result(find, location), isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list()], s1))  310  []
+add(doing(ac_report_action([[send, Metroliner, Baltimore]]), , s1))  309  []
+delete(now(84))  308  []
+End of Step----------------------------------
+
+step(86)
+add(done(ac_post_process(s1, [[send, Metroliner, Baltimore]]), [result(find, location), isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list()], s1))  314  []
+add(done(ac_action(s1, domain, [5, [send, Metroliner, Baltimore]]), , s1))  313  []
+add(now(86))  312  []
+delete(doing(ac_post_process(s1, [[send, Metroliner, Baltimore]]), [result(find, location), isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, NorthStar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list()], s1))  310  []
+delete(doing(ac_action(s1, domain, [5, [send, Metroliner, Baltimore]]), , s1))  300  []
+delete(now(85))  311  []
+End of Step----------------------------------
+
+step(87)
+add(done(ac_report_action([[send, Metroliner, Baltimore]]), , s1))  316  []
+add(now(87))  315  []
+delete(doing(ac_report_action([[send, Metroliner, Baltimore]]), , s1))  309  []
+delete(now(86))  312  []
+End of Step----------------------------------
+
+step(88)
+add(idling(88))  318  []
+add(now(88))  317  []
+delete(curr_wait_time(0))  261  []
+delete(now(87))  315  []
+End of Step----------------------------------
+
+step(89)
+add(now(89))  320  []
+add(curr_wait_time(1))  319  []
+delete(now(88))  317  []
+End of Step----------------------------------
+
+step(90)
+add(idling(90))  322  []
+add(now(90))  321  []
+delete(curr_wait_time(1))  319  []
+delete(now(89))  320  []
+End of Step----------------------------------
+
+step(91)
+add(now(91))  324  []
+add(curr_wait_time(2))  323  []
+delete(now(90))  321  []
+End of Step----------------------------------
+
+step(92)
+add(idling(92))  326  []
+add(now(92))  325  []
+delete(curr_wait_time(2))  323  []
+delete(now(91))  324  []
+End of Step----------------------------------
+
+step(93)
+add(now(93))  328  []
+add(curr_wait_time(3))  327  []
+delete(now(92))  325  []
+End of Step----------------------------------
+
+step(94)
+add(idling(94))  330  []
+add(now(94))  329  []
+delete(curr_wait_time(3))  327  []
+delete(now(93))  328  []
+End of Step----------------------------------
+
+step(95)
+add(now(95))  332  []
+add(curr_wait_time(4))  331  []
+delete(now(94))  329  []
+End of Step----------------------------------
+
+step(96)
+add(idling(96))  334  []
+add(now(96))  333  []
+delete(curr_wait_time(4))  331  []
+delete(now(95))  332  []
+End of Step----------------------------------
+
+step(97)
+add(now(97))  336  []
+add(curr_wait_time(5))  335  []
+delete(now(96))  333  []
+End of Step----------------------------------
+
+step(98)
+add(idling(98))  338  []
+add(now(98))  337  []
+delete(curr_wait_time(5))  335  []
+delete(now(97))  336  []
+End of Step----------------------------------
+
+step(99)
+add(now(99))  340  []
+add(curr_wait_time(6))  339  []
+delete(now(98))  337  []
+End of Step----------------------------------
+
+step(100)
+add(idling(100))  342  []
+add(now(100))  341  []
+delete(curr_wait_time(6))  339  []
+delete(now(99))  340  []
+End of Step----------------------------------
+
+step(101)
+add(now(101))  344  []
+add(curr_wait_time(7))  343  []
+delete(now(100))  341  []
+End of Step----------------------------------
+
+step(102)
+add(idling(102))  346  []
+add(now(102))  345  []
+delete(curr_wait_time(7))  343  []
+delete(now(101))  344  []
+End of Step----------------------------------
+
+step(103)
+add(now(103))  348  []
+add(curr_wait_time(8))  347  []
+delete(now(102))  345  []
+End of Step----------------------------------
+
+step(104)
+add(idling(104))  350  []
+add(now(104))  349  []
+delete(curr_wait_time(8))  347  []
+delete(now(103))  348  []
+End of Step----------------------------------
+
+step(105)
+add(now(105))  352  []
+add(curr_wait_time(9))  351  []
+delete(now(104))  349  []
+End of Step----------------------------------
+
+step(106)
+add(idling(106))  354  []
+add(now(106))  353  []
+delete(curr_wait_time(9))  351  []
+delete(now(105))  352  []
+End of Step----------------------------------
+
+step(107)
+add(now(107))  356  []
+add(curr_wait_time(10))  355  []
+delete(now(106))  353  []
+End of Step----------------------------------
+
+step(108)
+add(idling(108))  358  []
+add(now(108))  357  []
+delete(curr_wait_time(10))  355  []
+delete(now(107))  356  []
+End of Step----------------------------------
+
+step(109)
+add(now(109))  360  []
+add(curr_wait_time(11))  359  []
+delete(now(108))  357  []
+End of Step----------------------------------
+
+step(110)
+add(idling(110))  362  []
+add(now(110))  361  []
+delete(curr_wait_time(11))  359  []
+delete(now(109))  360  []
+End of Step----------------------------------
+
+step(111)
+add(now(111))  364  []
+add(curr_wait_time(12))  363  []
+delete(now(110))  361  []
+End of Step----------------------------------
+
+step(112)
+add(idling(112))  366  []
+add(now(112))  365  []
+delete(curr_wait_time(12))  363  []
+delete(now(111))  364  []
+End of Step----------------------------------
+
+step(113)
+add(now(113))  368  []
+add(curr_wait_time(13))  367  []
+delete(now(112))  365  []
+End of Step----------------------------------
+
+step(114)
+add(idling(114))  370  []
+add(now(114))  369  []
+delete(curr_wait_time(13))  367  []
+delete(now(113))  368  []
+End of Step----------------------------------
+
+step(115)
+add(now(115))  372  []
+add(curr_wait_time(14))  371  []
+delete(now(114))  369  []
+End of Step----------------------------------
+
+step(116)
+add(idling(116))  374  []
+add(now(116))  373  []
+delete(curr_wait_time(14))  371  []
+delete(now(115))  372  []
+End of Step----------------------------------
+
+step(117)
+add(now(117))  376  []
+add(curr_wait_time(15))  375  []
+delete(now(116))  373  []
+End of Step----------------------------------

@@ -1,0 +1,101 @@
+#! /bin/sh
+RIGHTONE=70x44+510+0
+RIGHTTWO=70x5+510+640
+LEFTONE=70x44+0+0
+LEFTTWO=70x5+0+640
+ALFRED_BASE=/fs/erewhon/group/systems/darsana_alfred
+if [ $# = 0 ]
+then
+	echo "Missing arguments. For help, type $0 help"
+	exit
+fi
+
+if [ $1 = help ]
+then
+	echo
+	echo "To run, type:"
+	echo
+	echo " $0 DOMAIN [RUN]" 
+	echo
+	echo "    	Valid values for DOMAIN are house, trains, movies, pool, furnisher,chess."
+	echo "    	If RUN is rd then the domain will be run along with Alfred."
+	echo "    	For all other values of RUN the domain needs to be run separately."
+	echo
+	exit
+fi
+
+if [ $1 = chess ]
+then	
+	cp $ALFRED_BASE/domain/chess/KB/*.pl $ALFRED_BASE/src/domain/
+else if [ $1 = movies ]
+     then
+	cp $ALFRED_BASE/domain/movies/KB/*.pl $ALFRED_BASE/src/domain/
+     else if [ $1 = pool ]
+	  then
+	  	cp $ALFRED_BASE/domain/pool/KB/*.pl $ALFRED_BASE/src/domain/
+		cp $ALFRED_BASE/etc/domainhost.pool $ALFRED_BASE/etc/domainhost.darsana
+          else if [ $1 = trains ] 
+	       then
+			cp $ALFRED_BASE/domain/trains/KB/*.pl $ALFRED_BASE/src/domain/
+	       else if [ $1 = furnisher ]
+		    then
+			cp $ALFRED_BASE/domain/furnisher/KB/*.pl $ALFRED_BASE/src/domain/
+		    else if [ $1 = house ] 
+			 then
+        			cp $ALFRED_BASE/domain/house/KB/*.pl $ALFRED_BASE/src/domain/
+			 else if [ $1 = email ] 
+			      then
+				  cp $ALFRED_BASE/domain/email/KB/*.pl $ALFRED_BASE/src/domain/
+			     else if [ $1 = draughts ] 
+			        then
+        			  cp $ALFRED_BASE/domain/draughts/KB/*.pl $ALFRED_BASE/src/domain/
+			         else if [ $1 = restaurant ] 
+			              then
+        			      cp $ALFRED_BASE/domain/restaurant/KB/*.pl $ALFRED_BASE/src/domain/
+				     else if [ $1 = universal ]
+				          then
+					  cp $ALFRED_BASE/domain/universal/KB/*.pl $ALFRED_BASE/src/domain/
+					else
+					echo "Usage: $0 DOMAIN [RUN] or $0 help"
+					exit
+					fi
+				      fi
+			          fi
+			     fi
+			 fi
+		      fi
+		fi
+	   fi
+      fi
+fi
+
+chgrp active $ALFRED_BASE/src/domain/*
+chmod 666 $ALFRED_BASE/src/domain/*
+
+if [ $# = 2 ] 
+then
+   if [ $2 = rd ]
+   then 
+       xterm $ALFRED_BASE/domain/$1/rd.$1 &
+   fi
+fi
+rxvt -T Parser -geometry $RIGHTONE -bg Green3 -fg Black -e ./rp &
+rxvt -T Carne -geometry $LEFTONE -bg Blue3 -fg White -e ./rc &
+rxvt -T Alma -geometry $LEFTTWO -e ./ra &
+
+
+%%rxvt -T $1 -geometry $RIGHTTWO -bg Yellow -fg Red -e $ALFRED_BASE/domain/$1/rd.$1 &
+
+
+
+
+
+
+
+
+
+
+
+
+
+

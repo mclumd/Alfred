@@ -1,0 +1,163 @@
+/*
+Name: 		alfred_strawman.alma
+Title: 		Simple Alfred: takes a string and transforms it to a command, calls socket
+Created: 	1/30/09
+*/
+
+// Load calls:
+loadcall "get_utterance" "alma.callfile.GetUtterance".
+loadcall "tokenize_string_into_words" "alma.callfile.Tokenize".
+loadcall "combine" "alma.callfile.Combine".
+loadcall "client_open" "alma.callfile.ClientSocket".
+loadcall "client_send" "alma.callfile.ClientSocket".
+loadcall "client_recv" "alma.callfile.ClientSocket".
+loadcall "client_test" "alma.callfile.ClientSocket".
+loadcall "client_close" "alma.callfile.ClientSocket".
+
+// First get the utterance from the user.
+
+//#{isa(ID, utterance) & has(ID, spelling, X)}[1] get_utterance(X,ID).
+
+/*
+#{new_utterance(ID,Sp)}[] get_utterance(Sp,ID).
+
++new_utterance(ID,Sp)
+	->	isa(ID, utterance).
+
++new_utterance(ID,Sp)
+	->	has(ID, spelling, Sp).
+*/
+
++isa(1, utterance).
++has(1, spelling, "move to six").
+
+step 2.
+
++isa(U, utterance) &
+has(U, spelling, Sp) &
+tokenize_string_into_words(Sp, L)
+	->	has(U, word_token_list, L).
+
+/* Must query to get the ball rolling because there is
+    a call in the antecedent of the previous rule...
+?{needs_to_be_broken_up(U,L)}[1] has(U, word_token_list, L).
+*/
+
++needs_to_be_broken_up(U, [X.Y])
+	->	first_head(X).
+
++needs_to_be_broken_up(U, [X.Y])
+	-> first_tail(Y).
+
++first_head(X)
+	->	utterance(u0, start_sequence, X).
+
++first_head(X) & first_tail([Y.Z])
+	->	utterance(u0, X, Y).
+
++first_tail([Y.Z])
+	->	head(Y).
+
++first_tail([Y.Z])
+	->	last_tail(Z).
+
++head(Y) & last_tail([Z.NULL])
+	->	utterance(u0, Y, Z).
+
++last_tail([Z.NULL])
+	->	utterance(u0, Z, stop_sequence).
+
+
+//The desired command, in a bigram representation
+/*	Command(c0, start_sequence, send).
+	Command(c0, send, rover1).
+	Command(c0, rover1, action).
+	Command(c0, action, moveto).
+	Command(c0, moveto, six).
+	Command(c0, six, stop_sequence).	*/
+	
+//A configuration parameter: which rover to address
++SetAgent("rover1 ").
+
+//Initiates transformation from utterance to command
++RequestTransform(u0, c0).
+
++RequestTransform(U, C)
+ 	-> 	Command(C, start_sequence, "send ").
+
++RequestTransform(U, C) & 
+SetAgent(R)
+ 	-> 	Command(C, "send ", R).
+
++RequestTransform(U, C) & 
+SetAgent(R)
+ 	-> 	Command(C, R, "action ").
+
++RequestTransform(U, C) &
+utterance(U, start_sequence, "move") & 
+utterance(U, "move", "to")
+ 	-> 	Command(C, "action ", "moveto ").
+
++RequestTransform(U, C) &
+utterance(U, "to", L) & 
+utterance(U, L, stop_sequence)
+ 	-> 	Command(C, "moveto ", L).
+
++RequestTransform(U, C) & 
+utterance(U, "to", L) & 
+utterance(U, L, stop_sequence)
+ 	-> 	Command(C, L, stop_sequence).
+
+
+/*ooo
+//The rules to perform the transformation
++RequestTransform(U, C) & 
+SetAgent(R) & 
+utterance(U, start_sequence, "move") & 
+utterance(U, "move", "to") & 
+utterance(U, "to", L) & 
+utterance(U, L, stop_sequence)
+ 	-> 	Command(C, start_sequence, "send ") & 
+		Command(C, "send ", R) &
+ 		Command(C, R, "action ") & 
+ 		Command(C, "action ", "moveto ") & 
+ 		Command(C, "moveto ", L) &
+ 		Command(C, L, stop_sequence).
+ooo*/
+
+	
+//Will only work for commands with six words.
+//Found weird problems with Alma binding that prevented greater flexibility.  
++Command(ID, start_sequence, A) & 
+Command(ID, A, B) & 
+Command(ID, B, C) & 
+Command(ID, C, D) & 
+combine(A, B, AB) & 
+combine(AB, C, ABC) & 
+combine(ABC, D, ABCD)
+	->	CombCommand(ID, ABCD, E). 
+
++CombCommand(ID, ABCD, E) & 
+Command(ID, E, stop_sequence) & 
+combine(ABCD, E, ABCDE) 
+	->	FinalCommand(ID, ABCDE).
+
+
+//Procedural, because Alma calls currently must be in antecedent.
+//Because of an Alma problem this actually sends the message dozens of times.
+
+
+step 5.
+?{needs_to_be_broken_up(U,L)}[1] has(U, word_token_list, L).
+step 10.
+
+
+
++client_open("localhost", 4445) -> dummy("abc").
+step 5.
++FinalCommand(ID, ABCDE) & client_send(ABCDE) -> dummy("def").
+step 1.
++client_close() -> isa("ghi").
+step 5.
+
+

@@ -1,0 +1,180 @@
+// test file
+
++a([a,b,c]) & z([a,b,c]).
+
++a([X.Y])        -> y([X.Y]).
++a([X.Y])        -> b([X.Y]) & c([X.Y]).	
++a([X.Y]) & z([Z.W])-> h(X) & i(W).
+
++b([X.Y]) & c([X.Y]) -> d([X.Y]) & e([X.Y]).
+//+b([X.Y]) & c([X.Y]) -> f([X.Y]).
+//+b([X.Y])        -> g([X.Y]).
+//
+//+d([X.Y]) & e([X.Y]) -> m([X.Y]).
+//+m([X.Y]) -> j([X.Y]) & k([X.Y]).
+//
+//+b([X.Y]) & c([X.Y]) -> n([X.Y]).
+//+n([X.Y]) -> d([X.Y]) & e([X.Y]).
+
+step 5.
+
+//?{ans1(X)}[1] b(X).					//yes.				//& RHS, 1 LHS, no list in query
+//?{ans11(X) & ans12(Y)}[1] b([X.Y]).	//no!				//same as ans1, except list in query, split up answer
+//?{ans13(X) & ans14(X)}[1] b(X).		//no!
+
+//?{ans15(X)}[1] y(X).					//yes.				//& RHS, 1 LHS, no list in query
+//?{ans16(X) & ans17(Y)}[1] y([X.Y]).	//no!				//same as ans1, except list in query, split up answer
+//?{ans18(X) & ans19(X)}[1] y(X).		//no!
+
+//?{ans2([X.Y])}[1] c([X.Y]).			//yes.				//same as ans1, except list in query
+//?{ans21(X)}[1] c([X.Y]).				//yes.				//same as ans11, except LHS of query is split (see ans22)
+//?{ans22(Y)}[1] c([X.Y]).				//yes.				//same as ans21
+//?{ans23([X.Y]) & ans24([X.Y])}[1] c([X.Y]).		//no!
+//?{ans25([X.Y]) & ans26(a)}[1] c([X.Y]).		//no!
+//?{ans3(X)}[1] d(X).		  			//			//
+//?{ans4(X)}[1] e(X).		  			//			//
+//?{ans5(X)}[1] f(X).					//			//
+//?{ans6(X)}[1] g(X).					//
+//?{ans7(X)}[1] h(X).					//no!
+//?{ans8(X)}[1] i(X).		  			//
+//?{ans9(X)}[1] j(X).		  			//.
+//?{ans10(X)}[1] k(X).		  			//.
+//?{ans11(X)}[1] m(X).		  			//.
+
+/*opop
++a(p) & z(p).
++a(X)        -> b(X) & c(X).	
++a(X) & z(X) -> h(X) & i(X).
++b(X) & c(X) -> d(X) & e(X).
++b(X) & c(X) -> f(X).
++b(X)        -> g(X).
+
++d(X) & e(X) -> m(X).
++m(X) -> j(X) & k(X).
+
+//these two rules allow d and e to be queried (ans3 and ans4)
++b(X) & c(X) -> n(X).
++n(X) -> d(X) & e(X).
+
+step 2.
+opop*/
+
+/*
+?{ans1(X)}[1] b(X).		//works.		//
+?{ans2(X)}[1] c(X).		//works.		//
+?{ans3(X)}[1] d(X).		  //wrong.		//& RHS; 2 links
+?{ans4(X)}[1] e(X).		  //wrong.		//& RHS; 2 links
+?{ans5(X)}[1] f(X).		//works.		//
+?{ans6(X)}[1] g(X).		//works.		//
+?{ans7(X)}[1] h(X).		  //wrong.		//& RHS; 1 link
+?{ans8(X)}[1] i(X).		  //wrong.		//& RHS; 1 link
+?{ans9(X)}[1] j(X).		  //wrong.
+?{ans10(X)}[1] k(X).		  //wrong.
+?{ans11(X)}[1] m(X).		  //wrong.
+*/
+
+
+/*kkk
++a(p) & z(p).
++a(X)        -> b(X) & c(X).	
++a(X) & z(X) -> h(X) & i(X).	//
++b(X) & c(X) -> d(X) & e(X).	//
++b(X) & c(X) -> f(X).
++b(X)        -> g(X).
++d(X) & e(X) -> m(X).
++m(X) -> j(X) & k(X).
++b(X) & c(X) -> n(X).
++n(X) -> d(X) & e(X).
+
+step 2.
+kkk*/
+
+//?{ans1(X)}[1] b(X).		//works.		//
+//?{ans2(X)}[1] c(X).		//works.		//
+//?{ans3(X)}[1] d(X).		  //wrong.		//& RHS; 2 links
+//?{ans4(X)}[1] e(X).		  //wrong.		//& RHS; 2 links
+//?{ans5(X)}[1] f(X).		//works.		//
+//?{ans6(X)}[1] g(X).		//works.		//
+//?{ans7(X)}[1] h(X).		  //wrong.		//& RHS; 1 link
+//?{ans8(X)}[1] i(X).		  //wrong.		//& RHS; 1 link
+//?{ans9(X)}[1] j(X).		  //wrong.
+//?{ans10(X)}[1] k(X).		  //wrong.
+//?{ans11(X)}[1] m(X).		  //wrong.
+
+// to test if the reason the query for member-of-list
+// doesn't work is because the first rule hasn't fired
+// as the first rule below in the next test fires before
+// it is queried.
+// 1. load alfred w/ main, functions, and eng rules.
+// 2. enter text
+// then:
+/*
+step 2.
++has(1, word_token_list, ["Enter","Text","Here"]).
++isa(["Enter","Text","Here"], list).
+step 2.
+?{ans3(L,W)}[1] has(L, member, W).
+*/
+
+//+has(1, word_token_list, ("Enter".("Text".("Here".NULL)))).
+//+ans2((""Enter".("Text".("Here"".NULL)))).
+
+
+/*uuu  
+	+isa([X.Y],list)
+		->	has([X.Y], member, X) &
+			has([X.Y], rest_of_list, Y).
+
+	+has(L, rest_of_list, [X.Y])
+		-> 	has(L, member, X) &
+			has(L, rest_of_list, Y).
+
++isa([a,b,c],list).
+
+uuu*/
+
+
+// ?{ans(X)}[3] has(L, member, X).
+
+/*rrr
++isa([X.Y],list)
+	->	has([X.Y], member, X) &
+		has([X.Y], tail, Y).
+
++has(A, tail, [X.Y])
+	-> 	has(A, member, X) &
+		has(A, tail, Y).
+
+ +isa([a,b,c],list).
+rrr*/
+
+/*iop
+loadcall "unique_id" "alma.callfile.UniqueID".
+
++B(g).
+step 3.
++B(g) & unique_id(ID) -> C(ID).
+iop*/
+
+
+/*lk
++c(a) & d(a).
++c(X) -> needs_b(X).
++a(a).
+?{b(X)}[1] needs_b(X) -> done(true).
+lk*/
+
+/*asd
++unique_id(ID)
+  -> isa(ID, utterance) & isa(ID, new) & has(ID, spelling, "recharge at six").
+
+	+isa(X, utterance) &
+	isa(X, new) 
+		-> isa(X, needs_current).
+		
+		step 5.
+
+?{isa(X,current)}[1] isa(X,needs_current).
+
+		step 50.
+asd*/

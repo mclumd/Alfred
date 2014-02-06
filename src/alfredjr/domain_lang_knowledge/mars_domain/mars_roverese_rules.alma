@@ -1,0 +1,132 @@
+/*
+Name: 		mars_roverese_rules.alma
+Title:		Mars Roverese Grammar Rules
+Author: 	Scott
+
+Created: 	9/12/08
+Modified:
+
+Description: 	This file contains Alfred's initial knowledge 
+		of Mars Roverese grammar rules. It is loaded into 
+		Alfred's knowledge base via a 'load' command in the 
+		file "/fs/qubit/scott/jalma/AlfredJr/alfred.alma".
+
+
+
+To-Do:		
+
+Calls:
+*/
+
+
+// Syntax Rules:
+
+	// S -> dispatch_command
+	+isa(U, utterance) &
+	isa(U, current) &
+	has(U, constituent, X) &
+	isa(X, d_c_p) &
+	has(X, spelling, Sp) &
+	unique_id(ID)
+		-> isa(ID, s) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, spelling, Sp).
+
+	// dispatch_command -> tcp1c_command
+	+isa(U, utterance) &
+	isa(U, current) &
+	has(U, constituent, X) &
+	isa(X, tcp1c_c_p) &
+	has(X, spelling, Sp) &
+	unique_id(ID)
+		-> isa(ID, d_c_p) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, spelling, Sp).
+	
+	// tcp1c_command -> tcp1c  agent_directive
+	+isa(U, utterance) &
+	isa(U, current) &
+	has(U, constituent, X) &
+	has(roverese, lexeme, X) &
+	isa(X, tcp1c) &
+	has(X, spelling, Sp1) &
+	has(U, constituent, Y) &
+	isa(Y, a_d_p) &
+	has(Y, spelling, Sp2) &
+	combine(Sp1, Sp2, Sp3) &
+	unique_id(ID)
+		-> isa(ID, tcp1c_c_p) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, daughter, Y) &
+		has(ID, spelling, Sp3).
+
+	// agent_directive -> agent  mars_rover_command
+	+isa(U, utterance) &
+	isa(U, current) &
+	has(U, constituent, X) &
+	has(roverese, lexeme, X) &
+	isa(X, agent) &
+	has(X, spelling, Sp1) &
+	has(U, constituent, Y) &
+	isa(Y, m_r_c_p) &
+	has(Y, spelling, Sp2) &
+	combine(Sp1, Sp2, Sp3) &
+	unique_id(ID)
+		-> isa(ID, a_d_p) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, daughter, Y) &
+		has(ID, spelling, Sp3).
+
+	// mars_rover_command -> mars_rover_planner_core_command
+	+isa(U, utterance) &
+	isa(U, current) &
+	has(U, constituent, X) &
+	isa(X, m_r_p_c_c_p) &
+	has(X, spelling, Sp) &
+	unique_id(ID)
+		-> isa(ID, m_r_c_p) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, spelling, Sp).
+		
+// m_r_p_c_c_p -> action  mars_rover_action
+	+isa(U, utterance) &
+	isa(U, current) &
+	has(U, constituent, X) &
+	has(roverese, lexeme, X) &
+	isa(X, plan) &
+	has(X, spelling, Sp1) &
+	has(U, constituent, Y) &
+	isa(Y, m_r_a_p) &
+	has(Y, spelling, Sp2) &
+	combine(Sp1, Sp2, Sp3) &
+	unique_id(ID)
+		-> isa(ID, m_r_p_c_c_p) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, daughter, Y) &
+		has(ID, spelling, Sp3).
+
+// m_r_a_p -> action  dest
+	+isa(U, utterance) &
+	isa(U, current) &
+	has(U, constituent, X) &
+	has(roverese, lexeme, X) &
+	isa(X, action) &
+	has(X, spelling, Sp1) &
+	has(roverese, lexeme, Y) &
+	isa(Y, action) &
+	has(Y, spelling, Sp2) &
+	combine(Sp1, Sp2, Sp3) &
+	unique_id(ID)
+		-> isa(ID, m_r_a_p) &
+		has(U, constituent, ID) &
+		has(ID, daughter, X) &
+		has(ID, daughter, Y) &
+		has(ID, spelling, Sp3).
+
+ 

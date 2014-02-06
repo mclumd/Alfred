@@ -1,0 +1,83 @@
+/*
+Name: 		alfred_functions.alma
+Title: 		Alfred Functions
+Author: 	Scott
+Created: 	7/01/08
+Modified:
+
+
+Description:	This file defines the functions used by Alfred.
+
+
+To-Do:		
+
+Calls:
+
+*/
+
+
+
+/*
+name:		member_of_list
+Form:		has(L, member, X)
+Summary:	X is a member of the list L.
+Parameters:	L is a list, X is an entity in that list
+*/
+	// To find out if X is a member of L, recursively go through 
+	// the list.
+
+	+isa([X.Y],list)
+		->	has([X.Y], member, X).
+
+	+isa([X.Y],list)
+		->	has([X.Y], rest_of_list, Y).
+
+	+has(L, rest_of_list, [X.Y])
+		-> 	has(L, member, X).
+
+	+has(L, rest_of_list, [X.Y])
+		->	has(L, rest_of_list, Y).
+
+
+// This goal finds all members of a list A (but continues to 
+// fire and slow things down after the list has been completed
+// as it continues to look for solutions).
+// Consider adding a number to brackets.
+// ?{ans(L, member, X)}[] has(L, member, X).
+
+// This version of "find member of list" creates an 
+// infinite list of predicates of form 
+// 'has([H'', H', ... H, X], member, X)' due to forward
+// chaining.
+//	+has([X . T], member, X).
+//	+has(T, member, X)
+//	-> has([H . T], member, X).
+
+
+
+/*abc
+/*
+name:		successor
+
+Form:		has(X, successor, Y)
+
+Summary:	X is ordered immediately before Y in a list
+
+Parameters:	L is a list, X and Y are entities in that list
+
+*/
+
+	// Relate each member of the list to the member that 
+	// comes after it via the 'successor' predicate. Find the two
+	// list members, then find their ID numbers, and relate
+	// via 'successor'.
+	// TO-DO: 
+	+has([X.[Y.T]], _, _)
+		-> has(X, successor, Y).
+	+has([X.T], _, _) & has([H . [X.T]], _, _)
+		-> has(H, sucessor, X).
+	+has([X.T], _, _) -> has(T, _, _).
+	
+
+abc*/
+

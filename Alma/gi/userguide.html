@@ -1,0 +1,182 @@
+<html>
+<title> User guide
+</title>
+
+<h1> The Alma GUI</h1>
+
+This is a user guide to the alma gui. For more detail as to how to invoke
+it, look at the sample html files.
+
+<hr>
+
+<h3> Overview </h3>
+This is a GUI for a running alma process or for alma history files.
+ The state of the alma kb is kept track of through the history output. 
+ There is also a connection to the stdio of alma through which all the
+ usual alma commands can be executed
+ <br>
+ There are three main windows: the KB display window, the alma control
+ window and the IO window. 
+<br>
+<img src="all.gif">
+<br>
+
+<hr>
+
+<h3> Arguments </h3>
+<br>
+ There are two main modes of operation: as an interface to a running 
+ alma process or as a history reader. In the latter case only the KB 
+ display window is produced. Also, in the latter case, the applet is
+ viewable using netscape whereas in the former case, the applet will
+ run with the appletviewer.
+ <br>
+ Arguments: <br>
+ <ul>
+ <li>
+ almaArgs. The value of this should be the string that is to be used to
+ exec alma. The default is: "alma run false keyboard true histocket htcp 
+ prompt false". If you decide to change that, make sure that the histocket,
+ prompt, and keyboard values are as in the default.
+ <li>
+ autoExec. The value is true or false. The default is false. If it is true,
+ alma will be execed on start-up, otherwise it will be execed when the
+ 'Exec' button is clicked.
+ <li>
+ historyFromFile. Value true or false. If true, the GUI will run in 
+ hostory reader mode. Default is false. The history file can be specified
+ in the GUI or through the next parameter.
+ <li>
+ historyInputURLName. The value of that is the URL for the history file
+ that is to be read. There is no default.
+ <li>
+ verbose. Value is true or false. Default is false. 
+ <li>
+ historyOutput. Value is a file name. This is to be used when the GUI
+ is connected to a running Alma process and we want to record the
+ history. The file name is the name of the file in which the history
+ will be recorded.
+ <li>
+ prologSocketFile. Value is a file name. This is used when the GUI is
+ connected to a running Alma process. The file name is the name of the
+ file in which the socket information is written. This has to be
+ coordinated with the Alma arguments.
+ </ul>
+
+<hr>
+
+<h3> The history display </h3>
+
+ The formulas are displayed as:
+ <br>
+ &lt FORMULA NAME &gt : &lt PRINTABLE FORMULA &gt
+ <br>
+ The formula name is a string that can be used to identify the formula
+ in other literals. The printable formula is an intuitive rendering
+ of the formula though it may not correspond exactly to the formula
+ entered.
+ <br>
+ The formulas added at the beginning of the current step are colored
+ green.
+ <br>
+ Clicking on a formula will pop out a window with information about
+ the formula  as in:
+<br>
+<img src="nodeinfo.gif">
+<br>
+ The control panel is:
+ <img src="dbcontrol.gif">
+ <br>
+ <ul>
+ <li>
+ The first button dispalys the first step in the history.
+ <li>
+ The second button moves back one step in the history.
+ <li>
+ The third button, causes the step in the text field to be displayed.
+ <li>
+ The text field serves to display the step number of the step that is
+ being displayed. It is editable and can also be used to specify a 
+ particular step to display.
+ The fourth button causes the next step to be displayed. If there are no
+ more steps, this will not cause new steps to be computed.
+ <li>
+ The fifth button causes the last step to be displayed. This serves
+ another purpose which is to synchronize the display with the input
+ steps. 
+ </ul>
+ In usual operation, with alma computing steps instead of reading
+ from a file, the latest available step is displayed. However,
+ if any one of the buttons but the last is used, the display is no
+ longer synchronized with the steps that are being computed by alma.
+ This allows one to inspect previous steps without always jumping to 
+ the latest step. 
+ <br>
+ The last button resynchronizes the display with the running alma so
+ that the latest computed step is displayed.
+ <br>
+ In history file mode, an additional panel is displayed:
+ <br>
+ <img src="urlload.gif">
+ <br>
+ This allows one to load new history files. Loading a new file causes
+ the previous information to be lost.
+<p>
+
+<hr>
+
+<h3> The alma control panel </h3>
+
+  The control panel enables the user to control the running of alma.
+ <br>
+ <img src="execcontrol.gif">
+ <br>
+ The following controls are provided:
+ <ul>
+ <li>
+ Exec. If alma is not automatically started, clicking this will
+ start alma. This will not work if alma is already up.
+ <li>
+ Step. This causes alma to step once. If alma is automatically stepping,
+ the results might be unexepcted.
+ <li>
+ Run. This causes alma to step continuously with a delay between steps
+ as specified by the next control. If alma is run with "run true", this
+ might not have the expected results.
+ <li>
+ Delay. The delay can be specified in milliseconds. Making the delay
+ shorter than is possible for the alma executable does no good.
+ <li>
+ Stop. This stops alma from stepping if that was initiated by the Run
+ button. It has no effect on a "run true" alma process.
+ Reset. This resets alma. It is effective for both an automatically
+ stepping alma process and one controlled from the GUI.
+</ul>
+
+<hr>
+
+<h3> The IO panel </h3>
+
+ The IO panel reads and writes to the alma process though stdio.
+ <br>
+ <img src="io.gif">
+ <br>
+ There are two windows: one for input and one for output.
+ <br>
+ The window for input expects the same syntax as one would type at
+ the alma keyboard. To send a command to alma, click on "Send" or hit
+ return. 
+ <br>
+ The up and down keys (^ and V) traverse the history of the commands
+ typed. 
+ <br>
+ The output window displays whatever alma outputs to stdout.
+<p>
+
+<hr>
+kpurang@cs.umd.edu 
+<br>
+Oct 00
+
+
+</html>
