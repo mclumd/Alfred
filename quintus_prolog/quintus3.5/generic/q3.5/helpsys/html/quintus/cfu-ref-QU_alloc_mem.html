@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QU_alloc_mem()</code>, <code>QU_alloc_init_mem()</code>, <code>QU_free_mem()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     char *QU_alloc_mem(size, alignment, actualsize)
+     unsigned int  size;
+     unsigned int  alignment;
+     unsigned int *actualsize;
+     </pre>
+
+   <p>The primitive function that Prolog calls to get memory
+
+<pre class="example">     char *QU_alloc_init_mem(size, alignment, actualsize)
+     unsigned int  size;
+     unsigned int  alignment;
+     unsigned int *actualsize;
+     </pre>
+
+   <p>Called when Prolog needs memory for the first time
+
+<pre class="example">     int QU_free_mem(mem, size)
+     char          *mem;
+     unsigned int  size;
+     </pre>
+
+   <p>The primitive function called when Prolog wants to free memory.
+
+<h4 class="subheading">Description</h4>
+
+   <p>These are the primitive functions on which the
+all of Prolog's sophisticated memory management is built. 
+If Prolog is to be embedded into an application that would
+like to provide its own memory management routines then
+the user can redefine these functions and link it with the Prolog
+system.
+
+   <p><code>QU_alloc_mem()</code> must allocate a piece of memory that has
+at least <var>size</var> bytes aligned at <var>alignment</var> in it
+and return a pointer to it. 
+The memory returned itself need not be aligned at <var>alignment</var>. 
+The <var>alignment</var> argument is guaranteed to be a power of 2. 
+The actual size of the piece of memory returned should be stored in
+<var>*actualsize</var>. Prolog uses all the memory given to it;
+there is no memory wasted when <var>actualsize</var> is greater than
+<var>size</var>. 
+<code>QU_alloc_mem()</code> should return 0 if it cannot allocate
+any more memory.
+
+   <p><code>QU_alloc_init_mem()</code> is a special case of <code>QU_alloc_mem()</code>.  It
+can do whatever initialization that this layer of memory management
+wants to do.
+
+   <p><code>QU_free_mem()</code> is called with a pointer to the memory that is to be freed
+and the size of the memory to be freed. 
+If <code>QU_free_mem()</code> was not able to free this piece of memory then
+this function should return 0. In this case Prolog will continue
+using the memory as if it was not freed.
+
+   <p>The default definitions for these functions look at
+the environment variables <code>PROLOGINITSIZE</code>, <code>PROLOGINCSIZE</code>,
+<code>PROLOGKEEPSIZE</code> and <code>PROLOGMAXSIZE</code>. These environment variables are
+useful to customize the default memory manager. If users redefine this
+layer of memory management they can choose to ignore these environment
+variables.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>Here is a simple example of the embeddable
+layer of memory management based on <code>malloc(3)</code> and <code>free(3)</code>.  This example
+is far from ideal because you might be over-allocating memory to
+ensure the required size of aligned memory, but demonstrates the
+capability.  The C file <code>mem.c</code> defines <code>QU_alloc_mem()</code>,
+<code>QU_alloc_init_mem()</code> and <code>QU_free_mem()</code>.
+
+<pre class="example">
+                                      <div align="right"><em>mem.c</em>
+     </div>
+     
+     unsigned int IncSize = 0x100000;        /* 1M */
+     unsigned int InitSize = 0x100000;       /* 1M */
+     unsigned int MaxSize = 0x1000000;       /* 16 M */
+     unsigned int KeepSize = 0x100000;       /* 1M */
+     unsigned int MemTotal;
+     
+     char * QU_alloc_mem(size, align, actualsize)
+         unsigned int size;  /* in bytes */
+         unsigned int align;         /* power of 2 */
+         unsigned int *actualsize;
+         {
+             char *mem, *malloc();
+     
+             size = size + align;
+             if (size &lt;= IncSize) size = IncSize;
+             if ((size + MemTotal) &gt; MaxSize) return 0;
+             mem = malloc(size);
+             *actualsize = size;
+             MemTotal += (mem == 0 ? 0 : size);
+             return mem;
+         }
+     
+     char * QU_alloc_init_mem(size, align, actualsize)
+         unsigned int size;  /* in bytes */
+         unsigned int align;         /* power of 2 */
+         unsigned int *actualsize;
+         {
+             char *mem, *str, *malloc(), *getenv();
+     
+             str = getenv("PROLOGINCSIZE");
+             if (str) sscanf(str, "%u", &amp;IncSize);
+             str = getenv("PROLOGINITSIZE");
+             if (str) sscanf(str, "%u", &amp;InitSize);
+             str = getenv("PROLOGMAXSIZE");
+             if (str) sscanf(str, "%u", &amp;MaxSize);
+             str = getenv("PROLOGKEEPSIZE");
+             if (str) sscanf(str, "%u", &amp;KeepSize);
+     
+             MemTotal = 0;
+             return QU_alloc_mem(size, align, actualsize);
+         }
+     
+     int QU_free_mem(mem, size)
+         char * mem;
+         unsigned int size;
+         {
+             if ((MemTotal - size) &lt; KeepSize) return 0;
+             free(mem);
+             MemTotal = MemTotal - size;
+             return 1;
+         }
+     </pre>
+
+   <p>To build a Prolog development system based on
+the functions defined in <code>mem.c</code>:
+<pre class="example">     % <kbd>cc -c mem.c</kbd>
+     % <kbd>qld -D mem.o -o prolog_on_my_mm_fns</kbd>
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <a href="fli-emb.html#fli-emb">fli-emb</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-QU_fdopen.html#cfu-ref-QU_fdopen">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-wait_input.html#cfu-ref-wait_input">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

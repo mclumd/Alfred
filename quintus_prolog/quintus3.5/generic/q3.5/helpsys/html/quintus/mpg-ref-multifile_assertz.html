@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>multifile_assertz/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>multifile_assertz(</code><var>+Clause</var><code>)</code>
+
+   <p>Adds a compiled clause to the database. The clause will be added at
+the end of all existing clauses in the database.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Clause</var> [MOD]
+     <dd><dfn>callable</dfn> A valid Prolog clause. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>If a predicate is multifile (compiled, interpreted-static or dynamic)
+<code>multifile_assertz/1</code> can be used to add a clause, <var>Clause</var>,
+to the end of the predicate. 
+In a runtime system (see <a href="sap-srs.html#sap-srs">sap-srs</a>), it is
+an error to <code>multifile_assertz</code> a
+compiled clause because the compiler is not available.
+
+   <p>If predicate is undefined at the time of the <code>multifile_assertz</code>,
+it is set to be compiled (in the
+Development System) or dynamic (in a Runtime System). 
+In either case the predicate is also set to be multifile.
+
+   <p>[Note that in runtime systems <code>compile(</code><var>File</var><code>)</code> actually loads the file as
+<code>all_dynamic</code>.]
+
+   <p>Except for the case of a multifile dynamic predicate, the effect of
+<code>multifile_assertz</code> if used on a predicate that is currently
+running will not be well-defined.  The new clause may or may not be
+seen on backtracking.  If you want the proper semantics, use <code>assertz</code>
+instead.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <p>Same as <code>assert/1</code>.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>abolish/[1,2]</code>,
+<code>assertz/1</code>,
+<code>dynamic/1</code>,
+<code>multifile/1</code>,
+<a href="sap-srs.html#sap-srs">sap-srs</a>
+
+   <a href="sap-rge.html#sap-rge">sap-rge</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-name.html#mpg-ref-name">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-multifile.html#mpg-ref-multifile">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

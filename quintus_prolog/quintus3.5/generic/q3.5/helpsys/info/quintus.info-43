@@ -1,0 +1,1740 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxt-exp-motif,  Next: pxt-exp-px,  Up: pxt-exp
+
+Motif Predicates
+----------------
+
+     xmActivateProtocol(+SHELL,+PROPERTY,+PROTOCOL)
+     SHELL:      Widget
+     PROPERTY:   XAtom
+     PROTOCOL:   XAtom
+
+     xmActivateWMProtocol(+SHELL,+PROTOCOL)
+     SHELL:      Widget
+     PROTOCOL:   XAtom
+
+     xmAddProtocolCallback(+SHELL,+PROPERTY,+PROTOCOL,+CALLBACK,+CLIENTDATA)
+     SHELL:      Widget
+     PROPERTY:   XAtom
+     PROTOCOL:   XAtom
+     CALLBACK:   CallbackProc
+     CLIENTDATA: AnyTerm
+
+     xmAddProtocols(+SHELL,+PROPERTY,+PROTOCOLS)
+     SHELL:      Widget
+     PROPERTY:   XAtom
+     PROTOCOLS:  XAtomList
+
+     xmAddTabGroup(+TABGROUP)
+     TABGROUP:   Widget
+
+     xmAddWMProtocolCallback(+SHELL,+PROTOCOL,+CALLBACK,+CLIENTDATA)
+     SHELL:      Widget
+     PROTOCOL:   XAtom
+     CALLBACK:   CallbackProc
+     CLIENTDATA: AnyTerm
+
+     xmAddWMProtocols(+SHELL,+PROTOCOLS)
+     SHELL:      Widget
+     PROTOCOL:   XAtomList
+
+     xmCascadeButtonGadgetHighlight(+CASCADEBUTTONGADGET, +HIGHLIGHT)
+     CASCADEBUTTONGADGET:        Widget
+     HIGHLIGHT:  Boolean
+
+     xmCascadeButtonHighlight(+CASCADEBUTTON, +HIGHLIGHT)
+     CASCADEBUTTON:      Widget
+     HIGHLIGHT:  Boolean
+
+     xmChangeColor(+WIDGET, +BACKGROUND)
+     CASCADEBUTTON:      Widget
+     BACKGROUND: Pixel
+
+     xmClipboardCancelCopy(+DISPLAY,+WINDOW,+ITEMID)
+     DISPLAY:    Display
+     WINDOW:     Window
+     ITEMID:     Integer
+
+     xmClipboardCopy(+DISPLAY,+WINDOW,+ITEMID,+FORMATNAME,+BUFFER,+LENGTH,
+               +PRIVATEID,+DATAID, -RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     ITEMID:     Integer
+     FORMATNAME: String
+     BUFFER:     String
+     LENGTH:     Integer
+     PRIVATEID:  Integer
+     DATAID:     Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardCopyByName(+DISPLAY,+WINDOW,+DATAID,+BUFFER,+LENGTH,+PRIVATEID,
+              -RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     DATAID:     Integer
+     BUFFER:     String
+     LENGTH:     Integer
+     PRIVATEID:  Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardEndCopy(+DISPLAY,+WINDOW,+ITEMID,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     ITEMID:     Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardEndRetrieve(+DISPLAY,+WINDOW,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardInquireCount(+DISPLAY,+WINDOW,-COUNT,-MAXFORMATLEN,
+              -RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     COUNT:      Integer
+     MAXFORMATLEN:       Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardInquireFormat(+DISPLAY,+WINDOW,+INDEX,-FORMAT,
+              +BUFFERLEN,-COPIEDLEN,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     INDEX:      Integer
+     FORMAT:     String
+     BUFFERLEN:  Integer
+     COPIEDLEN:  Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardInquireLength(+DISPLAY,+WINDOW,+FORMAT,-LENGTH,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     FORMAT:     String
+     LENGTH:     Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardInquirePendingItems(+DISPLAY,+WINDOW,+FORMAT,-ITEMLIST,-COUNT,
+              -RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     FORMAT:     String
+     ITEMLIST:   XmClipboardPendingList
+     COUNT:      Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardLock(+DISPLAY,+WINDOW,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardRegisterFormat(+DISPLAY,+FORMAT,+FORMATLENGTH,-RETURNVALUE)
+     DISPLAY:    Display
+     FORMAT:     String
+     FORMATLENGTH:       Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardRetrieve(+DISPLAY,+WINDOW,+FORMAT,-BUFFER,
+              +LENGTH,-NUMBYTES,-PRIVATEID,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     FORMAT:     String
+     BUFFER:     String or XtPointer
+     LENGTH:     Integer
+     NUMBYTES:   Integer
+     PRIVATEID:  Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardStartCopy(+DISPLAY,+WINDOW,+CLIPLABEL,+TIMESTAMP,
+              +WIDGET,+CALLBACK,-ITEMID,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     CLIPLABEL:  XmString
+     TIMESTAMP:  Time
+     WIDGET:     Widget
+     CALLBACK:   CallbackProc
+     ITEMID:     Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardStartRetrieve(+DISPLAY,+WINDOW,+TIMESTAMP)
+     DISPLAY:    Display
+     WINDOW:     Window
+     TIMESTAMP:  Time
+
+     xmClipboardUndoCopy(+DISPLAY,+WINDOW,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardUnlock(+DISPLAY,+WINDOW,+REMOVEALLLOCKS,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     REMOVEALLLOCKS:     Boolean
+     RETURNVALUE:        ClipboardStatus
+
+     xmClipboardWithdrawFormat(+DISPLAY,+WINDOW,+DATAID,-RETURNVALUE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     DATAID:     Integer
+     RETURNVALUE:        ClipboardStatus
+
+     xmCommandAppendValue(+WIDGET, +COMMAND)
+     WIDGET:     Widget
+     COMMAND:    XmString
+
+     xmCommandError(+WIDGET, +ERROR)
+     WIDGET:     Widget
+     ERROR:      XmString
+
+     xmCommandGetChild(+WIDGET, +CHILDTYPE, -CHILD)
+     WIDGET:     Widget
+     CHILDTYPE:  XmChildType
+     CHILD:      Widget
+
+     xmCommandSetValue(+WIDGET, +COMMAND)
+     WIDGET:     Widget
+     COMMAND:    XmString
+
+     xmConvertUnits(+WIDGET,+ORIENTATION,+FROMUNITTYPE,+FROMVALUE,
+              +TOUNITTYPE,-TOVALUE)
+     WIDGET:     Widget
+     ORIENTATION:        XmOrientation
+     FROMUNITTYPE:       XmUnitType
+     FROMVALUE:  Integer
+     TOUNITTYPE: XmUnitType
+     TOVALUE:    Integer
+
+     xmCreateArrowButton(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateArrowButtonGadget(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateBulletinBoard(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateBulletinBoardDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateCascadeButton(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateCascadeButtonGadget(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateCommand(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateDialogShell(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateDragIcon(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateDrawingArea(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateDrawnButton(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateErrorDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateFileSelectionBox(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateFileSelectionDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateForm(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateFormDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateFrame(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateInformationDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateLabel(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateLabelGadget(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateList(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateMainWindow(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateMenuBar(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateMenuShell(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateMessageBox(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateMessageDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateOptionMenu(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreatePanedWindow(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreatePopupMenu(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreatePromptDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreatePulldownMenu(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreatePushButton(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreatePushButtonGadget(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateQuestionDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateRadioBox(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateRowColumn(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateScale(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateScrollBar(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateScrolledList(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateScrolledText(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateScrolledWindow(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSelectionBox(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSelectionDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSeparator(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSeparatorGadget(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSimpleCheckBox(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSimpleMenuBar(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSimpleOptionMenu(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSimplePopupMenu(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSimplePulldownMenu(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateSimpleRadioBox(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateTemplateDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateText(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateTextField(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateToggleButton(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateToggleButtonGadget(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateWarningDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateWorkArea(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCreateWorkingDialog(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCvtCTToXmString(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmCvtXmStringToCT(+PARENT,+NAME,+ATTRIBUTES,-WIDGET)
+     PARENT:     Widget
+     NAME:       String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xmDeactivateProtocol(+SHELL,+PROPERTY,+PROTOCOL)
+     SHELL:      Widget
+     PROPERTY:   XAtom
+     PROTOCOL:   XAtom
+
+     xmDeactivateWMProtocol(+SHELL,+PROTOCOL)
+     SHELL:      Widget
+     PROTOCOL:   XAtom
+
+     xmDestroyPixmap(+SCREEN, +PIXMAP)
+     SCREEN:     Screen
+     PIXMAP:     Pixmap
+
+     xmDragCancel(+DRAGCONTEXT)
+     DRAGCONTEXT:        Widget
+
+     xmDragStart(+WIDGET,+EVENT,+ATTRIBUTES,-DRAGCONTEXT)
+     WIDGET:     Widget
+     EVENT:      XEvent
+     ATTRIBUTES: AttributeList
+     DRAGCONTEXT:        Widget
+
+     xmDropSiteConfigureStackingOrder(+WIDGET,+SIBLING,+STACKMODE)
+     WIDGET:     Widget
+     SIBLING:    Widget
+     STACKMODE:  XmStackMode
+
+     xmDropSiteEndUpdate(+WIDGET)
+     WIDGET:     Widget
+
+     xmDropSiteQueryStackingOrder(+WIDGET,-PARENT,-CHILDREN)
+     WIDGET:     Widget
+     PARENT:     Widget
+     CHILDREN:   WidgetList
+
+     xmDropSiteRegister([+WIDGET],+ATTRIBUTES
+     WIDGET:     Widget
+     ATTRIBUTES: AttributeList
+
+     xmDropSiteRetrieve(+WIDGET,+ATTRIBUTES)
+     WIDGET:     Widget
+     ATTRIBUTES: AttributeList
+
+     xmDropSiteStartUpdate(+WIDGET)
+     WIDGET:     Widget
+
+     xmDropSiteUnregister(+WIDGET)
+     WIDGET:     Widget
+
+     xmDropSiteUpdate(+WIDGET,+ATTRIBUTES)
+     WIDGET:     Widget
+     ATTRIBUTES: AttributeList
+
+     xmDropTransferAdd(+DROPTRANSFER,+TRANSFERS)
+     DROPTRANSFER:       Widget
+     TRANSFERS:  XmDropTransfers
+
+     xmDropTransferStart(+WIDGET,+ATTRIBUTES,-DROPWIDGET)
+     WIDGET:     Widget
+     ATTRIBUTES: AttributeList
+     DROPWIDGET: Widget
+
+     xmFileSelectionBoxGetChild(+WIDGET, +CHILDTYPE, -CHILD)
+     WIDGET:     Widget
+     CHILDTYPE:  XmChildType
+     CHILD:      Widget
+
+     xmFileSelectionDoSearch(+WIDGET, +DIRMASK)
+     WIDGET:     Widget
+     DIRMASK:    XmString
+
+     xmFontListAdd(+OLDLIST,+NEWFONT,+CHARSET,-NEWLIST)
+     OLDLIST:    XmFontList
+     NEWFONT:    XFont
+     CHARSET:    XmStringCharSet
+     NEWLIST:    XmFontList
+
+     xmFontListAppendEntry(+OLDLIST,+ENTRY,-NEWLIST)
+     OLDLIST:    XmFontList
+     ENTRY:      XmFontListEntry
+     NEWLIST:    XmFontList
+
+     xmFontListCopy(+FONTLIST,-NEWFONTLIST)
+     FONTLIST:   XmFontList
+     NEWFONTLIST:        XmFontList
+
+     xmFontListCreate(+FONT,+CHARSET,-FONTLIST)
+     FONT:       XFont
+     CHARSET:    XmStringCharSet
+     FONTLIST:   XmFontList
+
+     xmFontListEntryCreate(+TAG,+TYPE,+FONT,-ENTRY)
+     TAG:        XmFontListTag
+     TYPE:       XmFontType
+     FONT:       XFont or XFontSet
+     ENTRY:      XmFontListEntry
+
+     xmFontListEntryFree(+ENTRY)
+     ENTRY:      XmFontListEntry
+
+     xmFontListEntryGetFont(+ENTRY,-TYPE,-FONT)
+     ENTRY:      XmFontListEntry
+     TYPE:       XmFontType
+     FONT:       XFont or XFontSet
+
+     xmFontListEntryGetTag(+ENTRY,-TAG)
+     ENTRY:      XmFontListEntry
+     TAG:        XmFontListTag
+
+     xmFontListEntryLoad(+DISPLAY,+FONTNAME,+TYPE,+TAG,-ENTRY)
+     DISPLAY:    Display
+     FONTNAME:   String
+     TYPE:       XmFontType
+     TAG:        XmFontListTag
+     ENTRY:      XmFontListEntry
+
+     xmFontListFree(+FONTLIST)
+     FONTLIST:   XmFontList
+
+     xmFontListFreeFontContext(+CONTEXT)
+     CONTEXT:    XmFontContext
+
+     xmFontListGetNextFont(+CONTEXT,-CHARSET,-FONT)
+     CONTEXT:    XmFontContext
+     CHARSET:    XmStringCharSet
+     FONT:       XFont
+
+     xmFontListInitFontContext(-CONTEXT,+FONTLIST)
+     CONTEXT:    XmFontContext
+     FONTLIST:   XmFontList
+
+     xmFontListNextEntry(+CONTEXT,-ENTRY)
+     CONTEXT:    XmFontContext
+     ENTRY:      XmFontListEntry
+
+     xmFontListRemoveEntry(+OLDLIST,+ENTRY,-NEWLIST)
+     OLDLIST:    XmFontList
+     ENTRY:      XmFontListEntry
+     NEWLIST:    XmFontList
+
+     xmGetAtomName(+DISPLAY,+ATOM,-ATOMNAME)
+     DISPLAY:    Display
+     ATOM:       XAtom
+     ATOMNAME:   String
+
+     xmGetColorCalculation(-COLORPROC)
+     COLORPROC:  CallbackProc
+
+     xmGetColors(+SCREEN,+COLORMAP,+BACKGROUND,
+                     -FOREGROUND,-TOPSHADOW,-BOTTOMSHADOW,-SELECT)
+     SCREEN:     Screen
+     COLORMAP:   Colormap
+     BACKGROUND: Pixel
+     FOREGROUND: Pixel
+     TOPSHADOW:  Pixel
+     BOTTOMSHADOW:       Pixel
+     SELECT:     Pixel
+
+     xmGetDestination(+DISPLAY, -WIDGET)
+     DISPLAY:    Display
+     WIDGET:     Widget
+
+     xmGetDragContext(+REFWIDGET, +TIMESTAMP, -WIDGET)
+     REFWIDGET:  Widget
+     TIMESTAMP:  Time
+     WIDGET:     Widget
+
+     xmGetFocusWidget(+WIDGET, -FOCUSWIDGET)
+     WIDGET:     Widget
+     FOCUSWIDGET:        Widget
+
+     xmGetMenuCursor(+DISPLAY, -CURSOR)
+     DISPLAY:    Display
+     CURSOR:     Cursor
+
+     xmGetPixmap(+SCREEN,+IMAGENAME,+FOREG,+BACKG,-PIXMAP)
+     SCREEN:     Screen
+     IMAGENAME:  String
+     FOREG:      Pixel
+     BACKG:      Pixel
+     PIXMAP:     Pixmap
+
+     xmGetPixmapByDepth(+SCREEN,+IMAGENAME,+FOREG,+BACKG,+DEPTH,-PIXMAP)
+     SCREEN:     Screen
+     IMAGENAME:  String
+     FOREG:      Pixel
+     BACKG:      Pixel
+     DEPTH:      Integer
+     PIXMAP:     Pixmap
+
+     xmGetPostedFromWidget(+MENU,-WIDGET)
+     MENU:       Widget
+     WIDGET:     Widget
+
+     xmGetTabGroup(+WIDGET,-TABGROUP)
+     WIDGET:     Widget
+     TABGROUP:   Widget
+
+     xmGetTearOffControl(+MENU,-WIDGET)
+     MENU:       Widget
+     WIDGET:     Widget
+
+     xmGetVisibility(+WIDGET,-VISIBILITY)
+     WIDGET:     Widget
+     VISIBILITY: XmVisibility
+
+     xmGetXmDisplay(+WIDGET,-DISPLAYOBJECT)
+     WIDGET:     Widget
+     DISPLAYOBJECT:      Widget
+
+     xmGetXmScreen(+WIDGET,-SCREENOBJECT)
+     WIDGET:     Widget
+     SCREENOBJECT:       Widget
+
+     xmInstallImage(+IMAGE, +NAME)
+     IMAGE:      XImage
+     NAME:       String
+
+     xmInternAtom(+DISPLAY,+ATOMNAME,+ONLYIFEXISTS,-ATOM)
+     DISPLAY:    Display
+     ATOMNAME:   String
+     ONLYIFEXISTS:       Boolean
+     ATOM:       XAtom
+
+     xmIsMotifWMRunning(+SHELL)
+     SHELL:      Widget
+
+     xmIsTraversable(+WIDGET)
+     WIDGET:     Widget
+
+     xmListAddItem(+WIDGET, +ITEM, +POSITION)
+     WIDGET:     Widget
+     ITEM:       XmString
+     POSITION:   Integer
+
+     xmListAddItemUnselected(+WIDGET, +ITEM, +POSITION)
+     WIDGET:     Widget
+     ITEM:       XmString
+     POSITION:   Integer
+
+     xmListAddItems(+WIDGET, +ITEMLIST, +POSITION)
+     WIDGET:     Widget
+     ITEMLIST:   XmStringTable
+     POSITION:   Integer
+
+     xmListAddItemsUnselected(+WIDGET, +ITEMLIST, +POSITION)
+     WIDGET:     Widget
+     ITEMLIST:   XmStringTable
+     POSITION:   Integer
+
+     xmListDeleteAllItems(+WIDGET)
+     WIDGET:     Widget
+
+     xmListDeleteItem(+WIDGET, +ITEM)
+     WIDGET:     Widget
+     ITEM:       XmString
+
+     xmListDeleteItems(+WIDGET, +ITEMLIST)
+     WIDGET:     Widget
+     ITEMLIST:   XmStringTable
+
+     xmListDeleteItemsPos(+WIDGET, +ITEMCOUNT, +POSITION)
+     WIDGET:     Widget
+     ITEMCOUNT:  Integer
+     POSITION:   Integer
+
+     xmListDeletePos(+WIDGET, +POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmListDeletePositions(+WIDGET, +POSITIONLIST)
+     WIDGET:     Widget
+     POSITIONLIST:       IntegerList
+
+     xmListDeselectAllItems(+WIDGET)
+     WIDGET:     Widget
+
+     xmListDeselectItem(+WIDGET, +ITEM)
+     WIDGET:     Widget
+     ITEM:       XmString
+
+     xmListDeselectPos(+WIDGET, +POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmListGetKbdItemPos(+WIDGET, -POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmListGetMatchPos(+WIDGET, +ITEM, -POSITIONLIST)
+     WIDGET:     Widget
+     ITEM:       XmString
+     POSITIONLIST:       IntegerList
+
+     xmListGetSelectedPos(+WIDGET, -POSITIONLIST)
+     WIDGET:     Widget
+     POSITIONLIST:       IntegerList
+
+     xmListItemExists(+WIDGET, +ITEM)
+     WIDGET:     Widget
+     ITEM:       XmString
+
+     xmListItemPos(+WIDGET, +ITEM, -POSITION)
+     WIDGET:     Widget
+     ITEM:       XmString
+     POSITION:   Integer
+
+     xmListPosSelected(+WIDGET, +POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmListPosToBounds(+WIDGET, +POSITION, -X, -Y, -WIDTH, -HEIGHT)
+     WIDGET:     Widget
+     POSITION:   Integer
+     X:  Integer
+     Y:  Integer
+     WIDTH:      Integer
+     HEIGHT:     Integer
+
+     xmListReplaceItems(+WIDGET, +OLDITEMS, +NEWITEMS)
+     WIDGET:     Widget
+     OLDITEMS:   XmStringTable
+     NEWITEMS:   XmStringTable
+
+     xmListReplaceItemsPos(+WIDGET, +NEWITEMS, +POSITION)
+     WIDGET:     Widget
+     NEWITEMS:   XmStringTable
+     POSITION:   Integer
+
+     xmListReplaceItemsPosUnselected(+WIDGET, +NEWITEMS, +POSITION)
+     WIDGET:     Widget
+     NEWITEMS:   XmStringTable
+     POSITION:   Integer
+
+     xmListReplaceItemsUnselected(+WIDGET, +OLDITEMS, +NEWITEMS)
+     WIDGET:     Widget
+     OLDITEMS:   XmStringTable
+     NEWITEMS:   XmStringTable
+
+     xmListReplacePositions(+WIDGET, +POSLIST, +NEWITEMS)
+     WIDGET:     Widget
+     POSLIST:    IntegerList
+     NEWITEMS:   XmStringTable
+
+     xmListSelectItem(+WIDGET, +ITEM, +NOTIFY)
+     WIDGET:     Widget
+     ITEM:       XmString
+     NOTIFY:     Boolean
+
+     xmListSelectPos(+WIDGET, +POSITION, +NOTIFY)
+     WIDGET:     Widget
+     POSITION:   Integer
+     NOTIFY:     Boolean
+
+     xmListSetAddMode(+WIDGET, +STATE)
+     WIDGET:     Widget
+     STATE:      Boolean
+
+     xmListSetBottomItem(+WIDGET, +ITEM)
+     WIDGET:     Widget
+     ITEM:       XmString
+
+     xmListSetBottomPos(+WIDGET, +POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmListSetHorizPos(+WIDGET, +POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmListSetItem(+WIDGET, +ITEM)
+     WIDGET:     Widget
+     ITEM:       XmString
+
+     xmListSetKbdItemPos(+WIDGET, +POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmListSetPos(+WIDGET, +POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmListUpdateSelectedList(+WIDGET)
+     WIDGET:     Widget
+
+     xmListYToPos(+WIDGET, +Y, -POSITION)
+     WIDGET:     Widget
+     Y:  Position
+     POSITION:   Integer
+
+     xmMainWindowSep1(+MAINWINDOW, -SEPARATOR1)
+     MAINWINDOW: Widget
+     SEPARATOR1: Widget
+
+     xmMainWindowSep2(+MAINWINDOW, -SEPARATOR2)
+     MAINWINDOW: Widget
+     SEPARATOR2: Widget
+
+     xmMainWindowSep3(+MAINWINDOW, -SEPARATOR3)
+     MAINWINDOW: Widget
+     SEPARATOR3: Widget
+
+     xmMainWindowSetAreas(+MAINWINDOW, +MENUBAR, +COMMANDWINDOW,
+              +HORIZONTALSCROLLBAR, +VERTICALSCROLLBAR, +WORKREGION)
+     MAINWINDOW: Widget
+     MENUBAR:    Widget
+     COMMANDWINDOW:      Widget
+     HORIZONTALSCROLLBAR:        Widget
+     VERTICALSCROLLBAR:  Widget
+     WORKREGION: Widget
+
+     xmMapSegmentEncoding(+FONTLISTTAG,-ENCODING)
+     FONTLISTTAG:        XmFontListTag
+     ENCODING:   String
+
+     xmMenuPosition(+MENU, +EVENT)
+     MENU:       Widget
+     EVENT:      XEvent
+
+     xmMessageBoxGetChild(+MESSAGEBOX, +CHILDTYPE, -CHILD)
+     MESSAGEBOX: Widget
+     CHILDTYPE:  XmChildType
+     CHILD:      Widget
+
+     xmOptionButtonGadget(+OPTIONMENU, -BUTTONGADGET)
+     OPTIONMENU: Widget
+     BUTTONGADGET:       Widget
+
+     xmOptionLabelGadget(+OPTIONMENU, -LABELGADGET)
+     OPTIONMENU: Widget
+     LABELGADGET:        Widget
+
+     xmProcessTraversal(+WIDGET,+DIRECTION)
+     WIDGET:     Widget
+     DIRECTION:  XmTraversalDirection
+
+     xmRegisterSegmentEncoding(+FONTLISTTAG,+ENCODING,-NEWTAG)
+     FONTLISTTAG:        XmFontListTag
+     ENCODING:   String
+     NEWTAG:     XmFontListTag
+
+     xmRemoveProtocolCallback(+SHELL,+PROPERTY,+PROTOCOL,+CALLBACK,+CLIENTDATA)
+     SHELL:      Widget
+     PROPERTY:   XAtom
+     PROTOCOL:   XAtom
+     CALLBACK:   CallbackProc
+     CLIENTDATA: AnyTerm
+
+     xmRemoveProtocols(+SHELL,+PROPERTY,+PROTOCOLS)
+     SHELL:      Widget
+     PROPERTY:   XAtom
+     PROTOCOLS:  XAtomList
+
+     xmRemoveTabGroup(+TABGROUP)
+     TABGROUP:   Widget
+
+     xmRemoveWMProtocolCallback(+SHELL,+PROTOCOL,+CALLBACK,+CLIENTDATA)
+     SHELL:      Widget
+     PROTOCOL:   XAtom
+     CALLBACK:   CallbackProc
+     CLIENTDATA: AnyTerm
+
+     xmRemoveWMProtocols(+SHELL,+PROTOCOLS)
+     SHELL:      Widget
+     PROTOCOLS:  XAtomList
+
+     xmRepTypeAddReverse(+REPTYPEID)
+     REPTYPEID:  XmRepTypeId
+
+     xmRepTypeGetId(+REPTYPE, -REPTYPEID)
+     REPTYPE:    String
+     REPTYPEID:  XmRepTypeId
+
+     xmRepTypeGetNameList(+REPTYPEID, USEUC, -NAMELIST)
+     REPTYPEID:  XmRepTypeId
+     USEUC:      Boolean
+     NAMELIST:   StringTable
+
+     xmRepTypeGetRecord(+REPTYPEID, -REPTYPERECORD)
+     REPTYPEID:  XmRepTypeId
+     REPTYPERECORD:      XmRepTypeEntry
+
+     xmRepTypeGetRegistered(-REPTYPELIST)
+     REPTYPELIST:        XmRepTypeList
+
+     xmRepTypeInstallTearOffModelConverter
+
+     xmRepTypeRegister(+REPTYPE, +VALUENAMES, -REPTYPEID)
+     REPTYPE:    String
+     VALUENAMES: StringTable
+     REPTYPEID:  XmRepTypeId
+
+     xmRepTypeValidValue(+REPTYPEID, +TESTVALUE, +ENABLEWARNING)
+     REPTYPEID:  XmRepTypeId
+     TESTVALUE:  Integer
+     ENABLEWARNING:      Widget
+
+     xmScaleGetValue(+WIDGET, -VALUE)
+     WIDGET:     Widget
+     VALUE:      Integer
+
+     xmScaleSetValue(+WIDGET, +VALUE)
+     WIDGET:     Widget
+     VALUE:      Integer
+
+     xmScrollBarGetValues(+WIDGET, -VALUE, -SLIDERSIZE, -INCREMENT,
+              -PAGEINCREMENT)
+     WIDGET:     Widget
+     VALUE:      Integer
+     SLIDERSIZE: Integer
+     INCREMENT:  Integer
+     PAGEINCREMENT:      Integer
+
+     xmScrollBarSetValues(+WIDGET, -VALUE, -SLIDERSIZE, -INCREMENT,
+              -PAGEINCREMENT,-NOTIFY)
+     WIDGET:     Widget
+     VALUE:      Integer
+     SLIDERSIZE: Integer
+     INCREMENT:  Integer
+     PAGEINCREMENT:      Integer
+     NOTIFY:     Boolean
+
+     xmScrollVisible(+SCROLLWIDGET,+WIDGET,+LRMARGIN,+TOPBTMMARGIN)
+     SCROLLWIDGET:       Widget
+     WIDGET:     Widget
+     LRMARGIN:   Dimension
+     TOPBTMMARGIN:       Dimension
+
+     xmScrolledWindowSetAreas(+WIDGET,+MENUBAR,+HORIZONTALSCROLLBAR,
+              +VERTICALSCROLLBAR,+WORKREGION)
+     WIDGET:     Widget
+     HORIZONTALSCROLLBAR:        Widget
+     VERTICALSCROLLBAR:  Widget
+     WORKREGION: Widget
+
+     xmSelectionBoxGetChild(+WIDGET,+CHILDTYPE,-CHILD)
+     WIDGET:     Widget
+     CHILDTYPE:  XmChildType
+     CHILD:      Widget
+
+     xmSetColorCalculation(+COLORPROC, -PREVPROC)
+     COLORPROC:  CallbackProc
+     PREVPROC:   CallbackProc
+
+     xmSetFontUnit(+DISPLAY, +FONTUNITVALUE)
+     DISPLAY:    Display
+     FONTUNITVALUE:      Integer
+
+     xmSetFontUnits(+DISPLAY, +HVALUE, +VVALUE)
+     DISPLAY:    Display
+     HVALUE:     Integer
+     VVALUE:     Integer
+
+     xmSetMenuCursor(+DISPLAY, +CURSOR)
+     DISPLAY:    Display
+     CURSORID    Cursor
+
+     xmSetProtocolHooks(+SHELL,+PROPERTY,+PROTOCOL,+PREHOOK,
+                  +PREHOOKDATA,+POSTHOOK,+POSTHOOKDATA)
+     SHELL:      Widget
+     PROPERTY:   XAtom
+     PROTOCOL:   XAtom
+     PREHOOK:    CallbackProc
+     PREHOOKDATA:        AnyTerm
+     POSTHOOK:   CallbackProc
+     POSTHOOKDATA:       AnyTerm
+
+     xmSetWMProtocolHooks(+SHELL,+PROTOCOL,+PREHOOK,
+                  +PREHOOKDATA,+POSTHOOK,+POSTHOOKDATA)
+     SHELL:      Widget
+     PROTOCOL:   XAtom
+     PREHOOK:    CallbackProc
+     PREHOOKDATA:        AnyTerm
+     POSTHOOK:   CallbackProc
+     POSTHOOKDATA:       AnyTerm
+
+     xmStringBaseline(+FONTLIST, +STRING, -BASELINE)
+     FONTLIST:   XmFontList
+     STRING:     XmString
+     BASELINE:   Dimension
+
+     xmStringByteCompare(+STRING1, +STRING2)
+     STRING1:    XmString
+     STRING2:    XmString
+
+     xmStringCompare(+STRING1, +STRING2)
+     STRING1:    XmString
+     STRING2:    XmString
+
+     xmStringConcat(+STRING1, +STRING2, -RESULTSTRING)
+     STRING1:    XmString
+     STRING2:    XmString
+     RESULTSTRING:       XmString
+
+     xmStringCopy(+STRING, -RESULTSTRING)
+     STRING:     XmString
+     RESULTSTRING:       XmString
+
+     xmStringCreate(+TEXT, +TAG, -STRING)
+     TEXT:       String
+     TAG:        XmFontListTag
+     STRING:     XmString
+
+     xmStringCreateLocalized(+TEXT, -STRING)
+     TEXT:       String
+     STRING:     XmString
+
+     xmStringCreateLtoR(+TEXT, +TAG, -STRING)
+     TEXT:       String
+     TAG:        XmFontListTag
+     STRING:     XmString
+
+     xmStringCreateSimple(+TEXT, -STRING)
+     TEXT:       String
+     STRING:     XmString
+
+     xmStringDirectionCreate(+DIRECTION, -STRING)
+     DIRECTION:  XmStringDirection
+     STRING:     XmString
+
+     xmStringDraw(+DISPLAY,+WINDOW,+FONTLIST,+STRING,+GC,
+              +X,+Y,+WIDTH,+ALIGNMENT,+LAYOUTDIRECTION,+CLIP)
+     DISPLAY:    Display
+     WINDOW:     Window
+     FONTLIST:   XmFontList
+     STRING:     XmString
+     GC: XGC
+     X:  Position
+     Y:  Position
+     WIDTH:      Dimension
+     ALIGNMENT:  XmAlignment
+     LAYOUTDIRECTION:    XmStringDirection
+     CLIP:       XRectangle
+
+     xmStringDrawImage(+DISPLAY,+WINDOW,+FONTLIST,+STRING,+GC,
+              +X,+Y,+WIDTH,+ALIGNMENT,+LAYOUTDIRECTION,+CLIP)
+     DISPLAY:    Display
+     WINDOW:     Window
+     FONTLIST:   XmFontList
+     STRING:     XmString
+     GC: XGC
+     X:  Position
+     Y:  Position
+     WIDTH:      Dimension
+     ALIGNMENT:  XmAlignment
+     LAYOUTDIRECTION:    XmStringDirection
+     CLIP:       XRectangle
+
+     xmStringDrawUnderline(+DISPLAY,+WINDOW,+FONTLIST,+STRING,+GC,
+              +X,+Y,+WIDTH,+ALIGNMENT,+LAYOUTDIRECTION,+CLIP,+UNDERLINE)
+     DISPLAY:    Display
+     WINDOW:     Window
+     FONTLIST:   XmFontList
+     STRING:     XmString
+     GC: XGC
+     X:  Position
+     Y:  Position
+     WIDTH:      Dimension
+     ALIGNMENT:  XmAlignment
+     LAYOUTDIRECTION:    XmStringDirection
+     CLIP:       XRectangle
+     UNDERLINE:  XmString
+
+     xmStringEmpty(+STRING)
+     STRING:     XmString
+
+     xmStringExtent(+FONTLIST, +STRING, +WIDTH, +HEIGHT)
+     FONTLIST:   XmFontList
+     STRING:     XmString
+     WIDTH:      Dimension
+     HEIGHT:     Dimension
+
+     xmStringFree(+STRING)
+     STRING:     XmString
+
+     xmStringFreeContext(+CONTEXT)
+     CONTEXT:    XmStringContext
+
+     xmStringGetLtoR(+STRING, +TAG, -TEXT)
+     STRING:     XmString
+     TAG:        XmFontListTag
+     TEXT:       String
+
+     xmStringGetNextComponent(+CONTEXT, -TEXT, -TAG,
+              -DIRECTION, -UNKNOWNTAG, -UNKNOWNLENGTH, -UNKNOWNVALUE, -RESULT)
+     CONTEXT:    XmStringContext
+     TEXT:       String
+     TAG:        XmFontListTag
+     DIRECTION:  XmStringDirection
+     UNKNOWNTAG: XmStringComponentType
+     UNKNOWNLENGTH       Integer
+     UNKNOWNVALUE:       String
+     RESULT:     XmStringComponentType
+
+     xmStringGetNextSegment(+CONTEXT, -TEXT, -TAG,
+              -DIRECTION, -SEPARATOR)
+     CONTEXT:    XmStringContext
+     TEXT:       String
+     TAG:        XmFontListTag
+     DIRECTION:  XmStringDirection
+     SEPARATOR:  Boolean
+
+     xmStringHasSubstring(+STRING, +SUBSTRING)
+     STRING:     XmString
+     SUBSTRING:  XmString
+
+     xmStringHeight(+FONTLIST, +STRING, -HEIGHT)
+     FONTLIST:   XmFontList
+     STRING:     XmString
+     HEIGHT::    Dimension
+
+     xmStringInitContext(-CONTEXT, +STRING)
+     CONTEXT:    XmStringContext
+     STRING:     XmString
+
+     xmStringLength(+STRING, -LENGTH)
+     STRING:     XmString
+     LENGTH:     Integer
+
+     xmStringLineCount(+STRING, -LINES)
+     STRING:     XmString
+     LINES:      Integer
+
+     xmStringNConcat(+STRING1, +STRING2, -NUMBYTES, -RESULTSTRING)
+     STRING1:    XmString
+     STRING2:    XmString
+     NUMBYTES:   Integer
+     RESULTSTRING:       XmString
+
+     xmStringNCopy(+STRING,+NUMBYTES, -RESULTSTRING)
+     STRING:     XmString
+     NUMBYTES:   Integer
+     RESULTSTRING:       XmString
+
+     xmStringPeekNextComponent(+STRINGCONTEXT, -COMPONENT)
+     STRINGCONTEXT:      XmStringContext
+     COMPONENT:  XmStringComponentType
+
+     xmStringSegmentCreate(+TEXT, +TAG, +DIRECTION, +SEPARATOR, -STRING)
+     TEXT:       String
+     TAG:        XmFontListTag
+     DIRECTION:  XmStringDirection
+     SEPARATOR:  Boolean
+     STRING:     XmString
+
+     xmStringSeparatorCreate(-SEPARATOR)
+     SEPARATOR:  XmString
+
+     xmStringWidth(+FONTLIST, +STRING, -WIDTH)
+     FONTLIST:   XmFontList
+     STRING:     XmString
+     WIDTH:      Dimension
+
+     xmTargetsAreCompatible(+DISPLAY,+EXPORTTARGETS,+IMPORTTARGETS)
+     DISPLAY:    Display
+     EXPORTTARGETS:      XAtomList
+     IMPORTTARGETS:      XAtomList
+
+     xmTextClearSelection(+WIDGET, +TIME)
+     WIDGET:     Widget
+     TIME:       Time
+
+     xmTextCopy(+WIDGET,+TIME)
+     WIDGET:     Widget
+     TIME:       Time
+
+     xmTextCut(+WIDGET,+TIME)
+     WIDGET:     Widget
+     TIME:       Time
+
+     xmTextDisableRedisplay(+WIDGET)
+     WIDGET:     Widget
+
+     xmTextEnableRedisplay(+WIDGET)
+     WIDGET:     Widget
+
+     xmTextFieldClearSelection(+WIDGET,+TIME)
+     WIDGET:     Widget
+     TIME:       Time
+
+     xmTextFieldCopy(+WIDGET,+TIME)
+     WIDGET:     Widget
+     TIME:       Time
+
+     xmTextFieldCut(+WIDGET,+TIME)
+     WIDGET:     Widget
+     TIME:       Time
+
+     xmTextFieldGetBaseline(+WIDGET,-POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmTextFieldGetCursorPosition(+WIDGET,-POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextFieldGetEditable(+WIDGET)
+     WIDGET:     Widget
+
+     xmTextFieldGetInsertionPosition(+WIDGET,-POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextFieldGetLastPosition(+WIDGET,-POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextFieldGetMaxLength(+WIDGET,-LENGTH)
+     WIDGET:     Widget
+     LENGTH:     Integer
+
+     xmTextFieldGetSelection(+WIDGET,-SELECTION)
+     WIDGET:     Widget
+     SELECTION:  String
+
+     xmTextFieldGetSelectionPosition(+WIDGET,-LEFT,-RIGHT)
+     WIDGET:     Widget
+     LEFT:       XmTextPosition
+     RIGHT:      XmTextPosition
+
+     xmTextFieldGetSelectionWcs(+WIDGET,-SELECTION)
+     WIDGET:     Widget
+     SELECTION:  XmValueWcs
+
+     xmTextFieldGetString(+WIDGET,-TEXT)
+     WIDGET:     Widget
+     TEXT:       String
+
+     xmTextFieldGetStringWcs(+WIDGET,-TEXT)
+     WIDGET:     Widget
+     TEXT:       XmValueWcs
+
+     xmTextFieldGetSubstring(+WIDGET,+START,+LENGTH,-TEXT,-STATUS)
+     WIDGET:     Widget
+     START:      XmTextPosition
+     LENGTH:     Integer
+     TEXT:       String
+     STATUS:     CopyStatus
+
+     xmTextFieldGetSubstringWcs(+WIDGET,+START,+LENGTH,-TEXT,-STATUS)
+     WIDGET:     Widget
+     START:      XmTextPosition
+     LENGTH:     Integer
+     TEXT:       XmValueWcs
+     STATUS:     CopyStatus
+
+     xmTextFieldInsert(+WIDGET,+POSITION,+VALUE)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+     VALUE:      String
+
+     xmTextFieldInsertWcs(+WIDGET,+POSITION,+VALUE)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+     VALUE:      XmValueWcs
+
+     xmTextFieldPaste(+WIDGET)
+     WIDGET:     Widget
+
+     xmTextFieldPosToXY(+WIDGET,+POSITION,-X,-Y)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+     X:  Position
+     Y:  Position
+
+     xmTextFieldRemove(+WIDGET)
+     WIDGET:     Widget
+
+     xmTextFieldReplace(+WIDGET,+FROMPOS,+TOPOS,+TEXT)
+     WIDGET:     Widget
+     FROMPOS:    XmTextPosition
+     TOPOS:      XmTextPosition
+     TEXT:       String
+
+     xmTextFieldReplaceWcs(+WIDGET,+FROMPOS,+TOPOS,+TEXT)
+     WIDGET:     Widget
+     FROMPOS:    XmTextPosition
+     TOPOS:      XmTextPosition
+     TEXT:       XmValueWcs
+
+     xmTextFieldSetAddMode(+WIDGET,+STATE)
+     WIDGET:     Widget
+     STATE:      Boolean
+
+     xmTextFieldSetCursorPosition(+WIDGET,+POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextFieldSetEditable(+WIDGET,+EDITABLE)
+     WIDGET:     Widget
+     EDITABLE:   Boolean
+
+     xmTextFieldSetHighlight(+WIDGET,+LEFT,+RIGHT,+MODE)
+     WIDGET:     Widget
+     LEFT:       XmTextPosition
+     RIGHT:      XmTextPosition
+     MODE:       XmHighlightMode
+
+     xmTextFieldSetInsertionPosition(+WIDGET,+POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextFieldSetMaxLength(+WIDGET,+MAXLENGTH)
+     WIDGET:     Widget
+     MAXLENGTH:  Integer
+
+     xmTextFieldSetSelection(+WIDGET,+FIRST,+LAST,+TIME)
+     WIDGET:     Widget
+     FIRST:      XmTextPosition
+     LAST:       XmTextPosition
+     TIME:       Time
+
+     xmTextFieldSetString(+WIDGET,+STRING)
+     WIDGET:     Widget
+     STRING:     String
+
+     xmTextFieldSetStringWcs(+WIDGET,+STRING)
+     WIDGET:     Widget
+     STRING:     XmValueWcs
+
+     xmTextFieldShowPosition(+WIDGET,+POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextFieldXYToPos(+WIDGET,+X,+Y,-POSITION)
+     WIDGET:     Widget
+     X:  Position
+     Y:  Position
+     POSITION:   XmTextPosition
+
+     xmTextFindString(+WIDGET,+START,+STRING,+DIRECTION,-POSITION)
+     WIDGET:     Widget
+     START:      XmTextPosition
+     STRING:     String
+     DIRECTION:  XmTextDirection
+     POSITION:   XmTextPosition
+
+     xmTextFindStringWcs(+WIDGET,+START,+STRING,+DIRECTION,-POSITION)
+     WIDGET:     Widget
+     START:      XmTextPosition
+     STRING:     XmValueWcs
+     DIRECTION:  XmTextDirection
+     POSITION:   XmTextPosition
+
+     xmTextGetBaseline(+WIDGET,-POSITION)
+     WIDGET:     Widget
+     POSITION:   Integer
+
+     xmTextGetCursorPosition(+WIDGET,-POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextGetEditable(+WIDGET)
+     WIDGET:     Widget
+
+     xmTextGetInsertionPosition(+WIDGET, -POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextGetLastPosition(+WIDGET, -POSITION)
+     WIDGET:     Widget
+     LASTPOSITION:       XmTextPosition
+
+     xmTextGetMaxLength(+WIDGET, -LENGTH)
+     WIDGET:     Widget
+     LENGTH:     Integer
+
+     xmTextGetSelection(+WIDGET, -SELECTION)
+     WIDGET:     Widget
+     SELECTION:  String
+
+     xmTextGetSelectionPosition(+WIDGET, -LEFT, -RIGHT, -SUCCESS)
+     WIDGET:     Widget
+     LEFT:       XmTextPosition
+     RIGHT:      XmTextPosition
+     SUCCESS:    Boolean
+
+     xmTextGetSelectionWcs(+WIDGET,-SELECTION)
+     WIDGET:     Widget
+     SELECTION:  XmValueWcs
+
+     xmTextGetSource(+WIDGET,-SOURCE)
+     WIDGET:     Widget
+     SOURCE:     XmTextSource
+
+     xmTextGetString(+WIDGET,-TEXT)
+     WIDGET:     Widget
+     TEXT:       String
+
+     xmTextGetStringWcs(+WIDGET,-TEXT)
+     WIDGET:     Widget
+     TEXT:       XmValueWcs
+
+     xmTextGetSubstring(+WIDGET,+START,+LENGTH,-TEXT,-STATUS)
+     WIDGET:     Widget
+     START:      XmTextPosition
+     LENGTH:     Integer
+     TEXT:       String
+     STATUS:     CopyStatus
+
+     xmTextGetSubstringWcs(+WIDGET,+START,+LENGTH,-TEXT,-STATUS)
+     WIDGET:     Widget
+     START:      XmTextPosition
+     LENGTH:     Integer
+     TEXT:       XmValueWcs
+     STATUS:     CopyStatus
+
+     xmTextGetTopCharacter(+WIDGET, -POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextInsert(+WIDGET,+POSITION,+VALUE)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+     VALUE:      String
+
+     xmTextInsertWcs(+WIDGET,+POSITION,+VALUE)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+     VALUE:      XmValueWcs
+
+     xmTextPaste(+WIDGET)
+     WIDGET:     Widget
+
+     xmTextPosToXY(+WIDGET, +POSITION, -X, -Y)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+     X:  Position
+     Y:  Position
+
+     xmTextRemove(+WIDGET)
+     WIDGET:     Widget
+
+     xmTextReplace(+WIDGET,+FROMPOS,+TOPOS,+TEXT)
+     WIDGET:     Widget
+     FROMPOS:    XmTextPosition
+     TOPOS:      XmTextPosition
+     TEXT:       String
+
+     xmTextReplaceWcs(+WIDGET,+FROMPOS,+TOPOS,+TEXT)
+     WIDGET:     Widget
+     FROMPOS:    XmTextPosition
+     TOPOS:      XmTextPosition
+     TEXT:       XmValueWcs
+
+     xmTextScroll(+WIDGET, +LINES)
+     WIDGET:     Widget
+     LINES:      Integer
+
+     xmTextSetAddMode(+WIDGET,+STATE)
+     WIDGET:     Widget
+     STATE:      Boolean
+
+     xmTextSetCursorPosition(+WIDGET,+POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextSetEditable(+WIDGET, +EDITABLE)
+     WIDGET:     Widget
+     EDITABLE:   Boolean
+
+     xmTextSetHighlight(+WIDGET,+LEFT,+RIGHT,+MODE)
+     WIDGET:     Widget
+     LEFT:       XmTextPosition
+     RIGHT:      XmTextPosition
+     MODE:       XmHighlightMode
+
+     xmTextSetInsertionPosition(+WIDGET, +POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextSetMaxLength(+WIDGET, +MAXLENGTH)
+     WIDGET:     Widget
+     MAXLENGTH:  Integer
+
+     xmTextSetSelection(+WIDGET, +FIRST, +LAST, +TIME)
+     WIDGET:     Widget
+     FIRST:      XmTextPosition
+     LAST:       XmTextPosition
+     TIME:       Time
+
+     xmTextSetSource(+WIDGET, +SOURCE, +TOPCHAR, +CURSORPOS)
+     WIDGET:     Widget
+     SOURCE:     XmTextSource
+     TOPCHAR:    XmTextPosition
+     CURSORPOS:  XmTextPosition
+
+     xmTextSetString(+WIDGET, +STRING)
+     WIDGET:     Widget
+     STRING:     String
+
+     xmTextSetStringWcs(+WIDGET, +STRING)
+     WIDGET:     Widget
+     STRING:     XmValueWcs
+
+     xmTextSetTopCharacter(+WIDGET, +POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextShowPosition(+WIDGET,+POSITION)
+     WIDGET:     Widget
+     POSITION:   XmTextPosition
+
+     xmTextXYToPos(+WIDGET, +X, +Y, -POSITION)
+     WIDGET:     Widget
+     X:  Position
+     Y:  Position
+     POSITION:   XmTextPosition
+
+     xmToggleButtonGadgetGetState(+GADGET)
+     GADGET:     Widget
+
+     xmToggleButtonGadgetSetState(+GADGET,+STATE,+NOTIFY)
+     GADGET:     Widget
+     STATE:      Boolean
+     NOTIFY:     Boolean
+
+     xmToggleButtonGetState(+WIDGET)
+     WIDGET:     Widget
+
+     xmToggleButtonSetState(+WIDGET, +STATE, +NOTIFY)
+     WIDGET:     Widget
+     STATE:      Boolean
+     NOTIFY:     Boolean
+
+     xmTrackingEvent(+WIDGET, +CURSOR, +CONFINETO, -EVENT, -RESULT)
+     WIDGET:     Widget
+     CURSOR:     Cursor
+     CONFINETO:  Boolean
+     EVENT:      XEvent
+     RESULT:     Widget
+
+     xmTrackingLocate(+WIDGET, +CURSOR, +CONFINETO, -EVENT, -RESULT)
+     WIDGET:     Widget
+     CURSOR:     Cursor
+     CONFINETO:  Boolean
+     RESULT:     Widget
+
+     xmTranslateKey(+DISPLAY,+KEYCODE,+MODIFIERS, -MODIFIERSRTN,-KEYSYM)
+     WIDGET:     Widget
+     KEYCODE:    Integer
+     MODIFIERS:  Integer
+     MODIFIERSRTN:       Integer
+     KEYSYM:     KeySym
+
+     xmUninstallImage(+IMAGE)
+     IMAGE:      XImage
+
+     xmUpdateDisplay(+WIDGET)
+     WIDGET:     Widget
+
+     xmWidgetGetBaselines(+WIDGET, -BASELINES, -LINECOUNT)
+     WIDGET:     Widget
+     BASELINES:  IntegerList
+     LINECOUNT:  Integer
+
+     xmWidgetGetDisplayRect(+WIDGET, -RECTANGLE)
+     WIDGET:     Widget
+     RECTANGLE:  XRectangle
+

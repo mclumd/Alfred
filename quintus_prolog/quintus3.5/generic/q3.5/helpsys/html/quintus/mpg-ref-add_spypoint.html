@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>add_spypoint/1</code> <dfn>development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>add_spypoint</code><var>(+SpySpec)</var>
+
+   <p>sets a spypoint on the specified predicate or call.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>SpySpec</var> <dfn>compound</dfn>
+     <dd>a specification of an individual spypoint.  Two forms
+of <var>spyspec</var> are allowed:
+
+          <dl>
+
+          <br><dt><code>predicate(</code><var>Pred</var><code>)</code>
+          <dd>
+A spypoint on any call to <var>Pred</var>. <var>Pred</var> must be a skeletal
+predicate specification, and may be module qualified.
+
+          <br><dt><code>call(</code><var>Caller</var><code>,</code><var>Clausenum</var><code>,</code><var>Callee</var><code>,</code><var>Callnum</var><code>)</code>
+          <dd>
+A spypoint on the <var>Callnum</var> call to <var>Callee</var> in the body of
+the <var>Clausenum</var> clause of <var>Caller</var>. <var>Callee</var> and
+<var>Caller</var> must be skeletal predicate specifications. 
+<var>Callnum</var> and <var>Clausenum</var> must be
+integers, and begin counting from 1.  Note that <var>Callnum</var> specifies
+a <em>lexical</em> position, that is, the number of the occurrence of
+<var>Callee</var> counting from the beginning of the body of the clause, and
+ignoring any punctuation.
+
+     </dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>add_spypoint/1</code> is used to set spypoints on predicates or
+on specific calls to predicates while debugging.
+
+   <p><code>add_spypoint/1</code> does not turn on the debugger. 
+You have to explicitly turn on the debugger with a call to
+<code>debug/0</code> or <code>trace/0</code>.
+
+   <p>You can add spypoints to predicates or calls that do not exist. 
+If they later get defined the spypoints get placed.
+
+   <p>Turning off the debugger does not remove spypoints. Use
+<code>remove_spypoint/1</code> to remove these spypoints.
+
+   <p>If you are using QUI, the more convenient way to add these
+spypoints is to use the QUI based source debugger to select
+a particular goal or predicate and to use the Spypoints menu.
+
+   <p>This predicate is not supported in runtime systems.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+        <var>SpySpec</var> is not sufficiently instantiated.
+
+     <br><dt><code>type_error</code>
+     <dd>
+        <var>SpySpec</var> is not a compound term.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+        <var>SpySpec</var> is not a <code>predicate/1</code> or <code>call/4</code> term. 
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>current_spypoint/1</code>, <code>remove_spypoint/1</code>,
+<code>spy/1</code>, <code>nospy/1</code>, <code>debugging/0</code>,
+
+   <a href="dbg-bas-bas.html#dbg-bas-bas">dbg-bas-bas</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-and.html#mpg-ref-and">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-add_advice.html#mpg-ref-add_advice">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

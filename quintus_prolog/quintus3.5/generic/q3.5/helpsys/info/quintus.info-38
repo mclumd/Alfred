@@ -1,0 +1,1455 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxl-graf-cgc,  Prev: pxl-graf-cre,  Up: pxl-graf
+
+Checking GC validity
+--------------------
+
+* Menu:
+
+* pxl-graf-cgc-valid_gc::               valid_gc/1
+* pxl-graf-cgc-ensure_valid_gc::        ensure_valid_gc/2
+* pxl-graf-cgc-valid_gcable::           valid_gcable/2
+* pxl-graf-cgc-ensure_valid_gcable::    ensure_valid_gcable/3
+
+   The following primitives may be used to check whether a gc or a
+gcable is valid, and to find the gc associated with a gcable.
+
+
+File: quintus.info,  Node: pxl-graf-cgc-valid_gc,  Next: pxl-graf-cgc-ensure_valid_gc,  Up: pxl-graf-cgc
+
+`valid_gc/1'
+............
+
+     valid_gc(+GC)
+
+   GC is a valid gc.  I.e., it has not been destroyed.
+
+
+File: quintus.info,  Node: pxl-graf-cgc-ensure_valid_gc,  Next: pxl-graf-cgc-valid_gcable,  Prev: pxl-graf-cgc-valid_gc,  Up: pxl-graf-cgc
+
+`ensure_valid_gc/2'
+...................
+
+     ensure_valid_gc(+GC, +GOAL)
+
+   GC is a valid gc.  If it's not, an error message mentioning GOAL is
+printed, and execution is aborted.
+
+
+File: quintus.info,  Node: pxl-graf-cgc-valid_gcable,  Next: pxl-graf-cgc-ensure_valid_gcable,  Prev: pxl-graf-cgc-ensure_valid_gc,  Up: pxl-graf-cgc
+
+`valid_gcable/2'
+................
+
+     `valid_gcable(+GCABLE, -GC)'
+
+   GC is a valid gcable.  I.e., it has not been destroyed.  GC is the
+real gc.
+
+
+File: quintus.info,  Node: pxl-graf-cgc-ensure_valid_gcable,  Prev: pxl-graf-cgc-valid_gcable,  Up: pxl-graf-cgc
+
+`ensure_valid_gcable/3'
+.......................
+
+     `ensure_valid_gcable(+GCABLE, -GC, +GOAL)'
+
+   GCABLE is a valid gcable.  If it's not, an error message mentioning
+GOAL is printed, and execution is aborted.  GC is the real gc.
+
+
+File: quintus.info,  Node: pxl-font,  Next: pxl-graf,  Prev: pxl-prim,  Up: pxl
+
+Fonts
+=====
+
+* Menu:
+
+* pxl-font-font::                       Font Attributes
+* pxl-font-lod::                        Loading and Unloading Fonts
+* pxl-font-find::                       Finding Font Attributes
+* pxl-font-pat::                        The Font Search Path
+* pxl-font-what::                       What Fonts Are Available?
+* pxl-font-siz::                        The Size of a String
+* pxl-font-cfnt::                       Checking Font Validity
+
+   Fonts determine how text will look when drawn in a drawable.  The set
+of fonts actually available at any time is implementation dependent.
+
+
+File: quintus.info,  Node: pxl-font-font,  Next: pxl-font-lod,  Up: pxl-font
+
+Font Attributes
+---------------
+
+   Font attributes are:
+`direction(V)'
+     Does the font draw from left to right or right to left?  This is
+     just a hint.  Possible values are `left_to_right' or
+     `right_to_left'.
+
+`min_char(V)'
+     Character code of the lowest represented character in this font.
+
+`max_char(V)'
+     Character code of highest represented character in this font.
+
+`min_charset(V)'
+     The lowest represented character set in this font.  This is an
+     integer between 0 and 255.
+
+`max_charset(V)'
+     The highest represented character set in this font.  This is an
+     integer between 0 and 255.
+
+`all_chars_exist(V)'
+     Do all characters between the `min_char' and the `max_char' in
+     character sets between the `min_charset' and the `max_charset' in
+     this font have nonzero size?  Possible values are `true' and
+     `false'.
+
+`default_char(V)'
+     The character code of the character printed for missing characters.
+
+`ascent(V)'
+     The number of pixels in the font above the base line.  This is the
+     nominal ascent for the font; some characters may write above this
+     point.
+
+`descent(V)'
+     The number of pixels in the font below at or below the base line.
+     This is the nominal ascent for the font; some characters may write
+     below this point.
+
+`height(V)'
+     The font's ascent + descent.  This is the nominal height for the
+     font; some characters may be taller.
+
+`property(N, V)'
+     V is the value of the N  property of the font.  If N is unbound,
+     backtrack through all the properties of the font.  If N is bound,
+     it should be an atom.  V will be bound to an integer.  Consult a
+     good reference on X for information about font properties.
+
+`max_lbearing(V)'
+     The maximum number of pixels left of the base point of any
+     character in this font.
+
+`max_rbearing(V)'
+     The maximum number of pixels at or to the right of the base point
+     of any character in this font.
+
+`max_width(V)'
+     The width of widest character in this font.
+
+`max_ascent(V)'
+     The largest height above baseline of any character in this font.
+
+`max_descent(V)'
+     Largest height at or the below baseline of any character in this
+     font.
+
+`min_lbearing(V)'
+     Minimum number of pixels to the left of the base point of any
+     character in this font.
+
+`min_rbearing(V)'
+     Minimum number of pixels at or to the right of the base point of
+     any character in this font.
+
+`min_width(V)'
+     Width of narrowest character in this font.
+
+`min_ascent(V)'
+     Smallest height above baseline of any character in this font.
+
+`min_descent(V)'
+     Smallest height at or below the baseline of any character in this
+     font.
+
+`char_lbearing(C, V)'
+     V is the number of pixels left of the base point for the character
+     whose character code is C.
+
+`char_rbearing(C, V)'
+     V is the number of pixels right of the base point of character C.
+
+`char_width(C, V)'
+     V is width of character C.
+
+`char_ascent(C, V)'
+     V is height above the baseline of character C.
+
+`char_descent(C, V)'
+     V is height at or below the baseline of character C.
+
+`char_height(C, V)'
+     V is the ascent plus the descent of character C.
+
+`char_attribute_bits(C, V)'
+     V is the attribute bits, represented as an integer, of character
+     C.  The meaning of the attributes is not defined by X.
+
+   Font attributes are "read only," it is not possible to change them.
+
+
+File: quintus.info,  Node: pxl-font-lod,  Next: pxl-font-find,  Prev: pxl-font-font,  Up: pxl-font
+
+Loading and Unloading Fonts
+---------------------------
+
+* Menu:
+
+* pxl-font-lod-load_font::              load_font/[2,3]
+* pxl-font-lod-release_font::           release_font/1
+
+   Before a font can be used, it must be loaded.  Then it must be
+specified as the value of the FONT graphics attribute of the
+destination drawable or the gc to be used for drawing.
+
+
+File: quintus.info,  Node: pxl-font-lod-load_font,  Next: pxl-font-lod-release_font,  Up: pxl-font-lod
+
+`load_font/[2,3]'
+.................
+
+     load_font(+NAME, -FONT)
+     load_font(+DISPLAY, +NAME, -FONT)
+
+   FONT is the font whose name is NAME living on DISPLAY, which
+defaults to the default display.
+
+
+File: quintus.info,  Node: pxl-font-lod-release_font,  Prev: pxl-font-lod-load_font,  Up: pxl-font-lod
+
+`release_font/1'
+................
+
+     release_font(+FONT)
+
+   Inform ProXL that FONT is no longer being "held onto" by the
+programmer.  As soon as no gcs refer to it, FONT will be unloaded.
+
+   _Warning_:  A font is considered to be "held onto" when it is
+created, or when it is got from a gc (e.g., by
+`get_graphics_attributes').  It is the responsibility of the programmer
+to ensure that she is not releasing a font that is being held by
+another branch of her code.  For example, If a font is created,
+asserted somewhere, and put into a gc, and later is accessed through
+the gc, the programmer _must not_ release it at this point, since it is
+still in the database and may be used.  _Be careful_.
+
+
+File: quintus.info,  Node: pxl-font-find,  Next: pxl-font-pat,  Prev: pxl-font-lod,  Up: pxl-font
+
+Finding Font Attributes
+-----------------------
+
+* Menu:
+
+* pxl-font-find-get_font_attributes::   get_font_attributes/2
+
+   It is not possible to change font attributes, only to examine them.
+
+
+File: quintus.info,  Node: pxl-font-find-get_font_attributes,  Up: pxl-font-find
+
+`get_font_attributes/2'
+.......................
+
+     get_font_attributes(+FONTABLE, +ATTRIBUTES)
+
+   ATTRIBUTES is a list of attributes of FONTABLE.
+
+
+File: quintus.info,  Node: pxl-font-pat,  Next: pxl-font-what,  Prev: pxl-font-find,  Up: pxl-font
+
+The Font Search Path
+--------------------
+
+* Menu:
+
+* pxl-font-pat-get_font_path::          get_font_path/[1,2]
+* pxl-font-pat-set_font_path::          set_font_path/[1,2]
+
+   It is possible to examine and change the path that will be searched
+when a font is to be loaded.  Notice that the font search path applies
+to _all_ clients, not just you, so setting it should be done only with
+great care.
+
+
+File: quintus.info,  Node: pxl-font-pat-get_font_path,  Next: pxl-font-pat-set_font_path,  Up: pxl-font-pat
+
+`get_font_path/[1,2]'
+.....................
+
+     get_font_path(-DIRECTORIES)
+     get_font_path(+DISPLAY, -DIRECTORIES)
+
+   DIRECTORIES is a list of Prolog atoms specifying the font search path
+for DISPLAY (defaults as usual).
+
+
+File: quintus.info,  Node: pxl-font-pat-set_font_path,  Prev: pxl-font-pat-get_font_path,  Up: pxl-font-pat
+
+`set_font_path/[1,2]'
+.....................
+
+     set_font_path(+DIRECTORIES)
+     set_font_path(+DISPLAY, +DIRECTORIES)
+
+   DIRECTORIES is a list of Prolog atoms to become the font search path
+for DISPLAY (defaults as usual).  Note this changes the search path for
+all clients using that display!
+
+
+File: quintus.info,  Node: pxl-font-what,  Next: pxl-font-siz,  Prev: pxl-font-pat,  Up: pxl-font
+
+What Fonts Are Available?
+-------------------------
+
+* Menu:
+
+* pxl-font-what-current_font::          current_font/[1,2,3,4]
+* pxl-font-what-current_font_attributes::current_font_attributes/[2,3,4,5]
+
+
+File: quintus.info,  Node: pxl-font-what-current_font,  Next: pxl-font-what-current_font_attributes,  Up: pxl-font-what
+
+`current_font/[1,2,3,4]'
+........................
+
+     current_font(-NAME)
+     current_font(+PATTERN, -NAME)
+     current_font(+LIMIT, +PATTERN, -NAME)
+     current_font(+DISPLAY, +LIMIT, +PATTERN, -NAME)
+
+   NAME is the name of a currently available font on DISPLAY (which
+defaults as usual).  If PATTERN is given, it restricts NAME to fonts
+matching it.  If LIMIT is given, it is an upper limit on the number of
+fonts that will be backtracked through (defaults to one million).
+
+
+File: quintus.info,  Node: pxl-font-what-current_font_attributes,  Prev: pxl-font-what-current_font,  Up: pxl-font-what
+
+`current_font_attributes/[2,3,4,5]'
+...................................
+
+     current_font_attributes(-NAME, +ATTRIBUTES)
+     current_font_attributes(+PATTERN, -NAME, +ATTRIBUTES)
+     current_font_attributes(+LIMIT, +PATTERN, -NAME, +ATTRIBUTES)
+     current_font_attributes(+DISPLAY, +LIMIT, +PATTERN, -NAME, +ATTRIBUTES)
+
+   This is just like `current_font/[1,2,3,4]', except that ATTRIBUTES
+is a list of attributes of the font named NAME.  The first three call
+the last with the appropriate defaults.  Any valid font attributes may
+be used in ATTRIBUTES, except for `char_' attributes.  This is a
+limitation of X11.
+
+
+File: quintus.info,  Node: pxl-font-siz,  Next: pxl-font-cfnt,  Prev: pxl-font-what,  Up: pxl-font
+
+The Size of a String
+--------------------
+
+* Menu:
+
+* pxl-font-siz-text_width::             text_width/3
+* pxl-font-siz-text_extents::           text_extents/[7,8]
+* pxl-font-siz-query_text_extents::     query_text_extents/[7,8]
+
+
+File: quintus.info,  Node: pxl-font-siz-text_width,  Next: pxl-font-siz-text_extents,  Up: pxl-font-siz
+
+`text_width/3'
+..............
+
+     text_width(+FONTABLE, +STRING, -WIDTH)
+
+   WIDTH is the width in pixels of STRING when drawn in FONTABLE.
+STRING may be either an atom or list of character codes.
+
+
+File: quintus.info,  Node: pxl-font-siz-text_extents,  Next: pxl-font-siz-query_text_extents,  Prev: pxl-font-siz-text_width,  Up: pxl-font-siz
+
+`text_extents/[7,8]'
+....................
+
+     text_extents(+FONTABLE, +STRING, -LBEARING, -RBEARING,
+                  -WIDTH, -ASCENT, -DESCENT)
+     text_extents(+FONTABLE, +STRING, -LBEARING, -RBEARING,
+                  -WIDTH, -ASCENT, -DESCENT, -ATTRIBUTE_BITS)
+
+   How much space would be occupied if STRING were drawn in in FONTABLE?
+LBEARING is the number of pixels to the left of the origin point;
+RBEARING is the number of pixels to the right of the origin point;
+ASCENT is the number of pixels above the origin point; and DESCENT is
+one greater than the number of pixels below the origin point.  The
+reason DESCENT is one greater than what you would expect is that it
+allows you to add ASCENT and DESCENT to determine the height of STRING.
+
+   STRING may be either an atom or list of character codes.
+
+
+File: quintus.info,  Node: pxl-font-siz-query_text_extents,  Prev: pxl-font-siz-text_extents,  Up: pxl-font-siz
+
+`query_text_extents/[7,8]'
+..........................
+
+     query_text_extents(+FONTABLE, +STRING, -LBEARING, -RBEARING,
+                        -WIDTH, -ASCENT, -DESCENT)
+     query_text_extents(+FONTABLE, +STRING, -LBEARING, -RBEARING,
+                        -WIDTH, -ASCENT, -DESCENT, -ATTRIBUTE_BITS)
+
+   How much space will be occupied if STRING were drawn in FONTABLE?
+LBEARING is the number of pixels to the left of the origin point;
+RBEARING is the number of pixels to the right of the origin point;
+ASCENT is the number of pixels above the origin point; and DESCENT is
+one greater than the number of pixels below the origin point.  The
+reason DESCENT is one greater than what you would expect is that it
+allows you to add ASCENT and DESCENT to determine the height of STRING.
+
+   STRING may be either an atom or list of character codes.
+
+   This differs from `text_extents' only in that it does not force ProXL
+to load the sizes of all the characters in the font from the server.
+If this information has already been loaded, `query_text_extents' will
+use it.  It is usually better to use `text_extents', since once the
+information is loaded from the server, it is _much_ faster to determine
+the size of a string.  So if you will ever want to find the size of
+another string in the same font, you should probably use `text_extents'.
+
+
+File: quintus.info,  Node: pxl-font-cfnt,  Prev: pxl-font-siz,  Up: pxl-font
+
+Checking Font Validity
+----------------------
+
+* Menu:
+
+* pxl-font-cfnt-valid_font::            valid_font/1
+* pxl-font-cfnt-ensure_valid_font::     ensure_valid_font/2
+* pxl-font-cfnt-valid_fontable::        valid_fontable/2
+* pxl-font-cfnt-ensure_valid_fontable:: ensure_valid_fontable/3
+
+   The following procedures may be used to check whether a font or
+fontable is valid, and to find the font associated with a fontable.
+
+
+File: quintus.info,  Node: pxl-font-cfnt-valid_font,  Next: pxl-font-cfnt-ensure_valid_font,  Up: pxl-font-cfnt
+
+`valid_font/1'
+..............
+
+     valid_font(+FONT)
+
+   FONT is a valid font.  I.e., it has not been destroyed.
+
+
+File: quintus.info,  Node: pxl-font-cfnt-ensure_valid_font,  Next: pxl-font-cfnt-valid_fontable,  Prev: pxl-font-cfnt-valid_font,  Up: pxl-font-cfnt
+
+`ensure_valid_font/2'
+.....................
+
+     ensure_valid_font(+FONT, +GOAL)
+
+   FONT is a valid font.  If it's not, an error message mentioning GOAL
+is printed, and execution is aborted.
+
+
+File: quintus.info,  Node: pxl-font-cfnt-valid_fontable,  Next: pxl-font-cfnt-ensure_valid_fontable,  Prev: pxl-font-cfnt-ensure_valid_font,  Up: pxl-font-cfnt
+
+`valid_fontable/2'
+..................
+
+     valid_fontable(+FONTABLE, -FONT)
+
+   FONTABLE is a valid fontable.  A fontable is either a font, or
+something from which we can determine a font.  This means a gc, or a
+window or pixmap, which have an associated gc.  FONT is the real font
+corresponding to FONTABLE.
+
+
+File: quintus.info,  Node: pxl-font-cfnt-ensure_valid_fontable,  Prev: pxl-font-cfnt-valid_fontable,  Up: pxl-font-cfnt
+
+`ensure_valid_fontable/3'
+.........................
+
+     ensure_valid_fontable(+FONTABLE, -FONT, +GOAL)
+
+   FONTABLE is a valid fontable.  If it's not, an error message
+mentioning GOAL is printed, and execution is aborted.  FONT is the real
+font corresponding to FONTABLE.
+
+
+File: quintus.info,  Node: pxl-col,  Next: pxl-crs,  Prev: pxl-wmf,  Up: pxl
+
+Colors and Colormaps
+====================
+
+* Menu:
+
+* pxl-col-cs::                          Color Specifications
+* pxl-col-vis::                         Visuals
+* pxl-col-use::                         Using Colors
+* pxl-col-alc::                         Allocating and Freeing Colors
+* pxl-col-std::                         Standard Colormaps
+* pxl-col-alccp::                       Allocating Color Cells and Planes
+* pxl-col-find::                        Finding and Changing Colors
+* pxl-col-cre::                         Creating and Freeing Colormaps
+* pxl-col-ins::                         Colormap Installation
+* pxl-col-ccmap::                       Checking Colormap Validity
+
+   This section describes several parts of the X window system related
+to color.  It describes colors:  red, green, blue triples; it describes
+colormaps:  mappings from pixel values to colors; and it describes
+visuals:  specifications of how colors will be appear physically on the
+screen.
+
+
+File: quintus.info,  Node: pxl-col-cs,  Next: pxl-col-vis,  Up: pxl-col
+
+Color Specifications
+--------------------
+
+   Colors are specified in ProXL as `color(R,G,B)' terms, where R, G,
+and B are (usually floating point) numbers between 0 and 1 inclusive.
+Alternately, a color can be specified as an atom naming a color (case
+is not significant), such as `blue' or `plum', or as an atom of the
+form `'#RGB'' or `'#RRGGBB'' or `'#RRRGGGBBB'' or `'#RRRRGGGGBBBB''
+where R, G, and B are hex digits.  For example, `'#05F'' would
+represent a color with no red, 5/15 (or 0.333333) green, and full blue.
+In `put_color' and `put_colors', RED, GREEN, and/or BLUE in a
+`color(RED,GREEN,BLUE)' term can be the atom `none', which means that
+that primary won't be changed in the colormap.
+
+   Pixel values are simply integers.
+
+
+File: quintus.info,  Node: pxl-col-vis,  Next: pxl-col-use,  Prev: pxl-col-cs,  Up: pxl-col
+
+Visuals
+-------
+
+   Visuals are Prolog terms of one of the following forms:
+
+     gray(WRITABLE, DEPTH, SIZE)
+     
+     direct_color(WRITABLE, DEPTH, SIZE,BITS_PER_RGB, RMASK, GMASK, BMASK)
+     
+     pseudo_color(WRITABLE, DEPTH, SIZE, BITS_PER_RGB)
+
+   Visual terms describe the color capability of a screen or window.  A
+`gray/3' visual means that pixel values in a window specify an entry in
+a colormap, but only one of the primary colors is actually used to
+drive the grayscale (or monochrome) display (1).  `direct_color/7' means
+that the window or screen support color hardware where separate bits in
+a pixel value specify entries in separate colormaps for each of the
+three primary colors.  `pseudo_color/4' means that each pixel value
+specifies an entry in a colormap, which specifies all three primary
+colors.  WRITABLE is either `true' or `false', indicating whether or
+not is is possible to allocate and change cells in a colormap.  DEPTH
+specifies the number of bitplanes that are supported on this screen or
+window.  SIZE is the number of user-accessible colormap entries; this
+will always be less than or equal to 2 to the power of DEPTH.
+BITS_PER_RGB is the number of bits used to specify each primary in a
+color specification.  In some sense, this is the "precision" of color
+specifications.  And finally, RMASK, GMASK, and BMASK are bit masks
+(i.e. integers) that specify which bits of a `direct_color' visual
+pixel specify the red, green, and blue primary, respectively.
+
+   ---------- Footnotes ----------
+
+   (1) X does not specify which color drives the display, so R, G and B
+should all be the same for grayscale visuals.
+
+
+File: quintus.info,  Node: pxl-col-use,  Next: pxl-col-alc,  Prev: pxl-col-vis,  Up: pxl-col
+
+Using Colors
+------------
+
+   There are five different ways you can use color in ProXL, in
+approximate order of increasing difficulty:
+  1. You can use the `black_pixel' and `white_pixel' of your screen.
+     `black_pixel' is the default foreground color, so if you don't
+     change your drawable's foreground graphics attribute, you will be
+     drawing in black.  And the default window background is its
+     screen's `white_pixel', so if you don't change that, you will be
+     drawing in black on a white background, which is often good enough.
+
+  2. You can allocate "colors".  If you want to have color images, this
+     is usually the best approach.  Allocating a color never fails,
+     even on a monochrome screen, it just gives you the _closest_ color
+     it can.  So if you ask for yellow and navy blue, you will get
+     white and black, respectively.  This allows your application to
+     run on monochrome (or grayscale) screens, as well as color.
+
+     When you allocate colors, you share these colors with other
+     applications, too.  This means that if you ask for blue, and
+     another application is already using blue, you will get the same
+     pixel value.  Obviously this is good citizenship on a color screen
+     with a limited number of pixel values available.  It also means
+     that you cannot change the color of a pixel value you get this
+     way, because it would confound the other applications using this
+     pixel value.
+
+  3. You can allocate "color cells" and "planes".  This gives you
+     private pixel values for you to play with.  You can set these
+     pixel values to any colors you like, and change them as often as
+     you like.  Allocating color planes also allows you to control the
+     actual bit patterns of the pixels you use, allowing you to do
+     sophisticated tricks with images.
+
+  4. You can use a "standard colormap".  Standard colormaps provide a
+     number of pre-selected colors, and can be shared with other
+     applications.  You must rely on your window manager to create
+     standard colormaps for you, and, unfortunately, not all window
+     managers do this.
+
+  5. You can allocate a "colormap".  While this might seem harmless
+     enough, since your color table is yours alone, and doesn't affect
+     the colormaps used by other applications, in practice few screens
+     can support more than one colormap at a time.  This means that
+     when you colormap is installed, _all the other windows on the
+     screen may display the wrong colors_.  Also, if you use a private
+     colormap, you must make sure that your colormap is installed.  In
+     theory, your window manager is responsible for installing your
+     colormap when the pointer is in your window.  In practice, few
+     window managers do this now.  This will probably change, but at
+     the moment, this is a serious problem.
+
+
+File: quintus.info,  Node: pxl-col-alc,  Next: pxl-col-std,  Prev: pxl-col-use,  Up: pxl-col
+
+Allocating and Freeing Colors
+-----------------------------
+
+* Menu:
+
+* pxl-col-alc-alloc_color::             alloc_color/[2,3,4,5]
+* pxl-col-alc-parse_color::             parse_color/[2,3]
+* pxl-col-alc-free_colors::             free_colors/[2,3]
+
+
+File: quintus.info,  Node: pxl-col-alc-alloc_color,  Next: pxl-col-alc-parse_color,  Up: pxl-col-alc
+
+`alloc_color/[2,3,4,5]'
+.......................
+
+     alloc_color(+COLOR, -PIXEL)
+     alloc_color(+COLORMAPABLE, +COLOR, -PIXEL)
+     alloc_color(+COLORMAPABLE, +COLOR, -PIXEL, -ACTUAL_COLOR)
+     alloc_color(+COLORMAPABLE, +COLOR, -PIXEL, -ACTUAL_COLOR, -EXACT_COLOR)
+
+   PIXEL is a (possibly newly allocated) pixel value for the colormap
+associated with COLORMAPABLE that is as close as possible to COLOR.
+COLOR is a color spec, as described in *Note pxl-col-cs::.
+ACTUAL_COLOR is the actual color of PIXEL in COLORMAPABLE, and
+EXACT_COLOR is the color that should have been allocated (the same as
+COLOR, if it is a `color/3' term).  COLORMAPABLE defaults to the default
+screen (which means the color is allocated in the default screen's
+default colormap).
+
+
+File: quintus.info,  Node: pxl-col-alc-parse_color,  Next: pxl-col-alc-free_colors,  Prev: pxl-col-alc-alloc_color,  Up: pxl-col-alc
+
+`parse_color/[2,3]'
+...................
+
+     parse_color(+COLOR, -EXACT_COLOR)
+     parse_color(+SCREEN, +COLOR, -EXACT_COLOR)
+
+   EXACT_COLOR is the color associated with COLOR on SCREEN (or default
+screen).  Fails if COLOR is not a valid color spec.
+
+
+File: quintus.info,  Node: pxl-col-alc-free_colors,  Prev: pxl-col-alc-parse_color,  Up: pxl-col-alc
+
+`free_colors/[2,3]'
+...................
+
+     free_colors(+COLORMAPABLE, +PIXELS)
+     free_colors(+COLORMAPABLE, +PIXELS, +PLANES)
+
+   PIXELS, a list of pixel values allocated from the colormap associated
+with COLORMAPABLE, is freed, so that those pixel values can be
+allocated later.  COLORMAPABLE defaults to the default colormap of the
+default screen.  PLANES, if supplied, is a list of plane masks, which
+is also freed.
+
+
+File: quintus.info,  Node: pxl-col-std,  Next: pxl-col-alccp,  Prev: pxl-col-alc,  Up: pxl-col
+
+Standard Colormaps
+------------------
+
+* Menu:
+
+* pxl-col-std-get_standard_colormap::   get_standard_colormap/[2,3]
+
+
+File: quintus.info,  Node: pxl-col-std-get_standard_colormap,  Up: pxl-col-std
+
+`get_standard_colormap/[2,3]'
+.............................
+
+     get_standard_colormap(+NAME, -COLORMAP)
+     get_standard_colormap(+SCREEN, +NAME, -COLORMAP)
+
+   COLORMAP is a standard colormap on SCREEN that you may use, and that
+may be shared with other applications running on the same screen.  NAME
+is the name of a standard colormap.  SCREEN defaults to the default
+screen.
+
+   These procedures rely on another program, usually the window manager,
+to actually create the standard colormaps.  If your window manager
+doesn't do this, then these procedures will report an error.
+
+
+File: quintus.info,  Node: pxl-col-alccp,  Next: pxl-col-find,  Prev: pxl-col-std,  Up: pxl-col
+
+Allocating Color Cells and Planes
+---------------------------------
+
+* Menu:
+
+* pxl-col-alccp-alloc_color_cells::     alloc_color_cells/5 and alloc_contig_color_cells/5
+* pxl-col-alccp-alloc_color_planes::    alloc_color_planes/[8,9] and alloc_contig_color_planes/[8,9]
+* pxl-col-alccp-freeing::               Freeing Color Cells and Planes
+
+
+File: quintus.info,  Node: pxl-col-alccp-alloc_color_cells,  Next: pxl-col-alccp-alloc_color_planes,  Up: pxl-col-alccp
+
+`alloc_color_cells/5' and `alloc_contig_color_cells/5'
+......................................................
+
+     alloc_color_cells(+COLORMAPABLE, +NCOLORS, -PIXELS,
+                       +NPLANES, -PLANES)
+     alloc_contig_color_cells(+COLORMAPABLE, +NCOLORS, -PIXELS,
+                             +NPLANES, -PLANES)
+
+   PIXELS is a list of NCOLORS pixel values (integers), and PLANES is a
+list of NPLANES plane masks that have been allocated from the colormap
+associated with COLORMAPABLE.  COLORMAPABLE defaults to the default
+colormap of the default screen.  For `alloc_contig_color_cells/5',
+PIXELS are sequential numbers.
+
+
+File: quintus.info,  Node: pxl-col-alccp-alloc_color_planes,  Next: pxl-col-alccp-freeing,  Prev: pxl-col-alccp-alloc_color_cells,  Up: pxl-col-alccp
+
+`alloc_color_planes/[8,9]' and `alloc_contig_color_planes/[8,9]'
+................................................................
+
+     alloc_color_planes(+NCOLORS, -PIXELS, +NREDS, +NGREENS, +NBLUES,
+                        -RMASK, -GMASK, -BMASK)
+     alloc_color_planes(+COLORMAPABLE, +NCOLORS, -PIXELS, +NREDS, +NGREENS, +NBLUES,
+                        -RMASK, -GMASK, -BMASK)
+     alloc_contig_color_planes(+NCOLORS, -PIXELS, +NREDS, +NGREENS, +NBLUES,
+                               -RMASK, -GMASK, -BMASK)
+     alloc_contig_color_planes(+COLORMAPABLE, +NCOLORS, -PIXELS, +NREDS, +NGREENS, +NBLUES,
+                               -RMASK, -GMASK, -BMASK)
+
+   PIXELS is a list of NCOLORS pixel values (integers), and RMASK,
+GMASK, and BMASK indicated NREDS, NGREENS, and NBLUES planes,
+respectively, allocated from the colormap associated with COLORMAPABLE.
+COLORMAPABLE defaults to the default colormap of the default screen.
+For `alloc_contig_color_planes/9', RMASK, GMASK, and BMASK have
+contiguous bits turned on.
+
+
+File: quintus.info,  Node: pxl-col-alccp-freeing,  Prev: pxl-col-alccp-alloc_color_planes,  Up: pxl-col-alccp
+
+Freeing Color Cells and Planes
+..............................
+
+   Color cells and planes are freed by `free_colors/[2,3]', as
+described in *Note pxl-col-alc-free_colors:: above.
+
+
+File: quintus.info,  Node: pxl-col-find,  Next: pxl-col-cre,  Prev: pxl-col-alccp,  Up: pxl-col
+
+Finding and Changing Colors
+---------------------------
+
+* Menu:
+
+* pxl-col-find-put_color::              put_color/[2,3]
+* pxl-col-find-put_colors::             put_colors/[1,2]
+* pxl-col-find-get_color::              get_color/[2,3]
+* pxl-col-find-get_colors::             get_colors/[1,2]
+
+   The colors of shared pixels cannot be changed.
+
+
+File: quintus.info,  Node: pxl-col-find-put_color,  Next: pxl-col-find-put_colors,  Up: pxl-col-find
+
+`put_color/[2,3]'
+.................
+
+     put_color(+PIXEL, +COLOR)
+     put_color(+COLORMAPABLE, +PIXEL, +COLOR)
+
+   Install COLOR as the color of PIXEL in the colormap associated with
+COLORMAPABLE.  COLOR is a color specification, as described above.
+For these procedures, colors may be specified as `color(R,G,B)' terms,
+where any of R, G, and/or B may be the atom `none', in which case this
+component of the color is not set.  COLORMAPABLE defaults to the
+default colormap of the default screen.
+
+
+File: quintus.info,  Node: pxl-col-find-put_colors,  Next: pxl-col-find-get_color,  Prev: pxl-col-find-put_color,  Up: pxl-col-find
+
+`put_colors/[1,2]'
+..................
+
+     put_colors(+PIXEL_COLORS)
+     put_colors(+COLORMAPABLE, +PIXEL_COLORS)
+
+   Install colors in the colormap associated with COLORMAPABLE as
+specified by PIXEL_COLORS.  PIXEL_COLORS is a list of PIXEL-COLOR
+terms, where COLOR is to be the color of Pixel in the colormap
+associated with COLORMAPABLE.  Color may be color specification, as
+described above.  For these procedures, colors may also be specified as
+`color(R,G,B)' terms, where any of R, G, and/or B may be the atom
+`none', in which case this component of the color is not set.
+COLORMAPABLE defaults to the default colormap of the default screen.
+
+
+File: quintus.info,  Node: pxl-col-find-get_color,  Next: pxl-col-find-get_colors,  Prev: pxl-col-find-put_colors,  Up: pxl-col-find
+
+`get_color/[2,3]'
+.................
+
+     get_color(+PIXEL, -COLOR)
+     get_color(+COLORMAP, +PIXEL, -COLOR)
+
+   COLOR is the color of PIXEL in the colormap associated with
+Colormapable.  COLOR is specified as a `color(R,G,B)' term, and PIXEL
+must be an integer.  Colormapable defaults to the default colormap of
+the default screen.
+
+
+File: quintus.info,  Node: pxl-col-find-get_colors,  Prev: pxl-col-find-get_color,  Up: pxl-col-find
+
+`get_colors/[1,2]'
+..................
+
+     get_colors(+PIXEL_COLORS)
+     get_colors(+COLORMAPABLE, +PIXEL_COLORS)
+
+   PIXEL_COLORS is a list of PIXEL-COLOR terms, where PIXEL is bound at
+call time, and COLOR will be bound to a `color(R,G,B)' term indicating
+the color of Pixel in the colormap associated with COLORMAPABLE.
+COLORMAPABLE defaults to the default colormap of the default screen.
+
+
+File: quintus.info,  Node: pxl-col-cre,  Next: pxl-col-ins,  Prev: pxl-col-find,  Up: pxl-col
+
+Creating and Freeing Colormaps
+------------------------------
+
+* Menu:
+
+* pxl-col-cre-create_colormap::         create_colormap/[1,2,3]
+* pxl-col-cre-create_colormap_and_alloc::create_colormap_and_alloc/[1,2,3]
+* pxl-col-cre-free_colormap::           free_colormap/1
+* pxl-col-cre-copy_colormap_and_free::  copy_colormap_and_free/2
+
+
+File: quintus.info,  Node: pxl-col-cre-create_colormap,  Next: pxl-col-cre-create_colormap_and_alloc,  Up: pxl-col-cre
+
+`create_colormap/[1,2,3]'
+.........................
+
+     create_colormap(-COLORMAP)
+     create_colormap(?VISUAL, -COLORMAP)
+     create_colormap(+SCREEN, ?VISUAL, -COLORMAP)
+
+   COLORMAP is a newly created colormap on SCREEN using VISUAL.  SCREEN
+defaults to the default screen.  VISUAL defaults to the SCREEN's
+default visual.
+
+
+File: quintus.info,  Node: pxl-col-cre-create_colormap_and_alloc,  Next: pxl-col-cre-free_colormap,  Prev: pxl-col-cre-create_colormap,  Up: pxl-col-cre
+
+`create_colormap_and_alloc/[1,2,3]'
+...................................
+
+     create_colormap_and_alloc(-COLORMAP)
+     create_colormap_and_alloc(+VISUAL, -COLORMAP)
+     create_colormap_and_alloc(+SCREEN, +VISUAL, -COLORMAP)
+
+   COLORMAP is a newly created colormap on SCREEN using VISUAL.  All of
+the color cells in COLORMAP are allocated for your use.  SCREEN
+defaults to the default screen.  VISUAL defaults to the default
+screen's default visual.
+
+
+File: quintus.info,  Node: pxl-col-cre-free_colormap,  Next: pxl-col-cre-copy_colormap_and_free,  Prev: pxl-col-cre-create_colormap_and_alloc,  Up: pxl-col-cre
+
+`free_colormap/1'
+.................
+
+     free_colormap(+COLORMAP)
+
+   Free COLORMAP.  If COLORMAP is the colormap of any windows, it will
+be yanked out from under them.  If COLORMAP is the default colormap of
+a screen, it is not really freed.  _Be careful_.
+
+
+File: quintus.info,  Node: pxl-col-cre-copy_colormap_and_free,  Prev: pxl-col-cre-free_colormap,  Up: pxl-col-cre
+
+`copy_colormap_and_free/2'
+..........................
+
+     copy_colormap_and_free(+OLD_CMAP, -NEW_CMAP)
+
+   NEW_CMAP is a newly allocated, non-shared, colormap containing all
+the colors you have allocated out of OLD_CMAP (which is probably
+shared).
+
+
+File: quintus.info,  Node: pxl-col-ins,  Next: pxl-col-ccmap,  Prev: pxl-col-cre,  Up: pxl-col
+
+Colormap Installation
+---------------------
+
+* Menu:
+
+* pxl-col-ins-install_colormap::        install_colormap/1
+* pxl-col-ins-uninstall_colormap::      uninstall_colormap/1
+* pxl-col-ins-installed_colormap::      installed_colormap/[1,2]
+
+   Remember, installing your own colormap is very antisocial.  This is
+the window manager's job.  But if the window manager isn't doing its
+job....
+
+
+File: quintus.info,  Node: pxl-col-ins-install_colormap,  Next: pxl-col-ins-uninstall_colormap,  Up: pxl-col-ins
+
+`install_colormap/1'
+....................
+
+     install_colormap(+COLORMAP)
+
+   Make sure COLORMAP is installed on its screen.
+
+
+File: quintus.info,  Node: pxl-col-ins-uninstall_colormap,  Next: pxl-col-ins-installed_colormap,  Prev: pxl-col-ins-install_colormap,  Up: pxl-col-ins
+
+`uninstall_colormap/1'
+......................
+
+     uninstall_colormap(+COLORMAP)
+
+   Remove COLORMAP from the required list for its screen.
+
+
+File: quintus.info,  Node: pxl-col-ins-installed_colormap,  Prev: pxl-col-ins-uninstall_colormap,  Up: pxl-col-ins
+
+`installed_colormap/[1,2]'
+..........................
+
+     installed_colormap(-COLORMAP)
+     installed_colormap(+SCREEN, -COLORMAP)
+
+   COLORMAP is a colormap that is installed on SCREEN.
+
+
+File: quintus.info,  Node: pxl-col-ccmap,  Prev: pxl-col-ins,  Up: pxl-col
+
+Checking Colormap Validity
+--------------------------
+
+* Menu:
+
+* pxl-col-ccmap-valid_colormap::        valid_colormap/1
+* pxl-col-ccmap-valid_colormapable::    valid_colormapable/2
+* pxl-col-ccmap-ensure_valid_colormap:: ensure_valid_colormap/2
+* pxl-col-ccmap-ensure_valid_colormapable::ensure_valid_colormapable/3
+
+
+File: quintus.info,  Node: pxl-col-ccmap-valid_colormap,  Next: pxl-col-ccmap-valid_colormapable,  Up: pxl-col-ccmap
+
+`valid_colormap/1'
+..................
+
+     valid_colormap(+COLORMAP)
+
+   COLORMAP is a valid colormap, which hasn't been destroyed.
+
+
+File: quintus.info,  Node: pxl-col-ccmap-valid_colormapable,  Next: pxl-col-ccmap-ensure_valid_colormap,  Prev: pxl-col-ccmap-valid_colormap,  Up: pxl-col-ccmap
+
+`valid_colormapable/2'
+......................
+
+     valid_colormapable(+COLORMAPABLE, -COLORMAP)
+
+   COLORMAPABLE is a valid colormapable, which hasn't been destroyed.
+
+
+File: quintus.info,  Node: pxl-col-ccmap-ensure_valid_colormap,  Next: pxl-col-ccmap-ensure_valid_colormapable,  Prev: pxl-col-ccmap-valid_colormapable,  Up: pxl-col-ccmap
+
+`ensure_valid_colormap/2'
+.........................
+
+     ensure_valid_colormap(+COLORMAP, +GOAL)
+
+   COLORMAP is a valid colormap.  If it's not, an error message
+mentioning GOAL is printed, and execution is aborted.
+
+
+File: quintus.info,  Node: pxl-col-ccmap-ensure_valid_colormapable,  Prev: pxl-col-ccmap-ensure_valid_colormap,  Up: pxl-col-ccmap
+
+`ensure_valid_colormapable/3'
+.............................
+
+     ensure_valid_colormapable(+COLORMAPABLE, -COLORMAP, +GOAL)
+
+   COLORMAP is the valid colormap associated with COLORMAPABLE.  If
+it's not, an error message mentioning GOAL is printed, and execution is
+aborted.
+
+
+File: quintus.info,  Node: pxl-bmp,  Next: pxl-win,  Prev: pxl-xlib,  Up: pxl
+
+Pixmaps and Bitmaps
+===================
+
+* Menu:
+
+* pxl-bmp-attr::                        Pixmap Attributes
+* pxl-bmp-find::                        Finding and Changing Pixmap Attributes
+* pxl-bmp-cre::                         Creating and Freeing Pixmaps
+* pxl-bmp-rdwr::                        Reading and Writing Bitmap Files
+* pxl-bmp-cpix::                        Checking Pixmap Validity
+
+
+File: quintus.info,  Node: pxl-bmp-attr,  Next: pxl-bmp-find,  Up: pxl-bmp
+
+Pixmap Attributes
+-----------------
+
+   Following is a list of pixmap attributes:
+`*width(W)'
+     The width of pixmap, in pixels.  Default is 100.
+
+`*height(H)'
+     The height of pixmap, in pixels.  Default is 100.
+
+`*size(W, H)'
+     The same as `width(W), height(H)'.
+
+`*depth(D)'
+     The number of bits per pixel.  Default is the screen's depth.
+
+`*screen(S)'
+     The screen on which this pixmap can be used.  Default is the
+     default screen.
+
+`gc(V)'
+     Default graphics context for drawing on this pixmap.  Default is
+     the default gc for the the pixmap's screen.
+
+   * -- starred items cannot be modified once a pixmap is created.
+
+
+File: quintus.info,  Node: pxl-bmp-find,  Next: pxl-bmp-cre,  Prev: pxl-bmp-attr,  Up: pxl-bmp
+
+Finding and Changing Pixmap Attributes
+--------------------------------------
+
+* Menu:
+
+* pxl-bmp-find-get_pixmap_attributes::  get_pixmap_attributes/[2,3]
+* pxl-bmp-find-put_pixmap_attributes::  put_pixmap_attributes/[2,3]
+
+
+File: quintus.info,  Node: pxl-bmp-find-get_pixmap_attributes,  Next: pxl-bmp-find-put_pixmap_attributes,  Up: pxl-bmp-find
+
+`get_pixmap_attributes/[2,3]'
+.............................
+
+     get_pixmap_attributes(+PIXMAP, +ATTRIBUTES)
+     get_pixmap_attributes(+PIXMAP, +ATTRIBUTES, +GRAPHICS_ATTRIBS)
+
+   ATTRIBUTES are a subset of PIXMAP's current attributes.
+GRAPHICS_ATTRIBS is a subset of PIXMAP's graphics attributes.
+
+
+File: quintus.info,  Node: pxl-bmp-find-put_pixmap_attributes,  Prev: pxl-bmp-find-get_pixmap_attributes,  Up: pxl-bmp-find
+
+`put_pixmap_attributes/[2,3]'
+.............................
+
+     put_pixmap_attributes(+PIXMAP, +ATTRIBUTES)
+     put_pixmap_attributes(+PIXMAP, +ATTRIBUTES, +GRAPHICS_ATTRIBS)
+
+   PIXMAP is modified so that ATTRIBUTES are a subset of its attributes.
+The only pixmap attribute that may be changed is its gc.  If
+GRAPHICS_ATTRIBS is specified, it is a list of graphics attributes to
+be given to the pixmap.  `put_pixmap_attributes(P,A,G)' is equivalent
+to `put_pixmap_attributes(P,A), put_graphics_attributes(P,G)', but is
+slightly more efficient.  But mainly it's more convenient.
+
+
+File: quintus.info,  Node: pxl-bmp-cre,  Next: pxl-bmp-rdwr,  Prev: pxl-bmp-find,  Up: pxl-bmp
+
+Creating and Freeing Pixmaps
+----------------------------
+
+* Menu:
+
+* pxl-bmp-cre-create_pixmap::           create_pixmap/[2,3]
+* pxl-bmp-cre-free_pixmap::             free_pixmap/1
+
+
+File: quintus.info,  Node: pxl-bmp-cre-create_pixmap,  Next: pxl-bmp-cre-free_pixmap,  Up: pxl-bmp-cre
+
+`create_pixmap/[2,3]'
+.....................
+
+     create_pixmap(-PIXMAP, +ATTRIBUTES)
+     create_pixmap(-PIXMAP, +ATTRIBUTES, +GRAPHICS_ATTRIBS)
+
+   PIXMAP is a newly created pixmap having the specified attributes.
+If GRAPHICS_ATTRIBS is given, it is a list of graphics attributes to be
+given to the pixmap.  `create_pixmap(P,A,G)' is equivalent to
+`create_pixmap(P,A), put_graphics_attributes(P,G)', but slightly more
+efficient.  But mainly it's more convenient.
+
+
+File: quintus.info,  Node: pxl-bmp-cre-free_pixmap,  Prev: pxl-bmp-cre-create_pixmap,  Up: pxl-bmp-cre
+
+`free_pixmap/1'
+...............
+
+     free_pixmap(+PIXMAP)
+
+   PIXMAP is freed.  It can no longer be used.
+
+
+File: quintus.info,  Node: pxl-bmp-rdwr,  Next: pxl-bmp-cpix,  Prev: pxl-bmp-cre,  Up: pxl-bmp
+
+Reading and Writing Bitmap Files
+--------------------------------
+
+* Menu:
+
+* pxl-bmp-rdwr-read_bitmap_file::       read_bitmap_file/[2,3,4,5]
+* pxl-bmp-rdwr-write_bitmap_file::      write_bitmap_file/[2,4]
+
+   These routines allow you to read and write files containing pixmaps
+of depth 1.  Unfortunately, there is no established file format for
+pixmaps of greater depth.
+
+
+File: quintus.info,  Node: pxl-bmp-rdwr-read_bitmap_file,  Next: pxl-bmp-rdwr-write_bitmap_file,  Up: pxl-bmp-rdwr
+
+`read_bitmap_file/[2,3,4,5]'
+............................
+
+     read_bitmap_file(+FILENAME, -PIXMAP)
+     read_bitmap_file(+FILENAME, -PIXMAP, -X_HOT, -Y_HOT)
+     read_bitmap_file(+FILENAME, +SCREEN, -PIXMAP)
+     read_bitmap_file(+FILENAME, +SCREEN, -PIXMAP, -X_HOT, -Y_HOT)
+
+   PIXMAP is the bitmap encoded in file FILENAME.  If SCREEN is
+supplied, it is PIXMAP's screen, if not it defaults to the default
+screen.  If X_HOT and Y_HOT are asked for, they are the X and Y
+components of PIXMAP's hotspot, if it is specified in the file, and -1
+if not specified in the file.
+
+
+File: quintus.info,  Node: pxl-bmp-rdwr-write_bitmap_file,  Prev: pxl-bmp-rdwr-read_bitmap_file,  Up: pxl-bmp-rdwr
+
+`write_bitmap_file/[2,4]'
+.........................
+
+     write_bitmap_file(+FILENAME, +PIXMAP)
+     write_bitmap_file(+FILENAME, +PIXMAP, +X_HOT, +Y_HOT)
+
+   Writes PIXMAP out to file FILENAME in X11 standard encoding.  If
+X_HOT and Y_HOT are supplied, they specify the hotspot for the pixmap,
+else there is no hotspot.
+
+
+File: quintus.info,  Node: pxl-bmp-cpix,  Prev: pxl-bmp-rdwr,  Up: pxl-bmp
+
+Checking Pixmap Validity
+------------------------
+
+* Menu:
+
+* pxl-bmp-cpix-valid_pixmap::           valid_pixmap/1
+* pxl-bmp-cpix-ensure_valid_pixmap::    ensure_valid_pixmap/2
+
+
+File: quintus.info,  Node: pxl-bmp-cpix-valid_pixmap,  Next: pxl-bmp-cpix-ensure_valid_pixmap,  Up: pxl-bmp-cpix
+
+`valid_pixmap/1'
+................
+
+     valid_pixmap(+PIXMAP)
+
+   PIXMAP is a valid pixmap.  I.e., it has not been destroyed.
+
+
+File: quintus.info,  Node: pxl-bmp-cpix-ensure_valid_pixmap,  Prev: pxl-bmp-cpix-valid_pixmap,  Up: pxl-bmp-cpix
+
+`ensure_valid_pixmap/2'
+.......................
+
+     ensure_valid_pixmap(+PIXMAP, +GOAL)
+
+   PIXMAP is a valid pixmap.  If it's not, an error message mentioning
+GOAL is printed, and execution is aborted.
+
+
+File: quintus.info,  Node: pxl-crs,  Next: pxl-dis,  Prev: pxl-col,  Up: pxl
+
+Cursors
+=======
+
+* Menu:
+
+* pxl-crs-cre::                         Creating and Freeing Cursors
+* pxl-crs-util::                        Cursor Utilities
+* pxl-crs-ccrs::                        Checking Cursor Validity
+
+   Cursors do not have attributes, as there is nothing about a cursor
+that can be determined.
+
+
+File: quintus.info,  Node: pxl-crs-cre,  Next: pxl-crs-util,  Up: pxl-crs
+
+Creating and Freeing Cursors
+----------------------------
+
+* Menu:
+
+* pxl-crs-cre-create_cursor::           create_cursor/[2,3,4,5]
+* pxl-crs-cre-free_cursor::             free_cursor/1
+
+
+File: quintus.info,  Node: pxl-crs-cre-create_cursor,  Next: pxl-crs-cre-free_cursor,  Up: pxl-crs-cre
+
+`create_cursor/[2,3,4,5]'
+.........................
+
+     create_cursor(+CURSOR_SPEC, -CURSOR)
+     create_cursor(+DISPLAY, +CURSOR_SPEC, -CURSOR)
+     create_cursor(+CURSOR_SPEC, -CURSOR, +FOREGROUND_COLOR, +BACKGROUND_COLOR)
+     create_cursor(+DISPLAY, +CURSOR_SPEC, -CURSOR, +FOREGROUND_COLOR,
+                   +BACKGROUND_COLOR)
+
+   CURSOR is a newly created cursor on DISPLAY, as specified by
+CURSOR_SPEC.  If DISPLAY is not specified, the display of the default
+screen is used.  If FOREGROUND_COLOR and BACKGROUND_COLOR are
+specified, they must be color specifications (see *Note pxl-col::)
+indicating the color to give to the two parts of the cursor, otherwise
+black and white are used.  Note that FOREGROUND_COLOR and
+BACKGROUND_COLOR are _not_ pixel values.
+
+   CURSOR_SPEC must be one of these:
+An atom
+     which names a font cursor.
+
+`pixmap_cursor(SOURCE, MASK, X_HOT, Y_HOT)'
+     Where SOURCE and MASK are pixmaps of the same size, and X_HOT and
+     Y_HOT are integers specifying the hot spot of the cursor, relative
+     to the upper right corner of the pixmaps.
+
+`glyph_cursor(SOURCE_FONT, SOURCE_CHAR)'
+     Where SOURCE_FONT specifies a font and SOURCE_CHAR is the
+     character code of the character in that font to be used as the
+     image of the cursor.
+
+`glyph_cursor(SOURCE_FONT, SOURCE_CHAR, MASK_CHAR)'
+     Where SOURCE_FONT a font and SOURCE_CHAR and MASK_CHAR are the
+     character codes of the characters in that font to be used as
+     source and mask image of the cursor.
+
+`glyph_cursor(SOURCE_FONT, SOURCE_CHAR, MASK_FONT, MASK_CHAR)'
+     Where SOURCE_FONT specifies a font and SOURCE_CHAR is the
+     character code of the character in that font to be used as the
+     foreground image of the cursor, and MASK_FONT and MASK_CHAR
+     similarly specify a mask image.
+
+   Obviously, specifying a cursor by name is simplest.  In the other
+cases, the cursor is specified as a source and mask bitmap, and a
+hotspot.  The bits that are turned off in the mask bitmap are
+transparent in the cursor.  The bits turned on in both the mask and
+source bitmaps will appear in the cursor's foreground color.  The
+remaining bits appear in the cursor's background color.  For
+`glyph_cursor/2' terms, the same image is used as both source and mask,
+so there is no background.
+
+
+File: quintus.info,  Node: pxl-crs-cre-free_cursor,  Prev: pxl-crs-cre-create_cursor,  Up: pxl-crs-cre
+
+`free_cursor/1'
+...............
+
+     free_cursor(+CURSOR)
+
+   Free CURSOR
+
+
+File: quintus.info,  Node: pxl-crs-util,  Next: pxl-crs-ccrs,  Prev: pxl-crs-cre,  Up: pxl-crs
+
+Cursor Utilities
+----------------
+
+* Menu:
+
+* pxl-crs-util-recolor_cursor::         recolor_cursor/3
+* pxl-crs-util-query_best_cursor::      query_best_cursor/[4,5]
+
+
+File: quintus.info,  Node: pxl-crs-util-recolor_cursor,  Next: pxl-crs-util-query_best_cursor,  Up: pxl-crs-util
+
+`recolor_cursor/3'
+..................
+
+     recolor_cursor(+CURSOR, +FOREGROUND_COLOR, +BACKGROUND_COLOR)
+
+   Change the color of CURSOR
+
+
+File: quintus.info,  Node: pxl-crs-util-query_best_cursor,  Prev: pxl-crs-util-recolor_cursor,  Up: pxl-crs-util
+
+`query_best_cursor/[4,5]'
+.........................
+
+     query_best_cursor(+WIDTH, +HEIGHT, -BEST_WIDTH, -BEST_HEIGHT)
+     query_best_cursor(+SCREEN, +WIDTH, +HEIGHT, -BEST_WIDTH, -BEST_HEIGHT)
+
+   BEST_WIDTH and BEST_HEIGHT are the "best" size for a cursor on SCREEN
+that is closest to WIDTH and HEIGHT.
+
+
+File: quintus.info,  Node: pxl-crs-ccrs,  Prev: pxl-crs-util,  Up: pxl-crs
+
+Checking Cursor Validity
+------------------------
+
+* Menu:
+
+* pxl-crs-ccrs-valid_cursor::           valid_cursor/1
+* pxl-crs-ccrs-ensure_valid_cursor::    ensure_valid_cursor/2
+
+
+File: quintus.info,  Node: pxl-crs-ccrs-valid_cursor,  Next: pxl-crs-ccrs-ensure_valid_cursor,  Up: pxl-crs-ccrs
+
+`valid_cursor/1'
+................
+
+     valid_cursor(+CURSOR)
+
+   CURSOR is a valid ProXL cursor.
+
+
+File: quintus.info,  Node: pxl-crs-ccrs-ensure_valid_cursor,  Prev: pxl-crs-ccrs-valid_cursor,  Up: pxl-crs-ccrs
+
+`ensure_valid_cursor/2'
+.......................
+
+     ensure_valid_cursor(+CURSOR, +GOAL)
+
+   CURSOR must be a valid cursor. If it's not, an error message
+mentioning GOAL is printed, and execution is aborted.
+
+
+File: quintus.info,  Node: pxl-dis,  Next: pxl-prim,  Prev: pxl-crs,  Up: pxl
+
+Displays and Screens
+====================
+
+* Menu:
+
+* pxl-dis-attr::                        Display Attributes
+* pxl-dis-opn::                         Opening and Closing Displays
+* pxl-dis-sync::                        Flushing and Syncing Displays
+* pxl-dis-find::                        Finding Currently Open Displays
+* pxl-dis-cdsp::                        Checking Display Validity
+* pxl-dis-atts::                        Screen Attributes
+* pxl-dis-def::                         The Default Screen
+* pxl-dis-cscr::                        Checking Screen Validity
+* pxl-dis-ifc::                         Interfacing with Foreign Code
+
+   This section describes displays and screens for ProXL.  We also
+discuss the concepts of displayables and screenables, and the default
+screen and display.
+
+   Both displays and screens have many attributes that can be examined
+by the `get_display_attributes/[1,2]' and `get_screen_attributes/[1,2]'
+predicates.  It is not possible to set any attributes of displays or
+screens.
+
+
+File: quintus.info,  Node: pxl-dis-attr,  Next: pxl-dis-opn,  Up: pxl-dis
+
+Display Attributes
+------------------
+
+* Menu:
+
+* pxl-dis-attr-get_display_attributes:: get_display_attributes/[1,2]
+
+   Display attributes include:
+`bitmap_bit_order(V)'
+     Is leftmost bit in bitmap least or most significant?  Either
+     `lsb_first' or `msb_first'.
+
+`bitmap_pad(N)'
+     Number of bits each scanline must be padded to.
+
+`bitmap_unit(N)'
+     Size of the bitmap's unit, in bits.
+
+`connection_number(N)'
+     Connection number for display (`fd' under UNIX).
+
+`default_screen(V)'
+     The default screen for this display.
+
+`display_string(S)'
+     The name of this display, as an atom.
+
+`image_byte_order(V)'
+     Is leftmost byte in scanline least or most significant?  Either
+     `lsb_first' or `msb_first'.
+
+`protocol_revision(N)'
+     Minor X protocol revision number.
+
+`protocol_version(N)'
+     The major X protocol version (usually 11).
+
+`q_length(N)'
+     Number of events in display's input queue.
+
+`screen(N, S)'
+     S is Screen number N of this display (0 origin).
+
+`screen_count(N)'
+     Number of screens available on this display.
+
+`server_vendor(V)'
+     The name of the supplier of this server, as an atom.
+
+`vendor_release(V)'
+     The vendor's release number for this server.
+

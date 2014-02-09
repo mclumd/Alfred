@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>unknown/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>unknown(</code><var>-OldAction, +NewAction</var><code>)</code>
+
+   <p>Unifies <var>OldAction</var> with the current action on unknown
+procedures, and then sets the current action to <var>NewAction</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>OldAction</var> <dfn>one of </dfn><code>[error,fail]</code><dfn></dfn>
+     <dd>
+<br><dt><var>NewAction</var> <dfn>one of </dfn><code>[error,fail]</code><dfn></dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>This action determines what happens when an undefined predicate is
+called:
+     <dl>
+
+     <br><dt><code>error</code>
+     <dd>Undefined procedures will raise an exception
+
+     <br><dt><code>fail</code>
+     <dd>Undefined procedures will simply fail
+</dl>
+
+   <p>The default action is <code>error</code>.  <code>trace</code> is accepted as a synonym for
+<code>error</code> for backword compatibility.  Note that
+<pre class="example">     | ?- <kbd>unknown(</kbd><var>Action</var><kbd>, </kbd><var>Action</var><kbd>).</kbd>
+     </pre>
+
+   <p>just returns <var>Action</var> without changing it.
+
+   <p>Procedures that are known to be dynamic just fail when there
+are no clauses for them.  Their behavior is not affected by
+<code>unknown/2</code>. For more information on dynamic procedures, see
+<a href="ref-mdb-dsp.html#ref-mdb-dsp">ref-mdb-dsp</a>.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>unknown_predicate_handler/3</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-unknown_predicate_handler.html#mpg-ref-unknown_predicate_handler">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-unix.html#mpg-ref-unix">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,740 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="unnumberedsec">Glossary</h3>
+
+     <dl>
+
+     <br><dt><dfn>abolish</dfn>
+     <dd>To abolish a <dfn>predicate</dfn> is to <dfn>retract</dfn> all the
+predicate's <dfn>clauses</dfn> and to remove all information
+about it from the Prolog system, to make
+it as if that predicate had never existed.  <dfn>Built-in
+predicates</dfn> cannot be abolished, but user-defined ones
+always can be, even when <dfn>static</dfn>.
+
+     <br><dt><dfn>absolute filename</dfn>
+     <dd>A name of a file giving the absolute location
+of that file. 
+Under UNIX and Windows, Quintus Prolog considers filenames beginning with
+<code>/</code> or <code>~</code> absolute. 
+Under Windows, filenames beginning with a letter followed
+by <code>:</code> are also considered absolute. 
+All other filenames are considered <dfn>relative</dfn>.
+
+     <br><dt><dfn>alphanumeric</dfn>
+     <dd>An alphanumeric character is any of the lowercase
+characters from <code>a</code> to <code>z</code>, the uppercase characters from <code>A</code> to <code>Z</code>, or the
+numerals from <code>0</code> to <code>9</code>.
+
+     <br><dt><dfn>ancestor</dfn>
+     <dd>An ancestor of a <dfn>goal</dfn> is any goal that the
+system is trying to solve when it calls that goal.  The most distant
+ancestor is the goal that was typed at the top-level prompt.
+
+     <br><dt><dfn>anonymous</dfn>
+     <dd>An anonymous <dfn>variable</dfn> is one that has no unique
+name, and whose value is therefore inaccessible.  An anonymous variable is
+denoted by an underscore (_).
+
+     <br><dt><dfn>archive file</dfn>
+     <dd>A file containing an <dfn>object code</dfn> library
+that can be statically linked into programs. 
+Sometimes called <dfn>static library</dfn>. 
+Archive files have an operating system dependent extension, which is:
+          <dl>
+
+          <br><dt>Windows:
+          <dd><code>.lib</code>
+By convention, Quintus Prolog uses the suffix <code>s.lib</code> (e.g.,
+<code>libqps.lib</code>) since a <code>.lib</code> is also used for Windows DLL
+import libraries.
+
+          <br><dt>UNIX:
+          <dd>samp{.a}
+</dl>
+
+     <br><dt><dfn>argument</dfn>
+     <dd>See <dfn>predicate</dfn>, <dfn>structure</dfn>, and <dfn>arity</dfn>.
+
+     <br><dt><dfn>arity</dfn>
+     <dd>The arity of a <dfn>structure</dfn> is its number of <dfn>argument</dfn>s. 
+For example, the structure <code>customer(jones, 85)</code> has an arity of 2.
+
+     <br><dt><dfn>atom</dfn>
+     <dd>A character sequence used to uniquely denote
+some
+entity in the problem domain.  A number is <em>not</em> an atom.  Examples of legal
+atoms are:
+     <pre class="example">          hello   *   '#$%'   'New York'   'don''t'
+          </pre>
+
+     <p><strong>Please note:</strong>  An atom may not start with a capital letter or underscore
+unless that atom is
+enclosed in single quotes.  Character sequences that include spaces must
+also be enclosed in single quotes.  To include a single quote in an atom,
+print it twice in succession for each single quote that is to appear.  See
+the <a href="ref-syn-trm-ato.html#ref-syn-trm-ato">ref-syn-trm-ato</a>  for a complete definition of an atom.
+
+     <br><dt><dfn>atomic term</dfn>
+     <dd>Synonym for <dfn>simple term</dfn> or <dfn>constant</dfn>.
+
+     <br><dt><dfn>backtracking</dfn>
+     <dd>The process of reviewing the <dfn>goal</dfn>s that have been
+satisfied and attempting to resatisfy these goals by finding alternative
+solutions.
+
+     <br><dt><dfn>binding</dfn>
+     <dd>The process of assigning a value to a <dfn>variable</dfn>; used
+in <dfn>unification</dfn>.
+
+     <br><dt><dfn>body</dfn>
+     <dd>The body of a <dfn>clause</dfn> consists of the part of a Prolog
+clause following the <code>:- </code> symbol.
+
+     <br><dt><dfn>buffer</dfn>
+     <dd>A temporary workspace in Emacs that contains a file
+being edited.
+
+     <br><dt><dfn>built-in predicate</dfn>
+     <dd>A <dfn>predicate</dfn> that comes with the system and
+that does not have to be explicitly <dfn>consult</dfn>ed or <dfn>compile</dfn>d before
+it is used.
+
+     <br><dt><dfn>clause</dfn>
+     <dd>A <dfn>fact</dfn> or a <dfn>rule</dfn>.  A rule comprises a
+<dfn>head</dfn> and a <dfn>body</dfn>.  A fact consists of a head only, and is equivalent
+to a rule with the body <code>true</code>.
+
+     <br><dt><dfn>command</dfn>
+     <dd>An instruction for the Prolog system to perform an action
+involving <dfn>side-effects</dfn>.  If the command is written preceded by a
+<code> :- </code>, it will be executed as a <dfn>directive</dfn>.
+
+     <br><dt><dfn>compile</dfn>
+     <dd>Load a program (or a portion thereof) into Prolog through
+the
+compiler.  Compiled code runs more quickly than interpreted code, but you
+cannot debug compiled code in as much detail as interpreted code.
+
+     <br><dt><dfn>compound term</dfn>
+     <dd>See <dfn>structure</dfn>.
+
+     <br><dt><dfn>connective</dfn>
+     <dd>a logical <dfn>term</dfn>, or a symbol thereof, that relates
+components in such a way that the truth or falsity of the resulting statement
+is determined by the truth or falsity of the components. 
+For example,
+     <pre class="example">          :-     ;     ,
+          </pre>
+
+     <p>stand for the connectives <code>if</code>, <code>or</code>, and <code>and</code>.
+
+     <br><dt><dfn>constant</dfn>
+     <dd>An integer (for example:  1, 20, -10), a floating-point
+number (for example:  12.35), or an <dfn>atom</dfn> (for example:  <code>'New York'</code>). 
+Constants are also known as <dfn>simple term</dfn>s, and
+are recognized by the Prolog predicate <code>atomic/1</code>.
+
+     <br><dt><dfn>consult</dfn>
+     <dd>Load a program (or a portion thereof) into Prolog through
+the
+interpreter.  Interpreted code runs more slowly than compiled code, but you
+can debug interpreted code in more detail than compiled code.
+
+     <br><dt><dfn>creep</dfn>
+     <dd>What the debugger does in <dfn>trace</dfn> mode, also known as
+single-stepping.  It goes to the next <dfn>port</dfn> of a <dfn>procedure</dfn> box and
+prints the <dfn>goal</dfn>, then prompts you for input.  See <a href="dbg-bas-bas.html#dbg-bas-bas">dbg-bas-bas</a>.
+
+     <br><dt><dfn>cross-reference</dfn>
+     <dd>A notation in the text of the manual, pointing
+to another section of the manual containing related information.  In
+the on-line manual, these are of the form {<var>manual</var>(<var>Tag</var>)}, as in
+"see {manual(int-man-ove)}."  Typing the text between the braces
+into the Prolog system will cause the text of the referenced section
+to be displayed.
+
+     <br><dt><dfn>cursor</dfn>
+     <dd>The point on the screen at which typed characters appear. 
+This is usually highlighted by a line or rectangle the size of one space,
+         which may or may not blink.
+
+     <br><dt><dfn>cut</dfn>
+     <dd>Written as <code>!</code>.  A <dfn>built-in predicate</dfn> that succeeds when
+encountered; if <dfn>backtracking</dfn> should later return to the cut, the <dfn>goal</dfn>
+that matched the <dfn>head</dfn> of the <dfn>clause</dfn> containing the cut fails
+immediately.
+
+     <br><dt><dfn>database</dfn>
+     <dd>The Prolog database comprises all of the <dfn>clause</dfn>s
+that have been <dfn>load</dfn>ed into the Prolog system via <code>compile/1</code>,
+<code>consult/1</code>, or that have been asserted, excepting those clauses that
+have been removed by <code>retract/1</code> or <code>abolish/[1,2]</code>
+
+     <br><dt><dfn>debug</dfn>
+     <dd>A mode of <dfn>program</dfn> execution in which the debugger
+stops to print the current <dfn>goal</dfn> only at <dfn>procedures</dfn> that
+have <dfn>spypoints</dfn> set on them (see <dfn>trace</dfn>).
+
+     <br><dt><dfn>determinate</dfn>
+     <dd>A <dfn>procedure</dfn> is determinate if it can supply
+only one answer.
+
+     <br><dt><dfn>directive</dfn>
+     <dd>A directive is a <dfn>command</dfn> preceded by the prefix
+operator <code>:- </code>, whose intuitive meaning is "execute this as a command,
+but do not print out any variable bindings."
+
+     <br><dt><dfn>disjunction</dfn>
+     <dd>A series of <dfn>goal</dfn>s connected by the <dfn>connective</dfn>
+"or" (that is, a series of goals whose principal <dfn>operator</dfn> is <code>|</code> or <code>;</code>).
+
+     <br><dt><dfn>dynamic predicate</dfn>
+     <dd>A predicate that can be modified while a
+<dfn>program</dfn> is
+running.  A <dfn>predicate</dfn> must explicitly be declared to be dynamic or it must
+be added to the <dfn>database</dfn> via one of the assertion predicates.
+
+     <br><dt><dfn>environment variable</dfn>
+     <dd>A variable known to the command interpreter
+environment.  Most programs can be controlled to some extent by
+environment variables.  The syntax for setting environment variables
+in command interpreter dependent.  For example, (A) would be
+appropriate for <code>csh(1)</code> and <code>tcsh(1)</code>; (B) for <code>sh(1)</code>,
+<code>bash(1)</code>, and <code>ksh(1)</code>; (C) for Windows
+<code>cmd.exe</code>. 
+Under Windows, it is often preferable to set environment variables globally
+in the System control panel.
+
+     <pre class="example">          % <kbd>setenv PROLOGINITSIZE 2M</kbd> (A)
+          % <kbd>export PROLOGINITSIZE=2M</kbd> (B)
+          % <kbd>SET PROLOGINITSIZE=2M</kbd> (C)
+          </pre>
+
+     <br><dt><dfn>export</dfn>
+     <dd>A <dfn>module</dfn> exports a <dfn>procedure</dfn> by making that
+procedure <dfn>public</dfn>, so that other modules can <dfn>import</dfn> it.
+
+     <br><dt><dfn>fact</dfn>
+     <dd>(Also called a <dfn>unit clause</dfn>.)  A <dfn>clause</dfn> with no
+<dfn>conditions</dfn>--that is, with an empty <dfn>body</dfn>.  A fact is a
+statement that a relationship exists between its <dfn>arguments</dfn>.  Some
+examples, with possible interpretations, are:
+     <pre class="example">          king(louis, france).   % Louis was king of France.
+          have_beaks(birds).     % Birds have beaks.
+          employee(nancy, data_processing, 55000).
+                               % Nancy is an employee in the
+                               % data processing department.
+          </pre>
+
+     <p>An integer number assigned to a file when it is opened, and then used as a
+unique identifier in I/O operations.
+
+     <br><dt><dfn>first-order logic</dfn>
+     <dd>A system of logic in which the values of
+<dfn>variables</dfn> may range over the data items in the domain.  In Prolog these
+data items are <dfn>terms</dfn>.  For comparison, in zero-order logic (also known
+as propositional logic) there are no variables, and in second-order logic
+the values of variables are allowed to range both over data items and over
+functions and relations.
+
+     <br><dt><dfn>functor</dfn>
+     <dd>The name and <dfn>arity</dfn> of a <dfn>structure</dfn>.  For
+example, the
+structure <code>foo(a, b)</code> is said to have "the functor foo of arity two",
+which is generally written <code>foo/2</code>.
+
+     <br><dt><dfn>garbage collection</dfn>
+     <dd>The freeing up of space for computation by
+making the space occupied by <dfn>terms</dfn> that are no longer available
+for use by the Prolog system.
+
+     <br><dt><dfn>goal</dfn>
+     <dd>A <dfn>procedure</dfn> call.  When called, it will either succeed or
+fail.  A
+goal typed at the top level is called a <dfn>query</dfn>.
+
+     <br><dt><dfn>head</dfn>
+     <dd>The head of a <dfn>clause</dfn> is the single <dfn>goal</dfn> that will
+be satisfied if the <dfn>conditions</dfn> in the <dfn>body</dfn> (if any)
+are true; the part of a <dfn>rule</dfn> before the <code>:- </code> symbol.  The head of
+a <dfn>list</dfn> is the first element of the list.
+
+     <br><dt><dfn>home directory</dfn>
+     <dd>Your default directory upon login.  Under UNIX,
+this is the value of the <code>HOME</code> environment variable.  Under
+Windows, it is the directory specified by the environment variables
+<code>HOMEDRIVE</code> and <code>HOMEPATH</code>. 
+You can ask Quintus Prolog what it considers to be you home directory by typing
+     <pre class="example">          | ?- <kbd>absolute_file_name(~, HomeDir).</kbd>
+          </pre>
+
+     <br><dt><dfn>Horn clause</dfn>
+     <dd>See <dfn>clause</dfn>.
+
+     <br><dt><dfn>import</dfn>
+     <dd><dfn>Public</dfn> <dfn>procedures</dfn> in a <dfn>module</dfn> can be imported by
+other modules.  Once a procedure has been imported
+by a module, it can be called as if it were defined in that module.
+
+     <p>There are two kinds of importation:  procedure-importation, in
+which only specified procedures are imported from a module; and
+module-importation, in which all the predicates made public by
+a module are imported.
+
+     <br><dt><dfn>instantiation</dfn>
+     <dd>A <dfn>variable</dfn> is instantiated if it is <dfn>bound</dfn> to
+a non-variable <dfn>term</dfn>; that is, to an <dfn>atomic term</dfn> (see <dfn>constant</dfn>)
+or a <dfn>compound term</dfn>.
+
+     <br><dt><dfn>interpret</dfn>
+     <dd>Load a <dfn>program</dfn> or set of <dfn>clauses</dfn> into Prolog
+through the interpreter (also known as <dfn>consulting</dfn>).  Interpreted code
+runs much more slowly than <dfn>compiled</dfn> code, but more extensive facilities
+are available for debugging interpreted code.
+
+     <br><dt><dfn>leap</dfn>
+     <dd>What the debugger does in <dfn>debug</dfn> mode.  The debugger
+shows only
+the <dfn>ports</dfn> of <dfn>procedures</dfn> that have <dfn>spypoints</dfn> on them. It then
+        prompts you for input, at which time you may leap again to the
+        next spypoint.  See <a href="dbg-bas-tra-spy.html#dbg-bas-tra-spy">dbg-bas-tra-spy</a>.
+
+     <br><dt><dfn>leashing</dfn>
+     <dd>Determines how frequently the debugger will stop
+and prompt you for input when you are <dfn>tracing</dfn>.  A <dfn>port</dfn>
+at which the debugger stops is called a "leashed port."
+
+     <br><dt><dfn>list</dfn>
+     <dd>A list is written as a set of zero or more <dfn>term</dfn>s
+between square
+brackets.  If there are no terms in a list, it is said to be empty, and is
+written as [].  In this first set of examples, all members of each list
+are explicitly stated.
+     <pre class="example">          [aa, bb,cc]  [X, Y]  [Name]  [[x, y], z]
+          </pre>
+
+     <p>In the second set of examples, only the first several members of each list
+are explicitly stated, while the rest of the list is represented by a
+<dfn>variable</dfn> on the right-hand side of the "rest of" operator, <code>|</code>:
+
+     <pre class="example">          [X | Y]  [a, b, c | Y]  [[x, y] | Rest]
+          </pre>
+
+     <p><code>|</code> is also known as the "list constructor."  The first element of the list
+to the left of <code>|</code> is called the <dfn>head</dfn> of the list.  The rest of the
+list,
+including the variable following <code>|</code> (which represents a list of any length),
+is called the <dfn>tail</dfn> of the list.
+
+     <p>For example,
+     <pre class="example">          <b>list              head        tail</b>
+          [X | Y]           X           Y
+          [a, b, c | y]     a           [b, c | y]
+          [[X, Y] | Rest]   [X, Y]      Rest
+          </pre>
+
+     <br><dt><dfn>load</dfn>
+     <dd>To <dfn>compile</dfn> or <dfn>consult</dfn> a Prolog <dfn>clause</dfn> or set of
+clauses.
+
+     <br><dt><dfn>meta-predicate</dfn>
+     <dd>A meta-predicate is one that calls one or more of
+its <dfn>arguments</dfn>; more generally, any <dfn>predicate</dfn> that needs to assume
+some <dfn>module</dfn> in order to operate is called a meta-predicate.
+
+     <p>A meta-predicate declaration is a <dfn>term</dfn> in a <dfn>module-file</dfn> that
+is associated with a given <dfn>functor</dfn>, sharing its <dfn>name</dfn> and
+<dfn>arity</dfn>, but having each of its <dfn>arguments</dfn> replaced either by one
+of the mode annotations <code>+</code>, <code>-</code>, <code>*</code>, <code>+-</code>, <code>+*</code>, or by <code>:</code> or a
+non-negative integer.  <code>:</code> or a non-negative integer signifies that
+the corresponding argument requires module name expansion.
+
+     <br><dt><dfn>mode line</dfn>
+     <dd>The information line at the bottom of each Emacs
+<dfn>window</dfn> that is one line long and the width of the screen; often shown in
+reverse video.  The mode line at the bottom of the Prolog window says "Quintus Prolog"
+plus other information such as the state of the debugger if it is activated. 
+The mode line of the text window(s) states the <dfn>buffer</dfn>name, the filename,
+the editor mode ("Prolog" for a file ending in <code>.pl</code>), and the percentage
+of the file that precedes the <dfn>cursor</dfn>.
+
+     <br><dt><dfn>module</dfn>
+     <dd>A module is a set of <dfn>procedures</dfn> in a <dfn>module-file</dfn>. 
+Some procedures in a module
+are <dfn>public</dfn>.  The default module is <code>user</code>.
+
+     <br><dt><dfn>module-file</dfn>
+     <dd>A module-file is a file that is headed
+with a <dfn>module</dfn> declaration of the form
+     <pre class="example">          :- module(<var>ModuleName, PublicPredList</var>).
+          </pre>
+
+     <p>which must appear as the first <dfn>term</dfn> in the file.
+
+     <br><dt><dfn>multifile predicate</dfn>
+     <dd>A <dfn>predicate</dfn> whose definition is to be
+spread over more than one file. Such a predicate must be preceded by an
+explicit multifile declaration in the first file containing <dfn>clauses</dfn> for
+it.
+
+     <br><dt><dfn>name clash</dfn>
+     <dd>A name clash occurs when a <dfn>module</dfn> attempts to
+define or <dfn>import</dfn> a <dfn>procedure</dfn> that it has
+already defined or imported.
+
+     <br><dt><dfn>object code</dfn>
+     <dd>The machine-executable, as opposed to the
+human-readable, representation of a <dfn>program</dfn>.
+
+     <br><dt><dfn>object file</dfn>
+     <dd>A file containing <dfn>object code</dfn>. 
+Object files have an operating system dependent extension, which is:
+          <dl>
+
+          <br><dt>Windows:
+          <dd><code>.obj</code>
+
+          <br><dt>UNIX:
+          <dd>samp{.o}
+</dl>
+
+     <br><dt><dfn>operator</dfn>
+     <dd>A notational convenience that allows you to
+express
+any <dfn>compound term</dfn> in a different format.  For example, if "likes" in
+     <pre class="example">          | ?- <kbd>likes(sue, cider).</kbd>
+          </pre>
+
+     <p>is declared an infix operator, the query above could be written:
+     <pre class="example">          | ?- <kbd>sue likes cider.</kbd>
+          </pre>
+
+     <p>An operator does not have to be associated with a <dfn>predicate</dfn>.  However,
+certain <dfn>built-in predicates</dfn> are declared as operators.  For example,
+     <pre class="example">          | ?- <kbd>=..(X, Y).</kbd>
+          </pre>
+
+     <p>can be written as
+     <pre class="example">          | ?- <kbd>X =.. Y.</kbd>
+          </pre>
+
+     <p>because <code>=..</code> has been declared an infix operator.
+
+     <p>Those predicates that correspond to built-in operators are written using
+infix notation in the list of built-in predicates at the beginning of the
+part that contains the reference pages.
+
+     <p>Some built-in operators do <em>not</em> correspond to built-in predicates; for
+example, arithmetic operators.  <a href="ref-syn-ops-bop.html#ref-syn-ops-bop">ref-syn-ops-bop</a> contains a list
+of built-in operators.
+
+     <br><dt><dfn>parent</dfn>
+     <dd>The <dfn>parent</dfn> of the current <dfn>goal</dfn> is a goal that, in
+its attempt to obtain a successful solution to itself, is calling the
+current goal.
+
+     <br><dt><dfn>port</dfn>
+     <dd>One of the four key points of interest in the
+execution of a Prolog <dfn>procedure</dfn>.  There are four ports: the Call
+port, representing the initial invocation of the procedure; the Exit
+Port, representing a successful return from the procedure; the Redo
+port, representing reinvocation of the procedure through
+<dfn>backtracking</dfn>; and the Fail port, representing an unsuccessful
+return due to the failure of the initial <dfn>goal</dfn> of the procedure.
+
+     <br><dt><dfn>precedence</dfn>
+     <dd>A number associated with each Prolog <dfn>operator</dfn>, which
+is used to disambiguate the structure of the term represented
+by an expression containing a number of operators.  Operators of lower
+precedence
+are applied before those of higher precedence; the operator with the
+highest precedence is considered the principal <dfn>functor</dfn> of the
+expression.  To disambiguate operators of the same
+precedence, the associativity type is also necessary.  See the
+syntax chapter (<a href="ref-syn.html#ref-syn">ref-syn</a>).
+
+     <br><dt><dfn>predicate</dfn>
+     <dd>A <dfn>functor</dfn> that specifies some relationship
+existing in the problem domain.  For example, <code>&lt;/2</code> is a
+built-in <dfn>predicate</dfn>
+specifying the relationship of one number being less than another.  In
+contrast, the functor <code>+/2</code> is not (normally used as) a predicate.
+
+     <p>A predicate is either <dfn>built-in</dfn> or is implemented by a <dfn>procedure</dfn>.
+
+     <br><dt><dfn>procedure</dfn>
+     <dd>A set of <dfn>clauses</dfn> in which the <dfn>head</dfn> of each
+clause has the same <dfn>predicate</dfn>.  For instance, a group of clauses of the
+following form:
+     <pre class="example">          connects(san_francisco, oakland, bart_train).
+          connects(san_francisco, fremont, bart_train).
+          connects(concord, daly_city, bart_train).
+          </pre>
+
+     <p>is identified as belonging to the procedure <code>connects/3</code>.
+
+     <br><dt><dfn>program</dfn>
+     <dd>A set of <dfn>procedures</dfn> designed to perform a given task.
+
+     <br><dt><dfn>public</dfn>
+     <dd>A <dfn>procedure</dfn> in a <dfn>module</dfn> is public if it can be
+<dfn>imported</dfn> by other modules.  The public predicates of a module are listed
+in the module declaration (see <dfn>module-file</dfn>).
+
+     <br><dt><dfn>QOF file</dfn>
+     <dd>a fully general way of storing arbitrary Prolog facts
+and rules in a form that can be quickly and easily used.  QOF files contain a
+machine independent representation of both compiled and dynamic Prolog
+predicates.  This means they are completely portable between different
+platforms running Quintus Prolog.
+
+     <br><dt><dfn>query</dfn>
+     <dd>
+          <ul>
+<li><dfn>simple query</dfn>:   A query is a question
+put by the user to the
+Prolog system.  A simple query is written as a <dfn>goal</dfn> followed by a
+<dfn>full-stop</dfn> in response to the Prolog system prompt.  For example,
+          <pre class="example">               | ?- <kbd>father(edward, ralph).</kbd>
+               </pre>
+
+          <p>refers to the <dfn>predicate</dfn> <code>father/2</code>.  If a query has no <dfn>variable</dfn>s
+in it, the system will respond either <code>yes</code> or <code>no.</code> If a query contains
+variables, the system will try to find values of those variables for which
+the query is true.  For example,
+          <pre class="example">               | ?- <kbd>father(edward, X).</kbd>
+               X = ralph
+               </pre>
+
+          <p>After the system has found one answer, the user can direct the system to look
+for additional answers to the query by typing <kbd>; &lt;RET&gt;</kbd>.
+
+          </p><li><dfn>compound query</dfn>:   A compound query consists of two or more simple
+queries connected by commas.  For a compound query to be true, all of
+its <dfn>goal</dfn>s must be
+true simultaneously.  For example, the following compound query will find
+Ralph's grandfather (G):
+          <pre class="example">               | ?- <kbd>father(G, F), father(F, ralph).</kbd>
+               </pre>
+
+          <p><code>F</code> is a shared <dfn>variable</dfn> that is constrained by <dfn>unification</dfn> to have
+the same value in each of the two subgoals. 
+</ul>
+
+     <br><dt><dfn>quintus-directory</dfn>
+     <dd>The root directory of the entire Quintus
+Prolog file hierarchy.  Used by Prolog executables
+to relocate certain relative file names. 
+Is the value of the <code>quintus_directory</code> Prolog flag. 
+See <a href="int-dir.html#int-dir">int-dir</a>.
+
+     <br><dt><dfn>recursion</dfn>
+     <dd>The process in which a running <dfn>procedure</dfn>
+calls itself, presumably with different <dfn>arguments</dfn> and for the
+purpose of solving some subset of the original problem.
+
+     <br><dt><dfn>region</dfn>
+     <dd>The text between the  <dfn>cursor</dfn> and a previously-set
+mark in an Emacs buffer.
+
+     <br><dt><dfn>relative filename</dfn>
+     <dd>A name of a file giving the location of that
+file relative to the
+working directory.  See <dfn>absolute filename</dfn> about
+differentiating absolute filenames from relative ones.
+
+     <br><dt><dfn>rule</dfn>
+     <dd>A <dfn>clause</dfn> with one or more <dfn>conditions</dfn>. 
+For a rule to be true, all of its conditions must also be true.  For example,
+     <pre class="example">          has_stiff_neck(ralph) :-
+             hacker(ralph).
+          </pre>
+
+     <p>This rule states that if the individual <code>ralph</code> is a hacker, then he must
+also have a stiff neck.  The <dfn>constant</dfn> <code>ralph</code> is replaced in
+     <pre class="example">          has_stiff_neck(X) :-
+             hacker(X).
+          </pre>
+
+     <p>by the <dfn>variable</dfn> X.  X <dfn>unifies</dfn>
+with anything, so this rule can be used to prove that any hacker has a
+stiff neck.
+
+     <br><dt><dfn>runtime-directory</dfn>
+     <dd>A platform-specific directory containing
+Quintus Prolog executables, object files and the like. 
+Is the value of the <code>runtime_directory</code> Prolog flag. 
+See <a href="int-dir.html#int-dir">int-dir</a>.
+
+     <br><dt><dfn>saved-state</dfn>
+     <dd>A snapshot of the state of Prolog saved in a
+file by <code>save_program/1</code>, <code>save_modules/2</code>, or <code>save_predicates/2</code>. 
+<code>save_program/1</code> saves the whole Prolog data base, <code>save_modules/2</code>
+and <code>save_predicates/2</code> save a list of modules and predicates respectively.
+
+     <br><dt><dfn>semantics</dfn>
+     <dd>The relation between the set of Prolog symbols and
+their combinations (as Prolog <dfn>terms</dfn> and <dfn>clauses</dfn>), and their meanings. 
+Compare <dfn>syntax</dfn>.
+
+     <br><dt><dfn>static library</dfn>
+     <dd>See <dfn>shared object file</dfn>.
+
+     <br><dt><dfn>shared object file</dfn>
+     <dd>A file containing <dfn>object code</dfn>
+that can be dynamically loaded into programs. 
+Sometimes called <dfn>shared library</dfn>. 
+Shared object files have an operating system dependent extension, which is:
+          <dl>
+
+          <br><dt>Windows:
+          <dd><code>.dll</code>
+
+          <br><dt>HPUX:
+          <dd>samp{.sl}
+
+          <br><dt>other UNIX:
+          <dd>samp{.so}
+</dl>
+
+     <br><dt><dfn>side-effect</dfn>
+     <dd>A <dfn>predicate</dfn> that produces a side-effect is one
+that has any effect on the "outside world"
+(the user's terminal, a file, etc.),
+or that changes the Prolog <dfn>database</dfn>.
+
+     <br><dt><dfn>simple term</dfn>
+     <dd>see <dfn>constant</dfn>.
+
+     <br><dt><dfn>source code</dfn>
+     <dd>The human-readable, as opposed to the
+machine-executable, representation of a <dfn>program</dfn>.
+
+     <br><dt><dfn>spypoint</dfn>
+     <dd>A flag placed on a <dfn>predicate</dfn> by the
+command <code>spy/1</code> and removed by <code>nospy/1</code> that tells the debugger
+to stop
+execution and allow user interaction at <dfn>goals</dfn> for that predicate.  Any
+number of predicates can have spypoints set on them.
+
+     <br><dt><dfn>static library</dfn>
+     <dd>See <dfn>archive file</dfn>.
+
+     <br><dt><dfn>static predicate</dfn>
+     <dd>A <dfn>predicate</dfn> that can be modified only by being
+reloaded
+via the <dfn>consult</dfn> or <dfn>compile</dfn> facility or by being <dfn>abolish</dfn>ed. 
+  (See <dfn>dynamic predicate</dfn>.)
+
+     <br><dt><dfn>stream</dfn>
+     <dd>An input/output channel.
+
+     <br><dt><dfn>structure</dfn>
+     <dd>(Also called a <dfn>compound term</dfn>.)  A
+structure is a <dfn>functor</dfn> together with zero or more <dfn>argument</dfn>s.  For
+example, in the structure
+     <pre class="example">          father(X)
+          </pre>
+
+     <p><code>father/1</code> is the functor, and X is the first and only argument.  The argument
+to a structure can be another structure, as in
+     <pre class="example">          father(father(X))
+          </pre>
+
+     <br><dt><dfn>syntax</dfn>
+     <dd>The part of Prolog grammar dealing with the way in which
+symbols are put together to form legal Prolog <dfn>terms</dfn>.  Compare
+ <dfn>semantics</dfn>.
+
+     <br><dt><dfn>term</dfn>
+     <dd>A basic data object in Prolog.  A term can be
+a <dfn>constant</dfn>, a <dfn>variable</dfn>, or a <dfn>structure</dfn>.
+
+     <br><dt><dfn>trace</dfn>
+     <dd>A mode of <dfn>program</dfn> execution in which the debugger
+single-steps to the next <dfn>port</dfn> and prints the <dfn>goal</dfn>.
+
+     <br><dt><dfn>unbound</dfn>
+     <dd>A <dfn>variable</dfn> is unbound if it has not yet been
+<dfn>instantiated</dfn>.
+
+     <br><dt><dfn>unification</dfn>
+     <dd>The process of matching a <dfn>goal</dfn> with the <dfn>head</dfn>
+of a <dfn>clause</dfn>
+during the evaluation of a <dfn>query</dfn>, or of matching arbitrary terms with
+one another during <dfn>program</dfn> execution.  A goal unifies with the head of a
+clause if 1) they have the same <dfn>functor</dfn>,
+and 2) all of the <dfn>argument</dfn> <dfn>term</dfn>s can be unified.  The rules governing
+the unification of terms are:
+          <ul>
+
+          <li>Two <dfn>constant</dfn>s unify with one another if they are identical. 
+<li>A <dfn>variable</dfn> unifies with a <dfn>constant</dfn> or a <dfn>structure</dfn>.  As a result
+of the unification, the variable is <dfn>instantiated</dfn> to the constant or
+structure. 
+<li>A variable unifies with another variable.  As a result of the unification,
+they become the same variable. 
+<li>A structure unifies with another structure if they have the same functor
+and if all of the arguments can be unified. 
+</ul>
+
+     <br><dt><dfn>unit clause</dfn>
+     <dd>See <dfn>fact</dfn>.
+
+     <br><dt><dfn>variable</dfn>
+     <dd>Logical variable. 
+A logical variable is a name that stands for objects
+that may or may not be determined at a specific point in a Prolog <dfn>program</dfn>. 
+When the object for which the variable stands is determined in the Prolog
+program, the variable becomes instantiated (see <dfn>instantiation</dfn>). 
+A logical variable may be unified (see <dfn>unification</dfn>) with a <dfn>constant</dfn>,
+a <dfn>structure</dfn>, or another variable.  Variables become uninstantiated when
+the procedure they occur in backtracks (see <dfn>backtracking</dfn>)
+past the point at which they were instantiated.
+
+     <p>A variable is written as a single word (with no intervening spaces)
+beginning either with a
+capital letter without quotes, or with the character <code>_</code>.  Examples:
+     <pre class="example">          X   Y   Z   Name   Position   _c   _305  One_stop
+          </pre>
+
+     <br><dt><dfn>volatile</dfn>
+     <dd>Predicate property.  The clauses of a volatile
+predicate are not saved by in QOF files by the Prolog <code>save</code>
+predicates.  However, they are saved by <code>qpc</code>.
+
+     <br><dt><dfn>window</dfn>
+     <dd>Under the Emacs interface, a region of the terminal screen. 
+There are two types of window:  the Prolog window, of which there is exactly
+one, and the the text window, of which there are one or more.  Each window
+has a <dfn>mode line</dfn> at the bottom, and each text window displays the
+contents of one file.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="glo.html#glo">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,1153 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: lib-ofi-cfe,  Next: lib-ofi-oth,  Prev: lib-ofi-rdf,  Up: lib-ofi
+
+Checking To See If A File Exists
+--------------------------------
+
+   No matter what programming language you are using, all
+multiple-access file systems have the problem that the system may
+correctly report that a file _does_ exist, and then when you attempt to
+use it you may find that it does _not_, because someone has deleted or
+renamed it in the meantime.
+
+   The operations below can help you avoid problems, but in the final
+analysis, the only way to tell whether you can open a file is to try to
+open it.
+
+`file_exists(+FILENAME)'
+     FILENAME must be an atom.  `file_exists/1' succeeds if a file of
+     that name exists.  If there is something of that name, but it is a
+     directory, `file_exists/1' fails.  You need sufficient rights to
+     the file to be able to determine whether it is a directory (see
+     `stat(2)').  Named pipes and devices are accepted as files.
+
+`file_exists(+FILENAME, +PERMISSIONS)'
+     FILENAME must be an atom, and PERMISSIONS must be one of the
+     following, or a list of them:
+    `exists'
+          does the file exist?
+
+    `read'
+          can the file be read?
+
+    `write'
+          can the file be _over_-written?
+
+    N
+          N is an integer(N); see `access(2)'
+
+     `file_exists/2' succeeds when there is a file (not a directory)
+     named FILENAME and you have each of the PERMISSIONS you named.
+
+     If PERMISSION is an integer, it is interpreted the way that the
+     argument to the system call `access(2)' is interpreted, namely
+     (the file must exist)
+
+              + 1 * ('execute' permission is wanted)
+              + 2 * ('write' permission is wanted)
+              + 4 * ('read' permission is wanted)>
+
+     This is allowed so that a C programmer who is used to writing
+          if (!access(FileName, 6)) {
+              can_read_and_write(FileName);
+          } else {
+              cannot_access_file(FileName);
+          }
+
+     can write
+          (   file_exists(FileName, 6) ->
+              can_read_and_write(FileName)
+          ;    /* otherwise */
+              cannot_access_file(FileName)
+          )
+
+     We recommend, however, that you code this example as
+          (   file_exists(FileName, [read,write]) ->
+              can_read_and_write(FileName)
+          ;       /* otherwise */
+              cannot_access_file(FileName)
+          )
+
+     Under operating systems that do not support version numbers (as
+     UNIX and Windows do not), `file_exists/2' could fail (because
+     there is no such FILENAME) and `can_open_file/2' could succeed
+     (because you are allowed to create one).  Conversely,
+     `file_exists/2' could succeed (because there is such a FILENAME)
+     and `can_open_file/2' fail (because you have so many files open
+     that you cannot open another).
+
+`file_must_exist(+FILENAME)'
+     succeeds when `file_exists(FILENAME)' succeeds; otherwise, it
+     raises an error exception.
+          | ?- file_must_exist(fred).
+          ! Existence error in file_must_exist/1
+          ! file fred does not exist
+          ! O/S error : No such file or directory
+          ! goal:  file_must_exist(fred)
+
+`file_must_exist(+FILENAME, +PERMISSION)'
+     succeeds when `file_exists(FILENAME, PERMISSION)' succeeds;
+     otherwise, it raises an error exception.
+          | ?- unix(system('ls -l files.o')),
+               file_must_exist('files.o', write).
+          
+          -r--r--r--  1 ok       746 Jan 24 17:58 files.o
+          ! Permission error: cannot access file 'foo.o'
+          ! O/S error : Permission denied
+          ! goal:  file_must_exist('foo.o',write)
+
+`can_open_file(+FILENAME, +MODE, +QUIET)'
+     FILENAME is a filename.  MODE is `read', `write', or `append',
+     just as for the `open/3' command.  `can_open_file/2' fails quietly
+     if the file cannot be opened.  The QUIET parameter controls the
+     raising of an error exception when the file cannot be opened:  if
+     QUIET is `fail', `can_open_file/3' fails quietly, whereas if QUIET
+     is `warn', it raises an error exception.  If MODE is
+    `read'
+          FILENAME must exist and be readable
+
+    `append'
+          FILENAME must exist and you must have permission to append to
+          it, or FILENAME must be nonexistent in a directory in which
+          you have permission to create a new file
+
+    `write'
+          the same conditions apply as for `append'
+
+     This predicate actually attempts to open the file.  It will, for
+     example, create a file in order to determine whether it _can_
+     create it.  But if that happens, it immediately deletes the file
+     again, so there should be no permanent effect on the file system.
+
+`can_open_file(+FILENAME, +MODE)'
+     equivalent to `can_open_file(FILENAME, MODE, fail)'.
+
+`open_file(+FILENAME, +MODE, -STREAM)'
+     is the same as the built-in predicate `open/3' (which is described
+     in the reference pages), except that it always raises an error
+     exception if it cannot open the file, and is not sensitive to the
+     `fileerrors' flag.
+
+`current_dec10_stream(?FileName, ?See_or_Tell)'
+     is true when SEE_OR_TELL is `see' and FILENAME is a file that was
+     opened by `see(FILENAME)' and has not yet been closed, or when
+     SEE_OR_TELL is `tell' and FILENAME is a file that was opened by
+     `tell(FILENAME)' and has not yet been closed.  It is a version of
+     `current_stream/3', which just tells you about the
+     Dec-10-compatible streams.  It relies on two facts: (1) _all_ the
+     streams you opened are in the `current_stream/3' table.  (2)
+     `seeing/1' (`telling/1') return an atom if and only if the current
+     input (output) stream was opened by `see/1' (`tell/1'), and the
+     atom it returns is the one given to `see/1' (`tell/1').
+
+`close_all_streams'
+     closes all the current streams except the standard streams.
+
+   None of the predicates described in this section is affected by the
+`fileerrors' flag.  Indeed, they exist so that you can check for errors
+_before_ they happen.
+
+   See the summary description of `library(ask)' (*Note lib-uin::) for
+two useful predicates that use `can_open_file/3'.
+
+
+File: quintus.info,  Node: lib-ofi-oth,  Prev: lib-ofi-cfe,  Up: lib-ofi
+
+Other Related Library Files
+---------------------------
+
+* Menu:
+
+* lib-ofi-oth-aropen::                  library(aropen)
+* lib-ofi-oth-ask::                     library(ask)
+* lib-ofi-oth-big_text::                library(big_text)
+* lib-ofi-oth-crypt::                   library(crypt)
+* lib-ofi-oth-directory::               library(directory)
+* lib-ofi-oth-fromonto::                library(fromonto)
+* lib-ofi-oth-unix::                    library(unix)
+
+   Several other library files do things to or with files.  This
+section lists those files and the file-related predicates in them.
+`library(ask)' and `library(directory)' are documented in this manual.
+The remaining files contain in-line comments, which you can read.
+
+
+File: quintus.info,  Node: lib-ofi-oth-aropen,  Next: lib-ofi-oth-ask,  Up: lib-ofi-oth
+
+`library(aropen)'
+.................
+
+`ar_open(+ARCHIVE, +MEMBER, -STREAM)'
+     opens a stream reading a particular member of a UNIX archive.  See
+     `ar(1)'.
+
+
+File: quintus.info,  Node: lib-ofi-oth-ask,  Next: lib-ofi-oth-big_text,  Prev: lib-ofi-oth-aropen,  Up: lib-ofi-oth
+
+`library(ask)'
+..............
+
+`ask_file(+PROMPT, -FILENAME)'
+     Reads FILENAME from the terminal, having prompted for it with
+     PROMPT.  It continues prompting until a FILENAME is read for which
+     `can_open_file(FILENAME, read, warn)' is true, or until an empty
+     line is typed (in the latter case it fails quietly).
+
+`ask_file(+PROMPT, +MODE, -FILENAME)'
+     Reads FILENAME from the terminal, having prompted for it with
+     PROMPT.  It continues prompting until a FILENAME is read for which
+     `can_open_file(FILENAME, MODE, warn)' is true, or until an empty
+     line is typed (in the latter case it fails quietly).
+
+
+File: quintus.info,  Node: lib-ofi-oth-big_text,  Next: lib-ofi-oth-crypt,  Prev: lib-ofi-oth-ask,  Up: lib-ofi-oth
+
+`library(big_text)'
+...................
+
+   This is a package for keeping large chunks of text in files. See
+*Note lib-abs::.
+
+
+File: quintus.info,  Node: lib-ofi-oth-crypt,  Next: lib-ofi-oth-directory,  Prev: lib-ofi-oth-big_text,  Up: lib-ofi-oth
+
+`library(crypt)'
+................
+
+`crypt_open(+FILENAME, +PASSWORD, +MODE, -STREAM)'
+     is the same as `open(FILENAME, MODE, STREAM)' except that the
+     external file is encrypted, using PASSWORD as the key.
+
+`crypt_open(+FILENAME, +MODE, -STREAM)'
+     prompts for PASSWORD and proceeds as `crypt_open/4'.
+
+   These predicates do not use any of the encryption features of the
+operating system, so a separate C program for managing encrypted files
+is included.
+
+
+File: quintus.info,  Node: lib-ofi-oth-directory,  Next: lib-ofi-oth-fromonto,  Prev: lib-ofi-oth-crypt,  Up: lib-ofi-oth
+
+`library(directory)'
+....................
+
+   This module provides operations for finding files in directories and
+for finding properties of files and directories.
+
+   See *Note lib-lfi:: for details.
+
+
+File: quintus.info,  Node: lib-ofi-oth-fromonto,  Next: lib-ofi-oth-unix,  Prev: lib-ofi-oth-directory,  Up: lib-ofi-oth
+
+`library(fromonto)'
+...................
+
+   This package provides a suite of I/O redirection operators, which
+allow the user to execute a goal with the current input or output stream
+temporarily redirected to a specified stream, file, or list of
+characters.  See *Note lib-abs::.
+
+
+File: quintus.info,  Node: lib-ofi-oth-unix,  Prev: lib-ofi-oth-fromonto,  Up: lib-ofi-oth
+
+`library(unix)'
+...............
+
+   This package provides a set of UNIX-like commands.  They take
+character lists as well as atoms.
+
+     | ?- cd.           % same as cd "~".
+     | ?- cd Dir.       % Dir is atom or chars.
+     
+     | ?- csh.          % runs an interactive /bin/csh
+     | ?- csh Cmd.      % interprets Cmd with /bin/csh
+     | ?- ls.           % runs /bin/ls with no arguments.
+     
+     | ?- pg F.         % same as sh('/usr/bin/pg F').
+     
+     | ?- sh.           % runs an interactive /bin/sh
+     | ?- sh Cmd.       % interprets Cmd with /bin/sh
+     | ?- shell.        % runs an interactive $SHELL
+     | ?- shell Cmd.    % interprets Cmd with $SHELL
+
+
+File: quintus.info,  Node: lib-lfi,  Next: lib-uin,  Prev: lib-ofi,  Up: lib
+
+Looking Up Files
+================
+
+* Menu:
+
+* lib-lfi-bas::                         Introduction --- library(directory)
+* lib-lfi-fdi::                         Finding Files in Directories
+* lib-lfi-sub::                         Finding Subdirectories
+* lib-lfi-pfd::                         Finding Properties of Files and Directories
+* lib-lfi-sum::                         Summary
+
+
+File: quintus.info,  Node: lib-lfi-bas,  Next: lib-lfi-fdi,  Up: lib-lfi
+
+Introduction -- `library(directory)'
+------------------------------------
+
+   For the most part, Prolog programs have little need to examine
+directories or to inquire about file properties.  However, the need
+does occasionally arise.  For example, an expert-system shell might
+offer the option of either loading a single file into its knowledge
+base, or of loading all the files in a directory having a particular
+extension.  The Quintus Prolog library file `library(directory)'
+provides the tools you need to do this.  For example, we might define
+     kb_load(File) :-
+         (  directory_property(File, searchable) ->
+               forall(file_member_of_directory(File,'*.kb',_,Full),
+                        kb_load(Full))
+         ;  file_property(File, readable) ->
+               kb_load_file(File)
+         ;  format(user_error, '~N! cannot read ~w.~n', [File]),
+            fail
+         ).
+
+   The routines in this package were designed to be a complete toolkit
+for safely wandering around a UNIX-like file system.  Although there
+are quite a few of them, they do actually fit together in a coherent
+group.  For information on operations relating to individual files
+rather than to directories, see `library(files)' (*Note lib-ofi::).
+
+   The following principles have been observed:
+
+   * An absolute distinction is drawn between files and directories.
+     The set of operations one can usefully perform on a directory is
+     different from the set one can perform on a file:  for example,
+     having write permission to a directory allows the user to create
+     new files in it, not to rewrite the entire directory!  If any
+     routine in this package tells you that a "file" exists, you can be
+     sure that it means a "regular" file.
+
+   * The directory scanning routines do not actually open the files they
+     find.  Thus finer discriminations, such as that between source and
+     object code, are not made.
+
+   * The predicate names are made up of complete English words in
+     lowercase, separated by underscores, with no abbreviations.
+
+   * Every predicate acts like a genuine logical relation insofar as it
+     possibly can.
+
+   * Like those in the `library(unix)' package, if anything goes wrong,
+     the predicates in `library(directory)' raise an error exception.
+     Any time that a predicate fails quietly, it should mean "this
+     question is meaningful, but the answer is no"; any exception to
+     this should be regarded as a bug.
+
+   * The directory scanning routines insist that the directory argument
+     name a searchable directory.  But the "property" routines are to
+     be read as "there exists a thing of such a type with such a
+     property", and quietly fail if there is no such file or directory.
+
+
+File: quintus.info,  Node: lib-lfi-fdi,  Next: lib-lfi-sub,  Prev: lib-lfi-bas,  Up: lib-lfi
+
+Finding Files in Directories
+----------------------------
+
+   The basic directory scanning routine is
+     `file_member_of_directory(?DIRECTORY, ?FILENAME, ?FULLNAME)' is
+     true when
+       1. DIRECTORY is an atom naming a directory;
+
+       2. FILENAME is an atom conforming to the rules for file names
+          without directory components;
+
+       3. DIRECTORY contains an entry with name FILENAME, and the
+          current process is allowed to know this fact; and
+
+       4. FULLNAME is an atom naming the file, combining both the
+          DIRECTORY and the FILENAME, and FULLNAME names a regular file.
+
+     DIRECTORY can be an absolute filename or a relative one.  FULLNAME
+     will be absolute if DIRECTORY is absolute, relative if DIRECTORY
+     is relative.
+
+     We return the FILENAME component because that is the component on
+     which pattern matching is generally done.  We return the FULLNAME
+     component in order to remove from the user the burden of
+     manipulating the (system-dependent) rules for putting together a
+     directory name and a file name.
+
+     This predicate acts as much like a logical relation as it can.
+     Here are some of the ways of using it:
+          | ?- file_member_of_directory(foo, Name, Full),
+               write(Name=Full), nl, fail.
+            %  to enumerate members of the directory
+          
+          | ?- file_member_of_directory(baz, 'ugh.pl', Full).
+            %  to test whether a file 'ugh.pl' is visible in
+            %  directory 'baz', and if so return the full name
+          
+          | ?- file_member_of_directory(Dir, Nam, 'baz/jar.log').
+            % if there is a visible regular file baz/jar.log,
+            % to return its directory in Dir and name in Nam.
+
+   `file_member_of_directory/3' has two variants:
+
+`file_member_of_directory(?FILENAME, ?FULLNAME)'
+     is the same as `file_member_of_directory/3', except that it checks
+     the current directory.  You could obtain this effect quite easily
+     by calling `file_member_of_directory/3' with first argument `.',
+     but in other operating systems the current directory is denoted
+     differently.  This provides an operating-system-independent way of
+     searching the current directory.  There is one other difference,
+     which is of great practical importance:  `.' is a _relative_
+     directory name, but `file_member_of_directory/2' uses the
+     _absolute_ name for the current directory, so that the FULLNAME
+     you get back will also be absolute.  See the description of
+     `absolute_file_name/2' in the reference pages.  Note the
+     difference between calling
+          absolute_file_name(FILENAME, FULLNAME)
+
+     and calling
+          file_member_of_directory(FILENAME, FULLNAME)
+
+     The former will accept any filename, but the FILENAME must be
+     instantiated.  The latter will only accept simple file names with
+     no directory component, and insists that the file must already
+     exist, but in return will generate FILENAME.
+
+`file_member_of_directory(?DIRECTORY, ?PATTERN, ?FILENAME, ?FULLNAME)'
+     is the same as `file_member_of_directory/3', except that it
+     filters out all the FILENAMEs that do not match  PATTERN.  PATTERN
+     is an atom that may contain `?' and `*' wildcards.  `?' matches
+     any character and `*' matches any sequence of characters (cf. UNIX
+     `csh(1)' and `sh(1)').  The main use for this routine is to select
+     files with a particular extension.  Thus,
+          | ?- file_member_of_directory(foo,'*.pl',Short,Full).
+
+     matches files `foo/*.pl'.
+
+   To summarize, the three routines discussed so far are
+     file_member_of_directory([Directory, [Pattern, ]]Short, Full)
+
+   They enumerate FILENAME-FULLNAME pairs one at a time:  in alphabetic
+order, as it happens.
+
+   There is another set of three predicates finding exactly the same
+solutions, but returning them as a _set_ of FILENAME-FULLNAME pairs.
+We follow here the general convention that predicates that return one
+"thing"  have `thing' in their name, and  predicates that return the
+_set_ of "things"  have `things' in their name.
+
+`file_members_of_directory([?DIRECTORY, [?PATTERN, ]]?SET)'
+     unifies SET with a list of FILENAME-FULLNAME pairs that name
+     visible files in the given DIRECTORY matching the given PATTERN.
+     Thus, instead of
+          | ?- file_member_of_directory(foo, '*.pl', S, F).
+          
+          S = 'bat.pl',
+          F = 'foo/bat.pl' ;
+          
+          S = 'fly.pl',
+          F = 'foo/fly.pl' ;
+          
+          no
+
+     one would find
+          | ?- file_members_of_directory(foo, '*.pl', Set).
+          
+          Set = ['bat.pl'-'foo/bat.pl', 'fly.pl'-'foo/fly.pl']
+
+
+File: quintus.info,  Node: lib-lfi-sub,  Next: lib-lfi-pfd,  Prev: lib-lfi-fdi,  Up: lib-lfi
+
+Finding Subdirectories
+----------------------
+
+   Corresponding to the above set of six predicates for matching files
+in a particular directory, there is another set of six for matching
+subdirectories.  They have the forms
+`directory_member_of_directory([?DIRECTORY, [?PATTERN, ]]?SHORT, ?FULL)'
+
+`directory_members_of_directory([?DIRECTORY, [?PATTERN, ]]?SET)'
+     They are exactly like the `file_member...' predicates in every
+     way, except that they insist that the files thus located should
+     instead be proper subdirectories of  DIRECTORY.  This means that
+     not only should FULL name a directory, but also SHORT should _not_
+     be `.' or `..'.  The reason for this is to allow you to easily
+     write routines that explore an entire directory tree, as in
+          explore(Directory, FullName) :-
+             file_member_of_directory(Directory, _, FullName).
+          explore(Directory, FullName) :-
+             directory_member_of_directory(Directory, _, SubDir),
+             explore(SubDir, FullName).
+          
+          | ?- explore(., FullName), write(FullName), nl, fail.
+
+     If the self (`.') and parent (`..') entries were not concealed
+     from the search, this code would go into an infinite loop
+     exploring `DIRECTORY/./././././././.' and so on.  Note that this
+     does not preclude using `.' and `..' in the DIRECTORY name itself.
+
+
+File: quintus.info,  Node: lib-lfi-pfd,  Next: lib-lfi-sum,  Prev: lib-lfi-sub,  Up: lib-lfi
+
+Finding Properties of Files and Directories
+-------------------------------------------
+
+   Once you have obtained a file or directory name, you can ask about
+the properties of that file or directory.  The set of properties
+available is inherently operating-system-dependent.  This section
+describes the facilities currently available under UNIX and the
+restrictions in the Windows version.
+
+   Properties fall into several classes.  The current classes are
+`boolean'
+     having values `true' and `false'
+
+`integer'
+     having non-negative integer values
+
+     In the Windows version no `_id' information, such as `user_id', is
+     obtained.
+
+`who'
+     (UNIX only) values are sub_sequences_ of `[user,group,other]' --
+     that is, the order of the elements must be preserved.  Sub_sets_
+     will not do -- `[other,user]' is not a possible value.
+
+`date'
+     values are `date(YEAR, MONTH, DAY)' terms.  The arguments are this
+     way round so you can use them for sorting.
+
+`time'
+     values are `date(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND)' terms,
+     with HOUR on a 24-hour clock.  The arguments are in this order so
+     you can use them for sorting.  The times given are _local_ times,
+     not GMT times.  See `ctime(3)'.
+
+`user'
+     (UNIX only) values are user names
+
+`group'
+     (UNIX only) values are group names
+
+   The properties, with their types, are
+     readable        : boolean
+     writable        : boolean
+     executable      : boolean       file only
+     searchable      : boolean       directory only
+     set_user_id     : boolean       file only
+     set_group_id    : boolean       file only
+     save_text       : boolean       file only
+     only_one_link   : boolean       file only
+     who_can_read    : who
+     who_can_write   : who
+     who_can_execute : who           file only
+     who_can_search  : who           directory only
+     access_date     : date
+     modify_date     : date
+     create_date     : date
+     access_time     : time
+     modify_time     : time
+     create_time     : time
+     owner_user_name : user
+     owner_group_name: group
+     owner_user_id   : integer
+     owner_group_id  : integer
+     number_of_links : integer       file only
+     size_in_bytes   : integer       file only
+     size_in_blocks  : integer       file only
+     block_size      : integer       file only
+
+   The properties `readable', `writable', `executable', and
+`searchable' ask the question "can this process do such-and-such to the
+file". For more information, see `access(2)'.  For more information on
+the other properties, see `stat(2)'.
+
+   The basic routine for determining the properties of files is
+
+`file_property(+FILE, ?PROPERTY, ?VALUE)'
+     `file_property/3' is true when FILE is the name of a visible
+     regular file, PROPERTY is one of the properties listed in the
+     table above, other than those specific to directories, and VALUE
+     is the actual value of PROPERTY for that FILE.  FILE  must be
+     specified; there may be tens of thousands of files with a
+     particular attribute!  However, you can enumerate all the
+     properties of a given FILE (by leaving PROPERTY uninstantiated) if
+     you like.
+
+   `file_property/3' has the following variant:
+`file_property(+FILE, ?PROPERTY)'
+     is only allowed when PROPERTY is a boolean property, and is
+     otherwise equivalent to the call
+          file_property(FILE, PROPERTY, true)
+
+     (Note that if there is a user with login name `true',
+     `file_property(F,owner_user_name,true)' is possible, but
+     `file_property(F,owner_user_name)' is not; the PROPERTY really must
+     be a boolean property, not just have `true' as its value.)  In
+     particular, a quick way to check whether FILE names a file that
+     this process can read is to ask
+          file_property(FILE, readable)
+
+     See also `can_open_file/3' in `library(files)'.  Note that
+          file_property(FILE, writable)
+
+     asks whether a writable FILE already exists; if you want to know
+     whether `open(FILE, write, Stream)' will be allowed, use
+     `can_open_file/3' (see *Note lib-ofi::).
+
+   To match these two predicates, which access properties of files,
+there are two predicates for asking about the properties of directories:
+
+   * `directory_property(?DIRECTORY, ?PROPERTY, ?VALUE)'
+
+   * `directory_property(?DIRECTORY, ?PROPERTY)'  % boolean only
+
+
+File: quintus.info,  Node: lib-lfi-sum,  Prev: lib-lfi-pfd,  Up: lib-lfi
+
+Summary
+-------
+
+   `library(directory)' provides Prolog routines for scanning
+directories and checking properties of files.  See also
+`absolute_file_name/2' in the reference pages, and `library(files)'.
+
+
+File: quintus.info,  Node: lib-uin,  Next: lib-iml,  Prev: lib-lfi,  Up: lib
+
+Obtaining User Input
+====================
+
+* Menu:
+
+* lib-uin-bas::                         Introduction
+* lib-uin-ctypes::                      Classifying Characters --- library(ctypes)
+* lib-uin-lineio::                      Reading and Writing Lines --- library(lineio)
+* lib-uin-continued::                   Reading Continued Lines --- library(continued)
+* lib-uin-ese::                         Reading English Sentences
+* lib-uin-ask::                         Yes-no Questions, and Others --- library(ask)
+* lib-uin-prompt::                      Other Prompted Input --- library(prompt)
+* lib-uin-readconstant::                Pascal-like Input --- library(readconstant)
+
+
+File: quintus.info,  Node: lib-uin-bas,  Next: lib-uin-ctypes,  Up: lib-uin
+
+Introduction
+------------
+
+   Quintus Prolog, DEC-10 Prolog, SICstus Prolog, and other similar
+Prolog systems offer only two methods of input:
+  1. reading Prolog terms using `read/1'
+
+  2. reading single characters using `get0/1'
+
+   There is a large gap between the two, and sometimes the input
+requirements of  application programs lies in the gap.  The Prolog
+library contains two sets of packages to fill the gap.
+   * `library(readin)' and `library(readsent)' are for reading English
+     sentences.  They return a list of words, which you can then parse
+     using a Definite Clause Grammar (built into the Prolog system).
+
+   * `library(ctypes)', `library(prompt)', `library(readconst)',
+     `library(continued)', `library(lineio)', and `library(ask)' are
+     more general in purpose.
+
+
+File: quintus.info,  Node: lib-uin-ctypes,  Next: lib-uin-lineio,  Prev: lib-uin-bas,  Up: lib-uin
+
+Classifying Characters -- `library(ctypes)'
+-------------------------------------------
+
+   One of the problems facing anyone who uses Prolog on more than one
+system is that different operating systems use different characters to
+signal the end of a line or the end of a file.  We have
+     Dialect         DEC-10 Prolog   SICStus Prolog  Quintus Prolog
+     OS              (TOPS-10)       (UNIX,Windows)  (UNIX,Windows)
+     
+     end-of-line     31 (^_)         10 (LF, ^J)     10 (LF, ^J)
+     end-of-file     26 (^Z)         -1              -1
+
+     *Windows note:* From an application program's point of view, each
+     line in the file is terminated with a single <LFD>.  However,
+     what's actually stored in the file is the sequence <RET><LFD>.
+
+   A prudent Prolog programmer will try to avoid writing these
+constants into his program.  Indeed, a prudent Prolog programmer will
+try to avoid relying too much on the fact that Prolog uses the ASCII
+character set.
+
+   Quintus Prolog addresses these problems by imitating the programming
+language C.  The package `library(ctypes)' defines predicates that
+recognize or enumerate certain types of characters.  Where possible,
+the names and the character sets have been borrowed from C.
+
+   Except as indicated, all of the predicates in `library(ctypes)'
+check the type of a given character, or backtrack over all the
+characters of the appropriate type if given a variable.
+
+`is_endfile(-CHAR)'
+     CHAR is the end-of-file character.  There is only one such
+     character.  If `get0/1' returns it, the end of the input file has
+     been reached, and the file should not be read further.  No special
+     significance is attached to this character on output; it might not
+     be a valid output character at all (as in Quintus Prolog) or it
+     might simply be written out along with other text.
+
+     The need for this predicate is largely obviated by the built-in
+     predicate `at_end_of_file/[0,1]' in Release 3.
+
+`is_newline(-CHAR)'
+     CHAR is the end-of-line character.  There is only one such
+     character.  You can rely on it not being space, tab, or any
+     printing character.  It is returned by `get0/1' at the end of an
+     input line.  The end-of-line character is a valid output
+     character, and when written to a file ends the current output
+     line.  It should not be used to _start_ lines, only to _end_ them.
+
+     The need for this predicate is largely obviated by the built-in
+     predicate `skip_line/[0,1]' in Release 3.
+
+`is_newpage(-CHAR)'
+     CHAR is the end-of-page character.  There is at most one such
+     character, and when it is defined at all it is the ASCII
+     "formfeed" character.  On some systems there may be no end-of-page
+     character.  This character is returned by `get0/1' at the end of
+     an input page.  It is a valid output character, and when written
+     to a file ends the current output page.  It should not be used to
+     _start_ pages, only to _end_ them.
+
+`is_endline(+CHAR)'
+     Some systems permit more than one end-of-line character for
+     terminal input; one of them is always C's "newline" character,
+     another is the end-of-file character (`^D' or `^Z') if typed
+     anywhere but as the first character of a line, and the last is the
+     "eol" character, which the user can set with the `stty(1)' command.
+
+     `is_endline/1' accepts most ASCII control characters, but not
+     space, tab, or delete, which covers all the line terminators
+     likely to arise in practice.  It should only be used to recognize
+     line terminators; if passed a variable, it will raise an error
+     exception.
+
+     The need for this predicate is largely obviated by the built-in
+     predicate `at_end_of_line/[0,1]' in Release 3.
+
+`is_alnum(?CHAR)'
+     is true when CHAR is the ASCII code of a letter or digit.  It may
+     be used to recognize alphanumerics or to enumerate them.
+     Underscore `_' is _not_ an alphanumeric character.  (See
+     `is_csym/1' below.)
+
+`is_alpha(?CHAR)'
+     is true when CHAR is the ASCII code of a letter.  It may be used to
+     recognize letters or to enumerate them.  Underscore `_' is _not_ a
+     letter.  (See `is_csymf/1' below.)
+
+`is_ascii(?CHAR)'
+     is true when CHAR is in the range 0..127.  If CHAR is a variable,
+     `is_ascii/1' (like most of the predicates in this section) will
+     try to bind it to each of the acceptable values in turn (that is,
+     it will enumerate them).  Whether the end-of-file character
+     satisfies `is_ascii/1' or not is system-dependent.
+
+`is_char(?Char)'
+     is true when Char is a character code in whatever the range
+     happens to be.  (In this version: ISO 8859/1.)
+
+`is_cntrl(?CHAR)'
+     is true when CHAR is an ASCII control character; that is, when CHAR
+     is the code for DEL (127) or else is in the range 0..31.  Space is
+     _not_ a control character.
+
+`is_csym(?CHAR)'
+     is true when CHAR is the code for a character that can appear in an
+     identifier.  C identifiers are identical to Prolog identifiers
+     that start with a letter.  Put another way, CHAR is a letter,
+     digit, or underscore.  There are C compilers that allow other
+     characters in identifiers, such as `$'.  In such a system, C's
+     version of `iscsym/1' will accept those additional characters, but
+     Prolog's will not.
+
+`is_csymf(?CHAR)'
+     is true when CHAR is the code for a character that can appear as
+     the first character of a C or Prolog identifier.  Put another way,
+     CHAR is a letter or an underscore.
+
+`is_digit(?CHAR)'
+     is true when CHAR is the code for a decimal digit; that is, a
+     character in the range 0..9.
+
+`is_digit(?CHAR, ?WEIGHT)'
+     is true when CHAR is the character code of a decimal digit, and
+     WEIGHT is its decimal value.
+
+`is_digit(?CHAR, ?BASE, ?WEIGHT)'
+     is true when CHAR is the code for a digit in the given BASE.  BASE
+     should be an integer in the range 2..36.  The digits (that is, the
+     possible values of CHAR) are 0..9, A..Z, and a..z, where the case
+     of a letter is ignored.  WEIGHT is the value of CHAR considered as
+     a digit in that base, given as a decimal number.  For example,
+          is_digit(97 /* a */, 16, 10)
+          is_digit(52 /* 4 */, 10,  4)
+          is_digit(70 /* F */, 16, 15)
+
+     This is a genuine relation; it may be used all possible ways.  You
+     can even use it to enumerate all the triples that satisfy the
+     relation.  Each argument must be either a variable or an integer.
+
+`is_graph(?CHAR)'
+     is true when CHAR is the code for a "graphic" character, that is,
+     for any printing character other than space.  The graphic
+     characters are the letters and digits, plus
+          !  "  #  $  %  &  '  (  )  *  ;  <  =  >  ?  @
+          [  \  ]  ^  _  `  {  |  }  ~  +  ,  -  .  /  :
+
+`is_lower(+CHAR)'
+     is true when CHAR is the code for a lowercase letter, a..z.
+
+`is_paren(?LEFT, ?RIGHT)'
+     is true when LEFT and RIGHT together form one of the delimiter
+     pairs `(' and `)', `[' and `]', or `{' and `}'.
+
+`is_period(?CHAR)'
+     `is_period/1' recognizes each of the three punctuation marks that
+     can end an English sentence.  That is, `is_period(CHAR)' is true
+     when CHAR is an exclamation point (`!'), a question mark (`?'), or
+     a period (`.').  Note that if you want to test specifically for a
+     period character, you should use the goal
+          Char is "."
+
+`is_print(?CHAR)'
+     is true when CHAR is any of the ASCII "printing" characters, that
+     is, anything except a control character.  All the "graphic"
+     characters are "printing" characters, and so is the space
+     character.  When written to ordinary terminals, each printing
+     character takes exactly one column, and Prolog code for lining up
+     output in nice columns is entitled to rely on this.  The width of
+     a tab, and the depiction of other control characters than tab or
+     newline, is not defined.
+
+`is_punct(?CHAR)'
+     is true when CHAR is the code for a non-alphanumeric printing
+     character; that is, CHAR is a space or one of the characters
+     listed explicitly under `is_graph/1'.  Note that underscore is a
+     "punct" and so is the space character.  The reason for this is
+     that C defines it that way, and this package eschews innovation
+     for innovation's sake.
+
+`is_quote(?CHAR)'
+     is true when CHAR is one of the quotation marks ``' (back-quote),
+     `'' (single-quote), or `"' (double-quote).
+
+`is_space(?CHAR)'
+     is true when CHAR is the code for a white space character.  This
+     includes tab (9, ^I), linefeed (10, ^J), vertical tab (11, ^K),
+     formfeed (12, ^L), carriage return (13, ^M), and space (32).
+     These constitute the C definition of white space.  For
+     compatibility with DEC-10 Prolog, `is_space/1' also accepts the
+     (31, ^_) character.
+
+`is_upper(?CHAR)'
+     is true when CHAR is the code for an uppercase letter, A..Z.
+
+`is_white(?CHAR)'
+     is true when CHAR is a space or a tab.  The reason for
+     distinguishing between this and `is_space/1' is that if you skip
+     over characters satisfying `is_space/1' you will also be skipping
+     over the ends of lines and pages (though at least you will not run
+     off the end of the file), while if you skip over characters
+     satisfying `is_white/1' you will stop at the end of the current
+     line.
+
+`to_lower(?CHAR, ?LOWER)'
+     is true when CHAR is any ASCII character code, and LOWER is the
+     lowercase equivalent of CHAR.  The lowercase equivalent of an
+     uppercase letter is the corresponding lowercase letter.  The
+     lowercase equivalent of any other character is the same character.
+     If you have a string (list of character codes) X, you can obtain
+     a version of X with uppercase letters mapped to lowercase letters
+     and other characters left alone by calling the library routine
+          maplist(to_lower, X, LowerCasedX)
+
+     In normal use of `to_lower/2', CHAR is bound.  If CHAR is
+     uninstantiated, `to_lower/2' will still work correctly, but will
+     be less efficient.  If you want to convert a lowercase letter KL
+     to its uppercase version KU, _do not_ use `to_lower/2';
+     `to_lower(Ku, 97)' has two solutions: 65 (A) and 97 (a).  Use
+     `to_upper/2' instead.
+
+`to_upper(?CHAR, ?UPPER)'
+     is true when CHAR is any ASCII character code, and UPPER is the
+     uppercase equivalent of CHAR.  The uppercase equivalent of a
+     lowercase letter is the corresponding uppercase letter.  The
+     uppercase equivalent of any other character is the same character.
+     If you have a string (list of character codes) X, you can obtain
+     a version of X with lowercase letters mapped to uppercase and
+     other characters left alone by calling the library routine
+          maplist(X, to_upper, UpperCasedX)
+
+   The System V macro `isxdigit()' is not represented in this package
+because `isdigit/3' subsumes it.  The System V macros `_tolower()' and
+`_toupper()' are not represented because `to_lower/2' and `to_upper/2'
+subsume them.
+
+   The predicates needed for portability between operating systems are
+
+   * `is_endfile/1'
+
+   * `is_endline/1'
+
+   * `is_newline/1'
+
+   * `is_newpage/1'
+
+   Remember:  `is_endfile/1' and `is_endline/1' are for recognizing the
+end of an input file or the end of an input line, while `is_newline/1'
+and `is_newpage/1' return the character that you should give to `put/1'
+to end a line or page of output.
+
+
+File: quintus.info,  Node: lib-uin-lineio,  Next: lib-uin-continued,  Prev: lib-uin-ctypes,  Up: lib-uin
+
+Reading and Writing Lines -- `library(lineio)'
+----------------------------------------------
+
+   `library(lineio)' defines some commands for reading and writing
+lines of text.
+
+`get_line(-CHARS, -TERMINATOR)'
+     reads characters from the current input stream until it finds an
+     end-of-line character.  CHARS is unified with a list containing
+     all the character codes other than the end-of-line character, and
+     TERMINATOR is unified with the end-of-line character.  This allows
+     you to check which character ended the line; in particular you
+     should be prepared to handle the `is_endfile(TERMINATOR)' case.
+     When the end of a file is encountered, there may have been a
+     partial line preceding it; so when `is_endfile(TERMINATOR)', CHARS
+     may or may not be the empty list.
+
+     `get_line/2' is normally called with CHARS unbound.  A call to
+     `get_line/2' with CHARS _bound_ will behave similarly to `get0/1'
+     in that even if the line of characters does not unify with CHARS,
+     nevertheless the entire line is consumed and is irretrievable.
+     Thus, if you call `get_line("fred", Eol)' and the next line of
+     input is in fact `jim' or `frederica', the entire line will have
+     been read before the call to `get_line/2' fails.  Only call
+     `get_line/2' with CHARS bound when you want the line to be thrown
+     away if it does not match.  For example, if you want to skip until
+     you encounter a line containing only a single `.' (a convention
+     some editors and some mailers use for the end of terminal input),
+     you can write
+          ...
+          skip_through_line(".")
+
+     where
+          skip_through_line(X) :-
+                  repeat,
+                      get_line(X, _),
+                  !.
+
+     (`skip_through_line/1' is not in the library.)
+
+`get_line(-CHARS)'
+     is used for the common case in which you are uninterested in what
+     the end-of-line character was, provided it was not end-of-file.
+     `get_line/1' reads a whole line, just like `get_line/2', then
+     checks that the line terminator was not the end-of-file character,
+     and unifies the list of character codes with CHARS.  If CHARS is
+     instantiated and does not match the line that is read, or if the
+     line terminator was end-of-file, `get_line/1' fails quietly (with
+     the same consequences regarding the loss of the non-matching text
+     as with `get_line/2' above).
+
+`fget_line(+STREAM, ?CHARS, ?TERMINATOR)'
+     like `get_line/2' except that STREAM is specified.
+
+`fget_line(+STREAM, ?CHARS)'
+     like `get_line/1' except that STREAM is specified.
+
+`put_chars(+CHARS)'
+     is a generalization of `put/1'.  CHARS should be instantiated to a
+     (possibly empty) list of character codes.  The corresponding
+     characters are written to the current output stream.  If you know
+     the characters in advance, it is better to use `write/1'; for
+     example,
+          put_chars("they do the same thing")
+
+     and
+          write('they do the same thing')
+
+     both write exactly the same characters to the current output
+     stream, but the latter is more efficient.  Use `put_chars/1' when
+     you already have the text you want to write as a list of character
+     codes, `write/1' when you have the text as an atom.
+
+`put_line(+CHARS)'
+     writes the list of character codes CHARS, then writes a newline
+     character.  It produces exactly the same output that
+          put_chars(CHARS), nl
+
+     would, but is generally more convenient.  If you are reading lines
+     from one file using `get_line/1' and writing them to another,
+     `put_line/1' is the predicate to use.
+
+
+File: quintus.info,  Node: lib-uin-continued,  Next: lib-uin-ese,  Prev: lib-uin-lineio,  Up: lib-uin
+
+Reading Continued Lines -- `library(continued)'
+-----------------------------------------------
+
+   `library(continued)' is an extension of `library(lineio)'.  It
+defines two commands for reading continued lines.
+
+`read_oper_continued_line(-LINE)'
+     reads a line of text, using a convention rather like that of BCPL:
+     an input line that ends with `<OP, newline>' where OP is a left
+     parenthesis `(', left bracket `[', left brace `{', or a binary
+     infix character from the set
+          + * - / # = < > ^ | & : ,
+
+     is taken to be continued; the OP character is included in the
+     combined LINE, but the newline is _not_ included.
+          | ?- compile([library(printchars),library(continued)]).
+                    . . .
+          | ?- read_oper_continued_line(Line).
+          |: command /option1=value1,
+          |:    /option2=value2
+          
+          Line = "command /option1=value1,   /option2=value2"
+          
+          | ?- read_oper_continued_line(Line).
+          |: Not continued!
+          
+          Line = "Not continued!"
+          
+          | ?- read_oper_continued_line(Line).
+          |: x^2+
+          |: 2*x+
+          |: 1
+          
+          Line = "x^2+2*x+1"
+
+     It is likely that this will not be exactly the set of characters
+     you want to act as continuation indicators, and you may want some
+     OP characters retained and others discarded.  That is why we make
+     the source code available:  this file is intended mainly as an
+     example.
+
+`read_unix_continued_line(-LINE)'
+     uses the UNIX convention (understood by `sh', `csh', `cc', and
+     several other programs) that a line terminated by a `<backslash,
+     newline>' pair is continued, and the backslash and newline do
+     _not_ appear in the combined LINE.  For example,
+          | ?- read_unix_continued_line(Line).
+          |: ab\
+          |: cde\
+          |: f
+          
+          Line = "abcdef"
+
+     The following example is an extract from `/etc/termcap':
+          | ?- unix(system('cat termcap-extract')).
+          
+          dw|vt52|dec vt52:\
+              :cr=^M:do=^J:nl=^J:bl=^G:\
+              :le=^H:bs:cd=\EJ:ce=\EK:cl=\EH\EJ:cm=\EY%+ %+ :\
+              :co#80:li#24:nd=\EC:ta=^I:pt:sr=\EI:up=\EA:\
+              :ku=\EA:kd=\EB:kr=\EC:kl=\ED:kb=^H:
+          dx|dw2|decwriter II:\
+              :cr=^M:do=^J:nl=^J:bl=^G:\
+              :kb=^h:le=^H:bs:co#132:hc:os:
+          
+          | ?- see('termcap-extract'),
+          |    read_unix_continued_line(Line),
+          |    seen.
+          
+          Line = "dw|vt52|dec vt52:    :cr=^M:do=^J:nl=^J:bl=^G:
+              :le=^H:bs:cd=\EJ:ce=\EK:cl=\EH\EJ:cm=\EY%+ %+ :
+           :co#80:li#24:nd=\EC:ta=^I:pt:sr=\EI:up=\EA:    :ku=\E
+          A:kd=\EB:kr=\EC:kl=\ED:kb=^H:"
+
+     Note that only the backslashes at the ends of the lines have been
+     discarded, and that the spaces at the beginning of the following
+     lines have been retained.
+
+
+File: quintus.info,  Node: lib-uin-ese,  Next: lib-uin-ask,  Prev: lib-uin-continued,  Up: lib-uin
+
+Reading English Sentences
+-------------------------
+
+* Menu:
+
+* lib-uin-ese-ove::                     Overview
+* lib-uin-ese-readin::                  library(readin)
+* lib-uin-ese-readsent::                library(readsent)
+
+
+File: quintus.info,  Node: lib-uin-ese-ove,  Next: lib-uin-ese-readin,  Up: lib-uin-ese
+
+Overview
+........
+
+   There are two library files for reading sentences.  One of them is
+`library(readin)', which defines the single predicate `read_in/1'.
+`library(readin)' was written to be used.
+
+   `library(readsent)' was originally written to be read and modified,
+as everyone has a different idea of how sentence reading should be done.
+Nevertheless, you may find `read_sent/1' to be quite useful.
+
+   Both sentence readers work by reading characters until some
+termination condition and then parsing a list of character codes using
+a Definite Clause Grammar.  You can have any number of grammars in one
+Prolog program.  You will probably find that `read_in/1' does most of
+what you want, but if you want to do something different you may find
+it easier to modify `read_sent/1'.
+
+
+File: quintus.info,  Node: lib-uin-ese-readin,  Next: lib-uin-ese-readsent,  Prev: lib-uin-ese-ove,  Up: lib-uin-ese
+
+`library(readin)'
+.................
+
+`read_in(-SENTENCE)'
+     reads characters from the current input stream until it finds
+     end-of-file or a sentence terminator (see `is_period/1') at the
+     end of a line.  There may be any number of tabs and spaces between
+     that stop and the end of the line.  It then breaks the characters
+     up into "words", where a "word" is
+        * a sequence of letters (see `is_alpha/1'), which is converted
+          to lowercase and returned as a Prolog atom
+
+        * a sequence of decimal digits (see `is_digit/1'), which is
+          returned as a Prolog integer (plus and minus signs become
+          separate atoms).
+
+        * any graphic character other than a letter or digit, which is
+          returned as a single-character Prolog atom
+
+     The resulting list is returned in SENTENCE.  The punctuation mark
+     that terminated the sentence _is_ included in the list.  Here is
+     an example:
+          | ?- read_in(X).
+          |: This is an example.  An example of read-in.  In
+          |: it there are +00003 sentences!
+          
+          X = [this,is,an,example,.,an,example,of,read,-,
+               in,.,in,it,there,are,+,3,sentences,!]
+
+     Note that the end-of-line character, and any spaces and tabs
+     following the sentence terminator, are consumed.  It is important
+     that the end-of-line character be consumed; otherwise subsequent
+     prompts will behave unpredictably.
+

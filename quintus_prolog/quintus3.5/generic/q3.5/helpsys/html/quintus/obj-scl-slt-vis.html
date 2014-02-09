@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Visibility</h5>
+
+   <p>A slot's visibility is either private, protected, or public. If its visibility
+is not specified, the slot is private. The following example shows
+all four possibilities:
+
+<pre class="example">     :- class example = [w:integer,
+                         private   x:integer,
+                         protected y:integer,
+                         public    z:integer]
+     </pre>
+
+   <p>Slot <code>z</code> is public, <code>y</code> is protected, and both <code>x</code> and <code>w</code> are
+private.
+
+   <p>Direct access to private slots is strictly limited to the methods of
+the class.  Any other access to such slots must be accomplished
+through these methods.  Making slots private will allow you
+later to change how you represent your class, adding and removing
+slots, without having to change any code that uses your class.  You
+need only modify the methods of the class to accomodate that change. 
+This is known as <dfn>information hiding</dfn>.
+
+   <p>Protected slots are much like private slots, except that they can also
+be directly accessed by subclasses.  This means that if you wish to
+modify the representation of your class, you will need to examine not
+only the class itself, but also its subclasses.
+
+   <p>Public slots, in contrast, can be accessed from anywhere.  This is
+accomplished through automatically generated get and put methods named
+for the slot and taking one argument.  In the example above, our
+<code>example</code> class would automatically support a get and put method
+named <code>z/1</code>.  Note, however, that unlike other object oriented
+programming languages that support them, public slots in Quintus
+Objects do not violate information hiding.  This is because you may
+easily replace a public slot with your own get and put methods of the
+same name.  In this sense, a public slot is really only a protected
+slot with automatically generated methods to fetch and store its
+contents.
+
+   <p>Within a method clause, any of the class's slots can be accessed via
+the <code>fetch_slot/2</code> and <code>store_slot/2</code> predicates. These are the
+only way to access private and protected slots. They may be used to
+define get and put methods for the class, which provide controlled
+access to the protected slots. But, they can only be used within the
+method clauses for the class, and they can only refer to slots of the
+current class and protected and public slots of superclasses.
+
+   <p>In the slot description, <code>public</code>, <code>protected</code> and <code>private</code> are
+used as prefix operators. The <code>obj_decl</code> module redefines the prefix
+operator <code>public</code>, as follows:
+
+<pre class="example">     :- op(600, fy, [public]).
+     </pre>
+
+   <p>Unless you use the obsolete <code>public/1</code> directive in your Prolog
+programs, this should cause no problems.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-scl-slt-typ.html#obj-scl-slt-typ">Next</a>
+<li><a rel="up" accesskey="u" href="obj-scl-slt.html#obj-scl-slt">Up</a>
+</ul>
+</div>
+   </body></html>
+

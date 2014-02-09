@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_term_type()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_term_type(term)
+     QP_term_ref term;
+     </pre>
+
+   <p>Tests the type of Prolog terms in C.
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>QP_term_type()</code> returns the type of a
+Prolog term that is passed to it as argument. The returned value is one of
+the following constants defined in the file <code>&lt;quintus/quintus.h&gt;</code>:
+<code>QP_VARIABLE</code>, <code>QP_INTEGER</code>, <code>QP_ATOM</code>,
+<code>QP_FLOAT</code> or <code>QP_COMPOUND</code>.
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>print_type()</code> is a C function that prints the type of
+the Prolog term passed to it.
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(print_type, c, print_type(+term)).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     void print_type(term)
+     QP_term_ref term;
+     {
+         switch (QP_term_type(term)) {
+         case QP_VARIABLE:
+             QP_printf("Term is a variable\n");
+             break;
+         case QP_INTEGER:
+             QP_printf("Term is an integer\n");
+             break;
+         case QP_FLOAT:
+             QP_printf("Term is a float\n");
+             break;
+         case QP_ATOM:
+             QP_printf("Term is an atom\n");
+             break;
+         case QP_COMPOUND:
+             if (QP_is_list(term)) {
+                 QP_printf("Term is a list\n");
+             } else {
+                 QP_printf("Term is a compound term\n");
+             }
+             break;
+         }
+     }
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_is_*()</code>, <code>QP_get_*()</code>, <code>QP_put_*()</code>,
+<code>QP_new_term_ref()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-toplevel.html#cfu-ref-toplevel">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-tabto.html#cfu-ref-tabto">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

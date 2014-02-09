@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Error Reporting/Handling</h5>
+
+   <p>In earlier releases, some errors caused simple failures.  For example,
+<pre class="example">     | ?- <kbd>functor(A,B,C).</kbd>
+     no
+     </pre>
+
+   <p>This is not logical, since it is easy to choose <var>A</var>, <var>B</var>, <var>C</var> such that
+<code>functor(</code><var>A</var><code>,</code><var>B</var><code>,</code><var>C</var><code>)</code> is true.  Generally, built-in predicates should
+enumerate all their logical solutions or else raise an exception in
+cases such as this one where enumeration is impractical. Thus you now
+get:
+<pre class="example">     | ?- <kbd>functor(A,B,C).</kbd>
+     ! Instantiation error in argument 2 of functor/3
+     ! goal:  functor(_530,_531,_532)
+     </pre>
+
+   <p>Existing code that relies on the old error behavior will need
+modification to take this into account.  The insertion of appropriate
+<code>nonvar/1</code> checks is usually all that is required.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="int-hig-com-sst.html#int-hig-com-sst">Previous</a>
+<li><a rel="up" accesskey="u" href="int-hig-com.html#int-hig-com">Up</a>
+</ul>
+</div>
+   </body></html>
+

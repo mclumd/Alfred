@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Methods</h5>
+
+   <p>In Quintus Objects, by default, a class inherits all the methods of
+its superclass. The programmer has more control over the inheritance
+of methods than the inheritance of slots, however. In particular,
+methods can be uninherited and they can be redefined.
+
+   <p>To prevent a method from being inherited, use the <code>uninherit/1</code>
+directive. For example, suppose that the class <code>point</code> is defined as
+before. That is, its definition begins as follows:
+
+<pre class="example">     :- class point =
+             [public x:float=0,
+              public y:float=0].
+     </pre>
+
+   <p>Because both slots are public, a put method is automatically generated
+for each, which allows their values to be changed.
+
+   <p>The definition of a new class <code>fixed_point</code> might begin as follows:
+
+<pre class="example">     :- class fixed_point = point.
+     
+     :- uninherit
+             point &lt;&lt; (x/l),
+             point &lt;&lt; (y/l).
+     
+     Self &lt;- create(X, Y) :-
+             store_slot(x, X),
+             store_slot(y, Y).
+     </pre>
+
+   <p>The parentheses are necessary because of the precedences of the <code>&lt;&lt;</code> and
+<code>/</code> operators.
+
+   <p>Because the put methods from <code>point</code> are not inherited, no instance of
+the <code>fixed_point</code> class can change its <code>x</code> and <code>y</code> values once
+created--unless the class definition contains another method for doing
+so. The get methods are inherited from <code>point</code>, however.
+
+   <p>To redefine a method, simply include method clauses for its message
+within a class's definition. The new method clauses replace, or
+shadow, the inherited method clauses for this class.
+
+   <p>Another way to prevent the <code>x</code> and <code>y</code> slots of the
+<code>fixed_point</code> class from being modified would be to shadow the put
+methods. For example, they might be redefined as
+
+<pre class="example">     Self &lt;&lt; x(_) :-
+             format(user_error, "cannot modify x slot value.~n.", []),
+             fail.
+     
+     Self &lt;&lt; y(_) :-
+             format(user_error, "cannot modify y slot value.~n", []),
+             fail.
+     </pre>
+
+   <p>Now attempts to modify the <code>x</code> or <code>y</code> values of a fixed point
+object generate a specific error message and fail.  A more complicated
+version would raise an appropriate exception.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-inh-sih-ssup.html#obj-inh-sih-ssup">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-inh-sih-slt.html#obj-inh-sih-slt">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-inh-sih.html#obj-inh-sih">Up</a>
+</ul>
+</div>
+   </body></html>
+

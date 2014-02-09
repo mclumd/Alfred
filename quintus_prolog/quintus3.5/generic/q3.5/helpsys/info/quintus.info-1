@@ -1,0 +1,1336 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: Top,  Next: int,  Prev: (dir),  Up: (dir)
+
+Quintus Prolog
+**************
+
+* Menu:
+
+* int::                                 Introduction
+* bas::                                 User's Guide
+* qui::                                 The Quintus User Interface
+* ema::                                 The Emacs Interface
+* vb::                                  The Visual Basic Interface
+* dbg::                                 The Debugger
+* glo::                                 Glossary
+* ref::                                 The Prolog Language
+* sap::                                 Creating Executables
+* fli::                                 Foreign Language Interface
+* ipc::                                 Inter-Process Communication
+* lib::                                 Library
+* str::                                 The Structs Package
+* obj::                                 The Objects Package
+* pbn::                                 The PrologBeans Package
+* pxl::                                 The ProXL Package
+* pxt::                                 The ProXT Package
+* mpg::                                 Prolog Reference pages
+* cfu::                                 C Reference Pages
+* too::                                 Command Reference Pages
+* pindex::                              Predicate Index
+* kindex::                              Keystroke Index
+* bindex::                              Book Index
+
+   This manual documents Quintus Prolog Release December 2003.
+
+   Prolog is a simple but powerful programming language developed at the
+University of Marseille, as a practical tool for programming in logic.
+From a user's point of view the major attraction of the language is
+ease of programming.  Clear, readable, concise programs can be written
+quickly with few errors.
+
+
+File: quintus.info,  Node: int,  Next: bas,  Prev: Top,  Up: Top
+
+Introduction
+************
+
+* Menu:
+
+* int-man::                             About this Manual
+* int-hig::                             Highlights of  release3
+* int-dir::                             The Quintus Directory
+
+
+File: quintus.info,  Node: int-man,  Next: int-hig,  Up: int
+
+About this Manual
+=================
+
+* Menu:
+
+* int-man-ove::                         Overview
+* int-man-org::                         Organization of the Manual
+* int-man-not::                         Notational Conventions
+* int-man-bib::                         Bibliographical Notes
+
+
+File: quintus.info,  Node: int-man-ove,  Next: int-man-org,  Up: int-man
+
+Overview
+--------
+
+   The purpose of this manual is to provide a complete description of
+the Quintus Prolog system.  It is not necessary to read the entire
+manual before starting to use Quintus Prolog.  On the contrary, it is
+organized so that you should be able to quickly find out whatever you
+need to know about the system.
+
+   Start by reading Chapter 1.  *Note int-hig:: provides an overview of
+all the new functionality and includes references to places where this
+new functionality is documented.  *Note int-dir:: provides an overview
+of the installation hierarchy, which will be helpful in orienting you
+at many points in the manual.
+
+   Familiarity with some form of Prolog programming is assumed, at least
+at the level of textbooks such as those listed at the end of this
+chapter.  It is the particular syntax, semantics and functionality of
+Quintus Prolog that is treated here.  The material in the first 10
+chapters is meant to introduce you to Quintus Prolog, not Prolog in
+general.
+
+   The entire manual is accessible on-line as discussed in *Note
+ref-olh::, and, for Quintus User Interface users, *Note qui-hlp::.
+This facility allows you to access the manual directly from Prolog
+whenever you need to look something up.
+
+   The manual, printed and on-line, is supplemented by various on-line
+resources including tutorials, demos, and code comments in library
+packages.  See *Note int-dir:: for the location of these materials in
+the Quintus Directory.
+
+
+File: quintus.info,  Node: int-man-org,  Next: int-man-not,  Prev: int-man-ove,  Up: int-man
+
+Organization of the Manual
+--------------------------
+
+   The documentation for release 3 consists of 19 chapters (see the
+Table of Contents).
+
+   There is a separate reference entry, following a standard format, for
+every Prolog built-in predicate, callable function, and command-line
+tool.  They are arranged alphabetically for ease of reference.  The
+other parts of the manual describe how predicates, functions, and tools
+are used, and how they work together, but the reader will be referred to
+the "Reference Pages" for a detailed description of each predicate,
+function, and tool.
+
+   While reading the descriptions of functionality provided, you can
+always find more detail on these routines in the Reference Pages.
+Since they are listed alphabetically within those major groupings,
+explicit cross-references to them are not spelled out.
+
+   Preceding the reference pages of each category there is a list of
+predicates, functions, or tools arranged by functional categories to
+assist the reader in locating unfamiliar names of routines.
+
+   At the end of each section, you will be referred to relevant
+reference pages and libraries when such supporting documentation or
+packages exist.  Reference pages include cross-references to related
+reference pages and to relevant sections throughout the manual.
+
+
+File: quintus.info,  Node: int-man-not,  Next: int-man-bib,  Prev: int-man-org,  Up: int-man
+
+Notational Conventions
+----------------------
+
+* Menu:
+
+* int-man-not-mod::                     Goal Templates and Mode Annotations
+* int-man-not-exa::                     Examples
+* int-man-not-osd::                     Operating System Dependencies
+
+
+File: quintus.info,  Node: int-man-not-mod,  Next: int-man-not-exa,  Up: int-man-not
+
+Goal Templates and Mode Annotations
+...................................
+
+   Goal templates such as this are used in reference page synopses and
+elsewhere:
+
+     setof(+TEMPLATE, +*GENERATOR, *SET)
+
+   Here TEMPLATE, GENERATOR, and SET are meta-variables, mnemonic names
+for the arguments.  Preceding each meta-variable is a symbol indicating
+the mode of the argument: whether it is an input or output, and
+information about its determinacy.  These mode annotations are
+discussed in detail in *Note mpg-ref-mod::.
+
+     *Please note:* The system of mode annotations used in release 3 has
+     not been applied to the Quintus Prolog Library.
+
+
+File: quintus.info,  Node: int-man-not-exa,  Next: int-man-not-osd,  Prev: int-man-not-mod,  Up: int-man-not
+
+Examples
+........
+
+   Examples illustrating interactive terminal sessions show what the
+user types in as well as system output.  The operating system prompt is
+represented as `% ' in examples.  For example:
+
+     % prolog +
+     | ?- display(a+b).
+     +(a,b)
+     yes
+
+
+File: quintus.info,  Node: int-man-not-osd,  Prev: int-man-not-exa,  Up: int-man-not
+
+Operating System Dependencies
+.............................
+
+   The name of certain command line tools and file extensions are
+operating system dependent.  When reading this manual, you may have to
+substitute the actual name for the one used in the manual.  This
+applies to:
+
+`cc'
+     The C compiler, called `cc' or `gcc' under UNIX and `cl' under
+     Windows.
+
+`ld'
+     The linker, called `ld' under UNIX and `link' under Windows.
+
+`.o'
+     File extension for object files, `.o' under UNIX and `.obj' under
+     Windows.
+
+`.so'
+     File extension for shared object files, `.sl' under HPUX, `.so'
+     under other UNIX, and `.dll' under Windows.
+
+`.a'
+     File extension for archive files, `.a' under UNIX and `.lib' under
+     Windows.
+
+
+File: quintus.info,  Node: int-man-bib,  Prev: int-man-not,  Up: int-man
+
+Bibliographical Notes
+---------------------
+
+   There are now a number of excellent books that teach Prolog.   The
+following six books offer fully comprehensive courses in Prolog.
+
+`Programming in Prolog'
+     William  Clocksin and Christopher Mellish, Springer Verlag 1987,
+     (third edition), ISBN 0-387-17539-3.
+
+`Prolog: A Logical Approach'
+     Tony Dodd, Oxford University Press 1990, ISBN 0-19-853821-9.
+
+`Advanced Prolog'
+     Peter Ross, Addison Wesley 1989, ISBN 0-201-17527-4.
+
+`Prolog Programming for Artificial Intelligence'
+     Ivan Bratko,  Addison Wesley 1990 (second edition), ISBN
+     0-201-41606-9.
+
+`The Art of Prolog, 2nd ed.'
+     Leon  Sterling  and  Ehud  Shapiro,  MIT   Press   1994, ISBN
+     0-262-19338-8.
+
+`Prolog Programming In Depth'
+     Michael Covington, Donald Nute and Andre Vellino, Prentice-Hall,
+     1996, ISBN 0-13-138645-X.
+
+   More advanced texts:
+
+`The Craft of Prolog'
+     Richard O'Keefe, MIT Press 1990, ISBN 0-262-15039-5.
+
+     An advanced text dedicated to the proposition that elegance is not
+     optional.
+
+`The Practice of Prolog'
+     Leon Sterling (ed.), MIT Press 1990, ISBN 0-262-19301-9.
+
+     Each chapter presents and explains a particular application
+     program written in Prolog.
+
+`Artificial Intelligence: A Modern Approach'
+     Stuart Russell, Peter Norvig, Prentice Hall 1995, ISBN
+     0-13-103805-2.
+
+     A textbook on Artificial Intelligence using Prolog.
+
+`Techniques for Prolog Programming'
+     T. Van Lee, John Wiley, 1993.
+
+`Computational Intelligence--A Logical Approach'
+     David Poole, Alan Mackworth, Randy Goebel, Oxford University
+     Press, 1998, ISBN 0-195-10270-3.
+
+`Natural Language Processing for Prolog Programmers'
+     Michael Covington, Prentice Hall, 1994, ISBN 0-13-629213-5.
+
+`From Logic Programming to Prolog'
+     K. Apt. Prentice-Hall, 1997, ISBN 0-132-30368-X.
+
+   The author explains the procedural and logical interpretation of
+Prolog programs, which eases the transition for C programmers.
+
+   Tools used in the Quintus Prolog programming environment are
+documented in these manuals:
+`GNU Emacs Manual, Version 20'
+     Richard Stallman, Free Software Foundation, 1998.
+
+`Introduction to the X Window System'
+     Jones, Oliver, Prentice-Hall, 1988, ISBN 0-13-499997-5.
+
+     An introduction to programming with Xlib
+
+`X Window System: Programming and Applications With Xt'
+     Young, Douglas A., OSF/Motif Edition, Prentice-Hall, 1990, ISBN
+     0-13-497074-8.
+
+     A basic tutorial on writing programs using the Xt and Motif
+     toolkits.
+
+`OSF/Motif Series'
+     (5 volumes) Open Software Foundation, Prentice Hall, 1990.  The
+     volumes include Motif Style Guide, Programmer's Guide,
+     Programmer's Reference, User's Guide, and Application Environment
+     Specification (AES) User Environment Volume.  Editions of these
+     books, available for Release 1.1 and Release 1.2.
+
+`The X Window System Series'
+     (8 volumes), O'Reilly and Associates, 1988, 1989, 1990.
+
+`X Window System Toolkit'
+     Asente, Paul J. and Ralph R. Swick, DEC Press, 1990, ISBN
+     1-55558-051-3.
+
+     The X Toolkit bible.
+
+
+File: quintus.info,  Node: int-hig,  Next: int-dir,  Prev: int-man,  Up: int
+
+Highlights of  release 3
+========================
+
+* Menu:
+
+* int-hig-emb::                         Embeddability
+* int-hig-qof::                         QOF Loading and Saving
+* int-hig-qui::                         QUI: An X-based Development Environment
+* int-hig-sld::                         Source-linked Debugger
+* int-hig-oth::                         Other New Features
+* int-hig-com::                         Compatibility Issues
+* int-hig-bip::                         New Built-in Predicates
+* int-hig-hok::                         New Hook Predicates
+* int-hig-rem::                         Removed Built-in Predicates
+
+   This section summarizes the new functionality in release 3.
+
+
+File: quintus.info,  Node: int-hig-emb,  Next: int-hig-qof,  Up: int-hig
+
+Embeddability
+-------------
+
+   Embeddability means the ability to embed a Prolog sub-program in a
+program written in some other language or languages.  It is described
+in *Note fli-emb::.  The specific features of this release that
+contribute towards embeddability are:
+
+   * Callable Prolog: In earlier releases, Prolog could call routines
+     written in other languages but the reverse was not possible.  Now
+     each language can call the other, allowing much greater freedom in
+     the way that multi-language programs can be organized (see *Note
+     fli-ffp::).
+
+   * Terms in C: Compound terms can be passed to and from C.  Routines
+     are provided for testing, unifying, comparing and constructing
+     terms in C.  (See *Note fli-p2f-trm::)
+
+   * Access to C data structures: Arithmetic evaluation has been
+     extended so that elements of C data structures can be accessed.
+     Also, there is a new built-in predicate `assign/2', which allows
+     assignment into C data structures (see *Note mpg::).
+
+   * Open OS Interface: The main interfaces between the Prolog system
+     and the operating system are now open.  That is, the I/O and memory
+     management interfaces are a set of documented functions, which can
+     be replaced by user-defined functions.  Source code is supplied
+     for the default versions of these functions. (See *Note fli-emb::)
+
+   * Discontiguous Memory Management: As in previous releases, the
+     system requests memory from the operating system only as it needs
+     it, and it frees it up again when possible.  (This contrasts with
+     many other Prolog implementations in which all needed memory must
+     be pre-allocated.)  An important difference with this release is
+     that the allocated memory need not be contiguous.  This allows
+     Prolog to better co-exist with other components that share its
+     process' address space.
+
+   * User-defined `main()': There is no longer any necessity to use the
+     default `main()' routine.  An application may call individual
+     Prolog predicates and may never need to start an interactive
+     Prolog session (See *Note fli-emb::).
+
+   * Signal Handling: Prolog used to trap all signals and then call any
+     signal handler that had been specified by a user.  release 3 does
+     not intercept signals that are being handled by the user's code.
+
+
+File: quintus.info,  Node: int-hig-qof,  Next: int-hig-qui,  Prev: int-hig-emb,  Up: int-hig
+
+QOF Loading and Saving
+----------------------
+
+   Since Release 2.5, the Runtime Generator compiler `qpc' has been
+made available as part of the Development System.  `qpc' compiles
+Prolog files into QOF (Quintus Object Format) files.  QOF files can be
+linked together to make an executable file, which is an extended
+version of the development system.  If you have a Runtime Generator
+license, you have the alternative of linking your QOF files into a
+runtime system, which omits development features (the compiler and
+debugger) and which can be conveniently deployed to different machines
+since it requires no authorization code in order to be run.
+
+   Release 3 introduces the ability to load QOF files directly into a
+running Prolog system.  Loading a QOF file is up to 100 times faster
+than compiling it from source.  File loading has been adapted to take
+advantage fo this new functionality.  For instance, the form
+     | ?- [file].
+
+   now loads `file.qof' if it exists and is more recent than `file.pl';
+otherwise it compiles `file.pl'.
+
+   The saved-state produced by `save_program/1' is now a QOF file.
+This means that it is now portable between different hardware and
+operating systems as well as between all releases of Quintus Prolog.
+It can still be executed as if it were an executable file, or it can be
+loaded into a running Prolog system.  Another alternative is to call
+the QOF-linker `qld' on it to convert it to an executable file.  It is
+also possible to save individual predicates or modules into a QOF file.
+
+   *Note ref-lod:: and *Note ref-sls:: describe QOF loading and QOF
+saving  respectively.  See *Note sap-srs-bas-cld:: for how to link QOF
+files to make an executable file.
+
+
+File: quintus.info,  Node: int-hig-qui,  Next: int-hig-sld,  Prev: int-hig-qof,  Up: int-hig
+
+QUI: An X-based Development Environment
+---------------------------------------
+
+   The Quintus User Interface (QUI) is a new development environment
+based on the X-Windows system.  QUI makes use of windows, buttons and
+menus to increase programmer productivity, and it includes an internal
+editor, access to GNU Emacs and access to the on-line manual.  See
+*Note qui::.
+
+
+File: quintus.info,  Node: int-hig-sld,  Next: int-hig-oth,  Prev: int-hig-qui,  Up: int-hig
+
+Source-linked Debugger
+----------------------
+
+   A source-linked debugger is provided via QUI as well as via Emacs,
+allowing you to single-step through your source code.  The debugger
+works by modification of compiled code, so there is no longer any need
+to distinguish between "consulting" and "compiling"; all code is
+compiled unless declared dynamic.
+
+   The new debugger also helps you to find inefficiencies in your
+program by
+   * showing visually the creation of choice points, and
+
+   * distinguishing between determinate and nondeterminate exit from a
+     goal.
+
+   The debugger is documented in *Note dbg::.
+
+
+File: quintus.info,  Node: int-hig-oth,  Next: int-hig-com,  Prev: int-hig-sld,  Up: int-hig
+
+Other New Features
+------------------
+
+   * Exception Handler: Allows the programmer to specify a recovery
+     action to be taken if an exception occurs during the execution of a
+     particular goal.  All errors detected by the system now cause an
+     exception to be raised; exceptions can also be raised by calling
+     the built-in predicate `raise_exception/1' (see *Note ref-ere::).
+
+   * Message Handler: Allows customization of the text of system
+     messages and of how they are displayed to the user.  Major uses are
+     customization or internationalization of error messages, and
+     building user interfaces.  (See *Note ref-msg::)
+
+   * New I/O: The new I/O system has substantially faster character I/O
+     and more efficient (buffer-based rather than character-based)
+     user-defined streams.  There is now no limit on the number of open
+     streams other than that imposed by the operating system.
+
+   * New Arithmetic: Standard 32-bit integers and 64-bit floats are
+     supported.  Exceptions are raised on overflows.  Variables in
+     arithmetic expressions can be bound to expressions (not just
+     numbers).
+
+   * Advice Package: Allows a developer to associate consistency checks
+     ("advice") to be performed whenever specified predicates are
+     entered or exited.  Advice checking can be enabled/disabled
+     selectively or globally during the development process (see *Note
+     dbg-adv::).
+
+
+File: quintus.info,  Node: int-hig-com,  Next: int-hig-bip,  Prev: int-hig-oth,  Up: int-hig
+
+Compatibility Issues
+--------------------
+
+* Menu:
+
+* int-hig-com-sst::                     Saved States
+* int-hig-com-erh::                     Error Reporting/Handling
+
+
+File: quintus.info,  Node: int-hig-com-sst,  Next: int-hig-com-erh,  Up: int-hig-com
+
+Saved States
+............
+
+   `save/[1,2]' are gone.  *Note ref-sls:: explains why these have been
+removed.  In most cases `save_program/2' can be used in their place,
+with a little rearrangement of your code.
+
+   Foreign code is no longer included in saved-states.  When a
+saved-state is used it needs to be able to find the relevant object
+files and cause them to be linked in.  Since this linking can be slow,
+it will often be preferable to use `qld' to link your saved-state with
+its object files into an executable file.  See *Note sap-srs-bas-cld::
+for how to do this.
+
+
+File: quintus.info,  Node: int-hig-com-erh,  Prev: int-hig-com-sst,  Up: int-hig-com
+
+Error Reporting/Handling
+........................
+
+   In earlier releases, some errors caused simple failures.  For
+example,
+     | ?- functor(A,B,C).
+     no
+
+   This is not logical, since it is easy to choose A, B, C such that
+`functor(A,B,C)' is true.  Generally, built-in predicates should
+enumerate all their logical solutions or else raise an exception in
+cases such as this one where enumeration is impractical. Thus you now
+get:
+     | ?- functor(A,B,C).
+     ! Instantiation error in argument 2 of functor/3
+     ! goal:  functor(_530,_531,_532)
+
+   Existing code that relies on the old error behavior will need
+modification to take this into account.  The insertion of appropriate
+`nonvar/1' checks is usually all that is required.
+
+
+File: quintus.info,  Node: int-hig-bip,  Next: int-hig-hok,  Prev: int-hig-com,  Up: int-hig
+
+New Built-in Predicates
+-----------------------
+
+   See the Reference Pages for information on the following new
+predicates.
+
+`absolute_file_name/3'
+     generalization of `absolute_file_name/2'
+
+`add_spypoint/1'
+     add a spypoint
+
+`add_advice/3'
+     specify an advice action for a particular port of a predicate
+
+`append/3'
+     list concatenation relation
+
+`assign/2'
+     assign a value to a foreign data structure
+
+`at_end_of_file/0'
+     test if the current input stream is at end of file
+
+`at_end_of_file/1'
+     test if the specified stream is at end of file
+
+`at_end_of_line/0'
+     test if the current input stream is at end of line
+
+`at_end_of_line/1'
+     test if the specified stream is at end of line
+
+`callable/1'
+     test if the a term is syntactically valid as an argument to
+     `call/1'; that is, not a variable, a number or a database reference
+
+`check_advice/0'
+     enable advice-checking for all predicates with advice
+
+`check_advice/1'
+     enable advice-checking for the specified predicates
+
+`compound/1'
+     test if a term is a compound term
+
+`current_advice/3'
+     find out what advice exists
+
+`current_spypoint/1'
+     find out what spypoints exist
+
+`db_reference/1'
+     test if a term is a database reference
+
+`extern/1'
+     declare predicate to be callable from C
+
+`ground/1'
+     test if a term is ground (contains no unbound variables)
+
+`hash_term/2'
+     produce a hash-value corresponding to a term
+
+`initialization/1'
+     declare a goal to be called when a file is loaded or when an
+     executable file containing it is run
+
+`load_files/1'
+     load source or QOF files
+
+`load_files/2'
+     load source or QOF files with specified options
+
+`nocheck_advice/0'
+     turn off all advice checking
+
+`nocheck_advice/1'
+     turn off advice checking for specified predicates
+
+`on_exception/3'
+     execute a goal in the context of an exception handler
+
+`open/4'
+     open a file with specified options
+
+`peek_char/1'
+     return the next character in the current input stream without
+     consuming it
+
+`peek_char/2'
+     return the next character in specified stream without consuming it
+
+`print_message/2'
+     print an error, warning, help, silent or informational message
+
+`print_message_lines/3'
+     auxiliary routine for message printing
+
+`prompt/3'
+     examine or change the prompt for a particular stream
+
+`raise_exception/1'
+     raise an exception
+
+`read_term/2'
+     read a term from current input stream
+
+`read_term/3'
+     read a term from specified stream
+
+`remove_advice/3'
+     remove advice for specified port of a predicate
+
+`remove_spypoint/1'
+     remove a spypoint
+
+`save_modules/2'
+     save a module or modules to QOF
+
+`save_predicates/2'
+     save a predicate or predicates to QOF
+
+`save_program/2'
+     save the program state and specify goal to be run on start-up
+
+`seek/4'
+     byte-oriented random access to files
+
+`simple/1'
+     opposite of `compound/1'; true of variables, atoms, numbers and
+     database references
+
+`skip_line/0'
+     skips characters on current input up to end of line
+
+`skip_line/1'
+     skips characters on specified stream up to end of line
+
+`source_file/3'
+     relation between source file, predicate and clause number
+
+`volatile/1'
+     declare that a predicate should be excluded when saving
+
+`write_term/2'
+     write a term to current output
+
+`write_term/3'
+     write a term to specified stream
+
+
+File: quintus.info,  Node: int-hig-hok,  Next: int-hig-rem,  Prev: int-hig-bip,  Up: int-hig
+
+New Hook Predicates
+-------------------
+
+   These predicates are called at appropriate times by the Prolog system
+and are defined by the user.
+`user:display_help_file/3'
+     define how on-line help is displayed
+
+`user:message_hook/3'
+     define how messages are displayed
+
+`user:generate_message_hook/3'
+     define the textual form of messages
+
+`user:query_hook/2'
+     define or bypass user-interaction
+
+
+File: quintus.info,  Node: int-hig-rem,  Prev: int-hig-hok,  Up: int-hig
+
+Removed Built-in Predicates
+---------------------------
+
+   `save/[1,2]' has been removed as discussed above.  Their names are
+still reserved so that we can use them in a future release.
+
+   The following predicates were supported only by the interpreter and
+have now been eliminated.  If their functionality is required, it can
+be achieved by passing an explicit ancestors list to all the predicates
+that need it as an extra argument.
+   * `ancestors/1'
+
+   * `subgoal_of/1'
+
+   * `maxdepth/1'
+
+   * `depth/1'
+
+   The following predicates that were previously provided only because
+they are defined in other Prolog systems have now been removed.  The
+user may supply definitions for them if desired.  (Many of these just
+printed error messages in earlier releases.)
+
+   * `'LC'/0'
+
+   * `'NOLC'/0'
+
+   * `current_functor/2'
+
+   * `incore/1'
+
+   * `load_foreign_files/3'
+
+   * `log/0'
+
+   * `nolog/0'
+
+   * `plsys/1'
+
+   * `reinitialize/0'
+
+   * `restore/2'
+
+   * `revive/2'
+
+
+File: quintus.info,  Node: int-dir,  Prev: int-hig,  Up: int
+
+The Quintus Directory
+=====================
+
+* Menu:
+
+* int-dir-qdu::                         Structure of the Quintus Directory under UNIX
+* int-dir-qdw::                         Structure of the Quintus Directory under Windows
+* int-dir-spa::                         Search Paths
+
+   All Quintus products are designed to be installed in a single
+directory hierarchy.  For each product, several different hardware and
+operating system platforms may be supported within the same directory
+structure, provided that all platforms are able to access this
+hierarchy using NFS.  Also, multiple versions of each product may
+co-exist in the same hierarchy.
+
+   The Quintus directory, QUINTUS-DIRECTORY (as seen in the figures
+below), is the root of the whole installation, and is where the entire
+Quintus hierarchy is installed.  The following sections describe the
+files and directories located directly under the QUINTUS-DIRECTORY: The
+structure of the Quintus Directory differs slightly between UNIX and
+Windows.  We therefore describe the two cases separately.
+
+
+File: quintus.info,  Node: int-dir-qdu,  Next: int-dir-qdw,  Up: int-dir
+
+Structure of the Quintus Directory under UNIX
+---------------------------------------------
+
+
+[See printed or HTML manual.]
+
+                Quintus-directory structure under UNIX
+
+`bin3.5'
+     Contains one subdirectory for each platform (and operating system)
+     on which Quintus Prolog has been installed.  For example, `sun4-5'
+     contains the executables installed for a Sun4 running SunOS 5.x.
+     When the manual refers to RUNTIME-DIRECTORY, it is the
+     subdirectories of `bin3.5', such as `sun4-5', that are referred
+     to.  The RUNTIME-DIRECTORY for your platform is the default
+     `runtime_directory' Prolog flag. These directories are generated
+     automatically for each platform during the installation procedure.
+
+`generic'
+     a directory containing files shared by different platforms.
+     Subdirectories are described below.
+
+`editor3.5'
+     a directory containing the single directory `gnu', which contains
+     `.el' and `.elc' files for the GNU Emacs interface.  See *Note
+     ema-ove::.
+
+`qui3.5'
+     a directory containing support files for the Quintus User
+     Interface.  See *Note qui-qui::.
+
+`proxl3.5'
+     a directory for the ProXL Package.  See *Note pxl::.
+
+`proxt3.5'
+     a directory for the ProXT Package.  See *Note pxt::.
+
+`dbi', `flex', etc.
+     one installation directory exists add-on product installed:
+     Quintus Database Interface, Flex, etc.
+
+`license3.5'
+     a directory containing license files for Quintus Prolog and its
+     add-on products
+
+`java3.5'
+     a directory containing Java software components
+
+   The subdirectories of `generic' are the library directory,
+`qplib3.5', and the Quintus information directory, `q3.5'.
+`qplib3.5'
+     the library directory.  This directory contains source and QOF
+     files for the packages in the Quintus Prolog Library and the
+     `embed' and `tools' directories.  The contents of the library
+     directory are detailed in *Note lib-bas::.
+
+`q3.5'
+     information about Quintus Prolog.  Subdirectories:
+
+    `demo'
+          demonstration programs
+
+    `helpsys'
+          files for the Development System's on-line help-system
+
+    `man'
+          the man pages describing the executables found in the binary
+          directory
+
+    `tutorial'
+          small programs demonstrating aspects of Quintus Prolog
+
+
+File: quintus.info,  Node: int-dir-qdw,  Next: int-dir-spa,  Prev: int-dir-qdu,  Up: int-dir
+
+Structure of the Quintus Directory under Windows
+------------------------------------------------
+
+
+[See printed or HTML manual.]
+
+               Quintus-directory structure under Windows
+
+`bin'
+     Contains the single subdirectory `ix86'.  When the manual refers
+     to RUNTIME-DIRECTORY, it is that subdirectory that is referred to.
+     It is also the value of the `runtime_directory' Prolog flag.
+
+`lib'
+     Contains the single subdirectory `ix86', which contains import
+     libraries and other files required for building Prolog executables.
+
+`include'
+     Contains `<quintus/quintus.h>'.
+
+`src'
+     a directory containing files shared by different platforms, in
+     particular the library modules.  The contents of this directory
+     are detailed in *Note lib-bas::.  Subdirectories include:
+
+    `demo'
+          demonstration programs
+
+    `helpsys'
+          files for the Development System's on-line help-system
+
+    `embed'
+          see *Note lib-bas::.
+
+    `tools'
+          see *Note lib-bas::.
+
+    `vbqp'
+          files for the Visual Basic interface.
+
+`editor3.5'
+     a directory containing the single directory `gnu', which contains
+     sq'.el' and `.elc' files for the GNU Emacs interface.  See *Note
+     ema-ove::.
+
+`dbi', `flex', etc.
+     one installation directory exists add-on product installed:
+     Quintus Database Interface, Flex, etc.
+
+`license3.5'
+     a directory containing license files for Quintus Prolog and its
+     add-on products
+
+`java3.5'
+     a directory containing Java software components
+
+
+File: quintus.info,  Node: int-dir-spa,  Prev: int-dir-qdw,  Up: int-dir
+
+Search Paths
+------------
+
+   The absolute name of QUINTUS-DIRECTORY is returned by (A) and is, by
+default, used to set (B):
+          prolog_flag(quintus_directory, QuintusDir). (A)
+     
+          file_search_path(quintus, QuintusDir). (B)
+
+   See *Note ref-lps-flg-cha:: for discussion of `prolog_flag/2', and
+*Note ref-fdi-fsp-pre:: for discussion of predefined
+`file_search_path/2' facts.
+
+
+File: quintus.info,  Node: bas,  Next: qui,  Prev: int,  Up: Top
+
+User's Guide
+************
+
+* Menu:
+
+* bas-eff::                             Writing Efficient Programs
+* bas-sta::                             Getting Started
+* bas-lim::                             Limits in Quintus Prolog
+* bas-lod::                             Loading Programs into Prolog
+* bas-run::                             Running Programs
+
+
+File: quintus.info,  Node: bas-sta,  Next: bas-lim,  Prev: bas-eff,  Up: bas
+
+Getting Started
+===============
+
+* Menu:
+
+* bas-sta-ove::                         Overview
+* bas-sta-sta::                         Starting Prolog
+* bas-sta-exi::                         Exiting Prolog
+* bas-sta-tpp::                         The Top-level Prolog Prompt
+* bas-sta-hlp::                         Using the On-line Help System
+
+
+File: quintus.info,  Node: bas-sta-ove,  Next: bas-sta-sta,  Up: bas-sta
+
+Overview
+--------
+
+   This chapter describes things that you should know about Quintus
+Prolog.  It assumes only the default interface, the way you can use
+Prolog on terminals that do not support X-Windows or Emacs.
+
+   This section describes how to run and halt Prolog, what you'll see
+once you've started Prolog, and how to use the on-line help system.
+*Note bas-lod:: describes how to load programs into Prolog.  *Note
+bas-run:: discusses various features of the system related to running
+programs.
+
+
+File: quintus.info,  Node: bas-sta-sta,  Next: bas-sta-exi,  Prev: bas-sta-ove,  Up: bas-sta
+
+Starting Prolog
+---------------
+
+   If you are using Windows, the batch file
+`RUNTIME-DIRECTORY\qpvars.bat' needs to be executed to set up the
+necessary environment variables.  If you are using UNIX, your `PATH'
+environment variable needs to include the directory containing the
+Quintus tools.
+
+   To start Prolog, type `prolog' at the operating system prompt
+(whether UNIX or Windows):
+     % prolog
+
+   The system responds by displaying a copyright message followed by
+the main Prolog prompt, as shown below.
+
+     Quintus Prolog Release 3.5 (Sun 4, SunOS 5.5)
+     
+     | ?-
+
+   The `| ?- ' is the main Prolog prompt.  It indicates that you are at
+the top level of the Prolog system.  At this point, the system is
+waiting for you to type a goal, such as a command to load a previously
+created file containing a Prolog program.
+
+   If you are using Windows, it is probably more useful to run `qpwin'
+from the Start Menu.  This has the same appearance as the console-based
+version, except that the output is directed to a window.  The
+properties of this window can be tuned; see *Note too-too-prolog::.  If
+you use `qpwin' you do not need to run the
+`RUNTIME-DIRECTORY\qpvars.bat' batch file.
+
+
+File: quintus.info,  Node: bas-sta-exi,  Next: bas-sta-tpp,  Prev: bas-sta-sta,  Up: bas-sta
+
+Exiting Prolog
+--------------
+
+   To exit from Prolog, type your end-of-file character at the main
+Prolog prompt.  (The standard end-of-file character is `^d' for UNIX and
+`^z' for Windows.)
+
+     | ?- ^D
+
+   Alternatively, you can exit from Prolog by typing `halt.' followed
+by a carriage return at the main Prolog prompt:
+     | ?- halt.<RET>
+
+   <RET> stands for the Return key on your terminal.  Note that a period
+followed by a <RET> must always be typed after a goal.  The <RET> will
+usually not be shown explicitly but will be assumed in the examples
+that follow.
+
+   If all else fails, you can always use a `^c' interrupt followed by an
+`e' to exit.
+
+
+File: quintus.info,  Node: bas-sta-tpp,  Next: bas-sta-hlp,  Prev: bas-sta-exi,  Up: bas-sta
+
+The Top-level Prolog Prompt
+---------------------------
+
+   The prompt `| ?-' indicates that Prolog is waiting for a goal to be
+typed in.  For example, you can call built-in predicates like this:
+     | ?- write(hello).
+     hello
+     yes
+     
+     | ?- X is 2+2.
+     
+     X = 4 <RET>
+     
+     | ?-
+
+   When Prolog prints a variable binding at the top level like `X = 4'
+in this example, it waits for you to either type a <RET>, which brings
+it back to the top level, or else type a `;', which causes it to
+backtrack and look for another solution.  In this case, you would get
+     | ?- X is 2+2.
+     
+     X = 4 ;
+     
+     no
+     | ?-
+
+   because there is only one X for which the goal can be satisfied.
+
+   It is always possible to interrupt any Prolog process and return to
+the top-level Prolog prompt.  To do this, type `^c'.  The system then
+displays the message
+     Prolog interruption (h for help)?
+
+   Type `a' (for abort) and press <RET>.  The system then displays a
+message indicating that execution has been aborted, followed by the
+top-level Prolog prompt.
+
+     ! Execution aborted
+     
+     | ?-
+
+
+File: quintus.info,  Node: bas-sta-hlp,  Prev: bas-sta-tpp,  Up: bas-sta
+
+Using the On-line Help System
+-----------------------------
+
+   Quintus Prolog provides an on-line help system, which allows on-line
+access to this manual.  The best ways to access the on-line manual are
+via QUI or Emacs, but it can also be accessed from the TTY interface.
+Type `manual.' at the main Prolog prompt to access the on-line help
+system as shown below.
+     | ?- manual.
+
+   The system then displays the following menu:
+
+     File: quintus.info,  Node: Top,  Next: int,  Prev: (dir),  Up: (dir)
+     
+     Quintus Prolog
+     **************
+     
+     * Menu:
+     
+     * {manual(int)}                         Introduction
+     * {manual(bas)}                         User's Guide
+     * {manual(qui)}                         The Quintus User Interface
+     * {manual(ema)}                         The Emacs Interface
+     * {manual(vb)}                          The Visual Basic Interface
+     * {manual(dbg)}                         The Debugger
+     * {manual(glo)}                         Glossary
+     * {manual(ref)}                         The Prolog Language
+     * {manual(sap)}                         Creating Executables
+     * {manual(fli)}                         Foreign Language Interface
+     * {manual(ipc)}                         Inter-Process Communication
+     * {manual(lib)}                         Library
+     * {manual(str)}                         The Structs Package
+     * {manual(obj)}                         The Objects Package
+     * {manual(pbn)}                         The PrologBeans Package
+     * {manual(pxl)}                         The ProXL Package
+     * {manual(pxt)}                         The ProXT Package
+     * {manual(mpg)}                         Prolog Reference pages
+     * {manual(cfu)}                         C Reference Pages
+     * {manual(too)}                         Command Reference Pages
+     * {manual(pindex)}                      Predicate Index
+     * {manual(kindex)}                      Keystroke Index
+     * {manual(bindex)}                      Book Index
+     
+        This manual documents Quintus Prolog Release December 2003.
+     
+        Prolog is a simple but powerful programming language developed at the
+     University of Marseille, as a practical tool for programming in logic.
+     From a user's point of view the major attraction of the language is
+     ease of programming.  Clear, readable, concise programs can be written
+     quickly with few errors.
+     
+     {text}
+
+   To see the table of contents for the Quintus User Interface, type
+     | ?- manual(qui).
+
+   The table of contents of the QUI part will then be shown as another
+menu.  You can then choose a chapter/section in that part.  For
+example, the second entry in the QUI menu is:
+     * {manual(qui-mai)}                     QUI Main Window
+
+   So, to find out about the main window of the QUI you would type:
+     | ?- manual(qui-mai).
+
+   In response, the system displays the appropriate section of the
+manual on the screen.  You can continue typing goals of this form until
+you reach a file of text that does not begin with a menu.
+
+   You can control the way that manual files are written to the screen
+by setting  your environment variable `PAGER' to the name of a program
+to be used to display a file.  If `PAGER' is not set the default is
+`more(1)'.
+
+   If you wish to save an on-line manual section into a file it can be
+done like this:
+     | ?- tell('qui-mai.manual'), manual(qui-mai), told.
+
+   To request information about a specific topic, type `help(TOPIC).'
+at the main Prolog prompt, where TOPIC represents the topic you want
+information about.  The system displays a menu generated by scanning the
+index of the manual for all entries containing the substring formed by
+TOPIC.
+
+   For example, you might type
+     | ?- help(debug).
+
+   if you are interested in learning about using the debugger.  In
+response to this, the system will display a menu indicating all the
+parts of the manual whose index entries contain the substring `debug'.
+Note that you can abbreviate topics; if you type
+     | ?- help(deb).
+
+   you will get a menu referring to all topics containing with the
+substring `deb'.  Thus, the more you abbreviate, the larger the menu
+you are likely to get.  If the menu would only have one entry it is not
+displayed -- that entry is selected automatically.
+
+
+File: quintus.info,  Node: bas-lod,  Next: bas-run,  Prev: bas-lim,  Up: bas
+
+Loading Programs into Prolog
+============================
+
+* Menu:
+
+* bas-lod-fil::                         Loading a File into Prolog
+* bas-lod-qof::                         Loading Pre-Compiled (QOF) Files
+* bas-lod-cif::                         Commands in Files
+* bas-lod-syn::                         Syntax Errors
+* bas-lod-sty::                         Style Warnings
+* bas-lod-srs::                         Saving and Restoring a Program State
+* bas-lod-uif::                         Using an Initialization File
+
+
+File: quintus.info,  Node: bas-lod-fil,  Next: bas-lod-qof,  Up: bas-lod
+
+Loading a File into Prolog
+--------------------------
+
+   If you have created a Prolog program and stored it in a file called
+`myfile.pl', you can load that file into Prolog by typing the following:
+     | ?- compile(myfile).
+
+   This goal has the effect of compiling your file into the Prolog
+database.  A message is displayed showing the absolute filename:
+     % compiling /ufs/joe/myfile.pl...
+
+   When Prolog finishes compiling a file, it displays the name of the
+file that was compiled, the amount of time it took to compile the file,
+and the number of bytes required to store the compiled file in memory.
+If an earlier version of the file or another file of the same name has
+been previously compiled during this Prolog session, this last number
+represents the number of _additional_ bytes required to recompile the
+file, and may be zero (or even negative, if the new version takes up
+less space than the old).
+     % myfile.pl compiled 2.354 sec 2346 bytes
+     | ?-
+
+   As shown above, the main Prolog prompt reappears after the system
+finishes compiling a file.  At this point, you can begin running or
+testing by typing calls to the predicates that the file defines.
+
+   The predicate `compile/1' also accepts a list of files as an
+argument.  For example, to compile three files called `file1.pl',
+`file2.pl', and `file3.pl', type
+     | ?- compile([file1,file2,file3]).
+
+
+File: quintus.info,  Node: bas-lod-qof,  Next: bas-lod-cif,  Prev: bas-lod-fil,  Up: bas-lod
+
+Loading Pre-Compiled (QOF) Files
+--------------------------------
+
+   It is possible to pre-compile files that you use frequently so that
+they can be rapidly loaded whenever needed.  See *Note
+sap-srs-bas-cld:: for information on how to create such files.  The
+standard naming convention is that the compiled file corresponding to a
+source file called `myfile.pl' is `myfile.qof'.  If you use this
+convention, then the command
+     | ?- [myfile].
+
+   is appropriate: it loads either `myfile.pl' or `myfile.qof', using
+the more recent of the two if they both exist.  *Please note:* you
+should not also have a file called just `myfile', without any
+extension, since this will take precedence over the `.pl' and the
+`.qof' files.
+
+   If you have several files to load, then you can use, for example:
+     | ?- [file1,file2,file3].
+
+   That is, a list of files typed as a goal is a command to load those
+files.
+
+
+File: quintus.info,  Node: bas-lod-cif,  Next: bas-lod-syn,  Prev: bas-lod-qof,  Up: bas-lod
+
+Commands in Files
+-----------------
+
+   A Prolog source file can contain commands as well as clauses.  If
+you have a program that is spread across many files, it may be useful
+to create a file containing commands to load each of those files.  For
+example, such a file could look like this:
+     :- compile(file1).
+     :- compile(file2).
+     :- compile(file3).
+
+   When this master-file is compiled, the `% compiling File...'  and `%
+File compiled' messages for file1, file2 and file3 will be indented by
+one character.  If they in turn cause other files to be loaded, the
+messages for those files will be indented two characters, and so on.
+
+   *Notes:*
+  1. The `:- ' symbol is placed at the beginning of the line just as it
+     appears in the example above.
+
+  2. When a file being compiled contains a command to compile another
+     file, a relative filename in that command is interpreted with
+     reference to the directory that contains the first file.  For
+     example, if the file `/usr/fred/test.pl' contains the following
+     commands
+          :- compile('../whatsit').
+          :- compile('xyz.pl').
+
+     then the files to be compiled would be `/usr/whatsit.pl' (or
+     `/usr/whatsit') and `/usr/fred/xyz.pl'.
+
+     For example, you can have a file called `mainfile.pl' containing
+
+          :- [file1, file2, file3].
+
+     and provided that you keep all of these files in the same
+     directory as `mainfile.pl', you can compile them all, no matter
+     what your current working directory is, by giving `compile/1' a
+     file specification for `mainfile.pl'.
+
+
+File: quintus.info,  Node: bas-lod-syn,  Next: bas-lod-sty,  Prev: bas-lod-cif,  Up: bas-lod
+
+Syntax Errors
+-------------
+
+   If a clause being compiled contains a syntax error, Prolog tells you
+that a syntax error has been found and displays the clause.  For
+example, suppose you accidentally omitted a closing parenthesis in a
+clause:
+     | ?- member(X,[a,b,c,d].
+
+   When you compile a file containing this clause, Prolog compiles all
+the clauses that precede the clause containing the error.  When it
+reaches this clause, it displays the message:
+     ! Syntax error
+     ! between lines 26 and 27
+     ! member(X,[a,b,c,d]
+     ! <<here>>
+
+   to let you know
+  1. that the syntax of the clause is incorrect,
+
+  2. where the clause is in the file, and
+
+  3. at what point in the clause it found the syntax error.
+
+   Prolog then ignores the clause and continues loading the rest of the
+file into the database.
+

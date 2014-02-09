@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>query_hook/6</code> <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile query_hook/6.</code>
+
+   <p><code>query_hook(</code><var>+QueryClass</var><code>, </code><var>+Prompt</var><code>, </code><var>+PromptLines</var><code>, </code><var>+Help</var><code>, </code><var>+HelpLines</var><code>, </code><var>-Answer</var><code>)</code>
+
+   <p>Provides a method of overriding Prolog's default keyboard based
+input requests.  The query hook is used by the Quintus User Interface.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>QueryClass</var> <dfn>term</dfn>
+     <dd>determines the allowed values for the atom <var>Answer</var>.
+
+          <dl>
+
+          <br><dt><b>If </b><var>QueryClass</var><b> is:</b>
+          <dd><b></b><var>Answer</var><b> must be:</b>
+
+          <br><dt><code>yes_or_no(</code><var>Question</var><code>)</code>
+          <dd><code>yes</code> or <code>no</code>.
+
+          <br><dt><code>toplevel</code>
+          <dd><code>yes</code> or <code>no</code>
+
+          <br><dt><code>yes_no_proceed</code>
+          <dd><code>yes</code>, <code>no</code>, or <code>proceed</code>.
+
+     </dl>
+
+     <br><dt><var>Prompt</var> <dfn>list of pair</dfn>
+     <dd>A message term.
+
+     <br><dt><var>PromptLines</var> <dfn>list of pair</dfn>
+     <dd>The message generated from the <var>Prompt</var> message term.
+
+     <br><dt><var>Help</var> <dfn>term</dfn>
+     <dd>A message term.
+
+     <br><dt><var>HelpLines</var> <dfn>list of pair</dfn>
+     <dd>The message generated from the <var>Help</var> message term.
+
+     <br><dt><var>Answer</var> <dfn>term</dfn>
+     <dd>see <var>QueryClass</var>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>This provides a way of overriding Prolog's
+default method of interaction.  If this predicate fails, Prolog's
+default method of interaction is invoked.
+
+   <p>The default method first prints out the prompt, then if the response
+from the user is not one of the allowed values, the help message is
+printed.
+
+   <p>It is useful to compare this predicate to <code>message_hook/3</code>, since
+this explains how you might use the <var>Prompt</var>, <var>PromptLines</var>,
+<var>Help</var>, <var>HelpLines</var>.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>An exception raised by this predicate causes an error
+message to be printed and then the default method of interation is invoked.  In
+other words, exceptions are treated as failures.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>If Prolog is looking for a yes-no response to one
+question <code>Done?</code>, as in the toplevel, this request for input can be captured
+<pre class="example">     query_hook(toplevel,_,_,_,_,Answer):-
+         my_yes_no('Done?',Answer).
+     </pre>
+
+   <p>where <code>my_yes_no/2</code> binds Answer to either <code>yes</code> or <code>no</code>.
+
+   <p>Here is roughly how the default method works.  Notice the
+interaction with <code>query_abbreviation/3</code>.
+<pre class="example">     
+     query_hook(QueryClass,_,PromptLines,_,HelpLines,Answer):-
+         'QU_messages':query_abbreviation(QueryClass,
+                                          AbbreviationPrompt,
+                                          Pairs),
+         repeat,
+             (   print_message_lines(user_output,'',PromptLines),
+                 (   AbbreviationPrompt == ''
+                 -&gt;  write(Stream,' ')
+                 ;   format(Stream,' ~w ',[AbbreviationPrompt])
+                 ),
+                 flush_output(Stream),
+                 get0(C),
+                 member(Answer-Abrv,Pairs),
+                 member(C,Abrv),
+                 !
+             ;   print_message_lines(Stream,'',HelpLines),
+                 fail
+             ).
+     </pre>
+
+<h4 class="subheading">Tips</h4>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>query_abbreviation/3</code>,
+<code>message_hook/3</code>,
+<code>print_message_lines/3</code>
+
+   <a href="ref-msg.html#ref-msg">ref-msg</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-qui.html#mpg-ref-qui">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-query_abbreviation.html#mpg-ref-query_abbreviation">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

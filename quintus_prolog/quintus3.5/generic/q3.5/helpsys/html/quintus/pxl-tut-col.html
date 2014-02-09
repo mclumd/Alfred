@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Color</h4>
+
+   <p>Now let's add color.  If you don't have a color machine, this will
+still work.  Of course, you won't be able to see the colors, so if you
+can find a color display to run this example on, that would be best.
+
+<pre class="example">     | ?- <kbd>alloc_color(goldenrod, Pixel1),
+          alloc_color(forestgreen, Pixel2),
+          alloc_color(cyan, Pixel3),
+          alloc_color(black, Pixel4),
+          retractall(colors(_,_,_,_)),
+          assert(colors(Pixel1,Pixel2,Pixel3,Pixel4)).</kbd>
+     
+     Pixel1 = 6,
+     Pixel2 = 7,
+     Pixel3 = 8,
+     Pixel4 = 1
+     </pre>
+
+   <p>Each line here allocates a color in the default colormap of the
+default screen.  When you give <code>alloc_color/2</code> a valid color, it
+always returns a pixel value, even for black and white screens.  If it
+can't allocate the color you ask for, it will give you the closest one
+it can.  In this case, we have chosen the colors so that on a
+monochrome system the two background colors (<var>Pixel1</var> and <var>Pixel2</var>) will
+be different, and likewise the two foreground colors (<var>Pixel3</var> and
+<var>Pixel4</var>), so that the window will look reasonable.  It wouldn't do if
+all the colors were the same.
+
+   <p>If you're following along typing in these examples, you probably didn't
+get the same pixel values as we did here.  That's why we assert the
+values:  so we can get the right pixel values later when we need them.
+
+   <p>Now let's construct a new background that uses these colors.
+
+<pre class="example">     | ?- <kbd>colors(Pixel1, Pixel2, _, _),
+          create_pixmap(Pix, [size(4,4)]),
+          put_graphics_attributes(Pix, [foreground(Pixel1)]),
+          fill_rectangle(Pix, 0, 0, 3, 3),
+          put_graphics_attributes(Pix, [foreground(Pixel2)]),
+          draw_segments(Pix, [segment(0,0,3,3), segment(0,3,3,0)]),
+          win(Window),
+          put_window_attributes(Window,[background(Pix)]).</kbd>
+     
+     Pixel1 = 6,
+     Pixel2 = 7,
+     Pix = pixmap(586904)
+     </pre>
+
+   <p>The only thing here that's new is the call to <code>fill_rectangle/5</code>.  We
+call it here to fill the pixmap with the appropriate background color. 
+The rest of this has been discussed before in <a href="pxl-tut-dbg.html#pxl-tut-dbg">pxl-tut-dbg</a>.
+
+   <p>Finally, let's put the message back, only in color.
+
+<pre class="example">     | ?- <kbd>win(Window),
+          colors(_, _, Pixel3, Pixel4),
+          put_graphics_attributes(Window, [foreground(Pixel4)]),
+          draw_string(Window, 6, 24, 'Hello, world!!'),
+          put_graphics_attributes(Window, [foreground(Pixel3)]),
+          draw_string(Window, 2, 19, 'Hello, world!!').</kbd>
+     
+     Window = window(2376568),
+     Pixel3 = 8,
+     Pixel4 = 1,
+     </pre>
+
+   <p>This is exactly what we did before, only now we specify <code>foreground/1</code> for
+the message, and the shadow, to take on the newly allocated colors.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-tut-crs.html#pxl-tut-crs">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-tut-tit.html#pxl-tut-tit">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-tut.html#pxl-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

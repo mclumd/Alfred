@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Retrieving Variable Values</h4>
+
+   <p>After the successful return of <code>PrologNextSolution</code>, the values
+assigned to the variables of the query can be retrieved by specific
+functions of the interface.  There are separate functions for retrieving
+the variable values in string, quoted string and integer formats.
+
+   <p>The <code>PrologGetLong</code> function retrieves the integer value of a given
+variable within a query and assigns it to a variable.  That is, the
+value of the given variable is converted to an integer.  Returns 1 on
+success.
+
+   <p>Example:
+The following code fragment assigns the value 2 to the variable <code>v</code>:
+
+<pre class="example">     Dim qid As Long
+     
+     Q = "member(X,[1,2,3]), X &gt; 1"
+     
+     qid = PrologOpenQuery(Q)
+     Call PrologNextSolution(qid)
+     Call PrologGetLong(qid,"X",v)
+     </pre>
+
+   <p>The <code>PrologGetString</code> function retrieves the value of a given
+variable in a query as a string.  That is, the value of the variable is
+written out using the <code>write/2</code> Prolog predicate, and the resulting
+output is stored in a Visual Basic variable.  Retuns 1 on success.
+
+   <p>Example: suppose we have the following clause in a Prolog program:
+
+<pre class="example">     capital_of('Sweden'-'Stockholm').
+     </pre>
+
+   <p>The code fragment below assigns the string <code>"Sweden-Stockholm"</code> to the variable <code>capital</code>:
+
+<pre class="example">     Dim qid As Long
+     
+     Q = "capital_of(Expr)"
+     
+     qid = PrologOpenQuery(Q)
+     If PrologNextSolution(qid) = 1 Then
+       Call PrologGetString(qid,"Expr",capital)
+     End if
+     Call PrologCloseQuery(qid)
+     </pre>
+
+   <p>The <code>PrologGetStringQuoted</code> function is the same as
+<code>PrologGetString</code>, but the conversion uses the <code>writeq/2</code>
+Prolog predicate.  Returns 1 on success.
+
+   <p>Example:
+if the function <code>PrologGetStringQuoted</code> is used in the code above
+instead of the <code>PrologGetString</code> function, then the value assigned to
+the variable <code>capital</code> is <code>"'Sweden'-'Stockholm'"</code>.
+
+   <p>The only way of transferring information from Prolog to Visual Basic is
+by the above three <code>PrologGet...</code> functions.  This means that,
+although arbitrary terms can be passed to Visual Basic, there is no
+support for the transfer of composite data such as lists or
+structures. We will show examples of how to overcome this limitation
+later in the manual (see <a href="vb-ex.html#vb-ex">vb-ex</a>).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="vb-vbp-sid.html#vb-vbp-sid">Next</a>
+<li><a rel="previous" accesskey="p" href="vb-vbp-sol.html#vb-vbp-sol">Previous</a>
+<li><a rel="up" accesskey="u" href="vb-vbp.html#vb-vbp">Up</a>
+</ul>
+</div>
+   </body></html>
+

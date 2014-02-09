@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The 'hello.pl' Program</h4>
+
+   <p>The ProXL source code file listed below encapsulates all of the
+concepts presented in the previous session as a single program.  This
+program appears in the file <code>demo('hello.pl')</code>.
+
+<pre class="example">
+                                   <div align="right"><em>hello.pl</em>
+     </div>
+     
+     :- module(proxl_hello, [hello/0]).
+     
+     :- use_module(library(proxl)).
+     
+     
+     %  hello
+     %  test program for message_window/7.
+     
+     hello :-
+             chosen_font(Fontspec),
+             current_font(Fontspec, Fontname),
+             !,
+             message_window('Hello, world!!', Fontname,
+                     goldenrod, forestgreen, cyan, black, _).
+     
+     
+     %  message_window(+Message, +Fontname, +Bg1, +Bg2, +Letters, +Shadow,
+     %       -Window)
+     %  Window is a window with Message, a Prolog atom, centered in it
+     %  in Fontname, an atom naming a font.  Bg1, Bg2, Letters and Shadow
+     %  are atoms naming colors.
+     
+     message_window(Message, Fontname, Bg1, Bg2, Letters, Shadow, Window) :-
+             load_font(Fontname, Font),
+             message_size(Message, Font, Window_width, Window_height,
+                     Xoffset, Yoffset, Xdisplacement, Ydisplacement),
+             alloc_color(Letters, Letters_pix),
+             alloc_color(Shadow, Shadow_pix),
+             background_pixmap(Bg1, Bg2, Bg),
+             create_cursor(gumby, Cursor),
+             create_window(Window,
+                     [   size(Window_width,Window_height), mapped(true),
+                         border_width(2), background(Bg), cursor(Cursor),
+                         property('WM_NAME', hello),
+                         callback(expose, [count(0)],
+                                 expose_message(Window,Message,Letters_pix,
+                                         Shadow_pix,Xoffset,Yoffset,
+                                         Xdisplacement,Ydisplacement)),
+                         callback(button_press, [], destroy_window(Window))
+                     ], [font(Font)]).
+     </pre>
+
+<pre class="example">
+                                   <div align="right"><em>hello.pl</em>
+     </div>
+     
+     % message_size(+Message, +Font, -Window_width, -Window_height, -Xoffset,
+     %               -Yoffset, -Xdisplacement, -Ydisplacement)
+     %  Window_width and Window_height are the size of the smallest window
+     %  that will accomodate Message drawn with a drop shadow using font
+     %  Font.  Xoffset and Yoffset are the offset from the center of the
+     %  window at which we want to draw the string.  Since we want to keep
+     %  the message centered even when the window is resized, it's most
+     %  convenient to remember the offset from the center of the window,
+     %  which won't change.  Xdisplacement and Ydisplacement are the
+     %  distance the shadow should be displaced from the primary image,
+     %  computed as 1/5 of the font width and height, respectively.
+     
+     message_size(Message, Font, Window_width, Window_height,
+                     Xoffset, Yoffset, Xdisplacement, Ydisplacement) :-
+             get_font_attributes(Font, [height(Hei), max_width(Wid)]),
+             Xdisplacement is Wid//5,
+             Ydisplacement is Hei//5,
+             text_extents(Font, Message, Lbearing, Rbearing, _, Asc, Desc),
+             Xoffset is Lbearing-(Lbearing+Rbearing+Xdisplacement)//2,
+             Yoffset is Asc-(Asc+Desc+Ydisplacement)//2,
+             %  X and Y offset
+             Window_width is Lbearing+Rbearing+Xdisplacement+4,
+             Window_height is Asc+Desc+Ydisplacement+4.
+     
+     
+     %  background_pixmap(+Bg1, +Bg2, -Pixmap)
+     %  Pixmap is a newly allocated 4x4 background pixmap filled with our
+     %  background pattern.  Bg1 and Bg2 are the names of the colors to
+     %  use for this pixmap.
+     
+     background_pixmap(Bg1, Bg2, Pixmap) :-
+             alloc_color(Bg1, Bg1_pix),
+             alloc_color(Bg2, Bg2_pix),
+             create_pixmap(Pixmap, [size(4,4)], [foreground(Bg1_pix)]),
+             fill_rectangle(Pixmap, 0, 0, 3, 3),
+             put_graphics_attributes(Pixmap, [foreground(Bg2_pix)]),
+             draw_segments(Pixmap, [segment(0,0,3,3),segment(0,3,3,0)]).
+     </pre>
+
+<pre class="example">
+                                   <div align="right"><em>hello.pl</em>
+     </div>
+     
+     %  expose_message(+Window, +Message, +Letters_pix, +Shadow_pix,
+     %       +Xoffset, +Yoffset, +Xdisplacement, +Ydisplacement)
+     %  Redisplay the contents of Window.  Window is a window created by
+     %  message_window/7, and Message is the message displayed in it.
+     %  Letters_pix and Shadow_pix are the pixel values to draw the
+     %  letters and shadow in, respectively.  Xoffset and Yoffset are
+     %  the pixel offset from the center of the window at which Message
+     %  should be drawn.  And Xdisplacement and Ydisplacement are the
+     %  pixel offset from the message at which the shadow should be drawn.
+     
+     expose_message(Window, Message, Letters_pix, Shadow_pix, Xoffset, Yoffset,
+                     Xdisplacement, Ydisplacement) :-
+             get_window_attributes(Window, [size(Width,Height)]),
+             X is Width//2 + Xoffset,        % compute position for message
+             Y is Height//2 + Yoffset,
+             Shadow_x is X+Xdisplacement,
+             Shadow_y is Y+Ydisplacement,
+             clear_window(Window),
+             put_graphics_attributes(Window, [foreground(Shadow_pix)]),
+             draw_string(Window, Shadow_x, Shadow_y, Message),
+             put_graphics_attributes(Window, [foreground(Letters_pix)]),
+             draw_string(Window, X, Y, Message).
+     
+     
+     %  chosen_font(-Fontname)
+     %  table of fonts to try.
+     
+     chosen_font('*-times-bold-i-*-24-*').   % First choice, for X11R3
+     chosen_font('vgb-25').                  % Second coice, or on X11R2
+     chosen_font('fixed').                   % Last choice ...
+     
+     
+     %  user:runtime_entry(+Context)
+     %  The main program for runtime systems.
+     
+     user:runtime_entry(start) :-
+             hello,
+             handle_events.                  % process callbacks till
+                                             % hello window is destroyed
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxl-tut-cbk.html#pxl-tut-cbk">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-tut.html#pxl-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

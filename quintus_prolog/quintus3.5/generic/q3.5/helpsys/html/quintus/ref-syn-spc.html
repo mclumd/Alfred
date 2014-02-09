@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Predicate Specifications</h4>
+
+   <p>A predicate is uniquely identified by its module (not always
+specified), name and arity (number of arguments).  In Quintus Prolog these are
+the ways of specifying a predicate as an argument of a predicate:
+
+     <ol type=1 start=1>
+
+     <li>The form <var>Module</var>:<var>Name</var>(<var>Term1,Term2, <small class="dots">...</small>,TermN</var>) is
+called the <dfn>skeletal</dfn> predicate specification.  It identifies the
+predicate <var>Name</var> of arity <var>N</var> in module <var>Module</var>.  It
+is required by predicates when the specification was likely to have
+been obtained from predicates such as <code>clause/[2,3]</code>.  This is the
+case when one is manipulating Prolog programs themselves.
+
+     <p><var>Module</var> is optional; if omitted, the predicate is assumed to be
+in the source module.
+
+     <p>When the skeletal specification is
+used as an <em>input</em> argument, the values of
+<var>Term1</var>,<var>Term2</var>, <small class="dots">...</small>,<var>TermN</var> are not significant; they only
+serve as place-holders for determining the arity of <var>Name</var>. 
+For example,
+     <pre class="example">          | ?- <kbd>predicate_property(put(97), P1),
+               predicate_property(put(98), P2).</kbd>
+          
+          P1 = P2 = built_in <kbd>;</kbd>
+          
+          no
+          </pre>
+
+     <p>When the skeletal specification is used as an <em>output</em> argument,
+<var>Module</var>:<var>Name</var>(<var>Term1,Term2, <small class="dots">...</small>,TermN</var>) is made to be
+the most general
+term with name <var>Name</var> and arity <var>N</var> (that is,
+<var>Term1</var>, <var>Term2</var>, <small class="dots">...</small>, <var>TermN</var> are each made to be variables,
+distinct from each other and any others in the system). 
+For example,
+     <pre class="example">          | ?- <kbd>compile(user).</kbd>
+          | <kbd>foo(1, 2, 3).</kbd>
+          | <kbd>^D</kbd>
+          % user compiled, 0.100 sec 196 bytes
+          
+          yes
+          | ?- <kbd>source_file(X, user).</kbd>
+          
+          X = foo(_224,_225,_226) <kbd>;</kbd>
+          
+          no
+          | ?- <kbd>source_file(foo(7,8,9), user).</kbd>
+          
+          yes
+          </pre>
+
+     </p><li>
+
+     <p>The <var>Module</var>:<var>Name</var>/<var>Arity</var> form
+is an alternative representation to the skeletal form.  <var>Arity</var>
+can be a single arity, or a list of arities and/or arity ranges.
+
+     <p><var>Module</var> is optional; if omitted, the predicate is assumed to be in
+the current module.  For example,
+<blockquote>
+
+          <p><code>prog1:foo/1</code> specifies predicate <code>foo</code>, arity 1 in module <code>prog1</code>. 
+<code>foo/1</code> specifies predicate <code>foo</code> of arity 1 in the current module.
+
+     </blockquote>
+
+     <p><strong>Notes:</strong>
+          <ol type=a start=1>
+
+          <li>The form <var>Name</var>/[<var>Arity</var>] is used only by some
+library packages and for demonstrative purposes in this manual. 
+Currently, it is not used by any supported built-in predicates. 
+<li>The <var>Module</var>:<var>Name</var>/[<var>Arities</var>] form is required by
+declarations that take a predicate specification
+(or a list of predicate specifications) as an argument. 
+For most predicates, this form requires fewer characters, which
+is desirable because these specifications will likely be typed by the user.
+          </ol>
+
+        </ol>
+
+   <p><code>abolish/2</code> is the only predicate that does not use either of the
+above specifications.  Its first argument is the <var>Name</var> of the
+predicate and the second argument is the <var>Arity</var>.  For
+consistency, it is recommended that <code>abolish/1</code> be used instead.
+
+   <p>The following predicate can be used to convert between the
+<var>Name</var>/<var>Arity</var> specification and the skeletal specification, or
+to verify that two specifications identify the same predicate.
+<pre class="example">     predicate_specification(NameAritySpec, SkeletalSpec) :-
+            (nonvar(NameAritySpec) ; nonvar(SkeletalSpec)),
+             !,
+             NameAritySpec = Name/Arity,
+             functor(SkeletalSpec, Name, Arity),
+             atom(Name).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-syn-syn.html#ref-syn-syn">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-syn-com.html#ref-syn-com">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-syn.html#ref-syn">Up</a>
+</ul>
+</div>
+   </body></html>
+

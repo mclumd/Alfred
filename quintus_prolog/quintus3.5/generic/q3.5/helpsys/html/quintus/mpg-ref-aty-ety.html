@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Extended Types</h5>
+
+   <p>Following is a list of argument types that are defined in terms of
+the simple argument types. This is a formal description of the
+types/domains used in the Arguments sections of the reference pages
+for the built-ins. The rules are given in BNF (Backus-Naur form).
+
+   <p><table>
+<tr align="left"><td valign="top"><var>term</var> </td><td valign="top">::= (any Prolog term) | <var>var</var> | <var>nonvar</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>list</var> </td><td valign="top">::= <code>[]</code> | <code>[</code><var>term</var><code>|</code><var>list</var><code>]</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>list of Type</var> </td><td valign="top">::= <code>[]</code> | <code>[</code><var>Type</var><code>|</code><var>list of Type</var><code>]</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>one of [Element|Rest]</var> </td><td valign="top">::= <var>Element</var> | <var>one of Rest</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>arity</var> </td><td valign="top">::= {An <var>integer</var> <var>X</var> in the range 0..255}
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>char</var> </td><td valign="top">::= {An <var>integer</var> <var>X</var> in the range 1..255}
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>chars</var> </td><td valign="top">::= <code>[]</code> | <code>[</code><var>char</var><code>|</code><var>chars</var><code>]</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>pair</var> </td><td valign="top">::= <code></code><var>term</var><code>-</code><var>term</var><code></code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>simple_pred_spec</var> </td><td valign="top">::= <code></code><var>atom</var><code>/</code><var>arity</var><code></code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>pred_spec</var> </td><td valign="top">::= <var>simple_pred_spec</var> | <code></code><var>atom</var><code>:</code><var>pred_spec</var><code></code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>pred_spec_tree</var> </td><td valign="top">::= <code>[]</code> | <var>pred_spec</var> | <code>[</code><var>pred_spec_tree</var><code>|</code><var>pred_spec_tree</var><code>]</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>pred_spec_forest</var> </td><td valign="top">::= <code>[]</code> | <var>pred_spec</var>
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">| <code>[</code><var>pred_spec_forest</var><code>|</code><var>pred_spec_forest</var><code>]</code>
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">| <code></code><var>pred_spec_forest</var><code>,</code><var>pred_spec_forest</var><code></code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>gen_pred_spec</var> </td><td valign="top">::= <var>atom</var> | <code></code><var>atom</var><code>:</code><var>gen_pred_spec</var><code></code>
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">| <var>simple_pred_spec</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>gen_pred_spec_tree</var> </td><td valign="top">::= <code>[]</code> | <var>gen_pred_spec</var>
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">| <code>[</code><var>gen_pred_spec_tree</var><code>|</code><var>gen_pred_spec_tree</var><code>]</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>gen_pred_spec_tree_var</var> </td><td valign="top">::= <var>gen_pred_spec_tree</var> {in which all atoms also can be variables}
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>extern_spec</var> </td><td valign="top">::= <var>atom</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <var>compound</var> {all arguments being <var>extern_arg</var>}
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>extern_arg</var> </td><td valign="top">::= <code>+</code><var>interf_arg_type</var><code></code> | <code>-</code><var>interf_arg_type</var><code></code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>foreign_spec</var> </td><td valign="top">::= <var>atom</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <var>compound</var> {all arguments being <var>foreign_arg</var>}
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>foreign_arg</var> </td><td valign="top">::= <code>+</code><var>interf_arg_type</var><code></code> | <code>-</code><var>interf_arg_type</var><code></code> | <code>[-</code><var>interf_arg_type</var><code>]</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>interf_arg_type</var> </td><td valign="top">::= <code>integer</code> | <code>float</code> | <code>single</code> | <code>double</code> | <code>atom</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>term</code> | <code>string</code> | <code>string(</code><var>integer</var><code>)</code> | <code>address</code> | <code>address(</code><var>atom</var><code>)</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>file_spec</var> </td><td valign="top">::= <var>atom</var> | <code></code><var>atom</var><code>(</code><var>file_spec</var><code>)</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>expr</var> </td><td valign="top">::= {everything that is accepted as second argument to <code>is/2</code>;
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">see the description of arithmetic expressions in <a href="ref-ari-aex.html#ref-ari-aex">ref-ari-aex</a>.}
+   <br></td></tr></table>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-aty-sim.html#mpg-ref-aty-sim">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref-aty.html#mpg-ref-aty">Up</a>
+</ul>
+</div>
+   </body></html>
+

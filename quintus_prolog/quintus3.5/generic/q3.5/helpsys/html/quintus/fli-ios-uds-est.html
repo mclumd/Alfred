@@ -1,0 +1,314 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Creating A Stream To Read An Encrypted File</h5>
+
+   <p>This example creates an input stream to read from a file encrypted
+using a simple encryption algorithm.  The key is
+stored in the first byte of the file.  A character code stored in the
+file is the result of a logical exclusive-or operation of the output
+character and the key.  The decryption of the input file is done in
+the bottom layer read function.
+
+   <p>The input stream created only permits seeking to a previous
+read position.  Notice the bottom layer read function defined
+(<code>decrypt_read()</code>) buffers more than one record.  By doing this,
+the Prolog input/output system will maintain a correct line count
+and line position based on the new line character (<code>\n</code>). 
+There are also two user-defined error numbers used in this example
+(<code>DECRYPT_NO_KEY</code> and <code>DECRYPT_TTY_FILE</code>).
+
+<pre class="example">
+                                 <div align="right"><em>decrypt.pl</em>
+     </div>
+     
+     foreign(open_decrypt, c, open_decrypt(+string, -integer,
+                                           [-address])).
+     foreign_file('decrypt', [open_decrypt]).
+     
+     :- load_foreign_files(['decrypt'],['-lc']).
+     
+     open_decrypt_stream(FileName, PrologStream) :-
+             open_decrypt(FileName, ErrorNum, CStream),
+             ( CStream =:= 0 -&gt;
+                     raise_exception(existence_error(
+                         open_decrypt_stream(FileName, PrologStream),
+                         1, file, FileName, errno(ErrorNum)))
+             ; stream_code(PrologStream, CStream)
+             ).
+     </pre>
+
+<pre class="example">
+                                  <div align="right"><em>decrypt.c</em>
+     </div>
+     
+     #include &lt;fcntl.h&gt;
+     #include &lt;quintus/quintus.h&gt;
+     extern int errno;
+     
+     #define Buffer_Size             8192
+     
+     typedef unsigned char           Key_Type;
+     
+     typedef struct
+         {
+             QP_stream       qpinfo;
+             int             fd;          /* file descriptor */
+             int             last_rdsize; /* size of last record */
+             int             left_size;   /* char. left unread */
+             unsigned char   *left_ptr;   /* pointer to the unread */
+             unsigned char   buffer[Buffer_Size+3];
+             Key_Type        key;            /* decryption key */
+         } DecryptStream;
+     
+     #define CoerceDecryptStream(qpstream) \
+                                ((DecryptStream *)(qpstream))
+     
+     /* define user-defined error number */
+     #define DECRYPT_NO_KEY          QP_END_ECODE+1
+     #define DECRYPT_TTY_FILE        QP_END_ECODE+2
+     </pre>
+
+<pre class="example">
+                                  <div align="right"><em>decrypt.c</em>
+     </div>
+     
+     /*
+          To enable the Prolog system to maintain correct line count
+          and line position, a whole buffer is read but only a line
+          in the buffer is returned every time.
+          The characters in the buffer are decrypted at once.
+     
+          The buffer is maintained as follows:
+     
+                          &lt;- left_size -&gt;
+          +---------------+-------------+--+-------+
+          | has been read | to be read  |\n| empty |
+          +---------------+-------------+--+-------+
+                          ^ left_ptr      ^ &lt;pad '\n' character&gt;
+     */
+     static int
+     decrypt_read(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             register DecryptStream *stream =
+                                    CoerceDecryptStream(qpstream);
+             register int            n;
+             register unsigned char  *s, *s1;
+     
+             /* magic is the beginning byte offset of return record */
+             qpstream-&gt;magic.byteno += stream-&gt;last_rdsize;
+     
+             if (stream-&gt;left_size &lt;= 0) {
+                 register Key_Type   *kp, *kq, key;
+     
+                 /* read a new buffer of input and decrypt characters*/
+                 n = read(stream-&gt;fd, (char *) stream-&gt;buffer,
+                                       Buffer_Size);
+     
+                 if (n &gt; 0) {
+                     kp=(Key_Type *) stream-&gt;buffer;
+                     kq=(Key_Type *) &amp;stream-&gt;buffer[n];
+                     for (key = stream-&gt;key; kp &lt; kq ; ) /* decrypt */
+                         *kp++ ^= key;
+                     stream-&gt;left_size = n;
+                     stream-&gt;left_ptr  = stream-&gt;buffer;
+                 } else if (n == 0) {
+                     stream-&gt;last_rdsize = stream-&gt;left_size = 0;
+                     *bufptr = stream-&gt;left_ptr = stream-&gt;buffer;
+                     *sizeptr = stream-&gt;last_rdsize = 0;
+                     return QP_EOF;
+                 } else {
+                     qpstream-&gt;errno = errno;
+                     stream-&gt;last_rdsize = stream-&gt;left_size = 0;
+                     return QP_ERROR;
+                 }
+             }
+     </pre>
+
+<pre class="example">
+                                  <div align="right"><em>decrypt.c</em>
+     </div>
+     
+             /*  make next line of data available  */
+             s = stream-&gt;left_ptr;
+             se = s + stream-&gt;left_size;
+             while (s &lt; se) {
+                 if (*s++ == '\n') {         /* found end of record */
+                     break;
+                 }
+             }
+     
+             *bufptr = stream-&gt;left_ptr;
+             *sizeptr = stream-&gt;last_rdsize = s - stream-&gt;left_ptr;
+             stream-&gt;left_ptr   = s;
+             stream-&gt;left_size  = se - s;
+             return (*--s == '\n') ? QP_FULL : QP_PART;
+         }
+     
+     /* Only QP_SEEK_PREVIOUS is allowed for the file, so 'whence'
+        specified can only be QP_BEGINNING.  '*sizeptr' should always
+        be set to 0 since there is only input stream.
+     */
+     static int
+     decrypt_seek(qpstream, qpmagic, whence, bufptr, sizeptr)
+          QP_stream          *qpstream;
+          union QP_cookie    *qpmagic;
+          int                whence;
+          unsigned char      **bufptr;
+          size_t             *sizeptr;
+          {
+             DecryptStream *stream = CoerceDecryptStream(qpstream);
+             off_t           offset;
+     
+             switch (whence) {
+             case QP_BEGINNING:
+                 if ((offset = lseek(stream-&gt;fd,qpmagic-&gt;byteno,L_SET))
+                                                 == -1) {
+                     qpstream-&gt;errno = errno;
+                     return QP_ERROR;
+                 }
+                 qpstream-&gt;magic.byteno = offset;
+                 *bufptr  = stream-&gt;buffer;
+                 *sizeptr = 0;
+                 stream-&gt;left_ptr  = stream-&gt;buffer;
+                 stream-&gt;left_size = stream-&gt;last_rdsize = 0;
+                 return QP_SUCCESS;
+             case QP_CURRENT:
+             case QP_END:
+             default:
+                 qpstream-&gt;errno = QP_E_INVAL;
+                 return QP_ERROR;
+             }
+          }
+     </pre>
+
+<pre class="example">
+                                  <div align="right"><em>decrypt.c</em>
+     </div>
+     
+     static int
+     decrypt_close(qpstream)
+         QP_stream   *qpstream;
+         {
+             DecryptStream *stream = CoerceDecryptStream(qpstream);
+             int fd = stream-&gt;fd;
+     
+             QP_free((char *)stream);
+             if (close(fd) &lt; 0) {
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+             return QP_SUCCESS;
+         }
+     </pre>
+
+<pre class="example">
+                                  <div align="right"><em>decrypt.c</em>
+     </div>
+     
+     /* open_crypt_stream: open the specified non-tty 'filename' for
+        reading.  The file is a simple crypted file with the first
+        byte as the key.  It is crypted by logical exclusive-or
+        operation of the key with every character in the file.
+        Upon success, the opened stream is returned.
+        Upon failure, QP_NULL_STREAM is returned and the error code
+        is stored in the parameter 'error_num'.
+     */
+     QP_stream *
+     open_decrypt(filename, error_num)
+         char *filename;
+         int  *error_num;
+         {
+             int             fd;
+             Key_Type        key;
+             DecryptStream   *stream;
+             QP_stream       *option;
+     
+             if ((fd = open(filename, O_RDONLY)) &lt; 0) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+             if (isatty(fd)) {        /* tty file is not accepted */
+                 (void) close(fd);
+                 *error_num = DECRYPT_TTY_FILE;
+             }
+     
+             switch (read(fd, (char *) &amp;key, sizeof(key)) ) {
+             case sizeof(key):
+                     break;
+             case 0:
+                     *error_num = DECRYPT_NO_KEY;
+                     (void) close(fd);
+                     return QP_NULL_STREAM;;
+             default:
+                     *error_num = errno;
+                     (void) close(fd);
+                     return QP_NULL_STREAM;
+             }
+     </pre>
+
+<pre class="example">
+                                  <div align="right"><em>decrypt.c</em>
+     </div>
+     
+             if (! (stream = (DecryptStream *)
+                             QP_malloc(sizeof(*stream))) ) {
+                 (void) close(fd);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+     
+             stream-&gt;fd = fd;
+             stream-&gt;last_rdsize = 0;
+             stream-&gt;left_size = 0;
+             stream-&gt;key = key;
+     
+             option = &amp;stream-&gt;qpinfo;
+             QU_stream_param(filename, QP_READ, QP_DELIM_LF, option);
+     
+             option-&gt;max_reclen = Buffer_Size;
+                  /* Record the current byte offset in the file */
+             option-&gt;magic.byteno = sizeof(key);
+             option-&gt;read   = decrypt_read;
+             option-&gt;seek   = decrypt_seek;
+             option-&gt;close  = decrypt_close;
+     
+             QP_prepare_stream(&amp;stream-&gt;qpinfo, stream-&gt;buffer);
+             if (QP_register_stream(&amp;stream-&gt;qpinfo) == QP_ERROR) {
+                 (void) stream-&gt;qpinfo.close(&amp;stream-&gt;qpinfo);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+             return (QP_stream *) stream;
+         }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-uds-sst.html#fli-ios-uds-sst">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-uds-bst.html#fli-ios-uds-bst">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-uds.html#fli-ios-uds">Up</a>
+</ul>
+</div>
+   </body></html>
+

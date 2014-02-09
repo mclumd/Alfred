@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Overview</h5>
+
+   <p>Operators in Prolog are simply a notational convenience. 
+For example, <code>+</code> is an infix operator, so
+<pre class="example">     2 + 1
+     </pre>
+
+   <p>is an alternative way of writing the term <code>+(2, 1)</code>. 
+That is, <code>2 + 1</code> represents the data structure
+<pre class="example">                +
+              /   \
+             2     1
+     </pre>
+
+   <p>and <em>not</em> the number 3. 
+(The addition would only be performed if the structure were passed as an
+argument to an appropriate procedure, such as <code>is/2</code>; see <a href="ref-ari-eae.html#ref-ari-eae">ref-ari-eae</a>.)
+
+   <p>Prolog syntax allows operators of three kinds: <dfn>infix</dfn>,
+<dfn>prefix</dfn>, and <dfn>postfix</dfn>.  An infix operator appears between
+its two arguments, while a prefix operator precedes its single
+argument and a postfix operator follows its single argument.
+
+   <p>Each operator has a <dfn>precedence</dfn>, which is a
+number from  1  to  1200.  The  precedence  is  used  to  disambiguate
+expressions  in which  the  structure  of  the  term  denoted is not made
+explicit through the  use  of  parentheses.   The  general  rule
+is that the operator with the
+<em>highest</em> precedence is the principal functor.  Thus if <code>+</code>  has  a
+higher precedence than <code>/</code>, then
+<pre class="example">     a+b/c     a+(b/c)
+     </pre>
+
+   <p>are equivalent, and denote the term <code>+(a,/(b,c))</code>. Note that the  infix
+form of the term <code>/(+(a,b),c)</code> must be written with explicit parentheses:
+<pre class="example">     (a+b)/c
+     </pre>
+
+   <p>If there are two operators in the expression having  the  same highest
+precedence,  the ambiguity must be resolved from the <dfn>types</dfn> of the
+operators.  The possible types for an infix operator are
+     <ul>
+
+     <li><code>xfx</code>
+<li><code>xfy</code>
+<li><code>yfx</code>
+</ul>
+
+   <p>Operators of type <code>xfx</code> are not associative:  it is required that
+both of the arguments of the operator be subexpressions of
+<em>lower</em> precedence than the operator itself; that is, the principal
+functor of each subexpression must be of lower precedence, unless the
+subexpression is
+written in parentheses (which gives it zero precedence).
+
+   <p>Operators of type <code>xfy</code> are right-associative:
+only the first (left-hand) subexpression must
+be of lower precedence;  the right-hand subexpression
+can be of the <em>same</em>  precedence  as the main operator. 
+Left-associative operators (type <code>yfx</code>) are the other way around.
+
+   <p>An atom named <var>Name</var> is  declared  as  an
+operator of type <var>Type</var> and precedence <var>Precedence</var> by the command
+<pre class="example">     :-op(<var>Precedence, Type, Name</var>).
+     </pre>
+
+   <p>An operator declaration can be cancelled by redeclaring the <var>Name</var>
+with the same <var>Type</var>, but <var>Precedence</var> 0.
+
+   <p>The argument <var>Name</var> can also be a list of names of operators of the same
+type and precedence.
+
+   <p>It is possible to have more than one operator of the  same  name,
+so long as they are of different kinds:  infix, prefix, or postfix. 
+An operator of any kind may be redefined by a new declaration  of  the
+same  kind. 
+Declarations for all these <dfn>built-in operators</dfn> can be found in
+<a href="ref-syn-ops-bop.html#ref-syn-ops-bop">ref-syn-ops-bop</a>.
+
+   <p>For example, the built-in operators <code>+</code> and <code>-</code> are as if they
+had been declared by (A) so that (B) is valid syntax, and means (C) or pictorially (D).
+<pre class="example">     :-op(500, yfx, [+,-]). (A)
+     </pre>
+
+<pre class="example">     a-b+c (B)
+     </pre>
+
+<pre class="example">     (a-b)+c (C)
+     </pre>
+
+<pre class="example">                  +
+                /   \
+               -     c
+              / \
+             a   b (D)
+     </pre>
+
+   <p>The list functor <code>./2</code> is not a standard operator, but we could declare it
+to be (E) then (F) would represent the structure (G).
+<pre class="example">     :-op(600, xfy, .). (E)
+     </pre>
+
+<pre class="example">     a.b.c (F)
+     </pre>
+
+<pre class="example">                .
+               / \
+              a   .
+                 / \
+                b   c (G)
+     </pre>
+
+   <p>Contrasting this with the diagram above for a-b+c shows the difference
+between <code>yfx</code> operators where the tree grows to the left, and <code>xfy</code>
+operators where it grows to the right.  The tree cannot grow at all for
+<code>xfx</code> operators; it is simply illegal to combine <code>xfx</code> operators having
+equal precedences in this way.
+
+   <p>The possible types for a prefix operator are:
+     <ul>
+
+     <li><code>fx</code>
+<li><code>fy</code>
+</ul>
+
+   <p>and for a postfix operator they are:
+<pre class="example">     <code>xf</code>
+     
+     <code>yf</code>
+     </pre>
+
+   <p>If these precedence and associativity rules seem rather complex,
+remember that you can always use parentheses when in any doubt.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-syn-ops-ops.html#ref-syn-ops-ops">Next</a>
+<li><a rel="up" accesskey="u" href="ref-syn-ops.html#ref-syn-ops">Up</a>
+</ul>
+</div>
+   </body></html>
+

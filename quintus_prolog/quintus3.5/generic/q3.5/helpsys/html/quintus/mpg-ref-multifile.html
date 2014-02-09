@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>multifile/1</code> <dfn>declaration</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile </code><var>+PredSpecs</var><code></code>
+
+   <p>Allows the clauses for the specified predicates to be in more than one file.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>PredSpecs</var> <dfn>pred_spec_forest</dfn> [MOD]
+     <dd>A single predicate
+specification of the form <var>Name/Arity</var>, or a sequence of
+predicate specifications separated by commas.  <var>Name</var> must be an
+atom and <var>Arity</var> an integer in the range 0..255.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>A built-in prefix operator, so that declarations can be written as
+e.g.
+<pre class="example">      :- multifile a/1, b/3.
+     </pre>
+
+   <p>By default, all clauses for a predicate are expected to come from just
+one file.  This assists with reloading and debugging of code. 
+Declaring a predicate <code>multifile</code> means that its clauses can be
+spread across several different files.  This is independent of whether
+or not the predicate is declared <code>dynamic</code>.
+
+   <p>Should precede all the clauses for the specified predicates in the
+file.
+
+   <p>There should be a <code>multifile</code> declaration for a predicate <var>P</var>
+in every file that contains clauses for <var>P</var>.  This restriction is
+not currently enforced in the Development System: for compatibility
+with earlier releases it suffices to have a <code>multifile</code> declaration
+in the first file loaded that contains clauses for <var>P</var>.  However,
+a warning is noted if the <code>multifile</code> declaration is omitted in
+subsequent files.  The <code>multifile</code> declarations <em>must</em> be
+included in every file when <code>qpc</code> is being used to compile files
+separately.
+
+   <p>If a <code>multifile</code> predicate is dynamic, there should be a <code>dynamic</code>
+declaration in every file containing clauses for the predicate.  Again, this is
+not enforced in the Development System, for backwards compatibility, but
+warnings are printed if the <code>dynamic</code> declarations are omitted. 
+The <code>dynamic</code> declarations may not be omitted when <code>qpc</code> is being used to
+compile files separately.
+
+   <p>When a file containing clauses for a <code>multifile</code> predicate (<var>P</var>) is
+reloaded, the clauses for <var>P</var> that previously came from that file are
+removed.  Then the new clauses for <var>P</var> (which may be the same as the old
+ones) are added to the end of the definition of the <code>multifile</code> predicate. 
+An exception to this is when the file concerned is the pseudo-file <code>user</code>,
+meaning that clauses are being entered from the terminal; in this case the
+clauses are always added to the end of the predicate without removing any
+previously defined clauses.
+
+   <p>If a <code>multifile</code> declaration is found for a predicate that has already been
+defined in another file (without a <code>multifile</code> declaration), then this is
+considered to be a redefinition of that predicate.  Normally this will result
+in a multiple-definition style-check warning (see <code>style_check/1</code>).
+
+   <p>The predicate <code>source_file/2</code> can be used to find all the files containing
+clauses for a <code>multifile</code> predicate.
+
+   <p><code>multifile</code> predicates can be extended at run-time using
+<code>multifile_assertz/1</code>.
+
+   <p><code>multifile/1</code> cannot be called as a built-in predicate.  It can only be used
+as a declaration to the compiler in a Prolog source file.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>PredSpecs</var> not ground.
+
+     <br><dt><code>type_error</code>
+     <dd>
+Either name or arity in PredSpec has the wrong type
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>Arity</var> not in the range 0..255.
+
+     <br><dt><code>context_error</code>
+     <dd>
+If the declaration contradicts previous declaration or clauses for the
+same predicate in the file.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>multifile_assertz/1</code>,
+<code>source_file/[1,2]</code>, <code>compile/1</code>, <code>load_files/[1,2]</code>,
+<code>dynamic/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-multifile_assertz.html#mpg-ref-multifile_assertz">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-module1.html#mpg-ref-module1">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

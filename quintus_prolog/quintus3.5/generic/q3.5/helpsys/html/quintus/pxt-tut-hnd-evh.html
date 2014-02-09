@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Event Handlers</h5>
+
+   <p>The X Toolkit allows applications to catch low level X events
+occurring in a window owned by a widget. This can be accomplished with
+a call to <code>xtAddEventHandler/5</code>. This predicate is exactly like the
+corresponding X Toolkit function, therefore refer to the Xt manual for
+more information about it. Note that the event mask is represented as
+a list of event names in ProXT. There is also the
+<code>xtAddRawEventHandler/5</code> predicate, which is almost the same as
+<code>xtAddEventHandler/5</code> except that it does not affect the widget's
+event mask. To remove an event handler use
+<code>xtAddRawEventHandler/5</code> or <code>xtAddRawEventHandler/5</code> accordingly.
+
+   <p>Following is the first example rewritten in order to utilize event
+handlers.
+
+<pre class="example">     create_button :-
+             xtAppInitialize(App,'Demo',[],Shell),
+             xmCreatePushButton(Shell,push_button,
+                                [xmNwidth(100), xmNheight(100)],Button),
+             xtManageChild(Button),
+             xtAddEventHandler(Button,[buttonPressMask],false,
+                               pressed,'Hello Quintus!'),
+             xtRealizeWidget(Shell),
+             xtAppMainLoop(App).
+     
+     pressed(Widget, ClientData, CallData) :-
+             write(Widget), nl,
+             write(ClientData), nl,
+             write(CallData), nl.
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxt-tut-hnd-oevt.html#pxt-tut-hnd-oevt">Next</a>
+<li><a rel="previous" accesskey="p" href="pxt-tut-hnd-acc.html#pxt-tut-hnd-acc">Previous</a>
+<li><a rel="up" accesskey="u" href="pxt-tut-hnd.html#pxt-tut-hnd">Up</a>
+</ul>
+</div>
+   </body></html>
+

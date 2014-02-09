@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_flush()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_flush(stream)
+     QP_stream *stream;
+     </pre>
+
+   <p>Forces the buffered output of the stream <var>stream</var> to be sent
+to the associated device.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>stream</var>
+     <dd>pointer to a valid stream structure. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Calls the bottom layer flushing function of
+<var>Stream</var> to write out the current buffered output of the stream. 
+The output is usually written out to a disk or a tty device.
+
+<h4 class="subheading">Return Value</h4>
+
+     <dl>
+
+     <br><dt><code>QP_SUCCESS</code>
+     <dd>The function succeeds
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>There is an error in the function call, the error number is stored
+in both <code>QP_errno</code> and <var>stream-&gt;errno</var>. 
+</dl>
+
+<h4 class="subheading">Errors</h4>
+
+     <dl>
+
+     <br><dt><code>QP_E_PERMISSION</code>
+     <dd><var>stream</var> is not an output stream or
+it does not permit flushing.
+
+     <br><dt><code>QP_E_CANT_WRITE</code>
+     <dd>Unknown error in the bottom layer of flush function
+of <var>stream</var>
+
+     <p>Errors from host operating system
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>flush_output/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-fnewln.html#cfu-ref-fnewln">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-fgets.html#cfu-ref-fgets">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

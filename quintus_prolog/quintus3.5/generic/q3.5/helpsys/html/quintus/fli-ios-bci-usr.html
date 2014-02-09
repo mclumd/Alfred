@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">User_defined Streams</h5>
+
+   <p>In Quintus Prolog releases prior to 3.0, <code>QP_make_stream()</code> was the
+function used to create a user-defined stream.   Quintus Prolog 3.1 users should
+use the method described in <a href="fli-ios-cps.html#fli-ios-cps">fli-ios-cps</a>. 
+<code>QP_make_stream()</code> creates an unbuffered Prolog stream.  This is not
+very efficient.
+
+   <p><code>QP_make_stream()</code> can still be used in release 3, but may not be
+supported in the future.  Other old QP I/O functions that may not be
+available in future release are:
+
+<pre class="example">     QP_sprintf()     QP_getc()       QP_sgetc()
+     QP_putc()        QP_sputc()      QP_sputs()
+     </pre>
+
+   <p>The naming convention of these functions does not match well with
+their counterparts on C standard I/O library.  For instance,
+<code>QP_sprintf()</code> performs formatted output on a Prolog stream as the
+same operation for <code>fprintf(3)</code> on a C standard I/O stream.  It is
+therefore renamed to be <code>QP_fprintf()</code> in release 3.  For
+the same reason, <code>QP_sgetc()</code> is renamed as <code>QP_fgetc()</code>;
+<code>QP_sputc()</code> is renamed as <code>QP_fputc()</code>.  <code>QP_getc()</code> and
+<code>QP_putc()</code> are now actually macros defined in
+<code>&lt;quintus/quintus.h&gt;</code>.  However, all these functions are still
+available in release 3.  If a user's foreign code calls either
+<code>QP_getc()</code> or <code>QP_putc()</code> without including
+<code>&lt;quintus/quintus.h&gt;</code>, the old version of the function will be
+called.  If <code>&lt;quintus/quintus.h&gt;</code> is included, the call is
+expanded to another function since both <code>QP_getc()</code> and
+<code>QP_putc()</code> are macros in <code>&lt;quintus/quintus.h&gt;</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-bci-def.html#fli-ios-bci-def">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-bci.html#fli-ios-bci">Up</a>
+</ul>
+</div>
+   </body></html>
+

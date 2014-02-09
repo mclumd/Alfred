@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>peek_char/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>peek_char(</code><var>-Char</var><code>)</code>
+
+   <p><code>peek_char(</code><var>+Stream, -Char</var><code>)</code>
+
+   <p>looks ahead for next input character on the current input stream
+or on the input stream <var>Stream</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>a valid Prolog stream.
+
+     <br><dt><var>Char</var> <dfn>char</dfn>
+     <dd>the resulting next input character available on the stream. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>peek_char/[1,2]</code> looks ahead of the next input character of the
+specified input stream and unifies the character with <var>Char</var>. 
+The peeked character is still available for subsequent input on the
+stream.
+
+<h4 class="subheading">Example</h4>
+
+   <p>&lt;&lt;NEEDS EXAMPLE&gt;&gt;
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>),
+plus:
+     <dl>
+
+     <br><dt><code>existence_error</code>
+     <dd>
+This is an attempt to read past end of file, or
+some operating system dependent error occurred in reading.
+
+   </dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>It is safe to call <code>peek_char/[1,2]</code> several
+times without actually inputting any character.  For example:
+<pre class="example">     | ?- <kbd>peek_char(X), peek_char(X), get0(X).</kbd>
+     |: <kbd>a</kbd>
+     
+     X = 97
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>get0/[1,2]</code>,
+<code>get/[1,2]</code>,
+<code>open/[3,4]</code>
+
+   <a href="ref-iou.html#ref-iou">ref-iou</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-phrase.html#mpg-ref-phrase">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-otherwise.html#mpg-ref-otherwise">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

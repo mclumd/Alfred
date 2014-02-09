@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Implementation: Term-Based Messages</h4>
+
+   <p>The message facility design is based on transforming
+<dfn>message terms</dfn> to lists of <dfn>format commands</dfn> according to
+<dfn>definite clause grammars</dfn>.   The format commands are processed by
+<code>print_message_lines/3</code> to become the message text. 
+For information about <code>format/2</code>, see <a href="ref-iou-cou-fou.html#ref-iou-cou-fou">ref-iou-cou-fou</a> in the
+input/output section of this manual.  Definite clause grammars are
+described in <a href="ref-gru.html#ref-gru">ref-gru</a>.
+
+   <p>This design has the advantage of being able to utilize a relatively
+small list of message terms, each of which generates a set of related
+messages, and it gives the translator or other user explicit control
+over the order in which variables are referred to in the
+translated/customized message.
+
+   <p>In release 3, all output from Prolog is represented internally
+as terms, called message terms.  These terms consist of a
+<dfn>functor</dfn> that names the message, and <dfn>arguments</dfn> that give
+information about the particulars.  For example, these <em>message
+terms</em> underlie the <em>messages</em> given in the overview:
+
+<pre class="example">     type_error(is(_, number, apples + oranges), 2, number, apples) (1)
+     
+     debug_message(leap) (2)
+     
+     advice(no_preds, '', predicate_family(user:f)) (3)
+     
+     version(3.5, 'Sun-4, SunOS 5.5') (4)
+     </pre>
+
+   <p>The <dfn>message generator</dfn> is defined in the file:
+<pre class="example">     messages(language('QU_messages.pl'))
+     </pre>
+    It associates such message
+terms with the corresponding messages.  This is accomplished by a
+series of default clauses for <code>generate_message/3</code> within the module. 
+This section will explain and exemplify various ways available to
+customize these messages.
+
+   <p>In addition to the message generator, the message facility consists of
+a set of built-in predicates &amp; hooks.  Once an event is correlated
+with a call to <code>print_message/2</code>, either by Quintus Prolog or by user code,
+these procedures can be used as shown in the following figure to
+customize system messages, or use the underlying message terms as
+triggers for other events.
+
+<br><p>
+   <img src="images/ref-messages-diag.png" alt="images/ref-messages-diag.png">
+
+<div align="center">Message Facility Control Flow</div>
+
+   <p>The heavy arrows in the diagram trace the default path of a message
+term through the message generator.
+
+   <p>To print a message, call <code>print_message/2</code>.  This may be done
+explicitly in your code.  Often, however, it is called by the system. 
+For example, an unhandled exception message <var>E</var> will always be
+captured at the Prolog top level, where it calls
+<code>print_message(error, </code><var>E</var><code>)</code>.
+
+   <p>Prolog first tries calling user:<code>generate_message_hook/3</code> to transform
+a message term into textual form.  If that fails, it then tries
+<code>'QU_messages':generate_message/3</code> instead.  (If that also fails the
+message term will simply be written out as if by <code>write/1</code>.) 
+There is one exception to this rule. Messages that fall into
+the <code>silent</code> category do not go through <code>generate_message_hook/3</code>.
+
+   <p>Once the text of the message, represented as a list of format
+commands, is decided, Prolog calls user:<code>message_hook/3</code>.  If this
+succeeds, nothing else is done; otherwise, <code>print_message_lines/3</code>
+is called to print the message. <code>silent</code> messages just go through
+<code>message_hook/3</code> but even if it does not succeed, it is not
+passed to <code>print_message_lines/3</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-msg-umf.html#ref-msg-umf">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-msg-ove.html#ref-msg-ove">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-msg.html#ref-msg">Up</a>
+</ul>
+</div>
+   </body></html>
+

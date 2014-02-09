@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Reading Past End Of File</h5>
+
+<pre class="example">     open/4 option:  eof_action(Action)
+     QP_stream:      unsigned char peof_act
+     </pre>
+
+   <p>This field is only used for an input stream.  There are three states for
+an input stream, normal, end of file, and past end of file. 
+An input stream is in normal state until it reaches end of file, where
+the state is switched to end of file state.  If there is no file border
+code or the file border code is consumed,  the input stream is switched
+to past end of file state.  The field <code>peof_act</code> specifies which
+action to take for reading from a stream at past end of file state. 
+The value of <code>peof_act</code> can be one of the following.
+
+     <dl>
+
+     <br><dt><code>QP_SEEK_ERROR</code>
+     <dd>specified as <code>seek(error)</code> in <code>open/4</code>. 
+An error for any type of seeking in the stream.
+
+     <br><dt><code>QP_PASTEOF_ERROR</code>
+     <dd>specified as <code>eof_action(error)</code> in <code>open/4</code>. 
+The <code>errno</code> field of the stream is set to <code>QP_E_EXHAUSTED</code>,
+and the read call fails.
+
+     <br><dt><code>QP_PASTEOF_EOFCODE</code>
+     <dd>specified as <code>eof_action(eof_code)</code> in <code>open/4</code>. 
+Retuns the file border code for reading at the past end of file state. 
+The state of the input stream does not change.  If there is no file
+border code for the input stream, it is the same as setting the
+field to <code>QP_PASTEOF_ERROR</code>.
+
+     <br><dt><code>QP_PASTEOF_RESET</code>
+     <dd>specified as <code>eof_action(reset)</code> in <code>open/4</code>. 
+Resets the state of an input stream to normal state and calls
+the bottom layer read function to get the
+input record for reading at past end of file state. 
+Setting the field to this value may be useful for the stream with
+<code>QP_DELIM_TTY</code> format.  It is possible to get more records
+from a tty device after the end of file character is typed. 
+</dl>
+
+   <p>Once an input stream reaches end of file state, its bottom layer read function
+will not be called unless the <code>peof_act</code> field is
+<code>QP_PASTEOF_RESET</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-sst-pro.html#fli-ios-sst-pro">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-sst-fbc.html#fli-ios-sst-fbc">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-sst.html#fli-ios-sst">Up</a>
+</ul>
+</div>
+   </body></html>
+

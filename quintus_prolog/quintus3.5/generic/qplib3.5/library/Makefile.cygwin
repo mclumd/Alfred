@@ -1,0 +1,463 @@
+# -*- Mode:Makefile -*-
+# [PM] 3.5 Converted to GNU Make
+
+
+# File   : Makefile
+# Author : David Connelly
+# Origin : August, 1993
+# Purpose: Microsoft NMAKE Makefile for Quintus Prolog library.
+
+include config.mk
+
+
+# [PM] 3.5 We definitely want -MD for dynamic code and will, in fact, use -MD for all code.
+
+# [PM] 1999 Oct 18. Changing -ML (single-threaded LIBC) to -MT (multithreaded LIBC).
+#      This is to match the fact that QP itself is now compiled with -MT.
+#      Note: It is unclear if the use of -MD (multi-threaded DLL) is
+#            really what we want for DLLs. The DLL part means that the
+#            LIBC used (msvcrt.dll or some such) is a DLL, it does
+#            *not* have anything to do with if we are building a dll
+#            or not. The effect of -MD is thus to create a runtime
+#            dependency on the MS runtime DLL.
+#
+
+STATIC_LIBC ?= $(error [PM] 3.5 STATIC_LIBC must be defined here)
+DYNAMIC_LIBC ?= $(error [PM] 3.5 DYNAMIC_LIBC must be defined here)
+
+# BIN := ix86
+BIN ?= $(error [PM] 3.5 BIN : should have been set here)
+
+# QPDIR := ../..
+QPRELDIR ?= $(error [PM] 3.5 QPRELDIR : should have been set here)
+QPDIR = $(QPRELDIR)
+
+# [PM] 3.5 no longer used (rely on $(PROLOG) and $(QPC) being set instead
+# # SYSBIN := $(QPDIR)/bin/$(BIN)
+# QPRELSYSBIN ?= $(error [PM] 3.5 QPRELSYSBIN : should have been set here)
+# SYSBIN = $(QPRELSYSBIN)
+
+# SYSLIB := $(QPDIR)/lib/$(BIN)
+QPRELSYSLIB ?= $(error [PM] 3.5 QPRELSYSLIB : should have been set here)
+# SYSLIB is only used to set-up NATIVE_SYSLIB
+SYSLIB = $(QPRELSYSLIB)
+NATIVE_SYSLIB = $(call NATIVEPATH, $(SYSLIB))
+
+# PROLOG=$(SYSBIN)/prolog
+PROLOG ?= $(error [PM] 3.5 PROLOG should have been set here)
+# QPC=$(SYSBIN)/qpc
+QPC ?= $(error [PM] 3.5 QPC should have been set here)
+# CC=cl
+CC ?= $(error [PM] 3.5 CC should have been set here)
+# LD=link
+LD ?= $(error [PM] 3.5 LD should have been set here)
+
+BASELDFLAGS  ?= $(error [PM] 3.5 BASELDFLAGS  should have been set here)
+# LFLAGS = /MACHINE:X86
+LFLAGS = $(BASELDFLAGS)
+
+# [PM] 3.5 was (in effect): (but library is no longer side by side with embed)
+# QPINCLUDEDIR := ../embed
+# QPINCLUDEDIR := $(QPDIR)/src/embed
+QPINCLUDEDIR = $(QPEMBEDDIR)
+# [PM] 3.5 passed to cl.exe so need to be Win32 path
+NATIVE_QPINCLUDEDIR = $(call NATIVEPATH, $(QPINCLUDEDIR))
+
+# $(warning [PM] 3.5 CFLAGS should be taken from config.mk)
+QPCFLAGS = -H -L .
+# CFLAGS = -Ox -I$(NATIVE_QPINCLUDEDIR) -DWIN32
+CFLAGS = $(BASECFLAGS) $(CNODEBUG)
+override CFLAGS += -I$(NATIVE_QPINCLUDEDIR)
+
+
+# [PD] 3.5 add fastrw.obj
+DOBJS = $(BIN)/dll/arity.obj    \
+	$(BIN)/dll/big_text.obj \
+	$(BIN)/dll/charsio.obj  \
+	$(BIN)/dll/count.obj    \
+	$(BIN)/dll/critical.obj \
+	$(BIN)/dll/crypt.obj    \
+	$(BIN)/dll/ctr.obj      \
+	$(BIN)/dll/date.obj     \
+	$(BIN)/dll/directory.obj \
+	$(BIN)/dll/eaccess.obj  \
+	$(BIN)/dll/environ.obj  \
+	$(BIN)/dll/exit.obj     \
+	$(BIN)/dll/fastrw.obj   \
+	$(BIN)/dll/files.obj    \
+	$(BIN)/dll/fuzzy.obj    \
+	$(BIN)/dll/openfiles.obj \
+	$(BIN)/dll/pipe.obj     \
+	$(BIN)/dll/putfile.obj  \
+	$(BIN)/dll/random.obj   \
+	$(BIN)/dll/statistics.obj \
+	$(BIN)/dll/strings.obj  \
+	$(BIN)/dll/terms.obj    \
+	$(BIN)/dll/unix.obj     \
+	$(BIN)/dll/vectors.obj
+
+# SOBJS = $(DOBJS:\dll\=\static\)
+SOBJS = $(subst dll,static, $(DOBJS))
+
+# [PM] 3.5 What is this? MKS docs gives no clue.
+# {}.c{$(BIN)\dll}.obj:
+$(BIN)/dll/%.obj : %.c
+	$(CC) $(CFLAGS) $(DYNAMIC_LIBC) -c -Fo$@ $<
+
+# [PM] -ML -> -MT
+# [PM] 3.5 No idea about these braces, see rule above.
+# {}.c{$(BIN)\static}.obj:
+$(BIN)/static/%.obj : %.c
+	$(CC) $(CFLAGS) $(STATIC_LIBC) -c -Fo$@ $<
+
+
+.PHONY: default
+default: library.qof $(SUPPORT_PLQOF_FILES) libraries
+
+# [PM] 3.5 these used to go elsewhere in 3.4
+SUPPORT_PLSOURCE_FILES := emacsdebug.pl showpos.pl srcpos.pl
+SUPPORT_PLQOF_FILES := $(addsuffix .qof, $(SUPPORT_PLSOURCE_FILES))
+
+
+# generate the file Contents and Index
+
+GENERATED_FILES += Contents Index
+Contents Index: makelib.pl FILES.TXT
+	echo "compile(makelib), makelib('FILES.TXT'), halt. " | $(PROLOG) +f
+
+%.qof: %.pl
+	$(QPC) $(QPCFLAGS) -cv "$<"
+
+# [PM] 3.5 changed *.pl to $(wildcard)
+library.qof: library.pl $(wildcard *.pl)
+	$(QPC) $(QPCFLAGS) -cv "library(library.pl)"
+
+DIRS := $(BIN)
+DIRS += $(BIN)/dll $(BIN)/static
+
+.PHONY: dirs
+dirs: $(DIRS)
+#	$(foreach d,$(DIRS),- [ -d $(d) ] || mkdir -p $(d);)
+
+
+LIB_BASENAMES := libplm libpl
+LIB_SHARED := $(patsubst %, $(BIN)/%.dll, $(LIB_BASENAMES))
+LIB_STATIC := $(patsubst %, $(BIN)/%s.lib, $(LIB_BASENAMES))
+# [PM] 3.5 import libraries. FIXME: are they ever used or needed?
+LIB_STATIC += $(patsubst %, $(BIN)/%.lib, $(LIB_BASENAMES))
+
+LIBRARIES := $(LIB_SHARED) $(LIB_STATIC)
+
+.PHONY: libraries
+libraries: dirs $(LIBRARIES)
+
+
+GENERATED_FILES += $(DIRS)
+$(DIRS):
+	[ -d $@ ] || mkdir -p $@
+
+
+# [PM] 3.5 in this make file only, a lot of receipes uses $**. This
+# construct is not documented in MKS manual, in fact it should be
+# equivalent to $(*)*, that is $* followed by a shell wildcard.
+# Whatever the intent, I have replaced it with $^ and $< as
+# appropriate (I hope..).
+
+
+# [PM] 3.5 used $**
+# $(BIN)/libpl.dll: $(DOBJS) $(BIN)/libpl.exp
+# 	$(LD) -dll -out:$@ -dll $(LFLAGS) $** $(NATIVE_SYSLIB)/qpeng.lib $(NATIVE_SYSLIB)/libqp.lib $(CLIBS)
+$(BIN)/libpl.dll: $(DOBJS) $(BIN)/libpl.exp
+	$(LD) -dll -out:$@ -dll $(LFLAGS) $^ $(NATIVE_SYSLIB)/qpeng.lib $(NATIVE_SYSLIB)/libqp.lib $(CLIBS)
+
+# $(BIN)/libpl.lib $(BIN)/libpl.exp: libpl.def
+# 	$(LD) -lib -out:$(BIN)/libpl.lib -def:$**
+$(BIN)/libpl.lib $(BIN)/libpl.exp: libpl.def
+	$(LD) -lib -out:$(BIN)/libpl.lib -def:$<
+
+# $(BIN)/libpls.lib: $(SOBJS)
+# 	$(LD) -lib -out:$@ $**
+$(BIN)/libpls.lib: $(SOBJS)
+	$(LD) -lib -out:$@ $^
+
+# $(BIN)/libplm.dll: $(BIN)/dll/math.obj $(BIN)/libplm.exp
+# 	$(LD) -dll -out:$@ -dll $(LFLAGS) $** $(CLIBS)
+$(BIN)/libplm.dll: $(BIN)/dll/math.obj $(BIN)/libplm.exp
+	$(LD) -dll -out:$@ -dll $(LFLAGS) $^ $(CLIBS)
+
+# $(BIN)/libplm.lib $(BIN)/libplm.exp: libplm.def
+# 	$(LD) -lib -out:$(BIN)/libplm.lib -def:$**
+$(BIN)/libplm.lib $(BIN)/libplm.exp: libplm.def
+	$(LD) -lib -out:$(BIN)/libplm.lib -def:$<
+
+
+# $(BIN)/libplms.lib: $(BIN)/static/math.obj
+# 	$(LD) -lib -out:$@ $**
+$(BIN)/libplms.lib: $(BIN)/static/math.obj
+	$(LD) -lib -out:$@ $^
+
+
+$(BIN)/dll/arity.obj:           arity.c
+$(BIN)/dll/big_text.obj:        big_text.c
+$(BIN)/dll/charsio.obj:         charsio.c malloc.h
+$(BIN)/dll/count.obj:           count.c
+$(BIN)/dll/critical.obj:        critical.c
+$(BIN)/dll/crypt.obj:           crypt.c malloc.h
+$(BIN)/dll/ctr.obj:             ctr.c
+$(BIN)/dll/date.obj:            date.c qerrno.h
+$(BIN)/dll/direct.obj:          direct.c eaccess.h ntdirent.h
+$(BIN)/dll/eaccess.obj:         eaccess.c
+$(BIN)/dll/environ.obj:         environ.c
+$(BIN)/dll/exit.obj:            exit.c malloc.h
+# [PD] 3.5 add fastrw
+$(BIN)/dll/fastrw.obj:          fastrw.c fastrw.h
+$(BIN)/dll/files.obj:           files.c eaccess.h
+$(BIN)/dll/fuzzy.obj:           fuzzy.c
+$(BIN)/dll/ntdirent.obj:        ntdirent.c ntdirent.h
+$(BIN)/dll/openfile.obj:        openfile.c eaccess.h malloc.h
+$(BIN)/dll/pipe.obj:            pipe.c malloc.h
+$(BIN)/dll/putfile.obj:         putfile.c
+$(BIN)/dll/random.obj:          random.c
+$(BIN)/dll/stats.obj:           stats.c
+$(BIN)/dll/strings.obj:         strings.c
+$(BIN)/dll/terms.obj:           terms.c terms.h
+$(BIN)/dll/unix.obj:            unix.c
+$(BIN)/dll/vectors.obj:         vectors.c malloc.h
+
+$(BIN)/static/arity.obj:        arity.c
+$(BIN)/static/big_text.obj:     big_text.c
+$(BIN)/static/charsio.obj:      charsio.c malloc.h
+$(BIN)/static/count.obj:        count.c
+$(BIN)/static/critical.obj:     critical.c
+$(BIN)/static/crypt.obj:        crypt.c malloc.h
+$(BIN)/static/ctr.obj:          ctr.c
+$(BIN)/static/date.obj:         date.c qerrno.h
+$(BIN)/static/direct.obj:       direct.c eaccess.h ntdirent.h
+$(BIN)/static/eaccess.obj:      eaccess.c
+$(BIN)/static/environ.obj:      environ.c
+$(BIN)/static/exit.obj:         exit.c malloc.h
+# [PD] 3.5 add fastrw
+$(BIN)/static/fastrw.obj:       fastrw.c fastrw.h
+$(BIN)/static/files.obj:        files.c eaccess.h
+$(BIN)/static/fuzzy.obj:        fuzzy.c
+$(BIN)/static/ntdirent.obj:     ntdirent.c ntdirent.h
+$(BIN)/static/openfile.obj:     openfile.c eaccess.h malloc.h
+$(BIN)/static/pipe.obj:         pipe.c malloc.h
+$(BIN)/static/putfile.obj:      putfile.c
+$(BIN)/static/random.obj:       random.c
+$(BIN)/static/stats.obj:        stats.c
+$(BIN)/static/strings.obj:      strings.c
+$(BIN)/static/terms.obj:        terms.c terms.h
+$(BIN)/static/unix.obj:         unix.c
+$(BIN)/static/vectors.obj:      vectors.c malloc.h
+
+$(BIN)/dll/math.obj:            math.c
+	$(CC) $(CFLAGS) $(DYNAMIC_LIBC) -DNODREM -c -Fo$@ math.c
+# [PM] -ML -> -MT
+$(BIN)/static/math.obj:         math.c
+	$(CC) $(CFLAGS) $(STATIC_LIBC) -DNODREM -c -Fo$@ math.c
+
+
+# [PM] 3.5 clean target
+.PHONY: clean
+clean:
+	rm -rf $(GENERATED_FILES)
+	rm -f *.qof
+
+# --------------------------------------------------------------
+# [PM] 3.5 mkentries et al. Used to reside in ./makefile
+# --------------------------------------------------------------
+
+# [PD] 3.5 add fastrw.pl
+PLFILES=arity.pl big_text.pl charsio.pl count.pl critical.pl \
+	crypt.pl ctr.pl date.pl directory.pl environ.pl exit.pl \
+	files.pl fuzzy.pl openfiles.pl pipe.pl putfile.pl random.pl \
+	statistics.pl strings.pl terms.pl unix.pl vectors.pl \
+	fastrw.pl
+PLFILESUX=aropen.pl fortransup.pl nlist.pl
+
+PLMFILES=math.pl
+# [PM] 3.5 somewhat obsolete comment:
+# [PM] 19991021
+#      MKENTRIES are only(*) used with NMAKE on NT
+#      Its is faking the existence of the mkentries program
+#      The original def can never have worked
+#      Was: MKENTRIES=prolog +f +l mkentries
+#      Instead we now create a dummy file that calls runtime_entry to
+#      start things going
+#      
+#      (*) [PM] 3.5 Also for rs6000 in Makefile.x
+MKENTRIES_PL := mkentries.pl
+MKENTRIES_PREREQUISITES := $(MKENTRIES_PL)
+MKENTRIES := prolog +f +l $(MKENTRIES_PL) +z 
+
+
+# [PM] 3.5 not used
+# mkentries:	mkentries.pl
+# 		echo "compile('mkentries.pl'),save_program(mkentries,runtime_entry(start)),halt." | $(PROLOG)
+
+
+GENERATED_FILES += libpl.def
+libpl.def:	$(MKENTRIES_PREREQUISITES) $(PLFILES)
+	echo 'runtime_entry(start).' | for f in "" $(filter-out $(MKENTRIES_PREREQUISITES), $^); do sed -n -e '/^end_of_file\./q;p' $$f; done | $(MKENTRIES) -nt libpl.dll > $@
+# [PM] create dummy file foo.pl to drive mkentries.pl
+# GENERATED_FILES += foo.pl
+# ...
+#
+#		echo 'runtime_entry(start).' > foo.pl
+#		@echo "expect 2 syntax errors in the next command"
+#		cat foo.pl $(PLFILES) | grep -v '^end_of_file.' | \
+#			$(MKENTRIES) -nt libpl.dll > $@
+#		rm foo.pl
+
+
+
+GENERATED_FILES += libplm.def
+libplm.def:	$(MKENTRIES_PREREQUISITES) $(PLMFILES)
+	echo 'runtime_entry(start).' | for f in "" $(filter-out $(MKENTRIES_PREREQUISITES), $^); do sed -n -e '/^end_of_file\./q;p' $$f; done | $(MKENTRIES) -nt libplm.dll > $@
+
+#		echo 'runtime_entry(start).' > foo.pl
+#		cat foo.pl $(PLMFILES) | $(MKENTRIES) -nt libplm.dll > $@
+#		rm foo.pl
+
+# ------------------------------------------------------------------------
+# [PM] 3.5 new install target for moving things into the RELEASE hierarchy
+# ------------------------------------------------------------------------
+
+# Extract a list of all libraries
+# library.pl consists of a lot of :- use_module(library(foo)) and some
+# :- ensure_loaded(library(foo)).
+#
+# [PM] 3.5 I could not get make to swallow a shell argument with right parenthesises.
+# PLLIBRARIES := $(shell "cat library.pl | sed -n -e 's/^:- [^%]*library\(\([a-z0-9]*\).*/\1/p'" )
+
+PLLIBRARIES.mk.cygwin: library.pl
+	echo "# Generated from library.pl" > $@
+	echo 'PLLIBRARIES= \' >> $@
+	cat $< | sed -n -e 's/^:- [^%]*library(\([a-z][_a-z0-9]*\).*/  \1 \\/p' | sort -u >> $@
+	echo "" >> $@
+
+
+include PLLIBRARIES.mk.cygwin
+
+# PLSOURCE_FILES := $(addsuffix .pl, $(PLLIBRARIES))
+# PLQOF_FILES := $(addsuffix .qof, $(PLLIBRARIES))
+# [PM] 3.5 despite what FILES.txt and libraries.pl says there are no
+# .pl-files that did not use to go into the distribution.
+PLSOURCE_FILES := $(wildcard *.pl)
+
+# [PM] 3.5 These files only contain an initialization that writes a warning about obsolescence
+OBSOLETE_STUBS := contains.pl project.pl streampos.pl
+# [PM] 3.5 some files were only distributed as source
+NOQOF_FILES := $(OBSOLETE_STUBS)
+NOQOF_FILES += ebctypes.pl mkentries.pl makelib.pl
+# [PM] 3.5 hooks were only distributed as source but I cannot see why
+# NOQOF_FILES += hooks.pl
+
+PLQOF_FILES :=  $(patsubst %.pl, %.qof, $(filter-out $(NOQOF_FILES), $(PLSOURCE_FILES)))
+
+
+CSOURCE_FILES := $(wildcard *.c *.h)
+MISC_FILES := $(wildcard *.doc)
+# [PM] 3.5 obsolete, no need to distribute
+# MISC_FILES += errno.ed errno.vms
+
+MISC_FILES += libpl.def libplm.def
+
+# [PM] 3.5 loaded by filename.pl
+MISC_FILES += filename.unix
+# [PM] 3.5 FIXME: maybe *should* be loaded by filename.pl on MS-Windows? (and should support UNC paths)
+MISC_FILES += filename.msdos
+# [PM] 3.5 design document, for informational purposes only
+MISC_FILES += filename.txt
+# [PM] 3.5 obsolete, FIXME: Should we drop these?
+MISC_FILES += filename.cms filename.mac filename.vms
+
+MISC_FILES += Makefile.cygwin Makefile.x
+# [PM] 3.5 obsolote 
+MISC_FILES += makefile
+# [PM] 3.5 obsolote BUT referred to from the docs!
+MISC_FILES += makefile.win 
+
+# [PM] 3.5 mocklisp code used by menu.pl. FIXME: needs to be converted
+#      to Emacs Lisp since Unipress Emacs is dead these days.
+MISC_FILES += menu.ml
+# [PM] 3.5 lpa compatibility stuff
+MISC_FILES += quintus.dec quintus.mac
+
+MISC_FILES += Contents Index
+# [PM] 3.5 these used to be distributed. Not much point, though.
+MISC_FILES += FILES.TXT CHANGES
+
+
+QPRELDIR ?= $(error [PM] 3.5 QPRELDIR should have been set by caller)
+QPRELLIBRARYDIR := $(QPRELDIR)/src/library
+GENERATED_FILES += $(QPRELLIBRARYDIR)
+
+# [PM] 3.5 .lib files goes into $(QPRELSTATICDIR)/$(BIN)/
+# [PM] 3.5 same place as DLLs
+QPRELSTATICDIR := $(QPRELLIBRARYDIR)
+
+# [PM] 3.5 there is something fishy in previous releases: libpl.dll
+# was placed both in bin/ix86 and in src/library/ix86. Clearly the
+# latter is the only sane location, however, it may be problematic if
+# the import library is ever used to place a dependency on libpl.dll
+# (which would be easier to find if in bin/ix86 since that directory
+# is likely to be in the PATH (or be the same as the application in
+# the case of prolog.exe et al.).
+# QPRELSHAREDDIR := $(QPRELDIR)/bin
+# [PM] 3.5 .dll files goes into $(QPRELSHAREDDIR)/$(BIN)/
+QPRELSHAREDDIR := $(QPRELLIBRARYDIR)
+
+QPREL_PLSOURCE_FILES := $(addprefix $(QPRELLIBRARYDIR)/, $(PLSOURCE_FILES))
+QPREL_PLQOF_FILES := $(addprefix $(QPRELLIBRARYDIR)/, $(PLQOF_FILES))
+QPREL_CSOURCE_FILE := $(addprefix $(QPRELLIBRARYDIR)/, $(CSOURCE_FILES))
+QPREL_MISC_FILES := $(addprefix $(QPRELLIBRARYDIR)/, $(MISC_FILES))
+
+QPREL_SHARED := $(addprefix $(QPRELSHAREDDIR)/, $(LIB_SHARED))
+QPREL_STATIC := $(addprefix $(QPRELSTATICDIR)/, $(LIB_STATIC))
+QPREL_LIBRARIES := $(QPREL_SHARED) $(QPREL_STATIC)
+
+
+QPREL_COPIED_FILES := $(QPREL_PLSOURCE_FILES) $(QPREL_PLQOF_FILES) $(QPREL_LIBRARIES)
+QPREL_COPIED_FILES += $(QPREL_CSOURCE_FILE) $(QPREL_MISC_FILES)
+# [PM] 3.5 have not decided on target-name yet, UNIX used install-target for something else
+.PHONY: install
+install: install_release
+.PHONY: install_release
+install_release: install_dirs $(QPREL_COPIED_FILES)
+
+#.PHONY: install_dirs
+#install_dirs:
+#	-mkdir -p $(QPRELLIBRARYDIR) 2> /dev/null
+#	-mkdir -p $(QPRELLIBRARYDIR)/$(BIN) 2> /dev/null
+
+INSTALL_DIRS := $(sort $(dir $(QPREL_COPIED_FILES)))
+
+GENERATED_FILES += $(INSTALL_DIRS)
+.PHONY: install_dirs
+install_dirs: $(INSTALL_DIRS)
+
+$(INSTALL_DIRS):
+	[ -d $@ ] || mkdir -p $@
+	chmod 775 $@
+
+GENERATED_FILES += $(QPREL_COPIED_FILES)
+$(QPREL_COPIED_FILES): $(QPRELLIBRARYDIR)/% : %
+	cp -p $< $@
+
+# $(QPREL_PLSOURCE_FILES) $(QPREL_PLQOF_FILES): $(QPRELLIBRARYDIR)/% : %
+# 	@ : # -mkdir -p $(@D) 2> /dev/null
+# 	cp $< $@
+# 
+# GENERATED_FILES += $(QPREL_STATIC)
+# # [PM] 3.5 expects $(QPRELSTATICDIR) to exist
+# 
+# $(QPREL_STATIC): $(QPRELSTATICDIR)/% : %
+# 	cp $< $@
+# 
+# GENERATED_FILES += $(QPREL_SHARED)
+# # [PM] 3.5 expects $(QPRELSTATICDIR) to exist
+# $(QPREL_SHARED): $(QPRELSHAREDDIR)/% : %
+# 	cp $< $@
+

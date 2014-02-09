@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Example 3 - Queens</h4>
+
+   <p>This example gives a Visual Basic user interface to an N-queens program. 
+The purpose of this example is to show how to handle Prolog lists
+through the Visual Basic interface.  The full source of the example is
+found in the distribution.
+
+   <p>The user interface shown in this example will allow the user to specify
+the number of queens, and, with the help of the <code>Next Solution</code>
+command button all the solutions of the N-Queens problem will be enumerated. 
+A given solution will be represented in a simple graphical way as a PictureBox,
+using the basic <code>Circle</code> and <code>Line</code> methods.
+
+   <img src="images/vbspqueens.png" alt="images/vbspqueens.png">
+
+   <p>The problem itself will be solved in Prolog,
+using a <code>queens(</code><var>+N</var><code>,</code><var>?PositionList</var><code>)</code> Prolog predicate,
+stored in the file <code>queens</code>.
+
+   <p>We now present two solutions, using different techniques for retrieving
+Prolog lists.
+
+   <p><strong>Example 3a - N-Queens, generating a variable list into the Prolog call</strong>
+
+   <p>The first implementation of the N-Queens problem is based on the
+technique of generating a given length list of Prolog variables into the
+Prolog query.
+
+   <p>For example, if the N-Queens problem is to be solved for N = 4, i.e. 
+with the query "<code>queens(4,L)</code>", then the problem of retrieving a
+list from Visual Basic will arise. However, if the query is presented as
+"<code>queens(4,[X1,X2,X3,X4])</code>", then instead of retrieving the list it
+is enough to access the <code>X1,X2,X3,X4</code> values.  Since the number of
+queens is not fixed in the program, this query has to be generated, and
+the retrieval of the <var>Xi</var> values must be done in a cycle.
+
+   <p>This approach can always be applied when the format of the solution
+is known at the time of calling the query.
+
+   <p>We now go over the complete code of the program.
+
+   <p>Global declarations used in the program (<code>General/declarations</code>):
+
+<pre class="example">     Dim nQueens As Long       'number of queens
+     Dim nSol As Long          'index of solution
+     Dim nActqid As Long       'actual query identifier
+     Dim nQueryOpen As Boolean 'there is an open query
+     </pre>
+
+   <p>The initialization of the program will be done when the form window is loaded:
+
+<pre class="example">     Private Sub Form_Load()
+         nQueens = 0
+         nSol = 1
+         nQueryOpen = False
+     
+         'initialize Prolog
+         If PrologInit() &lt;&gt; 1 Then GoTo Err
+         'Load <code>queens.pl</code>
+         If PrologQueryCutFail("load_files(app(queens))") &lt;&gt; 1 Then GoTo Err
+         Exit Sub
+     
+     Err:
+         MsgBox "Prolog initialization failed", 48, "Error"
+         Unload Me
+     End Sub
+     </pre>
+
+   <p>Deinitialization of the Prolog engine will be done when the form windows
+is closed, exactly as for the calculator example.
+
+   <p>When the number of queens changes (i.e. the value of the text box
+<code>textSpecNo</code> changes), a new query has to be opened,
+after the previous query, if there has been any, is closed.
+
+<pre class="example">     Private Sub textSpecNo_Change()
+         nQueens = Val(textSpecNo)
+         nSol = 1
+     
+         If nQueryOpen Then PrologCloseQuery (nActqid)
+     
+         'create Prolog query in form: queens(4,[X1,X2,X3,X4])
+     
+         Q = "queens(" &amp; Str(nQueens) &amp; ", ["
+         For i = 1 To nQueens - 1 Step 1
+             Q = Q &amp; "X" &amp; i &amp; ","
+         Next
+         Q = Q &amp; "X" &amp; nQueens &amp; "])"
+     
+         nActqid = PrologOpenQuery(Q)
+         nQueryOpen = True
+     End Sub
+     </pre>
+
+   <p>The <code>Next command</code> button executes and shows the next solution of the
+current query:
+
+<pre class="example">     Private Sub cmdNext_Click()
+         Dim nPos As Long
+         Dim aPos(100) As Long
+     
+         If Not nQueryOpen Then
+             MsgBox "Specify number of queens first!", 48, ""
+             Exit Sub
+         End If
+         If PrologNextSolution(nActqid) &lt; 1 Then
+             MsgBox "No more solutions!", 48, ""
+         Else
+             For i = 1 To nQueens Step 1
+                If PrologGetLong(nActqid, "X" &amp; i, nPos) = 1 Then
+                    aPos(i - 1) = nPos
+                End If
+             Next i
+     
+             'display nth solution
+             txtSolNo = "Solution number: " &amp; Str(nSol)
+             Call draw_grid(nQueens)
+     
+             nLine = 1
+             For Each xElem In aPos
+                 Call draw_circle(nLine, xElem, nQueens)
+                 nLine = nLine + 1
+             Next
+     
+             nSol = nSol + 1
+         End If
+     End Sub
+     </pre>
+
+   <p>Drawing itself is performed by the <code>draw_grid</code> and
+<code>draw_circle</code> procedures.
+
+   <p><strong>Example 3b - N-Queens, converting the resulting Prolog list to an atom</strong>
+
+   <p>The second variant of the N-Queens program uses the technique of
+converting the resulting Prolog list into a string via the
+<code>PrologGetString</code> function, and decomposing it into an array in
+Visual Basic.  Here we show only those parts of the program which have
+changed with respect to the first version.
+
+   <p>In the <code>textSpecNo_Change</code> routine the <code>queens/2</code> predicate is
+called with a single variable in its second argument:
+
+<pre class="example">     Q = "queens(" &amp; Str(nQueens) &amp; ",Queens)"
+     nActqid = PrologOpenQuery(Q)
+     </pre>
+
+   <p>In the <code>cmdNext_Click</code> routine the solution list is retrieved into
+a single string which is then split up along the commas, and deposited
+into the <code>aPos</code> array by the <code>convert_prolog_list</code> routine. 
+(<code>aPos</code> is now an array of strings, rather than integers.)
+
+   <p>Finally, we include the code of the routine for splitting up a Prolog
+list:
+
+<pre class="example">     Private Sub convert_prolog_list(ByVal inList As String,
+                                     ByRef inArray() As String)
+         'drop brackets
+         xList = Mid(inList, 2, Len(inList) - 2)
+     
+         i = 0
+     
+         startPos = 1
+         xList = Mid(xList, startPos)
+     
+         Do While xList &lt;&gt; ""
+             endPos = InStr(xList, ",")
+             If endPos = 0 Then
+                 xElem = xList
+                 inArray(i) = xElem
+                 Exit Do
+             End If
+             xElem = Mid(xList, 1, endPos - 1)
+             inArray(i) = xElem
+             i = i + 1
+             xList = Mid(xList, endPos + 1)
+             startPos = endPos + 1
+         Loop
+     End Sub
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="vb-ex-tr.html#vb-ex-tr">Previous</a>
+<li><a rel="up" accesskey="u" href="vb-ex.html#vb-ex">Up</a>
+</ul>
+</div>
+   </body></html>
+

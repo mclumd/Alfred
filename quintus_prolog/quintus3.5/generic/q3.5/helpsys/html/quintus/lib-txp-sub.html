@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Finding and Extracting Substrings</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="lib-txp-sub-midstring.html#lib-txp-sub-midstring">lib-txp-sub-midstring</a>:                midstring/[3,4,5,6]
+<li><a accesskey="2" href="lib-txp-sub-substring.html#lib-txp-sub-substring">lib-txp-sub-substring</a>:                substring/[4,5]
+<li><a accesskey="3" href="lib-txp-sub-subchars.html#lib-txp-sub-subchars">lib-txp-sub-subchars</a>:                 subchars/[4,5]
+<li><a accesskey="4" href="lib-txp-sub-spa.html#lib-txp-sub-spa">lib-txp-sub-spa</a>:                      The "span" family
+</ul>
+
+   <p>The beauty of Prolog as a text processing language is that definite
+clause grammars (DCG's) are not only part of it, but almost an inevitable
+part, and may be used for constructing and decomposing pieces of text as
+well as matching them.
+
+   <p>As an example of the power of definite clause grammars, suppose we
+want to take American-style dates apart.  Here is a grammar:
+
+<pre class="example">     usa_date(Y, M, D, MDY) :-
+             usa_date(Y, M, D, MDY, "").
+     
+     usa_date(Y, M, D) --&gt;
+             digits(M), "/", digits(D), "/", digits(Y).
+     
+     digits([D|Ds]) --&gt;
+             [D], {is_digit(D)},
+             (   digits(Ds)
+             ;   {Ds = []}
+             ).
+     </pre>
+
+   <p>With this definition, we can take dates apart:
+<pre class="example">     | ?- <kbd>usa_date(Y, M, D, "12/25/86").</kbd>
+     
+     Y = "86",
+     M = "12",
+     D = "25"
+     
+     | ?- <kbd>usa_date(Y, M, D, "2/1/87").</kbd>
+     
+     Y = "87",
+     M = "2",
+     D = "1".
+     
+     | ?- <kbd>usa_date(Y, M, D, "1-feb-87").</kbd>
+     
+     no
+     </pre>
+
+   <p>We can also put dates together:
+<pre class="example">     | ?- <kbd>usa_date("86", "12", "25", Date).</kbd>
+     
+     Date = "12/25/86"
+     
+     | ?- <kbd>usa_date("87", "2", "1", Date).</kbd>
+     
+     Date = "2/1/87"
+     </pre>
+
+   <p>Thanks to the fact that non-terminals in a DCG can take arguments, and
+with a little care, you can write quite complicated grammars that can be
+used for composition as well as decomposition.
+
+   <p>If you want to do any sort of text processing in Prolog, you
+should learn how to use grammar rules.  A well-written grammar
+requires less mental decoding than a program using the operations
+in <code>library(strings)</code>.  Here are versions of <code>usa_date/4</code> written
+using the operations in <code>library(strings)</code>.  <code>cons_date/4</code> can only
+build a date, and <code>dest_date/4</code> can only take one apart.  Both are
+simplified, and do not check that <var>Y</var>, <var>M</var>, and <var>D</var> are made of digits.
+<pre class="example">     cons_date(Y, M, D, Date) :-
+             concat_atom([Y,/,M,/,D], Date).
+     
+     dest_date(Y, M, D, Date) :-
+             substring(Date, /, I, 1),       % find left /
+             substring(Date, /, J, 1, R),    % find right /
+             J &gt; I,
+             substring(Date, Y, 0, I),       % extract Y
+             substring(Date, D, _, R, 0),    % extract D
+             P is I+1, Q is R+1,             % widen fringes
+             substring(Date, M, P, _, Q).    % extract M
+     </pre>
+
+   <p>It is not immediately obvious what this does, whereas the
+version using grammar rules is considerably clearer.
+
+   <p>The argument is sometimes raised that, while grammar rules may be more
+elegant, string operations are more efficient.  However, it is the daily
+experience of Prolog programmers that "clean" and "efficient"
+tend to describe the same code.
+
+   <p>The following relative times were measured using Quintus Prolog on
+an MC68020:
+<pre class="example">     cons_date('86', '12', '25', _)
+     ------------------------------ = 1.5
+     usa_date( "86", "12", "25", _)
+     
+     dest_date(_, _, _, '86/12/25')
+     ------------------------------ = 4.5
+     usa_date( _, _, _, "86/12/25")
+     </pre>
+
+   <p>In both cases, processing lists of character codes using grammar
+rules was more efficient than using "string" operations.  If the
+"string" operations were built in, rather than being
+part of the library, they could be
+faster than they are.  Even so, using grammar rules would still
+be the preferred method.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-ato.html#lib-txp-ato">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-printlength.html#lib-txp-printlength">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp.html#lib-txp">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

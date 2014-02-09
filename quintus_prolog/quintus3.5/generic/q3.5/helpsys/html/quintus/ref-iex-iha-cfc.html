@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Changing Prolog's Control Flow from C</h5>
+
+   <p>If the application has a toplevel, the function <code>QP_action()</code> can
+be called from C to alter Prolog's flow of control.  This function
+allows the user to make Prolog abort, exit, suspend execution, turn on
+debugging, or prompt for the desired action.  To use it, use
+<code>#include &lt;quintus/quintus.h&gt;</code> in your C source code.  This file
+should be installed in a central place; if not, there should be a
+copy of it in the <code>embed</code> directory (refer to <a href="int-dir.html#int-dir">int-dir</a>
+for location). <code>quintus.h</code> defines the following constants:
+
+     <dl>
+
+     <br><dt><code>QP_ABORT</code>
+     <dd>*Abort to the current break level
+<br><dt><code>QP_REALLY_ABORT</code>
+     <dd>*Abort to top level
+<br><dt><code>QP_STOP</code>
+     <dd>Stop (suspend) process
+<br><dt><code>QP_IGNORE</code>
+     <dd>Do nothing
+<br><dt><code>QP_EXIT</code>
+     <dd>Exit Prolog immediately
+<br><dt><code>QP_MENU</code>
+     <dd>Present action menu
+<br><dt><code>QP_TRACE</code>
+     <dd>Turn on trace mode
+<br><dt><code>QP_DEBUG</code>
+     <dd>Turn on debugging
+</dl>
+
+   <p>To change Prolog's control flow in a given instance, call
+<code>QP_action()</code> with one of these constants; for example,
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     void abort_execution(){
+         QP_action(QP_ABORT);
+     }
+     </pre>
+
+   <p>Some calls to <code>QP_action()</code> do not normally return, for example when
+the <code>QP_ABORT</code> constant is specified. However, calls to <code>QP_action()</code> from
+an interrupt handler must be viewed as <dfn>requests</dfn>.  They are requests that
+will definitely be honored, but not always at the time of the call to
+<code>QP_action()</code>. Therefore calls to <code>QP_action()</code> should be prepared
+for the function to return.
+
+   <p>It is currently not possible to call Prolog from an interrupt handler.
+
+   <p>For systems that do not have a toplevel, the actions marked with an
+asterisk will have no effect other than to make <code>QP_action()</code> return
+<code>QP_ERROR</code>.
+
+   <p>What does it mean to have a
+toplevel? If the
+application is calling the function <code>QP_toplevel()</code>, then the
+application has a toplevel.  The development system and runtime
+systems both call <code>QP_toplevel()</code>.  An exit from either of these
+environments is effectively a return from <code>QP_toplevel()</code>.  An
+embedded application may or may not call <code>QP_toplevel()</code>.  One of
+the things <code>QP_toplevel()</code> does is establish signal handlers. 
+Another thing it does is establish a place for <code>QP_action()</code> to
+<em>jump to</em>, the actions marked with an asterik are essentially a
+<em>jump</em> to the toplevel, and will not work in systems without a
+toplevel.  For more about <code>QP_toplevel()</code>, see
+<a href="cfu-ref-toplevel.html#cfu-ref-toplevel">cfu-ref-toplevel</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iex-iha-ush.html#ref-iex-iha-ush">Next</a>
+<li><a rel="up" accesskey="u" href="ref-iex-iha.html#ref-iex-iha">Up</a>
+</ul>
+</div>
+   </body></html>
+

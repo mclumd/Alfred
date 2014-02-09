@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>seek/4</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>seek(</code><var>+Stream, +Offset, +Method, -NewLocation</var><code>)</code>
+
+   <p>Seeks to an arbitrary byte position in <var>Stream</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>a valid Prolog stream
+
+     <br><dt><var>Offset</var> <dfn>integer</dfn>
+     <dd>the offset in bytes to seek relative to <var>Method</var>
+specified.
+
+     <br><dt><var>Method</var> <dfn>one of </dfn><code>[bof,current,eof]</code><dfn></dfn>
+     <dd>specifies where
+to start seeking.  It is one of the following.
+
+          <dl>
+
+          <br><dt><code>bof</code>
+          <dd>Seek from beginning of the file stream.
+
+          <br><dt><code>current</code>
+          <dd>Seek from current position of the file stream.
+
+          <br><dt><code>eof</code>
+          <dd>Seek from end of the file stream.
+
+     </dl>
+
+     <br><dt><var>NewLocation</var> <dfn>integer</dfn>
+     <dd>The byte offset from beginning of the file after
+seeking operation. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Sets the current position
+of the file stream <var>Stream</var> to a new position according to
+<var>Offset</var> and <var>Method</var>.  If <var>Method</var> is
+     <dl>
+
+     <br><dt><code>bof</code>
+     <dd>the new position is set to <var>Offset</var> bytes from
+beginning of the file stream.
+
+     <br><dt><code>current</code>
+     <dd>the new position is <var>Offset</var> bytes plus the
+current position of <var>Stream</var>.
+
+     <br><dt><code>eof</code>
+     <dd>the new position is <var>Offset</var> bytes, a negative
+integer, plus the size of the file. 
+</dl>
+
+   <p>If <var>Offset</var> is 0, <code>seek/4</code> returns the current position from
+the beginning of <var>Stream</var> and sets the position to the same
+location.
+
+   <p>If <var>Stream</var> is an output stream permitting flushing output,
+the characters in the buffer of the stream are flushed before seek is
+performed.  If the output stream <var>Stream</var> does not permit flushing
+output and there are characters remaining in the buffer,
+then a permission error is raised.
+
+   <p>If <var>Stream</var> is an input stream, the characters in the input
+buffer of the stream are discarded before seek is performed.  The
+input buffer is empty when the <code>seek/4</code> call returns.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>),
+plus:
+     <dl>
+
+     <br><dt><code>domain_error</code>
+     <dd>
+   <var>Method</var> is not one of <code>bof</code>, <code>current</code> or <code>eof</code>.
+
+     <p><var>Offset</var> is a negative value and
+<var>Method</var> is <code>bof</code>.
+
+     <p><var>Offset</var> is a positive value and <var>Method</var> is <code>eof</code>.
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>Offset</var> or <var>Method</var> is not instantiated.
+
+     <br><dt><code>type_error</code>
+     <dd>
+   <var>Stream</var> is not a stream object.
+
+     <p><var>Offset</var> is not an integer type.
+
+     <p><var>Method</var> is not an atom type.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+   <var>Stream</var> names an open stream but the stream is not open
+with <code>seek(byte)</code> permission.
+
+     <p>An error occurred while seeking in the file stream.
+
+     <p>Flushing attempted but not permitted.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>stream_position/[2,3]</code>, <code>open/4</code>, <code>character_count/2</code>, <code>line_count/2</code>, <code>line_position/2</code>.
+
+   <a href="ref-iou.html#ref-iou">ref-iou</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-seen.html#mpg-ref-seen">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-seeing.html#mpg-ref-seeing">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>unix/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>unix(shell(</code><var>+Command</var><code>))</code>
+Spawns a command interpreter and executes <var>Command</var>. 
+Note that, despite the name, <code>unix/1</code> works on both UNIX and Windows.
+
+   <p><code>unix(system(</code><var>+Command</var><code>))</code>
+Spawns a shell process and executes <var>Command</var>.
+
+   <p><code>unix(system(</code><var>+Command</var><code>, </code><var>-Status</var><code>))</code>
+Spawns a shell process and executes <var>Command</var>. The exit status
+of the executed command is returned in <var>Status</var>.
+
+   <p><code>unix(cd(</code><var>+Path</var><code>))</code>
+Changes working directory to <var>Path</var>.
+
+   <p><code>unix(argv(</code><var>-ArgList</var><code>))</code>
+Returns in <var>ArgList</var> the list of commandline arguments as Prolog objects.
+
+   <p><code>unix(args(</code><var>-ArgList</var><code>))</code>
+Returns in <var>ArgList</var> the list of commandline arguments as a list
+of atoms.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Command</var> <dfn>term</dfn>
+     <dd>atom corresponding to a command (or null)
+
+     <br><dt><var>Status</var> <dfn>integer</dfn>
+     <dd>exit status of the command executed
+
+     <br><dt><var>Path</var> <dfn>atom</dfn>
+     <dd>atom corresponding to a legal directory (or null)
+
+     <br><dt><var>ArgList</var> <dfn>list of term</dfn>
+     <dd>list of arguments used to start up current session. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>unix(cd)</code> changes the working directory of Prolog (and of Emacs if
+running under the editor interface) to your home directory.  Note that
+the <kbd>&lt;ESC&gt; x cd</kbd> command under Emacs has the same effect as this,
+except that Emacs also provides filename completion.
+
+   <p>If the return status of <var>Command</var> is 0,
+<code>unix(system(</code><var>Command</var><code>))</code> succeeds, otherwise it fails.
+
+   <p><code>unix(system(</code><var>Command</var><code>, </code><var>Status</var><code>))</code> returns the status of the executed
+command, similar to the function <code>system(3)</code>. The low-order 8 bits
+of the <var>Status</var> is the value returned by the system call <code>wait(2V)</code> and the
+next 8-bits higher up in the <var>Status</var> has the shell exit status if the
+shell was not interrupted by a signal. An exit status of 127 indicates
+that the shell could not be executed.
+
+   <p>To start up an interactive shell, type <code>unix(shell)</code>.
+
+   <p>If <var>ArgList</var> is instantiated to a term that does not unify with
+the result returned, <code>unix(argv(</code><var>ArgList</var><code>))</code> or
+<code>unix(args(</code><var>ArgList</var><code>))</code> will simply fail.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+<dt><code>instantiation_error</code>
+     <dd>
+        Argument to <code>unix/1</code> is not sufficiently instantiated.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+        Argument to <code>unix/1</code> is invalid.
+
+     <br><dt><code>type_error</code>
+     <dd>
+        <var>Path</var> is not an atom.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+         <var>Path</var> is a nonexistent directory.
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>To list the
+QOF files in the current working directory:
+
+<pre class="example">     | ?- <kbd>unix(shell('ls -l *.qof')).</kbd>
+     -rw-rw-r--  1 joe   9152 Oct 20  1990 table.qof
+     -rw-rw-r--  1 joe    576 Oct 25  1990 test.qof
+     
+     yes
+     </pre>
+
+   <p>Alternatively, enter a command interpreter, execute commands,
+and type <kbd>exit</kbd> to return to prolog:
+<pre class="example">     | ?- <kbd>unix(shell).</kbd>
+     % <kbd>ls -l *.qof</kbd>
+     -rw-rw-r--  1 joe   9152 Oct 20  1990 table.qof
+     -rw-rw-r--  1 joe    576 Oct 25  1990 test.qof
+     % <kbd>exit</kbd>
+     
+     yes
+     | ?-
+     </pre>
+
+   <p>If Prolog was invoked using the command (A), the
+command line arguments can be retrieved as in (B):
+<pre class="example">     % <kbd>prolog screaming yellow + yellow.pl</kbd> (A)
+         .
+         .
+         .
+     
+     | ?- <kbd>unix(argv(ArgList)).</kbd> (B)
+     
+     ArgList = [screaming, yellow]
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_initialize()</code>, <code>QP_toplevel()</code>, <code>system/1</code>
+-- from <code>library(strings)</code>
+
+   <a href="ref-aos.html#ref-aos">ref-aos</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-unknown.html#mpg-ref-unknown">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-unv.html#mpg-ref-unv">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

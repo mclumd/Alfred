@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Passing Atoms as Strings to/from Pascal or FORTRAN</h5>
+
+   <p>This section describes passing atoms as pointers to fixed-length, blank-padded
+arrays of characters.  This is the way to pass atoms as strings between Prolog
+and Pascal or FORTRAN.  See <a href="fli-p2f-atm-spc.html#fli-p2f-atm-spc">fli-p2f-atm-spc</a> for how to pass atoms
+as null-terminated strings between Prolog and C.
+
+   <blockquote>
+
+        <p><strong>Implementation note:</strong>  The foreign interface makes some assumptions about how
+string parameters are handled in Pascal and FORTRAN compilers.  If a given
+Pascal or FORTRAN compiler has different conventions for the handling of string
+parameters, the interface will not work.  The conventions are:
+          <ul>
+
+          <li>A string result is represented by a pointer to the character array followed by
+its size.  These two values are passed before all the other arguments. 
+<li>Other string parameters are also represented by a pointer to the characters and
+a size.  In this case the pointer occupies the normal position in the argument
+list, and the size is passed after all the other arguments. 
+</ul>
+
+   </blockquote>
+
+<pre class="example">     Prolog:  +string(<var>N</var>)
+     C:       Not supported
+     Pascal:  type string<var>N</var> = packed array [1..<var>N</var>] of char;
+              var x: string<var>N</var>
+     FORTRAN: character*<var>N</var>
+     </pre>
+
+   <p>The argument must be instantiated to an atom, otherwise the call will signal
+an error. 
+A character array, containing a copy of the characters of the atom, is passed
+by reference to the function.  The text is truncated on the right
+or padded on the right with blanks to length <var>N</var>.
+
+   <p>Note that the Pascal parameter is call-by-reference (var), the same as
+for the <code>-string(</code><var>N</var><code>)</code> case below.
+
+<pre class="example">     Prolog:  -string(<var>N</var>)
+     C:       Not supported
+     Pascal:  type string<var>N</var> = packed array [1..<var>N</var>] of char;
+              var x: string<var>N</var>
+     FORTRAN: character*<var>N</var>
+     </pre>
+
+   <p>A pointer to a character array of length <var>N</var>, initialized to all
+blanks, is passed to the function.  It is assumed that the function will
+fill in this array.  When the function returns, the atom that has
+   the printed representation specified by the character array is unified
+   with the corresponding argument of the Prolog call.
+
+   <p>Trailing blanks in the character array are ignored.  Thus if the
+   foreign function sets a character array of length 6 to <code>atom  </code>,
+   Prolog will convert the result to the atom <code>atom</code>.  Leading blanks are
+   significant:  if the foreign function returns <code> this </code>, the resulting
+   atom is <code>' this'</code>.
+
+   <p>The argument can
+   be of any type; if it cannot be unified with the returned atom, then
+   the call fails.  If the function does not fill in the character
+   array, then the result is the null atom <code>''</code>.
+
+<pre class="example">     Prolog:  [-string(<var>N</var>)]
+     C:       Not supported
+     Pascal:  Not Supported
+     FORTRAN: character*<var>N</var> function
+     </pre>
+
+   <p>This argument specification is valid only for FORTRAN.  The FORTRAN function
+result is initialized to a blank-filled character array of length <var>N</var>.  It
+is assumed that the function will fill this array. 
+The atom that has the printed representation specified by the character
+array is unified with the corresponding argument of the Prolog call.
+
+   <p>Trailing blanks in the character array are ignored, as for
+the <code>-string(</code><var>N</var><code>)</code> case above.
+
+   <p>The argument can be of any type; if it cannot be unified with the returned
+atom, then the call fails.  If the function does not fill in the character
+array, then the result is the null atom <code>''</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-atm-a2s.html#fli-p2f-atm-a2s">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-atm-spc.html#fli-p2f-atm-spc">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-atm.html#fli-p2f-atm">Up</a>
+</ul>
+</div>
+   </body></html>
+

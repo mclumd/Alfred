@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Finding the Current Input Stream</h5>
+
+     <ul>
+
+     <li><code>current_input(</code><var>Stream</var><code>)</code> unifies <var>Stream</var> with the current input
+stream.
+
+     <li><code>seeing(</code><var>S</var><code>)</code> unifies
+<var>S</var> with the current input stream.  This is exactly the
+same as <code>current_input</code>(<var>S</var>), except that <var>S</var> will be unified
+with a filename if the current input stream was opened by <code>see/1</code>
+(see <a href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">ref-iou-sfh-opn</a>).
+
+     <p><code>seeing/1</code> can be used to verify that FileNameOrStream is still the
+current input stream as follows:
+     <pre class="example">          /* nonvar(FileNameOrStream), */
+          see(FileNameOrStream),
+          ...
+          seeing(FileNameOrStream)
+          </pre>
+
+     <p>If the current input stream has not been changed (or if changed, then
+restored), the above sequence will succeed for all file names and all stream
+objects opened by <code>open/[3,4]</code>.  However, it will fail for all stream objects
+opened by <code>see/1</code> (since only filename access to streams opened by
+<code>see/1</code> is supported).  This includes the stream object <code>user_input</code>
+(since the standard input stream is assumed to be opened by <code>see/1</code>, and
+so <code>seeing/1</code> would return <code>user</code> in this case).
+
+     <p><code>seeing/1</code> can be followed by <code>see/1</code> to ensure that a
+section of code leaves the current input unchanged
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iou-sfh-cos.html#ref-iou-sfh-cos">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-iou-sfh.html#ref-iou-sfh">Up</a>
+</ul>
+</div>
+   </body></html>
+

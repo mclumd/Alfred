@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Widget Resources</h4>
+
+   <p>The widgets are objects and they have resources, also called
+attributes. These can be set at creation time by passing
+the list of attributes as an argument to the predicate that creates
+the widget or in later time by calling <code>xtSetValues/2</code>. In the
+example above the third argument of <code>xmCreatePushButton/4</code> is the
+attribute list and the size of the push button is set initially to
+100x100 pixels.  If that argument was an empty list then no attributes
+would have been set. Each attribute is represented as a term whose
+functor is its resource name and whose argument is its value. In
+<a href="pxt-wid.html#pxt-wid">pxt-wid</a> all of the resources are listed with the types
+of their values.
+
+   <p>There is a method to inspect the values of the attributes. This can be
+accomplished using the predicate <code>xtGetValues/2</code>, which is almost the
+same as <code>xtSetValues/2</code> except that the argument of the attribute
+term is a variable, which is to be bound as a result of the call
+with the value of the attribute. For example to inspect the size of the
+push button from the previous example call:
+
+<pre class="example">     xtGetValues(Button, [xmNwidth(X), xmNheight(Y)]).
+     </pre>
+
+   <p>At last, a word of caution. Not all resources can be set at creation
+time or set/get at a later time. To check for that look at the Motif
+and X Toolkit manuals.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxt-tut-hnd.html#pxt-tut-hnd">Next</a>
+<li><a rel="previous" accesskey="p" href="pxt-tut-wid.html#pxt-tut-wid">Previous</a>
+<li><a rel="up" accesskey="u" href="pxt-tut.html#pxt-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

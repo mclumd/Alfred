@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>prolog</code> -- Quintus Prolog Development System</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     prolog [ +f ] [ +l file ] [ +L file ]
+          [ +p [path-name] ] [ +P [path-name] ] [+tty ]
+          [ +z user's-arguments | + [emacs-arguments] ]
+     </pre>
+
+<pre class="example">     qpwin [ +f ] [ +l file ] [ +L file ]
+          [ +p [path-name] ] [ +P [path-name] ] [+tty ]
+          [ +z user's-arguments | + [emacs-arguments] ]
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>prolog</code> is the command to invoke the Quintus Prolog  Development
+     System.   The prompt <code>| ?-</code> indicates that the execution
+     of Quintus Prolog Development System is in  top-level  mode. 
+     In  this  mode,  Prolog  queries  may be issued and executed
+     interactively.  A program written in the Prolog  programming
+     language  can  be compiled during the execution of <code>prolog</code> as
+     additional information for subsequent execution.  The Prolog
+     command <code>halt/[0,1]</code> is used to exit from prolog; under the
+     GNU Emacs editor, exit is <kbd>^x^c</kbd>.
+
+   <p>Under Windows, <code>prolog.exe</code> is a console-based
+     program that can run in a command prompt window, whereas <code>qpwin.exe</code>
+     runs in its own window and directs the Prolog standard streams to that
+     window.  <code>qpwin.exe</code> is a "windowed" executable; see
+     <a href="sap-srs-qld-iin.html#sap-srs-qld-iin">sap-srs-qld-iin</a>.
+
+   <p>Compiled programs can be saved into a file as a saved-state. 
+     The  file  can  be  restored  either  through Quintus Prolog
+     built-in restore command or issued as a  command  to the command
+     interpreter.   The UNIX command <code>head -1 </code><var>saved-state</var><code></code> displays
+     how the <var>saved-state</var> file is restored  in  the  latter  case. 
+     The  <var>saved-state</var>  file  can  also  be passed to <code>qld(1)</code> to be
+     linked into an executable program.
+
+   <p><code>prolog</code> depends on preset paths to locate the license
+     files,  Prolog  libraries,  system-dependent  foreign
+     object files, and certain executables.  There are three main
+     paths,  <var>quintus-directory</var>,  <var>runtime-directory</var> and <var>host-type</var>,
+     which are set during the installation of the  Quintus
+     Prolog Development System.  The paths can be checked with
+     <code>qgetpath(1)</code>, and changed with <code>qsetpath(1)</code>.   Upon  startup,
+     <code>prolog</code> checks the files in
+     <code></code><var>quintus-directory</var><code>/license</code><var>quintus-version</var><code></code> for authorization of
+     execution. 
+     Under UNIX, <code>prolog</code> locates its libraries under the directory
+     <code></code><var>quintus-directory</var><code>/generic/qplib</code><var>quintus-version</var><code></code>  where
+     <var>quintus-version</var> is the Quintus Prolog release number built
+     into  the executables. 
+     Under Windows, <code>prolog</code> locates its libraries under the directory
+     <code></code><var>quintus-directory</var><code>/src</code>. 
+     <code>prolog</code> searches the system dependent
+     foreign object files in directories based on <var>host-type</var>.
+
+   <p>Quintus Prolog Development System can be linked  with  other
+     Quintus  products,  and  user's  application  programs.  For more
+     detail, see <code>qld(1)</code>, <code>qpc(1)</code>, and the add-on products QUI, ProXT,
+     and ProXL, which are shipped with Quintus Prolog.
+
+<h4 class="subheading">Options</h4>
+
+   <p>Any argument that does not match options
+described in this section and does not start with a <code>+</code> is regarded as a
+user's argument.  The user's arguments may be obtained using the
+prolog command <code>unix(argv(ListOfArgs))</code>.  If a user's argument needs to
+begin with a <code>+</code>, it should be issued as <code>++</code> instead or given after the
+<code>+z</code> option.  Double pluses will be translated into a single plus, so the
+user's code will not see the <code>++</code>. 
+Arguments beginning with <code>+</code> are reserved for prolog, and
+an unrecognized argument starting with a <code>+</code> is treated as an error.
+
+     <dl>
+
+     <br><dt><code>+  </code><var>emacs-arguments</var><code></code>
+     <dd>Invoke Quintus Prolog with the Emacs
+interface.  Any arguments following <code>+</code> are taken as arguments to the
+Emacs editor.  If the environment variable <code>QUINTUS_EDITOR_PATH</code> is set
+then that Emacs invoked.  Otherwise, by default, GNU emacs is assumed
+to be in the path as <code>emacs</code>.
+
+     <br><dt><code>+f</code>
+     <dd>Fast start.  The initialization file <code>prolog.ini</code> will
+not be read upon startup.
+
+     <br><dt><code>+l </code><var>file</var><code></code>
+     <dd>Load the specified file upon startup.  <var>file</var> can be a
+Prolog or a QOF file, and it may be specified either as a string
+(e.g.  <code>file</code>, <code>~/prolog/file.pl</code>) or as a file search path specification
+(e.g. <code>library(file)</code>, <code>home(language(file))</code>).  Note, however, that the
+latter needs to be quoted to escape
+the shell interpretation of the parentheses.  Giving the extension is not
+necessary; if both source (<code>.pl</code>) and QOF (<code>.qof</code>) files exist, the
+more recent of the two will be loaded.
+
+     <br><dt><code>+L </code><var>file</var><code></code>
+     <dd>Similar to <code>+l</code> but the user's
+environment variable <code>PATH</code> will be searched for the specified <var>file</var>.
+
+     <br><dt><code>+p [</code><var>path-name</var><code>]</code>
+     <dd>Print the Prolog file search path definitions
+that begin with the string <var>path-name</var> (e.g. <code>library</code> if
+<code>+p lib</code> is specified); <var>path-name</var> is optional, and if not given,
+all file search path definitions are printed; Prolog exits
+after producing the required output to <code>stdout</code>.
+
+     <br><dt><code>+P [</code><var>path-name</var><code>]</code>
+     <dd>Similar to <code>+p</code>, but the absolutized versions of
+the file search path definitions are printed.
+
+     <br><dt><code>+tty</code>
+     <dd>Force the three standard stream associated with a Prolog
+process to act as tty streams.  A tty stream is usually line buffered
+and handles prompt automatically.
+
+     <br><dt><code>+z </code><var>user's-arguments</var><code></code>
+     <dd>Any arguments following <code>+z</code> are taken as
+user's arguments.  User's arguments can then be obtained through
+<code>unix(argv(ListOfArgs))</code>. 
+</dl>
+
+<h4 class="subheading">Environment</h4>
+
+     <dl>
+
+     <p>}
+
+     <br><dt><code>PAGER</code>
+     <dd>A program to use for interactively delivering the
+help-system's output to the screen.  The default is either <code>more</code> or <code>pg</code>
+depending on the host operating system.
+
+     <br><dt><code>PATH</code>
+     <dd>Directories to search for the executables and saved-states.
+
+     <br><dt><code>QUINTUS_LISP_PATH</code>
+     <dd>Absolute filename for the Emacs-Lisp
+directories.  The default is:
+<code></code><var>quintus-directory</var><code>/editor</code><var>quintus-version</var><code>/gnu</code>.
+
+     <br><dt><code>QUINTUS_EDITOR_PATH</code>
+     <dd>Absolute filename of the GNU Emacs
+executable.  By default the command <code>emacs</code> is looked for in your path.
+
+     <br><dt><code>SHELL</code>
+     <dd>Default shell interpreter to be used for Prolog commands
+<code>unix(shell)</code> and <code>unix(shell(</code><var>command</var><code>))</code>.
+
+   </dl>
+
+<h4 class="subheading">Files</h4>
+
+     <dl>
+
+     <br><dt><code></code><var>file</var><code>.pl</code>
+     <dd>Prolog source file
+
+     <br><dt><code></code><var>file</var><code>.qof</code>
+     <dd>Quintus Object File (QOF) files
+
+     <br><dt><code>prolog.ini</code>
+     <dd>Quintus Prolog initialization file, looked up in the
+home directory
+
+     <br><dt><code>/tmp/qp*</code>
+     <dd>Temporary files for loading foreign object files and for
+Emacs editor interface
+
+     <br><dt><code></code><var>quintus-directory</var><code>/license</code><var>quintus-version</var><code></code>
+     <dd>Location of license files
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>qgetpath(1)</code>, <code>qld(1)</code>, <code>qpc(1)</code>,
+<code>qsetpath(1)</code>, <code>unix/1</code>, <code>QP_initialize()</code>
+
+   <a href="ref-pro.html#ref-pro">ref-pro</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="too-too-qcon.html#too-too-qcon">Next</a>
+<li><a rel="up" accesskey="u" href="too-too.html#too-too">Up</a>
+</ul>
+</div>
+   </body></html>
+

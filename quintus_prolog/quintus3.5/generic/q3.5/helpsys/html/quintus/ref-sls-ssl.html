@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Selective saving and loading of QOF files</h4>
+
+   <p>The <code>save_program/[1,2]</code> and <code>restore/1</code> predicates discussed in
+the previous section are used for saving and restoring the entire Prolog
+database. To save selected parts of a Prolog database, the predicates
+<code>save_modules/2</code> and <code>save_predicates/2</code> are used.
+
+   <p>For example, to save the modules <code>user</code> and <code>special</code> you would use:
+
+<pre class="example">     | ?- <kbd>save_modules([user,special],'file1.qof').</kbd>
+     </pre>
+
+   <p>All predicates in those modules will be saved, and in addition any foreign
+code files previously loaded into these modules will generate an object file
+dependency in the QOF file.  All information in these modules about
+predicates attached to foreign functions, and also predicates that have
+been made externally callable from foreign code, is saved as a normal
+part of the module.
+
+   <p>For each module imported by one of the specified modules, a QOF file
+dependency is included in the QOF file.  This means that when you load
+<code>file1.qof</code> into another Prolog session, it will automatically load
+any additional QOF files that it needs.
+
+   <p>To just save certain predicates you would use:
+
+<pre class="example">     | ?- <kbd>save_predicates([person/2,dept/4],'file2.qof').</kbd>
+     </pre>
+
+   <p>This will only save the predicates specified. In this case no additional
+dependency information is saved into the QOF file. Note that the module information for these predicates is included. When the QOF file is loaded
+the predicates will be loaded into the same module they were in originally.
+
+   <p>Any QOF file, however generated, can be loaded into Prolog with
+<code>load_files/[1,2]</code>:
+
+<pre class="example">     | ?- <kbd>load_files('file1.qof')</kbd>
+     </pre>
+
+   <p>or, equivalently:
+<pre class="example">     | ?- <kbd>['file1.qof'].</kbd>
+     </pre>
+
+   <p>The information from each QOF file loaded is incrementally added to the
+database.  This means that definitions from later loads may replace
+definitions from previous loads.  A saved-state QOF file saved with
+<code>save_program/[1,2]</code> can also be loaded with <code>load_files/[1,2]</code> in
+which case the contents of the saved-state are just incrementally added to
+the database as for any other QOF file.  The use of <code>load_files/[1,2]</code>
+for this is different from the use of <code>restore/1</code> in that <code>restore/1</code>
+will re-execute the executable thus reinitializing the database. Using
+<code>load_files/[1,2]</code> allows the database to be incrementally changed
+within the same process.
+
+   <p>If the loaded QOF file has object file dependencies then those object
+files will be linked and loaded as part of loading the QOF file unless
+they have already been loaded. If the object file cannot be found or
+linked, then an exception will be raised.
+
+   <p>The predicates <code>load_files/[1,2]</code> are used for compiling and
+loading source files as well as QOF files.  If <code>file1.qof</code> and
+<code>file1.pl</code> both exist (and <code>file1</code> does not), then <code>load_files</code>
+(file 1) will load the source (<code>.pl</code>) or the QOF, whichever is the most
+recent.  Refer to <a href="ref-lod.html#ref-lod">ref-lod</a> for more information on
+loading programs, and also to the reference page for
+<code>load_files/[1,2]</code>.
+
+   <blockquote>
+
+        <p><strong>Advanced note:</strong>  Both <code>save_modules/2</code> and <code>save_predicates/2</code> will
+save Prolog code that is statically linked if such modules or predicates are
+specified.  This is different from <code>save_program/[1,2]</code>, which will not
+save statically linked Prolog code.  Note that if such a QOF file is loaded
+back into the same executable that saved it, then the new definitions from
+the QOF file will replace the statically linked code.  There is no problem
+with this, except that some space will be wasted.  The original statically
+linked code will not be used, but since it is linked into the executable its
+space cannot be reclaimed.  Since static linking is normally used to
+optimize start-up time and the space usage for code, it is somewhat of a
+waste to circumvent this by saving and loading a lot of Prolog code that is
+already in the executable.  If the QOF file is to be used for other
+purposes, such as re-linking the executable, or as a part to be loaded into
+another program, then, of course, the saving of statically linked code is
+probably exactly what is required. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sls-igs.html#ref-sls-igs">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-sls-sst.html#ref-sls-sst">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sls.html#ref-sls">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>uninherit/1</code> directive</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- uninherit </code><var>+Class</var><code> </code><var>+Op</var><code> </code><var>+Name</var><code>/</code><var>+Arity</var><code>, </code><var><small class="dots">...</small></var><code> .</code>
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Class</var>
+     <dd><dfn>atom</dfn>
+
+     <br><dt><var>Op</var>
+     <dd><dfn>message_operator</dfn>
+
+     <br><dt><var>Name</var>
+     <dd><dfn>atom</dfn>
+
+     <br><dt><var>Arity</var>
+     <dd><dfn>integer</dfn>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>This prevents the class within whose scope
+this directive appears from inheriting the <var>Name</var>/<var>Arity</var> method of type
+<var>Op</var> from ancestor <var>Class</var>.
+
+   <p>If <var>Class</var> is unbound, the specified message is uninherited from all
+ancestors that define it.
+
+<h4 class="subheading">Caveat</h4>
+
+   <p>Note that if you define a message for your class,
+you do not need to uninherit that message from its superclasses: it
+will automatically be shadowed.
+
+   <p>Be careful of the precedences of the message operator and the <code>/</code>
+operator. You may need to use parentheses.
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     :- uninherit someclass &lt;&lt; (foo/1),
+                  someclass &gt;&gt; (foo/1).
+     </pre>
+
+   <p>This prevents the get and put methods for the slot <code>foo</code> from being
+inherited from any ancestors of class <code>someclass</code>. In effect, it makes the <code>foo</code> slot a
+protected slot for this class.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>inherit/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="obj-exp-undefine_method.html#obj-exp-undefine_method">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-exp.html#obj-exp">Up</a>
+</ul>
+</div>
+   </body></html>
+

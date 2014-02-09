@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>assign/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>assign(</code><var>+LHS, +Expr</var><code>)</code>
+
+   <p>Evaluates <var>Expr</var> as an arithmetic expression, and stores the value
+in the memory location and format given by <var>LHS</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>LHS</var> <dfn>compound</dfn>
+     <dd>One of the following terms
+          <ul>
+
+          <li><code>integer_8_at(</code><var>L_Exp</var><code>)</code>
+<li><code>integer_16_at(</code><var>L_Exp</var><code>)</code>
+<li><code>unsigned_8_at(</code><var>L_Exp</var><code>)</code>
+<li><code>unsigned_16_at(</code><var>L_Exp</var><code>)</code>
+<li><code>integer_at(</code><var>L_Exp</var><code>)</code>
+<li><code>address_at(</code><var>L_Exp</var><code>)</code>
+<li><code>single_at(</code><var>L_Exp</var><code>)</code>
+<li><code>double_at(</code><var>L_Exp</var><code>)</code>
+</ul>
+
+     <br><dt><var>L_Exp</var> <dfn>expr</dfn>
+     <dd>a valid arithmetic expression
+
+     <br><dt><var>Expr</var> <dfn>expr</dfn>
+     <dd>A valid arithmetic expression
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Can be used to poke data directly into memory.  Evaluates <var>L_Exp</var>
+in <var>LHS</var> and <var>Expr</var> as arithmetic expressions.  The functor
+of the first argument describes the type of data to be stored:
+<code>integer_8_at/1</code> will store a signed 8 bit integer, <code>single_at/1</code> will
+store a single precision floating point number, etc. For more structured
+ways of doing this, see the Structs and Objects packages.
+
+   <p>The only proper addresses that should be assigned to are
+ones that are obtained through the foreign interface. 
+<code>assign/2</code> is a very primitive built-in and users should
+have only very rare occasions to use it. To directly access and change
+data structures represented in foreign languages (like C)
+users should look at using the Structs and Objects packages.
+
+   <p>Both arguments can be unbound at compile time. But it is more
+efficient if <var>LHS</var> is bound at compile time. 
+Also note that attempting to overwrite improper locations of memory
+can cause "Segmentation faults" or "Bus errors" and overwriting
+Prolog memory can result in undesirable behaviour long after the assignment
+is done.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+        <var>LHS</var> or <var>Expr</var> is not ground
+
+     <br><dt><code>type_error</code>
+     <dd>
+        <var>Expr</var> is not a proper arithmetic expression or
+
+     <p><var>L_Exp</var> in <var>LHS</var> is not a proper arithmetic expressions or
+
+     <p><var>Expr</var> is of a different type than what is specified by
+        <var>LHS</var>
+
+     <br><dt><code>domain_error</code>
+     <dd>
+        <var>LHS</var> is not one of the above listed terms
+</dl>
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     static int counter;
+     int * init_counter()
+     {
+             counter = 0;
+             return &amp;counter;
+     }
+     </pre>
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(init_counter, c, init_counter([-address])).
+     
+     get_counter(Counter, Count) :-
+             Count is integer_at(Counter).
+     
+     incr_counter(Counter) :-
+             assign(integer_at(Counter),
+             integer_at(Counter)+1).
+     
+     | ?- <kbd>init_counter(C), incr_counter(C), get_counter(C, Count1),</kbd>
+          <kbd>incr_counter(C), incr_counter(C), get_counter(C, Count2).</kbd>
+     
+     C = 1418304,
+     Count1 = 1,
+     Count2 = 3
+     
+     | ?-
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <a href="ref-ari-aex.html#ref-ari-aex">ref-ari-aex</a>
+<code>library(structs)</code>,
+<code>library(objects)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-at_end_of_file.html#mpg-ref-at_end_of_file">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-assert.html#mpg-ref-assert">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

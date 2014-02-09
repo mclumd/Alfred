@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>bag_of_all_servant(</code><var>?Template</var><code>, </code><var>+Goal</var><code>, </code><var>-Bag</var><code>)</code></h5>
+
+   <p>If the servant is running
+on a different physical processor than the master, then it is
+desirable to be able to achieve some degree of parallelism, to have both
+machines doing useful work at the same time. 
+This is not the case with
+<code>call_servant/1</code>, since the master Prolog process is waiting the entire
+time that the servant process is computing.  The predicate
+<code>bag_of_all_servant/3</code> is provided to allow a sophisticated user to write
+some truly parallel applications.  (See the demo program <code>queensdemo</code>
+for an example of using parallelism in a search problem.)
+
+   <p>Semantically <code>bag_of_all_servant/3</code> is very similar to <code>bagof/3</code>.  The
+reader should be familiar with the operation of <code>bagof/3</code> before reading
+further.  The differences are:
+     <ol type=1 start=1>
+
+     <li><code>bag_of_all_servant/3</code> requires that
+there be no free variables in <var>Goal</var> that do not appear in
+<var>Template</var>.  If there are, <code>bag_of_all_servant/3</code> will report an
+error.  You may use the existential operator (<code>^</code>) as in <code>bagof/3</code>. 
+<li><code>bag_of_all_servant/3</code> succeeds with <var>Bag</var> bound to <code>[]</code> if <var>Goal</var>
+has no answers at all.  This means that <code>bag_of_all_servant/3</code> always
+succeeds and returns in <var>Bag</var> exactly one answer:  the list of instances
+of <var>Template</var>, one instance for each success of <var>Goal</var>.
+        </ol>
+
+   <p>The exact operation of <code>bag_of_all_servant/3</code> depends on the form of
+<var>Goal</var>.  If <var>Goal</var> is a conjunction of the form
+<code>(</code><var>Goal1</var><code>, </code><var>Goal2</var><code>)</code> or a disjunction of the form
+<code>(</code><var>Goal1</var><code>; </code><var>Goal2</var><code>)</code>, then the first subgoal (<var>Goal1</var>) will be
+executed by the servant, and the second subgoal (<var>Goal2</var>) will be
+executed by the current process.  The system will try to overlap local and
+remote evaluation as much as possible.  If <var>Goal</var> is neither a
+conjunction nor a disjunction,
+then the entire goal will be sent to the servant to be
+executed.
+
+   <p>There are several restrictions on how <code>bag_of_all_servant/3</code> can be used.
+     <ul>
+
+     <li><var>Goal2</var> may not contain any cuts. 
+<li><var>Goal2</var> must not require the services of the servant to be
+evaluated.  That is, it cannot call any predicate that uses
+<code>call_servant/1</code> or <code>bag_of_all_servant/3</code>. 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-p2p-set_of_all_servant.html#ipc-rpc-p2p-set_of_all_servant">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc-p2p-call_servant.html#ipc-rpc-p2p-call_servant">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc-p2p.html#ipc-rpc-p2p">Up</a>
+</ul>
+</div>
+   </body></html>
+

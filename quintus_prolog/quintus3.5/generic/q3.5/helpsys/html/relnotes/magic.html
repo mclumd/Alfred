@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Updating <code>/etc/magic</code></h4>
+
+   <p>The UNIX command <code>file(1)</code> determines the type of a file by
+examining its contents.  By modifying the file <code>/etc/magic</code>, which
+records characteristics of files that <code>file(1)</code> recognizes,
+<code>file(1)</code> can be used to identify QOF files and QOF files that
+are saved states.
+
+   <p>The <code>sys</code> component postinstall script attempts to modify this
+file, adding the following lines to the end:
+
+<pre class="example">     0       string      QOF             Quintus Prolog Object File,
+     &gt;10     short       x               Ver %d
+     &gt;8      short       x               Rev %d
+     &gt;12     long        0x04030201      (byte-swapped)
+     256     string      QOF             Quintus Prolog Saved-state,
+     &gt;266    short       x               Ver %d
+     &gt;264    short       x               Rev %d
+     &gt;268    long        0x04030201      (byte-swapped)
+     </pre>
+
+   <p>If <code>/etc/magic</code> has been updated, and the file <code>camerton.qof</code> is a
+QOF file that has been built using Quintus Prolog Release 3.5, you
+should see:
+
+<pre class="example">     % <kbd>file camerton.qof</kbd>
+     camerton.qof: Quintus Prolog Object File; Ver 1 Rev 71
+     </pre>
+
+   <p>If you do not install the <code>sys</code> component on your system
+then the same effect can be achieved by creating your own copy of
+the system's <code>/etc/magic</code> file and adding the above lines to it.
+
+   <p>Your version of <code>/etc/magic</code> can then be used with the <code>-m</code>
+option to <code>file(1)</code> to recognize QOF files.  If you have made
+your own copy of <code>/etc/magic</code> in <code>~/mymagic</code> and modified that
+copy as suggested, you can type:
+
+<pre class="example">     % <kbd>file -m ~/mymagic camerton.qof</kbd>
+     camerton.qof: Quintus Prolog Object File; Ver 1 Rev 71
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">Release Notes</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="Links.html#Links">Next</a>
+<li><a rel="previous" accesskey="p" href="make.html#make">Previous</a>
+<li><a rel="up" accesskey="u" href="The-Sys-Component.html#The%20Sys%20Component">Up</a>
+</ul>
+</div>
+   </body></html>
+

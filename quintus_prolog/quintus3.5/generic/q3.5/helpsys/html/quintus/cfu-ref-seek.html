@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_seek()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_seek(stream, offset, whence)
+     QP_stream *stream;
+     long int   offset;
+     int        whence;
+     </pre>
+
+   <p>Seeks to an arbitrary byte position on the <var>stream</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>stream</var>
+     <dd>pointer to a valid stream structure.
+
+     <br><dt><var>offset</var>
+     <dd>the offset in bytes to seek relative to <var>whence</var> specified.
+
+     <br><dt><var>whence</var>
+     <dd>specifies where to start seeking.  It is one of the
+following.
+
+          <dl>
+
+          <br><dt><code>QP_BEGINNING</code>
+          <dd>seek from beginning of the file stream.  The new
+position of the file stream is set to <var>offset</var> bytes.
+
+          <br><dt><code>QP_CURRENT</code>
+          <dd>seek from current position of the file stream. 
+The new position of the file stream is set to its current location
+plus <var>offset</var>.
+
+          <br><dt><code>QP_END</code>
+          <dd>seek from end of the file stream.  The new position
+of the file stream is set to the size of the file plus <var>offset</var>.
+
+     </dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The new position in bytes from the beginning of the file stream is stored
+in magic field of <var>stream</var>.  It is
+<var>stream-&gt;magic.byteno</var>
+under UNIX.
+
+   <p>If <var>stream</var> is an output stream permitting flushing output,
+the characters in the buffer of the stream is flushed through
+<code>QP_flush()</code> before seek is performed. 
+If the <var>stream</var> does not permit flushing
+output and there are characters remaining in the output buffer,
+it is an error to seek.  If <var>stream</var> is an input stream,
+the characters in the input buffer of the stream are discarded
+before seek is performed.  The input buffer is empty when <code>QP_seek()</code>
+returns.
+
+<h4 class="subheading">Return Value</h4>
+
+     <dl>
+
+     <br><dt><code>QP_SUCCESS</code>
+     <dd>The function succeeds
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>There is an error in function call, the error number is stored
+in both <code>QP_errno</code> and <var>stream-&gt;errno</var>. 
+</dl>
+
+<h4 class="subheading">Errors</h4>
+
+     <dl>
+
+     <br><dt><code>QP_E_INVAL</code>
+     <dd><var>whence</var> is not one of
+<code>QP_BEGINNING</code>, <code>QP_CURRENT</code>, or
+<code>QP_END</code>.
+
+     <br><dt><code>QP_E_CANT_SEEK</code>
+     <dd>Unknown error in the bottom layer of seek function
+of <var>stream</var>
+
+     <p>Errors from <code>QP_flush()</code>
+
+     <p>Errors from host operating system
+
+   </dl>
+
+<h4 class="subheading">Tips</h4>
+
+   <p><code>QP_seek(</code><var>stream</var><code>, 0L, QP_CURRENT)</code> sets the current position to
+the magic field of <var>stream</var>.  It does not change the position of
+<var>stream</var>, but the side effect of flushing output and clearing
+buffer also takes place.
+
+<h4 class="subheading">Comments</h4>
+
+   <p>The seek type in <var>stream</var> must permits seeking by bytes, i.e. 
+the seek_type field in <var>stream</var> is <code>QP_SEEK_BYTE</code>. 
+So <var>stream</var> is created by defining a private stream and setting
+seek_type field to <code>QP_SEEK_BYTE</code>, opening a Prolog stream with
+seek(byte) option in <code>open/4</code>,
+or opening a binary stream through <code>QP_fopen()</code> or <code>QP_fdopen()</code>.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>Get the current byte offset from beginning of the file stream.
+<pre class="example">     if (QP_seek(stream, 0L, QP_CURRENT) != QP_SUCCESS)
+             QP_perror(stream-&gt;errno, "QP_seek");
+     else
+             location = stream-&gt;magic.byteno;
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_getpos()</code>, <code>QP_setpos()</code>,
+<code>QP_rewind()</code>, <code>QP_flush()</code>.
+
+   <a href="fli-ios.html#fli-ios">fli-ios</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-select.html#cfu-ref-select">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-rewind.html#cfu-ref-rewind">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

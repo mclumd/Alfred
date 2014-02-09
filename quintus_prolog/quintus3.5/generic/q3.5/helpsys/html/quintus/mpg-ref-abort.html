@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>abort/0</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>abort</code>
+
+   <p>Abandons the current execution and returns to
+the beginning of the current break level.
+
+<h4 class="subheading">Description</h4>
+
+   <p>Fairly drastic
+predicate that is normally only used when some error condition has
+occurred and there is no way of carrying on, or when debugging.
+
+   <p>Often used via the debugging option <kbd>a</kbd> or the <kbd>^C</kbd> interrupt
+option <kbd>a</kbd>.
+
+   <p>If <code>abort</code> is called from initialization (see
+<a href="sap-srs-eci.html#sap-srs-eci">sap-srs-eci</a>), then <code>QP_initialize()</code> returns. If
+user has not defined their own <code>main()</code>, this means that
+<code>QP_toplevel()</code> gets called and you get the default top level loop. 
+The same holds true for <kbd>^C</kbd> followed by the <kbd>a</kbd> option.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> The goal specified by <code>save_program/2</code> is
+also run as an <code>initialization</code> when a saved file is restored. 
+</blockquote>
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> In the context of a runtime system, <code>QP_toplevel()</code>
+corresponds to calling <code>runtime_entry(start)</code>. 
+</blockquote>
+
+<h4 class="subheading">Tip</h4>
+
+   <p>Does not close any files that you may have opened. 
+When using <code>see/1</code> and <code>tell/1</code>, (rather than <code>open/3</code>,
+<code>set_input/1</code>, and <code>set_output/1</code>), close files yourself to
+avoid strange behavior after your program is aborted and restarted.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>halt/[0,1]</code>, <code>break/0</code>, <code>QP_toplevel()</code>, <code>QP_initialize()</code>, <code>runtime_entry/1</code>
+
+   <a href="ref-iex-int.html#ref-iex-int">ref-iex-int</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-absolute_file_name.html#mpg-ref-absolute_file_name">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-abolish.html#mpg-ref-abolish">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

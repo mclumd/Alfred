@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Traveling Commands Sensitive to Spypoints</h5>
+
+   <p>The basic traveling commands listed above all ignore spypoints; the
+following commands take advantage of spypoints.
+
+     <dl>
+
+     <br><dt>leap
+     <dd>Causes the debugger to resume running your program,
+stopping only when the next spypoint is reached, or when the program
+terminates.  Leaping can be used to follow the program's execution at a
+higher level than exhaustive tracing through creeping.  This is done by
+setting spypoints on a set of pertinent procedures or calls, then
+following the control flow through these by leaping from one to the
+next.
+
+     <br><dt>quasi-skip
+     <dd>Causes the debugger to resume running
+your program, stopping when the next spypoint is reached.  It also
+ensures that the debugger will stop at the current invocation's Done,
+Exit, Fail, or Exception port, when one is reached.  Thus
+quasi-skip is a combination of leaping and skipping.  You may use it to
+travel to the next spypoint while also marking a place to stop when
+execution returns there.
+
+     <br><dt>zip
+     <dd>Is just like leap, except that the
+debugger does not keep any debugging information while looking for a
+spypoint, so it runs at nearly full compiled speed.  It does mean that
+the debugger will be unable to show you the ancestors between the
+invocation you zipped from and the invocation you stopped at.
+
+     <p>Zipping gives up some information in exchange for greatly increased
+speed.  This is not always desirable, but sometimes is very helpful. 
+A good use for zipping might be to run through a time-consuming initial
+part of a computation that is known to work properly, and stop at the
+beginning of a part that has a bug.  From that point, you might use
+leaping, creeping, and skipping to locate the bug.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-bas-tra-ccf.html#dbg-bas-tra-ccf">Next</a>
+<li><a rel="previous" accesskey="p" href="dbg-bas-tra-spy.html#dbg-bas-tra-spy">Previous</a>
+<li><a rel="up" accesskey="u" href="dbg-bas-tra.html#dbg-bas-tra">Up</a>
+</ul>
+</div>
+   </body></html>
+

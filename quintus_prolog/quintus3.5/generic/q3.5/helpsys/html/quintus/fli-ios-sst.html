@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Stream Structure</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-ios-sst-fst.html#fli-ios-sst-fst">fli-ios-sst-fst</a>:                      Filename of A Stream
+<li><a accesskey="2" href="fli-ios-sst-mod.html#fli-ios-sst-mod">fli-ios-sst-mod</a>:                      Mode of A Stream
+<li><a accesskey="3" href="fli-ios-sst-fmt.html#fli-ios-sst-fmt">fli-ios-sst-fmt</a>:                      Format of A Stream
+<li><a accesskey="4" href="fli-ios-sst-mrl.html#fli-ios-sst-mrl">fli-ios-sst-mrl</a>:                      Maximum Record Length
+<li><a accesskey="5" href="fli-ios-sst-lbc.html#fli-ios-sst-lbc">fli-ios-sst-lbc</a>:                      Line Border Code
+<li><a accesskey="6" href="fli-ios-sst-fbc.html#fli-ios-sst-fbc">fli-ios-sst-fbc</a>:                      File Border Code
+<li><a accesskey="7" href="fli-ios-sst-pef.html#fli-ios-sst-pef">fli-ios-sst-pef</a>:                      Reading Past End Of File
+<li><a accesskey="8" href="fli-ios-sst-pro.html#fli-ios-sst-pro">fli-ios-sst-pro</a>:                      Prompt String
+<li><a accesskey="9" href="fli-ios-sst-trm.html#fli-ios-sst-trm">fli-ios-sst-trm</a>:                      Record Trimming
+<li><a href="fli-ios-sst-see.html#fli-ios-sst-see">fli-ios-sst-see</a>:                      Seek Type
+<li><a href="fli-ios-sst-flu.html#fli-ios-sst-flu">fli-ios-sst-flu</a>:                      Flushing An Output Stream
+<li><a href="fli-ios-sst-obo.html#fli-ios-sst-obo">fli-ios-sst-obo</a>:                      Output Stream Buffer Overflow
+<li><a href="fli-ios-sst-sec.html#fli-ios-sst-sec">fli-ios-sst-sec</a>:                      Storing Error Condition Of A Stream
+<li><a href="fli-ios-sst-sda.html#fli-ios-sst-sda">fli-ios-sst-sda</a>:                      System-Dependent Address In A File Stream
+<li><a href="fli-ios-sst-bot.html#fli-ios-sst-bot">fli-ios-sst-bot</a>:                      Bottom Layer Functions
+</ul>
+
+   <p>The Prolog representation of a Prolog stream provides a way of retrieving information from its corresponding C stream
+structure. 
+It is currently represented as a Prolog term in the form of
+<code>'$stream'(N)</code> where N is an integer to identify the stream. 
+However, a user application should not explicitly create such a Prolog
+term as a Prolog stream,
+it should only be obtained through <code>open/[3,4]</code>,
+<code>open_null_stream/1</code>, or <code>stream_code/2</code>.  In C code, a Prolog stream is
+represented as a pointer to structure of type <code>QP_stream</code>. 
+The formatting information along with bottom layer functions of a stream
+is stored in its <code>QP_stream</code> structure.  A stream behavior
+depends on the values of fields in its <code>QP_stream</code> structure. 
+The options specified in <code>open/4</code> are converted and stored in the
+<code>QP_stream</code> structure created for the stream.
+
+   <p>Selected fields in <code>QP_stream</code> that can be accessed and
+modified by an application
+are described in the remainder of the section. 
+Most of these fields are option fields, which can be specified
+in <code>open/4</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-tty.html#fli-ios-tty">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-iom.html#fli-ios-iom">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios.html#fli-ios">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

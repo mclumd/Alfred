@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Name Clashes</h4>
+
+   <p>A <dfn>name clash</dfn> can arise if:
+     <ol type=1 start=1>
+
+     <li>a module tries to import a predicate from some other
+module <code>m1</code> and it has already imported a predicate with the same name and
+arity from a module <code>m2</code>;
+<li>a module tries to import a predicate from some other
+module <code>m1</code> and it already contains a definition of a predicate with the
+same name and arity; or
+<li>a module tries to define a predicate with the same name and arity as
+one that it has imported.
+        </ol>
+
+   <p>Whenever a name clash arises, a message is displayed beginning with
+the words <code>NAME CLASH</code>.  If the module that is importing or
+defining the clashing predicate is not <code>user</code>, then this message
+is just a warning, and the attempt to import or define the predicate
+simply fails.  Otherwise, if the module <var>is</var> <code>user</code>, the user
+is asked to choose from one of several options; for example,
+<pre class="example">     NAME CLASH: f/3 is already imported into module user
+                 from module m1;
+                 do you want to override this definition with
+                 the one in m2? (y,n,p,s,a or ?)
+     </pre>
+
+   <p>The meanings of the four recognized replies are as follows:
+     <ul>
+
+     <li><kbd>y</kbd> means forget the previous definition of <code>f/3</code> from <code>m1</code> and use
+the new definition of <code>f/3</code> from <code>m2</code> instead. 
+<li><kbd>n</kbd> means retain the previous definition of <code>f/3</code> from <code>m1</code> and ignore the
+new definition of <code>f/3</code> from <code>m2</code>. 
+<li><kbd>p</kbd> (for proceed) means forget the previous definition of <code>f/3</code> and of
+all subsequent predicate definitions in <code>m1</code> that clash during the current load of <code>m2</code>. 
+Instead, use the new definitions in <code>m2</code>.  When the <kbd>p</kbd> option is chosen,
+predicates being loaded from <code>m1</code> into <code>m2</code> will cause
+no <code>NAME CLASH</code> messages for the remainder of the load, though
+clashes with predicates from other modules will still generate such messages. 
+<li><kbd>s</kbd> (for suppress) means forget the new definition of <code>f/3</code> and of
+all subsequent predicate definitions in <code>m1</code> that clash during the current load of <code>m2</code>. 
+Instead, use the old definitions in <code>m2</code>.  When the <kbd>s</kbd> option is chosen,
+predicates being loaded from <code>m1</code> into <code>m2</code> will cause
+no <code>NAME CLASH</code> messages for the remainder of the load, though
+clashes with predicates from other modules will still generate such messages. 
+<li><kbd>?</kbd> gives brief help information. 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-ilm.html#ref-mod-ilm">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-mle.html#ref-mod-mle">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Introduction</h4>
+
+   <p>Under X11, events are selected on a per window basis by ORing
+individual <dfn>event select</dfn> bitmasks into the <code>event_mask</code> attribute
+of the window. To determine which window gets an event, the X server
+searches the window hierarchy bottom up, starting with the innermost
+window where the event logically happened. If a window <dfn>selects</dfn> that
+particular event, it is sent to it. If the window <dfn>discards</dfn> that event,
+the event is thrown away and the search stops. If the window neither
+selects nor discards the event, the search resumes with its parent. 
+Any event that propagates all the way up to the root window without being
+selected, is discarded anyway.
+
+   <p>When using ProXL, in most cases, the user does not need to know
+about bitmasks. Events are selected by name, and Prolog routines
+are attached to Windows to handle the conditions.
+
+   <p>The ProXL
+event handler mechanism receives X11 events, extracts
+user-specified values and calls the
+appropriate callback routine.
+
+   <p>If there is no registered callback for a given event (including
+<dfn>default</dfn> handlers, as specified later), the event
+is quietly discarded.
+
+   <p>If multiple callbacks are registered for an event in a Window
+(as might be the case for <code>button_press</code> or <code>button_release</code>
+events),
+they are tried sequentially until one succeeds, at which point
+the callback is considered satisfied and no more alternatives are tried. 
+If all the registered callbacks fail, the event is quietly discarded.
+
+   <p>Callbacks are Window attributes, and are established using
+<code>put_window_attributes/N</code>, or <code>create_window/N</code>,
+using one of the following attribute formats:
+
+<pre class="example">     callback(+<var>EventSpec</var>, +<var>EventValues</var>, +<var>ExitVar</var>, +<var>Context</var>, +<var>Goal</var>)
+     callback(+<var>EventSpec</var>, +<var>EventValues</var>, +<var>ExitVar</var>, +<var>Goal</var>)
+     callback(+<var>EventSpec</var>, +<var>EventValues</var>, +<var>Goal</var>)
+     </pre>
+
+   <p>where <var>EventSpec</var> is a description of the event that should cause
+the user-supplied callback <var>Goal</var>, a Prolog goal, to be called.
+
+   <p><var>EventValues</var> is either a list of the event fields that the user wants
+to be supplied as arguments to <var>Goal</var>
+, or the term <code>xevent(</code><var>E</var><code>)</code>, which instructs
+ProXL
+to deliver the whole event structure, in the same internal format
+used by the event handling functions described in <a href="pxl-evf.html#pxl-evf">pxl-evf</a>.
+
+   <p><var>ExitVar</var>, if supplied, is either a term that is bound by <var>Goal</var>
+when the user wants to exit the event handling
+loop and return, or the atom <code>none</code>. If omitted,
+it defaults to <code>none</code> and <var>Goal</var> is assumed to not contain an exit
+variable.
+
+   <p><var>Context</var>, if supplied, is a term that will be  unified with the
+<var>Context</var> argument supplied to <code>handle_events/[2,3]</code> when
+the callback <var>Goal</var> is executed. If omitted, it defaults to <code>none</code>. 
+If the user calls <code>handle_events/[0,1]</code>, <var>Goal</var> will be called
+with <var>Context</var> unbound.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-ev-spec.html#pxl-ev-spec">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-ev.html#pxl-ev">Up</a>
+</ul>
+</div>
+   </body></html>
+

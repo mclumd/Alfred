@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Abstract and Mixin Classes</h5>
+
+   <p>While Quintus Objects only supports a limited form of multiple
+inheritance, its facilities are sufficient for working with so-called
+<dfn>mixin classes</dfn>.
+
+   <p>The idea is to construct similar classes by first defining a class
+that contains the things the desired classes have in
+common. Typically, this will be an <dfn>abstract class</dfn>, which will have no
+instances itself. Then, provide the features that differentiate the
+desired classes with a set of mixin classes
+
+   <p>Mixin classes that have nothing in common can safely be mixed
+together, to build the desired classes. The mixin classes will usually
+be abstract classes, also, because they are too specialized for their
+instances to be useful on their own.
+
+   <p>The date_stamp class defined earlier would make a good mixin class. A
+similar <code>time_stamp</code> class might be (partially) defined as follows:
+
+<pre class="example">     :- class time_stamp =
+             [hour:integer,
+              minute:integer,
+              second:integer].
+     
+     Self &lt;- create :-
+             time(time(Hour, Minute, Second)),
+             store_slot(hour, Hour),
+             store_slot(minute, Minute),
+             store_slot(second, Second).
+     </pre>
+
+   <p>Another mixin class might be used to "register" objects in the Prolog
+database.
+
+<pre class="example">     :- class registry = [name:atom].
+     
+     Self &lt;- create(Name) :-
+             Self &lt;&lt; name(Name),
+             assert(registered(Name, Self)).
+     
+     Self &lt;- destroy :-
+             Self &gt;&gt; name(Name),
+             retract(registered(Name, Self)).
+     </pre>
+
+   <p>The <code>registry</code> mixin class could have been used with the <code>point</code>
+class to define the <code>named_point</code> class, which was an example from
+an earlier section.
+
+   <p>The ability to send a message to an object's superclass is useful when
+working with mixin classes. Suppose the definition of a new class
+begins with
+
+<pre class="example">     :- <var>NewClass</var> = <var>OldClass</var> + date + time + registry.
+     </pre>
+
+   <p>where <var>OldClass</var> is some previously defined class that lacks the
+features provided by the <code>date</code>, <code>time</code> and <code>registry</code>
+classes. (In fact, they should not have any slot names in common.) 
+Then its create method can be defined by
+
+<pre class="example">     Self &lt;- create(Name) :-
+             super(OldClass) &lt;- create,
+             super(date) &lt;- create,
+             super(time) &lt;- create,
+             super(registry) &lt;- create(Name).
+     </pre>
+
+   <p>This avoids the need to duplicate the code in the create methods of
+OldClass and all three mixin classes.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="obj-inh-mih-meth.html#obj-inh-mih-meth">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-inh-mih.html#obj-inh-mih">Up</a>
+</ul>
+</div>
+   </body></html>
+

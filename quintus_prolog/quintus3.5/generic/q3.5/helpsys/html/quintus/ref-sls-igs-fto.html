@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Fine Tuning</h5>
+
+   <p>To tune the initialization of a file or system to be run only when it
+should be run, <code>volatile/1</code>, in combination with other declarations,
+give <code>initialization/1</code> the information
+necessary to distinguish different loading situations. In the reference
+pages, we show how some common situations can be programmed using
+these predicates.
+
+   <p>If a source file contains data that is supposed
+to be transformed according to some complicated rules (which cannot be
+done with <code>term_expansion/2</code>), and the data after the transformation can
+be saved into a saved state, we might want the transformation to be
+done when the file is loaded, but not when a saved state is restored. 
+The following program defines the initialization to be run only when
+the file is loaded:
+
+<pre class="example">     :- dynamic do_not_transform/0. % reset fact
+     :- initialization my_init.
+     
+     my_init :-
+       ( do_not_transform -&gt;
+         true
+       ; undo_transform, % remove old data
+         do_transform,
+         assert(do_not_transform)
+       ).
+     </pre>
+
+   <p>In the above example, <code>do_transform/0</code> and <code>undo_transform/0</code> are user defined.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ref-sls-igs-vol.html#ref-sls-igs-vol">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sls-igs.html#ref-sls-igs">Up</a>
+</ul>
+</div>
+   </body></html>
+

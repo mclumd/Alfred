@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Converting between Atoms and Strings</h5>
+
+   <p>Four functions are provided to enable foreign functions to translate from
+one representation of an atom to another.  The first two
+functions are most useful for C:  they convert between canonical atoms and
+null-terminated C strings.  The other two functions
+are most useful for Pascal and FORTRAN:  they convert
+between canonical atoms and blank-padded character arrays.
+
+   <p><code>QP_string_from_atom(atom)</code>
+     <dl>
+
+     <br><dt><code>atom</code>
+     <dd><code>QP_atom</code> (that is, an unsigned integer passed by value)
+
+     <br><dt>Returns:
+     <dd>Pointer to a null-terminated string of
+characters (C convention for strings)
+</dl>
+
+   <p>Returns a pointer to a string representing <code>atom</code>.  This
+string should not be overwritten by the foreign function.
+
+   <p><code>QP_atom_from_string(string)</code>
+     <dl>
+
+     <br><dt><code>string</code>
+     <dd>Pointer to a null-terminated string of
+characters (C convention for strings)
+<br>
+
+     <br><dt>Returns:
+     <dd><code>QP_atom</code>
+</dl>
+
+   <p>Returns the canonical representation of the atom whose printed
+representation is <code>string</code>. 
+The string is copied, and the foreign function can
+reuse the string and its space.
+
+   <p><code>QP_padded_string_from_atom(pointer_to_atom,
+    pointer_to_padded_string, pointer_to_length)</code>
+     <dl>
+
+     <br><dt><code>pointer_to_atom</code>
+     <dd>Pointer to a <code>QP_atom</code> (that is, an
+unsigned integer passed by reference)
+
+     <br><dt><code>pointer_to_padded_string</code>
+     <dd>Pointer to a character array
+
+     <br><dt><code>pointer_to_length</code>
+     <dd>Pointer to an integer (that is,
+an integer passed by reference)
+
+     <br><dt>Returns:
+     <dd>integer
+</dl>
+
+   <p>Fills in the character array of length <code>*pointer_to_length</code> with the string
+representation of the atom.  The string is truncated or blank-padded
+to <code>*pointer_to_length</code> if the length of the atom is greater than or less than
+<code>*pointer_to_length</code>, respectively.  The length of the atom (not <code>*pointer_to_length</code>) is
+returned as the function value.
+
+   <p><code>QP_atom_from_padded_string(pointer_to_atom,
+    pointer_to_padded_string, pointer_to_length)</code>
+     <dl>
+
+     <br><dt><code>pointer_to_atom</code>
+     <dd>Pointer to a <code>QP_atom</code> (that is, an
+unsigned integer passed by reference)
+
+     <br><dt><code>pointer_to_padded_string</code>
+     <dd>Pointer to a character array
+
+     <br><dt><code>pointer_to_length</code>
+     <dd>Pointer to an integer (that is,
+an integer passed by reference)
+
+     <br><dt>Returns:
+     <dd> integer
+</dl>
+
+   <p>Sets <code>*pointer_to_atom</code> to the canonical representation of the atom whose printed
+representation is the string (less any trailing blanks) contained in
+the character array of length <code>*pointer_to_length</code>.  Returns the length of the
+resulting atom (not <code>*pointer_to_length</code>) as the function value.
+
+   <p>Below are C specifications of these functions.  Note that the arguments of
+the last two functions are passed by reference. 
+Hence, the last two functions can be called directly
+from Pascal or FORTRAN.  The first two functions are designed to be called
+from C, in which all parameters are passed by value.
+<pre class="example">     char * QP_string_from_atom(atom)
+          QP_atom atom;
+     
+     QP_atom QP_atom_from_string(string)
+          char *string;
+     
+     int QP_padded_string_from_atom(atom,string,length)
+          QP_atom *atom;
+          char *string;
+          int *length;
+     
+     int QP_atom_from_padded_string(atom,string,length)
+          QP_atom *atom;
+          char *string;
+          int *length;
+     </pre>
+
+   <p>Canonical atoms are particularly useful as constants, to be used in passing
+back results from foreign functions.  The above functions can be used to
+initialize tables of such constants.
+
+   <p>These functions can only be called from languages other than C if those
+languages have a C-compatible calling convention for passing integers and
+pointers.  For example, this is true for both  Pascal and FORTRAN running
+under UNIX 4.2 BSD. 
+See the appropriate Quintus Prolog Release Notes for any further
+details pertaining to  your system.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-atm-spf.html#fli-p2f-atm-spf">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-atm.html#fli-p2f-atm">Up</a>
+</ul>
+</div>
+   </body></html>
+

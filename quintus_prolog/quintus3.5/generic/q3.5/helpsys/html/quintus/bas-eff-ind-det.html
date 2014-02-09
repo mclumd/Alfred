@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Determinacy Detection</h5>
+
+   <p>The other advantage of indexing is that it often makes possible early
+detection of determinacy, even if cuts are not included in the program. 
+For example, consider the following simple predicate, which joins two
+lists together:
+<pre class="example">     concat([], L, L).
+     concat([X|L1], L2, [X|L3]) :- concat(L1, L2, L3).
+     </pre>
+
+   <p>If this predicate is called with an instantiated first argument, the
+first argument indexing of Quintus Prolog
+will recognize that the call is determinate -- only one of
+the two clauses for <code>concat/3</code> can possibly apply. 
+Thus, the Prolog system knows it does not have
+to store backtracking information for the call.  This significantly reduces
+memory use and execution time.
+
+   <p>Determinacy detection can also reduce the number of cuts in
+predicates.  In the above example, if there was no indexing, a cut would not
+strictly be needed in the first clause as long as the predicate was always to
+be called with the first argument instantiated.  If the first clause matched,
+then the second clause could not possibly match; discovery of this fact,
+however, would be postponed until backtracking.  The programmer might
+thus be tempted to use a cut in the first clause to signal determinacy
+and recover space for backtracking information as early as possible.
+
+   <p>With indexing, if the example predicate is always called with its first
+argument instantiated, backtracking information is <em>never</em> stored. 
+This gives substantial performance improvements over using a cut
+rather than indexing to force determinacy. 
+At the same time greater flexibility is maintained:
+the predicate can now be used in a nondeterminate fashion as well, as in
+<pre class="example">     | ?- <kbd>concat(L1, L2, [a,b,c,d]).</kbd>
+     </pre>
+
+   <p>which will generate on backtracking all the possible partitions of the
+list [a,b,c,d] on backtracking.  If a cut had been used in the first clause,
+this would not work.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-ind-dat.html#bas-eff-ind-dat">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-ind.html#bas-eff-ind">Up</a>
+</ul>
+</div>
+   </body></html>
+

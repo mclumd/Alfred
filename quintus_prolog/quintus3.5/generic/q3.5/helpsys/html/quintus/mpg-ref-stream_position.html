@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>stream_position/[2,3]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>stream_position(</code><var>+Stream, -Current</var><code>)</code>
+
+   <p>True when <var>Current</var> represents the current position of
+<var>Stream</var>.
+
+   <p><code>stream_position(</code><var>+Stream, -Current, +New</var><code>)</code>
+
+   <p>Unifies the current position of the read/write pointer for
+<var>Stream</var> with <var>Current</var>, then sets the position to <var>New</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>an open stream
+
+     <br><dt><var>Current</var> <dfn>term</dfn>
+     <dd>stream position object representing the
+current position of <var>Stream</var>.
+
+     <br><dt><var>New</var> <dfn>term</dfn>
+     <dd>stream position object
+</dl>
+
+<h4 class="subheading">Caution</h4>
+
+   <p>A stream position
+object is represented by a special Prolog term.  The only safe way of
+obtaining such an object is via <code>stream_position/3</code> or
+<code>stream_position/2</code>.  You should not try to construct, change, or
+rely on the form of this object.  It may vary under different
+operating systems and/or change in subsequent versions of Quintus Prolog.  On
+some systems, a stream position object currently has the form:
+<pre class="example">     '$stream_position'(CharCount, LineCount, LinePos, Magic1, Magic2)
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Character count, line count
+and line position determine the position of the pointer in the stream. 
+Such information is found by using <code>character_count/2</code>,
+<code>line_count/2</code> and <code>line_position/2</code>.
+
+   <p><code>stream_position/2</code> may be used on any stream at all:  streams that
+are connected to disk files, streams that are connected to
+sockets, streams that are connected to the terminal (including
+the standard streams <code>user_input</code>, <code>user_output</code>,
+<code>user_error</code>), and even streams defined using <code>QP_make_stream()</code>.
+
+   <p><code>stream_position/3</code> may only be used on streams that are
+connected to disk files.
+
+   <p>Standard term comparison of two stream position objects for the same
+stream will work as one expects.  When <var>SP1</var> and <var>SP2</var> refer
+to positions in the same stream, <code></code><var>SP1</var><code> @&lt; </code><var>SP2</var><code></code> if and only if
+<var>SP1</var> is before <var>SP2</var> in the stream.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>), plus:
+     <dl>
+
+     <br><dt><code>type_error</code>
+     <dd>
+<var>Current, New</var> are not valid stream position objects.
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+
+   </dl>
+
+<h4 class="subheading">Example</h4>
+
+   <p>To find the current position of a stream without changing it, one can ask
+<pre class="example">     | ?- <kbd>stream_position(Stream, Current).</kbd>
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>seek/4</code>, <code>open/[3,4]</code>,
+<code>character_count/2</code>, <code>line_count/2</code>, <code>line_position/2</code>. 
+<a href="ref-iou.html#ref-iou">ref-iou</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-style_check.html#mpg-ref-style_check">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-stream_code.html#mpg-ref-stream_code">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

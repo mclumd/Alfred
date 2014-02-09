@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>print_message_lines/3</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>print_message_lines(</code><var>+Stream, +Prefix, +Lines</var><code>)</code>
+
+   <p>Print the <var>Lines</var> to <var>Stream</var>, preceding each line with
+<var>Prefix</var>. Note that <code>print_message_lines/3</code> only succeeds if
+<var>Lines</var> is a <dfn>list of pair</dfn>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>Any valid output stream.
+
+     <br><dt><var>Prefix</var> <dfn>term</dfn>
+     <dd>Any term.
+
+     <br><dt><var>Lines</var> <dfn>list</dfn>
+     <dd>is of the form <code>[</code><var>Line1</var><code>, </code><var>Line2</var><code>, ...]</code>, where each
+<var>Linei</var> is of the form
+<code>[</code><var>Control_1-Args_1</var><code>,</code><var>Control_2-Args_2</var><code>, ...]</code>.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>This command is intended to
+be used in conjunction with <code>message_hook/3</code>.  After a message is
+intercepted using <code>message_hook/3</code>, this command is used to print
+the lines.  If the hook has not been defined, the arguments are those
+provided by the system.
+
+   <p><code>print_message_lines/3</code> is a simple failure driven loop over the
+<var>Lines</var> data structure, implemented as:
+
+<pre class="example">     :-use_module(library(basics),[member/2]).
+     
+     print_message_lines(Stream,Prefix,Lines):-
+         member(Line,Lines),
+         format(Stream,'~N~w',[Prefix]),
+         (   member(C-A,Line),
+             format(Stream,C,A)
+         ;   nl(Stream)
+         ),
+         fail.
+     print_message_lines(_,_,_).
+     </pre>
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Any exception that <code>format/3</code> might raise.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>A typical use of this would be when using the
+user defined predicate, <code>message_hook/3</code> to redirect output.  For
+example:
+
+<pre class="example">     message_hook(_,_,Lines):-
+         my_stream(MyStream),
+         print_message_lines(MyStream,'',Lines).
+     </pre>
+
+<h4 class="subheading">See Also:</h4>
+
+   <p><code>message_hook/3</code>, <code>print_message/2</code>, <code>generate_message/3</code>, <code>query_hook/6</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-profile.html#mpg-ref-profile">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-print_message.html#mpg-ref-print_message">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

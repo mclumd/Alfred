@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">A Note on Efficient Use of <code>retract/1</code></h5>
+
+   <p><em>WARNING:</em> <code>retract/1</code> is a nondeterminate procedure.  Thus, we can use
+
+<pre class="example">     | ?- <kbd>retract((foo(X) :- Body)), fail</kbd>.
+     </pre>
+
+   <p>to retract all clauses for <code>foo/1</code>.  A nondeterminate procedure
+in Quintus Prolog uses a <dfn>choice point</dfn>, a data  structure kept
+on an internal stack, to implement backtracking.  This applies to
+user-defined procedures as well as to built-in and library procedures. 
+In a simple model,
+a choice point is created for each call to a nondeterminate procedure,
+and is deleted on determinate success or failure of that call, when
+backtracking is no longer possible. 
+In fact, Quintus Prolog improves upon this simple model by recognizing
+certain contexts in which choice points
+can be avoided, or are no longer needed.
+
+   <p>The Prolog <dfn>cut</dfn> (<code>!</code>) works by removing choice points, disabling
+the potential backtracking they represented.  A choice point
+can thus be viewed as an "outstanding call", and a
+<dfn>cut</dfn> as deleting outstanding calls.
+
+   <p>To avoid leaving inconsistencies between the Prolog database and
+outstanding calls, a retracted clause is
+reclaimed only when the system determines that there are no choice
+points on the stack that could allow backtracking to the clause. 
+Thus, the existence
+of a single choice point on the stack can disable reclamation of
+retracted clauses for the procedure whose call created the choice point. 
+Space is recovered only when the choice point is deleted.
+
+   <p>Often <code>retract/1</code> is used determinately; for example, to retract a single
+clause, as in
+<pre class="example">     | ?- &lt;do some stuff&gt;
+           <kbd>retract(Clause)</kbd>,
+          &lt;do more stuff without backtracking&gt;.
+     </pre>
+
+   <p>No backtracking by <code>retract/1</code> is intended.  Nonetheless,
+if Clause may match more than one clause in its procedure, a choice point
+will be created by <code>retract/1</code>.  While
+executing "&lt;do more stuff without backtracking&gt;", that choice point will
+remain on the stack, making it impossible to reclaim the retracted Clause. 
+Such  choice points can also disable tail recursion optimization. 
+If not cut away, the choice point
+can also lead to runaway retraction on the unexpected failure of a
+subsequent goal.  This can be avoided by simply cutting away the choice
+point with an explicit <code>cut</code> or a local cut (<code>-&gt;</code>). 
+Thus, in the previous example, it is preferable to write either
+<pre class="example">     | ?- &lt;do some stuff&gt;
+           <kbd>retract(Clause),</kbd>
+           <kbd>!,</kbd>
+          &lt;do more stuff without backtracking&gt;.
+     </pre>
+
+   <p>or
+
+<pre class="example">     | ?- &lt;do some stuff&gt;
+          <kbd>( retract(Clause) -&gt; true ),</kbd>
+          &lt;do more stuff without backtracking&gt;.
+     </pre>
+
+   <p>This will reduce stack size and allow the earliest possible reclamation
+of retracted clauses.  Alternatively, you could use <code>retract_first/1</code>,
+defined in <code>library(retract)</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="ref-mdb-rcd.html#ref-mdb-rcd">Up</a>
+</ul>
+</div>
+   </body></html>
+

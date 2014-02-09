@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>substring/[4,5]</code></h5>
+
+   <p>Very often you are not interested in the third argument that
+<code>midstring/[3,4,5,6]</code> return.  This argument is not returned or
+constructed by <code>substring/[4,5]</code>.  In fact, <code>substring/[4,5]</code> were
+designed first, and <code>midstring/[3,4,5,6]</code> were developed from it to provide
+string insertion and deletion.
+
+     <ul>
+
+     <li><code>substring(</code><var>+ABC</var><code>, </code><var>?B</var><code>, </code><var>?LenA</var><code>, </code><var>?LenB</var><code>, </code><var>?LenC</var><code>)</code>
+<li><code>substring(</code><var>+ABC</var><code>, </code><var>?B</var><code>, </code><var>?LenA</var><code>, </code><var>?LenB</var><code>)</code>
+
+   </ul>
+
+   <p>are true when
+     <ul>
+
+     <li><var>ABC</var> and <var>B</var> are both
+atoms,
+<li><var>ABC</var> can be broken into three pieces <var>A</var>, <var>B</var>, and <var>C</var>,
+<li><var>LenA</var> is the length of <var>A</var>,
+<li><var>LenB</var> is the length of <var>B</var>, and
+<li><var>LenC</var> is the length of <var>C</var>. 
+</ul>
+
+   <p>The <var>ABC</var> argument must be instantiated.  The <var>B</var> argument
+may be instantiated (this provides a string search facility) but need
+not be.  This is the reason for the argument order:  arguments that
+are strict inputs should precede other arguments, and <code>substring/5</code> has
+precisely one strict input.
+
+   <p>The point of <code>substring/5</code> is
+to let you work from the right-hand end of the text as easily as
+from the left-hand end.  But the fact that Prolog is based on
+relations rather than functions means that this one
+operation can replace both substring and string search operations.
+
+   <p>Thus to determine where <code>a</code> occurs in <code>abracadabra</code>,
+<pre class="example">     | ?- <kbd>substring(abracadabra, a, Offset, _).</kbd>
+     
+     Offset = 0 <kbd>;</kbd>
+     Offset = 3 <kbd>;</kbd>
+     Offset = 5 <kbd>;</kbd>
+     Offset = 7 <kbd>;</kbd>
+     Offset = 10 <kbd>;</kbd>
+     no
+     </pre>
+
+   <p>This is the preferred way of searching for a substring in Quintus
+Prolog.  Note that if you use <code>substring/5</code> to search for a substring,
+you can then extract the preceding or following characters thus:
+<pre class="example">     | ?- <kbd>substring(Text, Pattern, L_Before, L_Pattern, L_After),</kbd>
+     |    <kbd>substring(Text, Before, 0, L_Before, _),</kbd>
+     |    <kbd>substring(Text, After, _, L_After, 0).</kbd>
+     </pre>
+
+   <p>Again, this is not guesswork, but is arrived at by thinking
+about the picture
+<pre class="example">     Text = Before (Pattern) After
+          = '' (Before) Pattern After
+          = Before Pattern (After) ''
+     </pre>
+
+   <p>There are two other predicates in this family:
+
+<pre class="example">     index(Pattern, String, Offset) :-
+             substring(String, Pattern, Offset, _).
+     
+     string_search(Pattern, String, Offset) :-
+             substring(String, Pattern, Offset, _).
+     </pre>
+
+   <p><code>index/3</code> is retained for compatibility with earlier
+releases of <code>library(strings)</code>.  It will be withdrawn in a future release. 
+If you have code that uses <code>index/3</code>, you should replace calls to
+<code>index/3</code> by calls to <code>string_search/3</code>, which is an exact synonym for it.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-sub-subchars.html#lib-txp-sub-subchars">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-sub-midstring.html#lib-txp-sub-midstring">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp-sub.html#lib-txp-sub">Up</a>
+</ul>
+</div>
+   </body></html>
+

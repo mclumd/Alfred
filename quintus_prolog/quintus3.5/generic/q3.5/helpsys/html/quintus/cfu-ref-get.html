@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_get_*(</code>)</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_get_atom(term, atom)
+     QP_term_ref      term;
+     QP_atom         *atom;
+     </pre>
+
+<pre class="example">     int QP_get_integer(term, integer)
+     QP_term_ref      term;
+     long int        *integer;
+     </pre>
+
+<pre class="example">     int QP_get_float(term, float)
+     QP_term_ref      term;
+     double          *float;
+     </pre>
+
+<pre class="example">     int QP_get_functor(term, name, arity)
+     QP_term_ref      term;
+     QP_atom         *name;
+     int             *arity;
+     </pre>
+
+<pre class="example">     int QP_get_arg(argnum, term, arg)
+     int              argnum;
+     QP_term_ref      term;
+     QP_term_ref      arg;
+     </pre>
+
+<pre class="example">     int QP_get_list(term, head, tail)
+     QP_term_ref      term;
+     QP_term_ref      head;
+     QP_term_ref      tail;
+     </pre>
+
+<pre class="example">     int QP_get_head(term, head)
+     QP_term_ref      term;
+     QP_term_ref      head;
+     </pre>
+
+<pre class="example">     int QP_get_tail(term, tail)
+     QP_term_ref      term;
+     QP_term_ref      tail;
+     </pre>
+
+<pre class="example">     int QP_get_nil(term)
+     QP_term_ref      term;
+     </pre>
+
+<pre class="example">     int QP_get_db_reference(term, ref)
+     QP_term_ref      term;
+     QP_db_reference *ref;
+     </pre>
+
+   <p>These C functions can be used to test and access
+Prolog terms passed to C through the foreign interface.
+
+<h4 class="subheading">Description</h4>
+
+   <p>If <var>term</var> refers to an atom then <code>QP_get_atom()</code>
+assigns to *<var>atom</var> the unsigned integer
+representing that atom and returns 1. Else <code>QP_get_atom()</code> returns 0. 
+To get at the string corresponding to the atom, use <code>QP_string_from_atom()</code>.
+
+   <p>If <var>term</var> refers to a Prolog integer then <code>QP_get_integer()</code>
+assigns that integer to *<var>integer</var> and returns 1. 
+Else <code>QP_get_integer()</code> returns 0.
+
+   <p>If <var>term</var> refers to a floating point number then <code>QP_get_float()</code>
+assigns that number to *<var>float</var> and returns 1. 
+Else <code>QP_get_float()</code> returns 0.
+
+   <p>If <var>term</var> refers to a compound term then <code>QP_get_functor()</code>
+assigns to *<var>name</var> the unsigned
+integer representing the name of the functor, assigns to *<var>arity</var>
+the arity of the functor and returns 1. 
+If <var>term</var> refers to an atom, then <code>QP_get_functor()</code> assigns
+to *<var>name</var> that atom, assigns 0 to *<var>arity</var> and returns 1. 
+If <var>term</var> does not refer to a compound term or an atom
+then <code>QP_get_functor()</code> returns 0. 
+Note that a list is a compound term with functor <code>.</code> and arity 2.
+
+   <p>If <var>term</var> refers to a compound term and <var>argnum</var> is between 1 and
+the arity of the compound term then <code>QP_get_arg()</code>
+assigns to <var>arg</var> a reference to the <var>argnum</var>
+argument of the compound term and returns 1. 
+If <var>term</var> does not refer to a
+compound term <code>QP_get_arg()</code> returns 0. Note that <code>QP_get_arg()</code>
+is similar to the Prolog builtin <code>arg/3</code> with its first and
+second arguments bound and its third argument unbound. 
+<code>QP_get_arg()</code> differs from the other <code>QP_get</code> functions in that
+it does not have <var>term</var> as its first argument.  This is to make it
+consistent with <code>arg/3</code>.
+
+   <p>If <var>term</var> refers to a list then <code>QP_get_list()</code>
+assigns to <var>head</var> a
+reference to the head of that list, assigns to <var>tail</var> a
+reference to the tail of the list and returns 1. If <var>term</var> does
+not refer to a list then <code>QP_get_list()</code> returns 0.
+
+   <p>If <var>term</var> refers to a list then <code>QP_get_head()</code>
+assigns to <var>head</var> a
+reference to the head of that list and returns 1. 
+If <var>term</var> does not refer to a list
+then <code>QP_get_head()</code> returns 0.
+
+   <p>If <var>term</var> refers to a list then <code>QP_get_tail()</code> assigns to
+<var>tail</var> a reference to the tail of that list and returns 1. 
+If <var>term</var> does not refer to a list then <code>QP_get_tail()</code> returns 0.
+
+   <p>If <var>term</var> refers to the atom <code>[]</code> then <code>QP_get_nil()</code>
+returns 1. Else it returns 0.
+
+   <p>If <var>term</var> refers to a db_reference (e.g. returned by <code>asserta/3</code>
+or <code>recorda/3</code>) then <code>QP_get_db_reference()</code> assigns to *<var>ref</var>
+that reference and returns 1. If <var>term</var> does not refer to a
+db_reference then <code>QP_get_db_reference()</code> returns 0.
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>write_term()</code> is a C function that writes out a Prolog term passed to it.
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(write_term, c, write_term(+term)).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     void write_term(term)
+     QP_term_ref term;
+     {
+         QP_atom a;
+         long int i;
+         double d;
+         switch (QP_term_type(term)) {
+         case QP_VARIABLE:
+             QP_printf("_");
+             break;
+         case QP_INTEGER:
+             QP_get_integer(term, &amp;i);
+             QP_printf("%d", i);
+             break;
+         case QP_FLOAT:
+             QP_get_float(term, &amp;d);
+             QP_printf("%f", d);
+             break;
+         case QP_ATOM:
+             QP_get_atom(term, &amp;a);
+             QP_printf("%s", QP_string_from_atom(a));
+             break;
+         case QP_DB_REFERENCE:
+             QP_printf("'$ref'()");
+             break;
+         case QP_COMPOUND:
+             if (QP_is_list(term)) {
+                 write_list(term);
+             } else {
+                 write_compound(term);
+             }
+             break;
+         }
+     }
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     void write_list(term)
+     QP_term_ref term;
+     {
+         QP_term_ref head = QP_new_term_ref();
+         QP_term_ref tail = QP_new_term_ref();
+         QP_atom a;
+     
+         QP_printf("[");
+         QP_get_list(term, head, tail);
+         write_term(head);
+         while (QP_is_list(tail)) {
+             QP_printf(",");
+             QP_get_list(tail, head, tail);
+             write_term(head);
+         }
+         if (QP_get_nil(tail)) {
+             QP_printf("]");
+         } else {
+             QP_printf("|");
+             write_term(tail);
+             QP_printf("]");
+         }
+     }
+     
+     void write_compound(term)
+     QP_term_ref term;
+     {
+         int i, arity;
+         QP_atom name;
+         QP_term_ref arg = QP_new_term_ref();
+     
+         QP_get_functor(term, &amp;name, &amp;arity);
+         QP_printf("%s(", QP_string_from_atom(name));
+         for (i = 1; i &lt; arity; i++) {
+             QP_get_arg(i, term, arg);
+             write_term(arg);
+             QP_printf(",");
+         }
+         QP_get_arg(i, term, arg);
+         write_term(arg);
+         QP_printf(")");
+     }
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_term_type()</code>, <code>QP_put_*()</code>,
+<code>QP_new_term_ref()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-getc.html#cfu-ref-getc">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-fwrite.html#cfu-ref-fwrite">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

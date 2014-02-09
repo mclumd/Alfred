@@ -1,0 +1,1925 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: mpg-top-fnm,  Next: mpg-top-fsh,  Prev: mpg-top-est,  Up: mpg-top
+
+Filename Manipulation
+---------------------
+
+`absolute_file_name(R,A)'
+     A is the absolute name of file R
+
+`absolute_file_name(R,O,A)'
+     expand relative filename R to absolute file name A using options
+     specified in O
+
+`file_search_path(F,D)'
+     user-extendible; directory D is included in file search path F
+
+`library_directory(D)'
+     user-extendible; D is a library directory that will be searched
+
+
+File: quintus.info,  Node: mpg-top-fsh,  Next: mpg-top-fin,  Prev: mpg-top-fnm,  Up: mpg-top
+
+File and Stream Handling
+------------------------
+
+`character_count(S,N)'
+     N is the number of characters read/written on stream S
+
+`close(F)'
+     close file or stream F
+
+`current_input(S)'
+     S is the current input stream
+
+`current_output(S)'
+     S is the current output stream
+
+`current_stream(F,M,S)'
+     S is a stream open on file F in mode M
+
+`fileerrors'
+     enable reporting of file errors
+
+`flush_output(S)'
+     flush the output buffer for stream S
+
+`line_count(S,N)'
+     N is the number of lines read/written on stream S
+
+`line_position(S,N)'
+     N is the number of characters read/written on the current line of S
+
+`nofileerrors'
+     disable reporting of file errors
+
+`open(F,M,S)'
+     file F is opened in mode M returning stream S
+
+`open(F,M,O,S)'
+     creates a Prolog stream S by opening the file F in mode M with
+     options O
+
+`open_null_stream(S)'
+     new output to stream S goes nowhere
+
+`prompt(O,N)'
+     queries or changes the prompt string of the current input stream
+
+`prompt(S,O,N)'
+     queries or changes the prompt string of the current input stream
+     or an input stream S
+
+`see(F)'
+     make file F the current input stream
+
+`seeing(N)'
+     the current input stream is named N
+
+`seek(S,O,M,N)'
+     seek to an arbitrary byte position on the stream S
+
+`seen'
+     close the current input stream
+
+`set_input(S)'
+     select S as the current input stream
+
+`set_output(S)'
+     select S as the current output stream
+
+`stream_code(S,C)'
+     Converts between Prolog and C representations of a stream
+
+`stream_position(S,P)'
+     P is the current position of stream S
+
+`stream_position(S,O,N)'
+     O is the old position of stream S; N is the new position
+
+`tell(F)'
+     make file F the current output stream
+
+`telling(N)'
+     to file N
+
+`told'
+     close the current output stream
+
+`ttyflush'
+     transmit all outstanding terminal output
+
+
+File: quintus.info,  Node: mpg-top-fin,  Next: mpg-top-gru,  Prev: mpg-top-fsh,  Up: mpg-top
+
+Foreign Interface
+-----------------
+
+`assign(A,V)'
+     poke into memory
+
+`extern(P)'
+     declares predicate P to be callable from foreign code
+
+`foreign(F,P)'
+     user-defined; C function F is attached to predicate P
+
+`foreign(F,L,P)'
+     user-defined; function F in language L is attached to P
+
+`foreign_file(F,L)'
+     user-defined; file F defines foreign functions in list L
+
+`load_foreign_files(F,L)'
+     load object files F using libraries L
+
+`unix(T)'
+     give access to system commands
+
+
+File: quintus.info,  Node: mpg-top-gru,  Next: mpg-top-hlp,  Prev: mpg-top-fin,  Up: mpg-top
+
+Grammar Rules
+-------------
+
+`HEAD --> BODY'
+     A possible form for HEAD is BODY
+
+`'C'(S1,T,S2)'
+     (in grammar rules) S1 is connected to S2 by the terminal T
+
+`expand_term(T,X)'
+     term T expands to term X using term_expansion/2 or grammar rule
+     expansion
+
+`phrase(P,L)'
+     list L can be parsed as a phrase of type P
+
+`phrase(P,L,R)'
+     R is what remains of list L after phrase P has been found
+
+`term_expansion(T,X)'
+     hook called by `expand_term/2'
+
+
+File: quintus.info,  Node: mpg-top-hlp,  Next: mpg-top-hok,  Prev: mpg-top-gru,  Up: mpg-top
+
+Help
+----
+
+`help'
+     prints some help information
+
+`help(TOPIC)'
+     indexed access to the on-line manual
+
+`manual'
+     access the top level of the on-line manual
+
+`manual(X)'
+     access the specified manual section
+
+`user_help'
+     user-defined; tells `help/1' what to do
+
+
+File: quintus.info,  Node: mpg-top-hok,  Next: mpg-top-lis,  Prev: mpg-top-hlp,  Up: mpg-top
+
+Hook Predicates
+---------------
+
+`foreign/[2,3]'
+     Describes the interface between Prolog and the foreign ROUTINE
+
+`foreign_file/2'
+     Describes the foreign functions in OBJECTFILE to interface to.
+
+`message_hook/3'
+     Overrides the call to `print_message_lines/3' in `print_message/2'.
+
+`generate_message_hook/3'
+     A way for the user to override the call to
+     `'QU_messages':generate_message/3' in `print_message/2'.
+
+`portray/1'
+     A way for the user to over-ride the default behavior of `print/1'.
+
+`query_hook/6'
+     Provides a method of overriding Prolog's default keyboard based
+     input requests.
+
+`runtime_entry/1'
+     This predicate is called upon start-up and exit of stand alone
+     applications.
+
+`term_expansion/2'
+     hook called by `expand_term/2'
+
+`unknown_predicate_handler/3'
+     User definable hook to trap calls to unknown predicates
+
+`user_help/0'
+     A hook for users to add more information when `help/0' is called.
+
+
+File: quintus.info,  Node: mpg-top-lis,  Next: mpg-top-lod,  Prev: mpg-top-hok,  Up: mpg-top
+
+List Processing
+---------------
+
+`T =.. L'
+     the functor and arguments of term T comprise the list L
+
+`append(A,B,C)'
+     the list C is the concatenation of lists A and B
+
+`keysort(L,S)'
+     the list L sorted by key yields S
+
+`length(L,N)'
+     the length of list L is N
+
+`sort(L,S)'
+     sorting the list L into order yields S
+
+
+File: quintus.info,  Node: mpg-top-lod,  Next: mpg-top-mem,  Prev: mpg-top-lis,  Up: mpg-top
+
+Loading Programs
+----------------
+
+`[F]'
+     same as `load_files(F)'
+
+`compile(F)'
+     compile procedures from file (or list of files) F into the database
+
+`consult(F)'
+     same as compile(F)
+
+`reconsult(F)'
+     same as compile(F)
+
+`ensure_loaded(F)'
+     load F if not already loaded
+
+`load_files(F)'
+     load the specified Prolog source and/or QOF files F into memory
+
+`load_files(F,O)'
+     load files according to options O
+
+`meta_predicate(P)'
+     declares predicates P that are dependent on the module from which
+     they are called
+
+`module(M,L)'
+     declaration that module M exports predicates in L
+
+`multifile(P)'
+     declares that the clauses for P are in more than one file
+
+`no_style_check(A)'
+     switch off style checking of type A
+
+`restore(F)'
+     restart system and load file F
+
+`style_check(A)'
+     turn on style checking of type A
+
+`use_module(F)'
+     import the module-file(s) F, loading them if necessary
+
+`use_module(F,I)'
+     import the procedure(s) I from the module-file F
+
+`use_module(M,F,I)'
+     import I from module M, loading module-file F if necessary
+
+`term_expansion(T,N)'
+     user-defined; compile-time transformation of clauses
+
+
+File: quintus.info,  Node: mpg-top-mem,  Next: mpg-top-msg,  Prev: mpg-top-lod,  Up: mpg-top
+
+Memory
+------
+
+`garbage_collect'
+     force an immediate garbage collection
+
+`garbage_collect_atoms'
+     garbage collect atom space
+
+`gc'
+     enable garbage collection
+
+`nogc'
+     disable garbage collection
+
+`statistics'
+     display various execution statistics
+
+`statistics(K,V)'
+     the execution statistic with key K has value V
+
+`trimcore'
+     reduce free stack space to a minimum
+
+
+File: quintus.info,  Node: mpg-top-msg,  Next: mpg-top-mod,  Prev: mpg-top-mem,  Up: mpg-top
+
+Messages
+--------
+
+`message_hook(M,S,L)'
+     user defined; intercept the printing of a message
+
+`'QU_messages':generate_message(M,SO,S)'
+     determines the mapping from a message term into a sequence of
+     lines of text to be printed
+
+`generate_message_hook(M,S0,S)'
+     user defined; intercept message before it is given to
+     `'QU_messages':generate_message/3'
+
+`print_message(S,M)'
+     print a message M of severity S
+
+`print_message_lines(S,P,L)'
+     print the message lines L to stream S with prefix P
+
+`'QU_messages':query_abbreviation(T,P)'
+     specifies one letter abbreviations for responses to queries from
+     the Prolog system
+
+`query_hook(Q,A)'
+     user-defined; intercept a system request for user input
+
+
+File: quintus.info,  Node: mpg-top-mod,  Next: mpg-top-sta,  Prev: mpg-top-msg,  Up: mpg-top
+
+Modules
+-------
+
+`current_module(M)'
+     M is the name of a current module
+
+`current_module(M,F)'
+     F is the name of the file in which M's module declaration appears
+
+`meta_predicate(P)'
+     declares predicates P that are dependent on the module from which
+     they are called
+
+`module(M)'
+     makes M the type-in module
+
+`module(M,L)'
+     declaration that module M exports predicates in L
+
+`save_modules(L,F)'
+     save the modules specifed in L into file F
+
+`use_module(F)'
+     import the module-file(s) F, loading them if necessary
+
+`use_module(F,I)'
+     import the procedure(s) I from the module-file F
+
+`use_module(M,F,I)'
+     import I from module M, loading module-file F if necessary
+
+
+File: quintus.info,  Node: mpg-top-sta,  Next: mpg-top-tcm,  Prev: mpg-top-mod,  Up: mpg-top
+
+Program State
+-------------
+
+`current_atom(A)'
+     backtrack through all atoms
+
+`current_module(M)'
+     M is the name of a current module
+
+`current_module(M,F)'
+     F is the name of the file in which M's module declaration appears
+
+`current_predicate(A,P)'
+     A is the name of a predicate with most general goal P
+
+`listing'
+     list all dynamic procedures in the type-in module
+
+`listing(P)'
+     list the dynamic procedure(s) specified by P
+
+`module(M)'
+     make M the type-in module
+
+`predicate_property(P,PROP)'
+     PROP is a property of the loaded predicate P
+
+`prolog_flag(F,V)'
+     V is the current value of Prolog flag F
+
+`prolog_flag(F,O,N)'
+     O is the old value of Prolog flag F; N is the new value
+
+`prolog_load_context(K,V)'
+     find out the context of the current load
+
+`source_file(F)'
+     F is a source file that has been loaded into the database
+
+`source_file(P,F)'
+     P is a predicate defined in the loaded file F
+
+`source_file(P,F,N)'
+     Clause number N of predicate P came from file F
+
+
+File: quintus.info,  Node: mpg-top-tcm,  Next: mpg-top-tha,  Prev: mpg-top-sta,  Up: mpg-top
+
+Term Comparison
+---------------
+
+`compare(C,X,Y)'
+     C is the result of comparing terms X and Y
+
+`X == Y'
+     terms X and Y are strictly identical
+
+`X \== Y'
+     terms X and Y are not strictly identical
+
+`X @< Y'
+     term X precedes term Y in standard order for terms
+
+`X @>= Y'
+     term X follows or is identical to term Y in standard order for
+     terms
+
+`X @> Y'
+     term X follows term Y in standard order for terms
+
+`X @=< Y'
+     term X precedes or is identical to term Y in standard order for
+     terms
+
+
+File: quintus.info,  Node: mpg-top-tha,  Next: mpg-top-tio,  Prev: mpg-top-tcm,  Up: mpg-top
+
+Term Handling
+-------------
+
+`X = Y'
+     terms X and Y are unified
+
+`arg(N,T,A)'
+     the Nth argument of term T is A
+
+`atom_chars(A,L)'
+     A is the atom containing the characters in list L
+
+`copy_term(T,C)'
+     C is a copy of T in which all variables have been replaced by new
+     variables
+
+`functor(T,F,N)'
+     the principal functor of term T has name F and arity N
+
+`ground(T)'
+     term T is a nonvar, and all substructures are nonvar
+
+`hash_term(T,H)'
+     H is a hash-value for term T
+
+`name(A,L)'
+     the list of characters of atom or number A is L
+
+`number_chars(N,L)'
+     N is the numeric representation of list of characters L
+
+`numbervars(T,M,N)'
+     number the variables in term T from M to N-1
+
+`subsumes_chk(G,S)'
+     true when G(eneral) subsumes S(pecific); S and G are terms.
+
+
+File: quintus.info,  Node: mpg-top-tio,  Next: mpg-top-typ,  Prev: mpg-top-tha,  Up: mpg-top
+
+Term I/O
+--------
+
+`current_op(P,T,A)'
+     atom A is an operator of type T with precedence P
+
+`display(T)'
+     write term T to the user output stream in prefix notation
+
+`format(C,A)'
+     write arguments A according to control string C
+
+`format(S,C,A)'
+     write arguments A on stream S according to control string C
+
+`op(P,T,A)'
+     make atom A an operator of type T with precedence P
+
+`portray(T)'
+     hook, which is called when allows user to `print(T)'.
+
+`portray_clause(C)'
+     write clause C to the current output stream
+
+`print(T)'
+     display the term T on the current output stream using `portray/1'
+     or `write/1'
+
+`print(S,T)'
+     display the term T on stream S using `portray/1' or `write/2'
+
+`read(T)'
+     read term T from the current input stream
+
+`read(S,T)'
+     read term T from stream S
+
+`read_term(O,T)'
+     read term T according to options O
+
+`read_term(S,O,T)'
+     read T from stream S according to options O
+
+`write(T)'
+     write term T on the current output stream
+
+`write(S,T)'
+     write term T on stream S
+
+`write_canonical(T)'
+     write term T on the current output stream so that it can be read
+     back by `read/[1,2]'
+
+`write_canonical(S,T)'
+     write term T on stream S so that it can be read back by
+     `read/[1,2]'
+
+`writeq(T)'
+     write  term T on the current output stream, quoting atoms where
+     necessary
+
+`writeq(S,T)'
+     write term T on stream S, quoting atoms where necessary
+
+`write_term(T,O)'
+     writes T to current output with options O
+
+`write_term(S,T,O)'
+     writes T to S according to options O
+
+
+File: quintus.info,  Node: mpg-top-typ,  Prev: mpg-top-tio,  Up: mpg-top
+
+Type Tests
+----------
+
+`atom(T)'
+     term T is an atom
+
+`atomic(T)'
+     term T is an atom, a number or a db_reference
+
+`callable(T)'
+     T is an atom or a compound term
+
+`compound(T)'
+     T is a compound term (a skeletal predicate specification; see
+     *Note ref-syn-spc::)
+
+`db_reference(D)'
+     D is a db_reference
+
+`float(N)'
+     N is a floating-point number
+
+`ground(T)'
+     term T is a nonvar, and all substructures are nonvar
+
+`integer(T)'
+     term T is an integer
+
+`nonvar(T)'
+     term T is one of atom, db_reference, number, compound (that is, T
+     is instantiated)
+
+`number(N)'
+     N is an integer or a float
+
+`simple(T)'
+     T is not a compound term; it is either atomic or a var
+
+`var(T)'
+     term T is a variable (that is, T is uninstantiated)
+
+
+File: quintus.info,  Node: mpg-bpr,  Next: mpg-ref,  Prev: mpg-top,  Up: mpg
+
+Built-in Predicates
+===================
+
+   The following reference pages, alphabetically arranged, describe the
+Quintus Prolog built-in predicates.
+
+   For a functional grouping of these predicates including brief
+descriptions, see *Note mpg-top::.
+
+   In many cases the heading of a reference page will contain not only
+the name and arity of the predicate, but also the name of a major
+category to which the predicate belongs.  These categories are defined
+in *Note mpg-ref-cat::.
+
+   Further information about categories of predicates and arguments,
+mode annotations, and the conventions observed in the reference pages is
+found in *Note mpg-ref::.
+
+
+File: quintus.info,  Node: mpg-ref-cut,  Next: mpg-ref-db_reference,  Prev: mpg-ref-current_stream,  Up: mpg-ref
+
+`!/0'
+-----
+
+Synopsis
+--------
+
+   `!'
+
+   Cut.
+
+Description
+-----------
+
+   When first encountered as a goal, cut succeeds immediately.  If
+backtracking should later return to the cut, the parent goal will fail
+(the parent goal is the one that matched the head of the clause
+containing the cut).
+
+See Also
+--------
+
+   *Note bas-eff-cut-ove::
+
+
+File: quintus.info,  Node: mpg-ref-or,  Next: mpg-ref-otherwise,  Prev: mpg-ref-open_null_stream,  Up: mpg-ref
+
+`;/2' -- disjunction
+--------------------
+
+Synopsis
+--------
+
+   +*P `;' +*Q
+
+   Disjunction: Succeeds if P succeeds _or_ Q succeeds.
+
+Arguments
+---------
+
+P "callable" [MOD]
+
+Q "callable" [MOD]
+Description
+-----------
+
+   This is normally regarded as part of the syntax of the language, but
+it is like a built-in predicate in that you can say `call' (P `;' Q).
+The character `|' (vertical bar) can be used as an alternative to `;'.
+
+   Note that `;/2' has a distinct behaviour if the first argument is a
+`->/2' term. See `;/2' - if-then-else.
+
+See Also
+--------
+
+   *Note bas-eff-cdi:: and *Note ref-sem-dis::
+
+
+File: quintus.info,  Node: mpg-ref-and,  Next: mpg-ref-append,  Prev: mpg-ref-add_spypoint,  Up: mpg-ref
+
+`,/2'
+-----
+
+Synopsis
+--------
+
+   +*P `,' +*Q
+
+   Conjunction: Succeeds if P succeeds _and_ then Q succeeds.
+
+Arguments
+---------
+
+P "callable" [MOD]
+
+Q "callable" [MOD]
+Description
+-----------
+
+   This is not normally regarded as a built-in predicate, since it is
+part of the syntax of the language.  However, it is like a built-in
+predicate in that you can say `call'((P `,' Q)) to execute P and then Q.
+
+See Also
+--------
+
+   *Note ref-sem-dis::
+
+
+File: quintus.info,  Node: mpg-ref-ite,  Next: mpg-ref-initialization,  Prev: mpg-ref-ith,  Up: mpg-ref
+
+`;/2' -- if-then-else
+---------------------
+
+Synopsis
+--------
+
+   +-P `->' +*Q `;' +*R
+
+   _If_ P _then_ Q _else_ R, using first solution of P only.
+
+Arguments
+---------
+
+P "callable" [MOD]
+
+Q "callable" [MOD]
+
+R "callable" [MOD]
+Description
+-----------
+
+   The character `|' can be used as an alternative to `;', giving the
+form:
+     P -> Q | R
+
+   The `|' is transformed into a `;' when the goal is read.
+
+   First P is executed.  If it succeeds, then Q is executed, and if Q
+fails, the whole conditional goal fails.  If P fails, however, R is
+executed instead of Q.
+
+   The operator precedences of the `;' and `->' are both greater than
+1000, so that they dominate commas.
+
+Backtracking
+------------
+
+   If P succeeds and Q then fails, backtracking into P does not occur.
+P may not contain a cut.  `->' acts like a cut except that its range is
+restricted to within the disjunction: it cuts away R and any choice
+points within P.  `->' may be thought of as a "local cut".
+
+See Also
+--------
+
+   *Note bas-eff-cdi:: and *Note ref-sem-dis::
+
+
+File: quintus.info,  Node: mpg-ref-ith,  Next: mpg-ref-ite,  Prev: mpg-ref-help,  Up: mpg-ref
+
+`->/2'
+------
+
+Synopsis
+--------
+
+   +-P `->' +*Q
+
+   "Local cut"
+
+   If P then Q else fail, using first solution of P only.
+
+Arguments
+---------
+
+P "callable" [MOD]
+
+Q "callable" [MOD]
+Description
+-----------
+
+   When occurring other than as the first argument of a disjunction
+operator (`|' or `;'), this is equivalent to:
+     P -> Q | fail.
+
+   (For a definition of `P -> Q | R', see *Note ref-sem-con::.)
+
+   `->' cuts away any choice points in the execution of P
+
+   Note that the operator precedence of `->' is greater than 1000, so
+it dominates commas.  Thus, in:
+     f :- p, q -> r, s.
+     f.
+
+   `->' cuts away any choices in `p' or in `q', but unlike cut (`!') it
+does not cut away the alternative choice for `f'.
+
+Exceptions
+----------
+
+`context_error'
+
+File: quintus.info,  Node: mpg-ref-uni,  Next: mpg-ref-arg,  Prev: mpg-ref-append,  Up: mpg-ref
+
+`=/2'
+-----
+
+Synopsis
+--------
+
+   +-TERM1 `=' +-TERM2
+
+   _unifies_ TERM1 and TERM2.
+
+Arguments
+---------
+
+TERM1 "term"
+
+TERM2 "term"
+Description
+-----------
+
+   This is defined as if by the clause `Z = Z.'.
+
+   If `=/2' is not able to unify TERM1 and TERM2, it will simply fail.
+
+
+File: quintus.info,  Node: mpg-ref-unv,  Next: mpg-ref-unix,  Prev: mpg-ref-tty,  Up: mpg-ref
+
+`=../2'
+-------
+
+Synopsis
+--------
+
+   +-TERM `=..' +-LIST
+
+   Unifies LIST with a list whose head is the atom corresponding to the
+principal functor of TERM and whose tail is a list of the arguments of
+TERM.
+
+Arguments
+---------
+
+TERM "term"
+     any term
+
+LIST "list"
+     and not empty
+
+Description
+-----------
+
+   Pronounced "univ".
+
+   If TERM is uninstantiated, then LIST must be instantiated either to
+a list of determinate length whose head is an atom, or to a list of
+length 1 whose head is a number.
+
+Exceptions
+----------
+
+`type_error'
+`domain_error'
+     TERM is uninstantiated and LIST is not a proper list.  TERM is
+     uninstantiated and the head of LIST is not atomic.
+
+`instantiation_error'
+     TERM and LIST are both uninstantiated
+
+`representation_error'
+     TERM is uninstantiated and LIST is longer than 256.
+
+See Also
+--------
+
+   `functor/3', `arg/3'
+
+   *Note ref-lte-act::
+
+
+File: quintus.info,  Node: mpg-ref-acm,  Next: mpg-ref-assert,  Prev: mpg-ref-arg,  Up: mpg-ref
+
+`</2', `=:=/2', `=</2', `=\=/2', `>/2', `>=/2'
+----------------------------------------------
+
+Synopsis
+--------
+
+   +EXPR1 `<' +EXPR2
+
+   Evaluates EXPR1 and EXPR2 as arithmetic expressions.  The goal
+succeeds if the result of evaluating EXPR1 is strictly _less than_ the
+result of evaluating EXPR2.
+
+   +EXPR1 `=:=' +EXPR2
+
+   Succeeds if the results of evaluating EXPR1 and EXPR2 _are equal_.
+
+   +EXPR1 `=<' +EXPR2
+
+   Succeeds if the result of evaluating EXPR1 is _less than or equal_
+to the result of evaluating EXPR2.
+
+   +EXPR1 `=\=' +EXPR2
+
+   Succeeds if the results of evaluating EXPR1 and EXPR2 are _not
+equal_.
+
+   +EXPR1 `>' +EXPR2
+
+   Succeeds if the result of evaluating EXPR1 is strictly _greater
+than_ the result of evaluating EXPR2.
+
+   +EXPR1 `>=' +EXPR2
+
+   Succeeds if the result of evaluating EXPR1 is _greater than or equal
+to_ the result of evaluating EXPR2.
+
+Arguments
+---------
+
+EXPR1 "expr"
+     Arithmetic expression
+
+EXPR2 "expr"
+     Arithmetic expression
+
+Description
+-----------
+
+   All of these predicates evaluate EXPR1 and EXPR2 as arithmetic
+expressions and compare the results.
+
+   The possible values for EXPR are spelled out in detail in *Note
+ref-ari-aex::.
+
+Exceptions
+----------
+
+`instantiation_error'
+
+`type_error'
+
+`representation_error'
+
+`domain_error'
+     EXPR1 or EXPR2 does not evaluate to a number.
+
+Examples
+--------
+
+     | ?- 23 + 2.2  <  23 - 2.2.
+     
+     yes
+     | ?- X = 31, Y = 25, X + Y  <  X - Y
+     
+     no
+
+     | ?- 1.0 + 1.0 =:= 2.
+     
+     yes
+
+     | ?- "a" =:= 97.
+     
+     yes
+
+     | ?- 42 =< 42.
+     
+     yes
+
+     | ?- "b" =< "a".
+     
+     no
+
+     | ?- 7 =\= 14/2.
+     
+     no
+
+     | ?- 7 =\= 15/2.
+     
+     yes
+
+     | ?- "g" > "g".
+     
+     no
+
+     | ?- 4*2 > 15/2.
+     
+     yes
+
+     | ?- 42 >= 42.
+     
+     yes
+
+     | ?- "b" >= "a".
+     
+     yes
+
+Comments
+--------
+
+   Note that the symbol `=<' is used here rather than `<=', which is
+used in some other languages.  One way to remember this is that the
+inequality symbols in Prolog are the ones that cannot be thought of as
+looking like arrows.  The `<' or `>' always points at the `='.
+
+See Also
+--------
+
+   *Note ref-ari::
+
+
+File: quintus.info,  Node: mpg-ref-not,  Next: mpg-ref-notrace,  Prev: mpg-ref-nospyall,  Up: mpg-ref
+
+`\+/1'
+------
+
+Synopsis
+--------
+
+   `\+'  +P
+
+   Fails if the goal P has a solution, and succeeds otherwise.
+
+Arguments
+---------
+
+P "callable" [MOD]
+Description
+-----------
+
+   This is not real negation ("P is false"), which is not possible in
+Prolog, but negation-by-failure meaning "P is not provable".  P may not
+contain a cut.  The goal `\+ P' behaves exactly like
+     ( P -> fail ; true)
+
+Exceptions
+----------
+
+`type_error'
+
+`context_error'
+Tip
+---
+
+   Remember that with prefix operators such as this one, it is
+necessary to be careful about spaces if the argument starts with a `('.
+For example:
+     | ?- \+ (P, Q).
+
+   is the `\+/1' operator applied to the conjunction of P and Q, but
+     | ?- \+(P, Q).
+
+   would require a predicate `\+/2' for its solution.  The prefix
+operator can, however, be written as a functor of one argument; thus
+     | ?- \+((P,Q)).
+
+   is also correct.
+
+See Also
+--------
+
+   `library(not)' -- defines a safer form of negation as failure.
+
+
+File: quintus.info,  Node: mpg-ref-teq,  Next: mpg-ref-term_expansion,  Prev: mpg-ref-telling,  Up: mpg-ref
+
+`==/2', `\==/2'
+---------------
+
+Synopsis
+--------
+
+   +TERM1 `==' +TERM2
+
+   Succeeds if the terms currently instantiating TERM1 and TERM2 are
+literally _identical_ (in particular, variables in equivalent positions
+in the two terms must be identical).
+
+   +TERM1 `\==' +TERM2
+
+   Succeeds if the terms currently instantiating TERM1 and TERM2 are
+_not_ literally identical.
+
+Arguments
+---------
+
+TERM1 "term"
+
+TERM2 "term"
+Description
+-----------
+
+   Query (A) fails because Term1 and Term2 are distinct uninstantiated
+variables.  However, query (B) succeeds because the first goal unifies
+the two variables:
+
+     | ?- Term1 == Term2.   (A)
+     
+     no
+
+     | ?- Term1 = Term2, Term1 == Term2.   (B)
+     
+     yes
+
+   Query (C) succeeds because Term1 and Term2 are distinct
+uninstantiated variables.  However, query (D) fails because the first
+goal unifies the two variables.
+
+     | ?- Term1 \== Term2.  (C)
+     
+     yes
+
+     | ?- Term1 = Term2, Term1 \== Term2.  (D)
+     
+     no
+
+See also
+--------
+
+   `compare/3', `@</2', `@=</2', `@>/2', `@>=/2' *Note ref-lte::
+
+
+File: quintus.info,  Node: mpg-ref-tcm,  Next: mpg-ref-statistics,  Prev: mpg-ref-spy,  Up: mpg-ref
+
+`@</2', `@=</2', `@>/2', `@>=/2'
+--------------------------------
+
+Synopsis
+--------
+
+   +TERM1 `@<' +TERM2
+
+   Succeeds if term TERM1 is _before_ term TERM2 in the standard order.
+
+   +TERM1 `@=<' +TERM2
+
+   Succeeds if term TERM1 is _not after_ term TERM2 in the standard
+order.
+
+   +TERM1 `@>' +TERM2
+
+   Succeeds if term TERM1 is _after_ term TERM2 in the standard order.
+
+   +TERM1 `@>=' +TERM2
+
+   Succeeds if term TERM1 is _not before_ term TERM2 in the standard
+order.
+
+Arguments
+---------
+
+TERM1 "term"
+
+TERM2 "term"
+Description
+-----------
+
+   These predicates use a standard total order when comparing terms.
+The standard total order is:
+
+     variables `@<' database references `@<' numbers `@<' atoms `@<' compound terms
+
+   For further details see *Note ref-lte-cte-sot::.
+
+Examples
+--------
+
+      | ?- foo(1) @< foo(2).
+     
+     yes
+     | ?- chicken @< egg.
+     
+     yes
+     | ?- a @< "a".
+     
+     yes
+
+     | ?- liberty @=< pride.
+     
+     yes
+     |?- 1 @=< 1.0.
+     
+     yes
+
+     | ?- fie(1,1) @> fie(1).
+     
+     yes
+
+     | ?- 1 @>= 1.0.
+     
+     no
+     | ?- 1.0 @>= 1.
+     
+     yes
+
+See Also
+--------
+
+   `compare/3', `==/2', `\==/2' *Note ref-lte::
+
+
+File: quintus.info,  Node: mpg-ref-rar,  Next: mpg-ref-ground,  Prev: mpg-ref-get_profile_results,  Up: mpg-ref
+
+->/2
+----
+
+Synopsis
+--------
+
+   `+HEAD-->+BODY'
+
+   A possible form for HEAD is BODY. Used primarily in grammar rules.
+
+Arguments
+---------
+
+HEAD "term"
+     Prolog term, or list of terms
+
+BODY "term"
+     Prolog term, or list of terms
+
+     The formal description of grammar heads and grammar bodies is
+     spelled out in *Note ref-syn-syn-sen::.
+
+Description
+-----------
+
+   HEAD and BODY are translated into lists of Prolog terms by
+`expand_term/2'.
+
+Exceptions
+----------
+
+     `context_error'
+
+     Cannot call `-->/2' as a predicate
+
+Examples
+--------
+
+   See examples in *Note ref-gru-exa:: and *Note ref-gru-tra::.
+
+See Also
+--------
+
+   `expand_term/2', `'C'/3', `term_expansion/2', `phrase/[2,3]' *Note
+ref-gru::
+
+
+File: quintus.info,  Node: mpg-ref-qua,  Next: mpg-ref-expand_term,  Prev: mpg-ref-erase,  Up: mpg-ref
+
+`^/2'
+-----
+
+Synopsis
+--------
+
+   +X `^' +*P
+
+   Equivalent to "there exists an X such that P is true", thus X is
+normally an unbound variable. The use of the explicit existential
+quantifier outside `setof/3' and `bagof/3' is superfluous.
+
+Arguments
+---------
+
+X "term"
+
+P "callable" [MOD]
+Description
+-----------
+
+   Equivalent to simply calling P
+
+Exceptions
+----------
+
+   As for `call/1':
+`type_error'
+
+`context_error'
+
+`instantiation_error'
+Examples
+--------
+
+   Using `bagof/3' without and with the existential quantifier:
+     | ?- bagof(X, foo(X,Y), L).
+     
+     X = _3342,
+     Y = 2,
+     L = [1,1] ;
+     
+     X = _3342,
+     Y = 3,
+     L = [2] ;
+     
+     no
+     
+     | ?- bagof(X, Y^foo(X,Y), L).
+     
+     X = _3342,
+     Y = _3361,
+     L = [1,1,2] ;
+     
+     no
+
+   *Note ref-all-cse-equ::
+
+See Also
+--------
+
+   `setof/3', `bagof/3'
+
+
+File: quintus.info,  Node: mpg-ref-abolish,  Next: mpg-ref-abort,  Prev: mpg-ref-exc,  Up: mpg-ref
+
+`abolish/[1,2]'
+---------------
+
+Synopsis
+--------
+
+   `abolish(+PREDSPECTREE)'
+
+   `abolish(+NAME, +ARITY)'
+
+   Removes procedures from the Prolog database.
+
+Arguments
+---------
+
+PREDSPECTREE "pred_spec_tree" [MOD]
+     A procedure specification in the form NAME/ARITY, or a list of
+     such procedure specifications.
+
+NAME "atom" [MOD]
+     A string representing the name of a predicate.
+
+ARITY "arity"
+     An integer giving the arity of the predicate.
+
+Description
+-----------
+
+   Removes all procedures specified.  After this command is executed
+the current program functions as if the named procedures had never
+existed.  That is, in addition to removing all the clauses for each
+specified procedure, `abolish' removes any properties that the
+procedure might have had, such as being dynamic or multifile.
+
+   You may abolish any of your own procedures, regardless of whether
+they are dynamic, static, compiled, interpreted, or foreign.  You cannot
+abolish built-in procedures.
+
+   It is important to note that `retract/1', `retractall/1', and
+`erase/1' can only remove dynamic predicates. They cannot remove the
+predicates properties (such as being dynamic or multifile) from the
+system.  `abolish[1,2]', on the other hand, can remove both static and
+dynamic predicates.  It removes the clauses of the predicates and its
+properties.
+
+   The procedures that are abolished do not become invisible to a
+currently running procedure.  See *Note ref-mdb-exa:: for an example
+illustrating this point.
+
+   Space occupied by abolished procedures is reclaimed.  The space
+occupied by the procedures is reclaimed.
+
+   Procedures must be defined in the source module before they can be
+abolished.  An attempt to abolish a procedure that is imported into the
+source module will cause a permission error.  Using a module prefix,
+M:, clauses in any module may be abolished.
+
+   Abolishing a foreign procedure destroys only the link between that
+Prolog procedure and the associated foreign code.  The foreign code
+that was loaded remains in memory.  This is necessary because Prolog
+cannot tell which subsequently-loaded foreign files may have links to
+the foreign code.  The Prolog part of the foreign procedure is
+destroyed and reclaimed.
+
+   Specifying an undefined procedure is not an error.
+
+   `abolish/2' is an obsolete special case of `abolish/1' maintained to
+provide compatibility with DEC-10 Prolog, C Prolog, and earlier
+versions of Quintus Prolog.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if one of the arguments is not ground.
+
+`type_error'
+     if a NAME is not an atom or an ARITY not an integer.
+
+`domain_error'
+     if a PREDSPEC is not a valid procedure specification, or if an
+     ARITY is specified as an integer outside the range 0-255.
+
+`permission_error'
+     if a specified procedure is built-in or imported into the source
+     module.
+
+See Also
+--------
+
+   `dynamic/1', `erase/1', `retract/1', `retractall/1'.
+
+   *Note ref-mdb-dre::
+
+
+File: quintus.info,  Node: mpg-ref-abort,  Next: mpg-ref-absolute_file_name,  Prev: mpg-ref-abolish,  Up: mpg-ref
+
+`abort/0'
+---------
+
+Synopsis
+--------
+
+   `abort'
+
+   Abandons the current execution and returns to the beginning of the
+current break level.
+
+Description
+-----------
+
+   Fairly drastic predicate that is normally only used when some error
+condition has occurred and there is no way of carrying on, or when
+debugging.
+
+   Often used via the debugging option `a' or the `^C' interrupt option
+`a'.
+
+   If `abort' is called from initialization (see *Note sap-srs-eci::),
+then `QP_initialize()' returns. If user has not defined their own
+`main()', this means that `QP_toplevel()' gets called and you get the
+default top level loop.  The same holds true for `^C' followed by the
+`a' option.
+
+     *Please note:* The goal specified by `save_program/2' is also run
+     as an `initialization' when a saved file is restored.
+
+     *Please note:* In the context of a runtime system, `QP_toplevel()'
+     corresponds to calling `runtime_entry(start)'.
+
+Tip
+---
+
+   Does not close any files that you may have opened.  When using
+`see/1' and `tell/1', (rather than `open/3', `set_input/1', and
+`set_output/1'), close files yourself to avoid strange behavior after
+your program is aborted and restarted.
+
+See Also
+--------
+
+   `halt/[0,1]', `break/0', `QP_toplevel()', `QP_initialize()',
+`runtime_entry/1'
+
+   *Note ref-iex-int::
+
+
+File: quintus.info,  Node: mpg-ref-absolute_file_name,  Next: mpg-ref-add_advice,  Prev: mpg-ref-abort,  Up: mpg-ref
+
+`absolute_file_name/[2,3]'
+--------------------------
+
+Synopsis
+--------
+
+   `absolute_file_name'(+RELFILESPEC,
+-ABSFILENAME)
+
+   `absolute_file_name'(+RELFILESPEC,
++OPTIONS,                           -ABSFILENAME)
+
+   `absolute_file_name'(+RELFILESPEC,
++OPTIONS,                           *ABSFILENAME)
+
+   Unifies ABSFILENAME with the the absolute filename that corresponds
+to the relative file specification RELFILESPEC.
+
+Arguments
+---------
+
+RELFILESPEC "file_spec"
+     A valid file specification.
+
+ABSFILENAME "atom"
+     The first absolute filename derived from RELFILESPEC that
+     satisfies the access modes given by OPTIONS.
+
+OPTIONS "list"
+     A list of zero or more of the following:
+
+    `ignore_underscores(BOOL)'
+          BOOL =
+         `true'
+               When constructing an absolute filename that matches the
+               given access modes, two names are tried: First the
+               absolute filename derived directly from RELFILESPEC, and
+               then the filename obtained by first deleting all
+               underscores from RELFILESPEC.
+
+         `false'
+               (default) Suppresses any deletion of underscores.
+
+    `extensions(EXT)'
+          Has no effect if RELFILESPEC contains a file extension.  EXT
+          is an atom or a list of atoms, each atom representing an
+          extension that should be tried when constructing the absolute
+          filename.  The extensions are tried in the order they appear
+          in the list.  Default value is EXT = `['']', i.e. only the
+          given RELFILESPEC is tried, no extension is added. To specify
+          `extensions('')' or `extensions([])' is equal to not giving
+          any extensions option at all.
+
+    `file_type(TYPE)'
+          Has no effect if RELFILESPEC contains a file extension.
+          Picks an adequate extension for the operating system
+          currently running, which means that programs using this
+          option instead of `extensions(EXT)' will be more portable
+          between operating systems.  TYPE must be one of the following
+          atoms:
+         `text'
+               implies `extensions([''])'.
+               RELFILESPEC is a file without any extension.  (Default)
+
+         `prolog'
+               implies `extensions(['pl',''])'.
+               RELFILESPEC is a Prolog source file, maybe with a `.pl'
+               extension.
+
+         `object'
+               implies `extensions(['o',''])'
+               (substitute the actual object file extension for `o')
+               RELFILESPEC is a foreign language object file, maybe
+               with an extension.
+
+         `executable'
+               implies `extensions(['so',''])'
+               (substitute the actual shared object file extension for
+               `so') RELFILESPEC is a foreign executable (shared object
+               file), maybe with an extension.
+
+         `qof'
+               implies `extensions(['qof',''])'.
+               RELFILESPEC is a Prolog object code file, maybe with a
+               `.qof' extension.
+
+         `directory'
+               implies `extensions([''])'.
+               RELFILESPEC is a directory, not a regular file. Only
+               when this option is present can `absolute_file_name/3'
+               access directories without raising an exception.
+
+         `foreign'
+               implies `extensions(['o',''])'
+               (substitute the actual object file extension for `o')
+               Same as `object'. Included for backward compatibility.
+               Might be removed from future releases.
+
+    `ignore_version(BOOL)'
+          This switch has no effect on systems where files don't have
+          version numbers. BOOL =
+
+         `true'
+               When looking for a file that obeys the specified access
+               modes, the version numbers will be ignored.  The
+               returned absolute filename will not contain any version
+               number.  To find a filename that includes a proper
+               version number, use `absolute_file_name/3' with the
+               returned file as input, and the option
+               `ignore_version(false').
+
+               See description of `access' option.
+
+         `false'
+               (default) Version numbers are significant.
+
+    `access(MODE)'
+          MODE must be one of the following:
+
+         `read'
+               ABSFILENAME must be readable.
+
+         `write'
+               If ABSFILENAME exists, it must be writable.  If it
+               doesn't exist, it must be possible to create.
+
+         `append'
+               If ABSFILENAME exists, it must be writable.  If it
+               doesn't exist, it must be possible to create.
+
+         `exist'
+               The file represented by ABSFILENAME must exist.
+
+         `none'
+               (default) The file system is not accessed. The first
+               absolute filename that is derived from RELFILESPEC is
+               returned. Note that if this option is specified, no
+               existence exceptions can be raised.
+
+         list of access modes
+               A list of one or more of the above options. If ABSFILE
+               exists, it must obey every specified option in the list.
+               This makes it possible to combine a read and write, or
+               write and exist check, into one call to
+               `absolute_file_name/3'.
+
+
+          *Please note:* The following only applies to file systems
+          with version numbered files.  If the user explicitly has
+          specified a version number, only that version is considered.
+          If no version number is supplied, the version number of
+          ABSFILENAME is determined by:
+
+         `read'
+               newest readable version.
+
+         `write'
+               the file exists, the newest version plus one. If the
+               file doesn't exist, a system dependent "youngest"
+               version number.
+
+         `append'
+               If the file exists, the newest version.  If the file
+               doesn't exist, a system dependent "youngest" version
+               number.
+
+         `exist'
+               newest version.
+
+         `none'
+               A system dependent "youngest" version number. Note that
+               this can be switched of with the `ignore_version' option.
+
+         list of modes
+               newest version.
+
+    `file_errors(VAL)'
+          VAL =
+         `error'
+               (default) Raise an exception if a file derived from
+               RELFILESPEC has the wrong permissions, that is, can't be
+               accessed at all, or doesn't satisfy the the access modes
+               specified with the `access' option.
+
+         `fail'
+               Fail if a file derived from RELFILESPEC has the wrong
+               permissions. Normally an exception is raised, which
+               might not always be a desirable behavior, since files
+               that do obey the access options might be found later on
+               in the search.  When this option is given, the search
+               space is guaranteed to be exhausted. Note that the
+               effect of this option is the same as having the Prolog
+               flag `fileerrors' set to `off'.
+
+    `solutions(VAL)'
+          i'Val' =
+         `first'
+               (default) As soon as a file derived from RELFILESPEC is
+               found, commit to that file. Makes `absolute_file_name/3'
+               determinate.
+
+         `all'
+               Return each file derived from RELFILESPEC that is found.
+               The files are returned through backtracking. This option
+               is probably most useful in combination with the option
+               `file_errors(fail)'.
+
+Description
+-----------
+
+   We can restrict our description to `absolute_file_name/3', because
+`absolute_file_name/2' can be defined as:
+     absolute_file_name(RelFileSpec, AbsFileName) :-
+        Options = [ ignore_underscores(true),
+                    file_type(prolog),
+                    access(exist),
+                    file_errors(fail) ],
+        (  absolute_file_name(RelFileSpec,
+                              Options,
+                              AbsFileName)
+        -> true
+        ;  absolute_file_name(RelFileSpec,
+                              [],
+                              AbsFileName)
+        ).
+
+   Note that the semantics of `absolute_file_name/2' has changed
+slightly since previous releases. The difference is that
+`absolute_file_name/2' now always succeeds and returns an absolute
+filename, also when the RELFILESPEC is a compound term. For instance,
+if the relative filename is `library(strings)', you get an absolute
+filename, even if the library file `strings.pl' doesn't exist. In
+previous releases, this would have raised an exception.  If it's
+important that an error is raised when the file doesn't exist,
+`absolute_file_name/3' with option `access(exist)' can be used.
+
+   Four phase process: The functionality of `absolute_file_name/3' is
+most easily described as a four phase process, in which each phase gets
+an infile from the preceding phase, and constructs one or more outfiles
+to be consumed by the succeeding phases. The phases are:
+  1.  Syntactic rewriting
+
+  2. Underscore deletion
+
+  3. Extension expansion
+
+  4. Access checking
+
+   Each of the three first phases modifies the infile and produces
+variants that will be fed into the succeeding phases. The functionality
+of all phases but the first are decided with the option list. The last
+phase checks if the generated file exists, and if not asks for a new
+variant from the preceding phases.  If the file exists, but doesn't
+obey the access mode option, a permission exception is raised. If the
+file obeys the access mode option, `absolute_file_name/3' commits to
+that solution, unifies ABSFILENAME with the filename, and succeeds
+determinately. For a thorough description, see below.
+
+   Note that the relative filename RELFILESPEC may also be of the form
+PathAlias(FILESPEC), in which case the absolute filename of the file
+FILESPEC in one of the directories designated by PATHALIAS is returned
+(see the description of each phase below, and  *Note ref-fdi-fsp::).
+
+Description of each phase
+-------------------------
+
+   (Phase 1) This phase translates the relative file specification
+given by RELFILESPEC into the corresponding absolute filename.
+
+   If RELFILESPEC is a term with one argument, it is interpreted as
+PathAlias(FILESPEC) and outfile becomes the file as given by
+`file_search_path/2'.    If `file_search_path/2' has more than one
+solution, outfile is unified with the solutions in the order they are
+generated.  If the succeeding phase fails, and there is no more
+solutions, an existence exception is raised.
+
+   If RELFILESPEC = `''', outfile is unified with the current working
+directory.  If `absolute_file_name/3' is called from a goal in a file
+being loaded, the directory containing that file is considered current
+working directory.  If the succeeding phase fails, an existence
+exception is raised.
+
+   If RELFILESPEC is an atom, other than `''', it's divided into
+components.  A component are defined to be those characters:
+  1. Between the beginning of the filename and the end of the filename
+     if there are no `/'s in the filename.
+
+  2. Between the beginning of the filename and the first `/'.
+
+  3. Between any two successive `/'-groups (where a `/'-group is
+     defined to be a sequence of one or more `/'s with no non-`/'
+     character interspersed.)
+
+  4. Between the last `/' and the end of the filename.
+
+   To give the absolute filename, the following rules are applied to
+each component of RELFILESPEC:
+  1.         The component `~USER', if encountered as the first
+     component            of RELFILESPEC, is replaced by the absolute
+     name            of the home directory of USER. If USER doesn't
+     exist,            a permission exception is raised.
+
+  2.         The component `~', if encountered as the first component
+             of RELFILESPEC, is replaced by the absolute name
+      of the home directory of the current user.
+
+  3.         If neither (1) nor (2) applies, then RELFILESPEC
+     is prefixed with the current working directory. If
+     `absolute_file_name/3' is called from a goal in a file being
+         loaded, the directory containing that file is considered
+     current            working directory.
+
+  4.         The component `.' is deleted.
+
+  5.         The component `..' is deleted together with the directory
+     name            syntactically preceding it. For example,
+     `a/b/../c' is            rewritten as `a/c'.
+
+  6.         Two or more consecutive `/'s are replaced with one `/'.
+
+   When these rules have been applied, the absolute filename is unified
+with outfile. If the succeeding phase fails, an existence exception is
+raised.
+
+   (Phase 2) See `ignore_underscores' option.
+
+   (Phase 3) See `extensions' and `file_type' options.
+
+   (Phase 4) See `access' option.
+
+Exceptions
+----------
+
+`domain_error'
+     OPTIONS contains an undefined option.
+
+`instantiation_error'
+     Any of the OPTIONS arguments or RELFILESPEC is not ground.
+
+`type_error'
+     In OPTIONS or in RELFILESPEC.
+
+`existence_error'
+     RELFILESPEC is syntactically valid but does not correspond to any
+     file.
+
+`permission_error'
+     RELFILESPEC names an existing file but the file does not obey the
+     given access mode.
+
+Comments
+--------
+
+   If an option is specified more than once the rightmost option takes
+precedence. This provides for a convenient way of adding default values
+by putting these defaults at the front of the list of options.
+
+   Note that the default behavior of `absolute_file_name/3', that is
+when OPTIONS = `[]', does not mimic the behavior of
+`absolute_file_name/2'.
+
+   If `absolute_file_name/3' succeeds, and the file access option was
+one of {read, write, append}, it is guaranteed that the file can be
+opened with `open/[3,4]'.  If the access option was `exist', the file
+does exist, but might be both read and write protected.
+
+   Note that `absolute_file_name/3' signals a permission error if a
+specified file refers to a directory (unless the option `access(none)'
+is given.)
+
+   `absolute_file_name/[2,3]' is sensitive to the `fileerrors' flag,
+which causes the predicate to fail rather than raising permission errors
+when reading files with wrong permission.  This has the effect that the
+search space always is exhausted.
+
+   directives in the extensions list. This causes the so specified
+access mode to be used as default access mode from there on, and the
+subsequently generated file names will thus be tried for this access
+mode, and not the default set by the access option. This can be
+particularly useful when used in combination with the `fileerrors' flag
+mentioned above.  }
+
+   If RELFILESPEC contains a `..' component, the constructed absolute
+filename might be wrong. This occurs if the parent directory is not the
+same as the directory preceding `..' in the relative file name, which
+only can happen if a soft link is involved.
+
+Examples
+--------
+
+   To check whether the file `my_text' exists in the current user
+directory, with one of the extensions `text' or `txt', and is both
+writable and readable:
+
+     absolute_file_name('~/my_text',
+                        [extensions(['text','txt']),
+                         access([read,write])],
+                        File).
+
+   To check if the Prolog file `same_functor' exists in some library,
+and also check if it exists under the name `samefunctor':
+     absolute_file_name(library(same_functor),
+                        [file_type(prolog), access(exist),
+                         ignore_underscores(true)],
+                        File).
+
+See Also
+--------
+
+   `file_search_path/2', `library_directory/2' `nofileerrors/0',
+`fileerrors/0', `prolog_flag/[2,3]'
+
+   `library(files)'  `library(directory)'
+

@@ -1,0 +1,111 @@
+%   File: IPC/CHANGES
+%   SCCS: @(#)88/11/16 CHANGES	27.2
+
+Changes in IPC/ part of the Quintus Prolog Library, November 1988
+-----------------------------------------------------------------
+
+Most files have had minor edits to improve the file headers and make the
+version numbering consistent so that the Unix command 'what' will always
+find an SCCS identification string in each file.  All files have also been
+tested on both Unix 4.2bsd and Unix System V.  All occurances of comments
+after "#else" and "#endif" in C source files have been enclosed in comment
+delimiters to avoid warnings from some System V C compilers. Appropriate
+C casts have also been added where necessary to avoid unnecessary warnings
+on different Unix systems. The comments below do not mention any of these
+simple changes - only changes of some semantic significance are noted.
+
+Changed IPC Files:
+
+	sigs.c			declaration of signal() fixed for SysV,
+				made SigFunc portable.
+
+	xdr.h			improved the way HAS_XDR is handled
+				making it easy to switch in makefile.
+
+	socket.pl		command line interface changed, we now
+	xdrsock.pl		provide arguments, previously file 
+	ccallqp.pl 		descriptors 3 and 4 were built in.
+
+	callservant.c		new command line method of telling child
+				it has pipes. We now have to use 
+                                interpreter() even on BSD systems.
+
+	ambi.c			new command line method of telling child 
+                                it has pipes. 
+
+	makesocket.c		deleted redefinition of SOCKQUEUELENGTH
+
+	
+Previous changes that were made to the IPC files prior to November 1988
+-----------------------------------------------------------------------
+
+There are three user-visible changes:
+
+(1) If you supply an empty host name, e.g.
+
+	QP_ipc_create_servant("", SavedState, OutputFile)	[C]
+    or
+	create_servant('', SavedState, OutputFile)		[Prolog]
+
+    the Prolog servant process will be started on the same machine,
+    and the connection will use PIPES rather than SOCKETS.
+
+    There is a new
+	create_servant(SavedState, OutputFile)			[Prolog]
+    which automatically supplies the '' host name.
+
+    Using "local" or 'local' will still try to run the servant on
+    the same machine and make the connection through SOCKETS.
+
+(2) There are now three cases for the OutputFile rather than 2:
+	''	>/dev/null					NEW
+	'user'	no redirection					OLD
+	Other	>Other 2>&1					OLD
+    Thus if you call
+	QP_ipc_create_servant(Machine, SavedState, "")		[C]
+    or
+	create_servant(Machine, SavedState, '')			[Prolog]
+    the standard output will be discarded and the standard error
+    will be routed to the caller's standard error.
+
+(3) There is now a
+	set_of_all_servant(Template, Generator, Set)
+    in addition to
+	bag_of_all_servant(Template, Generator, Bag)
+    The relation between the two is just what you'd expect.
+
+(4) The rule for identifying the saved state has been changed.
+    The old rule was that either
+    (a) the SavedState was an absolute file name, or
+    (b) the SavedState was a relative file name and would be
+	interpreted relative to your $HOME directory.
+
+    This is inconvenient and difficult to remember, especially as
+    you would expect running a saved state as a servant process
+    to be similar to calling it through "system".
+
+    The new rule is that either
+    (a) the SavedState is an absolute file name, or
+    (b) the SavedState is a relative file name, and is searched
+	for in the sequence of directories specified by your
+	$PATH environment variable.  If this fails, it will try
+	the CURRENT directory.
+
+    We could easily extend this to handle ~/ as a prefix on the
+    SavedState, so that it would be easy to specify a SavedState
+    in the $HOME directory.  It would also be easy to look first
+    for a $QPPATH variable.  If that were set thus:
+	QPPATH=$HOME:\$PATH
+    then *create*servant would check the $HOME directory before
+    looking in the $PATH.  (The second $ must be quoted and the
+    first one mustn't be.)
+
+    Note that the new rule only really makes sense when the local
+    machine and the remote machine share the same file system.
+    But then, the present interface never did make any sense in
+    any other context.  If you want to run a program on a machine
+    which doesn't have much the same file system, you have to say
+    who you are *on that machine* as well as what you want to run,
+    and the present interface has no provision for that.
+    [run Program as User/Password on Machine]
+

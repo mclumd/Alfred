@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Seek Type</h5>
+
+<pre class="example">     open/4 option:  seek(SeekType)
+     QP_stream:      unsigned char seek_type
+     </pre>
+
+   <p>This field specifies which type of seeking can be performed on the stream. 
+The possible values for <code>seek_type</code> are:
+
+     <dl>
+
+     <br><dt><code>QP_SEEK_ERROR</code>
+     <dd>specified as <code>seek(error)</code> in <code>open/4</code>. 
+It is an error to perform any type of seeking operation on the stream. 
+Any call to <code>seek/4</code>, <code>stream_position/3</code>, <code>QP_seek()</code>
+or <code>QP_setpos()</code> is an error.
+
+     <br><dt><code>QP_SEEK_PREVIOUS</code>
+     <dd>specified as <code>seek(previous)</code> in <code>open/4</code>. 
+The stream only seeks back to a previous read or written position. 
+The previous position must be saved through <code>QP_getpos()</code>
+or <code>stream_position/[2,3]</code>. 
+The seeking can only be performed through
+<code>stream_position/3</code> or <code>QP_setpos()</code>.
+
+     <br><dt><code>QP_SEEK_BYTE</code>
+     <dd>specified as <code>seek(byte)</code> in <code>open/4</code>. 
+The stream can seek to any arbitrary byte offset in the file or
+to any previously saved position.  In addition to the seeking method
+described in <code>QP_SEEK_PREVIOUS</code>, the stream can also seek
+through <code>seek/4</code> or <code>QP_seek()</code>.
+
+     <br><dt><code>QP_SEEK_RECORD</code>
+     <dd>specified as <code>seek(record)</code> in <code>open/4</code>. 
+The stream can seek to an arbitrary record number in the file or
+to any previously saved position. 
+</dl>
+
+   <p>The seek function must be supplied for a user-defined stream
+with <code>seek_type</code> set to any value other than <code>QP_SEEK_ERROR</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-sst-flu.html#fli-ios-sst-flu">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-sst-trm.html#fli-ios-sst-trm">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-sst.html#fli-ios-sst">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>get_profile_results/4</code> <dfn>development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>get_profile_results(</code><var>+By</var><code>,
+                        </code><var>+Num</var><code>,</code><var>-Results</var><code>,</code><var>-Total</var><code>)</code>
+
+   <p>Returns the results of the last profiled execution.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>By</var> <dfn>atom</dfn>
+     <dd>must be one of the atoms:
+          <ol type=1 start=1>
+
+          <li><code>by_time</code>
+<li><code>by_choice_points</code>
+<li><code>by_calls</code>
+<li><code>by_redos</code>
+          </ol>
+
+     <br><dt><var>Num</var> <dfn>integer</dfn>
+     <dd>specifies the maximum length of the
+<var>Results</var> list
+
+     <br><dt><var>Results</var> <dfn>list of term</dfn>
+     <dd>the results list
+
+     <br><dt><var>Total</var> <dfn>integer</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Returns profiling information accumulated from the last call to <code>profile/1</code>. 
+The <var>By</var> argument specifies the <dfn>display mode</dfn>, which determines how
+the list is sorted and what the <var>Total</var> argument returns. 
+The <var>Num</var> argument determines the maximum length of the <var>Results</var>
+list. This list is always sorted in descending order so that the top <var>Num</var>
+predicates are included in the list.
+
+   <p><var>Results</var> is a list of terms of the form
+<code>proc(</code><var>Name</var><code>,</code><var>Ncalls</var><code>,</code><var>Nchpts</var><code>,</code><var>Nredos</var><code>,</code><var>Time</var><code>,</code><var>Callers</var><code>)</code>
+where <var>Name,Ncalls,Nchpts,Nredos,Time</var> give call, choice point,
+redo counts and the execution time spent in milliseconds, and
+<var>Callers</var> is a list of <code>calledby(</code><var>Time</var><code>,</code><var>Calls</var><code>,</code><var>Name</var><code>,</code><var>ClauseNo</var><code>,</code><var>CallNo</var><code>)</code>
+terms, where <var>Time</var> in this case is the percentage of time attributed
+to this caller, <var>Calls</var> is the number of calls made from this caller
+and <var>Name, ClauseNo, CallNo</var> locate precisely the actual caller.
+
+   <p>If the display mode is <code>by_time</code> then <var>Total</var> is the total
+execution time in milliseconds. If the display mode is <code>by_calls</code>,
+<code>by_choice_points</code> or <code>by_redos</code> then <var>Total</var> returns
+the total number of calls, choice points or redos respectively.
+
+   <p>This predicate is not supported in runtime systems.
+
+<h4 class="subheading">Example</h4>
+
+<pre class="example">     | ?- <kbd>get_profile_results(by_time,3,List,Total).</kbd>
+     
+     List = [proc(user:setof/3,227,0,0,1980,
+                  [calledby(61,152,user:satisfy/1,6,1),
+                   calledby(20,27,user:satisfy/1,7,1),
+                   calledby(18,48,user:seto/3,1,1)]),
+             proc(user:satisfy/1,35738,36782,14112,260,
+                  [calledby(69,13857,user:satisfy/1,1,2),
+                   calledby(15,12137,user:satisfy/1,2,1)]),
+             proc(user:write/1,2814,0,0,240,
+                  [calledby(33,481,user:reply/1,3,1),
+                   calledby(25,608,user:replies/1,3,1),
+                   calledby(16,562,user:out/1,2,1),
+                   calledby(8,203,user:reply/1,2,5),
+                   calledby(8,34,user:replies/1,2,3)])],
+     Total = 6040
+     
+     [profile]
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>profile/[0,1,2,3]</code>,
+<code>show_profile_results/[0,1,2]</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-rar.html#mpg-ref-rar">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-get0.html#mpg-ref-get0">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

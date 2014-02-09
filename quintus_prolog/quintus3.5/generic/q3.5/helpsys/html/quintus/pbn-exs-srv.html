@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Application Servers</h4>
+
+   <p>If you want to get your Prolog application to be accessible from an intranet
+or the Internet you can use this package to embed the Prolog programs
+into a Java application server such as Tomcat, WebSphere, etc.
+
+   <p>An example of how to do this is provided in <code>sessionsum.pl</code>. 
+This example uses sessions to keep track of users so that the application
+can hold a state for a user session (as in the example below, remember the sum
+of all expressions evaluated in the session).
+
+<pre class="example">     &lt;% page import = "se.sics.prologbeans.*" %&gt;
+     &lt;html&gt;
+     &lt;head&gt;&lt;title&gt;Sum Calculator&lt;/title&gt;&lt;/head&gt;
+     &lt;body bgcolor="white"&gt;
+     &lt;font size=4&gt;Prolog Sum Calculator, enter expression to evaluate:
+     &lt;form&gt;&lt;input type=text name=query&gt;&lt;/form&gt;
+     &lt;%
+        PrologSession pSession =
+        PrologSession.getPrologSession("prolog/PrologSession", session);
+     
+        String evQuery = request.getParameter("query");
+        String output = "";
+        if (evQuery != null) {
+          Bindings bindings = new Bindings().bind("E",evQuery + '.');
+          QueryAnswer answer =
+             pSession.executeQuery("sum(E,Sum,Average,Count)", bindings);
+          Term average = answer.getValue("Average");
+          if (average != null) {
+             Term sum = answer.getValue("Sum");
+             Term count = answer.getValue("Count");
+     
+             output = "&lt;h4&gt;Average =" + average + ", Sum = "
+             + sum + " Count = " + count + "&lt;/h4&gt;";
+          } else {
+             output = "&lt;h4&gt;Error: " + answer.getError() + "&lt;/h4&gt;";
+          }
+       }
+     %&gt;
+     &lt;%= output  %&gt;&lt;br&gt;&lt;/font&gt;
+     &lt;p&gt;&lt;hr&gt;Powered by Quintus Prolog
+     &lt;/body&gt;&lt;/html&gt;
+     </pre>
+
+   <p>The example shows the code of a JSP (Java Server Page). It makes use
+of the method <code>PrologSession.getPrologSession(String jndiName,
+HTTPSession session)</code>, which uses JNDI to look up a registered
+<code>PrologSession</code>, which is connected to the Prolog server. The
+variable <var>session</var> is in a JSP bound to the current
+<code>HTTPSession</code>, and the variable <var>request</var> is bound to the
+current <code>HTTPRequest</code>.  Since the <code>HTTPSession</code> object
+<code>session</code> is specified all queries to the Prolog server will
+contain a session id. The rest of the example shows how to send a
+query and output the answer.
+
+   <p>Example usage of sessions is shown below, and is from
+<code>sessionsum.pl</code>:
+
+<pre class="example">     :- module(sessionsum,[main/0,sum/5]).
+     :- use_module(library(prologbeans)).
+     :- use_module(library(charsio), [read_from_chars/2]).
+     
+     %% Register the acceptable queries (session based)
+     main:-
+         register_query(sum(C,Sum,Average,Count),
+                        sum(C,Session,Sum,Average,Count),
+                        Session),
+         start.
+     
+     %% The sum predicate which gets the information from a session database,
+     %% makes some updates and then stores it back in to the session store
+     %% (and returns the information back to the application server)
+     sum(ExprChars, Session, Sum, Average, Count) :-
+         session_get(Session, sum, 0, OldSum),
+         session_get(Session, count, 0, OldCount),
+         read_from_chars(ExprChars, Expr),
+         Val is Expr,
+         Sum is OldSum + Val,
+         Count is OldCount + 1,
+         Average is Sum / Count,
+         session_put(Session, sum, Sum),
+         session_put(Session, count, Count).
+     </pre>
+
+   <p>In this example a query <code>sum/4</code> is registered to use a predicate
+<code>sum/5</code> where one of the variables, <var>Session</var> will
+be bound to the session id associated to the query. The <code>sum/5</code>
+predicate uses the <code>session_get/4</code> predicate to access stored
+information about the particular session, and then it performs the
+evaluation of the expression. Finally, it updates and stores the values
+for this session.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pbn-exs-tomcat.html#pbn-exs-tomcat">Next</a>
+<li><a rel="previous" accesskey="p" href="pbn-exs-mbd.html#pbn-exs-mbd">Previous</a>
+<li><a rel="up" accesskey="u" href="pbn-exs.html#pbn-exs">Up</a>
+</ul>
+</div>
+   </body></html>
+

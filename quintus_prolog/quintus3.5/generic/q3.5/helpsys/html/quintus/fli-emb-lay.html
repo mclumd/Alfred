@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The Embedding Layer</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-emb-lay-onm.html#fli-emb-lay-onm">fli-emb-lay-onm</a>:                      Contrasting Old and New Models
+</ul>
+
+   <p>In many cases, the embedding layer will be transparent to the
+application developer.  It provides a full set of default functions
+for interaction between Prolog and the host operating system. 
+Frequently all you will need to do is use the extended FLI and let the
+defaults provided by Quintus Prolog take care of the operating system
+requirements concerning memory management and I/O. 
+However, Prolog no longer insists on controlling memory management and
+input/output operations, should this be impossible or undesirable in your
+application.  These default interfaces are fully user redefinable.
+
+   <p><b>Memory management</b>: Quintus Prolog release 3 does not have any
+restrictions on the underlying memory.  This is a crucial aspect of
+embeddability.  Any good Prolog implementation will start up with the
+minimum amount of memory necessary and expand and shrink depending on
+the memory needed to execute each goal. In previous releases of
+Quintus Prolog (as well as most other Prolog implementations) all the
+memory that Prolog used had to be contiguous.  So it was possible
+that if some foreign component of the application allocated memory
+from the top, it would disable Prolog from growing any further. With
+release 3, Quintus Prolog runs on discontiguous memory. Therefore
+Prolog can share the process's address space with memory allocated to
+Prolog interspersed with memory allocated by other components of the
+application.
+
+   <p>The user can replace Quintus Prolog's low level memory management functions. 
+This is essential if the user has an application that would like to
+take care of all memory management and does not want Prolog to
+directly make system calls to the OS to allocate memory. This makes it
+easy to link Prolog with other components that have more rigid
+restrictions about its memory allocation.  (Discussed further in
+<a href="fli-emb-how-mem.html#fli-emb-how-mem">fli-emb-how-mem</a>).
+
+   <p><b>Input/Output</b>: The user can create, access and manipulate Prolog
+I/O streams from foreign code.  This provides a unified way of
+performing I/O from Prolog as well as foreign code.  It also gives the
+user the ability to have I/O streams to sockets, pipes or even
+windows.  Graphical user interfaces have become a natural Prolog component
+of an application.
+
+   <p>The low level I/O functions can also be replaced.  This is
+essential if the user has a large application and wants to take
+care of all I/O without any direct calls from Prolog to the
+OS to perform I/O.   This is elaborated in <a href="fli-emb-how-iou.html#fli-emb-how-iou">fli-emb-how-iou</a>.
+
+   <blockquote>
+
+        <p><strong>Windows caveat:</strong>
+Redefining functions in the Embedding Layer only works in
+executables built with <code>-S</code>; see <a href="sap-rge-sos.html#sap-rge-sos">sap-rge-sos</a>. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-emb-how.html#fli-emb-how">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-emb-ove.html#fli-emb-ove">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-emb.html#fli-emb">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

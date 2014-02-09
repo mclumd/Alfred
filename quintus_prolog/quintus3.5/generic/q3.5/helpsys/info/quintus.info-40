@@ -1,0 +1,1577 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxl-wmf-grp-change_active_pointer_grab,  Prev: pxl-wmf-grp-ungrab_pointer,  Up: pxl-wmf-grp
+
+`change_active_pointer_grab/[3,4]'
+..................................
+
+     change_active_pointer_grab(+DISPLAYABLE, +EVENTSMASK, +CURSOR, +TIME)
+     change_active_pointer_grab(+EVENTSMASK, +CURSOR, +TIME)
+
+   Modify the specified dynamic parameters of a grab, if the pointer is
+actively grabbed by the client and the specified TIME is no earlier
+than the last-pointer-grab and no later than the current X server time.
+
+   DISPLAYABLE is the ProXL Displayable. If omitted, the default
+Display is used.
+
+   EVENTSMASK is an integer bitmask specifying the events that are
+selected and should be reported to the client. The valid event mask
+names are:
+   * `button_press'
+
+   * `button_release'
+
+   * `enter_window'
+
+   * `leave_window'
+
+   * `pointer_motion'
+
+   * `pointer_motion_hint'
+
+   * `button1_motion'
+
+   * `button2_motion'
+
+   * `button3_motion'
+
+   * `button4_motion'
+
+   * `button5_motion'
+
+   * `button_motion'
+
+   * `keymap_state'
+
+   The predicate `event_list_mask/2' is useful to translate between
+event mask names and integer bitmasks.
+
+   CURSOR is the ProXL cursor to be displayed during the grab, or the
+atom `none'.
+
+   TIME is a timestamp in milliseconds (from an event), or the atom
+`current_time'.
+
+
+File: quintus.info,  Node: pxl-wmf-grk,  Next: pxl-wmf-grs,  Prev: pxl-wmf-grp,  Up: pxl-wmf
+
+Grabbing the Keyboard
+---------------------
+
+* Menu:
+
+* pxl-wmf-grk-grab_keyboard::           grab_keyboard/6
+* pxl-wmf-grk-ungrab_keyboard::         ungrab_keyboard/[0,1,2]
+* pxl-wmf-grk-grab_key::                grab_key/6
+* pxl-wmf-grk-ungrab_key::              ungrab_key/3
+* pxl-wmf-grk-allow_events::            allow_events/[1,2,3]
+
+   Usually, keyboard events will be delivered as soon as they occur to
+the appropriate window and client, which is determined by the window
+event masks and input focus.  With these routines it is possible to
+grab the keyboard keys; in this case, events will be sent to the
+grabbing client, rather than the normal client who would have received
+the event. If the keyboard or pointer is in asynchronous mode, further
+mouse and keyboard events will continue to be processed. If the
+keyboard or pointer is in synchronous mode, no further events will be
+processed until the grabbing client allows them.
+
+   There are two kinds of grabs: active and passive. An active grab
+occurs when a single client grabs the keyboard explicitly. Clients can
+also grab a particular keyboard key in a window, this is called a
+"passive grab" and it activates when the key is actually pressed.
+
+   Many of the operations take a TIME argument, which can be
+`current_time' (the X server current time) or an actual timestamp in
+milliseconds.
+
+
+File: quintus.info,  Node: pxl-wmf-grk-grab_keyboard,  Next: pxl-wmf-grk-ungrab_keyboard,  Up: pxl-wmf-grk
+
+`grab_keyboard/6'
+.................
+
+     grab_keyboard(+WINDOW, +OWNEREVENTS,
+             +POINTERMODE, +KEYBOARDMODE,
+             +TIME, -GRABSTATUS)
+
+   Actively grabs control of the keyboard and generates `focus_in' and
+`focus_out' events.
+
+   WINDOW is the ProXL window to which events will be reported while
+the grab is in effect.
+
+   OWNEREVENTS is one of:
+`true'
+     If keyboard events should be reported normally.
+
+`false'
+     If keyboard events should be reported only to the grab window.
+
+   POINTERMODE controls further processing of pointer events:
+`async'
+     If pointer event processing continues normally.
+
+`sync'
+     If the state of the pointer, as seen by applications appears to
+     freeze. No further pointer events are generated until the grabbing
+     client calls `allow_events/[1,2,3]' or the pointer grab is
+     released.
+
+   KEYBOARDMODE controls further processing of keyboard events:
+`async'
+     If keyboard event processing continues normally.
+
+`sync'
+     If the state of the keyboard, as seen by applications appears to
+     freeze. No further keyboard events are generated until the
+     grabbing client calls `allow_events/[1,2,3]' or the keyboard grab
+     is released.
+
+   TIME is a timestamp in milliseconds or `current_time'.
+
+   GRABSTATUS is unified by `grab_keyboard/6' with one of:
+`success'
+     If the grab was successful.
+
+`already_grabbed'
+     If the attempt is unsuccessful because the keyboard is already
+     actively grabbed  by some other client.
+
+`invalid_time'
+     If the attempt is unsuccessful because the specified TIME is
+     earlier than the last-keyboard-grab time, or later than the
+     current server time.
+
+`not_viewable'
+     If the attempt is unsuccessful because the grabbing WINDOW is not
+     viewable.
+
+`frozen'
+     If the attempt is unsuccessful because the keyboard is frozen by
+     an active grab of another client.
+
+
+File: quintus.info,  Node: pxl-wmf-grk-ungrab_keyboard,  Next: pxl-wmf-grk-grab_key,  Prev: pxl-wmf-grk-grab_keyboard,  Up: pxl-wmf-grk
+
+`ungrab_keyboard/[0,1,2]'
+.........................
+
+     ungrab_keyboard(+DISPLAYABLE, +TIME)
+     ungrab_keyboard(+TIME)
+     ungrab_keyboard
+
+   Release the keyboard and any queued events if this client has it
+actively grabbed, unless the TIME specified is earlier that the
+last-keyboard-grab time or later than the current server time. It also
+generates `focus_in' and `focus_out' events.
+
+   DISPLAYABLE is the ProXL Displayable. If omitted, the default Display
+is used.
+
+   TIME is a timestamp in milliseconds (from an event) or
+`current_time'. If omitted, `current_time' is used.
+
+
+File: quintus.info,  Node: pxl-wmf-grk-grab_key,  Next: pxl-wmf-grk-ungrab_key,  Prev: pxl-wmf-grk-ungrab_keyboard,  Up: pxl-wmf-grk
+
+`grab_key/6'
+............
+
+     grab_key(+KEY, +MODIFIERSMASK, +GRABWINDOW,
+             +OWNEREVENTS, +POINTERMODE, +KEYBOARDMODE)
+
+   Establishes a passive grab on the keyboard, to be activated when the
+given key and modifiers are pressed while the pointer is in the window.
+
+   KEY is the key that should be pressed. Possible values are:
+An integer
+     Giving the keycode.
+
+A valid key name
+     As given by `keysym/2'.
+
+`any_key'
+   MODIFIERSMASK is one of:
+An integer
+     A bitmask giving the state of the modifier masks. The predicate
+     `modifiers_mask/2' is useful to translate between modifier
+     specifications and bitmasks.
+
+`any_modifier'
+   WINDOW is the ProXL window to which events will be reported while
+the grab is in effect.
+
+   OWNEREVENTS is one of:
+`true'
+     If keyboard events should be reported normally.
+
+`false'
+     If keyboard events should be reported only to the grab window.
+
+   POINTERMODE controls further processing of pointer events:
+`async'
+     If pointer event processing continues normally.
+
+`sync'
+     If the state of the pointer, as seen by applications appears to
+     freeze. No further pointer events are generated until the grabbing
+     client calls `allow_events/[1,2,3]' or the pointer grab is
+     released.
+
+   KEYBOARDMODE controls further processing of keyboard events:
+`async'
+     If keyboard event processing continues normally.
+
+`sync'
+     If the state of the keyboard, as seen by applications appears to
+     freeze. No further keyboard events are generated until the
+     grabbing client calls `allow_events/[1,2,3]' or the keyboard grab
+     is released.
+
+
+File: quintus.info,  Node: pxl-wmf-grk-ungrab_key,  Next: pxl-wmf-grk-allow_events,  Prev: pxl-wmf-grk-grab_key,  Up: pxl-wmf-grk
+
+`ungrab_key/3'
+..............
+
+     ungrab_key(+KEY, +MODIFIERSMASK, +UNGRABWINDOW)
+
+   Releases the passive grab started by the key combination on the
+specified window if it was grabbed by this client. Has no effect on an
+active grab.
+
+   KEY is the key that should be ungrabbed. One of:
+An integer
+     Giving the keycode.
+
+A valid key name
+     As given by `keysym/2'.
+
+`any_key'
+   MODIFIERSMASK is one of:
+An integer
+     A bitmask giving the state of the modifier masks. The predicate
+     `modifiers_mask/2' is useful to translate between modifier
+     specifications and bitmasks.
+
+`any_modifier'
+   UNGRABWINDOW is the ProXL window where the grab is in effect.
+
+
+File: quintus.info,  Node: pxl-wmf-grk-allow_events,  Prev: pxl-wmf-grk-ungrab_key,  Up: pxl-wmf-grk
+
+`allow_events/[1,2,3]'
+......................
+
+     allow_events(+DISPLAYABLE, +EVENTMODE, +TIME)
+     allow_events(+EVENTMODE, +TIME)
+     allow_events(+EVENTMODE)
+
+   Release some of the queued events, if the client has caused a device
+to freeze.
+
+   DISPLAYABLE is a valid ProXL Displayable. If omitted, the default
+Display is used.
+
+   EVENTMODE is one of:
+   * `async_pointer'
+
+   * `sync_pointer'
+
+   * `replay_pointer'
+
+   * `async_keyboard'
+
+   * `sync_keyboard'
+
+   * `replay_keyboard'
+
+   * `sync_both'
+
+   * `async_both'
+
+   TIME is a timestamp in milliseconds (from an event) or
+`current_time'. If omitted, `current_time' is used.
+
+
+File: quintus.info,  Node: pxl-wmf-grs,  Next: pxl-wmf-misc,  Prev: pxl-wmf-grk,  Up: pxl-wmf
+
+Grabbing the Server
+-------------------
+
+* Menu:
+
+* pxl-wmf-grs-grab_server::             grab_server/[0,1]
+* pxl-wmf-grs-ungrab_server::           ungrab_server/[0,1]
+
+   Grabbing the server is antisocial, as it does not allow other clients
+access. The use of this predicates is highly discouraged.
+
+
+File: quintus.info,  Node: pxl-wmf-grs-grab_server,  Next: pxl-wmf-grs-ungrab_server,  Up: pxl-wmf-grs
+
+`grab_server/[0,1]'
+...................
+
+     grab_server(+DISPLAY)
+     grab_server
+
+   Allows a client to grab the server, disabling processing of any
+other requests.
+
+   DISPLAY is a ProXL Display. If omitted, the default Display is used.
+
+
+File: quintus.info,  Node: pxl-wmf-grs-ungrab_server,  Prev: pxl-wmf-grs-grab_server,  Up: pxl-wmf-grs
+
+`ungrab_server/[0,1]'
+.....................
+
+     ungrab_server(+DISPLAY)
+     ungrab_server
+
+   Release the server to other connections.
+
+   DISPLAY is a ProXL Display. If omitted, the default Display is used.
+
+
+File: quintus.info,  Node: pxl-wmf-misc,  Next: pxl-wmf-pctl,  Prev: pxl-wmf-grs,  Up: pxl-wmf
+
+Miscellaneous Control Functions
+-------------------------------
+
+* Menu:
+
+* pxl-wmf-misc-warp_pointer::           warp_pointer/8
+* pxl-wmf-misc-set_input_focus::        set_input_focus/3
+* pxl-wmf-misc-get_input_focus::        get_input_focus/[2,3]
+* pxl-wmf-misc-set_close_down_mode::    set_close_down_mode/[1,2]
+* pxl-wmf-misc-kill_client::            kill_client/[0,1,2]
+
+   This section discusses how to:
+   * Move the pointer arbitrarily.
+
+   * Control the input focus.
+
+   * Kill clients.
+
+
+File: quintus.info,  Node: pxl-wmf-misc-warp_pointer,  Next: pxl-wmf-misc-set_input_focus,  Up: pxl-wmf-misc
+
+`warp_pointer/8'
+................
+
+     warp_pointer(+SRCWINDOW, +DESTWINDOW,
+             +SRCX, +\SRCY, +SRCW, +SRCH,
+             +DESTX, +DESTY)
+
+   Moves the pointer to the coordinates specified by DESTX and DESTY,
+relative to DESTWINDOW's origin.  It generates events just as if the
+user had moved the pointer.
+
+   SRCWINDOW is one of:
+A ProXL Window
+     If the move should only take place if the pointer is currently
+     inside SRCWINDOW, and in a visible portion of the rectangle
+     specified by SRCX, SRCY, SRCW, and SRCH.
+
+`none'
+     If the move is independent of the current pointer position.
+
+   DESTWINDOW is one of:
+A ProXL Window
+     If the final destination of the move is relative to the origin of
+     this window.
+
+`none'
+     If the move is relative to the current position of the pointer.
+
+   SRCX, SRCY, SRCW, SRCH are integers that specify the region, if any,
+inside SRCWINDOW where the pointer must be prior to the move.
+
+   DESTX, DESTY are integers giving the coordinates of the final
+pointer destination.
+
+   `warp_pointer/8' allows a lot of freedom for specifying pointer
+movements, but its use is rarely necessary because
+`put_pointer_attributes/2' handles the usual cases.
+
+
+File: quintus.info,  Node: pxl-wmf-misc-set_input_focus,  Next: pxl-wmf-misc-get_input_focus,  Prev: pxl-wmf-misc-warp_pointer,  Up: pxl-wmf-misc
+
+`set_input_focus/3'
+...................
+
+     set_input_focus(+WINDOWSPEC, +REVERTTO, +TIME)
+
+   Changes the input focus and the last-focus-change time. It has no
+effect if the specified TIME is earlier than the current
+last-focus-change-time or later than the current X server time. It
+generates `focus_in' and `focus_out' events.
+
+   WINDOWSPEC is one of:
+A ProXL Window
+     The window that will acquire the input focus.
+
+`pointer_root'
+     If the focus window should be dynamically taken to be the root
+     window of whatever screen the pointer is on at each keyboard event.
+
+`none'
+     If all keyboard arguments should be discarded until a new focus
+     window is set.
+
+   REVERTTO specifies which window that the input focus should revert
+to, if the current focus becomes not viewable. One of:
+   * `parent'
+
+   * `pointer_root'
+
+   * `none'
+
+   TIME is a timestamp in milliseconds (from an event) or
+`current_time'.
+
+
+File: quintus.info,  Node: pxl-wmf-misc-get_input_focus,  Next: pxl-wmf-misc-set_close_down_mode,  Prev: pxl-wmf-misc-set_input_focus,  Up: pxl-wmf-misc
+
+`get_input_focus/[2,3]'
+.......................
+
+     get_input_focus(+DISPLAYABLE, -FOCUS, -REVERTTO)
+     get_input_focus(-FOCUS, -REVERTTO)
+
+   Obtain the current input focus window and the revert_to state.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   FOCUS returns the current focus window. One of:
+   * The ProXL focus window.
+
+   * `pointer_root'.
+
+   * `none'
+
+   REVERTTO returns the current focus reverts state. One of :
+   * `parent'
+
+   * `pointer_root'
+
+   * `none'
+
+
+File: quintus.info,  Node: pxl-wmf-misc-set_close_down_mode,  Next: pxl-wmf-misc-kill_client,  Prev: pxl-wmf-misc-get_input_focus,  Up: pxl-wmf-misc
+
+`set_close_down_mode/[1,2]'
+...........................
+
+     set_close_down_mode(+DISPLAYABLE, +CLOSEMODE)
+     set_close_down_mode(+CLOSEMODE)
+
+   Defines what happens to the client's resources when the connection
+is closed.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   CLOSEMODE is one of:
+   * `destroy_all'
+
+   * `retain_permanent'
+
+   * `retain_temporary'
+
+
+File: quintus.info,  Node: pxl-wmf-misc-kill_client,  Prev: pxl-wmf-misc-set_close_down_mode,  Up: pxl-wmf-misc
+
+`kill_client/[0,1,2]'
+.....................
+
+     kill_client(+DISPLAY, +RESOURCE)
+     kill_client(+RESOURCE)
+     kill_client
+
+   Force a close down of the client that created the associated
+resource.
+
+   DISPLAY is a ProXL Display. If omitted, the default Display is used.
+
+   RESOURCE is one of:
+     Any ProXL resource associated with the client.
+
+`all_temporary'
+     If required to destroy resources of all clients that have
+     terminated in `retain_temporary' mode.
+
+
+File: quintus.info,  Node: pxl-wmf-pctl,  Next: pxl-wmf-kbd,  Prev: pxl-wmf-misc,  Up: pxl-wmf
+
+Pointer Control
+---------------
+
+* Menu:
+
+* pxl-wmf-pctl-get_pointer_attributes:: get_pointer_attributes/[1,2]
+* pxl-wmf-pctl-put_pointer_attributes:: put_pointer_attributes/[1,2]
+
+   ProXL uses the concept of pointer attributes to query and control
+the state of the pointer.
+
+
+File: quintus.info,  Node: pxl-wmf-pctl-get_pointer_attributes,  Next: pxl-wmf-pctl-put_pointer_attributes,  Up: pxl-wmf-pctl
+
+`get_pointer_attributes/[1,2]'
+..............................
+
+     get_pointer_attributes(+ATTRIBUTELIST)
+     get_pointer_attributes(+SCREENABLE, +ATTRIBUTELIST)
+
+   Allows the user to find the state of the pointer.
+
+   SCREENABLE is a ProXL Screenable. If omitted, the default Screen is
+used.
+
+   ATTRIBUTELIST is a List of pointer attributes, whose elements will
+be unified with the actual state of the pointer. Valid attributes are:
+`acceleration(A)'
+     Unifies A with a term of the form N/D, where N and D are integers,
+     the numerator and denominator of the pointer acceleration
+     multiplier.
+
+`threshold(T)'
+     Unifies T with the integer value of the pointer threshold
+     parameter.
+
+`mapping(B1, B2, B3, B4, B5)'
+     Unifies B1 to B5 with integers in the range `0' to `5', denoting
+     the current mapping of physical pointer buttons to logical pointer
+     buttons. The nominal mapping is BI = I.  A value of `0', means
+     that the button is disabled.
+
+`root_position(X, Y)'
+     Unifies X and Y with the current pointer coordinates, relative to
+     the root window origin.
+
+`window(W, X, Y)'
+     Unifies W with a ProXL window the pointer is inside of, and X and
+     Y to the pointer coordinates, relative to the window's origin. If
+     W is unbound, `get_pointer_attributes' will backtrack over all
+     windows in the hierarchy that contain the pointer, except for the
+     root window.
+
+`deepest(W, X, Y)'
+     Unifies W with the innermost ProXL window the pointer is inside
+     of, and X and Y to the pointer coordinates, relative to the
+     window's origin.
+
+`state(B, M)'
+     Unifies B with a term describing the state of the pointer buttons,
+     and M with a term describing the state of the modifier keys. The
+     predicates `state_mask/2', `buttons_mask/2' and `modifiers_mask/2'
+     are useful for translating between buttons and modifiers
+     representations and bitmasks.
+
+
+File: quintus.info,  Node: pxl-wmf-pctl-put_pointer_attributes,  Prev: pxl-wmf-pctl-get_pointer_attributes,  Up: pxl-wmf-pctl
+
+`put_pointer_attributes/[1,2]'
+..............................
+
+     put_pointer_attributes(+ATTRIBUTELIST)
+     put_pointer_attributes(+SCREENABLE, +ATTRIBUTELIST)
+
+   Allows the user to change the state of the pointer.
+
+   SCREENABLE is a ProXL Screenable. If omitted, the default Screen is
+used.
+
+   ATTRIBUTELIST is a List of pointer attributes, whose elements will
+be used to change the state of the pointer. Valid attributes are:
+`acceleration(A)'
+     Where A is either N/D, with N and D are non-negative integers, or
+     `default', to restore the pointer default acceleration.
+
+`threshold(T)'
+     T is either a  non-negative integer, or `default', to restore the
+     pointer default threshold.
+
+`mapping(B1, B2, B3, B4, B5)'
+     B1 to B5 are non-duplicate integers in the range `1' to `5', or
+     `0', denoting the desired mapping of physical pointer buttons to
+     logical pointer buttons. A value of `0' means that the button
+     should be disabled.
+
+`root_position(X, Y)'
+     X and Y are non-negative integers. Has the effect of warping the
+     pointer to the given coordinates, relative to the root window
+     origin.
+
+`window(W, X, Y)'
+     Warps the pointer to window W, at the position given by the
+     coordinates X and Y. If W is a valid ProXL window, the coordinates
+     are relative to the window's origin. If W is `none', the
+     coordinates are interpreted as offsets relative to the current
+     pointer position.
+
+
+File: quintus.info,  Node: pxl-wmf-kbd,  Next: pxl-wmf-ssav,  Prev: pxl-wmf-pctl,  Up: pxl-wmf
+
+Keyboard Control
+----------------
+
+* Menu:
+
+* pxl-wmf-kbd-get_keyboard_attributes:: get_keyboard_attributes/[1,2]
+* pxl-wmf-kbd-put_keyboard_attributes:: put_keyboard_attributes/[1,2]
+* pxl-wmf-kbd-bell::                    bell/[1,2]
+
+   ProXL uses the concept of keyboard attributes to query and control
+the state of the keyboard.
+
+
+File: quintus.info,  Node: pxl-wmf-kbd-get_keyboard_attributes,  Next: pxl-wmf-kbd-put_keyboard_attributes,  Up: pxl-wmf-kbd
+
+`get_keyboard_attributes/[1,2]'
+...............................
+
+     get_keyboard_attributes(+ATTRIBUTELIST)
+     get_keyboard_attributes(+DISPLAYABLE, +ATTRIBUTELIST)
+
+   Allows the user to find the state of the keyboard.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   ATTRIBUTELIST is a List of keyboard attributes, whose elements will
+be unified with the actual state of the keyboard. Valid attributes are:
+`key_click_percent(C)'
+     Unifies C with an integer between `0' and `100', giving the volume
+     for key clicks.
+
+`bell_percent(B)'
+     Unifies B with an integer between `0' and `100', giving the base
+     volume for the bell.
+
+`bell_pitch(P)'
+     Unifies P with a non-negative integer that gives the bell pitch,
+     in Hz.
+
+`bell_duration(D)'
+     Unifies D with a non-negative integer that gives the duration of
+     the bell, in milliseconds.
+
+`led_mask(L)'
+     Unifies L with an integer mask, where each bit set to 1 indicates
+     that the corresponding led is on. The least significant bit of L
+     corresponds to led 1.
+
+`global_auto_repeat(G)'
+     Unifies G with one of `on' or `off'.
+
+`auto_repeats(A)'
+     Unifies A with a list of bytes that indicate what keyboard keys
+     have auto repeat enabled. The predicate `key_auto_repeat/2' is
+     useful for interpreting the result.
+
+`keymap(K)'
+     Unifies K with a list of bytes that indicate the logical state of
+     the keyboard. The predicate `key_state/2' is useful for
+     interpreting the result.
+
+
+File: quintus.info,  Node: pxl-wmf-kbd-put_keyboard_attributes,  Next: pxl-wmf-kbd-bell,  Prev: pxl-wmf-kbd-get_keyboard_attributes,  Up: pxl-wmf-kbd
+
+`put_keyboard_attributes/[1,2]'
+...............................
+
+     put_keyboard_attributes(+ATTRIBUTELIST)
+     put_keyboard_attributes(+DISPLAYABLE, +ATTRIBUTELIST)
+
+   Allows the user to change the state of the keyboard.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   ATTRIBUTELIST is a List of keyboard attributes, whose elements will
+be used to change the state of the keyboard. Valid attributes are:
+`key_click_percent(C)'
+     C is either an integer between `0' and `100', or `default', to
+     restore the keyboard default.
+
+`bell_percent(B)'
+     B is either an integer between `0' and `100', or `default', to
+     restore the keyboard default.
+
+`bell_pitch(P)'
+     P is either a non-negative integer, or `default', to restore the
+     keyboard default.
+
+`bell_duration(D)'
+     D is either a non-negative integer, or `default', to restore the
+     keyboard default.
+
+`led(N)'
+     N specifies the led number, an integer between `1' and `32'.
+
+`led_mode(M)'
+     M is either `on' or `off'.
+
+`auto_repeat_mode(R)'
+     R is either `on', `off' or `default'.
+
+
+File: quintus.info,  Node: pxl-wmf-kbd-bell,  Prev: pxl-wmf-kbd-put_keyboard_attributes,  Up: pxl-wmf-kbd
+
+`bell/[1,2]'
+............
+
+     bell(+DISPLAYABLE, +PERCENT)
+     bell(+PERCENT)
+
+   Rings the keyboard bell.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   PERCENT is an integer between `-100' and `100', specifying the
+volume, relative to the base volume
+
+
+File: quintus.info,  Node: pxl-wmf-ssav,  Prev: pxl-wmf-kbd,  Up: pxl-wmf
+
+Screen Saver Control
+--------------------
+
+* Menu:
+
+* pxl-wmf-ssav-set_screen_saver::       set_screen_saver/[4,5]
+* pxl-wmf-ssav-force_screen_saver::     force_screen_saver/[1,2]
+* pxl-wmf-ssav-get_screen_saver::       get_screen_saver/[4,5]
+
+
+File: quintus.info,  Node: pxl-wmf-ssav-set_screen_saver,  Next: pxl-wmf-ssav-force_screen_saver,  Up: pxl-wmf-ssav
+
+`set_screen_saver/[4,5]'
+........................
+
+     set_screen_saver(+DISPLAYABLE, +TIMEOUT, +INTERVAL, +BLANKING, +EXPOSURES)
+     set_screen_saver(+TIMEOUT, +INTERVAL, +BLANKING, +EXPOSURES)
+
+   Modify the screen saver parameters for the given DISPLAYABLE.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   TIMEOUT specifies the screen saver timeout value. One of:
+An integer
+     Giving the timeout in seconds before the screen saver activates.
+
+`default'
+     To install default value.
+
+`disable'
+     To disable the screen saver.
+
+   INTERVAL is An integer giving the interval between screen saver
+invocations.
+
+   BLANKING Specifies screen blanking mode. One of:
+   * `dont_prefer'
+
+   * `prefer'
+
+   * `default'
+
+   EXPOSURES Specifies the screen save control. One of:
+   * `dont_allow'
+
+   * `allow'
+
+   * `default'
+
+
+File: quintus.info,  Node: pxl-wmf-ssav-force_screen_saver,  Next: pxl-wmf-ssav-get_screen_saver,  Prev: pxl-wmf-ssav-set_screen_saver,  Up: pxl-wmf-ssav
+
+`force_screen_saver/[1,2]'
+..........................
+
+     force_screen_saver(+DISPLAYABLE, +MODE)
+     force_screen_saver(+MODE)
+
+   Set the screen saver on or off.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   MODE sets The screen saver mode. One of:
+`reset'
+     To deactivate.
+
+`active'
+     To activate.
+
+
+File: quintus.info,  Node: pxl-wmf-ssav-get_screen_saver,  Prev: pxl-wmf-ssav-force_screen_saver,  Up: pxl-wmf-ssav
+
+`get_screen_saver/[4,5]'
+........................
+
+     get_screen_saver(+DISPLAYABLE, -TIMEOUT, -INTERVAL, -BLANKING, -EXPOSURES)
+     get_screen_saver(-TIMEOUT, -INTERVAL, -BLANKING, -EXPOSURES)
+
+   Allows the user to check the state of the screen saver.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   TIMEOUT is the integer specifying the timeout in seconds before the
+screen saver activates.
+
+   INTERVAL is the integer specifying the interval, in seconds, between
+screen saver invocations.
+
+   BLANKING is the current screen blanking preference. One of:
+   * `dont_prefer'
+
+   * `prefer'
+
+   * `default'
+
+   EXPOSURES is the current screen saver control value. One of:
+   * `dont_allow'
+
+   * `allow'
+
+   * `default'
+
+
+File: quintus.info,  Node: pxl-util,  Next: pxl-wmf,  Prev: pxl-tut,  Up: pxl
+
+Utility Functions
+=================
+
+* Menu:
+
+* pxl-util-bit::                        Bitmask Handling
+* pxl-util-kbd::                        Key Handling
+* pxl-util-pre::                        Application Preferences
+
+   This section describes various utility predicates.
+
+
+File: quintus.info,  Node: pxl-util-bit,  Next: pxl-util-kbd,  Up: pxl-util
+
+Bitmask Handling
+----------------
+
+* Menu:
+
+* pxl-util-bit-state_mask::             state_mask/2
+* pxl-util-bit-buttons_mask::           buttons_mask/2
+* pxl-util-bit-modifiers_mask::         modifiers_mask/2
+* pxl-util-bit-event_list_mask::        event_list_mask/2
+* pxl-util-bit-bitset_composition::     bitset_composition/3
+
+
+File: quintus.info,  Node: pxl-util-bit-state_mask,  Next: pxl-util-bit-buttons_mask,  Up: pxl-util-bit
+
+`state_mask/2'
+..............
+
+     state_mask(?STATE, ?MASK)
+
+   Translates between events `state' fields that consist of button and
+modifier specifications and the corresponding integer bitmasks.
+
+   STATE is unified with a term of the form `state(BUTTONS,
+MODIFIERS)', where BUTTONS is the buttons specification used by
+`buttons_mask/2' and MODIFIERS is the modifiers specification used by
+`modifiers_mask/2'.
+
+   MASK is the integer bitmask representing the given set of buttons
+and modifiers.
+
+
+File: quintus.info,  Node: pxl-util-bit-buttons_mask,  Next: pxl-util-bit-modifiers_mask,  Prev: pxl-util-bit-state_mask,  Up: pxl-util-bit
+
+`buttons_mask/2'
+................
+
+     buttons_mask(?BUTTONS, ?MASK)
+
+   Translates between button specifications and the corresponding
+integer bitmask.
+
+   BUTTONS is a term of the form `buttons(B1, B2, B3, B4, B5)', where
+button number I has argument position I in the term and the value of
+each argument is either `up' or `down'.
+
+   MASK is the integer bitmask representing the given set of buttons.
+
+
+File: quintus.info,  Node: pxl-util-bit-modifiers_mask,  Next: pxl-util-bit-event_list_mask,  Prev: pxl-util-bit-buttons_mask,  Up: pxl-util-bit
+
+`modifiers_mask/2'
+..................
+
+     modifiers_mask(?MODIFIERS, ?MASK)
+
+   Translates between modifier specifications and the corresponding
+integer bitmask.
+
+   MODIFIERS is a term of the form `modifiers(SHIFT, CONTROL, LOCK,
+MOD1, MOD2, MOD3, MOD4, MOD5)', where the value of each argument is
+either `up' or `down'.
+
+   MASK is the integer bitmask representing the given set of modifiers.
+
+
+File: quintus.info,  Node: pxl-util-bit-event_list_mask,  Next: pxl-util-bit-bitset_composition,  Prev: pxl-util-bit-modifiers_mask,  Up: pxl-util-bit
+
+`event_list_mask/2'
+...................
+
+     event_list_mask(?EVENTLIST, ?MASK)
+
+   Translates between a list of events names and the corresponding
+integer bitmask.
+
+   EVENTLIST is a list of event mask names, taken from the following:
+   * `key_press'
+
+   * `key_release'
+
+   * `button_press'
+
+   * `button_release'
+
+   * `enter_window'
+
+   * `leave_window'
+
+   * `pointer_motion'
+
+   * `pointer_motion_hint'
+
+   * `button1_motion'
+
+   * `button2_motion'
+
+   * `button3_motion'
+
+   * `button4_motion'
+
+   * `button5_motion'
+
+   * `button_motion'
+
+   * `keymap_state'
+
+   * `exposure'
+
+   * `visibility_change'
+
+   * `structure_notify'
+
+   * `resize_redirect'
+
+   * `substructure_notify'
+
+   * `substructure_redirect'
+
+   * `focus_change'
+
+   * `property_change'
+
+   * `colormap_change'
+
+   * `owner_grab_button'
+
+   MASK is the corresponding integer bitmask.
+
+
+File: quintus.info,  Node: pxl-util-bit-bitset_composition,  Prev: pxl-util-bit-event_list_mask,  Up: pxl-util-bit
+
+`bitset_composition/3'
+......................
+
+     bitset_composition(?MASK1, ?MASK2, ?MASK3)
+
+   Take any of two mutually exclusive bitmasks and produce a third one,
+such that the arguments obey `MASK3 is MASK1 \/ MASK2'.
+
+
+File: quintus.info,  Node: pxl-util-kbd,  Next: pxl-util-pre,  Prev: pxl-util-bit,  Up: pxl-util
+
+Key Handling
+------------
+
+* Menu:
+
+* pxl-util-kbd-rebind_key::             rebind_key/[3,4]
+* pxl-util-kbd-key_keycode::            key_keycode/[3,4]
+* pxl-util-kbd-keysym::                 keysym/[1,2]
+* pxl-util-kbd-is_key::                 is_key/[2,3]
+* pxl-util-kbd-key_state::              key_state/[3,4]
+* pxl-util-kbd-key_auto_repeat::        key_auto_repeat/[3,4]
+
+
+File: quintus.info,  Node: pxl-util-kbd-rebind_key,  Next: pxl-util-kbd-key_keycode,  Up: pxl-util-kbd
+
+`rebind_key/[3,4]'
+..................
+
+     rebind_key(+DISPLAYABLE, +KEY, +MODIFIERSLIST, +ATOM)
+     rebind_key(+KEY, +MODIFIERSLIST, +ATOM)
+
+   Rebind a key, with a possible set of modifiers, to a new atom.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   KEY is a valid key name, as given by `keysym/2'.
+
+   MODIFIERSLIST is a list containing any of the following modifier key
+names:
+   * `'Shift_L''
+
+   * `'Shift_R''
+
+   * `'Control_L''
+
+   * `'Control_R''
+
+   * `'Caps_Lock''
+
+   * `'Shift_Lock''
+
+   * `'Meta_L''
+
+   * `'Meta_R''
+
+   * `'Alt_L''
+
+   * `'Alt_R''
+
+   * `'Super_L''
+
+   * `'Super_R''
+
+   * `'Hyper_L''
+
+   * `'Hyper_R''
+
+   ATOM is an atom giving the new binding of KEY
+
+
+File: quintus.info,  Node: pxl-util-kbd-key_keycode,  Next: pxl-util-kbd-keysym,  Prev: pxl-util-kbd-rebind_key,  Up: pxl-util-kbd
+
+`key_keycode/[3,4]'
+...................
+
+     key_keycode(+DISPLAYABLE, ?KEY, ?KEYCODE, ?INDEX)
+     key_keycode(?KEY, ?KEYCODE, ?INDEX)
+
+   Translates between keys and keycodes.
+
+   Under X11, physical keys are mapped to unique server-dependent
+keycodes and keycodes are mapped to a list of server-independent
+keysyms.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   KEY is a key name, as given by `keysym/2'.
+
+   KEYCODE is an integer, between `8' and `255', corresponding to the
+KEY.
+
+   INDEX is an integer, typically `0' or `1', that identifies which of
+the keysyms attached to KEYCODE corresponds to KEY. The usual case is
+that Keysym number `0' corresponds to the lower case variant of the
+key, and Keysym number `1' to the upper case variant, if it exists.
+
+
+File: quintus.info,  Node: pxl-util-kbd-keysym,  Next: pxl-util-kbd-is_key,  Prev: pxl-util-kbd-key_keycode,  Up: pxl-util-kbd
+
+`keysym/[1,2]'
+..............
+
+     keysym(-KEYSYMSET)
+     keysym(?KEYSYM, ?KEY)
+
+   `keysym/1' is true when KEYSYMSET is an atom giving the name of a
+pre-loaded keysym. The preloaded keysym sets are:
+   * `miscellany'
+
+   * `latin1'
+
+   * `latin2'
+
+   * `latin3'
+
+   * `latin4'
+
+   * `greek'
+
+   `keysym/2' is true when KEYSYM is the integer, server-independent
+keysym for the the key named KEY, which is an atom. In general, the
+name of a key is just the atom (quoted, if necessary). See the Xlib
+documentation on keysyms for a list of the keysyms and key names.
+
+
+File: quintus.info,  Node: pxl-util-kbd-is_key,  Next: pxl-util-kbd-key_state,  Prev: pxl-util-kbd-keysym,  Up: pxl-util-kbd
+
+`is_key/[2,3]'
+..............
+
+     is_key(?TYPE, +KEY, -KEYSYM)
+     is_key(?TYPE, +KEY)
+
+   Identify various subclasses of keys and their keysyms.
+
+   TYPE is one of:
+`keypad'
+     For keypad keys.
+
+`cursor'
+     For cursor control keys.
+
+`pf'
+     For pf keys.
+
+`function'
+     For function keys.
+
+`misc_function'
+     For various other function keys.
+
+`modifier'
+     For modifier keys.
+
+   KEY is the key name.
+
+   KEYSYM is the integer, server-independent, keysym.
+
+
+File: quintus.info,  Node: pxl-util-kbd-key_state,  Next: pxl-util-kbd-key_auto_repeat,  Prev: pxl-util-kbd-is_key,  Up: pxl-util-kbd
+
+`key_state/[3,4]'
+.................
+
+     key_state(+DISPLAYABLE, +KEYMAP, -KEY, -STATE)
+     key_state(+KEYMAP, -KEY, -STATE)
+
+   Allows the user to find out the state of a key in a keymap.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   KEYMAP is a keymap, typically obtained by
+`get_keyboard_attributes/N'.
+
+   KEY is the name of a key.
+
+   STATE is either `up' or `down'.
+
+
+File: quintus.info,  Node: pxl-util-kbd-key_auto_repeat,  Prev: pxl-util-kbd-key_state,  Up: pxl-util-kbd
+
+`key_auto_repeat/[3,4]'
+.......................
+
+     key_auto_repeat(+DISPLAYABLE, +AUTOREPEATMAP,
+                     -KEY, -STATE)
+     key_auto_repeat(+AUTOREPEATMAP, -KEY, -STATE)
+
+   Allows the user to find out if a key has auto repeat enabled or not.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   AUTOREPEATMAP is an auto repeat keymap, typically obtained by
+`get_keyboard_attributes/N'.
+
+   KEY is the name of a key.
+
+   STATE is either `on' or `off'.
+
+
+File: quintus.info,  Node: pxl-util-pre,  Prev: pxl-util-kbd,  Up: pxl-util
+
+Application Preferences
+-----------------------
+
+* Menu:
+
+* pxl-util-pre-get_default::            get_default/[3,4]
+* pxl-util-pre-parse_geometry::         parse_geometry/5
+* pxl-util-pre-geometry::               geometry/[12,13]
+
+
+File: quintus.info,  Node: pxl-util-pre-get_default,  Next: pxl-util-pre-parse_geometry,  Up: pxl-util-pre
+
+`get_default/[3,4]'
+...................
+
+     get_default(+DISPLAYABLE, +PROGRAM, +OPTION, -VALUE)
+     get_default(+PROGRAM, +OPTION, -VALUE)
+
+   Provides a simple interface for clients that want to find out about
+application preferences without using the Resource Manager. Defaults
+are usually loaded into the RESOURCE_MANAGER property on the root
+window at login. If no such property exists, the resource file
+`~/.Xdefaults' is loaded.  Additional defaults are obtained from the
+filename specified by the environment variable `XENVIRONMENT'.
+
+   DISPLAYABLE is a ProXL Displayable. If omitted, the default Display
+is used.
+
+   PROGRAM is an atom specifying the name of the program.
+
+   OPTION is an atom specifying the option name.
+
+   VALUE is an atom giving the preferred value for the option.
+
+
+File: quintus.info,  Node: pxl-util-pre-parse_geometry,  Next: pxl-util-pre-geometry,  Prev: pxl-util-pre-get_default,  Up: pxl-util-pre
+
+`parse_geometry/5'
+..................
+
+     parse_geometry(+GEOMETRY, -X, -Y, -W, -H)
+
+   Parses standard X11 geometry descriptions that describe size and
+placement.
+
+   GEOMETRY is an atom of the form
+
+     '=<width>x<height>{+-}<xoffset>{+-}<yoffset>'
+
+   X is unified with the x coordinate value from the atom.
+
+   Y is unified with the y coordinate value from the atom.
+
+   W is unified with the width value from the atom.
+
+   H is unified with the height value from the atom.
+
+
+File: quintus.info,  Node: pxl-util-pre-geometry,  Prev: pxl-util-pre-parse_geometry,  Up: pxl-util-pre
+
+`geometry/[12,13]'
+..................
+
+     geometry(+DISPLAYABLE, +SCREENNUM,
+             +POSITION, +DEFAULT, +BW, +FH, +FW,
+             +XADD, +YADD, -X, -Y, -W, -H)
+     geometry(+SCREENNUM, +POSITION, +DEFAULT,
+             +BW, +FH, +FW, +XADD, +YADD, -X,
+             -Y, -W, -H)
+
+   Parses a window geometry given an specification geometry, and a
+default geometry.  The arguments are:
+
+DISPLAYABLE
+     a ProXL Displayable. If omitted, the default Display is used.
+
+SCREENNUM
+     an integer specifying which screen the window is on.
+
+POSITION
+     an atom specifying a possible incomplete geometry description in
+     standard X format. See `parse_geometry/5' for details.
+
+DEFAULT
+     an atom specifying a complete geometry description in standard X
+     format.
+
+BW
+     an integer specifying the border width.
+
+FH
+     an integer specifying the font height in pixels.
+
+FW
+     an integer specifying the font width in pixels.
+
+XADD
+     an integer specifying additional horizontal padding, in pixels,
+     needed in the window.
+
+YADD
+     an integer specifying additional vertical padding, in pixels,
+     needed in the window.
+
+X
+     an integer giving back the x coordinate, or unbound.
+
+Y
+     an integer giving back the y coordinate, or unbound.
+
+W
+     an integer giving back the width, or unbound.
+
+H
+     an integer giving back the height, or unbound.
+
+
+File: quintus.info,  Node: pxl-xlib,  Next: pxl-bmp,  Prev: pxl-graf,  Up: pxl
+
+ProXL for Xlib speakers
+=======================
+
+* Menu:
+
+* pxl-xlib-nam::                        Naming Conventions
+* pxl-xlib-arg::                        Arguments
+* pxl-xlib-str::                        Data Structures
+* pxl-xlib-trm::                        Prolog Terms
+* pxl-xlib-conv::                       Convenience Functions
+* pxl-xlib-cch::                        Caching
+* pxl-xlib-dscr::                       Default Screen and Display
+* pxl-xlib-graf::                       Graphics Contexts
+* pxl-xlib-dgc::                        Default GCs
+* pxl-xlib-mgc::                        Modifying GCs
+* pxl-xlib-shr::                        Sharing and Cloning of GCs
+* pxl-xlib-mem::                        Memory Management
+* pxl-xlib-mix::                        Mixed Language Programming
+
+   This section documents some of the most important differences
+between ProXL and Xlib. We assume that you are familiar with Xlib and,
+have read *Note pxl-bas:: and *Note pxl-tut:: from this manual.
+
+
+File: quintus.info,  Node: pxl-xlib-nam,  Next: pxl-xlib-arg,  Up: pxl-xlib
+
+Naming Conventions
+------------------
+
+   ProXL has many primitives that are very similar (though none that are
+identical) to Xlib functions.  Unfortunately, Xlib's naming conventions
+are not very convenient in Prolog, so ProXL uses different names.  ProXL
+names are all lowercase, with underscores used to separate words.
+Also, ProXL names do not have prefixes or suffixes to specify the
+context they are to be used in; in Prolog, context is sufficient to
+disambiguate.  For example, the line style called `LineDoubleDash' by
+Xlib is called simply `double_dash' by Prolog, since the context in
+which it is used will make clear that it is a line style.
+
+   To be a little more formal about it, here's a rough algorithm for
+translating names:
+
+  1. Strip off the X prefix from a function or structure name, or the
+     context prefix or suffix from a #defined symbol.
+
+  2. Insert an underscore before the last in any sequence of one or more
+     uppercase letters.
+
+  3. Make all letters lowercase.
+
+   So `XOpenDisplay' would become `open_display', `NorthWestGravity'
+would become `north_west', and `LSBFirst' would become `lsb_first'.
+
+   Note that not all X functions have direct ProXL counterparts.  In
+some cases, a single ProXL procedure fills the role of many Xlib
+functions.  For example, ProXL has no `set_fill_rule' procedure,
+instead you use `put_graphics_attributes/2'.  Also, in a few cases,
+Xlib functions that take boolean arguments have been split into two
+different ProXL procedures, one for each boolean state.
+
+
+File: quintus.info,  Node: pxl-xlib-arg,  Next: pxl-xlib-str,  Prev: pxl-xlib-nam,  Up: pxl-xlib
+
+Arguments
+---------
+
+   Arguments and argument order to ProXL primitives are not always
+directly predictable from their Xlib counterparts, but some rules of
+thumb can be helpful:
+
+  1. Almost all Xlib functions take a display as first argument.  ProXL
+     doesn't need this argument at all if any X resource (i.e., a
+     server-side resource, like a window or GC or font) appears in the
+     call.  So few ProXL primitives take a display argument.
+
+  2. All the ProXL primitives that DO require a display have a version
+     that allows the display to be defaulted.  Also, several ProXL
+     primitives require a screen as argument, and these, too, allow
+     that argument to be defaulted.  See the section on the default
+     screen below for details.
+
+  3. Several Xlib functions take a window as argument (or some other X
+     resource) when all they really want to know is a screen.  In these
+     cases, the analogous ProXL primitive takes a screen as argument.
+     Note that rule 2 above applies in these cases.
+
+   ProXL doesn't always use the same argument order as Xlib.  There are
+a few reasons for different argument order.  Firstly, ProXL has defaults
+for some arguments, so sometimes argument orders are changed to
+facilitate defaults.  ProXL also rearranges arguments to make parallels
+among families of procedures more obvious.  In most cases, however, the
+argument order for ProXL procedures is the same as their Xlib
+counterparts.
+
+
+File: quintus.info,  Node: pxl-xlib-str,  Next: pxl-xlib-trm,  Prev: pxl-xlib-arg,  Up: pxl-xlib
+
+Data Structures
+---------------
+
+   Xlib has three basic kinds of data structures:  documented C
+structures, undocumented C structures, and XIDs.  The documented C
+structures are used as any C structure would be; the undocumented C
+structures are accessed through standard macros and functions; and the
+XIDs are used only as arguments to Xlib functions.
+
+   ProXL doesn't have these types, instead it has only "foreign terms"
+and regular Prolog terms.  Foreign terms are Prolog terms that
+represent X objects.  These objects are analogous to undocumented C
+structures in that their contents are not directly accessible, but it
+is not necessary to send a message to the server to get the contents.
+
+   Foreign terms, at the moment, are simply unary Prolog terms whose
+functor indicates the type of the foreign term and whose argument
+specifies the location of the contents of the data structure.  Note that
+this implementation may be changed at any time, so you should not count
+on it.
+
+   One useful property of the current implementation is that the printed
+representation of a foreign term may be read back in, and will yield
+the same data structure.  This is useful when debugging and when
+prototyping, since it means you can grab results of a goal you just ran
+and feed them in as arguments to the next goal you want to run.
+
+   All foreign terms representing XIDs contain not only the XID of the X
+resource, but also the display, and, where appropriate, the screen, on
+which this XID lives.  This means that where Xlib requires both a
+display and an XID, ProXL only needs the foreign term.  Therefore, very
+few ProXL procedures take a display as argument.
+
+
+File: quintus.info,  Node: pxl-xlib-trm,  Next: pxl-xlib-conv,  Prev: pxl-xlib-str,  Up: pxl-xlib
+
+Prolog Terms
+------------
+
+   Prolog terms represent a few of the documented C structures.  Most of
+the documented C structures are not needed in ProXL, for example the
+XWindowChanges structure.  The documented structures that are
+represented in ProXL by Prolog terms are XPoint, XSegment, XRectangle,
+XArc, and XColor.  The functor of these terms is the structure name
+translated by the naming conventions above.  The first four kinds of
+terms have the same arguments as the corresponding C struct members,
+except that the angles in an arc specification are given in degrees,
+rather than 64ths of a degree, as in Xlib.  Color terms have only the
+red, green, and blue components, and these are given as numbers between
+0 and 1.  For example, a 30 by 40 pixel rectangle at location (10, 20)
+would be represented by the term `rectangle(10,20,30,40)', and the color
+magenta would be represented by `color(1,0,1)'.  See the section of the
+ProXL manual on colors for information.
+
+
+File: quintus.info,  Node: pxl-xlib-conv,  Next: pxl-xlib-cch,  Prev: pxl-xlib-trm,  Up: pxl-xlib
+
+Convenience Functions
+---------------------
+
+   Xlib provides many "convenience functions" to make it simpler to
+change attributes of X resources.  ProXL doesn't provide these
+functions, since the `put_*_attributes/2' procedures are quite simple
+to use, so there is no need for them in Prolog.  For example, Xlib
+provides separate functions to change each GC attribute, as well as a
+general function that can change all the attributes of a GC at once;
+ProXL only provides the procedure to change all attributes at once,
+since it is easy to use.  Leaving out all these unnecessary convenience
+functions makes ProXL simpler and smaller than Xlib.
+
+
+File: quintus.info,  Node: pxl-xlib-cch,  Next: pxl-xlib-dscr,  Prev: pxl-xlib-conv,  Up: pxl-xlib
+
+Caching
+-------
+
+   It's also important to know what is _not_ in a foreign term.  Foreign
+terms do not contain any information about an X resource that may be
+changed.  The sole exception to this rule is graphics contexts, which
+are discussed below.  For example, a ProXL window may remember its depth
+(which cannot be changed once the window is created), but it won't
+remember its width or height, since they can change.  This means that it
+is possible for other programs, running in the same or different address
+space, to share X resources with ProXL.  ProXL will have no problems
+with window managers moving or resizing windows, since it goes to the
+server when it wants to know a window's size.
+
+   An unfortunate result of this is that not all attributes that can be
+changed can be gotten.  This is because the X protocol does not provide
+a way to get all information about every X resource.  For example, it
+is possible to set the background of a window, but it is not possible
+to get it.  There aren't many such attributes, and they are documented
+in the ProXL manual.
+
+
+File: quintus.info,  Node: pxl-xlib-dscr,  Next: pxl-xlib-graf,  Prev: pxl-xlib-cch,  Up: pxl-xlib
+
+Default Screen and Display
+--------------------------
+
+   ProXL maintains a default screen, which the user may set.  It starts
+out as the default screen on the default display.  This default screen
+is used in many primitives when an optional screen argument is not
+specified.  The display on which the default screen is present is
+considered to be the default display.  The default display is used when
+an optional display argument is not given.  The default display cannot
+be set directly, it is always determined by the default screen.
+
+
+File: quintus.info,  Node: pxl-xlib-graf,  Next: pxl-xlib-dgc,  Prev: pxl-xlib-dscr,  Up: pxl-xlib
+
+Graphics Contexts
+-----------------
+
+   ProXL, like Xlib, caches the current state of each graphics context.
+Therefore, it is possible for a ProXL application to determine the
+current state of a GC.  Therefore, ProXL does not permit its GCs to be
+shared with foreign code in the same or different address space.
+
+
+File: quintus.info,  Node: pxl-xlib-dgc,  Next: pxl-xlib-mgc,  Prev: pxl-xlib-graf,  Up: pxl-xlib
+
+Default GCs
+-----------
+
+   To make simple graphics easier, ProXL associates a default graphics
+context with each drawable.  Thus you may omit the GC argument to all
+the drawing primitives, in which case the destination drawable's default
+GC is used.  Alternatively, you may specify a GC in drawing primitives
+and ignore the default GC.  You may also replace a drawable's default GC
+at any time.
+
+   The concept of a drawable's GC allows you to forget about GCs as
+separate entities, and instead think of drawables as having graphics
+attributes.  ProXL manages this for you.  So if you want to draw in a
+window in green, you can set the window's foreground to green, and then
+draw.  You needn't worry about GCs at all.
+
+
+File: quintus.info,  Node: pxl-xlib-mgc,  Next: pxl-xlib-shr,  Prev: pxl-xlib-dgc,  Up: pxl-xlib
+
+Modifying GCs
+-------------
+
+   The primitive `put_graphics_attributes/2' is used to modify GCs.
+There are two ways to change a GC:  it may be modified directly, by
+calling `put_graphics_attributes/2' with a GC as argument, or through a
+drawable, by passing a drawable as argument.
+

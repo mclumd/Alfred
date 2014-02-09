@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Options</h5>
+
+   <p>When run from the command line, the determinacy checker has a few
+options to control its workings.
+
+   <p>The <code>-r</code> option specifies that the checker should recursively check
+files in such a way that it finds nondeterminacy caused by calls to
+other nondeterminate predicates, whether they are declared so or
+not.  Also, predicates that appear to determinate will be treated as
+such, whether declared nondet or not.  This option is quite useful
+when first running the checker on a file, as it will find all
+predicates that should be either made determinate or declared nondet
+at once.  Without this option, each time a <code>nondet</code> declaration is
+added, the checker may find previously unnoticed nondeterminacy.
+
+   <p>For example, if the original example above, without any <code>nondet</code>
+declarations, were checked with the <code>-r</code> option, the output would
+be:
+<pre class="example">     * Non-determinate: user:parent/2 (clause 1)
+     *     Indexing cannot distinguish this from clause 2.
+     * Non-determinate: user:parent/2 (clause 3)
+     *     Indexing cannot distinguish this from clause 4.
+     * Non-determinate: user:is_parent/1 (clause 1)
+     *     Calls nondet predicate user:parent/2.
+     </pre>
+
+   <p>The <code>-d</code> option causes the tool to print out the needed <code>nondet</code>
+declarations.  These can be readily pasted into the source files. 
+Note that it only prints the <code>nondet</code> declarations that are not already
+present in the files.  However, these declarations should not be
+pasted into your code without each one first being checked to see if
+the reported nondeterminacy is intended.
+
+   <p>The <code>-D</code> option is like <code>-d</code>, except that it prints out all
+<code>nondet</code> declarations that should appear, whether they are already in
+the file or not.  This is useful if you prefer to replace all old
+<code>nondet</code> declarations with new ones.
+
+   <p>Your code will probably rely on operator declarations and
+possibly term expansion. The determinacy checker handles this in
+much the same way as <code>qpc(1)</code>: you must supply an
+initialization file, using the <code>-i </code><var>ifile</var><code></code> option.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-det-wha.html#bas-eff-det-wha">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-det-exa.html#bas-eff-det-exa">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-det.html#bas-eff-det">Up</a>
+</ul>
+</div>
+   </body></html>
+

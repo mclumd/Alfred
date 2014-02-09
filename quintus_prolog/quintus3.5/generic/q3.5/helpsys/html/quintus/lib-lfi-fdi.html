@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Finding Files in Directories</h4>
+
+   <p>The basic directory scanning routine is
+     <dl>
+
+     <p><code>file_member_of_directory(</code><var>?Directory</var><code>, </code><var>?FileName</var><code>, </code><var>?FullName</var><code>)</code>
+is true when
+          <ol type=1 start=1>
+
+          <li><var>Directory</var> is an atom naming a directory;
+
+          <li><var>FileName</var> is an atom conforming to the rules for file names
+without directory components;
+<li><var>Directory</var> contains an entry with name <var>FileName</var>, and
+the current process is allowed to know this fact; and
+<li><var>FullName</var> is an atom naming the file, combining both the
+<var>Directory</var> and the <var>FileName</var>, and <var>FullName</var> names a regular file.
+          </ol>
+
+     <p><var>Directory</var> can be an absolute filename or a relative one. 
+<var>FullName</var>
+will be absolute if <var>Directory</var> is absolute, relative if
+<var>Directory</var> is relative.
+
+     <p>We return the <var>FileName</var> component because that is the component on which
+pattern matching is generally done.  We return the <var>FullName</var>
+component in order to remove from the user the burden of manipulating the
+(system-dependent) rules for putting together a directory name and a file
+name.
+
+     <p>This predicate acts as much like a logical relation as it can. 
+Here are some of the ways of using it:
+     <pre class="example">          | ?- <kbd>file_member_of_directory(foo, Name, Full),
+               write(Name=Full), nl, fail.</kbd>
+            %  to enumerate members of the directory
+          
+          | ?- <kbd>file_member_of_directory(baz, 'ugh.pl', Full).</kbd>
+            %  to test whether a file 'ugh.pl' is visible in
+            %  directory 'baz', and if so return the full name
+          
+          | ?- <kbd>file_member_of_directory(Dir, Nam, 'baz/jar.log').</kbd>
+            % if there is a visible regular file baz/jar.log,
+            % to return its directory in Dir and name in Nam.
+          </pre>
+
+   </dl>
+
+   <p><code>file_member_of_directory/3</code> has two variants:
+
+     <dl>
+
+     <br><dt><code>file_member_of_directory(</code><var>?FileName</var><code>, </code><var>?FullName</var><code>)</code>
+     <dd>
+is the same as <code>file_member_of_directory/3</code>, except that it
+checks the current directory.  You could obtain this effect quite
+easily by calling <code>file_member_of_directory/3</code> with first argument
+<code>.</code>, but in other operating systems the current directory is
+denoted differently.  This provides an operating-system-independent way of
+searching the current directory.  There is one other difference,
+which is of great practical importance:  <code>.</code> is a <em>relative</em>
+directory name, but <code>file_member_of_directory/2</code> uses the <em>absolute</em>
+name for the current directory, so that the <var>FullName</var> you get back will
+also be absolute.  See the description of <code>absolute_file_name/2</code> in
+the reference pages.  Note the difference between calling
+     <pre class="example">          absolute_file_name(<var>FileName</var>, <var>FullName</var>)
+          </pre>
+
+     <p>and calling
+     <pre class="example">          file_member_of_directory(<var>FileName</var>, <var>FullName</var>)
+          </pre>
+
+     <p>The former will accept any filename, but the <var>FileName</var>
+must be instantiated.  The latter will only accept simple file
+names with no directory component, and insists that the file must
+already exist, but in return will generate <var>FileName</var>.
+
+     <br><dt><code>file_member_of_directory(</code><var>?Directory</var><code>, </code><var>?Pattern</var><code>, </code><var>?FileName</var><code>, </code><var>?FullName</var><code>)</code>
+     <dd>
+is the same as <code>file_member_of_directory/3</code>, except that it
+filters out all the <var>FileName</var>s that do not match  <var>Pattern</var>. 
+<var>Pattern</var> is an atom that may contain <code>?</code> and <code>*</code>
+wildcards.  <code>?</code> matches any character and <code>*</code> matches any sequence of
+characters (cf. UNIX <code>csh(1)</code> and <code>sh(1)</code>). 
+The main use
+for this routine is to select files with a particular extension. 
+Thus,
+     <pre class="example">          | ?- <kbd>file_member_of_directory(foo,'*.pl',Short,Full).</kbd>
+          </pre>
+
+     <p>matches files <code>foo/*.pl</code>. 
+</dl>
+
+   <p>To summarize, the three routines discussed so far are
+<pre class="example">     file_member_of_directory([Directory, [Pattern, ]]Short, Full)
+     </pre>
+
+   <p>They enumerate <var>FileName</var>-<var>FullName</var> pairs one at a time:  in
+alphabetic order, as it happens.
+
+   <p>There is another set of three predicates finding exactly the
+same solutions, but returning them as a <em>set</em> of <var>FileName</var>-<var>FullName</var>
+pairs.  We follow here the general convention that predicates that return one
+"thing"  have <code>thing</code> in their name, and  predicates that
+return the <em>set</em> of "things"  have <code>things</code> in their name.
+
+     <dl>
+
+     <br><dt><code>file_members_of_directory([</code><var>?Directory</var><code>, [</code><var>?Pattern</var><code>, ]]</code><var>?Set</var><code>)</code>
+     <dd>
+unifies <var>Set</var> with a list of <var>FileName</var>-<var>FullName</var> pairs that name
+visible files in the given <var>Directory</var> matching the given <var>Pattern</var>. 
+Thus, instead of
+     <pre class="example">          | ?- <kbd>file_member_of_directory(foo, '*.pl', S, F).</kbd>
+          
+          S = 'bat.pl',
+          F = 'foo/bat.pl' <kbd>;</kbd>
+          
+          S = 'fly.pl',
+          F = 'foo/fly.pl' <kbd>;</kbd>
+          
+          no
+          </pre>
+
+     <p>one would find
+     <pre class="example">          | ?- <kbd>file_members_of_directory(foo, '*.pl', Set).</kbd>
+          
+          Set = ['bat.pl'-'foo/bat.pl', 'fly.pl'-'foo/fly.pl']
+          </pre>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-lfi-sub.html#lib-lfi-sub">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-lfi-bas.html#lib-lfi-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-lfi.html#lib-lfi">Up</a>
+</ul>
+</div>
+   </body></html>
+

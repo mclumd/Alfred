@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>draw_text/[4,5]</code></h5>
+
+<pre class="example">     draw_text(+<var>Drawable</var>, +<var>X</var>, +<var>Y</var>, +<var>Textitems</var>)
+     draw_text(+<var>Drawable</var>, +<var>Gc</var>, +<var>X</var>, +<var>Y</var>, +<var>Textitems</var>)
+     </pre>
+
+   <p>Draw strings in <var>Drawable</var>, with mixed fonts and flexible inter-string
+spacing.  <var>Textitems</var> is a list of <code>textitem(</code><var>String</var><code>,</code><var>Delta</var><code>)</code> and
+<code>textitem(</code><var>String</var><code>,</code><var>Delta</var><code>,</code><var>Font</var><code>)</code> terms, where <var>String</var> is the
+string (Prolog atom or list of character codes) to be printed, <var>Delta</var>
+is the number of extra pixels to skip over horizontally before drawing
+string, and, for <code>textitem/3</code> terms, <var>Font</var> is the font in which to draw
+String and any following strings in <var>Textitems</var> until Font is changed again. 
+Text printed after the call to <code>draw_text</code> will not be affected by the
+call.
+
+   <p>Note that this will not print text on multiple lines.  This is
+equivalent to doing several calls to <code>draw_string</code>, possibly with calls
+to <code>put_graphics_attributes/3</code> between, but more efficient.  There is no
+similar primitive that is equivalent to multiple calls to
+<code>draw_image_string</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxl-prim-txt-draw_image_string.html#pxl-prim-txt-draw_image_string">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-prim-txt.html#pxl-prim-txt">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">User-specified signal handlers</h5>
+
+   <p>This section only applies to UNIX as signals are not used under Windows.
+
+   <p>Prolog sets up signal handlers when either <code>QP_initialize()</code>
+or <code>QP_toplevel()</code> is called. These handlers provide the default
+interrupt handling  for <kbd>^c</kbd> described in the
+previous sections. <code>QP_initialize()</code> and <code>QP_toplevel()</code>
+sets handlers for all signals that have the default
+handler and the default behavior is not what Prolog wants. 
+If users have set their own signal handlers (which are
+different from the default signal handlers) then Prolog
+will not change these handlers. Once Prolog has started up
+and is running the toplevel read-prove loop, Prolog will not
+change any signal handlers unless the user calls <code>QP_toplevel()</code>.
+
+   <p>Users can set and remove signal handlers using the system
+function <code>signal(2)</code>.
+
+   <p>To set up a signal handler, call the routine
+
+<pre class="example">     signal(<var>signal_name</var>, <var>function_name</var>)
+     </pre>
+
+   <p>from within a C foreign function, where <var>signal_name</var> is a constant
+identifying the signal being trapped and <var>function_name</var> is the name
+of the function to be called in the event of the signal.  The
+constants identifying the various signals are defined in the file
+<code>/usr/include/signal.h</code>.
+
+   <p>The example below shows how one would define an interrupt handler using
+<code>signal</code> and <code>QP_action()</code>.  For most users <kbd>^C</kbd> is the interrupt
+character.  The files
+<code>interrupt.c</code> and <code>interrupt.pl</code> make up this example; the interrupt handler
+is set up
+by calling <code>establish_handler/0</code> after compiling <code>interrupt.pl</code>.
+<pre class="example">
+                               <div align="right"><em>interrupt.pl</em>
+     </div>
+     
+     /*
+         This is the foreign interface file for a sample interrupt handler.
+     */
+     
+     foreign_file('interrupt',[establish_handler]).
+     
+     foreign(establish_handler, establish_handler).
+     
+     :- load_foreign_files(['interrupt'], []).
+     </pre>
+
+<pre class="example">
+                                <div align="right"><em>interrupt.c</em>
+     </div>
+     
+     /*
+         The function my_handler is called when the user types the interrupt
+         character (normally <kbd>^c</kbd>).  This function prompts for a response
+         and executes the user's choice.
+     */
+     
+     #include &lt;signal.h&gt;
+     #include &lt;quintus/quintus.h&gt;
+     
+     int my_handler()
+     {
+         char c;
+     
+         for(;;) {
+             printf("\nWell? ");
+             c = getchar();
+             if (c != '\n')
+                 while (getchar() != '\n') {};
+             switch(c) {
+             case 'a': QP_action(QP_ABORT);
+             case 'e': QP_action(QP_EXIT);
+             case 'c': return;
+             default: printf("a, c or e, please");
+             }
+         }
+     }
+     
+     void establish_handler()
+     {
+         signal(SIGINT,  my_handler);
+     }
+     </pre>
+
+   <p>The following trace illustrates the use of these files:
+
+<pre class="example">     % <kbd>cc -c interrupt.c</kbd>
+     % <kbd>prolog</kbd>
+     Quintus Prolog Release 3.5 (Sun 4, SunOS 5.5)
+     
+     | ?- <kbd>compile(interrupt).</kbd>
+     % compiling file /goedel/tim/interrupt.pl
+     %  foreign file /goedel/tim/interrupt.o loaded
+     % interrupt.pl compiled in module user, 0.150 sec 1,508 bytes
+     
+     yes
+     | ?- <kbd>establish_handler.</kbd>
+     
+     yes
+     | ?- <kbd>write(hi).</kbd>
+     hi
+     yes
+     | ?- <kbd>^C</kbd>
+     Well? g
+     a, c or e, please
+     Well? a
+     
+     ! Execution aborted
+     
+     | ?- <kbd>^C</kbd>
+     Well? e
+     %
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iex-iha-cre.html#ref-iex-iha-cre">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-iex-iha-cfc.html#ref-iex-iha-cfc">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-iex-iha.html#ref-iex-iha">Up</a>
+</ul>
+</div>
+   </body></html>
+

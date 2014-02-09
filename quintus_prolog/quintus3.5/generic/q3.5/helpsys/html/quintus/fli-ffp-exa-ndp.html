@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Calling a Nondeterminate Predicate</h5>
+
+   <p>This example shows how a nondeterminate query can be made from
+C. It also shows how you can get at the exception terms raised
+from a Prolog query from C.
+
+<pre class="example">
+                                <div align="right"><em>brothers.pl</em>
+     </div>
+     
+     foreign(brothers, c, brothers).
+     foreign_file(brothers, [brothers]).
+     :- load_foreign_files(brothers, []),
+             abolish([foreign/3, foreign_file/2]).
+     
+     :- extern(write(+term)).        % Make write/1     callable from C
+     :- extern(karamazov(-atom)).    % Make karamazov/1 callable from C
+     
+     karamazov('Fyodor').
+     karamazov('Dmitri').
+     karamazov('Ivan').
+     karamazov('Alyosha').
+     </pre>
+
+<pre class="example">
+                                 <div align="right"><em>brothers.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     /* lookup_predicate() is just a wrapper around QP_predicate()
+        that prints an error message if QP_predicate() fails.
+        It returns 1 if QP_predicate() succeeds and 0 if
+        QP_predicate() fails
+     */
+     int lookup_predicate(name, arity, module, predref)
+         char * name;
+         int    arity;
+         char * module;
+         QP_pred_ref * predref;
+         {
+             *predref = QP_predicate(name, arity, module);
+     
+             if (*predref == QP_BAD_PREDREF) {
+                 printf("%s:%s/%-d is not callable from C\n",
+                        module, name, arity);
+                 return 0;
+             } else {
+                 return 1;
+             }
+         }
+     </pre>
+
+<pre class="example">
+                                 <div align="right"><em>brothers.c</em>
+     </div>
+     
+     void brothers() /* brothers() is called from Prolog */
+         {
+             QP_pred_ref     karam, write;
+             QP_qid          query;
+             QP_atom         bro;
+             int             status;
+     
+             if (!lookup_predicate("karamazov", 1, "user", &amp;karam)) {
+                 return;
+             }
+     
+             if ((query = QP_open_query(karam, &amp;bro)) == QP_BAD_QID) {
+                 printf("Cannot open query\n");
+                 return;
+             }
+     
+             /* Get solutions one at a time */
+             while ((status = QP_next_solution(query)) == QP_SUCCESS) {
+                 printf("%10s is a Karamazov\n",
+                        QP_string_from_atom(bro));
+             }
+     
+             QP_close_query(query);
+     
+             if (status == QP_ERROR) {
+                 /* Query raised an exception */
+                 QP_term_ref error = QP_new_term_ref();
+     
+                 printf("Query signalled an exception\n");
+                 if (QP_exception_term(error) == QP_ERROR) {
+                     printf("Could not get at exception term\n");
+                     return;
+                 }
+     
+                 if (lookup_predicate("write", 1, "user", &amp;write)) {
+                     /* Call Prolog builtin write/1 to print the
+                        exception term */
+                     if (QP_query(write, error) != QP_SUCCESS) {
+                         printf("Couldnt write exception term\n");
+                     } else {
+                         return;
+                     }
+                 }
+             }
+         }
+     </pre>
+
+   <p>To test the <code>QP_exception_term()</code> part of this example add
+a clause for <code>karamazov/1</code> like:
+
+<pre class="example">     karamazov(_) :- raise_exception(karamazov(error)).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-exa-nes.html#fli-ffp-exa-nes">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-exa-fib.html#fli-ffp-exa-fib">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-exa.html#fli-ffp-exa">Up</a>
+</ul>
+</div>
+   </body></html>
+

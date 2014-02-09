@@ -1,0 +1,1773 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: mpg-ref-use_module,  Next: mpg-ref-user_help,  Prev: mpg-ref-unknown_predicate_handler,  Up: mpg-ref
+
+`use_module/[1,2,3]'
+--------------------
+
+Synopsis
+--------
+
+   `use_module(+FILES)'
+
+   Loads the module-file(s) FILES, if not already loaded and up-to-date
+imports all exported predicates.
+
+   `use_module(+FILE, +IMPORTS)'
+
+   Loads module-file FILE, if not already loaded and up-to-date imports
+according to IMPORTS.
+
+   `use_module(+MODULE, -FILE, +IMPORTS)'
+
+   MODULE is already loaded and up-to-date. Imports according to
+IMPORTS.
+
+   `use_module(-MODULE, +FILE, +IMPORTS)'
+
+   MODULE has not been loaded, or is out-of-date. Loads MODULE from
+FILE and imports according to IMPORTS.
+
+Arguments
+---------
+
+FILE "file_spec" or "list of file_spec" [MOD]
+     Any legal file specification.  Only `use_module/1' accepts a "list"
+     of file specifications.  A `.pl' or `.qof' extension may be
+     omitted in a file specification.
+
+IMPORTS "list of simple_pred_spec" or "atom"
+     Either a list of predicate specifications in the NAME/ARITY form
+     to import into the calling module, or the atom `all', meaning all
+     predicates exported by the module are to be imported.
+
+MODULE "atom"
+     The module name in FILES, or a variable, in which case the module
+     name is returned.
+
+Description
+-----------
+
+   Loads each specified file except the previously loaded files that
+have not been changed since last loaded.  All files must be
+module-files, and all the public predicates of the modules are imported
+into the calling module (or module M if specified).
+
+   `use_module/2' imports only the predicates in IMPORTS when loading
+FILES.
+
+   `use_module/3' allows MODULE to be imported into another module
+without requiring that its source file (FILE) be known, as long as the
+MODULE already exists in the system.  This predicate is particularly
+useful when the module in question has been linked with the Development
+Kernel as described in *Note sap-srs::.
+
+   Generally, `use_module/3' is similar to `use_module/[1,2]', except
+that if MODULE is already in the system, MODULE, or predicates from
+MODULE, are simply imported into the calling module, and FILE is not
+loaded again.  If MODULE does not already exist in the system, FILE is
+loaded, and `use_module/3' behaves like `use_module/2', except that
+MODULE is unified, after the file has been loaded, with the actual name
+of the module in FILE.  If MODULE is a variable, FILE must exist, and
+the module name in FILE is returned.
+
+   When `use_module/3' is called from an embedded command in a file
+being compiled with `qpc', and FILE is unbound, an `initialization/1'
+fact is generated, so that the actual execution of the `use_module/3'
+command is delayed until the QOF file is loaded.  This means that the
+module given must exist when the QOF file is loaded, but not when it is
+created.
+
+   As FILE is not checked if MODULE already exists in the system, and
+FILE can even be left unnamed in that case, for example,
+     :- use_module(mod1, _, all).
+
+   In other words, the filename may be an unbound variable as long as
+MODULE is already in the system.
+
+   Special case of `load_files/2' and is defined as
+     use_module(Files) :-
+         load_files(Files, [if(changed),
+                            load_type(latest),
+                            must_be_module(true)]).
+     
+     use_module(File, Imports) :-
+         load_files(File, [if(changed),
+                           load_type(latest),
+                           must_be_module(true),
+                           imports(Imports)]).
+
+   `use_module/1' is similar to `ensure_loaded/1' except that all files
+must be module-files.
+
+   An attempt to import a predicate may fail or require intervention by
+the user because a predicate with the same name and arity has already
+been defined in, or imported into, the loading module (or module M if
+specified).  Details of what happens in the event of such a "name
+clash" are given in *Note ref-mod-ncl::.
+
+   After loading the module-file, the source module will attempt to
+import all the predicates in IMPORTS.  IMPORTS must be a list of
+predicate specifications in NAME/ARITY form.  If any of the predicates
+in IMPORTS are not public predicates, an error message is printed, but
+the predicates are imported nonetheless.  This lack of strictness is
+for convenience; if you forget to declare a predicate to be public, you
+can supply the necessary declaration and reload its module, without
+having to reload the module that has imported the predicate.
+
+   While `use_module/1' may be more convenient at the top level,
+`use_module/2' is recommended in files because it helps document the
+interface between modules by making the list of imported predicates
+explicit.
+
+   For consistency, `use_module/2' has also been extended so that the
+IMPORTS may be specified as the term `all', in which case it behaves
+the same as `use_module/1', importing the entire module into the caller.
+
+   For further details on loading files, see *Note ref-lod::.  On file
+specifications, see *Note ref-fdi::.
+
+Exceptions
+----------
+
+`instantiation_error'
+     M, FILES, or IMPORTS is not ground.
+
+`type_error'
+     One of the arguments is the wrong type.
+
+`existence_error'
+     A specified file does not exist.  If the `fileerrors' flag is
+     `off', the predicate fails instead of raising this exception.
+
+`permission_error'
+     A specified file is protected.  If the `fileerrors' flag is `off',
+     the predicate fails instead of raising this exception.
+
+See Also
+--------
+
+   `compile/1', `ensure_loaded/1', `initialization/1',
+`load_files/[1,2]', `volatile/1',
+
+   *Note ref-lod::,  *Note ref-fdi::
+
+
+File: quintus.info,  Node: mpg-ref-user_help,  Next: mpg-ref-var,  Prev: mpg-ref-use_module,  Up: mpg-ref
+
+`user_help/0' "hook"
+--------------------
+
+Synopsis
+--------
+
+   `:- multifile user_help/0.'
+
+   `user_help'
+
+   A hook for users to add more information when `help/0' is called.
+
+Description
+-----------
+
+   Useful when you want a standard way to tell users something, like
+how to run a demo.
+
+   `help/0' always calls `user_help/0' in module `user'.  Therefore, to
+be visible to `help/0', `user_help/0' must either be defined in or
+imported into module `user'.
+
+Example
+-------
+
+   The common test harness for many Quintus test suites includes the
+clause:
+
+     user_help :-
+       suite_type(_,Type), suite_host(Host),
+       write('You have loaded the Quintus test suite for '),
+       write(Type), write(' on '), write(Host), nl, nl,
+       write('You can invoke the suite as follows:'), nl, nl,
+       write(' ?- quiet.               % run suite, concise output'), nl,
+       write(' ?- verbose.             % run suite, verbose output'), nl,
+       write(' ?- quiet(+Pred).        % run suite, concise output for'), nl,
+       write('                         % tests of predicate Pred'), nl,
+       write(' ?- quiet(+Pred, +N).    % similar to above, but runs the'),nl,
+       write('                         %  test specified by N'), nl,
+       write(' ?- verbose(+Pred).      % run suite, verbose output for'), nl,
+       write('                         %  tests of predicate Pred'), nl,
+       write('                         %  (Pred a name, NOT name/arity!'),nl,
+       write(' ?- verbose(+Pred, +N).  % similar to above, but runs the'),nl,
+       write('                         %  test specified by N'), nl,
+       write(' ?- help.                % to get this message'), nl.
+
+   So if you compile the Prolog, C, Pascal or FORTRAN suites, you have a
+consistent help message telling you how to run the suites:
+
+          <run prolog>
+     
+          <compile /ptg/suite/plsuite.pl>
+     
+          | ?- help.
+
+   If you have loaded the Quintus test suite for Prolog on Sun ??? you
+can invoke the suite as follows:
+
+        ?- quiet.               % run suite, concise output
+        ?- verbose.             % run suite, verbose output
+        ?- quiet(+Pred).        % run suite, concise output for
+                                % tests of predicate Pred
+        ?- quiet(+Pred, +N).    % similar to above, but runs the
+                                %  test specified by N
+        ?- verbose(+Pred).      % run suite, verbose output for
+                                %  tests of predicate Pred
+                                %  (Pred a name, NOT name/arity!
+        ?- verbose(+Pred, +N).  % similar to above, but runs the
+                                %  test specified by N
+        ?- help.                % to get this message
+
+See Also
+--------
+
+   `help/1' *Note ref-olh::
+
+
+File: quintus.info,  Node: mpg-ref-var,  Next: mpg-ref-version,  Prev: mpg-ref-user_help,  Up: mpg-ref
+
+`var/1' "meta-logical"
+----------------------
+
+Synopsis
+--------
+
+   `var(+TERM)'
+
+   TERM is currently uninstantiated (`var' is short for variable).
+
+Arguments
+---------
+
+TERM "term"
+Description
+-----------
+
+   An uninstantiated variable is one that has not been bound to
+anything, except possibly another uninstantiated variable.  Note that a
+compound term with some arguments that are uninstantiated is not itself
+considered to be uninstantiated.
+
+Examples
+--------
+
+     | ?- var(foo(X,Y)).
+     
+     no
+     | ?- var([X,Y]).
+     
+     no
+     | ?- var(X).
+     
+     X = _3437 ;
+     
+     no
+     | ?- Term = foo(X,Y), var(Term).
+     
+     no
+
+See Also
+--------
+
+   `atom/1', `atomic/1', `number/1', `compound/1', `callable/1',
+`nonvar/1', `simple/1'
+
+
+File: quintus.info,  Node: mpg-ref-version,  Next: mpg-ref-vms,  Prev: mpg-ref-var,  Up: mpg-ref
+
+`version/[0,1]'
+---------------
+
+Synopsis
+--------
+
+   `version'
+
+   `version(+ATOM)'
+
+   Display system identification messages
+
+   Add the atom A to the list of introductory messages.
+
+Arguments
+---------
+
+ATOM "atom"
+
+File: quintus.info,  Node: mpg-ref-vms,  Next: mpg-ref-volatile,  Prev: mpg-ref-version,  Up: mpg-ref
+
+`vms/[1,2]'
+-----------
+
+Synopsis
+--------
+
+   `vms(+-COMMAND)'
+
+   `vms(+-COMMAND, +FLAG)'
+
+   Issue a VMS specific system command (only available on VMS
+platforms).
+
+Arguments
+---------
+
+COMMAND "term"
+
+FLAG "one of `[n,i]'"
+
+File: quintus.info,  Node: mpg-ref-volatile,  Next: mpg-ref-write,  Prev: mpg-ref-vms,  Up: mpg-ref
+
+`volatile/1' "declaration"
+--------------------------
+
+Synopsis
+--------
+
+   `:- volatile +PREDSPECS'
+
+   Declares PREDSPECS to be volatile.  Volatile predicates are not
+saved in QOF files by Prolog `save' predicates.
+
+Arguments
+---------
+
+PREDSPECS "pred_spec_forest" [MOD]
+     A single predicate specification of the form NAME/ARITY, or a
+     sequence of predicate specifications separated by commas.  NAME
+     must be an atom and ARITY an integer in the range 0..255.
+
+Description
+-----------
+
+   A built-in prefix operator, so that declarations can be written as
+e.g.
+      :- volatile a/1, b/3.
+
+   callable both at compile-time and run-time.  In both cases the
+predicate specified will, with immediate effect, be declared as
+volatile.
+
+   When used as a compile-time directive, the volatile declaration of a
+predicate must appear before all clauses of that predicate.  The
+predicate is reinitialized.
+
+   When used as a callable goal, the only effect on the predicate is
+that it is set to be volatile.
+
+Exceptions
+----------
+
+`instantiation_error'
+     If  PREDSPEC is not  ground.
+
+`type_error'
+     If  PREDSPEC is not a proper predicate specification.
+
+`permission_error'
+     PREDSPEC names a non-volatile predicate that is already defined
+     (This exception is only raised when volatile is used as a
+     compile-time directive.)
+
+Comments
+--------
+
+   Whether PREDSPEC is volatile can be checked with
+`predicate_property/2'.
+
+   The properties, as well as the predicate, can be deleted with
+`abolish/1'.
+
+   PREDSPEC clauses are saved by `qpc'.
+
+Examples
+--------
+
+   see examples under `initialization/1'.
+
+See Also
+--------
+
+   `initialization/1', `save_program/[1,2]', `save_modules/2',
+`save_predicates/2'
+
+   *Note ref-sls-igs-vol::
+
+
+File: quintus.info,  Node: mpg-ref-write,  Next: mpg-ref-write_canonical,  Prev: mpg-ref-volatile,  Up: mpg-ref
+
+`write/[1,2]'
+-------------
+
+Synopsis
+--------
+
+   `write(+TERM)'
+
+   `write(+STREAM, +TERM)'
+
+   Writes TERM to the current output stream or STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid output stream
+
+TERM "term"
+     the term to be written
+
+Description
+-----------
+
+   Equivalent to `write_term/[2,3]' with these options:
+     [quoted(false),ignore_ops(false),numbervars(true)]
+
+   If TERM is uninstantiated, it is written as an anonymous variable (an
+underscore followed by a non-negative integer).
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`existence_error'
+Example
+-------
+
+     | ?- write('a b').
+     a b
+
+See Also
+--------
+
+   `read[1,2]', `writeq/[1,2]', `write_canonical/[1,2]' or
+`write_term/[2,3]'.
+
+
+File: quintus.info,  Node: mpg-ref-write_canonical,  Next: mpg-ref-write_term,  Prev: mpg-ref-write,  Up: mpg-ref
+
+`write_canonical/[1,2]'
+-----------------------
+
+Synopsis
+--------
+
+   `write_canonical(+TERM)'
+
+   `write_canonical(+STREAM, +TERM)'
+
+   Writes TERM to the current or specified output stream in standard
+syntax.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog stream, which is open for output
+
+TERM "term"
+     the term to be written
+
+Description
+-----------
+
+   Equivalent to `write_term/[2,3]' with the options:
+     [quoted(true),ignore_ops(true),numbervars(false),char_escapes(false)]
+
+   This predicate is provided so that TERM, if written to a file, can
+be read back by `read/[1,2]' regardless of special characters in TERM
+or prevailing operator declarations.
+
+   Does not terminate its output with a full-stop, which is required by
+`read/[1,2]'.
+
+   In general, one can only read (using `read/[1,2]') a term written by
+`write_canonical/1' if the value of the `character_escapes' flag is the
+same when the term is read as when it was written.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::).
+
+Examples
+--------
+
+   The following sequence will succeed:
+     ...
+     open(FileName, write, StreamOut),
+     write_canonical(StreamOut, Term),
+     write(StreamOut, '.'),
+     nl(StreamOut),
+     close(StreamOut),
+     ...
+     open(FileName, read, StreamIn),
+     read(StreamIn, Term),
+     close(StreamIn),
+     ...
+
+   To contrast `write/[1,2]' and `write_canonical/[1,2]':
+     | ?- write({'A' + '$VAR'(0) + [a]}).
+     
+     {A+A+[a]}
+     
+     | ?- write_canonical({'A' + '$VAR'(0) + [a]}).
+     
+     {}(+(+('A','$VAR'(0)),.(a,[])))
+
+See Also
+--------
+
+   `write_term/[2,3]', `write/[1,2]', `writeq/[1,2]', `read/[1,2]'
+
+   *Note ref-iou-tou-cha::
+
+
+File: quintus.info,  Node: mpg-ref-write_term,  Next: mpg-ref-writeq,  Prev: mpg-ref-write_canonical,  Up: mpg-ref
+
+`write_term/[2,3]'
+------------------
+
+Synopsis
+--------
+
+   `write_term(+TERM, +OPTIONS)'
+
+   `write_term(+STREAM, +TERM, +OPTIONS)'
+
+   Writes TERM to the current output stream or to STREAM in a format
+given by the options.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog stream, which is open for output
+
+TERM "term"
+     the term to be written
+
+OPTIONS "list of term"
+     a list of zero or more of the following, where BOOL must be `true'
+     or `false' (`false' is the default).
+
+    `quoted(BOOL)'
+          Should atoms and functors be quoted as necessary to make them
+          acceptable as input to read?
+
+    `ignore_ops(BOOL)'
+          Ignore current operator declarations? If BOOL is true,
+          compound terms are always written in the form: `PREDICATE
+          NAME(ARG1,...,ARGN)'.
+
+    `portrayed(BOOL)'
+          Call user:`portray/1' for each subterm.  By default the
+          behavior of `write_term/[2,3]' is controlled by OPTIONS, but
+          you can change its effect by providing clauses for the
+          predicate `portray/1'.
+
+    `character_escapes(BOOL)'
+          Use character escapes.  BOOL must be `true' or `false' (the
+          default depends on the value of the `character_escapes' flag
+          as set by `prolog_flag/3'). If BOOL is `true' then
+          `write_term/[2,3]' tries to write layout characters (except
+          ASCII 9 and ASCII 32) in the form `\LOWER-CASE-LETTER', if
+          possible; otherwise, `write_term/[2,3]' writes the
+          `\^CONTROL-CHAR' form.  If BOOL is `false' then it writes the
+          actual character, without using an escape sequence.
+
+    `numbervars(BOOL)'
+          Should terms like `'$VAR'(N)' be treated specially?  If BOOL
+          is true, `write_term/[2,3]' writes `A' if N=0, `B' if N=1,
+          ...`Z' if N=25, `A1' if N=26, etc.  Terms of this form are
+          generated by `numbervars/3'.
+
+    `max_depth(N)'
+          Depth limit on printing.  N is any integer; 0 means no limit
+          and approximately 33 million is the default.
+
+Description
+-----------
+
+   `write_term/[2,3]' is the most general of the write family of
+predicates. `write_term/[2,3]' subsumes all predicates in the family,
+with the exception of `portray_clause/1'. That is, all write predicates
+can be written as calls to `write_term/[2,3]'.
+
+Exceptions
+----------
+
+`domain_error'
+     OPTIONS contains an undefined option.
+
+`instantiation_error'
+     Any of the OPTIONS arguments or STREAM is not ground.
+
+`type_error'
+     In STREAM or in OPTIONS.
+
+`existence_error'
+     STREAM is syntactically valid but does not name an open stream.
+
+`permission_error'
+     STREAM names an open stream but the stream is not open for output.
+
+Comments
+--------
+
+   If an option is specified more than once the rightmost option takes
+precedence. This provides for a convenient way of adding default values
+by putting these defaults at the front of the list of options.  For
+example, the predicate `my_write_term/2' defined as
+     my_write_term(Term, Options) :-
+        write_term(Term, [quoted(true),
+                          numbervars(true)|Options]).
+
+   is equivalent to `write_term/2' except that two of the defaults are
+different.
+
+Examples
+--------
+
+   How certain options affect the output of `write_term/2':
+     | ?- write_term('a b', [quoted(true)]).
+     'a b'
+     
+     | ?- write_term(a+b, [ignore_ops(true)]).
+     +(a,b)
+     
+     | ?- write_term(f('$VAR'(2)),
+                        [numbervars(true)].)
+     f(C)
+     
+     | ?- write_term(f('$VAR'('C')),
+                        [numbervars(true)]).
+     
+     f(C)
+
+   If your intention is to name variables such as that generated by
+`read_term/2' with the variable_names option then this can be done by
+defining a predicate like:
+     var_to_names([]) :- !.
+     var_to_names([=(Name,Var)|RestofPairs]) :-
+          ( var(Var) ->
+               Var = '$VAR'(Name)
+          ; true
+          ),
+          var_to_names(RestofPairs).
+     
+     | ?- read_term([variable_names(Names)], X),
+          var_to_names(Names),
+          write_term(X, [numbervars(true)]),
+          nl,
+          fail.
+     |: a(X, Y).
+     a(X, Y).
+     
+     no
+
+See Also
+--------
+
+   `write/[1,2]', `writeq/[1,2]', `write_canonical/[1,2]', `display/1',
+`print/1', `portray_clause/1'
+
+   *Note ref-iou-tou-cha::
+
+
+File: quintus.info,  Node: mpg-ref-writeq,  Prev: mpg-ref-write_term,  Up: mpg-ref
+
+`writeq/[1,2]'
+--------------
+
+Synopsis
+--------
+
+   `writeq(+TERM)'
+
+   `writeq(+STREAM, +TERM)'
+
+   Writes the term TERM to STREAM or the current output stream.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog stream, which is open for output
+
+TERM "term"
+     the term to be written
+
+Description
+-----------
+
+   Equivalent to `write_term/[2,3]' with the options:
+     [quoted(true),ignore_ops(false),numbervars(true)]
+
+   Does not terminate its output with a full-stop.  Therefore, if you
+want this term to be input to `read/[1,2]', you must explicitly write a
+full-stop to mark the end of the term.
+
+Comments
+--------
+
+   Depending upon whether character escaping is on or off,
+`writeq/[1,2]' and `write_canonical/[1,2]' behave differently when
+writing quoted atoms.  If character escaping is on:
+   * The characters with ASCII codes 9 (horizontal tab), 32 (space),
+     and 33 through 126 (non-layout characters) are written as
+     themselves.
+
+   * The characters with ASCII codes 8, 10, 11, 12, 13, 27, and 127 are
+     written in their `\LOWERCASE LETTER' form (see above for the
+     corresponding letter).
+
+   * The character with ASCII code 39 (single quote) is written as two
+     consecutive single quotes.
+
+   * The character with ASCII code 92 (back slash) is written as two
+     consecutive back slashes.
+
+   * All other characters are written in their `\^CONTROL CHAR' form.
+
+   If character escaping is off:
+   * The character with ASCII code 39 (single quote) is written as two
+     consecutive single quotes.
+
+   * All other characters are written as themselves.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::)
+
+See Also
+--------
+
+   `write_term/[2,3]', `write/[1,2]', `write_canonical/[1,2]'
+
+   *Note ref-syn-ces:: for information about character escaping.
+
+
+File: quintus.info,  Node: cfu,  Next: too,  Prev: mpg,  Up: Top
+
+C Reference Pages
+*****************
+
+* Menu:
+
+* cfu-rve::                             Return Values and Errors
+* cfu-top::                             Topical List of C Functions
+* cfu-ref::                             C Functions
+
+
+File: quintus.info,  Node: cfu-rve,  Next: cfu-top,  Up: cfu
+
+Return Values and Errors
+========================
+
+   Quintus Prolog C functions return the following:
+integer
+     one of
+
+    `QP_SUCCESS'
+          (0)
+
+    `QP_FAILURE'
+          (-1)
+
+    `QP_ERROR'
+          (-2)
+
+boolean
+     true (1), false (0)
+
+pointer
+     a pointer or null (0)
+
+   In some error situations, a global variable, `QP_errno' may also be
+set to give more information about the error condition.
+
+   Those I/O related predicates that take a Prolog stream argument do
+not set the error code in `QP_errno'.  Instead, they set the errno
+field of the stream.
+
+   There are two `QP_' functions provided to help diagnose error
+conditions from error numbers:
+
+`QP_perror()'
+     prints out a user message, together with a short error message
+     describing the last error encountered that set `QP_errno'.  This
+     function is similar to the system function `perror(3)'.
+
+`QP_error_message()'
+     returns a pointer to the diagnostic message corresponding to a
+     specified error number.
+
+   In addition, the error number is sometimes reported in the message
+field of exception terms, as in
+     existence_error(Goal, _,_,_,errno(ERROR NUMBER))
+
+   See *Note mpg-ref-ove:: for a description of the conventions
+observed in the Reference Pages for Prolog predicates.  C function
+Reference Pages differ primarily in the synopsis.
+
+
+File: quintus.info,  Node: cfu-top,  Next: cfu-ref,  Prev: cfu-rve,  Up: cfu
+
+Topical List of C Functions
+===========================
+
+* Menu:
+
+* cfu-top-err::                         C Errors
+* cfu-top-cio::                         Character I/O
+* cfu-top-exc::                         Exceptions
+* cfu-top-fst::                         Files and Streams
+* cfu-top-fin::                         Foreign Interface
+* cfu-top-ise::                         Input Services
+* cfu-top-main::                        main()
+* cfu-top-mem::                         Memory Management
+* cfu-top-sig::                         Signal Handling
+* cfu-top-tic::                         Terms in C
+* cfu-top-tio::                         Term I/O
+* cfu-top-typ::                         Type Tests
+
+   Following is a complete list of Quintus-supplied C functions.  They
+fall into two categories: built-in and user-redefinable.  The
+user-redefinable functions are used in embedding Prolog sub-programs
+(see *Note fli-emb::).  Quintus provides default definitions for these
+functions, and for most purposes it is unneccessary to even know about
+them.  However, it is possible to redefine any of these to make Quintus
+Prolog programs behave appropriately when embedded in C code.  Changing
+these default definitions means replacing them with your own code, not
+adding clauses.
+
+   By convention these functions are named to be recognizable as C
+functions, and as belonging to one or the other of these categories:
+Regular C builtins are prefixed with `QP_' and user-redefinable ones
+with `QU_'.
+
+
+File: quintus.info,  Node: cfu-top-err,  Next: cfu-top-cio,  Up: cfu-top
+
+C Errors
+--------
+
+`QP_perror()'
+     prints an error message based on a QP error number
+
+`QP_error_message()'
+     gets the corresponding error message from a QP error number
+
+`QU_error_message()'
+     as `QP_error_message()', but user-redefinable
+
+
+File: quintus.info,  Node: cfu-top-cio,  Next: cfu-top-exc,  Prev: cfu-top-err,  Up: cfu-top
+
+Character I/O
+-------------
+
+`QP_char_count()'
+     obtains the character count for a Prolog stream
+
+`QP_fgetc()'
+     gets a character from a Prolog input stream
+
+`QP_fgets()'
+     gets a string from a Prolog input stream
+
+`QP_fpeekc()'
+     looks a character ahead from a Prolog input stream
+
+`QP_fprintf()'
+     prints formatted output on a Prolog output stream
+
+`QP_fputc()'
+     puts a character on a Prolog output stream
+
+`QP_fputs()'
+     puts a character string on a Prolog output stream
+
+`QP_fskipln()'
+     skips the current input record of a Prolog input stream
+
+`QP_getc()'
+     gets a character from a Prolog input stream
+
+`QP_getchar()'
+     gets a character from the Prolog current input stream
+
+`QP_newln()'
+     terminates an output record for a Prolog output stream
+
+`QP_newline()'
+     terminates an output record for the Prolog current output stream
+
+`QP_peekc()'
+     looks a character ahead from a Prolog input stream
+
+`QP_peekchar()'
+     looks a character ahead from the Prolog current input stream
+
+`QP_putc()'
+     puts a character on a Prolog output stream
+
+`QP_putchar()'
+     puts a character on the Prolog current output stream
+
+`QP_puts()'
+     puts a character string on the Prolog current output stream
+
+`QP_skipline()'
+     skips the current input record of the Prolog current input stream
+
+`QP_skipln()'
+     skips the current input record of a Prolog input stream
+
+`QP_tab()'
+     puts the specified character the number of times specified on a
+     Prolog output stream
+
+`QP_tabto()'
+     puts the specified character up to the specified line position on
+     a Prolog output stream
+
+`QP_ungetc()'
+     "unget"s the previous read character from a Prolog input input
+     stream
+
+
+File: quintus.info,  Node: cfu-top-exc,  Next: cfu-top-fst,  Prev: cfu-top-cio,  Up: cfu-top
+
+Exceptions
+----------
+
+`QP_exception_term()'
+     fetches the Prolog term representing the most recently raised
+     exception
+
+
+File: quintus.info,  Node: cfu-top-fst,  Next: cfu-top-fin,  Prev: cfu-top-exc,  Up: cfu-top
+
+Files and Streams
+-----------------
+
+`QP_add_tty()'
+     registers a created Prolog stream as a tty stream group
+
+`QP_clearerr()'
+     clears the previous error on a Prolog stream
+
+`QP_close()'
+     closes a Prolog stream
+
+`QP_eof()'
+     tests for the end of file on an input stream
+
+`QP_eoln()'
+     tests for the end of record on an input stream
+
+`QP_fclose()'
+     closes a Prolog stream
+
+`QP_fdopen()'
+     creates a text stream or a binary stream from a file descriptor
+
+`QP_ferror()'
+     tests error condition for a Prolog stream
+
+`QP_flush()'
+     flushes output on a Prolog output stream
+
+`QP_fnewln()'
+     terminates an output record for a Prolog output stream
+
+`QP_fopen()'
+     opens a text file or a binary file as a Prolog stream
+
+`QP_getpos()'
+     gets the current position for a Prolog stream
+
+`QP_line_count()'
+     obtains the line count for a Prolog stream
+
+`QP_line_position()'
+     obtains the line position for a Prolog stream
+
+`QP_prepare_stream()'
+     initializes internal fields of a `QP_stream' structure
+
+`QP_register_stream()'
+     registers a created Prolog stream
+
+`QP_rewind()'
+     repositions a Prolog stream back to the beginning
+
+`QP_seek()'
+     seeks to a random position in a Prolog stream
+
+`QP_setinput()'
+     sets the Prolog current input stream
+
+`QP_setoutput()'
+     sets the Prolog current output stream
+
+`QP_setpos()'
+     positions a Prolog stream back to a previous read/written position
+
+`QU_fdopen()'
+     creates streams opened by `QP_fdopen()'
+
+`QU_initio()'
+     creates three Prolog initial streams
+
+`QU_open()'
+     creates streams opened by `open/[3,4]'
+
+`QU_stream_param()'
+     sets up default field values in a `QP_stream' stream structure
+
+
+File: quintus.info,  Node: cfu-top-fin,  Next: cfu-top-ise,  Prev: cfu-top-fst,  Up: cfu-top
+
+Foreign Interface
+-----------------
+
+`QP_atom_from_padded_string()'
+     returns the Prolog atom corresponding to a blank-padded string;
+     used with FORTRAN & Pascal
+
+`QP_atom_from_string()'
+     returns the Prolog atom corresponding to a null-terminated string
+
+`QP_close_query()'
+     closes a Prolog query opened from C by `QP_open_query()'
+
+`QP_cons_functor()'
+     creates a Prolog compound term from C
+
+`QP_cons_list()'
+     creates a Prolog list from C
+
+`QP_cut_query()'
+     terminates a nondeterminate Prolog query opened from C
+
+`QP_exception_term()'
+     returns the Prolog term to C corresponding to the most recent
+     Prolog error
+
+`QP_get_arg()'
+     fetches a specified argument of a compound term in a Prolog term
+     reference
+
+`QP_get_atom()'
+     fetches an atom from a Prolog term reference
+
+`QP_get_float()'
+     fetches a floating point number from a Prolog term reference
+
+`QP_get_functor()'
+     fetches the name and arity of a term in a Prolog term reference
+
+`QP_get_head()'
+     fetches the head of a list in a Prolog term reference
+
+`QP_get_integer()'
+     fetches an integer in a Prolog term reference
+
+`QP_get_list()'
+     fetches the head and tail of a list in a Prolog term reference
+
+`QP_get_tail()'
+     fetches the tail of a list in a Prolog term reference
+
+`QP_next_solution()'
+     gets the next solution, if any, to an open Prolog query
+
+`QP_open_query()'
+     opens a Prolog query from C
+
+`QP_padded_string_from_atom()'
+     returns the blank-padded string corresponding to a Prolog atom;
+     used with FORTRAN & Pascal
+
+`QP_pred()'
+     fetches an identifier for a Prolog predicate
+
+`QP_predicate()'
+     fetches an identifier a Prolog predicate
+
+`QP_put_atom()'
+     assigns an atom to a Prolog term reference
+
+`QP_put_float()'
+     assigns a floating point number to a Prolog term reference
+
+`QP_put_functor()'
+     assigns a new compound term to a Prolog term reference
+
+`QP_put_integer()'
+     assigns a Prolog integer to a Prolog term reference
+
+`QP_put_list()'
+     assigns a new list to a Prolog term reference
+
+`QP_put_term()'
+     assigns a Prolog term reference to another Prolog term reference
+
+`QP_put_variable()'
+     assigns a Prolog variable to a Prolog term reference
+
+`QP_query()'
+     makes a determinate query to a Prolog predicate
+
+`QP_string_from_atom()'
+     returns a null-terminated string corresponding to a Prolog atom
+
+
+File: quintus.info,  Node: cfu-top-ise,  Next: cfu-top-main,  Prev: cfu-top-fin,  Up: cfu-top
+
+Input Services
+--------------
+
+`QP_add_input()'
+     registers a function to be called when input occurs on a file
+     descriptor
+
+`QP_add_output()'
+     registers a function  to be called when output occurs on a file
+     descriptor
+
+`QP_add_exception()'
+     registers a function to be called when an exception condition
+     occurs on a file descriptor
+
+`QP_add_timer()'
+     arranges for a function to be called after a period of time
+
+`QP_add_absolute_timer()'
+     arranges for a function to be called at a given time
+
+`QP_remove_input()'
+     removes any input callbacks registered on a file descriptor
+
+`QP_remove_output()'
+     removes any output callbacks registered on a file descriptor
+
+`QP_remove_exception()'
+     removes any exception callbacks registered on a file descriptor
+
+`QP_remove_timer()'
+     removes a timer callback
+
+`QP_select()'
+     waits until I/O is ready on any of a set of file descriptors, or a
+     timeout period occurs
+
+`QP_wait_input()'
+     waits until input is ready on a file descriptor or a timeout
+     period occurs
+
+
+File: quintus.info,  Node: cfu-top-main,  Next: cfu-top-mem,  Prev: cfu-top-ise,  Up: cfu-top
+
+main()
+------
+
+`QP_initialize()'
+     initializes Prolog default
+
+`QP_toplevel()'
+     in a development system, calls the Prolog "read-prove" loop; in a
+     runtime system, calls `runtime_entry/1'.
+
+
+File: quintus.info,  Node: cfu-top-mem,  Next: cfu-top-sig,  Prev: cfu-top-main,  Up: cfu-top
+
+Memory Management
+-----------------
+
+`QP_register_atom()'
+     prevents an atom from being discarded by atom garbage collection
+     even if not referenced by Prolog code
+
+`QP_trimcore()'
+     asks Prolog to purge all memory not in use
+
+`QP_unregister_atom()'
+     enables an atom to be discarded during atom garbage collection if
+     not referenced by Prolog code
+
+`QU_alloc_init_mem()'
+     user-redefinable function to allocate memory for Prolog
+
+`QU_alloc_mem()'
+     user-redefinable function to allocate memory for Prolog
+
+`QU_free_mem()'
+     user-redefinable function to free memory from Prolog
+
+
+File: quintus.info,  Node: cfu-top-sig,  Next: cfu-top-tic,  Prev: cfu-top-mem,  Up: cfu-top
+
+Signal Handling
+---------------
+
+`QP_action()'
+     requests certain kinds of Prolog action
+
+
+File: quintus.info,  Node: cfu-top-tic,  Next: cfu-top-tio,  Prev: cfu-top-sig,  Up: cfu-top
+
+Terms in C
+----------
+
+`QP_compare()'
+     compares two terms using Prolog's standard term order
+
+`QP_new_term_ref()'
+     returns a reference, which can be used to hold a Prolog term in C
+
+`QP_unify()'
+     unifies two Prolog terms
+
+
+File: quintus.info,  Node: cfu-top-tio,  Next: cfu-top-typ,  Prev: cfu-top-tic,  Up: cfu-top
+
+Term I/O
+--------
+
+`QP_fread()'
+     reads several items of data from a Prolog input stream
+
+`QP_fwrite()'
+     writes several items of data on a Prolog output stream
+
+`QP_printf()'
+     prints formatted output on the Prolog current output stream
+
+`QP_vfprintf()'
+     prints formatted output of a varargs argument list on a Prolog
+     output stream
+
+
+File: quintus.info,  Node: cfu-top-typ,  Prev: cfu-top-tio,  Up: cfu-top
+
+Type Tests
+----------
+
+`QP_is_atom()'
+     tests whether a Prolog term reference contains an atom
+
+`QP_is_atomic()'
+     tests whether a Prolog term reference contains an atomic term
+
+`QP_is_compound()'
+     tests whether a Prolog term reference contains a compound term
+
+`QP_is_float()'
+     tests whether a Prolog term reference contains a floating point
+     number
+
+`QP_is_integer()'
+     tests whether a Prolog term reference contains a Prolog integer
+
+`QP_is_list()'
+     tests whether a Prolog term reference contains a list
+
+`QP_is_number()'
+     tests whether a Prolog term reference contains an integer or a
+     floating point number
+
+`QP_is_variable()'
+     tests whether a Prolog term reference contains a Prolog variable
+
+`QP_term_type()'
+     returns the type of the term in a Prolog term reference
+
+
+File: quintus.info,  Node: cfu-ref,  Prev: cfu-top,  Up: cfu
+
+C Functions
+===========
+
+* Menu:
+
+* cfu-ref-action::                      QP_action()
+* cfu-ref-add::                         QP_add_*()
+* cfu-ref-add_tty::                     QP_add_tty()
+* cfu-ref-atom_from_string::            QP_atom_from_string(), QP_atom_from_padded_string()
+* cfu-ref-char_count::                  QP_char_count()
+* cfu-ref-clearerr::                    QP_clearerr()
+* cfu-ref-close_query::                 QP_close_query()
+* cfu-ref-compare::                     QP_compare()
+* cfu-ref-cons::                        QP_cons_*()
+* cfu-ref-cut_query::                   QP_cut_query()
+* cfu-ref-error_message::               QP_error_message()
+* cfu-ref-exception_term::              QP_exception_term()
+* cfu-ref-eof::                         QP_eof()
+* cfu-ref-eoln::                        QP_eoln()
+* cfu-ref-fclose::                      QP_fclose()
+* cfu-ref-fdopen::                      QP_fdopen()
+* cfu-ref-ferror::                      QP_ferror()
+* cfu-ref-fgetc::                       QP_fgetc()
+* cfu-ref-fgets::                       QP_fgets()
+* cfu-ref-flush::                       QP_flush()
+* cfu-ref-fnewln::                      QP_fnewln()
+* cfu-ref-fopen::                       QP_fopen()
+* cfu-ref-fpeekc::                      QP_fpeekc()
+* cfu-ref-fprintf::                     QP_fprintf()
+* cfu-ref-fputc::                       QP_fputc()
+* cfu-ref-fputs::                       QP_fputs()
+* cfu-ref-fread::                       QP_fread()
+* cfu-ref-fskipln::                     QP_fskipln()
+* cfu-ref-fwrite::                      QP_fwrite()
+* cfu-ref-get::                         QP_get_*()
+* cfu-ref-getc::                        QP_getc()
+* cfu-ref-getchar::                     QP_getchar()
+* cfu-ref-getpos::                      QP_getpos()
+* cfu-ref-initialize::                  QP_initialize()
+* cfu-ref-is::                          QP_is_*()
+* cfu-ref-line_count::                  QP_line_count()
+* cfu-ref-line_position::               QP_line_position()
+* cfu-ref-malloc::                      QP_malloc(), QP_free()
+* cfu-ref-new_term_ref::                QP_new_term_ref()
+* cfu-ref-newline::                     QP_newline()
+* cfu-ref-newln::                       QP_newln()
+* cfu-ref-next_solution::               QP_next_solution()
+* cfu-ref-open_query::                  QP_open_query()
+* cfu-ref-peekc::                       QP_peekc()
+* cfu-ref-peekchar::                    QP_peekchar()
+* cfu-ref-perror::                      QP_perror()
+* cfu-ref-pred::                        QP_pred()
+* cfu-ref-predicate::                   QP_predicate()
+* cfu-ref-prepare_stream::              QP_prepare_stream()
+* cfu-ref-printf::                      QP_printf()
+* cfu-ref-put::                         QP_put_*()
+* cfu-ref-putc::                        QP_putc()
+* cfu-ref-putchar::                     QP_putchar()
+* cfu-ref-puts::                        QP_puts()
+* cfu-ref-query::                       QP_query()
+* cfu-ref-register_atom::               QP_register_atom(), QP_unregister_atom()
+* cfu-ref-register_stream::             QP_register_stream()
+* cfu-ref-remove::                      QP_remove_*()
+* cfu-ref-rewind::                      QP_rewind()
+* cfu-ref-seek::                        QP_seek()
+* cfu-ref-select::                      QP_select()
+* cfu-ref-setinput::                    QP_setinput()
+* cfu-ref-setoutput::                   QP_setoutput()
+* cfu-ref-setpos::                      QP_setpos()
+* cfu-ref-skipline::                    QP_skipline()
+* cfu-ref-skipln::                      QP_skipln()
+* cfu-ref-string_from_atom::            QP_string_from_atom(), QP_padded_string_from_atom()
+* cfu-ref-tab::                         QP_tab()
+* cfu-ref-tabto::                       QP_tabto()
+* cfu-ref-term_type::                   QP_term_type()
+* cfu-ref-toplevel::                    QP_toplevel()
+* cfu-ref-trimcore::                    QP_trimcore()
+* cfu-ref-ungetc::                      QP_ungetc()
+* cfu-ref-unify::                       QP_unify()
+* cfu-ref-vfprintf::                    QP_vfprintf()
+* cfu-ref-wait_input::                  QP_wait_input()
+* cfu-ref-QU_alloc_mem::                QU_alloc_mem(), QU_alloc_init_mem(), QU_free_mem()
+* cfu-ref-QU_fdopen::                   QU_fdopen()
+* cfu-ref-QU_free_mem::                 QU_free_mem()
+* cfu-ref-QU_initio::                   QU_initio()
+* cfu-ref-QU_open::                     QU_open()
+* cfu-ref-QU_stream_param::             QU_stream_param()
+
+   The following reference pages, alphabetically arranged, describe the
+Quintus Prolog built-in C functions.
+
+   For a functional grouping of these functions including brief
+descriptions, see *Note cfu-top::.
+
+   For information about return values and errors, see *Note cfu-rve::
+
+
+File: quintus.info,  Node: cfu-ref-action,  Next: cfu-ref-add,  Up: cfu-ref
+
+`QP_action()'
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_action(action)
+     int action;
+
+   Called to request certain actions of Prolog.
+
+Arguments
+---------
+
+   `action' is one of:
+`QP_ABORT'
+     *Abort to the current break level
+
+`QP_REALLY_ABORT'
+     *Abort to top level
+
+`QP_STOP'
+     Stop (suspend) process
+
+`QP_IGNORE'
+     Do nothing
+
+`QP_EXIT'
+     Exit Prolog immediately
+
+`QP_MENU'
+     Present action menu
+
+`QP_TRACE'
+     Turn on trace mode
+
+`QP_DEBUG'
+     Turn on debugging
+
+Description
+-----------
+
+   This function allows the user to make Prolog abort, exit, suspend
+execution, turn on debugging, or prompt for the desired action.
+
+   Calls to `QP_action()' from an interrupt handler must be viewed as
+REQUESTS.  They are requests that will definitely be honored, but not
+always at the time of the call to `QP_action()'. If Prolog is in a
+critical region the action might be delayed to when it has exitted the
+critical region.
+
+Return Value
+------------
+
+`QP_ERROR'
+
+`QP_SUCCESS'
+Errors
+------
+
+     For systems that do not have a toplevel, the actions marked with an
+     asterisk (*) will have no effect other than to make `QP_action()'
+     return `QP_ERROR'.
+
+Examples
+--------
+
+   For a full discussion of `QP_action()' and examples of its use, see
+*Note ref-iex-iha::
+
+
+File: quintus.info,  Node: cfu-ref-add,  Next: cfu-ref-add_tty,  Prev: cfu-ref-action,  Up: cfu-ref
+
+`QP_add_*()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_add_input(id,fn,data,flush_fn, flush_data)
+     int  id;
+     void (*fn)();
+     char *data;
+     void (*flush_fn)();
+     char *flush_data;
+
+     int QP_add_output(id,fn,data,flush_fn,flush_data)
+     int  id;
+     void (*fn)();
+     char *data;
+     void (*flush_fn)();
+     char *flush_data;
+
+     int QP_add_exception(id,fn,data,flush_fn,flush_data)
+     int  id;
+     void (*fn)();
+     char *data;
+     void (*flush_fn)();
+     char *flush_data;
+
+     int QP_add_timer(msecs,fn,data)
+     int  msecs;
+     void (*fn)();
+     char *data;
+
+     int QP_add_absolute_timer(timeo,fn,data)
+     struct timeval *timeo;
+     void (*fn)();
+     char *data;
+
+   These C functions register callback functions to be called on
+input/output or timing events.
+
+Description
+-----------
+
+   `QP_add_input()' arranges for a function to be called when input
+becomes available on the file descriptor ID. The callback function FN
+is called with two arguments: the file descriptor ID and the specified
+call data DATA.
+
+   Before the function is called, the callback is disabled so that the
+function will not be inadvertently reentered while it is running.  The
+callback will be enabled automatically after the callback function
+returns.
+
+   If the flush function FLUSH_FN is not `NULL' then it is called
+whenever Prolog needs to wait for input. This is useful when you
+communicate with another process using bidirectional buffered
+connections, where you must flush the output before you wait for input,
+lest your process waits for a response to a message that is still
+buffered in your output queue.
+
+   `QP_add_output()' is like `QP_add_input()' except that the callback
+function is called if output is ready on file descriptor ID.
+`QP_add_exception()' is like `QP_add_input()' except that the callback
+function is called if an exception condition occurs on file descriptor
+ID.
+
+   `QP_add_timer()' arranges for a function to be called in MSECS
+milliseconds time with two arguments: the actual time waited and the
+specified call data DATA. This timer does not repeat automatically; if
+you want a repeating timer, you should call `QP_add_timer()' within the
+callback function explicitly.
+
+   `QP_add_absolute_timer()' is like `QP_add_timer()' except that an
+absolute time is specified by the timeval structure TIMEO; see
+`gettimeofday(2)'.
+
+Return Values
+-------------
+
+TIMERID
+     Returned by `QP_add_timer()' and `QP_add_absolute_time()' if
+     successful.
+
+`QP_SUCCESS'
+     Returned by other functions.
+
+`QP_ERROR'
+     Returned by all functions if an error occurs.
+
+Tips
+----
+
+   Often your code will maintain a buffer associated with an input
+connection. If this is the case, then your flush function must check
+for this buffered input, and as long as it finds some, it should
+repeatedly call your callback function directly.  If you don't do this,
+then your callback function may not be called, even though you have
+pending input, since the operating system isn't aware of your buffer.
+
+See Also
+--------
+
+   `QP_wait_input()', `QP_select()', `QP_remove_*()'
+
+
+File: quintus.info,  Node: cfu-ref-add_tty,  Next: cfu-ref-atom_from_string,  Prev: cfu-ref-add,  Up: cfu-ref
+
+`QP_add_tty()'
+--------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_add_tty(stream, tty_id)
+     QP_stream *stream;
+     char      *tty_id;
+
+   Register a created Prolog stream to a tty stream group.
+
+Arguments
+---------
+
+STREAM
+     a pointer to a valid stream structure
+
+TTY_ID
+     an identification string for a tty group
+
+Description
+-----------
+
+   This function is used to register a stream to a tty group. All the
+streams in a tty group share a single stream position (see the
+reference pages for `line_count/2', `line_position/2' and
+`character_count/2'). When input is requested on one of the streams and
+the shared line position is 0, a prompt is output on one of the output
+streams.
+
+See Also
+--------
+
+   *Note fli-ios-tty::
+
+
+File: quintus.info,  Node: cfu-ref-atom_from_string,  Next: cfu-ref-char_count,  Prev: cfu-ref-add_tty,  Up: cfu-ref
+
+`QP_atom_from_string()', `QP_atom_from_padded_string()'
+-------------------------------------------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     QP_atom QP_atom_from_string(string)
+     char *string;
+
+   Returns the canonical representation of the atom whose printed
+representation is the (null-terminated) string STRING.
+
+     QP_atom QP_atom_from_padded_string(p_atom, p_string, p_length)
+     QP_atom *p_atom;
+     char    *p_string;
+     int     *p_length;
+
+   Computes the canonical representation of the atom whose printed
+representation is the (blank-padded) string P_STRING in a character
+array of length P_LENGTH.
+
+Description
+-----------
+
+   `QP_atom_from_string()' returns the canonical representation of the
+atom whose printed representation is STRING. STRING must be a valid
+null-terminated string. The string is copied and internalised by Prolog
+and the foreign function can reuse the string and its space.
+
+   `QP_atom_from_padded_string()' is useful for Pascal and FORTRAN and
+can be used with any language that has a C-compatible calling convention
+for passing integers and pointers (on the user's platform). e.g. some
+Pascal and FORTRAN compilers running under UNIX.
+
+   P_STRING is a pointer to a character array and P_LENGTH is a pointer
+to an integer specifying the length of the array.
+`QP_atom_from_padded_string()' sets the atom referenced by P_ATOM to
+the canonical representation of the atom whose printed representation
+is the string (less any trailing blanks) in the character array.  It
+returns the length of the resulting atom (not the character array's
+length) as the function value.
+
+Examples
+--------
+
+   `rev_atom()' is a C function that takes an atom and returns an atom
+whose string representation is the reverse of the string representation
+of the atom passed in.
+
+                                                               _foo.pl_
+     
+     foreign(rev_atom, c, rev_atom(+atom, [-atom])).
+
+                                                                _foo.c_
+     
+     QP_atom rev_atom(atom)
+     QP_atom atom;
+     {
+         char *string[MAX_ATOM_LEN];
+     
+         strcpy(string, QP_string_from_atom(atom));
+         reverse(string); /* reverses string in place */
+         return QP_atom_from_string(string);
+     }
+
+   Giving:
+
+     | ?- rev_atom(draw, X).
+     
+     X = ward
+     
+     yes
+     | ?-
+
+See Also
+--------
+
+   `QP_string_from_atom()', `QP_padded_string_from_atom()'
+
+   *Note fli-p2f-atm::
+
+
+File: quintus.info,  Node: cfu-ref-char_count,  Next: cfu-ref-clearerr,  Prev: cfu-ref-atom_from_string,  Up: cfu-ref
+
+`QP_char_count()'
+-----------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_char_count(stream)
+     QP_stream *stream;
+
+   Obtains the current character count for the Prolog stream STREAM.
+`QP_char_count()' is a macro.
+
+Arguments
+---------
+
+STREAM
+     a pointer to a valid Prolog stream structure
+
+See Also
+--------
+
+   `QP_get_pos()', `QP_line_count()', `QP_line_position()',
+`character_count/2', `QP_getpos()', `QP_setpos()', `QP_seek()',
+`stream_position/[2,3]'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-clearerr,  Next: cfu-ref-close_query,  Prev: cfu-ref-char_count,  Up: cfu-ref
+
+`QP_clearerr()'
+---------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     void QP_clearerr(stream)
+     QP_stream *stream;
+
+   Resets the error indication and EOF indication to zero on the named
+stream.
+
+   `QP_clearerr()' is similar to the library function `clearerr(3V)',
+however the return values differ and "stream" is a Prolog stream rather
+than a `stdio' stream.
+
+See Also
+--------
+
+   *Note fli-ios::
+

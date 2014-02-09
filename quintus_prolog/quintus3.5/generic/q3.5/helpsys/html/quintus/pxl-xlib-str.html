@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Data Structures</h4>
+
+   <p>Xlib has three basic kinds of data structures:  documented C structures,
+undocumented C structures, and XIDs.  The documented C structures are
+used as any C structure would be; the undocumented C structures are
+accessed through standard macros and functions; and the XIDs are used
+only as arguments to Xlib functions.
+
+   <p>ProXL doesn't have these types, instead it has only <dfn>foreign terms</dfn> and
+regular Prolog terms.  Foreign terms are Prolog terms that represent X
+objects.  These objects are analogous to undocumented C structures in
+that their contents are not directly accessible, but it is not necessary
+to send a message to the server to get the contents.
+
+   <p>Foreign terms, at the moment, are simply unary Prolog terms whose
+functor indicates the type of the foreign term and whose argument
+specifies the location of the contents of the data structure.  Note that
+this implementation may be changed at any time, so you should not count
+on it.
+
+   <p>One useful property of the current implementation is that the printed
+representation of a foreign term may be read back in, and will yield
+the same data structure.  This is useful when debugging and when
+prototyping, since it means you can grab results of a goal you just
+ran and feed them in as arguments to the next goal you want to run.
+
+   <p>All foreign terms representing XIDs contain not only the XID of the X
+resource, but also the display, and, where appropriate, the screen, on
+which this XID lives.  This means that where Xlib requires both a
+display and an XID, ProXL only needs the foreign term.  Therefore, very
+few ProXL procedures take a display as argument.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-xlib-trm.html#pxl-xlib-trm">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-xlib-arg.html#pxl-xlib-arg">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-xlib.html#pxl-xlib">Up</a>
+</ul>
+</div>
+   </body></html>
+

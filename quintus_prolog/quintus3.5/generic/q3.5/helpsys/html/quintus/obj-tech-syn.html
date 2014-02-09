@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Syntax of Class Definitions</h4>
+
+   <p>The following BNF grammar gives a concise description of the syntax of
+class definitions. It assumes an understanding of Prolog syntax for
+the following items: <dfn>variable</dfn>, <dfn>atom</dfn>, <dfn>compound_term</dfn>,
+and <dfn>constant</dfn>. Slot types, particularly the <code>address</code>, <code>class</code> and
+<code>pointer</code> types, were discussed in an earlier section.
+
+   <p><table>
+<tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>class_def</var> </td><td valign="top">::= <var>class_begin</var> { <var>clause</var> | <var>method</var> } <var>class_end</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>class_begin</var> </td><td valign="top">::= <code>:- class</code> <var>class_name</var> <var>opt_class_spec</var> <code>.</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>opt_class_spec</var> </td><td valign="top">::= <var>empty</var> | <code>=</code> <var>class_spec</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>class_spec</var> </td><td valign="top">::= <var>multi_parent_or_slots</var> | <var>term_class_spec</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>clause</var> </td><td valign="top">::= <var>head</var> <var>opt_body</var> <code>.</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>head</var> </td><td valign="top">::= <var>atom</var> | <var>compound_term</var> <code>.</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>method</var> </td><td valign="top">::= <var>message_head</var> <var>opt_body</var> <code>.</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>message_head</var> </td><td valign="top">::= <var>message_goal</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>class_end</var> </td><td valign="top">::= <code>:- end_class</code> <var>opt_class_name</var> <code>.</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <var>empty</var> /* if followed by <var>class_begin</var> or <var>eof</var> */
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>message</var> </td><td valign="top">::= <var>atom</var> | <var>compound_term</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>multi_parent_or_slots</var> </td><td valign="top">::= <var>parent_or_slots</var> { <code>+</code> <var>parent_or_slots</var> }
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>parent_or_slots</var> </td><td valign="top">::= <var>class_name</var> | <code>[]</code> | <code>[</code> <var>slot_def</var> {<code>,</code> <var>slot_def</var> } <code>]</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>slot_def</var> </td><td valign="top">::= <var>opt_visibility</var> <var>slot_name</var> <code>:</code> <var>slot_type</var> <var>opt_init_value</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>opt_visibility</var> </td><td valign="top">::= <var>empty</var> | <code>private</code> | <code>protected</code> | <code>public</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>opt_init_value</var> </td><td valign="top">::= <var>empty</var> | <code>=</code> <var>constant</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>term_class_spec</var> </td><td valign="top">::= <code>term(</code><var>term</var> <var>opt_goal_essence</var><code>)</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>opt_goal_essence</var> </td><td valign="top">::= <var>empty</var> | <code>,</code> <var>goal</var> <var>opt_essence</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>opt_essence</var> </td><td valign="top">::= <var>empty</var> | <code>,</code> <var>essence</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>essence</var> </td><td valign="top">::= <code>[</code>  <var>variable</var> <code>:</code> <var>slot_type</var> { <code>,</code> <var>variable</var> <code>:</code> <var>slot_type</var> } <code>]</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>opt_body</var> </td><td valign="top">::= <var>empty</var> | <code>:-</code> <var>body</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>body</var> </td><td valign="top">::= <var>message_or_goal</var> { <code>,</code> <var>message_or_goal</var> }
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>message_or_goal</var> </td><td valign="top">::= <var>message_goal</var> | <var>goal</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>message_goal</var> </td><td valign="top">::= <var>variable</var> <var>message_operator</var> <var>message</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>message_operator</var> </td><td valign="top">::= <code>&lt;&lt;</code> | <code>&gt;&gt;</code> | <code>&lt;-</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>opt_class_name</var> </td><td valign="top">::= <var>empty</var> | <var>class_name</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>class_name</var> </td><td valign="top">::= <var>atom</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>slot_name</var> </td><td valign="top">::= <var>atom</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>slot_type</var> </td><td valign="top">::= <code>integer</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>short</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>char</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>unsigned_short</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>unsigned_char</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>float</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>double</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>atom</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>address</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>term</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <var>class_name</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">| <code>pointer(</code><var>atom</var><code>)</code>
+<br></td></tr><tr align="left"><td valign="top">
+   <br></td></tr></table>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-tech-lim.html#obj-tech-lim">Next</a>
+<li><a rel="up" accesskey="u" href="obj-tech.html#obj-tech">Up</a>
+</ul>
+</div>
+   </body></html>
+

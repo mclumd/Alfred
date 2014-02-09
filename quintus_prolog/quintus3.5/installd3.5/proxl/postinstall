@@ -1,0 +1,267 @@
+#! /bin/sh
+# Build the shared object files (for linking with X11)
+
+if [ "x${QP_SH_X_FLAG}" != "x" ]; then
+  set ${QP_SH_X_FLAG}
+fi
+
+# [PM] 3.5 Barf on errors!
+set -e
+LC_ALL=C
+
+PROXLHOME=$QPHOME/proxl$VERSION
+# [PM] 3.5 bogus on Linux:
+# PATH="$PATH:/usr/ccs/bin"
+# export PATH
+
+# [PM] 3.5 load install-time parameters
+config_file=./config.install
+if [ -f ${config_file} ]; then
+#  echo "Loading install-time parameters from $config_file"
+  . ${config_file}
+fi
+
+
+#! /bin/sh
+# [PM] 3.5 BEGIN Various functions used by the postinstall scripts
+# TODO:
+# Should avoid adding the dirs in /etc/ld.so.conf to LD_RUN_PATH (on Linux, ...)
+# Should avoid adding the "standard location" dirs to LD_RUN_PATH (how determine these SysV-portably?)
+
+if [ ! -z "${QP_SH_X_FLAG}" ]; then
+  set ${QP_SH_X_FLAG}
+fi
+set -e
+
+LC_ALL=C
+export LC_ALL
+
+: ${INSTALL_SED=sed}            # should be set in config.install
+
+####################################
+
+installf()
+{	chown $2 $1 2> /dev/null || true	# ignore errors for chown/chgrp
+	chgrp $3 $1 2> /dev/null || true
+	chmod $4 $1
+}
+
+####################################
+
+# First arg is name of PATH-like variable (which may already be
+# set). Add the rest of the args separated by colon at end of the
+# variable, except that empty arguments and duplicates are not added.
+# Example:
+#   foo=a:b; adjoin_path foo c a d "" c
+# sets foo to a:b:c:d
+#
+# NOTE: this function is not used here, it is typically used by the
+# postinstall scripts that include this script (for things like
+# LD_RUN_PATH)
+#
+adjoin_path() {
+  var=$1
+  shift
+  eval "path=\$${var}"
+
+  for x in "$@"; do
+    if [ ! -z "${x}" ]; then    # skip empty components
+      new=yes
+      for old in ${path}; do
+        if [ "${x}" = "${old}" ]; then
+          new=no;
+          break;
+        fi
+      done
+      if [ ${new} = "yes" ]; then
+        path="${path}${path:+:}${x}"
+      fi
+    fi
+  done
+  eval "${var}='${path}'"
+}
+
+####################################
+##
+## detect_module [options] modules...
+## 
+
+# For each system library <y> there should be two variables defined in
+# config.install (<Y> is <y> in all uppercase, e.g., XM vs Xm):
+#
+# LIB<Y>SONAME, the SONAME of the library (e.g., libXm.so.3) and
+# LIB<Y>DIRS, a colon separated list of directories where the shared
+# object file named soname should be looked for at the installation
+# machine.
+#
+# When detect_modules is done there will be <y>... variable similar to
+# XmLDLFLAGS="-L<foo>"
+# XmLDlFLAGS="-lQuintusXm"
+# XmRPATH="<dir-where-the-SONAME-file-was-found>"
+
+
+# Before entering this you can set symlinklibdir
+# where the symlinks will be created
+: ${symlinklibdir=`pwd`/linklibs}
+
+detect_module () {
+ need_basename_symlink=no
+ be_quiet=no
+ while [ $# -ge 1 ]; do
+   case "$1" in
+     --need-basename-symlink)
+       # Add a symlink also for lib${module}.so (or rather lib${lib}.so)
+       need_basename_symlink=yes
+       shift
+     ;;
+     --quiet)
+       # do not exit 1 on failure to locate a module
+       be_quiet=yes
+       shift
+     ;;
+     *)
+       modules="$@"
+       break;
+     ;;
+   esac
+ done
+
+ for module in ${modules}; do
+
+ x=`echo ${module} | tr [a-z] [A-Z]` # module=Xm become, XM
+ LIBSONAME_NAME="LIB${x}SONAME"
+ eval soname='$'${LIBSONAME_NAME} # e.g., soname=$LIBXMSONAME
+ LIBDIRS_NAME="LIB${x}DIRS"
+ eval libdirs='$'${LIBDIRS_NAME} # e.g., libdirs=$LIBXMDIRS
+
+ broken=yes                     # assume failure
+ if [ -z "${soname}" ] || [ -z "${libdirs}" ]; then
+  [ -z "${QP_SH_X_FLAG}" ] && echo "!ERROR: Internal error, unknown X module \"${module}\""
+ else
+
+   # remove "lib" prefix and .so.<version> suffix, (libX11.so.6 becomes "X11")
+   # By convention $libbase will be the same as $module but that is not
+   # necessary.
+
+   # libbase=`echo "${soname}" | ${INSTALL_SED} -n -e 's/^lib\([^.]*\)\.so\(\..*\)*$/\1/p'`
+   libbase=`echo "${soname}" | ${INSTALL_SED} -n -e "s/^lib\\([^.]*\\)\\.${SO}\\(\\..*\\)*\$/\\1/p"`
+   # X11 becomes QuintusX11
+   lib="Quintus${libbase}"
+   symlink="${symlinklibdir}/lib${lib}.${SO}"
+   symlink_base=${symlinklibdir}/lib${libbase}.${SO} # corresponds to -l${module}
+
+   redo_symlink=no
+   if [ ! -f ${symlink} ]; then redo_symlink=yes; fi
+   if [ ${need_basename_symlink} = yes ] && [ ! -f ${symlink_base} ]; then redo_symlink=yes; fi
+
+   if [ ${redo_symlink} = no ]; then # re-use existing symlink
+     # extract the directory the symlink is pointing at
+     symlink_target=`ls -l ${symlink} | ${INSTALL_SED} -n -e 's/.* -> *\([^ ]*\)[ ]*$/\1/p'`
+     sonamedir=`dirname ${symlink_target}`
+     if [ ! -z "${sonamedir}" ] && [ -d "${sonamedir}" ]; then
+        broken=no
+     else                       # Could not use symlink, re-do it
+        redo_symlink=yes
+     fi
+   fi
+
+   if [ ${redo_symlink} = yes ]; then
+
+     [ -d ${symlinklibdir} ] || mkdir -p ${symlinklibdir}
+
+     rm -f ${symlink}
+     rm -f ${symlink_base}
+
+     old_IFS="${IFS}"
+     IFS=":"
+     for sonamedir in ${libdirs}; do # sonamedir is also used for ${module}RPATH
+      libfile=${sonamedir}/${soname}
+      if [ -f ${libfile} ]; then
+         rm -f ${symlink}; ln -s ${libfile} ${symlink}
+
+         # this link is for when we cannot use -l${lib} (e.g., when
+         # the library dependency was added with load_foreign_...)
+         [ ${need_basename_symlink} = yes ] && { rm -f ${symlink_base}; ln -s ${libfile} ${symlink_base}; }
+         broken=no
+         break
+      fi
+     done
+     IFS="${old_IFS}"
+   fi
+ fi
+
+ if [ ${broken} = no ]; then
+   [ -f "${symlinklibdir}/lib${lib}.${SO}" ] \
+   || broken=yes
+   [ ${need_basename_symlink} = no ] \
+   || [ -f "${symlinklibdir}/lib${libbase}.${SO}" ] \
+   || broken=yes
+ fi
+
+ if [ ${broken} = no ]; then
+   eval ${module}LDLFLAGS=\"-L${symlinklibdir}\"
+   eval ${module}LDlFLAGS=\"-l${lib}\"
+   eval ${module}RPATH=\"${sonamedir}\"
+ else                           # broken
+   # empty ${module}LDlFLAGS will signal that we could not find the lib
+   # Do not rely on the other ${module}.. variables for failure detection
+   eval ${module}LDLFLAGS=\"\"
+   eval ${module}LDlFLAGS=\"\"
+   eval ${module}RPATH=\"\"
+
+   [ ${be_quiet} != yes ] && { echo "!ERROR: Could not configure X module \"${module}\""; exit 1; }
+   return 1
+ fi                             # broken
+
+ [ ! -z "${QP_SH_X_FLAG}" ] && eval echo "\"${module}LDLFLAGS==\\\"\$${module}LDLFLAGS\\\", ${module}LDlFLAGS==\\\"\$${module}LDlFLAGS\\\", ${module}RPATH==\\\"\$${module}RPATH\\\"\""
+ done                           # modules
+
+ return 0
+}
+
+
+detect_module X11
+
+echo '% Building proxl shared objects'
+
+# [PM] 3.5 we do not want to invoke make
+# cd $PROXLHOME
+# ${QP_MAKE=make} -f Makefile.x BIN=$ARCHDIR XLIBDIR=$XLIBDIR >> $LOG
+#
+
+# [PM] 3.5 FIXME: should we really explicitly use XLIBDIR in
+#          postinstall when we have detect_module()
+
+## [PM] 3.5 NOTE: much of this this is duplicated in proxl/Makefile.x, keep in sync!
+
+  ## Input: ALL_SOLDFLAGS (or SOLDFLAGS, LDFLAGS), XSOLDRFLAG, XLIBDIR
+  # ALL_SOLDFLAGS ?= $(SOLDFLAGS) $(LDFLAGS)
+  # override ALL_SOLDFLAGS += $(XSOLDRFLAG)
+  : ${ALL_SOLDFLAGS="${SOLDFLAGS} ${LDFLAGS}"}
+
+  # Use LD_RUN_PATH for DT_RUNPATH instead of makefile fragment: ALL_SOLDFLAGS="${ALL_SOLDFLAGS} ${XSOLDRFLAG}"
+
+  # [PM] 3.5 is this good?
+  LD_RUN_PATH=${X11RPATH}
+  export LD_RUN_PATH
+  LD_LIBRARY_PATH=
+  export LD_LIBRARY_PATH
+
+  cd $PROXLHOME/library/$ARCHDIR
+  for base in proxl proxllib; do
+    ar xv ${base}.a > /dev/null
+    objects=`ar t ${base}.a`
+
+    rm -f ${base}.${SO}
+    # ld $(LDSOFLAG) -o proxl.${SO} -L$(XLIBDIR) *.o -lX11 $(EXTRALIBS)
+    ${SOLD} ${ALL_SOLDFLAGS} -o ${base}.${SO} ${objects} ${X11LDLFLAGS} ${X11LDlFLAGS}
+    rm -f ${objects}
+  done
+
+##
+
+installf $PROXLHOME/library/$ARCHDIR/proxl.${SO} bin bin 555
+installf $PROXLHOME/library/$ARCHDIR/proxllib.${SO} bin bin 555
+
+exit 0
+

@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Passing Atoms as Strings</h5>
+
+   <p>The foreign function interface allows Prolog atoms to be passed from
+C functions to Prolog either in a canonical form as unsigned integers,
+or as pointers to character strings.
+
+   <p>This section describes passing atoms as pointers to null-terminated
+character strings.  Strings are always identical across different
+invocations of a program, so are the correct atom representation to
+use when writing to files or using interprogram communication.  For
+other uses, atoms in the canonical form may be appropriate (see
+<a href="fli-ffp-dat-cat.html#fli-ffp-dat-cat">fli-ffp-dat-cat</a>).
+
+   <p>If, in a later release of Quintus Prolog, it is possible to call
+Prolog directly from FORTRAN or Pascal, it will additionally be possible
+to pass atoms as fixed-length, blank-padded strings (as when Prolog calls
+FORTRAN or Pascal).
+
+<pre class="example">     Prolog:  +string
+     C:       char *x
+     </pre>
+
+   <p>The argument passed from the C function is a null-terminated
+   character string.  The foreign interface automatically converts the
+   string to a Prolog atom, and passes it to the Prolog predicate.
+
+<pre class="example">     Prolog:  -string
+     C:       char **x;
+     </pre>
+
+   <p>A pointer to a C string pointer is passed to the foreign interface. 
+   When Prolog returns a solution, a Prolog atom is expected in the
+   corresponding argument of the call.  This atom might be one obtained
+   from Prolog, or one generated through the function
+   <code>QP_atom_from_string()</code> or <code>QP_atom_from_padded_string()</code> (see
+   <a href="fli-p2f-atm-a2s.html#fli-p2f-atm-a2s">fli-p2f-atm-a2s</a>).  The foreign interface writes a pointer
+   to the string for that atom at the location supplied.  The previous
+   contents of the location are destroyed.  This string must not be
+   overwritten by the C function.  If the Prolog call does not return
+   an atom in the appropriate position, a type error is raised and the
+   contents of the location is unchanged.
+
+   <p>See also <a href="fli-ffp-a2s.html#fli-ffp-a2s">fli-ffp-a2s</a> for discussion of conversion between
+atoms and strings.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-a2s-trm.html#fli-ffp-a2s-trm">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-a2s.html#fli-ffp-a2s">Up</a>
+</ul>
+</div>
+   </body></html>
+

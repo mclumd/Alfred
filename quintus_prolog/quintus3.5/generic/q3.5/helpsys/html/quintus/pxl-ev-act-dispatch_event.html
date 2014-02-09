@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>dispatch_event/[1,2,3]</code></h5>
+
+   <p>To activate the callbacks registered for a single X event, use one of:
+<pre class="example">     dispatch_event(<var>+XEvent</var>)
+     dispatch_event(<var>+XEvent</var>, <var>-ExitCond</var>)
+     dispatch_event(<var>+XEvent</var>, <var>-ExitCond</var>, <var>+Context</var>)
+     </pre>
+
+   <p><code>dispatch_event(+</code><var>XEvent</var><code>)</code> will trigger any ProXL
+callbacks associated with the supplied <var>XEvent</var> and succeed,
+even if there were no callbacks registered for the event.
+
+   <p><code>dispatch_event(+</code><var>XEvent</var><code>, -</code><var>ExitCond</var><code>)</code> triggers
+the ProXL callbacks associated with the supplied <var>XEvent</var> and
+succeeds either if all the ProXL Windows associated with the
+event's Display were destroyed, or if any of the callbacks binds its
+<dfn>exit variable</dfn> to a value that unifies with <var>ExitCond</var>. 
+If the callback uses contexts, <code>dispatch_event/2</code> will pass
+an anonymous variable.
+
+   <p><code>dispatch_event(+</code><var>XEvent</var><code>, -</code><var>ExitCond</var><code>, +</code><var>Context</var><code>)</code>
+is like <code>dispatch_event/2</code>, but gives the <var>Context</var> argument
+to the callback, for further discrimination.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-ev-act-exit.html#pxl-ev-act-exit">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-ev-act-handle_events.html#pxl-ev-act-handle_events">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-ev-act.html#pxl-ev-act">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,2121 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: mpg-ref-add_advice,  Next: mpg-ref-add_spypoint,  Prev: mpg-ref-absolute_file_name,  Up: mpg-ref
+
+`add_advice/3' "development"
+----------------------------
+
+Synopsis
+--------
+
+   `add_advice'(+GOAL,+PORT,+ACTION)
+
+   Associate an action with entry to a port of a procedure.
+
+Arguments
+---------
+
+GOAL "callable" [MOD]
+     a term to be unified against a calling goal.
+
+PORT "one of `[call,exit,done,redo,fail]'"
+     an atom indicating the port at which to check advice.
+
+ACTION "callable" [MOD]
+     a goal to be called when advice is checked at the given port.
+
+Description
+-----------
+
+   `add_advice/3' associates an advice action (a goal to be called)
+with a port of the standard Prolog debugger model (see *Note
+dbg-bas-pbx::).  Variable bindings made when GOAL matches the incoming
+call carry across to the advice action, so incoming arguments can be
+verified or processed by advice checking.  Any number of advice actions
+can be associated with a given GOAL, PORT, or GOAL-PORT combination.
+Putting advice on a procedure does not automatically turn on checking
+of advice, so advice can be built into a program and checked only when
+necessary.  At each port, advice is checked before interaction with the
+Prolog debugger, so the advice action can be used to control the
+debugger.  It is not currently possible to associate advice with Prolog
+system built-in predicates.
+
+   Advice added using a call to `add_advice/3' will be checked after
+all preexisting advice for that predicate and port.
+
+   This predicate is not supported in runtime systems.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if an argument is not sufficiently instantiated.
+
+`type_error'
+     if GOAL or ACTION is not a callable, or a module prefix is not an
+     atom, or PORT is not an atom.
+
+`domain_error'
+     if PORT is not a valid port.
+
+`permission_error'
+     if a specified procedure is built-in.
+
+Tips
+----
+
+   Using advice can streamline debugging of deep recursions and other
+situations where a given call is made correctly many times but
+eventually goes amiss.  Use of the Prolog debugger's spypoints is
+inconvenient because of the many calls before the error.  If, for
+instance, it is known that a certain bad datum is present in the
+particular call producing the error, it is possible to use advice to
+set a spypoint only when that datum is seen:
+
+     :- add_advice(recurse(X,Y), call,
+           (bad_data(X), spy recurse/2)).
+
+   When advice checking is enabled, this piece of advice will take
+effect only if the first argument passed to `recurse/2' is bad.  When
+that is so, a spypoint will be placed on `recurse/2' and execution will
+continue at the call port of `recurse/2'.  Since advice is checked
+before debugger interaction at the port, the debugger will immediately
+stop.  There is no need to interact with the debugger for all the calls
+that have valid data.
+
+   Advice can also provide a simple and flexible profiling tool by
+associating a counter with various ports of each "interesting"
+predicate.  The advice associated with each port and predicate might
+map the name, arity, module and port to a counter value held in a
+dynamic table.  When advice checking is on and an advised predicate
+port is reached, the advice action simply increments the counter.  The
+counter table can then be inspected to determine the number of times
+each predicate-port combination was reached.
+
+   Advice can also be used to associate "pre-conditions" and
+"post-conditions" to predicates. "pre-conditions" can be associated
+with the "call" port of a predicate and "post-conditions" can be
+associated with the "done" or "exit" port of a predicate.  Checking for
+"pre" and "post" conditions will be done only when checking advice is
+turned on.
+
+See Also
+--------
+
+   `remove_advice/3', `current_advice/3', `check_advice/[0,1]',
+`nocheck_advice/[0,1]'
+
+   *Note dbg-adv::
+
+
+File: quintus.info,  Node: mpg-ref-add_spypoint,  Next: mpg-ref-and,  Prev: mpg-ref-add_advice,  Up: mpg-ref
+
+`add_spypoint/1' "development"
+------------------------------
+
+Synopsis
+--------
+
+   `add_spypoint'(+SPYSPEC)
+
+   sets a spypoint on the specified predicate or call.
+
+Arguments
+---------
+
+SPYSPEC "compound"
+     a specification of an individual spypoint.  Two forms of SPYSPEC
+     are allowed:
+
+    `predicate(PRED)'
+          A spypoint on any call to PRED. PRED must be a skeletal
+          predicate specification, and may be module qualified.
+
+    `call(CALLER,CLAUSENUM,CALLEE,CALLNUM)'
+          A spypoint on the CALLNUM call to CALLEE in the body of the
+          CLAUSENUM clause of CALLER. CALLEE and CALLER must be
+          skeletal predicate specifications.  CALLNUM and CLAUSENUM
+          must be integers, and begin counting from 1.  Note that
+          CALLNUM specifies a _lexical_ position, that is, the number
+          of the occurrence of CALLEE counting from the beginning of
+          the body of the clause, and ignoring any punctuation.
+
+Description
+-----------
+
+   `add_spypoint/1' is used to set spypoints on predicates or on
+specific calls to predicates while debugging.
+
+   `add_spypoint/1' does not turn on the debugger.  You have to
+explicitly turn on the debugger with a call to `debug/0' or `trace/0'.
+
+   You can add spypoints to predicates or calls that do not exist.  If
+they later get defined the spypoints get placed.
+
+   Turning off the debugger does not remove spypoints. Use
+`remove_spypoint/1' to remove these spypoints.
+
+   If you are using QUI, the more convenient way to add these spypoints
+is to use the QUI based source debugger to select a particular goal or
+predicate and to use the Spypoints menu.
+
+   This predicate is not supported in runtime systems.
+
+Exceptions
+----------
+
+`instantiation_error'
+     SPYSPEC is not sufficiently instantiated.
+
+`type_error'
+     SPYSPEC is not a compound term.
+
+`domain_error'
+     SPYSPEC is not a `predicate/1' or `call/4' term.
+
+See Also
+--------
+
+   `current_spypoint/1', `remove_spypoint/1', `spy/1', `nospy/1',
+`debugging/0',
+
+   *Note dbg-bas-bas::.
+
+
+File: quintus.info,  Node: mpg-ref-append,  Next: mpg-ref-uni,  Prev: mpg-ref-and,  Up: mpg-ref
+
+`append/3'
+----------
+
+Synopsis
+--------
+
+   `append'(+*LIST1, +*LIST2, +*LIST3)
+
+   True when all three arguments are lists, and the members of LIST3
+are the members of LIST1 followed by the members of LIST2.
+
+Arguments
+---------
+
+LIST1 "term"
+     a list
+
+LIST2 "term"
+     a list
+
+LIST3 "term"
+     a list consisting of LIST1 followed by LIST2
+
+Description
+-----------
+
+   Appends lists LIST1 and LIST2 to form LIST3:
+
+     | ?- append([a,b], [a,d], X).
+     
+     X = [a,b,a,d]
+     
+     | ?- append([a], [a], [a]).
+     
+     no
+     | ?- append(2, [a], X).
+     
+     no
+
+   Takes LIST3 apart:
+     | ?- append(X, [e], [b,e,e]).
+     
+     X = [b,e]
+     
+     | ?- append([b|X], [e,r], [b,o,r,e,r]).
+     
+     X = [o,r]
+     
+     | ?- append(X, Y, [h,i]).
+     
+     X = [],
+     Y = [h,i] ;
+     
+     X = [h],
+     Y = [i] ;
+     
+     X = [h,i],
+     Y = [] ;
+     
+     no
+
+Backtracking
+------------
+
+   Suppose L is bound to a proper list (see *Note lib-lis-prl::).  That
+is, it has the form [T1,...,TN] for some N.  In that instance, the
+following things apply:
+  1. `append(L, X, Y)' has at most one solution, whatever X and Y are,
+     and cannot backtrack at all.
+
+  2. `append(X, Y, L)' has at most N+1 solutions, whatever X and Y are,
+     and though it can backtrack over these it cannot run away without
+     finding a solution.
+
+  3. `append(X, L, Y)', however, can backtrack indefinitely if X and Y
+     are variables.
+
+Examples
+--------
+
+   The following examples are perfectly ordinary uses of `append/3':
+
+   To enumerate adjacent pairs of elements from a list:
+     next_to(X, Y, /*in*/ List3) :-
+             append(_, [X,Y|_], List3).
+
+   To check whether Word1 and Word2 are the same except for a single
+transposition.  (`append/5' in `library(lists)' would be better for
+this task.)
+     one_transposition(Word1, Word2) :-
+             append(Prefix, [X,Y|Suffix], Word1),
+             append(Prefix, [Y,X|Suffix], Word2).
+     
+     | ?- one_transposition("fred", X).
+     X = "rfed" ;
+     X = "ferd" ;
+     X = "frde" ;
+     no
+
+   Given a list of words and commas, to backtrack through the phrases
+delimited by commas:
+     comma_phrase(List3, Phrase) :-
+             append(F, [','|Rest], List3),
+             !,
+             (   Phrase = F
+             ;   comma_phrase(Rest, Phrase)
+             ).
+     comma_phrase(List3, List3).
+     
+     | ?- comma_phrase([this,is,',',um,',',an,
+                            example], X).
+     X = [this,is] ;
+     X = [um] ;
+     X = [an,example] ;
+     no
+
+See Also
+--------
+
+   `length/2' *Note lib-lis:: `library(lists)'
+
+
+File: quintus.info,  Node: mpg-ref-arg,  Next: mpg-ref-acm,  Prev: mpg-ref-uni,  Up: mpg-ref
+
+`arg/3' "meta-logical"
+----------------------
+
+Synopsis
+--------
+
+   `arg'(+ARGNUM, +TERM, -ARG)
+
+   unifies ARG with the ARGNUMth argument of term TERM.
+
+Arguments
+---------
+
+ARGNUM "integer"
+     positive integer
+
+TERM "nonvar"
+     compound term
+
+ARG "term"
+Description
+-----------
+
+   The arguments are numbered from 1 upwards.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if ARGNUM or TERM is unbound.
+
+`type_error'
+     if ARGNUM is not an integer.
+
+Example
+-------
+
+     | ?- arg(2, foo(a,b,c), X).
+     
+     X = b
+
+See Also
+--------
+
+   `functor/3', `=../2'
+
+   *Note ref-lte-act::, *Note lib-tma-arg::
+
+
+File: quintus.info,  Node: mpg-ref-assert,  Next: mpg-ref-assign,  Prev: mpg-ref-acm,  Up: mpg-ref
+
+`assert/[1,2]'
+--------------
+
+Synopsis
+--------
+
+   These predicates add a dynamic clause, CLAUSE, to the Prolog
+database.  They optionally return a database reference in REF:
+
+   `assert(+CLAUSE)'
+
+   `assert(+CLAUSE, -REF)'
+
+   Undefined whether CLAUSE will precede or follow the clauses already
+in the database.
+
+   `asserta(+CLAUSE)'
+
+   `asserta(+CLAUSE, -REF)'
+
+   CLAUSE will precede all existing clauses in the database.
+
+   `assertz(+CLAUSE)'
+
+   `assertz(+CLAUSE, -REF)'
+
+   CLAUSE will follow all existing clauses in the database.
+
+Arguments
+---------
+
+CLAUSE "callable" [MOD]
+     A valid dynamic Prolog clause.
+
+REF "db_reference"
+     a database reference, which uniquely identifies the newly asserted
+     CLAUSE.
+
+Description
+-----------
+
+   CLAUSE must be of the form:
+            HEAD
+     or     HEAD :- BODY
+     or     M:CLAUSE
+
+   where HEAD is of type callable and BODY is a valid clause body.  If
+specified, M must be an atom.
+
+   `assert(HEAD)' means assert the unit-clause HEAD.  The exact same
+effect can be achieved by `assert((HEAD :- true))'.
+
+   If BODY is uninstantiated it is taken to mean `call(BODY)'.  For
+example, (A) is equivalent to (B):
+     | ?- assert((p(X) :- X)).            (A)
+     | ?- assert((p(X) :- call(X))).      (B)
+
+   REF should be uninstantiated; a range exception is signalled if REF
+does not unify with its return value.  This exception is signalled
+after the assert has been completed.
+
+   The procedure for CLAUSE must be dynamic or undefined.  If it is
+undefined, it is set to be dynamic.
+
+   If you want to write a term of the form `HEAD :- BODY' as the
+argument to `assert/1', you must put it in parentheses, because the
+operator precedence of the `:-/2' functor is greater than 1000 (see
+*Note ref-syn-ops-res::).  For example, (C) will cause a syntax error;
+instead you should type (D):
+     | ?- assert(foo:-bar).                 (C)
+     
+     | ?- assert((foo:-bar)).               (D)
+
+   When an assert takes place, the new clause is immediately seen by any
+subsequent call to the procedure.  However, if there is a currently
+active call of the procedure at the time the clause is asserted, the
+new clause is not encountered on backtracking by that call.  See *Note
+ref-mdb-exa:: for further explanation of what happens when currently
+running code is modified.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if HEAD (in CLAUSE) or M is uninstantiated.
+
+`type_error'
+     if HEAD is not of type callable, or if M is not an atom, or if
+     BODY is not a valid clause body.
+
+`permission_error'
+     if the procedure corresponding to HEAD is built-in or has a static
+     definition.
+
+`context_error'
+     if a cut appears in the if-part of an if-then-else.
+
+`range_error'
+     if REF does not unify with the returned database reference.
+
+See Also
+--------
+
+   `abolish/[1,2]', `dynamic/1', `erase/1', `multifile_assertz/1'
+`retract/1', `retractall/1', `clause/[2,3]'.
+
+   *Note ref-mdb-dre::
+
+
+File: quintus.info,  Node: mpg-ref-assign,  Next: mpg-ref-at_end_of_file,  Prev: mpg-ref-assert,  Up: mpg-ref
+
+`assign/2'
+----------
+
+Synopsis
+--------
+
+   `assign(+LHS, +EXPR)'
+
+   Evaluates EXPR as an arithmetic expression, and stores the value in
+the memory location and format given by LHS.
+
+Arguments
+---------
+
+LHS "compound"
+     One of the following terms
+        * `integer_8_at(L_EXP)'
+
+        * `integer_16_at(L_EXP)'
+
+        * `unsigned_8_at(L_EXP)'
+
+        * `unsigned_16_at(L_EXP)'
+
+        * `integer_at(L_EXP)'
+
+        * `address_at(L_EXP)'
+
+        * `single_at(L_EXP)'
+
+        * `double_at(L_EXP)'
+
+L_EXP "expr"
+     a valid arithmetic expression
+
+EXPR "expr"
+     A valid arithmetic expression
+
+Description
+-----------
+
+   Can be used to poke data directly into memory.  Evaluates L_EXP in
+LHS and EXPR as arithmetic expressions.  The functor of the first
+argument describes the type of data to be stored: `integer_8_at/1' will
+store a signed 8 bit integer, `single_at/1' will store a single
+precision floating point number, etc. For more structured ways of doing
+this, see the Structs and Objects packages.
+
+   The only proper addresses that should be assigned to are ones that
+are obtained through the foreign interface.  `assign/2' is a very
+primitive built-in and users should have only very rare occasions to
+use it. To directly access and change data structures represented in
+foreign languages (like C) users should look at using the Structs and
+Objects packages.
+
+   Both arguments can be unbound at compile time. But it is more
+efficient if LHS is bound at compile time.  Also note that attempting
+to overwrite improper locations of memory can cause "Segmentation
+faults" or "Bus errors" and overwriting Prolog memory can result in
+undesirable behaviour long after the assignment is done.
+
+Exceptions
+----------
+
+`instantiation_error'
+     LHS or EXPR is not ground
+
+`type_error'
+     EXPR is not a proper arithmetic expression or
+
+     L_EXP in LHS is not a proper arithmetic expressions or
+
+     EXPR is of a different type than what is specified by         LHS
+
+`domain_error'
+     LHS is not one of the above listed terms
+
+Examples
+--------
+
+                                                                _foo.c_
+     
+     static int counter;
+     int * init_counter()
+     {
+             counter = 0;
+             return &counter;
+     }
+
+                                                               _foo.pl_
+     
+     foreign(init_counter, c, init_counter([-address])).
+     
+     get_counter(Counter, Count) :-
+             Count is integer_at(Counter).
+     
+     incr_counter(Counter) :-
+             assign(integer_at(Counter),
+             integer_at(Counter)+1).
+     
+     | ?- init_counter(C), incr_counter(C), get_counter(C, Count1),
+          incr_counter(C), incr_counter(C), get_counter(C, Count2).
+     
+     C = 1418304,
+     Count1 = 1,
+     Count2 = 3
+     
+     | ?-
+
+See Also
+--------
+
+   *Note ref-ari-aex:: `library(structs)', `library(objects)'
+
+
+File: quintus.info,  Node: mpg-ref-at_end_of_file,  Next: mpg-ref-at_end_of_line,  Prev: mpg-ref-assign,  Up: mpg-ref
+
+`at_end_of_file/[0,1]'
+----------------------
+
+Synopsis
+--------
+
+   `at_end_of_file'
+
+   `at_end_of_file(+STREAM)'
+
+   Tests whether end of file has been reached for the current input
+stream or for the input stream STREAM.
+
+Arguments
+---------
+
+STREAM
+     "stream_object"  a valid Prolog input stream
+
+Description
+-----------
+
+   `at_end_of_file/[0,1]' checks if end of file has been reached for
+the specified input stream.  An input stream reaches end of file when
+all characters except the file border code (-1 by default) of the
+stream have been read.  It remains at end of file after the file border
+code has been read.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`existence_error'
+     Some operating system dependent error occurred in reading.
+
+Comments
+--------
+
+   `at_end_of_file/[0,1]' peeks ahead for next input character if there
+is no character available on the buffer of the specified input stream.
+
+   Coding with `at_end_of_file/[0,1]' to check for end of file condition
+is more portable among different operating systems than checking end of
+file by the character code (for example, peek_char(-1)).
+
+See Also
+--------
+
+   `at_end_of_line/[0,1]'.
+
+
+File: quintus.info,  Node: mpg-ref-at_end_of_line,  Next: mpg-ref-atom,  Prev: mpg-ref-at_end_of_file,  Up: mpg-ref
+
+`at_end_of_line/[0,1]'
+----------------------
+
+Synopsis
+--------
+
+   `at_end_of_line'
+
+   `at_end_of_line(+STREAM)'
+
+   Test whether end of line (record) has been reached for the current
+input stream or for the input stream STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog input stream
+
+Description
+-----------
+
+   `at_end_of_line/[0,1]' succeeds when end of line (record) is reached
+for the specified input stream.  An input stream reaches end of line
+when all the characters except the line border code of the current line
+have been read.
+
+   `at_end_of_line/[0,1]' is also true whenever `at_end_of_file/[0,1]'
+is true.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`existence_error'
+     Some operating system dependent error occurred in reading.
+
+Comments
+--------
+
+   Coding with `at_end_of_line/[0,1]' to check for end of line is more
+portable among different operating systems than checking end of line by
+the input character code.
+
+See Also
+--------
+
+   `at_end_of_file/[0,1]', `skip_line/[0,1]', `get0/[1,2]',
+`set_input/1'
+
+
+File: quintus.info,  Node: mpg-ref-atom,  Next: mpg-ref-atom_chars,  Prev: mpg-ref-at_end_of_line,  Up: mpg-ref
+
+`atom/1' "meta-logical"
+-----------------------
+
+Synopsis
+--------
+
+   `atom(+TERM)'
+
+   TERM is currently instantiated to an atom.
+
+Arguments
+---------
+
+TERM "term"
+Examples
+--------
+
+     | ?- atom(pastor).
+     
+     yes
+     | ?- atom(Term).
+     
+     no
+     | ?- atom(1).
+     
+     no
+     | ?- atom('Time').
+     
+     yes
+
+See Also
+--------
+
+   `atomic/1', `number/1', `var/1', `compound/1', `callable/1',
+`nonvar/1' `simple/1'
+
+   *Note ref-syn-trm-ato::
+
+
+File: quintus.info,  Node: mpg-ref-atom_chars,  Next: mpg-ref-atomic,  Prev: mpg-ref-atom,  Up: mpg-ref
+
+`atom_chars/2'
+--------------
+
+Synopsis
+--------
+
+   `atom_chars(+ATOM, -CHARS)'
+
+   `atom_chars(-ATOM, +CHARS)'
+
+   CHARS is the list of ASCII character codes comprising the printed
+representation of ATOM.
+
+Arguments
+---------
+
+CHARS "chars"
+     the list of ASCII character codes comprising the printed
+     representation of ATOM.
+
+ATOM "atom"
+     will be instantiated to an atom containing exactly those
+     characters, even if the characters look like the printed
+     representation of a number.
+
+Description
+-----------
+
+   Initially, either ATOM must be instantiated to an atom, or CHARS
+must be instantiated to a proper list of character codes (containing no
+variables).
+
+   Any atom that can be read or written by Prolog can be constructed or
+decomposed by `atom_chars/2'.
+
+Comment
+-------
+
+   If you deal with chars values often, you may find it useful to load
+`library(printchars)'.  Once this is done, a list of character codes
+will be written by `print/1' as double-quoted text.
+
+Exceptions
+----------
+
+`instantiation_error'
+
+`type_error'
+
+`representation_error'
+See Also
+--------
+
+   `print/1', `library(printchars)'
+
+
+File: quintus.info,  Node: mpg-ref-atomic,  Next: mpg-ref-bagof,  Prev: mpg-ref-atom_chars,  Up: mpg-ref
+
+`atomic/1' "meta-logical"
+-------------------------
+
+Synopsis
+--------
+
+   `atomic(+TERM)'
+
+   Succeeds if TERM is currently instantiated to either an atom number
+or a db_reference.
+
+Arguments
+---------
+
+TERM "term"
+Example
+-------
+
+     | ?- atomic(9).
+     
+     yes
+     | ?- atomic(a).
+     
+     yes
+     | ?- atomic("a").
+     
+     no
+     | ?- assert(foo(1), Ref), atomic(Ref).
+     
+     Ref = '$ref'(1195912,1)
+
+See Also
+--------
+
+   `atom/1', `number/1', `var/1', `compound/1', `callable/1', `nonvar/1'
+`simple/1'
+
+
+File: quintus.info,  Node: mpg-ref-bagof,  Next: mpg-ref-break,  Prev: mpg-ref-atomic,  Up: mpg-ref
+
+`bagof/3'
+---------
+
+Synopsis
+--------
+
+   `bagof(+TEMPLATE, +*GENERATOR, *SET)'
+
+   Like `setof/3' except that the list (or alternative lists) returned
+will not be ordered, and may contain duplicates.  This relaxation saves
+time and space in execution.
+
+Arguments
+---------
+
+TEMPLATE "term"
+
+GENERATOR "callable" [MOD]
+     a goal to be proved as if by `call/1'.
+
+SET "list of term"
+     non-empty set
+
+Examples
+--------
+
+   See `findall/3' for examples that illustrate the differences among
+`findall/3', `setof/3', and `bagof/3'.
+
+Exceptions
+----------
+
+   As for `call/1', and additionally:
+`resource_error'
+     TEMPLATE contains too many free variables.
+
+See Also
+--------
+
+   `findall/3', `setof/3', `^/2'
+
+   *Note ref-all::
+
+
+File: quintus.info,  Node: mpg-ref-break,  Next: mpg-ref-cla,  Prev: mpg-ref-bagof,  Up: mpg-ref
+
+`break/0' "development"
+-----------------------
+
+Synopsis
+--------
+
+   `break'
+
+   causes the current execution to be interrupted; enters next break
+level.
+
+Description
+-----------
+
+   The first time `break/0' is called, it displays the message
+     % Beginning break level 1
+     
+     | ?-
+
+   The system is then  ready  to  accept  input  as though it  were  at
+top level.  If another call to `break/0' is encountered, it moves up to
+level 2, and so on.  The break level is displayed in the editor mode
+line when you are running under the editor interface; otherwise it is
+displayed on a separate line before each top-level prompt, as follows:
+     [1]
+     | ?-
+
+   To close a break level and resume the execution that was suspended,
+type the end-of-file character applicable on your system (default `^D').
+`break/0' then succeeds, and execution of the interrupted program is
+resumed.  Alternatively, the suspended execution can be abandoned by
+interrupting with a `^C' and using the `q' option.
+
+   Changes can be made to a running program while in a break level.
+Any change made to a procedure will take effect the next time that
+procedure is called.  See *Note ref-lod-rpx::, for details of what
+happens if a procedure that is currently being executed is redefined.
+When a break level is entered, the debugger is turned off (although
+leashing and spypoints are retained).  When a break level is exited, the
+debugging state is restored to what it was before the break level was
+entered.
+
+   Often used via the debugging option `b'.
+
+   This predicate is not supported in runtime systems.
+
+See Also
+--------
+
+   `abort/0', `halt/[0,1]', `QP_toplevel()'
+
+
+File: quintus.info,  Node: mpg-ref-cla,  Next: mpg-ref-call,  Prev: mpg-ref-break,  Up: mpg-ref
+
+`C/3'
+-----
+
+Synopsis
+--------
+
+   `'C'(+-LIST1, +-TERMINAL, +-LIST2)'
+
+   In a grammar rule: TERMINAL connectsLIST1 and LIST2. It is defined
+by the clause `'C'([T|S], T, S)'.
+
+Arguments
+---------
+
+LIST1 "term"
+
+LIST2 "term"
+
+TERMINAL "term"
+Description
+-----------
+
+   Analyzes LIST1 into head and tail, and creates the tail, LIST2.
+
+   `'C'/3' is not normally of direct use to the user.  If its arguments
+are not of the expected form, it simply fails.
+
+Examples
+--------
+
+     | ?- 'C'([the, slithy, toves, did, grob], Head, Tail).
+     
+     Head = the,
+     Tail = [slithy,toves,did,grob] ;
+     
+     no
+
+   See examples in *Note ref-gru-tra::.
+
+See Also
+--------
+
+   *Note ref-gru::
+
+
+File: quintus.info,  Node: mpg-ref-call,  Next: mpg-ref-callable,  Prev: mpg-ref-cla,  Up: mpg-ref
+
+`call/1'
+--------
+
+Synopsis
+--------
+
+   `call(+*P)'
+
+   Proves(executes) P.
+
+Arguments
+---------
+
+P "callable" [MOD]
+Description
+-----------
+
+   If P is instantiated to an atom or compound term, then the goal
+`call(P)' is executed exactly as if that term appeared textually in its
+place, except that any cut (`!') occurring in P only cuts alternatives
+in the execution of P.
+
+Exceptions
+----------
+
+`instantiation_error'
+     P is not instantiated enough.
+
+`type_error'
+     A module prefix is not an atom, or a goal is not a callable.
+
+`context_error'
+     A cut occurred in the if-part of an if-then-else.
+
+`existence_error'
+     An undefined predicate was called.
+
+
+File: quintus.info,  Node: mpg-ref-callable,  Next: mpg-ref-character_count,  Prev: mpg-ref-call,  Up: mpg-ref
+
+`callable/1' "meta-logical"
+---------------------------
+
+Synopsis
+--------
+
+   `callable(+TERM)'
+
+   TERM is currently instantiated to a term that `call/1' would take as
+an argument and not give a type error (an atom or a compound term).
+
+Arguments
+---------
+
+TERM "term"
+Examples
+--------
+
+     | ?- callable(a).
+     
+     yes
+     | ?- callable(a(1,2,3)).
+     
+     yes
+     | ?- callable([1,2,3]).
+     
+     yes
+     | ?- callable(1.1).
+     
+     no
+
+See Also
+--------
+
+   `atom/1', `atomic/1', `number/1', `var/1', `compound/1', `nonvar/1',
+`simple/1'
+
+
+File: quintus.info,  Node: mpg-ref-character_count,  Next: mpg-ref-check_advice,  Prev: mpg-ref-callable,  Up: mpg-ref
+
+`character_count/2'
+-------------------
+
+Synopsis
+--------
+
+   `character_count(+STREAM, -COUNT)'
+
+   Obtains the total number of characters either input from or output to
+the open stream STREAM and unifies it with COUNT.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid open Prolog stream
+
+COUNT "integer"
+     the resulting character count of the stream
+
+Description
+-----------
+
+   A freshly opened stream has a character count of 0.  When a
+character is input from or output to a non-tty Prolog stream, the
+character count of the Prolog stream is increased by one.  Character
+count for a tty stream reflects the total character input from or
+output to the tty since the tty is opened to any stream.  See *Note
+ref-iou-sos-spt::, for details on the use of this predicate on a stream
+that is directed to the user's terminal.
+
+   A `nl/[0,1]' operation also increases the character count of a
+stream by one unless the line border code (end_of_line option in
+`open/4') is less than 0.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::).
+
+See Also
+--------
+
+   `line_count/2', `line_position/2', `stream_position/[2,3]'.  *Note
+ref-iou::
+
+
+File: quintus.info,  Node: mpg-ref-check_advice,  Next: mpg-ref-clause,  Prev: mpg-ref-character_count,  Up: mpg-ref
+
+`check_advice/[0,1]' "development"
+----------------------------------
+
+Synopsis
+--------
+
+   `check_advice'
+
+   `check_advice(+PREDSPECS)'
+
+   Enable advice checking.
+
+Arguments
+---------
+
+PREDSPECS "gen_pred_spec_tree" [MOD]
+     A list of predicate specifications.
+
+Description
+-----------
+
+   `check_advice/1' is used to enable advice checking on all predicates
+specified in PREDSPECS.  `check_advice/0' enables advice checking on
+all predicates for which advice has been added.  When advice checking
+is enabled for a predicate, and execution of that predicate reaches an
+advised port, the term carrying the current instantiation of the Prolog
+call is unified against the goal term of the advice.  If the two unify,
+the action associated with the goal and port is executed then failed
+over.  If there are multiple pieces of advice associated with the goal
+and port, they are sequentially called and failed over.
+
+   This predicate is not supported in runtime systems.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if the argument is not ground.
+
+`type_error'
+     if a NAME is not an atom or an ARITY not an integer.
+
+`domain_error'
+     if a PREDSPEC is not a valid procedure specification, or if an
+     ARITY is specified as an integer outside the range 0-255.
+
+`permission_error'
+     if a specified procedure is built-in.
+
+Tips
+----
+
+   `check_advice/0' behaves as though implemented by
+
+     check_advice :-
+             current_advice(Goal, Port, Action),
+             functor(Goal, Name, Arity),
+             check_advice(Name/Arity),
+             fail.
+     check_advice.
+
+See Also
+--------
+
+   `add_advice/3', `remove_advice/3', `current_advice/3',
+`nocheck_advice/[0,1]'
+
+   *Note dbg-adv::
+
+
+File: quintus.info,  Node: mpg-ref-clause,  Next: mpg-ref-close,  Prev: mpg-ref-check_advice,  Up: mpg-ref
+
+`clause/[2,3]'
+--------------
+
+Synopsis
+--------
+
+   `clause(+*HEAD, *BODY)'
+
+   `clause(-HEAD, -BODY, +REF)'
+
+   `clause(+*HEAD, *BODY, *REF)'
+
+   Searches the database for a clause whose head matches HEAD and whose
+body matches BODY.
+
+Arguments
+---------
+
+HEAD "callable" [MOD]
+     a term whose functor names a dynamic procedure.
+
+BODY "callable"
+     compound term or `true'
+
+REF "db_reference"
+     a database reference
+
+Description
+-----------
+
+   In the case of unit-clauses, BODY is unified with `true'.
+
+   If a procedure consists entirely of unit-clauses then there is no
+point in calling `clause/2' on it.  It is simpler and faster to call
+the procedure.
+
+   In `clause/3', either HEAD or REF must be instantiated.  If REF is
+instantiated, `(HEAD :- BODY)' is unified with the clause identified by
+REF.  (If this clause is a unit-clause, BODY is unified with `true'.)
+
+   If the predicate did not previously exist, then it is created as a
+dynamic predicate and `clause/2' fails.  If REF is not instantiated,
+`clause/3' behaves exactly like `clause/2' except that the database
+reference is returned.
+
+   By default, clauses are accessed with respect to the source module.
+
+Backtracking
+------------
+
+   Can be used to backtrack through all the clauses matching a given
+HEAD and BODY.  It fails when there are no (or no further) matching
+clauses in the database.
+
+Exceptions
+----------
+
+`instantiation_error'
+     Neither HEAD nor REF is instantiated.
+
+`type_error'
+     HEAD is not of type callable
+
+     REF is not a                 syntactically valid database
+     reference.
+
+`permission_error'
+     Procedure is static (not dynamic).
+
+`existence_error'
+     REF is a well-formed database reference but does
+     not correspond to an existing clause or record.
+
+Comments
+--------
+
+   If `clause/[2,3]' is called on an undefined procedure it fails, but
+before failing it makes the procedure dynamic.  This can be useful if
+you wish to prevent unknown procedure catching from happening on a call
+to that procedure.
+
+   It is not a limitation that HEAD is required to be instantiated in
+`clause(HEAD, BODY)', because if you want to backtrack through all
+clauses for all dynamic procedures this can be achieved by:
+     | ?- predicate_property(P,(dynamic)), clause(P,B).
+
+   If there are clauses with a given name and arity in several
+different modules, or if the module for some clauses is not known, the
+clauses can be accessed by first finding the module(s) by means of
+`current_predicate/2'.  For example, if the procedure is `f/1':
+     | ?- current_predicate(_,M:f(_)), clause(M:f(X),B).
+
+   `clause/3' will only access clauses that are defined in, or imported
+into, the source module, except that the source module can be
+overridden by explicitly naming the appropriate module.  For example:
+     | ?- assert(foo:bar,R).
+     
+     R = '$ref'(771292,1)
+     
+     | ?- clause(H,B,'$ref'(771292,1)).
+     
+     no
+     | ?- clause(foo:H,B,'$ref'(771292,1)).
+     
+     H = bar,
+     B = true
+     
+     | ?-
+
+   Accessing a clause using `clause/2' uses first argument indexing when
+possible, in just the same way that calling a procedure uses first
+argument indexing.  See *Note bas-eff-ind::.
+
+See Also
+--------
+
+   `instance/2', `assert/[1,2]', `dynamic/1', `retract/1'
+
+   *Note ref-mdb-dre::
+
+
+File: quintus.info,  Node: mpg-ref-close,  Next: mpg-ref-compare,  Prev: mpg-ref-clause,  Up: mpg-ref
+
+`close/1'
+---------
+
+Synopsis
+--------
+
+   `close(+STREAM)'
+
+   closes the stream corresponding to STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     stream or file specification
+
+Description
+-----------
+
+   If STREAM is a stream object, then if the corresponding stream is
+open, it will be closed; otherwise, `close/1' succeeds immediately,
+taking no action.
+
+   If STREAM is a file specification, the corresponding stream will be
+closed, provided that the file was opened by `see/1' or `tell/1'.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`permission_error'
+     File not opened by `see/1' or `tell/1'.
+
+`domain_error'
+     STREAM is neither a filename nor a stream.
+
+Examples
+--------
+
+   In this example, `foo' will be closed:
+     see(foo),
+     ...
+     close(foo)
+
+   However, in this example, a permission error will be raised and `foo'
+will not be closed:
+     open(foo, read, S),
+     ...
+     close(foo)
+
+   Here, `close(S)' should have been used.
+
+See Also
+--------
+
+   `see/1', `tell/1', `open/[3,4]', `write_canonical/[1,2]'
+
+
+File: quintus.info,  Node: mpg-ref-compare,  Next: mpg-ref-compile,  Prev: mpg-ref-close,  Up: mpg-ref
+
+`compare/3'
+-----------
+
+Synopsis
+--------
+
+   `compare(-ORDER, +TERM1, +TERM2)'
+
+   succeeds if the result of comparing terms TERM1 and TERM2 is ORDER
+
+Arguments
+---------
+
+ORDER "one of `[<,=,>]'"
+
+    `='
+          if TERM1 is identical to TERM2,
+
+    `<'
+          if TERM1 is before TERM2 in the standard order,
+
+    `>'
+          if TERM1 is after TERM2 in the standard order.
+
+TERM1 "term"
+
+TERM2 "term"
+Description
+-----------
+
+   The standard total order is as follows.  For further details see
+*Note ref-lte-cte-sot::.
+
+     variables `@<' database references `@<' numbers `@<' atoms `@<' compound terms
+
+   The goal (A) is equivalent to (B):
+     | ?- compare(=, Term1, Term2). (A)
+
+     |?- (Term1 == Term2). (B)
+
+   The following query succeeds, binding R to `<', because 1 comes
+before 2 in the standard order.
+      | ?- compare(R, 1, 2).
+     
+     R = <
+
+   If ORDER is supplied, and is not one of `<', `>', or `=', `compare/3'
+simply fails.
+
+See Also
+--------
+
+   `@</2', `@=</2', `@>/2', `@>=/2', `QP_compare()' *Note ref-lte::
+
+
+File: quintus.info,  Node: mpg-ref-compile,  Next: mpg-ref-compound,  Prev: mpg-ref-compare,  Up: mpg-ref
+
+`compile/1'
+-----------
+
+Synopsis
+--------
+
+   `compile(+FILES)'
+
+   Compiles the specified Prolog source file(s) into memory.
+
+Arguments
+---------
+
+FILES "file_spec" or "list of file_spec" [MOD]
+     a file specification or a list of file specifications; a `.pl'
+     extensions may be omitted in file specifications.
+
+Description
+-----------
+
+   Reads Prolog clauses from the specified file or files and adds them
+to the Prolog database, after first deleting any previous versions of
+the predicates they define.  Clauses for a single predicate must all be
+in the same file unless that predicate is declared to be `multifile'.
+
+   If there are any directives in the file being loaded, that is, any
+terms with principal functor `:-/1' or `?-/1', then these are executed
+as they are encountered.
+
+   When `compile/1' is called from an embedded command in a file being
+compiled by `qpc', the specified files are compiled from source into
+QOF.
+
+   If desired, clauses and directives can be transformed as they are
+loaded.  This is done by providing a definition for `term_expansion/2'
+(see `load_files/[1,2]').
+
+   When `compile/1' is called in a runtime system, all predicates are
+loaded as dynamic predicates.  The reason for this is that the compiler
+is not available in runtime systems.
+
+   This predicate is defined as if by:
+     compile(Files) :-
+             load(Files, [load_type(compile)]).
+
+   For further details on loading files, see *Note ref-lod::.
+
+Exceptions
+----------
+
+   Same as for `load_files/[1,2]'
+
+See Also
+--------
+
+   `multifile/1', `dynamic/1', `no_style_check/1', `style_check/1',
+`nofileerrors/0', `fileerrors/0', `source_file/1', `term_expansion/2',
+`prolog_load_context/2', `load_files/[1,2]', `ensure_loaded/1',
+`use_module/[1,2,3]', `volatile/1', `initialization/1'.
+
+
+File: quintus.info,  Node: mpg-ref-compound,  Next: mpg-ref-consult,  Prev: mpg-ref-compile,  Up: mpg-ref
+
+`compound/1' "meta-logical"
+---------------------------
+
+Synopsis
+--------
+
+   `compound(+TERM)'
+
+   TERM is currently instantiated to a compound term.
+
+Arguments
+---------
+
+TERM "term"
+Examples
+--------
+
+     | ?- compound(9).
+     
+     no
+     | ?- compound(a(1,2,3)).
+     
+     yes
+     | ?- compound("a").
+     
+     yes
+     | ?- compound([1,2]).
+     
+     yes
+
+See Also
+--------
+
+   `atom/1', `atomic/1', `number/1', `var/1', `callable/1', `nonvar/1',
+`simple/1'
+
+
+File: quintus.info,  Node: mpg-ref-consult,  Next: mpg-ref-copy_term,  Prev: mpg-ref-compound,  Up: mpg-ref
+
+`consult/1'
+-----------
+
+Synopsis
+--------
+
+   `consult(+FILES)'
+
+   Same as `compile/1'
+
+Arguments
+---------
+
+FILES "file_spec" or "list of file_spec"  [MOD]
+See Also
+--------
+
+   `compile/1', `load_files/[1,2]'.
+
+
+File: quintus.info,  Node: mpg-ref-copy_term,  Next: mpg-ref-current_advice,  Prev: mpg-ref-consult,  Up: mpg-ref
+
+`copy_term/2' "meta-logical"
+----------------------------
+
+Synopsis
+--------
+
+   `copy_term(+TERM, -COPY)'
+
+   Makes a copy of +TERM in which all variables have been replaced by
+new variables that occur nowhere outside the newly created term.
+
+Arguments
+---------
+
+TERM "term"
+
+COPY "term"
+Description
+-----------
+
+   * This is precisely the effect that would have been obtained from the
+     definition below, although the system implementation of
+     `copy_term/2' is more efficient.
+
+          copy_term(Term, Copy) :-
+             recorda(copy, copy(Term), DBref),
+             instance(DBref, copy(Temp)),
+             erase(DBref),
+             Copy = Temp.
+
+   * When you call `clause/[2,3]' or `instance/2', you get a new copy
+     of the term stored in the database, in precisely the same sense
+     that `copy_term/2' gives you a new copy.
+
+   * Used in writing interpreters for logic-based languages.
+
+Example
+-------
+
+   * A naive way to attempt to find out whether one term is a copy of
+     another:
+
+          identical_but_for_variables(X, Y) :-
+             \+ \+ (
+                numbervars(X, 0, N),
+                numbervars(Y, 0, N),
+                X = Y
+             ).
+
+     This solution is sometimes sufficient, but will not work if the
+     two terms have any variables in common.
+
+   * If you want the test to succeed even when the two terms do have
+     some variables in common, you need to copy one of them; for
+     example,
+          identical_but_for_variables(X, Y) :-
+             \+ \+ (
+                copy_term(X, Z),
+                numbervars(Z, 0, N),
+                numbervars(Y, 0, N),
+                Z = Y
+             ).
+
+
+See Also
+--------
+
+   `atomic/1', `float/1', `integer/1', `nonvar/1', `number/1', `var/1',
+`simple/1', `compound/1', `callable/1', `ground/1', `simple/1',
+`db_reference/1'.
+
+
+File: quintus.info,  Node: mpg-ref-current_advice,  Next: mpg-ref-current_atom,  Prev: mpg-ref-copy_term,  Up: mpg-ref
+
+`current_advice/3' "development"
+--------------------------------
+
+Synopsis
+--------
+
+   `current_advice(*GOAL, *PORT, *ACTION)'
+
+   Provides a means for checking what advice is present.
+
+Arguments
+---------
+
+GOAL "callable" [MOD]
+     any term.
+
+PORT "one of `[call,exit,done,redo,fail]'"
+
+ACTION "callable" [MOD]
+     any term.
+
+Description
+-----------
+
+   Unifies GOAL with the goal term, PORT with the port, and ACTION with
+the action term of currently existing user-defined advice.  None of the
+three arguments need to be instantiated.
+
+   This predicate is not supported in runtime systems.
+
+Tips
+----
+
+   To backtrack through all the advice that exists for a predicate
+`mypred/2', you can use the goal
+
+     | ?- current_advice(mypred(_,_), Port, Action).
+
+   If you are only interested in the advice for `mypred/2' on the call
+port, use
+
+     | ?- current_advice(mypred(_,_), call, Action).
+
+   To determine what predicates you told to call `format/2', use
+
+     | ?- current_advice(Goal, Port, format(_,_)).
+
+See Also
+--------
+
+   `add_advice/3', `remove_advice/3', `check_advice/[0,1]',
+`nocheck_advice/[0,1]'
+
+
+File: quintus.info,  Node: mpg-ref-current_atom,  Next: mpg-ref-current_input,  Prev: mpg-ref-current_advice,  Up: mpg-ref
+
+`current_atom/1' "meta-logical"
+-------------------------------
+
+Synopsis
+--------
+
+   `current_atom(+ATOM)'
+
+   `current_atom(*ATOM)'
+
+   ATOM is a currently existing atom.
+
+Arguments
+---------
+
+ATOM "atom"
+Backtracking
+------------
+
+   If ATOM is uninstantiated, `current_atom/1' can be used to enumerate
+all known atoms.  The order in which atoms are bound to ATOM on
+backtracking corresponds to the times of their creation.
+
+Comments
+--------
+
+   Note that the predicate `atom/1' is recommended for determining
+whether a term is an atom, as `current_atom/1' will succeed if ATOM is
+uninstantiated as well.
+
+See Also
+--------
+
+   `atom/1'
+
+
+File: quintus.info,  Node: mpg-ref-current_input,  Next: mpg-ref-current_key,  Prev: mpg-ref-current_atom,  Up: mpg-ref
+
+`current_input/1'
+-----------------
+
+Synopsis
+--------
+
+   `current_input(-STREAM)'
+
+   unifies STREAM with the current input stream.
+
+Arguments
+---------
+
+STREAM "stream_object"
+See Also
+--------
+
+   `open/[3,4]', `see/1', `seeing/1'
+
+   *Note ref-iou-sfh-cis::
+
+
+File: quintus.info,  Node: mpg-ref-current_key,  Next: mpg-ref-current_module,  Prev: mpg-ref-current_input,  Up: mpg-ref
+
+`current_key/2'
+---------------
+
+Synopsis
+--------
+
+   `current_key(*KEYNAME, *KEYTERM)'
+
+   Succeeds when KEYNAME is the name of KEYTERM, and KEYTERM is a
+recorded key.
+
+Arguments
+---------
+
+KEYNAME "atomic"
+     either of:
+        * KEYTERM, if KEYTERM is an atom or an integer; or
+
+        * the principal functor of KEYTERM, if KEYTERM is a compound
+          term.
+
+KEYTERM "nonvar"
+     is an integer, atom, or compound term, which is the key for a
+     currently recorded term.
+
+Description
+-----------
+
+   If KEYNAME is not an atom, an integer, or an unbound variable,
+`current_key/2' fails.  If KEYTERM is not a current key,
+`current_key/2' simply fails.
+
+See Also
+--------
+
+   `recorda/3', `recorded/3', `recordz/3',
+
+
+File: quintus.info,  Node: mpg-ref-current_module,  Next: mpg-ref-current_op,  Prev: mpg-ref-current_key,  Up: mpg-ref
+
+`current_module/[1,2]'
+----------------------
+
+Synopsis
+--------
+
+   `current_module(+MODULENAME)'
+
+   `current_module(*MODULENAME)'
+
+   Queries whether a module is "current" or backtracks through all of
+the current modules.
+
+   `current_module(+MODULENAME, -ABSFILE)'
+
+   `current_module(-MODULENAME, +ABSFILE)'
+
+   `current_module(*MODULENAME, *ABSFILE)'
+
+   Associates modules with their module-files.
+
+Arguments
+---------
+
+MODULENAME "atom"
+
+ABSFILE "atom"
+     absolute filename
+
+Description
+-----------
+
+   A loaded module becomes "current" as soon as some predicate is
+defined in it, and a module can never lose the property of being
+current.
+
+   It is possible for a current module to have no associated file, in
+which case `current_module/1' will succeed on it but `current_module/2'
+will fail.  This arises for the special module `user' and for
+dynamically-created modules (see *Note ref-mod-dmo::).
+
+   If its arguments are not correct, or if MODULE has no associated
+file, `current_module/2' simply fails.
+
+Backtracking
+------------
+
+   `current_module/1' backtracks through all of the current modules.
+The following command will print out all current modules:
+     | ?- current_module(Module), writeq(Module), nl, fail.
+
+   `current_module/2' backtracks through all of the current modules and
+their associated files.
+
+Exceptions
+----------
+
+`type_error'
+See Also
+--------
+
+   `module/1', `module/2'
+
+
+File: quintus.info,  Node: mpg-ref-current_output,  Next: mpg-ref-current_predicate,  Prev: mpg-ref-current_op,  Up: mpg-ref
+
+`current_output/1'
+------------------
+
+Synopsis
+--------
+
+   `current_output(-STREAM)'
+
+   Unifies STREAM with the current output stream.
+
+Arguments
+---------
+
+STREAM "stream_object"
+See Also
+--------
+
+   `open/[3,4]', `tell/1', `telling/1'
+
+
+File: quintus.info,  Node: mpg-ref-current_op,  Next: mpg-ref-current_output,  Prev: mpg-ref-current_module,  Up: mpg-ref
+
+`current_op/3'
+--------------
+
+Synopsis
+--------
+
+   `current_op(+PRECEDENCE, +TYPE, +NAME)'
+
+   `current_op(*PRECEDENCE, *TYPE, *NAME)'
+
+   Succeeds when the atom NAME is currently an operator of type TYPE
+and precedence PRECEDENCE.
+
+Arguments
+---------
+
+PRECEDENCE "integer"
+     if instantiated, must be an integer in the range 1 to 1200.
+
+TYPE "one of `[`xfx', `xfy', `yfx', `fx', `xf', `yf']'"
+     if instantiated.
+
+NAME "atom"
+     atom or a list of atoms if instantiated.
+
+Description
+-----------
+
+   None of the arguments need be instantiated at the time of the call;
+that is, this predicate can be used to find the precedence or type of
+an operator or to backtrack through all operators.
+
+   To add or remove an operator, use `op/3'.
+
+Exceptions
+----------
+
+`type_error'
+     NAME not an atom or TYPE not an atom or PRECEDENCE not an integer
+
+`domain_error'
+     PRECEDENCE not between 1-1200, or         TYPE not one of listed
+     atoms
+
+See Also
+--------
+
+   `op/3'
+
+   *Note ref-syn-ops::.
+
+
+File: quintus.info,  Node: mpg-ref-current_predicate,  Next: mpg-ref-current_spypoint,  Prev: mpg-ref-current_output,  Up: mpg-ref
+
+`current_predicate/2'
+---------------------
+
+Synopsis
+--------
+
+   `current_predicate(-NAME, +TERM)'
+
+   `current_predicate(*NAME, *TERM)'
+
+   Unifies NAME with the name of a user-defined predicate, and TERM
+with the most general term corresponding to that predicate.
+
+Arguments
+---------
+
+NAME "atom"
+
+TERM "callable" [MOD]
+Description
+-----------
+
+   If you have loaded the predicates `foo/1' and `foo/3' into Prolog,
+`current_predicate/2' would return the following:
+      | ?- current_predicate(foo, T).
+     
+     T = foo(_116) ;
+     
+     T = foo(_116,_117,_118) ;
+     
+     no
+
+Backtracking
+------------
+
+   * The following goal can be used to backtrack through every
+     predicate in your program.
+
+
+          | ?- current_predicate(Name, Module:Term).
+
+   * If a module is specified, `current_predicate/2' only succeeds for
+     those predicates that are _defined_ in the module.  It fails for
+     those predicates that are imported into a module.
+
+          | ?- current_predicate(_, m:P).
+
+     will backtrack through all predicates `P' that are defined in
+     module `m'.  To backtrack through all predicates imported by a
+     module use `predicate_property/2' (see *Note ref-lps-ove::).
+
+Tip
+---
+
+   To find out whether a predicate is built-in, use
+`predicate_property/2'.
+     % Is there a callable predicate named `gc'?
+     
+     | ?- current_predicate(gc, Term).
+     
+     no
+     | ?- predicate_property(gc, Prop)
+     
+     Prop = built_in
+
+See Also
+--------
+
+   `predicate_property/2'
+
+
+File: quintus.info,  Node: mpg-ref-current_spypoint,  Next: mpg-ref-current_stream,  Prev: mpg-ref-current_predicate,  Up: mpg-ref
+
+`current_spypoint/1' "development"
+----------------------------------
+
+Synopsis
+--------
+
+   `current_spypoint(*SPYSPEC)'
+
+   Determines if there is currently a spypoint on a particular predicate
+or call, or enumerates all current spypoints.
+
+Arguments
+---------
+
+SPYSPEC "compound"
+     can be any Prolog term. Prolog will try to unify it to terms of
+     the form:
+
+    `predicate(PRED)'
+          A spypoint on any call to PRED. PRED will be a skeletal
+          predicate specification, and may be module qualified.
+
+    `call(CALLER,CLAUSENUM,CALLEE,CALLNUM)'
+          A spypoint on the CALLNUM call to CALLEE in the body of the
+          CLAUSENUM clause of CALLER. CALLEE and CALLNUM will be
+          skeletal predicate specifications *Note dbg-bas-tra-spy::.
+          CALLNUM and CLAUSENUM will be integers, and begin counting
+          from 1.  Note that CALLNUM specifies a _lexical_ position,
+          that is, the number of the occurrence of CALLEE counting from
+          the beginning of the body of the clause, and ignoring any
+          punctuation.
+
+Description
+-----------
+
+   This predicate is not supported in runtime systems.
+
+Backtracking
+------------
+
+   Can generate all current spypoints on backtracking.
+
+See Also
+--------
+
+   `add_spypoint/1', `remove_spypoint/1', `spy/1', `nospy/1',
+`debugging/0'
+
+   *Note dbg-bas-bas::.
+
+
+File: quintus.info,  Node: mpg-ref-current_stream,  Next: mpg-ref-cut,  Prev: mpg-ref-current_spypoint,  Up: mpg-ref
+
+`current_stream/3'
+------------------
+
+Synopsis
+--------
+
+   `current_stream(-ABSFILE, -MODE, +STREAM)'
+
+   `current_stream(*ABSFILE, *MODE, *STREAM)'
+
+   STREAM is a stream, which is currently open on file ABSFILE in mode
+MODE.
+
+Arguments
+---------
+
+ABSFILE "atom"
+     absolute filename.
+
+MODE "one of `[read, write, append]'"
+
+STREAM "stream_object"
+     a term, which will be unifed with an open stream.
+
+Description
+-----------
+
+   * None of the arguments need be initially instantiated.
+
+   * Ignores the three special streams for the standard input, output,
+     and error channels.
+
+Backtracking
+------------
+
+   Can be used to backtrack through all open streams.
+
+See Also
+--------
+
+   `open/[3,4]', `see/1', `tell/1'
+
+   *Note ref-iou-sfh-bos::
+
+
+File: quintus.info,  Node: mpg-ref-db_reference,  Next: mpg-ref-debug,  Prev: mpg-ref-cut,  Up: mpg-ref
+
+`db_reference/1' "meta-logical"
+-------------------------------
+
+Synopsis
+--------
+
+   `db_reference(+TERM)'
+
+   TERM is a "db_reference".
+
+Arguments
+---------
+
+TERM "term"
+See Also
+--------
+
+   `recorda/3', `assert/2', `atom/1', `atomic/1', `number/1', `var/1',
+`compound/1', `callable/1', `nonvar/1', `simple/1'
+

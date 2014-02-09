@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Character Escaping</h4>
+
+   <p>The character escaping facility allows escape sequences to occur
+within strings and quoted atoms, so that programmers can put
+non-printable characters in atoms and strings and still be able to see
+what they are doing.  This facility can be switched on and off by the
+commands:
+<pre class="example">     | ?- <kbd>prolog_flag(character_escapes, _, on).</kbd>
+     
+     | ?- <kbd>prolog_flag(character_escapes, _, off).</kbd>
+     </pre>
+
+   <p>See <a href="ref-lps-ove.html#ref-lps-ove">ref-lps-ove</a>, for a description of <code>prolog_flag/3</code>. 
+Character escaping is off by default.
+
+   <p>Strings or quoted atoms containing the following
+escape sequences can occur in
+terms obtained by <code>read/[1,2]</code>,
+<code>compile/1</code>, and so on.
+
+   <p>The 0' notation for the integer code of a character is also affected by
+character escaping.
+
+   <p>With character escaping turned
+on, the only things that can occur in a string or
+quoted atom are the characters with ASCII codes
+9 (horizontal tab), 32 (space), 33 through
+126 (non-layout characters), or one of the following escape sequences:
+     <dl>
+
+     <br><dt><b>The escape sequence:</b>
+     <dd><b>Is converted to:</b>
+
+     <br><dt><code>\b</code>
+     <dd>backspace (ASCII 8)
+
+     <br><dt><code>\t</code>
+     <dd>horizontal tab (ASCII 9)
+
+     <br><dt><code>\n</code>
+     <dd>new line (ASCII 10)
+<br>
+
+     <br><dt><code>\v</code>
+     <dd>vertical tab (ASCII 11)
+
+     <br><dt><code>\f</code>
+     <dd>form feed (ASCII 12)
+
+     <br><dt><code>\r</code>
+     <dd>carriage return (ASCII 13)
+
+     <br><dt><code>\e</code>
+     <dd>escape (ASCII 27)
+
+     <br><dt><code>\d</code>
+     <dd>delete (ASCII 127)
+
+     <br><dt><code>\a</code>
+     <dd>alarm = BEL (ASCII 7)
+
+     <br><dt><code>\xCD</code>
+     <dd>the ASCII character with code <code>CD</code> (hexadecimal number)
+
+     <br><dt><code>\</code><var>octal string</var><code></code>
+     <dd>the ASCII character with code <var>octal string</var> base 8,
+where &lt;octal string&gt; is either 1, 2, or 3 octal digits
+
+     <br><dt><code>\^&lt;control char&gt;</code>
+     <dd>the ASCII character whose code is the ASCII code of
+<var>control char</var> mod 32.  <code>\^?</code> is another name for <code>\d</code>.
+
+     <br><dt><code>\</code><var>layout char</var><code></code>
+     <dd>no character, where <var>layout char</var> is a
+character with ASCII code =&lt; 32 or ASCII code &gt;= 127 (thus a newline or
+form-feed in a string or quoted atom can be ignored by
+immediately preceding it with a backslash)
+
+     <br><dt><code>\c</code>
+     <dd>no character; also, all characters up to, but not including,
+the next non-layout character are ignored
+
+     <br><dt><code>\</code><var>other</var><code></code>
+     <dd>the character <var>other</var>, where <var>other</var> is any
+character not predefined here; thus <code>\\</code> should be used to insert one
+backslash
+</dl>
+
+   <p>It is an error if an escape sequence or ASCII character that is not
+defined above occurs in a string or quoted atom.  For instance, an
+ordinary newline in an atom or string is regarded as an error when
+character escapes are on.  This allows the syntax error of a missing
+closing quote to be caught much earlier, but it has the problem that
+some old programs will break (which is why character_escapses are off
+by default).
+
+   <p>With character escaping turned on, the escape sequence <code>\'</code> represents
+the same character as the sequence <code>''</code> within a quoted atom, namely
+one single quote.  Similarly, with character escaping turned on, the
+escape sequence <code>\"</code> represents the same character as the sequence
+<code>""</code> within a string, namely one double quote.
+
+   <p>The escape sequence <code>\c</code> (c for continue) is useful when
+formatting a string for readability. 
+For example, the atom (A), is equivalent to (B):
+<pre class="example">                '!Ruth \c (A)
+                  Gehrig \c
+                  Cobb \c
+                  Williams!'
+     </pre>
+
+<pre class="example">          '!Ruth Gehrig Cobb Williams!' (B)
+     </pre>
+
+   <p>The following sequence denotes the integer 9:
+<pre class="example">     0'\t
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-syn-ops.html#ref-syn-ops">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-syn-cpt.html#ref-syn-cpt">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-syn.html#ref-syn">Up</a>
+</ul>
+</div>
+   </body></html>
+

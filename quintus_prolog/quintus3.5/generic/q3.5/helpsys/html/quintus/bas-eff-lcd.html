@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Last Clause Determinacy Detection</h4>
+
+   <p>Even if the determinacy detection made possible by indexing (see
+ <a href="bas-eff-ind-det.html#bas-eff-ind-det">bas-eff-ind-det</a>)
+is unavailable to a predicate call, Quintus Prolog still can detect
+determinacy before determinate exit from the predicate.  Space for
+backtracking information can thus be recovered as early as possible,
+reducing memory requirements and increasing performance.  For
+instance, the predicate <code>member/2</code> (found in the Quintus Prolog library)
+could be defined by:
+<pre class="example">     member(Element, [Element|_]).
+     member(Element, [_|Rest]) :-
+             member(Element, Rest).
+     </pre>
+
+   <p><code>member/2</code> might be called with an instantiated first argument in order to
+check for membership of the argument in a list, which is passed as a
+second argument, as in
+<pre class="example">     | ?- <kbd>member(4, [1,2,3,4]).</kbd>
+     </pre>
+
+   <p>The first arguments of both clauses of <code>member/2</code> are variables, so first
+argument indexing cannot be used.  However, determinacy
+can still be detected before determinate exit from the predicate. 
+This is because on entry to the last clause of a nondeterminate
+predicate, a call becomes effectively determinate; it can tell that it
+has no more clauses to backtrack to.  Thus, backtracking information
+is no longer needed, and its space can be reclaimed.  In the example,
+each time a call fails to match the first clause and backtracks to the
+second (last) clause, backtracking information for the call is automatically
+deleted.
+
+   <p>Because of last clause determinacy detection, a cut is never needed as the
+first subgoal in the last clause of a predicate.  Backtracking information
+will have been deleted before a cut in the last clause is executed, so
+the cut will have no effect except to waste time.
+
+   <p>Note that last clause determinacy detection is exploited by dynamic
+code as well as static code in Quintus Prolog.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-det.html#bas-eff-det">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-ind.html#bas-eff-ind">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff.html#bas-eff">Up</a>
+</ul>
+</div>
+   </body></html>
+

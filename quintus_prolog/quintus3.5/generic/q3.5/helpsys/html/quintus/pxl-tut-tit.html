@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Specifying a Title for the Window</h4>
+
+   <p>If you use a window manager that displays window titles, you probably
+would like to be able to give the window a title.  In ProXL, this is done
+with the <code>property/2</code> window attribute.
+
+<pre class="example">     | ?- <kbd>win(Window),
+          put_window_attributes(Window,
+                  [property('WM_NAME', hello)]).</kbd>
+     
+     Window = window(2376568)
+     </pre>
+
+   <p>This puts the string <code>hello</code> as the value of the <var>WM_NAME</var>
+property of our window.  This property is watched by window managers
+that display window titles, and when it changes, the window manager
+updates the title.  There are many other properties that are significant
+to window managers, all discussed in <a href="pxl-win-wmi.html#pxl-win-wmi">pxl-win-wmi</a>.
+
+   <p>Some window managers do not display window titles, for example, <code>uwm</code>. 
+If your window is like this, don't worry, the properties will not do any harm. 
+  And setting this property will make your programs friendlier for
+users with other window managers.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-tut-col.html#pxl-tut-col">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-tut-dshd.html#pxl-tut-dshd">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-tut.html#pxl-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,1124 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: ipc-rpc-p2p-reset_servant,  Next: ipc-rpc-p2p-shutdown_servant,  Prev: ipc-rpc-p2p-set_of_all_servant,  Up: ipc-rpc-p2p
+
+`reset_servant'
+...............
+
+   There are occasions in which the communications between the master
+and the servant can get out of sync, in particular if the user
+generates an interrupt and then aborts a process in the middle of a
+remote goal service.  In this case, the goal `reset_servant' attempts
+to return the servant to the top level and to flush the socket.
+
+
+File: quintus.info,  Node: ipc-rpc-p2p-shutdown_servant,  Prev: ipc-rpc-p2p-reset_servant,  Up: ipc-rpc-p2p
+
+`shutdown_servant'
+..................
+
+   To close down a servant when it is no longer needed (or to
+reinitialize it or to connect to another servant with a different
+database), use `shutdown_servant/0'.  This terminates the servant
+process.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp,  Next: ipc-rpc-tra,  Prev: ipc-rpc-p2p,  Up: ipc-rpc
+
+C Process Calling Prolog Process
+--------------------------------
+
+* Menu:
+
+* ipc-rpc-cpp-pro::                     The Prolog Side
+* ipc-rpc-cpp-save_ipc_servant::        save_ipc_servant(+SavedState)
+* ipc-rpc-cpp-csi::                     The C Side
+* ipc-rpc-cpp-create_servant::          QP_ipc_create_servant()
+* ipc-rpc-cpp-lookup::                  QP_ipc_lookup()
+* ipc-rpc-cpp-prepare::                 QP_ipc_prepare()
+* ipc-rpc-cpp-next::                    QP_ipc_next()
+* ipc-rpc-cpp-close::                   QP_ipc_close()
+* ipc-rpc-cpp-shutdown_servant::        QP_ipc_shutdown_servant()
+* ipc-rpc-cpp-atom_from_string::        QP_ipc_atom_from_string()
+* ipc-rpc-cpp-string_from_atom::        QP_ipc_string_from_atom()
+* ipc-rpc-cpp-exa::                     Examples
+
+   The support for calling a Prolog goal from a C program consists of
+Prolog predicates and C functions.  The Prolog predicates allow you to
+create a saved state, which will be the servant.  The C functions are
+used by your C program to create the Prolog process and communicate
+with it.
+
+   Before a C program can call a Prolog program, you must first create
+a Prolog saved state in which all the predicates to be called are
+defined.  The saved state must also define the characteristics of the
+interface to each of the predicates to be called.  Once this saved
+state is created, a C program can call the Prolog predicates by using C
+API functions.  We first describe how to create the Prolog saved state.
+After that we describe how the C program calls a Prolog predicate.
+     :- use_module(library(ccallqp)).
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-pro,  Next: ipc-rpc-cpp-save_ipc_servant,  Up: ipc-rpc-cpp
+
+The Prolog Side
+...............
+
+   The interface for calling a Prolog program from a C program is
+strictly typed.  In the Prolog servant program, the user must declare
+which Prolog procedures can be called from the C program, the types of
+the data elements to be passed between them, and the direction the
+elements are to be sent.  This is done in Prolog by defining
+`external/3' facts to provide this information.  These facts are very
+similar to those for `foreign/3' and have the following form:
+
+     external(COMMANDNAME, PROTOCOL, PREDICATESPECIFICATION).
+
+   COMMANDNAME is the name by which the C program invokes this
+predicate.  PROTOCOL is the protocol to be used, which currently must
+be `xdr'.  PREDICATESPECIFICATION is a term that describes the Prolog
+predicate and the interface, and is of the form:
+
+     PREDICATENAME(ARGSPEC1, ARGSPEC2, ...)
+
+   PREDICATENAME is the name of the Prolog predicate (an atom).  There
+is an ARGSPEC for each argument of the predicate, and  ARGSPEC is one
+of:
+
+     +integer        +float          +atom           +string
+     -integer        -float          -atom           -string
+
+   Examples:
+
+     external(add, xdr, addtwoints(+integer,+integer,-integer)).
+     external(ancestor, xdr, ancestor(+string,-string)).
+     
+     /* Define addtwoints/3 for use by C caller. */
+     addtwoints(X, Y, Z) :- Z is X+Y.
+     
+     /* Define ancestor/2 for use by C caller */
+     ancestor(X, Y) :- parent(X, Y).
+     ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
+
+   The interface allows the simple Prolog data types (atoms, integers,
+and floating-point numbers) to be passed to and from a calling C
+program.  The `+' annotation on an argument specification means that
+the corresponding value will be passed from the calling C program to
+the called Prolog predicate.  A `-' annotation means that the value
+will be passed from the Prolog predicate back to the calling C program.
+The `+' and `-' annotations are always from the point of view of the
+master (or caller).  In this case the C program is the master.
+
+   The argument specifications have the same meanings as they do in
+`foreign/3' facts, but note the directions implied by `+' and `-'.
+Also note that the `...' specifications are not allowed.  The
+limitations on the sizes of integers, floats, and strings in Prolog are
+the same as for the interface to foreign routines.
+
+   The values passed as `atom' arguments will be treated as unsigned
+integers in the C program.  Their uses must be restricted to the same
+invocation of the Prolog servant.  These integers can be converted to
+and from the associated strings by using the C functions
+`QP_ipc_atom_from_string()' and `QP_ipc_string_from_atom()' below.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-save_ipc_servant,  Next: ipc-rpc-cpp-csi,  Prev: ipc-rpc-cpp-pro,  Up: ipc-rpc-cpp
+
+`save_ipc_servant(+SAVEDSTATE)'
+...............................
+
+   To be able to call a servant from C, you must first have created a
+saved state that will run as the servant.  This is done using
+`save_ipc_servant/1'.  Run Prolog on the machine on which the servant is
+to be run, and load (that is, compile, consult, or assert) everything
+that the servant will need.  This includes all the `external/3' facts
+that define the interface, as well as the predicates that the C program
+will call.  Then call `save_ipc_servant(SAVEDSTATE)', where SAVEDSTATE
+is the name of the file in which to save the state.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-csi,  Next: ipc-rpc-cpp-create_servant,  Prev: ipc-rpc-cpp-save_ipc_servant,  Up: ipc-rpc-cpp
+
+The C Side
+..........
+
+   After the saved state containing the Prolog predicates and the
+interface declarations has been created, a C program can access those
+predicates by using the C functions described in the following
+sections.  Your C program that uses these functions should #include the
+file `IPC/RPC/ccallqp.h' to include the extern definitions.  The final
+linker step that creates the main executable must include the file
+`IPC/RPC/SYSTEM/ccallqp.o'.  This file contains the C object code that
+implements the C functions you will be using, and was created at the
+time your Quintus Prolog system was installed.
+
+   See the RPC demo for an example.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-create_servant,  Next: ipc-rpc-cpp-lookup,  Prev: ipc-rpc-cpp-csi,  Up: ipc-rpc-cpp
+
+`QP_ipc_create_servant()'
+.........................
+
+     int QP_ipc_create_servant(HOST, QP_SAVE_STATE, QP_OUTFILE)
+         char *HOST, *QP_SAVE_STATE, *QP_OUTFILE;
+
+   HOST is the name of the machine on which the Prolog servant is to
+run.  If HOST is the string `"local"', then the servant is run on the
+same machine as the master.  If HOST is the empty string `""', the
+servant is run on the local machine but pipes are used for the
+interprocess communication rather than sockets, which are used
+otherwise.
+
+   QP_SAVE_STATE is the name of a file containing a Prolog saved state
+that was created by `save_ipc_servant/1'.  This saved state must
+contain the definitions of the predicates to be called and the
+`external/3' facts that specify the interface.  If QP_SAVE_STATE is not
+an absolute filename, it will be sought, on the specified machine, in
+the sequence of directories specified by your `PATH' environment
+variable.  If this search fails, the current working directory will be
+tried, if it exists on that machine.
+
+   QP_OUTFILE is the name of the file to which to route the Prolog
+servant's output (`stdout' and `stderr').  If QP_OUTFILE is the string
+`"user"', then the servant's output is routed to the C program's
+`stdout'.  If it is the empty string `""', the servant's `stdout'
+stream is discarded, and its `stderr' stream is routed to the master's
+`stderr'.
+
+   This routine returns the file descriptor of the connecting socket if
+the connection was made successfully and -1 if not.  This routine
+starts the Prolog servant and may take several seconds to complete.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-lookup,  Next: ipc-rpc-cpp-prepare,  Prev: ipc-rpc-cpp-create_servant,  Up: ipc-rpc-cpp
+
+`QP_ipc_lookup()'
+.................
+
+     int QP_ipc_lookup(NAME)
+         char *NAME;
+
+   This routine finds and returns the command number associated with the
+external routine NAME.  The command number is a nonnegative integer.
+The associated command must have appeared as the first field in an
+`external' declaration in the saved state started by the previous
+`QP_ipc_create_servant()' call.  If the command is not found, -1 is
+returned.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-prepare,  Next: ipc-rpc-cpp-next,  Prev: ipc-rpc-cpp-lookup,  Up: ipc-rpc-cpp
+
+`QP_ipc_prepare()'
+..................
+
+     int QP_ipc_prepare(COMMAND, ARG1, ..., ARGN)
+         int COMMAND;
+         VA_DCL
+
+   This function sends a request to the Prolog process to evaluate a
+goal.  The command is identified by COMMAND, which must have been
+obtained by an earlier call to `QP_ipc_lookup()'.  The arguments are
+the values to be sent to the command, that is those in the interface
+specification with a `+' annotation.  They must be in left-to-right
+order as they appear in the specification.  They must be of the
+corresponding types as indicated in the specification:
+
+             +integer:       int
+             +float:         float
+             +atom:          QP_atom
+             +string:        char *
+
+   See the example below in *Note ipc-rpc-cpp-exa::.
+
+   On successful completion, this routine returns 0.  If an error has
+occurred, it returns -1.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-next,  Next: ipc-rpc-cpp-close,  Prev: ipc-rpc-cpp-prepare,  Up: ipc-rpc-cpp
+
+`QP_ipc_next()'
+...............
+
+     int QP_ipc_next(COMMAND, ARG1, ..., ARGM)
+         int COMMAND;
+         VA_DCL
+
+   The C routine `QP_ipc_next()' retrieves an answer for a goal
+(command) that was initiated by a previous call to `QP_ipc_prepare()'.
+The command is identified by COMMAND.  It must be the same as the
+command given to `QP_ipc_prepare()'.  The remaining arguments are
+variables that will be set by `QP_ipc_next()' to the values returned as
+the next answer to the goal.  There is one argument for each field in
+the interface specification that was annotated with `-'.  They must be
+in left-to-right order.  The types of the arguments must correspond to
+the types declared in the `external/3' specification as follows:
+
+             -integer:       int *
+             -float:         float *
+             -atom:          QP_atom *
+             -string:        char **
+
+   For a returned value of type string, space must be provided by the
+calling routine to hold the value returned.  The characters of the
+returned string will be copied over the string passed in.
+
+   If an(other) answer to the query has been obtained and the argument
+parameters have been set accordingly, `QP_ipc_next()' returns 0.  If
+there are no more answers, it returns -1.  If there is an error, it
+returns -2.
+
+   See the example below in *Note ipc-rpc-cpp-exa::.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-close,  Next: ipc-rpc-cpp-shutdown_servant,  Prev: ipc-rpc-cpp-next,  Up: ipc-rpc-cpp
+
+`QP_ipc_close()'
+................
+
+     int QP_ipc_close()
+
+   The `QP_ipc_close()' routine closes a query that was opened by
+`QP_ipc_prepare()' but did not have all of its answers retrieved by
+calls to `QP_ipc_next()'.  (When `QP_ipc_next()' returns a -1,
+indicating no more answers, the query is automatically closed, and a
+subsequent call to `QP_ipc_close()' is an error.) `QP_ipc_close()'
+returns 0 if it has closed the query successfully, and -1 if there is
+an error.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-shutdown_servant,  Next: ipc-rpc-cpp-atom_from_string,  Prev: ipc-rpc-cpp-close,  Up: ipc-rpc-cpp
+
+`QP_ipc_shutdown_servant()'
+...........................
+
+     int QP_ipc_shutdown_servant()
+
+   The routine `QP_ipc_shutdown_servant()' shuts down the servant.  It
+sends a message to the servant that causes it to terminate.  It returns
+0 if the shutdown is successful, and -1 if there is some problem.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-atom_from_string,  Next: ipc-rpc-cpp-string_from_atom,  Prev: ipc-rpc-cpp-shutdown_servant,  Up: ipc-rpc-cpp
+
+`QP_ipc_atom_from_string()'
+...........................
+
+     QP_atom QP_ipc_atom_from_string(STR)
+         char *str;
+
+   The routine `QP_ipc_atom_from_string()' returns the unsigned integer
+that is the Prolog representation of the atom with the name STR.  This
+representation is valid for the lifetime of the servant.  It must not
+be saved and used with a different invocation of the servant.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-string_from_atom,  Next: ipc-rpc-cpp-exa,  Prev: ipc-rpc-cpp-atom_from_string,  Up: ipc-rpc-cpp
+
+`QP_ipc_string_from_atom()'
+...........................
+
+     void QP_ipc_string_from_atom(ATOM, STR)
+         QP_atom ATOM;
+         char *STR;
+
+   The routine `QP_ipc_string_from_atom()' can be used to get the name
+corresponding to an atom, given the Prolog internal unsigned integer
+representation of the atom.  The string STR will be overwritten with a
+null-terminated string that is the name of the atom.  The caller must
+provide enough space to contain this string.
+
+
+File: quintus.info,  Node: ipc-rpc-cpp-exa,  Prev: ipc-rpc-cpp-string_from_atom,  Up: ipc-rpc-cpp
+
+Examples
+........
+
+   The first example shows how you can package a call to a Prolog goal
+that is known to be determinate.  Here, the C function `fred' hides the
+call to Prolog.  However, the servant must be initiated by a call to
+`QP_ipc_create_servant()' before it can be called.
+
+                                                 _Prolog Specification_
+     
+             external(fred, xdr, fred(+integer,-integer,+integer)).
+     
+             fred(X, Y, Z) :- ...
+
+                                                            _C routine_
+     
+             int fred(i, j)
+                 int i, j;
+                 {
+                     static int fredp = -1;
+                     int k;
+     
+                     if (fredp < 0) {        /* initialize */
+                         fredp = QP_ipc_lookup("fred");
+                         if (fredp < 0)
+                             DieBecause("couldn't find fred");
+                     }
+     
+                     /* send the request */
+                     QP_ipc_prepare(fredp, i, j);
+     
+                     /* get the answer back */
+                     if (QP_ipc_next(fredp, &k))
+                         DieBecause("fred failed");
+     
+                     /* known determinate, so close request */
+                     QP_ipc_close();
+     
+                     /* return the answer */
+                     return k;
+                 }
+
+   The second example shows an entire program and how all types of
+arguments are be passed.  It also shows how `QP_ipc_atom_from_string()'
+and `QP_ipc_string_from_atom()' can be used.  In terms of
+functionality, this is not a very interesting program, and the
+conversion between atoms and strings is just to give an example.
+
+                                                 _Prolog Specification_
+     
+     external(dupl, xdr, duplicate(-integer,+integer,-string,+string,
+                             -float,+float,-atom,+atom)).
+     
+     duplicate(A, A, B, B, C, C, D, D).
+
+                                                           _C program:_
+     
+     main()
+     {
+         int pdupl;
+         char host[20], savestate[50];
+         int iint, oint;
+         char istr1[20], istr2[20], ostr1[20], ostr2[20];
+         float iflt, oflt;
+         QP_atom iatom, oatom;
+     
+             printf("Enter host and savestate: ");
+             scanf("%s%s", host, savestate);
+     
+             if (QP_ipc_create_servant(host,savestate,"servant_out"))
+                     DieBecause("Error starting up servant");
+     
+             pdupl = QP_ipc_lookup("dupl");
+             if (pdupl < 0) DieBecause("dupl not defined");
+     
+             for (;;) {      /* loop until break */
+                 printf("Enter int, str, flt, str: ");
+                 if (scanf("%d%s%f%s",&iint,istr1,&iflt,istr2) != 4)
+                     break;
+                 /* get atom for the string typed in */
+                 iatom = QP_ipc_atom_from_string(istr2);
+     
+                 /* send the request */
+                 if (QP_ipc_prepare(pdupl, iint, istr1, iflt, iatom))
+                     DieBecause("dupl prepare error");
+     
+                 /* get answer back, and convert atom back to string */
+                 QP_ipc_next(pdupl, &oint, ostr1, &oflt, &oatom);
+                 QP_ipc_string_from_atom(oatom, ostr2);
+     
+                 /* close request because we want only one answer */
+                 if (QP_ipc_close()) printf("ERROR closing\n");
+     
+                 printf("Answer is: %d %s %G %s(%d)\n",
+                             oint, ostr1, oflt, ostr2, oatom);
+             }
+     
+             if (QP_ipc_shutdown_servant())
+                 DieBecause("Error shutting down servant");
+     }
+
+   The third example shows how to retrieve multiple answers:
+
+                                                 _Prolog Specification_
+     
+     external(table, xdr, table(-string,-integer)).
+     
+             table(samuel, 34).
+             table(sarah, 54).
+             ...
+
+                                                            _C program_
+     
+     main()
+     {
+             char host[20], savestate[50];
+             int ptable, ret;
+             char strval[40];
+             int intval;
+     
+             printf("Enter host and savestate: ");
+             scanf("%s%s", host, savestate);
+     
+             if (QP_ipc_create_servant(host,savestate,"servant_out"))
+                     DieBecause("Error starting up servant");
+     
+             ptable = QP_ipc_lookup("table");
+             if (ptable < 0) {
+                 printf("table not defined\n");
+                 return;
+             }
+     
+             /* send the request */
+             QP_ipc_prepare(ptable);
+     
+             /* retrieve and print ALL answers */
+             while (!(ret = QP_ipc_next(ptable, strval, &intval)))
+                 printf("String: %s, Integer: %d\n", strval,intval);
+     
+             /* note no close, since we retrieved all the answers! */
+             if (ret == -1) printf("All answers retrieved\n");
+             else printf("Error retrieving answers\n");
+     
+             if (QP_ipc_shutdown_servant())
+                 DieBecause("Error shutting down servant");
+     }
+
+   The final example shows how one could write a C function to turn
+Prolog's message tracing (see *Note ipc-rpc-tra::) on and off.
+
+                                                 _Prolog Specification_
+     
+             external(settrace, xdr, settrace(+string)).
+     
+             settrace(X) :- msg_trace(_,X).
+
+                                                            _C routine_
+     
+             void settrace(OnOff)
+                 char *OnOff;
+                 {
+                     static int psettrace = -1;
+                     int k;
+     
+                     if (psettrace < 0) {
+                         psettrace = QP_ipc_lookup("settrace");
+                         if (psettrace < 0)
+                             DieBecause("couldn't find settrace");
+                     }
+     
+                     QP_ipc_prepare(psettrace, OnOff);
+                     if (QP_ipc_next(psettrace))
+                         DieBecause("settrace failed");
+                     QP_ipc_close();
+                 }
+
+
+File: quintus.info,  Node: ipc-rpc-tra,  Next: ipc-rpc-bug,  Prev: ipc-rpc-cpp,  Up: ipc-rpc
+
+Tracing
+-------
+
+* Menu:
+
+* ipc-rpc-tra-msg_trace::               msg_trace(-OldValue, +OnOrOff)
+
+   A simple tracing facility is available for determining what messages
+are received by and sent from the Prolog servant.  When message tracing
+is on, messages sent or received cause a trace message to be written to
+the current output stream.  It will normally be redirected to a file by
+`create_servant/3' or `QP_ipc_create_servant()'.  The UNIX command
+`tail -f' may be helpful in looking at the trace messages.  Each trace
+message indicates what the corresponding interprocess message was.  The
+precise form of the trace information depends on whether the Prolog
+servant is serving a C program or another Prolog program.
+
+   Message tracing can be turned on and off by having the servant
+process call `msg_trace/2' which is described below.  A master that is
+a Prolog process can use `call_servant/1' to cause the servant to call
+`msg_trace/2'.  It can also call `msg_trace/2' directly to control
+tracing of its own messages.
+
+   To make a servant that serves a C master trace its message, it must
+either have had tracing turned on before its saved state was created,
+or it must provide an `external' routine that can be invoked by the C
+master to turn on tracing (see Example 4 in *Note ipc-rpc-cpp-exa::).
+
+
+File: quintus.info,  Node: ipc-rpc-tra-msg_trace,  Up: ipc-rpc-tra
+
+`msg_trace(-OLDVALUE, +ONOROFF)'
+................................
+
+   The predicate `msg_trace/2' returns the current value of the
+message-trace flag (`on' or `off') and resets its value.  The
+message-trace flag has one of the values `on' or `off'.  OLDVALUE is
+bound to the previous value of the flag, and the flag is reset to the
+value of ONOROFF, which must be either `on' or `off'.  The call
+`msg_trace(X,X)' returns the current value without changing it.  When
+the message-trace flag is on, messages to and from the servant are
+traced.  By executing `call_servant(msg_trace(_,on))', tracing can be
+turned on in the servant.
+
+
+File: quintus.info,  Node: ipc-rpc-bug,  Prev: ipc-rpc-tra,  Up: ipc-rpc
+
+Known Bugs
+----------
+
+   If the Prolog master process is interrupted while it is waiting for
+an answer from the servant process, the master process may crash.
+
+
+File: quintus.info,  Node: lib,  Next: str,  Prev: ipc,  Up: Top
+
+Library
+*******
+
+* Menu:
+
+* lib-bas::                             Introduction
+* lib-lis::                             List Processing
+* lib-tma::                             Term Manipulation
+* lib-txp::                             Text Processing
+* lib-xml::                             XML Parsing and Generation
+* lib-neg::                             Negation
+* lib-ofi::                             Operations on Files
+* lib-lfi::                             Looking Up Files
+* lib-uin::                             Obtaining User Input
+* lib-iml::                             Interface to Math Library
+* lib-mis::                             Miscellaneous Packages
+* lib-too::                             Tools
+* lib-abs::                             Abstracts
+
+
+File: quintus.info,  Node: lib-bas,  Next: lib-lis,  Up: lib
+
+Introduction
+============
+
+* Menu:
+
+* lib-bas-dst::                         Directory Structure
+* lib-bas-sta::                         Status of Library Packages
+* lib-bas-dlp::                         Documentation of Library Packages
+* lib-bas-not::                         Notation
+
+
+File: quintus.info,  Node: lib-bas-dst,  Next: lib-bas-sta,  Up: lib-bas
+
+Directory Structure
+-------------------
+
+   The Quintus Prolog Library directory (part of the installation
+directory described in *Note int-man::) contain files written in Prolog
+and C, which supplement the Quintus Prolog kernel.  The structure of
+the Library Directory differs slightly between UNIX and Windows, as
+shown in the following figures.
+
+
+[See printed or HTML manual.]
+
+      The Quintus Prolog Library Directory under UNIX, `qplib3.5'
+
+
+[See printed or HTML manual.]
+
+       The Quintus Prolog Library Directory under Windows, `src'
+
+`library'
+     contains a large number of predicates that can be regarded as
+     extensions to the set of predicates that are built into the Prolog
+     system.  Both source and QOF versions are provided.
+
+`tools'
+     source files for Quintus-supplied development tools, independent
+     programs that perform various functions such as determinancy
+     checking and cross-referencing.  They can be used to analyze your
+     programs statically (that is, without running them) and possibly
+     locate bugs.
+
+`structs'
+     contains the Structs Package, which allows access to C data
+     structures from Prolog.  The directory includes demos.
+
+`objects'
+     contains the Objects Package, which enables programmers to write
+     object-oriented programs in Quintus Prolog.  It can be regarded as
+     a high-level alternative to the Structs Package.
+
+`prologbeans'
+     contains the PrologBeans Package, which provides an interface from
+     Java to Prolog.
+
+`vbqp'
+     An interface from Visual Basic to Prolog.  Only available under
+     Windows.
+
+`IPC'
+     two inter-process communication packages: Remote Predicate Call
+     (RPC, not available under Windows) and Transmission Control
+     Protocol (TCP).
+
+`include'
+     Contains `<quintus/quintus.h>', a header file containing #defines,
+     typedefs, struct definitions, etc., which are needed to compile C
+     code that needs to call API functions or use Quintus data
+     structures.  Under Windows, the `include' directory is placed
+     directly under QUINTUS-DIRECTORY.
+
+`embed'
+     contains modules for user customization of the message handler
+     (see *Note ref-msg::) and source code for the Embedding Layer.
+
+   The predicate `library_directory/1' has predefined clauses for the
+`library' and `tools' directories.  These depend on the
+`file_search_path/2' definition of `qplib'.  You can see these clauses
+by typing `listing.'  or `listing(library_directory).' after starting
+up Prolog.  This definition of `library_directory/1' means that you can
+refer, from within Prolog, to any file in any of these areas using the
+form `library(FILE)'.  For example either (A) or (B) would load the
+file `lists.qof' from the `library' directory.
+     | ?- [library(lists)]. (A)
+     
+     | ?- load_files(library(lists)). (B)
+
+   Library packages are typically loaded by doing (C) if the package is
+not a module-file or if it is a module and you want all the exported
+predicates.
+     | ?- ensure_loaded(library(addportray)). (C)
+
+   See the descriptions of `ensure_loaded/1' and `use_module/[1,2,3]'.
+
+   In addition to the loadable QOF files, source files (`.pl' or `.c')
+are provided for each package.
+
+
+File: quintus.info,  Node: lib-bas-sta,  Next: lib-bas-dlp,  Prev: lib-bas-dst,  Up: lib-bas
+
+Status of Library Packages
+--------------------------
+
+   The predicates described here have been tested and are believed to
+work as documented.  If you want something slightly different from one
+of these predicates, it is strongly recommended that you _do not
+change_ the existing definition.  Instead, write a _new_ predicate
+using the existing definition as a model.  There are several reasons
+for not changing the definition of a predicate in the library:
+  1. It may confuse people reading your code who are familiar with the
+     documented behavior of the library predicate.
+
+  2. If you use other library files, they may depend on the exact
+     definition of this predicate.
+
+  3. You might have to redo your modification if you wished to run your
+     program on some new release of Quintus Prolog.
+
+  4. We do not accept responsibility for any bugs introduced by a
+     user's change to library code.
+
+
+File: quintus.info,  Node: lib-bas-dlp,  Next: lib-bas-not,  Prev: lib-bas-sta,  Up: lib-bas
+
+Documentation of Library Packages
+---------------------------------
+
+* Menu:
+
+* lib-bas-dlp-acc::                     Accessing Code Comments
+
+   All library packages include code comments, often extensive, which
+serve as documentation.  Accessing these comments and other information
+available in the library directory is discussed in *Note
+lib-bas-dlp-acc::.
+
+   In addition, many packages are more fully documented:
+   * The IPC packages are documented in *Note ipc::.
+
+   * A large number are documented in *Note lib-lis:: through *Note
+     lib-mis:: of this part of the manual.
+
+   The rest are abstracted in *Note lib-abs::.  For these the
+information in the following section is particularly useful.
+
+
+File: quintus.info,  Node: lib-bas-dlp-acc,  Up: lib-bas-dlp
+
+Accessing Code Comments
+.......................
+
+   If you know the name of the library package in question, simply look
+at the source code in `qplib3.5'.  Apart from code comments, there is
+information about predicates in two files that summarize the contents
+of the directory.  They are called `Contents' and `Index'.  (See the
+figure above.)  If you do not know the name of the package the `Index'
+file will be helpful.  If you know the name of the package, you can use
+the `Contents' file to gain further information about it.
+
+   The `Index' file contains one line for each exported predicate in
+the library.  The predicates are listed in standard order, ignoring
+module names.  A typical entry looks like this:
+     list_to_binary/4   flatten   ./flatten.pl
+
+   This means that there is a predicate called `list_to_binary/4' in
+the library, that it lives in a module called `flatten', and that the
+file that contains it is `flatten.pl' in the same directory as the
+Index.
+
+   If you have set up an environment variable `QL' holding the name of
+the Quintus library directory, you could ask "what predicates are there
+to deal with files?" by issuing the command
+     % egrep files $QL/Index
+
+   The `Contents' file is organized by library files rather than by
+predicates.  A typical entry in this file is a block of lines like this:
+     basics  + documented in manual
+     basics  % the basic list processing predicates
+     basics  - ./basics.pl
+     basics  : member/2
+     basics  : memberchk/2
+     basics  : nonmember/2
+
+   The first line means that `library(basics)' is one of the library
+packages that is fully documented in this manual.  The second line is a
+short description of the contents.  The third line says which file
+contains `library(basics)'; in this case it is `basics.pl' in the same
+directory as Contents.  The remaining lines list the predicates
+exported by `library(basics)'.  You could obtain this information by
+issuing the command
+     % egrep '^basics' $QL/Contents
+
+   These files are provided as a convenience, and do not have the same
+authority as the printed manual.
+
+
+File: quintus.info,  Node: lib-bas-not,  Prev: lib-bas-dlp,  Up: lib-bas
+
+Notation
+--------
+
+* Menu:
+
+* lib-bas-not-cco::                     Character Codes
+* lib-bas-not-mod::                     Mode Annotations
+
+
+File: quintus.info,  Node: lib-bas-not-cco,  Next: lib-bas-not-mod,  Up: lib-bas-not
+
+Character Codes
+...............
+
+   Many of the examples in this manual show lists of character codes
+being written as quoted strings.  This actually happens if you load the
+library package `library(printchars)'.  That package extends the
+predicate `portray/1' (using `library(addportray)') so that `print/1',
+the top-level, and the debugger will write lists of character codes as
+follows:
+
+     | ?- X = [0'a,0'b,0'c].
+     X = [97,98,99]
+     
+     | ?- ensure_loaded(library(printchars)).
+     
+     | ?- X = [0'a,0'b,0'c].
+     X = "abc"
+
+
+File: quintus.info,  Node: lib-bas-not-mod,  Prev: lib-bas-not-cco,  Up: lib-bas-not
+
+Mode Annotations
+................
+
+   A new system of representing the modes of arguments has been adapted
+in Release 3, is described in *Note mpg::. The library, including IPC,
+is still documented under the old system of mode annotations:
+
+   Each predicate definition is headed by a goal template such as
+     setof(?X,+GOAL,-SET)
+
+   Here X and the others are meta-variables, which name the arguments so
+that we don't have to keep saying "its first argument" and so on.  The
+characters that precede the meta-variables will seem familiar if you
+know the mode declarations of DEC-10 Prolog; their significance is as
+follows:
+`+'
+     This argument is an input to the predicate.  It must initially be
+     instantiated; otherwise, the predicate raises an error exception.
+
+`-'
+     This argument is an output.  It is returned by the predicate.
+     That is, the output value is unified with any value that was
+     supplied for this argument.  The predicate fails if this
+     unification fails.  If no value is supplied, the predicate
+     succeeds, and the output variable is unified with the return value.
+
+`?'
+     This argument does not fall into either of the above categories.
+     It is not necessarily an input nor an output, and it need not be
+     instantiated.
+
+   Note that it is not an error to call a predicate with a `-' argument
+already instantiated.  The value supplied will simply be unified with
+the result returned, and if that unification fails, the predicate fails.
+
+
+File: quintus.info,  Node: lib-lis,  Next: lib-tma,  Prev: lib-bas,  Up: lib
+
+List Processing
+===============
+
+* Menu:
+
+* lib-lis-bas::                         Introduction
+* lib-lis-prl::                         What is a ``Proper'' List?
+* lib-lis-lis::                         Five List Processing Packages
+* lib-lis-basics::                      Basic List Processing --- library(basics)
+* lib-lis-lists::                       Lists as Sequences --- library(lists)
+* lib-lis-set::                         Lists as Sets
+* lib-lis-ordsets::                     Lists as Ordered Sets --- library(ordsets)
+* lib-lis-listparts::                   Parts of lists --- library(listparts)
+
+
+File: quintus.info,  Node: lib-lis-bas,  Next: lib-lis-prl,  Up: lib-lis
+
+Introduction
+------------
+
+   While Prolog has data structures other than lists (and the library
+implements several others, such as priority queues, in terms of more
+primitive structures), list processing is still very important in
+Prolog.  This section describes the library predicates that operate on
+lists.
+
+
+File: quintus.info,  Node: lib-lis-prl,  Next: lib-lis-lis,  Prev: lib-lis-bas,  Up: lib-lis
+
+What is a "Proper" List?
+------------------------
+
+   Several of the predicate descriptions below indicate that a
+particular predicate only works when a particular argument "is a proper
+list".  A "proper list" is either the atom `[]' or else it is of the
+form `[_|L]' where L is a proper list.  X is a "partial list" if and
+only if `var(X)' or X is `[_|L]' where L is a partial list.  A term is
+a list if it is either a proper list or a partial list; that is,
+`[_|foo]' is not normally considered to be a list because its tail is
+neither a variable nor `[]'.
+
+   Note that the predicate `is_list(X)' defined in `library(lists)'
+really tests whether X is a "proper" list.  The name is retained for
+compatibility with earlier releases of the library.  Similarly,
+`is_set(X)' and `is_ordset(X)' test whether X is a proper list that
+possesses the additional properties defining sets and ordered sets.
+
+   The point of the definition of a proper list is that a recursive
+procedure working its way down a proper list can be certain of
+terminating.  Let us take the case of `last/2' as an example.  `last(X,
+L)' ought to be true when `append(_, [X], L)' is true.  The obvious way
+of doing this is
+     last(Last, [Last]).
+     last(Last, [_|Tail]) :-
+             last(Last, Tail).
+
+   If called with the second argument a proper list, this definition
+can be sure of terminating (though it will leave an extra choice point
+behind).  However, if you call
+     | ?- last(X, L), length(L, 0).
+
+   where `L' is a variable, it will backtrack forever, trying ever
+longer lists.  Therefore, users should be sure that only proper lists
+are used in those argument positions that require them.
+
+
+File: quintus.info,  Node: lib-lis-lis,  Next: lib-lis-basics,  Prev: lib-lis-prl,  Up: lib-lis
+
+Five List Processing Packages
+-----------------------------
+
+   There are five library files that are specifically concerned with
+list processing.  They are
+`library(basics)'
+     contains very basic list processing operations.
+
+`library(lists)'
+     contains operations that view lists as sequences.
+
+`library(sets)'
+     contains operations that view lists as sets.
+
+`library(ordsets)'
+     contains operations that view lists as sets, but require that the
+     elements of the lists be in standard order (see `compare/3' in the
+     reference pages) so as to be much more efficient than
+     `library(sets)' for any but the smallest sets.
+
+`library(listparts)'
+     establishes a common vocabulary for names of parts of lists.
+
+   As a general rule, if a predicate defined here has a counter (a
+non-negative integer) as one of its arguments, it will suffice for the
+counter argument to be instantiated.  Otherwise, at least one of the
+list arguments must be a proper list.  Failing this, the predicate may
+backtrack forever trying ever longer lists.  When you look at the code
+you will see that some of the library routines use `same_length/2' or
+`same_length/3' to ensure termination.
+
+
+File: quintus.info,  Node: lib-lis-basics,  Next: lib-lis-lists,  Prev: lib-lis-lis,  Up: lib-lis
+
+Basic List Processing -- `library(basics)'
+------------------------------------------
+
+* Menu:
+
+* lib-lis-basics-rel::                  Related Built-in Predicates
+* lib-lis-basics-member::               member(?Element, ?List)
+* lib-lis-basics-memberchk::            memberchk(+Element, +List)
+* lib-lis-basics-nonmember::            nonmember(+Element, +List)
+
+
+File: quintus.info,  Node: lib-lis-basics-rel,  Next: lib-lis-basics-member,  Up: lib-lis-basics
+
+Related Built-in Predicates
+...........................
+
+   See also the built-in predicates `length/2' and `append/3', which
+can be used to find the length of a proper list or to construct a
+proper list of a given length, and `append(*HEAD, *TAIL, *LIST)', which
+is used to combine lists and take lists apart.
+
+
+File: quintus.info,  Node: lib-lis-basics-member,  Next: lib-lis-basics-memberchk,  Prev: lib-lis-basics-rel,  Up: lib-lis-basics
+
+`member(?ELEMENT, ?LIST)'
+.........................
+
+   `member(?ELEMENT, ?LIST)' is true when LIST is a (possibly partial)
+list, and ELEMENT is one of its elements.  It may be used to check
+whether a particular element occurs in a given list, or to enumerate
+all of the elements of a list by backtracking.  `member/2' may also be
+used to generate a list.
+
+     | ?- member(a, [b,e,a,r]).
+     
+     yes
+     
+     | ?- member(e, [s,e,e,n]).
+     
+     yes   /* this will succeed _twice_ */
+     
+     | ?- member(e, [t,o,l,d]).
+     
+     no
+     
+     | ?- member(X-Y, [light-dark,near-far,wet-dry]).
+     
+     X = light,
+     Y = dark ;
+     
+     X = near,
+     Y = far ;
+     
+     X = wet,
+     Y = dry
+     
+     | ?- member(a-X, [b-2,Y-3,X-Y]).
+     
+     X = 3,
+     Y = a ;
+     
+     X = a,
+     Y = a
+     
+     | ?- member(a, L), member(b, L), member(c, L),
+     |    length(L, N).
+     
+     L = [a,b,c],
+     N = 3
+
+   The last example will generate lists of increasing length whose
+first three members are `a', `b', and `c'.
+
+   If L is a proper list of length N, `member(X, L)' has at most N
+solutions, whatever X is.  But if L is a partial list, `member/2' will
+backtrack indefinitely, trying to place X ever farther to the right.
+For example,
+     | ?- member(a, L).
+     
+     L = [a|_879] ;
+     
+     L = [_878,a|_881] ;
+     
+     L = [_878,_880,a|_883] ;
+        .
+        .
+        .
+
+   until you stop it.
+
+   In general, you should only use `member/2' when the second argument
+is a proper list.  This list need not be ground; however, it must not
+end with a variable.
+
+
+File: quintus.info,  Node: lib-lis-basics-memberchk,  Next: lib-lis-basics-nonmember,  Prev: lib-lis-basics-member,  Up: lib-lis-basics
+
+`memberchk(+ELEMENT, +LIST)'
+............................
+
+   In the previous section, it was pointed out that `member(e,
+[s,e,e,n])' succeeds twice.  If you have a ground term (or one that is
+sufficiently instantiated) and you only want to know whether it occurs
+in a list or not, you would like the membership test to succeed only
+once.  `memberchk/2' is a version of `member/2' that does this.
+
+   `memberchk(ELEMENT, LIST)' can only be used to test whether a known
+element occurs in a known list.  It cannot be used to enumerate elements
+of the list.  `memberchk/2' commits to the first match and does not
+backtrack.
+
+   Use `memberchk/2' in preference to `member/2', but only where its
+restrictions are appropriate.
+
+
+File: quintus.info,  Node: lib-lis-basics-nonmember,  Prev: lib-lis-basics-memberchk,  Up: lib-lis-basics
+
+`nonmember(+ELEMENT, +LIST)'
+............................
+
+   `nonmember(+ELEMENT, +LIST)' is true when ELEMENT does not occur in
+the LIST.  For `nonmember/2' to instantiate ELEMENT in any way would be
+meaningless, as there are infinitely many terms that do not occur in
+any given list.
+
+   `nonmember/2' should only be used when LIST and ELEMENT are
+sufficiently instantiated that you can tell whether  ELEMENT occurs in
+LIST or not without instantiating any variables.  If this requirement
+is not met, the answers generated may not be exactly what you would
+expect from the logic.
+
+   For example, some valid uses of `nonmember/2' are:
+     | ?- nonmember(a, [x,y,z]).
+     
+     yes
+     | ?- nonmember(x, [x,y,z]).
+     
+     no
+
+   In the following examples, `nonmember/2' is invalidly used with
+insufficiently instantiated arguments.  In these cases it simply fails.
+     | ?- nonmember(X, [x,y,z]).
+     
+     no
+     | ?- nonmember(x, [X]).
+     
+     no
+     | ?- nonmember(x, X).
+     
+     no
+
+   Use `nonmember/2' to check whether a known element occurs in a known
+list, in preference to `\+ member/2' or `\+ memberchk/2'.
+

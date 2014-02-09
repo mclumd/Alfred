@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>skip/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>skip(</code><var>+Char</var><code>)</code>
+
+   <p><code>skip(</code><var>+Stream, +Char</var><code>)</code>
+
+   <p>Skips over characters from the current input stream, or <var>Stream</var>,
+through the first character whith an ASCII code that match
+the lower 8-bits of the value of the integer expression <var>Char</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>
+
+     <br><dt><var>Char</var> <dfn>expr</dfn>
+     <dd>an integer expression. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>Char</var> may be an
+integer expression.  The most useful form of integer expression in
+this context is the zero-quote notation, for example, <code>0'a</code>, which
+evaluates to 97, the ASCII code for the letter <code>a</code>, so that
+<pre class="example">     | ?- <kbd>skip(0'a).</kbd>
+     </pre>
+
+   <p>skips over (ignores) all input until the next occurrence of the letter
+<code>a</code>.
+
+   <p>If <var>Char</var> does appear, <code>skip/1</code> will consume <var>Char</var>, so that
+<code>get0/1</code> will read the following character.
+
+   <p>To skip to the end of the current input stream:
+<pre class="example">     | ?- <kbd>repeat, get0(-1), !.</kbd>
+     </pre>
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>),
+plus:
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+
+     <br><dt><code>type_error</code>
+     <dd>
+
+     <br><dt><code>domain_error</code>
+     <dd>
+                <var>Char</var> evaluates to a float, or an
+                integer outside the range 0..25.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+                If <var>Char</var> does not appear on the current input stream,
+                an error message is given for reading beyond the end of
+                the stream, and the computation is aborted.
+
+     <p>The portion of the input following <var>Char</var> is not a valid
+                Prolog term. 
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>tab/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-skip_line.html#mpg-ref-skip_line">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-simple.html#mpg-ref-simple">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

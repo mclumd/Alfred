@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>window_event/4</code></h4>
+
+<pre class="example">     window_event(+<var>Window</var>, +<var>EventMask</var>, -<var>Type</var>, ?<var>XEvent</var>)
+     </pre>
+
+   <p>Searches the event queue for the <var>Window</var>'s Display, and removes
+the first event that is intended for <var>Window</var> and is selected by
+the given <var>EventMask</var>. Unifies <var>Type</var> with the type of event
+removed. Other events in the queue are not discarded.
+
+   <p>If there is no qualifying event in the queue, <code>window_event/4</code>
+flushes the output queue and blocks until one is received.  If events
+for which callbacks are registered arrive on other displays, they will
+be handled, and <code>window_event/4</code> will continue to wait for an
+event on <var>Window</var>'s display.
+
+   <p>The user can pass an existing <var>XEvent</var> X11 structure, which is
+then destructively filled with the received event's contents, or an
+unbound variable. In the latter case, <code>window_event/4</code> will
+unify <var>XEvent</var> with a private, local structure, which the user can
+not hang on to, but is guaranteed not to change its value until the
+next call to an event getting routine.
+
+   <p><var>EventMask</var> is an integer bitmask, that specifies the selected
+events. The predicate <code>event_list_mask/2</code> is useful to
+translate between X11 event mask names and bitmasks.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-evf-check_window_event.html#pxl-evf-check_window_event">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-evf-peek_event.html#pxl-evf-peek_event">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-evf.html#pxl-evf">Up</a>
+</ul>
+</div>
+   </body></html>
+

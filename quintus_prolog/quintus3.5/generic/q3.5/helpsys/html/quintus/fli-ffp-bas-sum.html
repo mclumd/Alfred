@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Summary of steps</h5>
+
+   <p>Following is a summary of the steps that enable you to call a Prolog
+predicate from a C function:
+
+     <dl>
+
+     <br><dt>IN THE PROLOG CODE:
+     <dd>
+          <ol type=1 start=1>
+
+          <li>Use <code>extern/1</code> to declare the
+predicate callable from foreign functions, establishing an argument
+passing interface (see <a href="fli-ffp-ppc.html#fli-ffp-ppc">fli-ffp-ppc</a>).
+          </ol>
+
+     <br><dt>IN THE C CODE:
+     <dd>
+          <ol type=1 start=1>
+
+          <li>Look up the Prolog predicate by
+calling one of the functions <code>QP_predicate()</code> or <code>QP_pred()</code>.  This
+provides C with a "handle" on the Prolog predicate that is used to
+make the actual call.  (see <a href="fli-ffp-ccp-lcp.html#fli-ffp-ccp-lcp">fli-ffp-ccp-lcp</a>). 
+<li>If only a single solution is required, the predicate handle, together
+with C variables for input and output parameters, is passed to
+<code>QP_query()</code>.  If <code>QP_query()</code> returns successfully, output results will
+have been left in C variables according to the specified interface. 
+<li>If more than one solution is required, the predicate handle and C
+variables for input and output parameters are passed to
+<code>QP_open_query()</code>.  This function initiates a query, returning a
+query identifier, which is passed to <code>QP_next_solution()</code>, which is
+called once for each solution requested.  When a solution is returned,
+output results are left in C variables according to the specified
+interface.  When sufficient solutions have been returned, or there are
+no more solutions, the query identifier is passed to either
+<code>QP_cut_query()</code> or <code>QP_close_query()</code> to terminate the query.
+          </ol>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-bas.html#fli-ffp-bas">Up</a>
+</ul>
+</div>
+   </body></html>
+

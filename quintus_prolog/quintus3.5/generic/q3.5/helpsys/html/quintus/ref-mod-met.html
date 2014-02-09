@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The <code>meta_predicate</code> Declaration</h4>
+
+   <p>Sometimes a user-defined predicate will require module name expansion (see
+<a href="ref-mod-mne.html#ref-mod-mne">ref-mod-mne</a>).  This can be specified by providing a
+<code>meta_predicate</code> declaration for that procedure.
+
+   <p>Module name expansion is needed whenever the argument of a predicate
+has some module-dependent meaning.  For example, if this argument is a
+goal that is to be called, it will be necessary to know in which
+module to call it -- or, if the argument is a clause to be
+asserted, in which module it should go.
+
+   <p>Consider, for example, a sort routine to which the name of the
+comparison predicate is passed as an argument.  In this example, the
+comparison predicate should be called with respect to the module
+containing the call to the sort routine.  Suppose that the sort
+routine is
+<pre class="example">      mysort(<var>+CompareProc, +InputList, -OutputList</var>)
+     </pre>
+
+   <p>An appropriate <code>meta_predicate</code> declaration for this is
+<pre class="example">      :- meta_predicate mysort(:, +, -).
+     </pre>
+    The significant
+argument in the <code>mysort/3</code> term is the <code>:</code>, which indicates that
+module name expansion is required for this argument.  This means that
+whenever a goal <code>mysort(</code><var>A</var><code>, </code><var>B</var><code>, </code><var>C</var><code>)</code> appears in a clause, it will be
+transformed at load time into <code>mysort(</code><var>M</var><code>:</code><var>A</var><code>, </code><var>B</var><code>, </code><var>C</var><code>)</code>, where <var>M</var> is the
+source module.  There are some exceptions to this compile-time
+transformation rule; the goal is not transformed if either of the
+following applies:
+     <ol type=1 start=1>
+
+     <li> <var>A</var> is of the form <var>Module:Goal</var>. 
+<li><var>A</var> is a variable and the same variable appears in the head of the clause
+in a module-name-expansion position.
+        </ol>
+
+   <p>The reason for (2)
+is that otherwise module name expansion could
+build larger and larger structures of the form <var>Mn: <small class="dots">...</small> :M2:M1:Goal</var>. 
+For example, consider the following program fragment adapted from the
+library (see <code>library(samsort)</code> for the full program):
+<pre class="example">     
+     :- module(samsort, [samsort/3]).
+     
+     :- meta_predicate
+             samsort(:, +, ?),
+             sam_sort(+, :, +, +, ?).
+     
+     samsort(_, [], []) :- !.
+     samsort(Order, List, Sorted) :-
+             sam_sort(List, Order, [], 0, Sorted).
+       .
+       .
+       .
+     </pre>
+
+   <p>Normally, the <code>sam_sort/5</code> goal in this example would have the module name of its
+second argument expanded thus:
+<pre class="example">     sam_sort(List, samsort:Order, [], 0, Sorted)
+     </pre>
+
+   <p>because of the <code>meta_predicate</code> declaration.  However, in this
+situation the appropriate source module will have already been
+attached to <var>Order</var> because it is the first argument of <code>samsort/3</code>,
+which also has a <code>meta_predicate</code> declaration.  Therefore it is
+not useful to attach the module name (<code>samsort</code>) to <var>Order</var> in the call of
+<code>sam_sort/5</code>.
+
+   <p>The argument of a <code>meta_predicate</code> declaration can be a term, or a
+sequence of terms separated by commas.  Each argument of each of these
+terms must be one of the following:
+
+     <dl>
+
+     <br><dt><code>:</code>
+     <dd>requires module name expansion
+
+     <br><dt>non-negative integer
+     <dd>same as <code>:</code>
+
+     <br><dt><code>+</code>, <code>-</code>, <code>*</code>
+     <dd>ignored
+</dl>
+
+   <p>The reason for allowing a non-negative integer as an alternative to
+<code>:</code> is that this may be
+used in the future to supply additional information to the
+cross-referencer (<code>library(xref)</code>) and to the Prolog compiler.  An
+integer <var>n</var> is intended to mean that that argument is a term that will
+be supplied <var>n</var> additional arguments.  Thus, in the example above where
+the meta-argument is the name of a comparison routine that would be
+called with two arguments, it would be appropriate to write the
+integer 2 instead of a <code>:</code>.
+
+   <p>The reason for <code>+</code>, <code>-</code> and <code>*</code> is simply so that the information
+contained in a DEC-10 Prolog-style "mode" declaration may be represented
+in the <code>meta_predicate</code> declaration if you wish.  There are many examples of
+<code>meta_predicate</code> declarations in the library.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-sum.html#ref-mod-sum">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-mne.html#ref-mod-mne">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

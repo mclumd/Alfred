@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>-&gt;/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><var>+-P</var> <code>-&gt;</code> <var>+*Q</var>
+
+   <p>"Local cut"
+
+   <p>If <var>P</var> then <var>Q</var> else fail, using first solution of <var>P</var>
+only.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>P</var> <dfn>callable</dfn> [MOD]
+     <dd>
+<br><dt><var>Q</var> <dfn>callable</dfn> [MOD]
+     <dd></dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>When occurring other than as the first argument of a disjunction operator
+(<code>|</code> or <code>;</code>), this is equivalent to:
+<pre class="example">     P -&gt; Q | fail.
+     </pre>
+
+   <p>(For a definition of <code></code><var>P</var><code> -&gt; </code><var>Q</var><code> | </code><var>R</var><code></code>,
+see <a href="ref-sem-con.html#ref-sem-con">ref-sem-con</a>.)
+
+   <p><code>-&gt;</code> cuts away any choice points in the execution of <var>P</var>
+
+   <p>Note that the operator precedence of
+<code>-&gt;</code>
+is greater than 1000, so it dominates commas.  Thus, in:
+<pre class="example">     f :- p, q -&gt; r, s.
+     f.
+     </pre>
+
+   <p><code>-&gt;</code> cuts away any choices in <code>p</code> or in <code>q</code>, but unlike cut (<code>!</code>)
+it does not cut away the alternative choice for <code>f</code>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>context_error</code>
+     <dd>
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-ite.html#mpg-ref-ite">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-help.html#mpg-ref-help">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

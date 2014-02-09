@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_select_from(</code><var>-Term</var><code>)</code></h5>
+
+   <p>This is similar to <code>tcp_select/1</code> (see <a href="ipc-tcp-trm-select1.html#ipc-tcp-trm-select1">ipc-tcp-trm-select1</a>), but instead
+of reading the socket that has data available, it returns the term
+<code>from(</code><var>Socket</var><code>)</code>, where <var>Socket</var> is socket to some other
+process.  The other terms it may return are
+
+     <ul>
+
+     <li><code>connected(Socket)</code>
+<li><code>wakeup(T)</code>
+<li><code>user_input</code>
+</ul>
+
+   <p>as described in the section on <code>tcp_select/1</code>.
+
+   <p>It is up to the caller to read from the stream associated with the
+socket file descriptor, <var>Socket</var>, by using <code>tcp_input_stream/2</code>
+and then reading from that stream using the standard stream input
+predicates, as in
+
+<pre class="example">     ...,
+     tcp_select_from(from(Socket)),
+     tcp_input_stream(Socket, S),
+     get0(S,X),
+     ...
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-ups-select_from2.html#ipc-tcp-ups-select_from2">Next</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-ups.html#ipc-tcp-ups">Up</a>
+</ul>
+</div>
+   </body></html>
+

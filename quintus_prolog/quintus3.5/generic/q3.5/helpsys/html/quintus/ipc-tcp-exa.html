@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Examples</h4>
+
+   <p>Five examples have been provided in <code>IPC/TCP/demo</code>.  Each example has
+detailed instructions on its use in its source file.  A Makefile is provided
+in the <code>demo</code> directory.
+
+   <p>Calling <code>absolute_file_name/2</code> is a convenient way of finding the
+path to a demonstration program.  For example, to find the sibling
+demonstration, try issuing the command
+
+<pre class="example">     | ?- <kbd>absolute_file_name(demo('sibling.pl'),X).</kbd>
+     </pre>
+
+   <p>Here is a list of the example tcp programs.
+
+     <dl>
+
+     <br><dt><code>client.pl, server.pl</code>
+     <dd>The client/server example.  This illustrates
+how connections are established and a very simple method of remote procedure
+call.
+
+     <br><dt><code>sibling.pl</code>
+     <dd>This file demonstrates the tcp software for three
+connected processes.  Once connected, all three send and receive goals
+to each other as peers.  It can detect reception of keyboard
+input, since it uses the <code>tcp_watch_user/2</code> predicate.
+
+     <br><dt><code>ce.pl</code>
+     <dd>An example of the producer, filter, consumer
+problem.  The producer process sends random numbers between 0 and 1 to the
+filter process, which in turn sends copies of the numbers it received from the
+producer ranging between 0.2 and 0.7 to the consumer.
+
+     <br><dt><code>cs.c</code>
+     <dd>
+This is a simple way to call the Prolog server defined in <code>server.pl</code>
+from the c-shell.  If the <var>ServerFile</var> (see <code>tcp_address_from_file/2</code>,
+<a href="ipc-tcp-mco-address_from_file2.html#ipc-tcp-mco-address_from_file2">ipc-tcp-mco-address_from_file2</a>) for some server is <code>x</code>, then
+
+     <pre class="example">          % <kbd>cs x "write('hi there'),nl"</kbd>
+          </pre>
+
+     <p>causes the server to write the string <code>"hi there\n"</code> to its socket.  The C
+program <code>cs.c</code> copies the socket output from the server to <code>stdout</code>.
+
+     <br><dt><code>c_server.c, c_server.pl</code>
+     <dd>This illustrates a Prolog client calling a C
+server. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-cfu.html#ipc-tcp-cfu">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp.html#ipc-tcp">Up</a>
+</ul>
+</div>
+   </body></html>
+

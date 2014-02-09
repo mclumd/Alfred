@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Compound Terms</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ref-syn-cpt-lis.html#ref-syn-cpt-lis">ref-syn-cpt-lis</a>:                      Lists
+<li><a accesskey="2" href="ref-syn-cpt-sli.html#ref-syn-cpt-sli">ref-syn-cpt-sli</a>:                      Strings As Lists
+</ul>
+
+   <p>The structured data objects of Prolog are compound terms.  A
+compound term comprises a <dfn>name</dfn> (called the <dfn>principal functor</dfn>
+of the term) and a sequence of one or more terms called <dfn>arguments</dfn>. 
+A functor is characterized by its <dfn>name</dfn>, which is
+an atom, and its <dfn>arity</dfn> or number of arguments. 
+For example, the compound term whose principal functor is <code>point</code> of
+arity 3, and which has arguments X, Y, and Z, is written
+<pre class="example">     point(X, Y, Z)
+     </pre>
+
+   <p>When we need to refer explicitly to a functor we will normally denote it
+by the form <var>Name</var>/<var>Arity</var>. 
+Thus, the functor <code>point</code> of arity 3 is denoted
+<pre class="example">     point/3
+     </pre>
+
+   <p>Note that a functor of arity 0 is represented as an atom.
+
+   <p>Functors are generally  analogous  to  common  nouns  in  natural
+language.   One  may  think  of  a  functor  as  a record type and the
+arguments of a compound term as the  fields  of  a  record.   Compound
+terms are usefully pictured as trees.  For example, the (compound) term
+<pre class="example">     s(np(john), vp(v(likes), np(mary)))
+     </pre>
+
+   <p>would be pictured as the following tree:
+
+<pre class="example">                       s
+                     /   \
+                  np       vp
+                  |       /  \
+                john     v     np
+                         |     |
+                       likes  mary
+     </pre>
+
+   <p>The principal functor of this term is <code>s/2</code>.  Its arguments are also compound
+terms.  In illustration, the principal functor of the first argument is <code>np/1</code>.
+
+   <p>Sometimes it is convenient to write certain functors as <dfn>operators</dfn>;
+binary functors (that is, functors of two arguments)  may be declared as
+<dfn>infix</dfn> operators, and unary functors (that is, functors of one argument)
+may be declared as either
+<dfn>prefix</dfn> or <dfn>postfix</dfn> operators.  Thus it is possible to write
+
+<pre class="example">     X+Y     P;Q     X&lt;Y      +X     P;
+     </pre>
+
+   <p>as optional alternatives to
+<pre class="example">     +(X,Y)   ;(P,Q)   &lt;(X,Y)   +(X)   ;(P)
+     </pre>
+
+   <p>The use of operators is described fully in <a href="ref-syn-ops.html#ref-syn-ops">ref-syn-ops</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-syn-ces.html#ref-syn-ces">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-syn-trm.html#ref-syn-trm">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-syn.html#ref-syn">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

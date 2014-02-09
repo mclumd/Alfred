@@ -1,0 +1,1023 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">ProXT 3.5 Data Types</h3>
+
+     <dl>
+
+     <br><dt><b>Action</b>
+     <dd>           Represented as <code>action(</code><var>ActionName</var><code>,</code><var>Predicate</var><code>)</code>,
+                     where <var>ActionName</var> is the action name to be mapped
+                     to a Prolog goal whose functor is <var>Predicate</var>.
+
+     <br><dt><b>ActionsList</b>
+     <dd>      Represented as a list of items of type <b>Action</b>.
+
+     <br><dt><b>AnyTerm</b>
+     <dd>          This can be any Prolog term
+
+     <br><dt><b>Attribute</b>
+     <dd>        Represented as a term whose functor is the resource
+                     name and whose argument is the value of the
+                     attribute.
+
+     <br><dt><b>AttributeList</b>
+     <dd>    Represented as a list of items of type <b>Attribute</b>.
+
+     <br><dt><b>Boolean</b>
+     <dd>          Represented as atom. Accepted values: <code>true</code> or <code>false</code>.
+
+     <br><dt><b>CallbackList</b>
+     <dd>     Represented as a list of items of type <b>CallbackTerm</b>.
+
+     <br><dt><b>CallbackProc</b>
+     <dd>     This must be a Prolog predicate.
+
+     <br><dt><b>CallbackTerm</b>
+     <dd>     Represented as <code>callback(</code><var>Predicate</var><code>,</code><var>ClientData</var><code>)</code>,
+                     where <var>Predicate</var> is the name of the callback goal
+                     and <var>ClientData</var> is the callback client data.
+
+     <br><dt><b>Calldata</b>
+     <dd>         A term returned in the callback call data.
+
+     <br><dt><b>CalldataFields</b>
+     <dd>   A list of the fields and their values from the
+                     term returned in the callback call data.
+
+     <br><dt><b>Cardinal</b>
+     <dd>         Represented as integer.
+
+     <br><dt><b>Char</b>
+     <dd>             Represented as a single character atom.
+
+     <br><dt><b>ClipboardStatus</b>
+     <dd>  Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmClipboardFail</code>
+<li>                     <code>xmClipboardSuccess</code>
+<li>                     <code>xmClipboardTruncate</code>
+<li>                     <code>xmClipboardLocked</code>
+<li>                     <code>xmClipboardBadFormat</code>
+<li>                     <code>xmClipboardNoData</code>
+</ul>
+
+     <br><dt><b>Colormap</b>
+     <dd>         Represented as integer.
+
+     <br><dt><b>CopyStatus</b>
+     <dd>       Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmCOPY_FAILED</code>
+<li>                     <code>xmCOPY_SUCCEEDED</code>
+<li>                     <code>xmCOPY_TRUNCATED</code>
+</ul>
+
+     <br><dt><b>Cursor</b>
+     <dd>           Represented as integer.
+
+     <br><dt><b>Dimension</b>
+     <dd>        Represented as integer.
+
+     <br><dt><b>Display</b>
+     <dd>          Represented as <code>xtdisplay(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>EventFields</b>
+     <dd>      A list of the fields and their values from
+                     the <b>XEvent</b> structure.
+
+     <br><dt><b>EventProc</b>
+     <dd>        This must be a Prolog predicate.
+
+     <br><dt><b>InputProc</b>
+     <dd>        This must be a Prolog predicate.
+
+     <br><dt><b>Integer</b>
+     <dd>          Of course, this is an integer.
+
+     <br><dt><b>IntegerList</b>
+     <dd>      This is a list of integers.
+
+     <br><dt><b>KeySym</b>
+     <dd>           Represented as a single character atom.
+
+     <br><dt><b>KeySymTable</b>
+     <dd>      Represented as a list of items of type <b>KeySym</b>.
+
+     <br><dt><b>Pixel</b>
+     <dd>            Represented as integer.
+
+     <br><dt><b>Pixmap</b>
+     <dd>           Represented as integer.
+
+     <br><dt><b>Position</b>
+     <dd>         Represented as integer.
+
+     <br><dt><b>Screen</b>
+     <dd>           Represented as <code>xtscreen(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>String</b>
+     <dd>           This is an atom.
+
+     <br><dt><b>StringTable</b>
+     <dd>      Represented as a list of atoms.
+
+     <br><dt><b>Time</b>
+     <dd>             Represented as integer.
+
+     <br><dt><b>TimerProc</b>
+     <dd>        This must be a Prolog predicate.
+
+     <br><dt><b>Visual</b>
+     <dd>           Represented as integer.
+
+     <br><dt><b>Widget</b>
+     <dd>           Represented as <code>widget(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>WidgetCallbackType</b>
+     <dd> Represented as atom. Accepted values are the
+                     resource names for resources of type <b>CallbackProc</b>
+
+     <br><dt><b>WidgetClass</b>
+     <dd>      Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>compositeWidgetClass</code>
+<li>                     <code>constraintWidgetClass</code>
+<li>                     <code>coreWidgetClass</code>
+<li>                     <code>widgetClass</code>
+<li>                     <code>objectClass</code>
+<li>                     <code>rectObjClass</code>
+<li>                     <code>shellWidgetClass</code>
+<li>                     <code>overrideShellWidgetClass</code>
+<li>                     <code>wmShellWidgetClass</code>
+<li>                     <code>transientShellWidgetClass</code>
+<li>                     <code>topLevelShellWidgetClass</code>
+<li>                     <code>applicationShellWidgetClass</code>
+<li>                     <code>vendorShellWidgetClass</code>
+<li>                     <code>xmArrowButtonWidgetClass</code>
+<li>                     <code>xmArrowButtonGadgetClass</code>
+<li>                     <code>xmBulletinBoardWidgetClass</code>
+<li>                     <code>xmCascadeButtonWidgetClass</code>
+<li>                     <code>xmCascadeButtonGadgetClass</code>
+<li>                     <code>xmCommandWidgetClass</code>
+<li>                     <code>xmDialogShellWidgetClass</code>
+<li>                     <code>xmDropSiteManagerObjectClass</code>
+<li>                     <code>xmDragIconObjectClass</code>
+<li>                     <code>xmDropTransferObjectClass</code>
+<li>                     <code>xmDrawingAreaWidgetClass</code>
+<li>                     <code>xmDrawnButtonWidgetClass</code>
+<li>                     <code>xmFileSelectionBoxWidgetClass</code>
+<li>                     <code>xmFormWidgetClass</code>
+<li>                     <code>xmFrameWidgetClass</code>
+<li>                     <code>xmGadgetClass</code>
+<li>                     <code>xmLabelWidgetClass</code>
+<li>                     <code>xmLabelGadgetClass</code>
+<li>                     <code>xmListWidgetClass</code>
+<li>                     <code>xmMainWindowWidgetClass</code>
+<li>                     <code>xmManagerWidgetClass</code>
+<li>                     <code>xmMenuShellWidgetClass</code>
+<li>                     <code>xmMessageBoxWidgetClass</code>
+<li>                     <code>xmPanedWindowWidgetClass</code>
+<li>                     <code>xmPrimitiveWidgetClass</code>
+<li>                     <code>xmPushButtonWidgetClass</code>
+<li>                     <code>xmPushButtonGadgetClass</code>
+<li>                     <code>xmRowColumnWidgetClass</code>
+<li>                     <code>xmScaleWidgetClass</code>
+<li>                     <code>xmScrollBarWidgetClass</code>
+<li>                     <code>xmScrolledWindowWidgetClass</code>
+<li>                     <code>xmSelectionBoxWidgetClass</code>
+<li>                     <code>xmSeparatorWidgetClass</code>
+<li>                     <code>xmSeparatorGadgetClass</code>
+<li>                     <code>xmTextWidgetClass</code>
+<li>                     <code>xmTextFieldWidgetClass</code>
+<li>                     <code>xmToggleButtonWidgetClass</code>
+<li>                     <code>xmToggleButtonGadgetClass</code>
+</ul>
+
+     <br><dt><b>WidgetList</b>
+     <dd>       Represented as a list of items of type <b>Widget</b>.
+
+     <br><dt><b>Window</b>
+     <dd>           Represented as integer.
+
+     <br><dt><b>WorkProc</b>
+     <dd>         This must be a Prolog predicate.
+
+     <br><dt><b>XAtom</b>
+     <dd>            Represented as integer.
+
+     <br><dt><b>XAtomList</b>
+     <dd>        Represented as a list of items of type <b>XAtom</b>.
+
+     <br><dt><b>XEvent</b>
+     <dd>           Represented as <code>xtevent(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XEventMask</b>
+     <dd>       Represented as a list of atoms. Accepted values:
+          <ul>
+
+          <li>                     <code>keyPressMask</code>
+<li>                     <code>keyReleaseMask</code>
+<li>                     <code>buttonPressMask</code>
+<li>                     <code>buttonReleaseMask</code>
+<li>                     <code>enterWindowMask</code>
+<li>                     <code>leaveWindowMask</code>
+<li>                     <code>pointerMotionMask</code>
+<li>                     <code>pointerMotionHintMask</code>
+<li>                     <code>button1MotionMask</code>
+<li>                     <code>button2MotionMask</code>
+<li>                     <code>button3MotionMask</code>
+<li>                     <code>button4MotionMask</code>
+<li>                     <code>button5MotionMask</code>
+<li>                     <code>buttonMotionMask</code>
+<li>                     <code>keymapStateMask</code>
+<li>                     <code>exposureMask</code>
+<li>                     <code>visibilityChangeMask</code>
+<li>                     <code>structureNotifyMask</code>
+<li>                     <code>resizeRedirectMask</code>
+<li>                     <code>substructureNotifyMask</code>
+<li>                     <code>substructureRedirectMask</code>
+<li>                     <code>focusChangeMask</code>
+<li>                     <code>propertyChangeMask</code>
+<li>                     <code>colormapChangeMask</code>
+<li>                     <code>ownerGrabButtonMask</code>
+</ul>
+
+     <br><dt><b>XFont</b>
+     <dd>            Represented as <code>xtfontstruct(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XFontSet</b>
+     <dd>         Represented as <code>xtfontset(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XGC</b>
+     <dd>              Represented as <code>xtgc(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XGCMask</b>
+     <dd>          Represented as a list of atoms. Accepted values:
+          <ul>
+
+          <li>                     <code>gcFunction</code>
+<li>                     <code>gcPlaneMask</code>
+<li>                     <code>gcForeground</code>
+<li>                     <code>gcBackground</code>
+<li>                     <code>gcLindWidth</code>
+<li>                     <code>gcLineStyle</code>
+<li>                     <code>gcCapStyle</code>
+<li>                     <code>gcJoinStyle</code>
+<li>                     <code>gcFillStyle</code>
+<li>                     <code>gcFillRule</code>
+<li>                     <code>gcTile</code>
+<li>                     <code>gcStipple</code>
+<li>                     <code>gcTileStipXOrigin</code>
+<li>                     <code>gcFont</code>
+<li>                     <code>gcSubwindowMode</code>
+<li>                     <code>gcGraphicsExposures</code>
+<li>                     <code>gcClipXOrigin</code>
+<li>                     <code>gcClipYOrigin</code>
+<li>                     <code>gcClipMask</code>
+<li>                     <code>gcDashOffset</code>
+<li>                     <code>gcDashList</code>
+<li>                     <code>gcArcMode</code>
+</ul>
+
+     <br><dt><b>XGCValues</b>
+     <dd>        Represented as a list of terms whose functor is the
+                     name of a <b>XGCMask</b> field and whose argument is the
+                     field value.
+
+     <br><dt><b>XImage</b>
+     <dd>           Represented as <code>xtimage(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XRectangle</b>
+     <dd>       Represented as a term of the form
+                     <code>rectangle(</code><var>X</var><code>,</code><var>Y</var><code>,</code><var>Width</var><code>,</code><var>Height</var><code>)</code>, where <var>X</var>, <var>Y</var>,
+                     <var>Width</var> and <var>Height</var> are all integers.
+
+     <br><dt><b>XRectangleList</b>
+     <dd>   Represented as a list of items of type <b>XRectangle</b>.
+
+     <br><dt><b>XmAlignment</b>
+     <dd>      Represented as atom. Accepted values:
+          <ul>
+
+          <li>
+                     <code>xmALIGNMENT_BEGINNING</code>
+<li>                     <code>xmALIGNMENT_CENTER</code>
+<li>                     <code>xmALIGNMENT_END</code>
+</ul>
+
+     <br><dt><b>XmAnimationStyle</b>
+     <dd> Represented at atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDRAG_UNDER_NONE</code>
+<li>                     <code>xmDRAG_UNDER_PIXMAP</code>
+<li>                     <code>xmDRAG_UNDER_SHADOW_IN</code>
+<li>                     <code>xmDRAG_UNDER_SHADOW_OUT</code>
+<li>                     <code>xmDRAG_UNDER_HIGHLIGHT</code>
+</ul>
+
+     <br><dt><b>XmArrowDirection</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmARROW_UP</code>
+<li>                     <code>xmARROW_DOWN</code>
+<li>                     <code>xmARROW_LEFT</code>
+<li>                     <code>xmARROW_RIGHT</code>
+</ul>
+
+     <br><dt><b>XmAttachment</b>
+     <dd>     Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmATTACH_NONE</code>
+<li>                     <code>xmATTACH_FORM</code>
+<li>                     <code>xmATTACH_OPPOSITE_FORM</code>
+<li>                     <code>xmATTACH_WIDGET</code>
+<li>                     <code>xmATTACH_OPPOSITE_WIDGET</code>
+<li>                     <code>xmATTACH_POSITION</code>
+<li>                     <code>xmATTACH_SELF</code>
+</ul>
+
+     <br><dt><b>XmAudibleWarning</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmNONE</code>
+<li>                     <code>xmBELL</code>
+</ul>
+
+     <br><dt><b>XmBlendModel</b>
+     <dd>     Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmBLEND_ALL</code>
+<li>                     <code>xmBLEND_STATE_SOURCE</code>
+<li>                     <code>xmBLEND_JUST_SOURCE</code>
+<li>                     <code>xmBLEND_NONE</code>
+</ul>
+
+     <br><dt><b>XmButtonType</b>
+     <dd>     Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmPUSHBUTTON</code>
+<li>                     <code>xmTOGGLEBUTTON</code>
+<li>                     <code>xmRADIOBUTTON</code>
+<li>                     <code>xmCASCADEBUTTON</code>
+<li>                     <code>xmSEPARATOR</code>
+<li>                     <code>xmDOUBLE_SEPARATOR</code>
+<li>                     <code>xmTITLE</code>
+</ul>
+
+     <br><dt><b>XmButtonTypeTable</b>
+     <dd> Represented as a list of items of type
+                     <b>XmButtonType</b>.
+
+     <br><dt><b>XmChildPlacement</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmPLACE_TOP</code>
+<li>                     <code>xmPLACE_ABOVE_SELECTION</code>
+<li>                     <code>xmPLACE_BELOW_SELECTION</code>
+</ul>
+
+     <br><dt><b>XmChildType</b>
+     <dd>      Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDIALOG_NONE</code>
+<li>                     <code>xmDIALOG_APPLY_BUTTON</code>
+<li>                     <code>xmDIALOG_CANCEL_BUTTON</code>
+<li>                     <code>xmDIALOG_DEFAULT_BUTTON</code>
+<li>                     <code>xmDIALOG_OK_BUTTON</code>
+<li>                     <code>xmDIALOG_FILTER_LABEL</code>
+<li>                     <code>xmDIALOG_FILTER_TEXT</code>
+<li>                     <code>xmDIALOG_HELP_BUTTON</code>
+<li>                     <code>xmDIALOG_HISTORY_LIST</code>
+<li>                     <code>xmDIALOG_LIST</code>
+<li>                     <code>xmDIALOG_LIST_LABEL</code>
+<li>                     <code>xmDIALOG_MESSAGE_LABEL</code>
+<li>                     <code>xmDIALOG_SELECTION_LABEL</code>
+<li>                     <code>xmDIALOG_SYMBOL_LABEL</code>
+<li>                     <code>xmDIALOG_TEXT</code>
+<li>                     <code>xmDIALOG_SEPARATOR</code>
+<li>                     <code>xmDIALOG_DIR_LIST</code>
+<li>                     <code>xmDIALOG_DIR_LIST_LABEL</code>
+</ul>
+
+     <br><dt><b>XmChildVerticalAlignment</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmALIGNMENT_BASELINE_TOP</code>
+<li>                     <code>xmALIGNMENT_CENTER</code>
+<li>                     <code>xmALIGNMENT_BASELINE_BOTTOM</code>
+<li>                     <code>xmALIGNMENT_WIDGET_TOP</code>
+<li>                     <code>xmALIGNMENT_WIDGET_BOTTOM</code>
+</ul>
+
+     <br><dt><b>XmClipboardPendingList</b>
+     <dd> Represented as a list of terms of the form
+                     <code>clipboardpending(</code><var>DataId</var><code>,</code><var>PrivateId</var><code>)</code>, where
+                     <var>DataId</var> and <var>PrivateId</var> are integers.
+
+     <br><dt><b>XmCommandWindowLocation</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmCOMMAND_ABOVE_WORKSPACE</code>
+<li>                     <code>xmCOMMAND_BELOW_WORKSPACE</code>
+</ul>
+
+     <br><dt><b>XmDefaultButtonType</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDIALOG_NONE</code>
+<li>                     <code>xmDIALOG_CANCEL_BUTTON</code>
+<li>                     <code>xmDIALOG_OK_BUTTON</code>
+<li>                     <code>xmDIALOG_HELP_BUTTON</code>
+</ul>
+
+     <br><dt><b>XmDeleteResponse</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDESTROY</code>
+<li>                     <code>xmUNMAP</code>
+<li>                     <code>xmDO_NOTHING</code>
+</ul>
+
+     <br><dt><b>XmDialogStyle</b>
+     <dd>    Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDIALOG_MODELESS</code>
+                     <code>xmDIALOG_PRIMARY_APPLICATION_MODAL</code>
+<li>                     <code>xmDIALOG_FULL_APPLICATION_MODAL</code>
+<li>                     <code>xmDIALOG_SYSTEM_MODAL</code>
+</ul>
+
+     <br><dt><b>XmDialogType</b>
+     <dd>     Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDIALOG_TEMPLATE</code>
+<li>                     <code>xmDIALOG_ERROR</code>
+<li>                     <code>xmDIALOG_INFORMATION</code>
+<li>                     <code>xmDIALOG_MESSAGE</code>
+<li>                     <code>xmDIALOG_WARNING</code>
+<li>                     <code>xmDIALOG_WORKING</code>
+<li>                     <code>xmDIALOG_WORK_AREA</code>
+<li>                     <code>xmDIALOG_PROMPT</code>
+<li>                     <code>xmDIALOG_SELECTION</code>
+<li>                     <code>xmDIALOG_COMMAND</code>
+<li>                     <code>xmDIALOG_FILE_SELECTION</code>
+</ul>
+
+     <br><dt><b>XmDragAttachment</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmATTACH_NORTH_WEST</code>
+<li>                     <code>xmATTACH_NORTH</code>
+<li>                     <code>xmATTACH_NORTH_EAST</code>
+<li>                     <code>xmATTACH_EAST</code>
+<li>                     <code>xmATTACH_SOUTH_EAST</code>
+<li>                     <code>xmATTACH_SOUTH</code>
+<li>                     <code>xmATTACH_SOUTH_WEST</code>
+<li>                     <code>xmATTACH_WEST</code>
+<li>                     <code>xmATTACH_CENTER</code>
+<li>                     <code>xmATTACH_HOT</code>
+</ul>
+
+     <br><dt><b>XmDragDropOperations</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDRAG_NOOP</code>
+<li>                     <code>xmDRAG_MOVE</code>
+<li>                     <code>xmDRAG_COPY</code>
+<li>                     <code>xmDRAG_LINK</code>
+</ul>
+
+     <br><dt><b>XmDragProtocolStyle</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDRAG_NONE</code>
+<li>                     <code>xmDRAG_DROP_ONLY</code>
+<li>                     <code>xmDRAG_PREFER_PREREGISTER</code>
+<li>                     <code>xmDRAG_PREREGISTER</code>
+<li>                     <code>xmDRAG_PREFER_DYNAMIC</code>
+<li>                     <code>xmDRAG_DYNAMIC</code>
+<li>                     <code>xmDRAG_PREFER_RECEIVER</code>
+</ul>
+
+     <br><dt><b>XmDropSiteActivity</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDROP_SITE_ACTIVE</code>
+<li>                     <code>xmDROP_SITE_INACTIVE</code>
+</ul>
+
+     <br><dt><b>XmDropSiteType</b>
+     <dd>   Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmDROP_SITE_SIMPLE</code>
+<li>                     <code>xmDROP_SITE_COMPOSITE</code>
+</ul>
+
+     <br><dt><b>XmDropTransfers</b>
+     <dd>  Represented as list of terms of the form
+                     <code>droptransfer(</code><var>Widget</var><code>,</code><var>Target</var><code>)</code>, where <var>Widget</var> is
+                     of type <b>Widget</b> and <var>Target</var> is of type <b>XAtom</b>.
+
+     <br><dt><b>XmEditMode</b>
+     <dd>       Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmMULTI_LINE_EDIT</code>
+<li>                     <code>xmSINGLE_LINE_EDIT</code>
+</ul>
+
+     <br><dt><b>XmFileTypeMask</b>
+     <dd>   Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmFILE_DIRECTORY</code>
+<li>                     <code>xmFILE_REGULAR</code>
+<li>                     <code>xmFILE_ANY_TYPE</code>
+</ul>
+
+     <br><dt><b>XmFontContext</b>
+     <dd>    Represented as <code>xmfontcontext(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XmFontList</b>
+     <dd>       Represented as <code>xmfontlist(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XmFontListEntry</b>
+     <dd>  Represented as <code>xmfontlistentry(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XmFontListTag</b>
+     <dd>    Represented as <code>char_ptr(</code><var>Address</var><code>)</code> or as the atom
+                     <code>xmFONTLIST_DEFAULT_TAG</code>
+
+     <br><dt><b>XmFontType</b>
+     <dd>       Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmFONT_IS_FONT</code>
+<li>                     <code>xmFONT_IS_FONTSET</code>
+</ul>
+
+     <br><dt><b>XmHighlightMode</b>
+     <dd>  Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmHIGHLIGHT_NORMAL</code>
+<li>                     <code>xmHIGHLIGHT_SELECTED</code>
+<li>                     <code>xmHIGHLIGHT_SECONDARY_SELECTED</code>
+</ul>
+
+     <br><dt><b>XmIndicatorType</b>
+     <dd>  Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmN_OF_MANY</code>
+<li>                     <code>xmONE_OF_MANY</code>
+</ul>
+
+     <br><dt><b>XmKeyboardFocusPolicy</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmEXPLICIT</code>
+<li>                     <code>xmPOINTER</code>
+</ul>
+
+     <br><dt><b>XmLabelType</b>
+     <dd>      Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmPIXMAP</code>
+<li>                     <code>xmSTRING</code>
+</ul>
+
+     <br><dt><b>XmListSizePolicy</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmVARIABLE</code>
+<li>                     <code>xmCONSTANT</code>
+<li>                     <code>xmRESIZE_IF_POSSIBLE</code>
+</ul>
+
+     <br><dt><b>XmMultiClick</b>
+     <dd>     Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmMULTICLICK_DISCARD</code>
+<li>                     <code>xmMULTICLICK_KEEP</code>
+</ul>
+
+     <br><dt><b>XmNavigationType</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmNONE</code>
+<li>                     <code>xmTAB_GROUP</code>
+<li>                     <code>xmSTICKY_TAB_GROUP</code>
+<li>                     <code>xmEXCLUSIVE_TAB_GROUP</code>
+<li>                     <code>xmDYNAMIC_DEFAULT_TAB_GROUP</code>
+</ul>
+
+     <br><dt><b>XmOrientation</b>
+     <dd>    Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmNO_ORIENTATION</code>
+<li>                     <code>xmVERTICAL</code>
+<li>                     <code>xmHORIZONTAL</code>
+</ul>
+
+     <br><dt><b>XmPacking</b>
+     <dd>        Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmNO_PACKING</code>
+<li>                     <code>xmPACK_TIGHT</code>
+<li>                     <code>xmPACK_COLUMN</code>
+<li>                     <code>xmPACK_NONE</code>
+</ul>
+
+     <br><dt><b>XmPositionIndex</b>
+     <dd>  Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmLAST_POSITION</code>
+<li>                     <code>xmFIRST_POSITION</code>
+</ul>
+
+     <br><dt><b>XmProcessingDirection</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmMAX_ON_TOP</code>
+<li>                     <code>xmMAX_ON_BOTTOM</code>
+<li>                     <code>xmMAX_ON_LEFT</code>
+<li>                     <code>xmMAX_ON_RIGHT</code>
+</ul>
+
+     <br><dt><b>XmRepTypeEntry</b>
+     <dd>   Represented as <code>xmreptypeentry(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XmRepTypeId</b>
+     <dd>      Represented as an integer.
+
+     <br><dt><b>XmRepTypeList</b>
+     <dd>    Represented as <code>xmreptypelist(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XmResizePolicy</b>
+     <dd>   Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmRESIZE_NONE</code>
+<li>                     <code>xmRESIZE_GROW</code>
+<li>                     <code>xmRESIZE_ANY</code>
+</ul>
+
+     <br><dt><b>XmRowColumnType</b>
+     <dd>  Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmWORK_AREA</code>
+<li>                     <code>xmMENU_BAR</code>
+<li>                     <code>xmMENU_PULLDOWN</code>
+<li>                     <code>xmMENU_POPUP</code>
+<li>                     <code>xmMENU_OPTION</code>
+</ul>
+
+     <br><dt><b>XmScrollBarDisplayPolicy</b>
+     <dd>  Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmSTATIC</code>
+<li>                     <code>xmAS_NEEDED</code>
+</ul>
+
+     <br><dt><b>XmScrollBarPlacement</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmBOTTOM_RIGHT</code>
+<li>                     <code>xmTOP_RIGHT</code>
+<li>                     <code>xmBOTTOM_LEFT</code>
+<li>                     <code>xmTOP_LEFT</code>
+</ul>
+
+     <br><dt><b>XmScrollingPolicy</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmAUTOMATIC</code>
+<li>                     <code>xmAPPLICATION_DEFINED</code>
+</ul>
+
+     <br><dt><b>XmSelectionArray</b>
+     <dd> Represented as list of items of type
+                     <b>XmSelectionType</b>.
+
+     <br><dt><b>XmSelectionPolicy</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmSINGLE_SELECT</code>
+<li>                     <code>xmMULTIPLE_SELECT</code>
+<li>                     <code>xmEXTENDED_SELECT</code>
+<li>                     <code>xmBROWSE_SELECT</code>
+</ul>
+
+     <br><dt><b>XmSelectionType</b>
+     <dd>  Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmSELECT_POSITION</code>
+<li>                     <code>xmSELECT_WHITESPACE</code>
+<li>                     <code>xmSELECT_WORD</code>
+<li>                     <code>xmSELECT_LINE</code>
+<li>                     <code>xmSELECT_ALL</code>
+<li>                     <code>xmSELECT_PARAGRAPH</code>
+</ul>
+
+     <br><dt><b>XmSeparatorType</b>
+     <dd>  Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmNO_LINE</code>
+<li>                     <code>xmSINGLE_LINE</code>
+<li>                     <code>xmDOUBLE_LINE</code>
+<li>                     <code>xmSINGLE_DASHED_LINE</code>
+<li>                     <code>xmDOUBLE_DASHED_LINE</code>
+<li>                     <code>xmSHADOW_ETCHED_IN</code>
+<li>                     <code>xmSHADOW_ETCHED_OUT</code>
+<li>                     <code>xmSHADOW_ETCHED_IN_DASH</code>
+<li>                     <code>xmSHADOW_ETCHED_OUT_DASH</code>
+<li>                     <code>xmINVALID_SEPARATOR_TYPE</code>
+</ul>
+
+     <br><dt><b>XmShadowType</b>
+     <dd>     Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmSHADOW_ETCHED_IN</code>
+<li>                     <code>xmSHADOW_ETCHED_OUT</code>
+<li>                     <code>xmSHADOW_IN</code>
+<li>                     <code>xmSHADOW_OUT</code>
+</ul>
+
+     <br><dt><b>XmStackMode</b>
+     <dd>      Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmABOVE</code>
+<li>                     <code>xmBELOW</code>
+</ul>
+
+     <br><dt><b>XmString</b>
+     <dd>         Represented as <code>xmstring(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XmStringCharSet</b>
+     <dd>  Represented as <code>xmstringcharset(</code><var>Address</var><code>)</code> or as an
+                     atom with the following accepted values:
+          <ul>
+
+          <li>                     <code>xmFONTLIST_DEFAULT_TAG</code>
+<li>                     <code>xmSTRING_DEFAULT_CHARSET</code>
+<li>                     <code>xmSTRING_FALLBACK_CHARSET</code>
+<li>                     <code>xmSTRING_ISO8859_1</code>
+</ul>
+
+     <br><dt><b>XmStringCharSets</b>
+     <dd> Represented as list of items of type <b>XmStringCharSet</b>
+                     <code>xmstringcharset(</code><var>Address</var><code>)</code> or atoms with values:
+
+     <br><dt><b>XmStringComponentType</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmSTRING_COMPONENT_UNKNOWN</code>
+<li>                     <code>xmSTRING_COMPONENT_CHARSET</code>
+<li>                     <code>xmSTRING_COMPONENT_TEXT</code>
+<li>                     <code>xmSTRING_COMPONENT_DIRECTION</code>
+<li>                     <code>xmSTRING_COMPONENT_SEPARATOR</code>
+<li>                     <code>xmSTRING_COMPONENT_END</code>
+<li>                     <code>xmSTRING_COMPOUND_STRING</code>
+<li>                     <code>xmSTRING_COMPONENT_USER_BEGIN</code>
+<li>                     <code>xmSTRING_COMPONENT_USER_END</code>
+</ul>
+
+     <br><dt><b>XmStringContext</b>
+     <dd>  Represented as <code>xmstringcontext(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XmStringDirection</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmSTRING_DIRECTION_L_TO_R</code>
+<li>                     <code>xmSTRING_DIRECTION_R_TO_L</code>
+<li>                     <code>xmSTRING_DIRECTION_DEFAULT</code>
+</ul>
+
+     <br><dt><b>XmStringTable</b>
+     <dd>    Represented as a list of items of type <b>XmString</b>.
+
+     <br><dt><b>XmTearOffModel</b>
+     <dd>   Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmTEAR_OFF_ENABLED</code>
+<li>                     <code>xmTEAR_OFF_DISABLED</code>
+</ul>
+
+     <br><dt><b>XmTextDirection</b>
+     <dd>  Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmTEXT_FORWARD</code>
+<li>                     <code>xmTEXT_BACKWARD</code>
+</ul>
+
+     <br><dt><b>XmTextPosition</b>
+     <dd>   Represented as integer.
+
+     <br><dt><b>XmTextSource</b>
+     <dd>     Represented as <code>xmtextsource(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XmTransferStatus</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmTRANSFER_FAILURE</code>
+<li>                     <code>xmTRANSFER_SUCCESS</code>
+</ul>
+
+     <br><dt><b>XmTraversalDirection</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmTRAVERSE_CURRENT</code>
+<li>                     <code>xmTRAVERSE_NEXT</code>
+<li>                     <code>xmTRAVERSE_PREV</code>
+<li>                     <code>xmTRAVERSE_HOME</code>
+<li>                     <code>xmTRAVERSE_NEXT_TAB_GROUP</code>
+<li>                     <code>xmTRAVERSE_PREV_TAB_GROUP</code>
+<li>                     <code>xmTRAVERSE_UP</code>
+<li>                     <code>xmTRAVERSE_DOWN</code>
+<li>                     <code>xmTRAVERSE_LEFT</code>
+<li>                     <code>xmTRAVERSE_RIGHT</code>
+</ul>
+
+     <br><dt><b>XmUnitType</b>
+     <dd>       Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmPIXELS</code>
+<li>                     <code>xm100TH_MILLIMETERS</code>
+<li>                     <code>xm1000TH_INCHES</code>
+<li>                     <code>xm100TH_POINTS</code>
+<li>                     <code>xm100TH_FONT_UNITS</code>
+</ul>
+
+     <br><dt><b>XmUnpostBehavior</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmUNPOST</code>
+<li>                     <code>xmUNPOST_AND_REPLAY</code>
+</ul>
+
+     <br><dt><b>XmValueWcs</b>
+     <dd>       Represented as <code>wchar_ptr(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XmVerticalAlignment</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmALIGNMENT_BASELINE_TOP</code>
+<li>                     <code>xmALIGNMENT_CENTER</code>
+<li>                     <code>xmALIGNMENT_BASELINE_BOTTOM</code>
+<li>                     <code>xmALIGNMENT_CONTENTS_TOP</code>
+<li>                     <code>xmALIGNMENT_CONTENTS_BOTTOM</code>
+</ul>
+
+     <br><dt><b>XmVisibility</b>
+     <dd>     Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmVISIBLILITY_UNOBSCURED</code>
+<li>                     <code>xmVISIBLILITY_PARTIALLY_OBSCURED</code>
+<li>                     <code>xmVISIBLILITY_FULLY_OBSCURED</code>
+</ul>
+
+     <br><dt><b>XmVisualPolicy</b>
+     <dd>   Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xmVARIABLE</code>
+<li>                     <code>xmCONSTANT</code>
+</ul>
+
+     <br><dt><b>XtAccelerators</b>
+     <dd>   Represented as <code>xtaccelerators(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XtAppContext</b>
+     <dd>     Represented as <code>app_context(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XtCallbackStatus</b>
+     <dd> Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xtCallbackNoList</code>
+<li>                     <code>xtCallbackHasNone</code>
+<li>                     <code>xtCallbackHasSome</code>
+</ul>
+
+     <br><dt><b>XtGrabKind</b>
+     <dd>       Represented as atom. Accepted values:
+          <ul>
+
+          <li>                     <code>xtGrabNone</code>
+<li>                     <code>xtGrabNonexclusive</code>
+<li>                     <code>xtGrabExclusive</code>
+</ul>
+
+     <br><dt><b>XtInputCondMask</b>
+     <dd>  Represented as a list of atoms. Accepted values:
+          <ul>
+
+          <li>                     <code>xtInputReadMask</code>
+<li>                     <code>xtInputWriteMask</code>
+<li>                     <code>xtInputExceptMask</code>
+</ul>
+
+     <br><dt><b>XtInputId</b>
+     <dd>        Represented as integer.
+
+     <br><dt><b>XtInputMask</b>
+     <dd>      Represented as a list of atoms. Accepted values:
+          <ul>
+
+          <li>                     <code>xtIMXEvent</code>
+<li>                     <code>xtIMTimer</code>
+<li>                     <code>xtIMAlternateInput</code>
+<li>                     <code>xtIMAll</code>
+</ul>
+
+     <br><dt><b>XtIntervalId</b>
+     <dd>     Represented as integer.
+
+     <br><dt><b>XtPointer</b>
+     <dd>        Represented as <code>xtpointer(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XtTranslations</b>
+     <dd>   Represented as <code>xttranslations(</code><var>Address</var><code>)</code>.
+
+     <br><dt><b>XtWorkProcId</b>
+     <dd>     Represented as integer.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxt-tut.html#pxt-tut">Previous</a>
+<li><a rel="up" accesskey="u" href="pxt.html#pxt">Up</a>
+</ul>
+</div>
+   </body></html>
+

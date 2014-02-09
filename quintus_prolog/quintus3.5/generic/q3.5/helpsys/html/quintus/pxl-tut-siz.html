@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Making the Window the Right Size</h4>
+
+   <p>Make the window the right size for the message:
+
+<pre class="example">     | ?- <kbd>win(Window),
+             text_extents(Window, 'Hello, world!!', L, R, W,
+                     Ascent, Descent),
+             Width is W+4,
+             Height is Ascent+Descent+4,
+             put_window_attributes(Window, [size(Width,Height)]),
+             TextLeft is L+2,
+             TextBase is Ascent+2.</kbd>
+     
+     Window = window(2376568),
+     L = 0,
+     R = 145,
+     W = 146,
+     Ascent = 17,
+     Descent = 3,
+     Width = 150,
+     Height = 24,
+     TextLeft = 2,
+     TextBase = 19
+     </pre>
+
+   <p>First we retrieve our window.  The second line, the call to
+<code>text_extents/7</code>, computes how big the message is when printed in the
+window.  The first argument to <code>text_extents/7</code> is a specification of
+the font we are using.  Here, since we've already specified the font to
+use for drawing into this window, the window uniquely determines the
+font.  So ProXL accepts the window in place of the font argument.
+
+   <p>This unique determination of argument types is an important concept. 
+ProXL tries to infer the right object from the object you give it.  In
+this case, it wants a font, but it accepts a window.  Previously, we
+associated a font with this window, so ProXL knows which font we mean. 
+The table in <a href="pxl-bas-inf.html#pxl-bas-inf">pxl-bas-inf</a> spells out which entities are
+predictable.
+
+   <p>Returning to our example, the remaining arguments to
+<code>text_extents/7</code> are:
+
+     <dl>
+
+     <br><dt><var>Msg</var>
+     <dd>the string whose size we're trying to find
+
+     <br><dt><var>L</var>
+     <dd>left bearing: the number of pixels this string will occupy
+left of the origin
+
+     <br><dt><var>R</var>
+     <dd>right bearing: the number of pixels this string will occupy right
+of the origin
+
+     <br><dt><var>W</var>
+     <dd>total width
+
+     <br><dt><var>Ascent</var>
+     <dd>the number of pixels above the origin
+
+     <br><dt><var>Descent</var>
+     <dd>the number of pixels below the origin
+</dl>
+
+   <p>The next two goals compute the width and height of the window.  We
+allow 2 pixels of blank space all around the string, yielding the 4
+pixels we add in to determine both width and height.  Note that the
+height of a string is its ascent plus it descent.
+
+   <p>In the fifth line, we specify the new size for the window as we did
+before, only now with a more precise size.
+
+   <p>The last two lines compute the origin point for drawing into the
+window.  <var>TextLeft</var> allows 2 pixels to the left of the string, and
+<var>TextBase</var> leaves 2 pixels above.  For this tutorial, we'll just
+remember these results and use them when needed.  In an actual program,
+we would pass them as arguments to the program doing the drawing.
+
+   <p>Notice that resizing the window erases our <code>Hello, world!!</code>
+message.  This points up an important aspect of X:  it is <em>always</em>
+the responsibility of the application to refresh its windows.  Later
+we'll worry about making that work automatically; for now, just manually
+refresh the window:
+
+<pre class="example">     | ?- <kbd>win(Window),
+          draw_string(Window, 2, 19, 'Hello, world!!').</kbd>
+     
+     Window = window(2376568)
+     </pre>
+
+   <p>There shouldn't be any surprises here.  The position (2,19) simply
+the TextLeft and TextBase we computed earlier.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-tut-dbg.html#pxl-tut-dbg">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-tut-dtxt.html#pxl-tut-dtxt">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-tut.html#pxl-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>predicate_property/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>predicate_property(</code><var>*Callable, *PredProperty</var><code>)</code>
+
+   <p>Unifies <var>PredProperty</var> with a predicate property of an existing
+predicate, and <var>Callable</var> with the most general term that corresponds
+to that predicate.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Callable</var> <dfn>callable</dfn> [MOD]
+     <dd>the skeletal specification (see
+<a href="ref-syn-spc.html#ref-syn-spc">ref-syn-spc</a>) of a loaded predicate
+
+     <br><dt><var>PredProperty</var> <dfn>term</dfn>
+     <dd>the various properties associated with
+<var>Callable</var>.    Each loaded predicate will have one
+or more of the properties:
+
+          <dl>
+
+          <br><dt><b>Property</b>
+          <dd><b>Comments</b>
+
+          <br><dt><code>compiled</code>
+          <dd>can have the <code>multifile</code> property
+
+          <br><dt><code>interpreted</code>
+          <dd><br><dt>
+          <dd>
+can have either the <code>dynamic</code> or <code>multifile</code> property or
+both
+
+          <br><dt><code>built_in</code>
+          <dd>
+
+          <br><dt><code>multifile</code>
+          <dd>
+
+          <br><dt><code>dynamic</code>
+          <dd>
+
+          <br><dt><code>exported</code>
+          <dd>on the public predicate list of its
+source module
+
+          <br><dt><code>imported_from(</code><var>Module</var><code>)</code>
+          <dd>imported into the
+source module from <var>Module</var>
+)
+
+          <br><dt><code>foreign</code>
+          <dd>
+
+          <br><dt><code>meta_predicate</code><var>(Term)</var><code></code>
+          <dd><var>Term</var> was specified in a meta_predicate
+declaration.  Thus <var>Term</var> consists of the principal functor name
+followed by mode declarations for its arguments.  For example:
+          <pre class="example">               mysort(:, +, -)
+               </pre>
+           See <a href="ref-mod-met.html#ref-mod-met">ref-mod-met</a> for further information.
+
+          <br><dt><code>volatile</code>
+          <dd>not to be saved in QOF files
+
+          <br><dt><code>locked</code>
+          <dd>not visible in the debugger due to use of <code>-h</code> option to <code>qpc</code>
+
+          <br><dt><code>has_advice</code>
+          <dd>advice has been added for the predicate
+
+          <br><dt><code>checking_advice</code>
+          <dd>advice checking is enabled for the predicate
+
+     </dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+     <ul>
+
+     <li>If <var>Callable</var>
+is instantiated then
+<code>predicate_property/2</code> successively unifies <var>PredProperty</var> with
+the various properties associated with <var>Callable</var>. 
+<li>If <var>PredProperty</var> is bound to a valid predicate property, then
+<code>predicate_property/2</code> successively unifies <var>Callable</var> with the
+skeletal specifications of all loaded predicates having
+<var>PredProperty</var>. 
+<li>If <var>Callable</var> is not a loaded predicate or
+<var>PredProperty</var> is not a valid predicate property, the call fails. 
+<li>If both arguments are unbound, then <code>predicate_property/2</code> can be
+used to backtrack through all currently defined predicates and their
+corresponding properties. 
+</ul>
+
+<h4 class="subheading">Examples</h4>
+
+     <ul>
+
+     <li>Predicates acquire properties when they are defined:
+     <pre class="example">          | ?- <kbd>[user].</kbd>
+          | <kbd>:- dynamic p/1.</kbd>
+          | <kbd>p(a).</kbd>
+          | <kbd>end_of_file.</kbd>
+          % user compiled 0.117 sec 296 bytes
+          
+          yes
+          | ?- <kbd>predicate_property(p(_), Property).</kbd>
+          
+          Property = (dynamic) <kbd>;</kbd>
+          
+          Property = interpreted <kbd>;</kbd>
+          
+          no
+          </pre>
+
+     <li>To backtrack through all the predicates <code>P</code> imported into module <code>m</code>
+from any module:
+     <pre class="example">          | ?- <kbd>predicate_property(m:P, imported_from(_)).</kbd>
+          </pre>
+
+     <li>To backtrack through all the predicates <code>P</code> imported into module <code>m1</code>
+from module <code>m2</code>:
+     <pre class="example">          | ?- <kbd>predicate_property(m1:P, imported_from(m2)).</kbd>
+          </pre>
+
+     <li>To backtrack through all the predicates <code>P</code> exported by module <code>m</code>:
+     <pre class="example">          | ?- <kbd>predicate_property(m:P, exported).</kbd>
+          </pre>
+
+     <li>A variable can also be used in place of a module atom to find
+the names of modules having a predicate and property association:
+
+     <pre class="example">          | ?- <kbd>predicate_property(M:f, imported_from(m1))</kbd>.
+          </pre>
+
+     <p>will return all modules <code>M</code> that import <code>f/0</code> from <code>m1</code>. 
+</ul>
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> All dynamic predicates are currently interpreted. 
+</blockquote>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>fileerrors/0</code>, <code>nofileerrors/0</code>,
+<code>gc/0</code>, <code>compile/1</code>, <code>module/[1,2]</code>, <code>foreign/[2,3]</code>,
+<code>meta_predicate/1</code>, <code>volatile/1</code>, <code>add_advice/3</code>,
+<code>check_advice/[0,1]</code>, <code>current_predicate/2</code>
+
+   <a href="ref-mod-ilm-vis.html#ref-mod-ilm-vis">ref-mod-ilm-vis</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-print.html#mpg-ref-print">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-portray_clause.html#mpg-ref-portray_clause">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

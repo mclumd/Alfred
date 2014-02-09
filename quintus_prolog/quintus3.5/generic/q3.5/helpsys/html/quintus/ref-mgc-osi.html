@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Operating System Interaction</h4>
+
+   <p>This section describes the various system parameters required to run Prolog.
+
+   <p>There is normally no need for you to seek any special
+privileges or quotas in order to run Prolog.  Prolog will automatically
+expand its space up to the total amount of virtual space you are allowed. 
+If it should run out of space, Prolog will raise a resource error.
+
+   <p>This may happen because of an infinite recursion in your program, or it may
+be that your program really needs more space than is available. 
+Under UNIX, if you are using the C shell (<code>csh</code>), you can find out how much space
+is available by means of the <code>csh</code> command <code>limit</code>.  The command
+<pre class="example">     % <kbd>limit</kbd>
+     </pre>
+
+   <p>will list a number of limits of which the relevant one is <code>datasize</code>.  This
+number is the number of kilobytes available to Prolog for its data areas. 
+You can reduce this limit by typing, for example,
+<pre class="example">     % <kbd>limit datasize 2000</kbd>
+     </pre>
+
+   <p>The main reason that you might want to reduce the limit is that
+some systems allow the allocation of
+more virtual memory than there is swap space available, and then to crash. 
+You can run quite large programs with a datasize of 2000 kilobytes.
+
+   <blockquote>
+
+        <p><strong>UNIX Caveat:</strong>
+
+        <p>On some UNIX systems, the specified <code>datasize</code> (program) limit
+(see <code>limit(csh)</code> and <code>getrlimit(3)</code>) can be grossly higher then the
+maximum break that a process can set.  This is because the setting
+of the break is dependent upon the amount of swap space available. 
+Since all processes share the same swap space, the space available to
+any one process is based on the space usage of all other processes
+running on the machine.  Therefore, one process that has set a large
+program break may prevent another process from doing the same, if
+both are running simultaneously. 
+</blockquote>
+
+   <p>The Quintus Prolog memory manager makes calculations based upon the
+specified <code>datasize</code> limit, since the actual limit cannot be
+determined except by experimentation, and even then the limit changes
+over time.  Better memory management will result when the
+specified <code>datasize</code> limit is close to the actual limit.
+
+   <p>The default behavior of Prolog is tuned to be optimal for a large
+class of programs. If the programmers need greater control of the way
+Prolog grows and frees memory, they can set environment variables, the
+documentation for which follow. Note that the default values for these
+variables should satisfy almost all programs and you really do not
+need to set these variables at all. 
+The values for these variables are entered in bytes, but may be
+followed by <code>K</code> or <code>M</code> meaning kilobytes or megabytes respectively.
+
+     <dl>
+
+     <br><dt><code>PROLOGINITSIZE</code>
+     <dd>Controls the size of Prolog's initial memory allocation. 
+Can be set to a sufficiently large size to allow the Prolog
+application to execute without needing to expand.  This must be done before
+Prolog is invoked.
+
+     <p>By default, the value is the minimum memory required for
+Prolog to start up.  In addition, the value is constrained to be
+at least that amount, regardless of the user setting.
+
+     <br><dt><code>PROLOGMAXSIZE</code>
+     <dd>Can be used to place a limit on the amount of data space
+that a given Prolog process will use.
+
+     <p>The <code>csh</code> command <code>limit</code> can also be used to set the amount of data space
+that can be used by the the current shell and all processes within it.
+
+     <p>By default, the value is effectively infinity, which is to say
+that Prolog's expansion will only be limited by the space that the
+shell is able to provide it.
+
+     <br><dt><code>PROLOGINCSIZE</code>
+     <dd>Can be used to control the
+amount of space Prolog asks the operating system for in any given
+memory expansion.
+
+     <p>By default, the value is the minimum amount of memory that
+will allow Prolog to expand one of its data areas, by kilobytes. In
+addition, the value is constrained to be at least that amount,
+regardless of the user setting.
+
+     <br><dt><code>PROLOGKEEPSIZE</code>
+     <dd>Can be used to control the
+amount of space Prolog retains after performing some computation.  By
+default, Prolog gets memory from the operating system as the user
+program executes and returns all the free memory back to the operating
+system when the user program does not need any more. If the programmer
+knows that her program once it has grown to a certain size is likely to
+need as much memory for future computations, then she can advise Prolog
+not to return all the free memory back to the operating system by
+setting the value to <var>K</var>.  Once Prolog grows to
+<var>K</var> bytes, it will always keep at least <var>K</var> bytes
+around. Only memory that was allocated above and beyond <var>K</var> bytes
+is returned to the OS.
+
+     <br><dt><code>PROLOGLOCALMIN</code>
+     <dd>Can be used to control the
+amount of space Prolog reserves for the local stack. The purpose
+of the local stack is described in detail in
+<a href="ref-mgc.html#ref-mgc">ref-mgc</a>.  The default value is 64Kb.
+
+     <br><dt><code>PROLOGGLOBALMIN</code>
+     <dd>Can be used to control the
+amount of space Prolog reserves for the global stack. The purpose
+of the global stack is described in detail in
+<a href="ref-mgc.html#ref-mgc">ref-mgc</a>.  The default value is 64Kb. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mgc-ago.html#ref-mgc-ago">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mgc-gcd.html#ref-mgc-gcd">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mgc.html#ref-mgc">Up</a>
+</ul>
+</div>
+   </body></html>
+

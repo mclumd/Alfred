@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>at_end_of_file/[0,1]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>at_end_of_file</code>
+
+   <p><code>at_end_of_file(</code><var>+Stream</var><code>)</code>
+
+   <p>Tests whether end of file has been reached for
+the current input stream or for the input stream <var>Stream</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var>
+     <dd><dfn>stream_object</dfn>  a valid Prolog input stream
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>at_end_of_file/[0,1]</code> checks if end of file
+has been reached for the specified input stream. 
+An input stream reaches end of file when all characters
+except the file border code (-1 by default) of the stream have been read. 
+It remains at end of file after the file border code has been read.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>), plus:
+     <dl>
+
+     <br><dt><code>existence_error</code>
+     <dd>
+Some operating system dependent error occurred in reading. 
+</dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p><code>at_end_of_file/[0,1]</code> peeks ahead for next input character if there is
+no character available on the buffer of the specified input stream.
+
+   <p>Coding with <code>at_end_of_file/[0,1]</code> to check for end of file condition
+is more portable among different operating systems than checking end of file
+by the character code (for example, peek_char(-1)).
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>at_end_of_line/[0,1]</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-at_end_of_line.html#mpg-ref-at_end_of_line">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-assign.html#mpg-ref-assign">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

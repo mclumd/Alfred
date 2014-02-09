@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Syntax of Terms as Tokens</h5>
+
+   <p><table>
+<tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>term-read-in</var> </td><td valign="top"><code>--&gt;</code> <var>subterm(1200)</var> <var>full-stop</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>subterm(N)</var> </td><td valign="top"><code>--&gt;</code> <var>term(M)</var> </td><td valign="top">{where <var>M</var> is less than or equal to <var>N</var>}
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>term(N)</var> </td><td valign="top"><code>--&gt;</code> <var>op(N,fx)</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>op(N,fy)</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>op(N,fx)</var> <var>subterm(N-1)</var> </td><td valign="top">{except the case <code>-</code> <var>number</var>}
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top"></td><td valign="top">{if <var>subterm</var> starts with a <code>(</code>, <var>op</var> must be followed by a <var>space</var>}
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>op(N,fy)</var> <var>subterm(N)</var> </td><td valign="top">{if <var>subterm</var> starts with a <code>(</code>, <var>op</var> must be followed by a <var>space</var>}
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>subterm(N-1)</var> <var>op(N,xfx)</var> <var>subterm(N-1)</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>subterm(N-1)</var> <var>op(N,xfy)</var> <var>subterm(N)</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>subterm(N)</var> <var>op(N,yfx)</var> <var>subterm(N-1)</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>subterm(N-1)</var> <var>op(N,xf)</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>subterm(N)</var> <var>op(N,yf)</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>term(1000)</var> </td><td valign="top"><code>--&gt;</code> <var>subterm(999)</var> <code>,</code> <var>subterm(1000)</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>term(0)</var> </td><td valign="top"><code>--&gt;</code> <var>functor</var> <code>(</code> <var>arguments</var> <code>)</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top"></td><td valign="top">{provided there is no <var>space</var> between <var>functor</var> and the <code>(</code>}
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <code>(</code> <var>subterm(1200)</var> <code>)</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <code>{</code> <var>subterm(1200)</var> <code>}</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>list</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>string</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>constant</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>variable</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>op(N,T)</var> </td><td valign="top"><code>--&gt;</code> <var>name</var> </td><td valign="top">{where <var>name</var> has been declared as an operator of type <var>T</var> and precedence <var>N</var>}
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>arguments</var> </td><td valign="top"><code>--&gt;</code> <var>subterm(999)</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>subterm(999)</var> <code>,</code> <var>arguments</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>list</var> </td><td valign="top"><code>--&gt;</code> <code>[]</code>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <code>[</code> <var>listexpr</var> <code>]</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>listexpr</var> </td><td valign="top"><code>--&gt;</code> <var>subterm(999)</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>subterm(999)</var> <code>,</code> <var>listexpr</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <var>subterm(999)</var> <code>|</code> <var>subterm(999)</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>constant</var> </td><td valign="top"><code>--&gt;</code> <var>atom</var> |  <var>number</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>number</var> </td><td valign="top"><code>--&gt;</code> <var>integer</var> |  <var>float</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>atom</var> </td><td valign="top"><code>--&gt;</code> <var>name</var> </td><td valign="top">{where <var>name</var> is not a prefix operator}
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>integer</var> </td><td valign="top"><code>--&gt;</code> <var>natural-number</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <code>-</code> <var>natural-number</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>float</var> </td><td valign="top"><code>--&gt;</code> <var>unsigned-float</var>
+<br></td></tr><tr align="left"><td valign="top"> </td><td valign="top">|  <code>-</code> <var>unsigned-float</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><var>functor</var> </td><td valign="top"><code>--&gt;</code> <var>name</var>
+   <br></td></tr></table>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-syn-syn-tok.html#ref-syn-syn-tok">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-syn-syn-sen.html#ref-syn-syn-sen">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-syn-syn.html#ref-syn-syn">Up</a>
+</ul>
+</div>
+   </body></html>
+

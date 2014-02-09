@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>telling/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>telling(</code><var>-FileOrStream</var><code>)</code>
+
+   <p>Unifies <var>FileOrStream</var> with the current output stream.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>FileOrStream</var> <dfn>file_spec</dfn> or <dfn>stream_object</dfn>
+     <dd></dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Exactly the same as
+<code>current_output(</code><var>FileOrStream</var><code>)</code> <a href="ref-iou-sfh-cos.html#ref-iou-sfh-cos">ref-iou-sfh-cos</a>), except that
+<var>FileOrStream</var> will be unified with a filename if the current output stream
+was opened by <code>tell/1</code>.
+
+   <p>If <var>FileOrStream</var> is not a filename or stream object corresponding
+to an open output stream, <code>telling</code>(<var>FileOrStream</var>) simply fails.
+
+   <p>A common usage of <code>telling/1</code> is
+<pre class="example">     tell('Some File Name')
+     ...
+     telling('Some File Name')
+     </pre>
+
+   <p>Should succeed if the current input stream was not
+changed (or if changed, restored).  It succeeds for any filename
+(including <code>user</code>) and any stream object opened by <code>open/3</code>
+(<a href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">ref-iou-sfh-opn</a>), but fails for <code>user_output</code> and any stream object
+opened by <code>tell/1</code> (<a href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">ref-iou-sfh-opn</a>).  Passing file names to
+<code>tell/1</code> is the only DEC-10 Prolog usage of <code>telling/1</code>, so Quintus Prolog
+is compatible with this usage.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>WARNING: The following sequence
+will fail if the current output stream was opened by <code>tell/1</code>.
+<pre class="example">     telling(File),
+     ...
+     set_output(File),
+     </pre>
+
+   <p>The only sequences that are guaranteed to succeed are
+<pre class="example">     telling(FileOrStream),
+     ...
+     tell(FileOrStream)
+     </pre>
+
+   <p>and
+<pre class="example">     current_output(Stream),
+     ...
+     set_output(Stream)
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>tell/1</code>, <code>open/[3,4]</code>, <code>current_output/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-teq.html#mpg-ref-teq">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-tell.html#mpg-ref-tell">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

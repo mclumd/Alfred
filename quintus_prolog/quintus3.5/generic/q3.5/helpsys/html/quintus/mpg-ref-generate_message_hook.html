@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">generate_message_hook/3 <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile generate_message_hook/3.</code>
+
+   <p><code>generate_message_hook(</code><var>+MessageTerm, -S0, -S</var><code>)</code>
+
+   <p>A way for the user to override the call to <code>'QU_messages':generate_message/3</code>
+in <code>print_message/2</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>MessageTerm</var> <dfn>term</dfn>
+     <dd>May be any term.
+
+     <br><dt><var>S0</var> <dfn>list of pair</dfn>
+     <dd>the resulting list of <var>Control-Args</var> pairs.
+
+     <br><dt><var>S</var> <dfn>list of pair</dfn>
+     <dd>the remaining list.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>For a given <var>MessageTerm</var>, generates the
+list of <var>Control-Args</var> pairs required for <code>print_message_lines/3</code> to
+format the message for display.
+
+   <p>This is the same as <code>'QU_messages':generate_message/3</code> except that it is
+a hook.  It is intended to be used when you want to override particular messages
+from the Prolog system, or when you want to add some messages.  If  you are
+using your own exception classes (see <code>raise_exception</code>) it may be useful
+to provide generate_message_hook clauses for those exceptions so that the
+<code>print_message/2</code> (and thus the default exception handler that calls
+<code>print_message/2</code>) can print them out nicely.
+
+   <p>The Prolog system uses the built-in predicate <code>print_message/2</code> to print
+all its messages.  When <code>print_message/2</code> is called, it calls
+<pre class="example">     user:generate_message_hook(Message,L,[])
+     </pre>
+
+   <p>to generate the message.  If that fails,
+<pre class="example">     'QU_messages':generate_message(Message,L,[])
+     </pre>
+
+   <p>is called instead.
+
+   <p>If <code>generate_message_hook/3</code> succeeds, L is assumed to have been bound to a list whose
+elements are either <var>Control-Args</var> pairs or the atom <code>nl</code>.  Each <var>Control-Args</var>
+pair should be such that the call
+<pre class="example">     format(user_error, <var>Control</var>, <var>Args</var>)
+     </pre>
+
+   <p>is valid. 
+The atom <code>nl</code> is used for breaking the message into lines.  Using the format
+specification <code>~n</code> (new-line) is discouraged, since the routine that actually
+prints the message (see <code>user:message_hook/3</code> and <code>print_message_lines/3</code>)
+may need to have control over newlines.
+
+   <p>It is recommended that you declare this predicate multifile when you define
+clauses for it so that different packages that define clauses for it can
+be used together.
+
+<h4 class="subheading">Examples</h4>
+
+     <ul>
+
+     <li>When a package is put in a module, it can still supply clauses like this:
+     <pre class="example">          :- multifile user:generate_message_hook/3.
+          user:generate_message_hook(hello_world) --&gt;
+                  ['hello world'-[],nl].
+          </pre>
+
+     <p>Note that the terminating <code>nl</code> is required. 
+</ul>
+
+<h4 class="subheading">Tips</h4>
+
+<h4 class="subheading">See also:</h4>
+
+   <p><code>'QU_messages':generate_message/3</code>, <code>print_message/2</code>,
+<code>message_hook/3</code>, <code>format/[2,3]</code>, <code>print_message_lines/3</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-get.html#mpg-ref-get">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-gen.html#mpg-ref-gen">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,167 @@
+%   Subfile: filename.unix
+%   Author : Richard A. O'Keefe
+%   Updated: 04 Apr 1990
+%   Purpose: UNIX file name parsing and unparsing.
+
+%   Copyright (C) 1989, Quintus Computer Systems, Inc.  All rights reserved.
+
+%-----------------------------------------------------------------------+
+%	Parsing UNIX file names						|
+%-----------------------------------------------------------------------+
+
+chars_to_file_word(host, Host) -->	% //host prefix
+	slashes(0, _),
+	unix_word([Char|Chars]),
+	{ atom_chars(Host, [Char|Chars]) }.
+chars_to_file_word(name, Name) -->	% names may not be empty
+	unix_word([Char|Chars]),
+	{ atom_chars(Name, [Char|Chars]) }.
+chars_to_file_word('type', Type) -->	% empty types are like unspecified ones
+	unix_word(Chars),
+	{ atom(Chars) -> Type = -1 ; atom_chars(Type, Chars) }.
+chars_to_file_word(device, _) --> {fail}.
+
+
+chars_to_file_site(file_name(Host,-1,AbsRel,Directories,-1,-1,'')) -->
+	slashes(0, N),
+	(   { N =:= 2 } ->		% //apollo	POSIX-allowed
+	    unix_word(Chars),
+	    { atom_chars(Host, Chars) },
+	    (   "/" ->			% there is more than just the host
+		slashes(0, _),
+		rest_unix_file_site(-2, AbsRel, [], Directories)
+	    ;	{ AbsRel = -1, Directories = [] }
+	    )
+	;   { N =\= 0 } ->		% / = /// = //// .....
+	    { Host = -1 	},	% absolute
+	    rest_unix_file_site(-2, AbsRel, [], Directories)
+	;   "~" ->			% ~user
+	    { Host = -1 },		% modified absolute
+	    rest_unix_file_site(-3, AbsRel, [], Directories)
+	;/* doesn't start with /, doesn't start with ~ */
+	    { Host = -1 },		% relative
+	    rest_unix_file_site(0, AbsRel, [], Directories)
+	).
+
+
+rest_unix_file_site(Depth0, Depth, Dirs0, Dirs) -->
+	unix_word(Word),
+	(   { Word = "." } ->
+	    slashes(0, _),
+	    rest_unix_file_site(Depth0, Depth, Dirs0, Dirs)
+	;   { Word = ".." } ->
+	    { Dirs0 = [_|Dirs1] -> Depth1 = Depth0
+	    ; Depth0 >= 0 -> Dirs1 = [], Depth1 is Depth0+1
+	    ; Dirs1 = [], Depth1 = Depth0
+	    },
+	    slashes(0, N),
+	    (	{ N > 0 } ->
+		rest_unix_file_site(Depth1, Depth, Dirs1, Dirs)
+	    ;	{ Depth = Depth1 },
+		{ reverse(Dirs1, [], Dirs) }
+	    )
+	;   /* ordinary name */
+	    { atom_chars(Dir, Word) },
+	    slashes(0, N),
+	    (	{ N > 0 } ->
+		rest_unix_file_site(Depth0, Depth, [Dir|Dirs0], Dirs)
+	    ;   /* last name in site */
+		{ Depth = Depth0 },
+		{ reverse(Dirs0, [Dir], Dirs) }
+	    )
+	).
+
+
+chars_to_file_name(file_name(Host,-1,AbsRel,Directories,Name,Extension,'')) -->
+	slashes(0, N),
+	(   { N =:= 2 } ->		% //apollo	POSIX-allowed
+	    unix_word(Chars),
+	    { atom_chars(Host, Chars) },
+	    (   "/" ->			% there is more than just the host
+		slashes(0, _),
+		rest_unix_file_name(-2, AbsRel, [], Directories, Name, Extension)
+	    ;	{ AbsRel = -1, Directories = [], Name = -1, Extension = -1 }
+	    )
+	;   { N =\= 0 } ->		% / = /// = //// .....
+	    { Host = -1 	},	% absolute
+	    rest_unix_file_name(-2, AbsRel, [], Directories, Name, Extension)
+	;   "~" ->			% ~user
+	    { Host = -1 },		% modified absolute
+	    rest_unix_file_name(-3, AbsRel, [], Directories, Name, Extension)
+	;/* doesn't start with /, doesn't start with ~ */
+	    { Host = -1 },		% relative
+	    rest_unix_file_name(0, AbsRel, [], Directories, Name, Extension)
+	).
+
+slashes(N0, N) --> "/", !, {N1 is N0+1}, slashes(N1, N).
+slashes(N, N) --> "".
+
+rest_unix_file_name(Depth0, Depth, Dirs0, Dirs, Name, Ext) -->
+	unix_word(Word),
+	(   { Word = "." } ->
+	    slashes(0, _),
+	    rest_unix_file_name(Depth0, Depth, Dirs0, Dirs, Name, Ext)
+	;   { Word = ".." } ->
+	    { Dirs0 = [_|Dirs1] -> Depth1 = Depth0
+	    ; Depth0 >= 0 -> Dirs1 = [], Depth1 is Depth0+1
+	    ; Dirs1 = [], Depth1 = Depth0
+	    },
+	    slashes(0, N),
+	    (	{ N > 0 } ->
+		rest_unix_file_name(Depth1, Depth, Dirs1, Dirs, Name, Ext)
+	    ;	{ Name = -1, Ext = -1, Depth = Depth1 },
+		{ reverse(Dirs1, [], Dirs) }
+	    )
+	;   /* ordinary name */
+	    slashes(0, N),
+	    (	{ N > 0 } ->
+		{ atom_chars(Dir, Word) },
+		rest_unix_file_name(Depth0, Depth, [Dir|Dirs0], Dirs, Name, Ext)
+	    ;   /* last name in file */
+		{ lit([C|Cs], Word, [0'.|Ex]) },
+		{ \+ memberchk(0'., Ex) },
+		!,
+		{ atom_chars(Name, [C|Cs]), atom_chars(Ext, Ex) },
+		{ reverse(Dirs0, [], Dirs), Depth = Depth0 }
+	    ;	{ atom_chars(Name, Word), Ext = -1 },
+		{ reverse(Dirs0, [], Dirs), Depth = Depth0 }
+	    )
+	).
+
+unix_word([C|Cs]) --> [C], { C =\= "/", C =\= 0 }, !, unix_word(Cs).
+unix_word([]) --> "".
+
+/*  The UNIX file system preserves case, and so must we.
+*/
+normalise_subdirs(X, X).
+
+
+file_name_to_chars(file_name(Host,_,AbsRel,Directories,Name,Extension,_)) -->
+	(   { atom(Host) } -> "//", explode(Host)
+	; /* traditional Unix */ ""
+	),
+	(   { AbsRel  >   0 } -> dotdots(AbsRel, "../", "")
+	;   { AbsRel =:= -2 } -> "/"
+	;   { AbsRel =:= -3 } -> "~"
+	;			 ""
+	),
+	subdirs(Directories, 0'/, 0'/),
+	(   { atom(Name) } -> explode(Name)
+	;   { integer(Name) } -> ""
+	),
+	(   { atom(Extension) } -> ".", explode(Extension)
+	;   { integer(Extension) } -> ""
+	).
+
+subdirs([], _, _) --> "".
+subdirs([Dir|Dirs], Sep, End) -->
+	explode(Dir), subdirs_1(Dirs, Sep, End).
+
+subdirs_1([], _, End) --> [End].
+subdirs_1([Dir|Dirs], Sep, End) -->
+	[Sep],
+	explode(Dir),
+	subdirs_1(Dirs, Sep, End).
+
+
+

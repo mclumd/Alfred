@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Instantiation Errors</h5>
+
+   <p>An instantiation error occurs when a predicate or command is called with
+one of its input arguments insufficiently instantiated.
+
+   <p>The exception code associated with an instantiation error is
+<pre class="example">     instantiation_error(<var>Goal, ArgNo</var>)
+     </pre>
+
+   <p><var>ArgNo</var> is a non-negative integer indicating which argument caused the
+problem.  ArgNo=0 means that the problem could not be localized to a single
+argument. 
+, <code>atom_chars/2</code>, <code>functor/3</code> etc., which allow alternative
+instantiation patterns.  Maybe this will be fixed but lets leave it vague for
+now. -DLB}
+
+   <p>Note that the <var>ArgNo</var>th argument of <var>Goal</var> might well be
+a non-variable:  the error is <em>in</em> that argument.  For example, the goal
+<pre class="example">     X is Y+1
+     </pre>
+
+   <p>where <var>Y</var> is uninstantiated raises the exception
+<pre class="example">     instantiation_error(_2298 is _2301+1,2)
+     </pre>
+
+   <p>because the second argument to <code>is/2</code> contains a variable.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-err-typ.html#ref-ere-err-typ">Next</a>
+<li><a rel="up" accesskey="u" href="ref-ere-err.html#ref-ere-err">Up</a>
+</ul>
+</div>
+   </body></html>
+

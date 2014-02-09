@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Declaring Types</h4>
+
+   <p>Programmers may declare new named data structures with the following
+procedure:
+<pre class="example">             :- foreign_type
+                 Type_name = Type,
+                 ...,
+                 Type_name = Type.
+     </pre>
+
+   <p>Where <var>Type_name</var> is an atom, and <var>Type</var> defines either an atomic
+or compound type, or is a previously-defined type name.
+
+   <p>In Prolog, atomic types are represented by the natural atomic term
+(integer, float, or atom).  Compound structures are represented by
+terms whose functor is the name of the type, and whose only argument
+is the address of the data.  So a term <code>foo(123456)</code> represents the
+thing of type <code>foo</code> that exists at machine address 123456.  And a term
+<code>integer(123456)</code> represents the integer that lives in memeory at
+address 123456, <em>not</em> the number 123456.
+
+   <p>For types that are not named, a type name is generated using the names
+of associated types and the dollar sign character (<code>$</code>), and possibly a
+number.  Therefore, users should not use <code>$</code> in their type names.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="str-fty.html#str-fty">Up</a>
+</ul>
+</div>
+   </body></html>
+

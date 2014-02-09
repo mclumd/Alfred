@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_date_timeval(</code><var>?Date</var><code>, </code><var>?Timeval</var><code>)</code></h5>
+
+   <p>This predicate is used to convert between the time format supplied by
+<code>library(date)</code> and the <code>timeval/2</code> representation.  At least one of the
+arguments must be ground.  The parameter <var>Date</var> is of the form
+<code>date(</code><var>Year</var><code>,</code><var>Month</var><code>,</code><var>Day</var><code>,</code><var>Hour</var><code>,</code><var>Minute</var><code>,</code><var>Second</var><code>)</code>.
+
+   <p><code>library(date)</code> has facilities for portraying time. 
+<code>tcp_date_timeval/2</code> can be used with <code>library(date)</code> for portrayal:
+
+<pre class="example">     :-use_module(library(addportray), [add_portray/1]).
+     :-use_module(library(date), [time_stamp/3]).
+     :-use_module(library(tcp), [tcp_date_timeval/2]).
+     
+     :-initialization add_portray(portray_timeval).
+     
+     portray_timeval(timeval(Seconds, MicroSeconds)):-
+         tcp_date_timeval(Date,timeval(Seconds, MicroSeconds)),
+         time_stamp(Date,'%y %02n %M %02d %W %02c:%02i:', Stamp),
+         write(Stamp),
+         Date=date(_, _, _, _, _, S),
+         X is (S * 1.0e6 + MicroSeconds) / 1.0e6,
+         (X &lt; 10 -&gt; write(0) ; true),
+         format('~2f', X).
+     </pre>
+
+   <p>Which would result in the following:
+
+<pre class="example">         | ?- <kbd>tcp_now(X).</kbd>
+     
+         X = 1989 03 March 01 Wednesday 17:09:58.12
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-tim-daily4.html#ipc-tcp-tim-daily4">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-tim.html#ipc-tcp-tim">Up</a>
+</ul>
+</div>
+   </body></html>
+

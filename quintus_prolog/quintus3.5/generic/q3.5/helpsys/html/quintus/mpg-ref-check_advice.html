@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>check_advice/[0,1]</code> <dfn>development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>check_advice</code>
+
+   <p><code>check_advice(</code><var>+PredSpecs</var><code>)</code>
+
+   <p>Enable advice checking.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>PredSpecs</var> <dfn>gen_pred_spec_tree</dfn> [MOD]
+     <dd>A list of predicate specifications.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>check_advice/1</code> is used to enable advice checking on all
+predicates specified in <var>PredSpecs</var>.  <code>check_advice/0</code>
+enables advice checking on all predicates for which advice has been
+added.  When advice checking is enabled for a
+predicate, and execution of that predicate reaches an advised port,
+the term carrying the current instantiation of the Prolog call is
+unified against the goal term of the advice.  If the two unify, the
+action associated with the goal and port is executed then failed over. 
+If there are multiple pieces of advice associated with the goal and port,
+they are sequentially called and failed over.
+
+   <p>This predicate is not supported in runtime systems.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+if the argument is not ground.
+
+     <br><dt><code>type_error</code>
+     <dd>
+if a <var>Name</var> is not an atom or an <var>Arity</var> not an integer.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+if a <var>PredSpec</var> is not a valid procedure specification, or
+if an <var>Arity</var> is specified as an integer outside the range 0-255.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+if a specified procedure is built-in.
+
+   </dl>
+
+<h4 class="subheading">Tips</h4>
+
+   <p><code>check_advice/0</code> behaves as though implemented
+by
+
+<pre class="example">     check_advice :-
+             current_advice(Goal, Port, Action),
+             functor(Goal, Name, Arity),
+             check_advice(Name/Arity),
+             fail.
+     check_advice.
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>add_advice/3</code>, <code>remove_advice/3</code>, <code>current_advice/3</code>, <code>nocheck_advice/[0,1]</code>
+
+   <a href="dbg-adv.html#dbg-adv">dbg-adv</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-clause.html#mpg-ref-clause">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-character_count.html#mpg-ref-character_count">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

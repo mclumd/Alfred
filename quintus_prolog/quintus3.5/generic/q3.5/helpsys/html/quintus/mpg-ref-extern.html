@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>extern/1</code> <dfn>declaration</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:-extern(</code><var>+ExternSpec</var><code>)</code>
+
+   <p>Declares a Prolog predicate to be callable from functions written
+in other languages.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>ExternSpec</var> <dfn>extern_spec</dfn> [MOD]
+     <dd>a term of the form
+<var>Name</var>(<var>Argspec</var>, <var>Argspec</var>, <small class="dots">...</small>)
+
+          <dl>
+
+          <br><dt><var>Name</var>
+          <dd>the name of the Prolog predicate
+
+          <br><dt><var>Argspec</var>
+          <dd>an argument specification for each
+argument of the predicate.  Each should be one of the
+following where <var>T</var> is a foreign type name.
+          <pre class="example">                +integer    +float    +single   +double
+                -integer    -float    -single   -double
+               
+                +atom       +term     +string
+                -atom       -term     -string
+               
+                +string     +address(<var>T</var>)
+                -string     -address(<var>T</var>)
+               </pre>
+
+     </dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>extern/1</code> is used to make Prolog predicates callable from
+functions written in other languages.  <code>extern/1</code> must appear as a
+compile-time declaration; furthermore, it may not appear in files
+loaded into runtime systems.  The user has to declare as callable each
+Prolog predicate that is to be called from foreign functions.  Any
+Prolog predicate can be declared to be callable from foreign
+functions, including system built-ins and predicates that do not
+currently have definitions.  Predicates must be declared callable
+before they can actually be called from a function written in a
+foreign language.
+
+   <p>Arguments are passed to the foreign interface as specified in
+<var>ExternSpec</var>:
+
+     <dl>
+
+     <br><dt><code>+</code>
+     <dd>indicates that an argument is to be passed to Prolog from a foreign function.
+
+     <br><dt><code>-</code>
+     <dd>indicates that an argument is to be passed from Prolog to the foreign
+function. 
+</dl>
+
+   <p>Unlike the interface enabling Prolog to call functions written in other
+languages, when foreign functions call Prolog there are no return
+values or corresponding designators in <var>ExternSpec</var>.
+
+   <p>When a Prolog predicate is declared to be callable, an interface predicate
+is created in the current module.  The arity of the interface predicate
+is the same as that of the Prolog predicate.  The
+name of the interface predicate is that of the Prolog predicate with an
+underscore prepended.  The interface predicate is made available to the
+user as a hook to the "callability" of the Prolog predicate; for instance,
+the callability of the predicate can be saved by putting the interface
+predicate in a QOF file via <code>save_predicates/2</code>, then reloaded like
+any other predicate.  The interface predicate can also be abolished
+like any other predicate; this also has the effect of making the
+previously callable Prolog predicate no longer available to foreign
+functions.  A call to any interface predicate simply fails.
+
+   <p>For more details about passing arguments from the foreign interface, see
+the chapter on the foreign language interface.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+    <var>ExternSpec</var> is uninstantiated
+
+     <p>Some <var>Argspec</var> in <var>ExternSpec</var> is uninstantiated
+or is a term that is insufficiently instantiated
+
+     <br><dt><code>type_error</code>
+     <dd>
+    <var>ExternSpec</var> is instantiated but is not a callable term
+
+     <p>Some <var>Argspec</var> in <var>ExternSpec</var> is not a callable term
+
+     <br><dt><code>domain_error</code>
+     <dd>
+    Some <var>Argspec</var> in <var>ExternSpec</var> is not one of the forms listed above
+</dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>It can be quite useful to make the system built-in
+<code>call/1</code> available
+to foreign functions.  Combined with term manipulation in C, doing so
+provides an evaluator for arbitrary Prolog queries.  This can be done
+by loading a Prolog file containing the declaration
+
+<pre class="example">     :- extern(call(+term)).
+     </pre>
+
+   <p>Prolog's <code>call/1</code> is then available to C via a function like
+
+<pre class="example">     call_prolog(term)
+     QP_term_ref term;
+     {
+         QP_pred_ref call;
+         call = QP_predicate("call",1,"user");
+         QP_query(call, term);
+     }
+     </pre>
+
+   <p>For the sake of brevity, this example does not check return values for
+failure or errors.  Doing so is generally recommended.  Of course, as
+is the case in Prolog, it is faster to call a Prolog predicate directly.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-fail.html#mpg-ref-fail">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-expand_term.html#mpg-ref-expand_term">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

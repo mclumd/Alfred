@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Example 2 - Train</h4>
+
+   <p>This example provides a Visual Basic user interface to the
+Prolog program finding train routes between two points.
+
+   <p>The Visual Basic program <code>train</code> contains the following form window:
+
+   <img src="images/vbsptrainform.png" alt="images/vbsptrainform.png">
+
+   <p>Clicking the <code>cmdRun</code> command button will display all the available
+routes between Stockholm and Orebro. These are calculated as solutions
+of the Prolog query <code>places('Stockholm','Orebro',Way)</code>. For each
+solution, the value assigned to the variable <code>Way</code> is retrieved
+into the Visual Basic variable <code>result</code> and is inserted as a new
+item into the <code>listConnection</code> listbox.
+
+   <p>The Visual Basic program consists of four parts:
+
+     <ul>
+<li>loading the Prolog code
+<li>opening the query
+<li>a loop generating the solutions, each cycle doing the following
+          <ul>
+<li>requesting the next solution
+<li>getting the value of the solution variable
+<li>adding the solution to the listbox
+</ul>
+     <li>closing the query
+</ul>
+
+<pre class="example">     Private Sub cmdRun_Click()
+         Dim qid As Long
+         Dim result As String
+         Dim s As String
+         Dim rc As Integer
+     
+         qid = -1 ' make it safe to PrologCloseQuery(qid) in Err:
+     
+         'load the <code>train.pl</code> Prolog file
+         rc = PrologQueryCutFail("ensure_loaded(app(train))")
+         If rc &lt; 1 Then
+             Msg = "ensure_loaded(train)"
+             GoTo Err
+         End If
+         'open the query
+         qid = PrologOpenQuery("places('Stockholm','Orebro',Way)")
+         If qid = -1 Then
+             rc = 0
+             Msg = "Open places/3"
+             GoTo Err
+         End If
+         'generate solutions
+         Do
+             rc = PrologNextSolution(qid)
+             If rc = 0 Then Exit Do ' failed
+             If rc &lt; 0 Then
+                 Msg = "places/3"
+                 GoTo Err
+             End If
+             If PrologGetString(qid, "Way", result) &lt; 1 Then
+                 rc = 0
+                 Msg = "PrologGetString Way"
+                 GoTo Err
+             End If
+             listConnections.AddItem result
+         Loop While True
+         'after all solutions are found, the query is closed
+         Call PrologCloseQuery(qid)
+         Exit Sub
+     </pre>
+
+   <p>Note that each part does elaborate error checking and passes
+control to the error display instructions shown below:
+
+<pre class="example">     Err:
+         Call PrologCloseQuery(qid) ' Always close opened queries
+     
+         'error message is prepared, adding either the - failed - or
+         'the - raised exception - suffix to the Msg string specific
+         'to the function called
+         If rc = 0 Then
+              Msg = Msg + " failed"
+         Else
+             Call PrologGetException(s)
+             Msg = Msg + " raised exception: " + s
+         End If
+         MsgBox Msg, 48, "Error"
+     End Sub
+     </pre>
+
+   <p>The Prolog predicate <code>places/3</code> is defined in the <code>train.pl</code>
+file, as mentioned earlier.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="vb-ex-qn.html#vb-ex-qn">Next</a>
+<li><a rel="previous" accesskey="p" href="vb-ex-calc.html#vb-ex-calc">Previous</a>
+<li><a rel="up" accesskey="u" href="vb-ex.html#vb-ex">Up</a>
+</ul>
+</div>
+   </body></html>
+

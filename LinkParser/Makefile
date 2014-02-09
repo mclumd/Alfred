@@ -53,7 +53,7 @@ ${OBJ}/print-util.o
 #TCPLIB = /fs/metacog/quintus3.5/generic/qplib3.5/IPC/TCP/linux/tcp_p.so
 #TCPLIB = /fs/metacog/quintus3.5/generic/qplib3.5/IPC/TCP/tcp_p.so
 #TCPLIB = /fs/metacog/quintus3.5/generic/qplib3.5/IPC/TCP/tcp.o
-TCPLIB = /home/emily/Desktop/ALFRED/quintus_prolog/quintus3.5/generic/qplib3.5/IPC/TCP/tcp.o
+TCPLIB = ~/Alfred/quintus_prolog/quintus3.5/generic/qplib3.5/IPC/TCP/tcp.o
 
 ${BIN}/parse: ${OBJECTS} ${TCPLIB} 
 		${CC} ${CLDFLAGS} ${OBJECTS} ${TCPLIB} ${LIBS} -o ${BIN}/parse

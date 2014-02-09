@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Creating a Module Dynamically</h4>
+
+   <p>There are several ways in which you can create a module without
+loading a module-file for it.  One way to do this is by asserting
+clauses into a specified module.  For example, the command (A) will
+create the dynamic predicate <code>f/1</code> and the module <code>m</code> if they did not
+previously exist.
+
+<pre class="example">     | ?- <kbd>assert(m:f(x)).</kbd> (A)
+     </pre>
+
+   <p>Another way to create a module dynamically is to compile a
+non-module-file into a specified module.  For example (B), will
+compile the clauses in <var>File</var> into the module <var>M</var>.
+
+<pre class="example">     | ?- <kbd>compile(</kbd><var>M</var><kbd>:</kbd><var>File</var><kbd>).</kbd> (B)
+     </pre>
+
+   <p>The same effect can be achieved by (temporarily) changing the type-in
+module to <var>M</var> (see <a href="ref-mod-tyi.html#ref-mod-tyi">ref-mod-tyi</a>) and then calling
+<code>compile(</code><var>File</var><code>)</code>, or executing the command in module <var>M</var> as
+in (C).
+
+<pre class="example">     | ?- <kbd></kbd><var>M</var><kbd>:compile(</kbd><var>File</var><kbd>).</kbd> (C)
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-mpc.html#ref-mod-mpc">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-tyi.html#ref-mod-tyi">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

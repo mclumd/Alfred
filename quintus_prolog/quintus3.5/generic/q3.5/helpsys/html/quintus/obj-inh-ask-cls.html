@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Classes</h5>
+
+   <p>The <code>current_class/1</code> predicate is used to ask whether a class is
+currently defined or to get the names of all currently defined
+classes.
+
+   <p>The <code>class_superclass/2</code> predicate is used to test whether one class
+is a superclass of another, or to find a class's superclasses, or to
+find a class's subclasses, or to find all subclass-superclass pairs. 
+The <code>class_ancestor/2</code> predicate is used in the same ways for the
+ancestor relation between currently defined classes.
+
+   <p>As an example, the following goal finds all the ancestors of each
+currently defined class.
+
+<pre class="example">     | ?- <kbd>setof(C-As,
+     	   (current_class(C),
+     	    setof(A, class_ancestor(C,A), As)),
+     	   L).</kbd>
+     </pre>
+
+   <p>It binds <code>L</code> to a list of terms of the form
+<var>Class</var>-<var>AncestorList</var>, with one term for each currently defined
+class.
+
+   <p>Arguably, this predicate violates the principle of information hiding,
+by letting you ask about how a class is defined.  Therefore, you
+should generally avoid it.  It may be useful, however, in debugging
+and in building programmer support tools.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-inh-ask-msg.html#obj-inh-ask-msg">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-inh-ask-obj.html#obj-inh-ask-obj">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-inh-ask.html#obj-inh-ask">Up</a>
+</ul>
+</div>
+   </body></html>
+

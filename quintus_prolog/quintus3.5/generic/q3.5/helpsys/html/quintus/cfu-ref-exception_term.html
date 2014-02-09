@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_exception_term()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_exception(term)
+     QP_term_ref term;
+     </pre>
+
+   <p>A function that users can call when their call to Prolog
+signals an error. If <code>QP_query()</code> returns <code>QP_ERROR</code> then users can
+call <code>QP_exception_term()</code> to get at the exception term
+signalled.
+
+<h4 class="subheading">Description</h4>
+
+   <p>If C calls Prolog and the Prolog goal raises
+an exception, <code>QP_query()</code> (or <code>QP_next_solution()</code>) returns the value
+<code>QP_ERROR</code>.  If the user wants to get at the exception term that has
+been raised, they can call the function <code>QP_exception_term()</code>. 
+<code>QP_exception_term()</code> takes a <code>QP_term_ref</code> as argument and returns a
+Prolog term.
+
+<h4 class="subheading">Example</h4>
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     :- extern(error).
+     
+     error :- raise_exception(error_term(from_prolog)).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+             QP_pred_ref pred;
+     
+             if ((pred = QP_predicate("error",0,"user")) !=
+                 (QP_pred_ref) QP_ERROR) {
+     
+                 if (QP_query(pred) == QP_ERROR) {
+                     QP_term_ref err_term = QP_new_term_ref();
+     
+                     QP_exception_term(err_term);
+                 }
+             }
+     </pre>
+
+   <p>Once you get <code>err_term</code>, you can use functions such as the <code>QP_get_*()</code>
+family to take apart the error term or to print it.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_query()</code>, <code>QP_next_solution()</code>, <code>raise_exception/3</code>
+
+   <a href="ref-ere.html#ref-ere">ref-ere</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-eof.html#cfu-ref-eof">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-error_message.html#cfu-ref-error_message">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

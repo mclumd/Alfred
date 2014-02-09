@@ -1,0 +1,30 @@
+# SCCS:	@(#)README	70.1 01/26/94
+
+The files in this directory are meant to be tutorials that demonstrate
+different aspects of Quintus Prolog.
+
+makefile.static:
+	demonstrates how you might write a makefile to build
+	a completely static executable (with no dependencies on shared
+	libraries) linking in Prolog code and foreign code.
+
+indexing.pl:
+	demonstrates how indexing works in core Quintus Prolog.
+	It also shows how you can use the QUI source debugger
+	to spot places where your code leaves choicepoints.
+
+There are three versions of an "ls" program in ls0.pl, ls1.pl and ls2.pl
+which demonstrate different ways of using the Quintus Prolog foreign language
+interface
+
+ls0.pl:	The shortest solution just uses unix/1 to call the Unix ls command.
+ls1.pl: Uses the structs package to setup structs from Prolog and calls
+	the Unix library routines
+ls2.pl: The structures are setup in C and more of the work is done in C.
+
+ls.pl:  Provides support predicates for ls1.pl and ls2.pl
+ls1.c:  An empty C file, just so that the Unix library functions called from
+	ls1.pl can get linked properly.
+ls2.c:  Support functions for ls2.pl
+
+For more details see the comments in the source files.

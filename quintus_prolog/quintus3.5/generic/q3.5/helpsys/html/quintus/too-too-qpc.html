@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>qpc</code> -- Quintus Prolog compiler</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     qpc [-cvhDHMN] [-o output] [-i initialization-file]
+          [ -L library-directory ] [ -a quintus-product ]
+          [ -f path-name:path-spec ]
+          [ -F path-name:path-spec ]
+          [ -p path-name ]
+          filename ...  [ -QLD qld-options ]
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>qpc</code> compiles the specified
+Prolog files into QOF (Quintus Object Format) files.  It then invokes
+<code>qld(1)</code> to link them together and produce an executable image (unless
+the <code>-c</code> option is given).  The QOF
+files are not deleted after processing terminates.
+
+   <p>Each filename must be the name of a valid Prolog source file or a QOF
+file.  Either absolute or relative filenames may be specified.  If
+filename does not name an existing file, and if it does not already
+have an extension, then <code>.pl</code> and <code>.qof</code> extensions are sought in that
+order.
+
+   <p>File names may be specified as simple paths (e.g. <code>file.pl</code>, <code>~/library/file</code>)
+or as file search paths of the form <code>library(file)</code>, <code>mylib(language(file))</code>,
+etc. 
+In the latter case, the path specification must be quoted to escape
+the shell's interpretation of the parentheses.
+
+   <p>Unless the <code>-o</code> option is given, the name of the output file is the name
+of the input file with the trailing <code>.pl</code>, if any, replaced by <code>.qof</code>. 
+If the input filename does not have a <code>.pl</code> extension, then a <code>.qof</code>
+extension is appended.  The argument to <code>-o</code> may also be specified the file
+search path form (see above).
+
+   <p>Source files specified on the <code>qpc</code> command line are always recompiled
+even if the corresponding QOF files are up to date (unless the <code>-M</code>
+switch is specified).  QOF files, on the other hand, are only
+recompiled if they are out of date compared to the corresponding
+source files.
+
+   <p>All the "dependencies" of a file, that is all the files named in
+embedded load commands in that file (or in its source if it is a QOF
+file), are checked to ensure that they are up-to-date, and they are
+recompiled if necessary.  This checking and recompiling of
+dependencies can be disabled using the <code>-N</code> option.
+
+   <p>A filename of <code>-</code> can be used to specify that Prolog source code is to
+be read from the standard input.  The corresponding QOF file will be
+called <code>a.qof</code>.
+
+   <p>Command line options may alter the above behavior as indicated
+below.  Unrecognized options and their arguments, if any, are passed
+to <code>qld(1)</code>.  Furthermore, the arguments following a <code>-QLD</code> option are
+not processed by <code>qpc</code> but are passed to <code>qld(1)</code>.  Note also that the
+command line is parsed from left to right.  This will affect how the
+file search path or library directory definitions are added
+if <code>-f</code>, <code>-F</code>, <code>-L</code>, or <code>-a</code> options are used.
+
+<h4 class="subheading">Options</h4>
+
+     <dl>
+
+     <br><dt><code>-a </code><var>quintus-product</var><code></code>
+     <dd>Specifies that the libraries for a
+particular Quintus product that is sold separately are to be used. 
+These Quintus products are normally installed in the
+<var>quintus-directory</var>.  List this directory to find the valid directory
+names for these products.   This option is equivalent to one or more <code>-L</code>
+switches.  Note that the libraries shipped with Quintus Prolog (<code>qui</code>,
+<code>proxt</code>, and <code>proxl</code>) are automatically available in the system, and,
+therefore, require no <code>-a</code> flag.
+
+     <br><dt><code>-c</code>
+     <dd>The input files are simply compiled into
+QOF format, and no further processing takes place.
+
+     <br><dt><code>-f </code><var>path-name</var><code>:</code><var>path-spec</var><code></code>
+     <dd>
+ Similar to the <code>-L</code> option, but
+<var>path-name</var>:<var>path-spec</var> defines a general file search, which
+instructs <code>qpc</code> to look for a file in directory <var>path-spec</var> whenever a
+file specification of the form <var>path-name</var>(<var>file-spec</var>) is encountered
+(in embedded load
+commands, in QOF file dependencies, or on the command line).  The <var>path-name</var>
+and the directory, <var>path-spec</var>, are separated by <code>:</code>, and, therefore,
+<var>path-name</var> cannot contain a colon.  If <var>path-spec</var> is given
+in the file search path form (as in <code>library:mylib(library)</code>), then
+the argument must be quoted to escape the shell's interpretation of the
+parentheses.  <var>path-spec</var> may be <code>.</code> or null, in which case <code>.</code> is assumed.
+
+     <p>There may be a list of path definitions (i.e. <code>-f</code> or <code>-F</code> options) for the same
+<var>path-name</var>. 
+<code>qpc</code> searches the list, just like Prolog, whenever it needs to
+expand a file search path specification.  The <code>-f</code> options appends (like
+assertz in Prolog) the new path to the end of the list of
+paths for <var>path-name</var>, while <code>-F</code> prepends (like asserta in Prolog).
+
+     <p>File search paths may also be defined using asserts in the Prolog source
+being compiled or in initializaiton files (see <code>-i</code>).  The <code>-f</code>, <code>-F</code>, <code>-L</code>, and
+<code>-a</code> options given on the <code>qpc</code> command
+line, and file_search_path and library_directory definitions asserted
+in source files or initialization files, are passed on to <code>qld(1)</code>.
+
+     <br><dt><code>-h</code>
+     <dd>Hides or "locks" the predicates in the file so that they
+are not visible to the debugger.  Such predicates will have
+predicate_property "locked" when they are linked or loaded into a
+Prolog system.
+
+     <br><dt><code>-i </code><var>initialization-file</var><code></code>
+     <dd>Specifies an initialization file. 
+The initialization file may be a source (<code>.pl</code>) or QOF (<code>.qof</code>) file. 
+Currently, source files cannot load foreign code; in other words, they
+cannot contain calls to <code>load_foreign_files/2</code> or <code>load_foreign_executable/1</code>.  The
+definitions in the initialization file apply during the compilation of
+all files specified to the right of the <code>-i</code> switch on the command line. 
+The definitions in the initialization file apply only during compile
+time.  Therefore, no QOF file is generated from an initialization file
+and its content is not included in any of the generated QOF files. 
+The initialization file may be specified in the file search path form
+(eg. <code>-i "library(basics)"</code>).
+
+     <br><dt><code>-o </code><var>output</var><code></code>
+     <dd>Specifies a name for the output file.  If used with
+the <code>-c</code> option, the qof file will be produced into the given file.  In
+this case, there may be several <code>-o</code> options for each qof file. 
+If the <code>-o</code> names a directory, all qof files will be placed
+in the given directory.  If the <code>-c</code> option is not used, the <code>-o</code> is
+passed onto <code>qld(1)</code>.
+
+     <br><dt><code>-p </code><var>path-name</var><code></code>
+     <dd>This option is just passed to <code>qld(1)</code> along with its argument,
+asking <code>qld(1)</code> to print out the file search definition for <var>path-name</var>.
+
+     <br><dt><code>-v</code>
+     <dd>When this option is specified, <code>qpc</code> echoes its activities,
+including the call to <code>qld(1)</code>, to the standard output.  This flag is
+also passed on to <code>qld(1)</code>.
+
+     <br><dt><code>-D</code>
+     <dd>This option is just passed to the linker <code>qld(1)</code> indicating that
+the Quintus Development System should be linked in.
+
+     <br><dt><code>-F </code><var>path-name</var><code>:</code><var>path-spec</var><code></code>
+     <dd>Similar to <code>-f</code>, but the path is added at
+the front of the list
+of paths for <var>path-name</var>.  Note that <code>-F library:library-directory</code> is identical
+to <code>-L library-directory</code>.
+
+     <br><dt><code>-H</code>
+     <dd>Like <code>-h</code> but in this case the hiding (locking) is done also
+to any files that are compiled because of embedded load commands in
+the file.
+
+     <br><dt><code>-L </code><var>library-directory</var><code></code>
+     <dd>
+ File specifications of the form <code>library(</code><var>Filespec</var><code>)</code>
+encountered in embedded load commands are searched for in the
+library search paths.  The initial search
+paths are the same as in the Development System (see <code>prolog(1)</code>). 
+Additional directories may be prepended to the list of library
+search paths with this option. 
+Note that the command line is parsed from left to right.  Also note
+that the <code>-L</code> must be followed by a space; otherwise, <code>qpc</code> assumes that
+the option specifies a library directory for <code>qld</code>.
+
+     <p>Library directories may also be specified with the <code>-f</code> and <code>-F</code> options. 
+library-directory may be a path to a directory (e.g. <code>dir</code>, <code>~/dir</code>) or a
+file search path specification of the form <code>mylib(library)</code>.  In the latter
+case, the path-name <code>mylib</code> must be defined either in the Prolog source
+code being compiled or by <code>-f</code> or <code>-F</code> options.
+
+     <br><dt><code>-M</code>
+     <dd>Specifies that files on the command line are not to be
+compiled if their corresponding QOF files are more recent than they
+are.
+
+     <br><dt><code>-N</code>
+     <dd>Specifies that files specified in embedded load commands
+are not to be compiled.  (By default they would be compiled unless
+their QOF files are already up-to-date.)
+
+     <br><dt><code>-QLD</code>
+     <dd>All remaining options are simply passed to <code>qld(1)</code>.
+
+   </dl>
+
+<h4 class="subheading">Environment</h4>
+
+     <dl>
+
+     <br><dt><code>TMPDIR</code>
+     <dd>Directory for creating temporary files.  The default is
+<code>/usr/tmp</code>
+
+   </dl>
+
+<h4 class="subheading">Files</h4>
+
+     <dl>
+
+     <br><dt><code>a.out</code>
+     <dd>Executable output file
+
+     <br><dt><code>a.qof</code>
+     <dd>Output QOF file if filename is <code>-</code>
+
+     <br><dt><code>file.pl</code>
+     <dd>Prolog source file
+
+     <br><dt><code>file.qof</code>
+     <dd>Quintus QOF file
+
+     <br><dt><code>$TMPDIR/qp*</code>
+     <dd>Compiler temporary files
+
+     <br><dt><code></code><var>runtime-directory</var><code>/qld</code>
+     <dd>QOF link editor
+
+     <br><dt><code></code><var>runtime-directory</var><code>/qcon</code>
+     <dd>QOF consolidator
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>prolog(1)</code>, <code>qcon(1)</code>, <code>qgetpath(1)</code>,
+<code>qld(1)</code>, <code>qnm(1)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="too-too-qplm.html#too-too-qplm">Next</a>
+<li><a rel="previous" accesskey="p" href="too-too-qnm.html#too-too-qnm">Previous</a>
+<li><a rel="up" accesskey="u" href="too-too.html#too-too">Up</a>
+</ul>
+</div>
+   </body></html>
+

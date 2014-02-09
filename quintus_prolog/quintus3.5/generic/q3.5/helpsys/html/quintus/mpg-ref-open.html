@@ -1,0 +1,387 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>open/[3,4]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>open(</code><var>+FileSpec, +Mode, -Stream</var><code>)</code>
+
+   <p><code>open(</code><var>+FileSpec, +Mode, +Options, -Stream</var><code>)</code>
+
+   <p>Creates a Prolog stream by opening the file <var>FileSpec</var>
+in mode <var>Mode</var> with options <var>Options</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>FileSpec</var> <dfn>file_spec</dfn>
+     <dd>a file specification
+(see <a href="ref-fdi.html#ref-fdi">ref-fdi</a>).
+
+     <br><dt><var>Mode</var> <dfn>one of </dfn><code>[read,write,append]</code><dfn></dfn>
+     <dd>an atom specifying the open mode of the target file. 
+One of:
+
+          <dl>
+
+          <br><dt><code>read</code>
+          <dd>open <var>FileSpec</var> for input.
+
+          <br><dt><code>write</code>
+          <dd>open <var>FileSpec</var> for output. 
+A new file is created if <var>FileSpec</var> does not exist. If the file already
+exists, then it is set to empty and its previous contents are lost.
+
+          <br><dt><code>append</code>
+          <dd>opens <var>FileSpec</var> for output.  If <var>FileSpec</var>
+already exists, adds output to the end of it.  If not, a new file is created.
+
+     </dl>
+
+     <br><dt><var>Options</var> <dfn>list</dfn>
+     <dd>a list of zero or more of the following.
+
+          <dl>
+
+          <br><dt><code>text</code>
+          <dd>Specifies that the file stream is a text stream. 
+This sets the line border code to &lt;LFD&gt;, the file border code to
+-1, and turns on trimming. This is the default.
+
+          <br><dt><code>binary</code>
+          <dd>Specifies that the file stream is a binary stream. 
+This sets the line border code to none, the file border code to -1,
+the format to <code>variable</code>, and turns off trimming.
+
+          <br><dt><code>record(</code><var>Size</var><code>)</code>
+          <dd><var>Size</var> is an integer value to
+specify the maximum record (line) size in the file.  This also sets
+the internal buffer size to be used for input/output options on the
+stream to <var>Size</var>.  If <var>Size</var> is 0, the opened stream
+operates in non-buffered mode.  The value of <var>Size</var> should be
+greater than or equal to 0. 
+<br><dt>
+          <dd>
+Under UNIX, the default is 256 for tty streams and 8192 for other stream.
+
+          <br><dt><code>end_of_line(</code><var>EolCode</var><code>)</code>
+          <dd><var>EolCode</var> is an integer value
+to specify the line (record) border code for the stream.  <var>EolCode</var> is
+
+               <dl>
+
+               <br><dt>-1
+               <dd>Indicates there is no line border code.
+
+               <br><dt><var>Charcode</var>
+               <dd>ASCII code for EOL character.  Default = &lt;LFD&gt;
+(ASCII code for &lt;LFD&gt;).
+
+          </dl>
+
+          <br><dt>
+          <dd>
+If an output predicate writes out the character whose code is the
+line border code of the stream, the Prolog system terminates the
+output record according to the format of the stream.
+
+          <br><dt><code>end_of_file(</code><var>EofCode</var><code>)</code>
+          <dd><var>EofCode</var> is an integer value
+to specify the file border code for an input stream.
+
+               <dl>
+
+               <br><dt>-2
+               <dd>Indicates there is no file border code for the stream.  Reading
+at the end of file is same as reading past end of file.
+
+          </dl>
+<br><dt>
+          <dd>
+The file border code is the value to be returned to an input
+predicate when an input stream reaches the end of file. The default
+file border code is -1.
+
+          <br><dt><code>eof_action(</code><var>Action</var><code>)</code>
+          <dd>Specifies what to do for reading past
+end of file.  This option has no effect on an output stream. 
+<var>Action</var> is one of the following.
+
+               <dl>
+
+               <br><dt><code>error</code>
+               <dd>It's an error to read past end of file. 
+This is the default for text binary streams.
+
+               <br><dt><code>eof_code</code>
+               <dd>Return file border code as set in
+<code>end_of_file</code> option for reading past end of file.
+
+               <br><dt><code>reset</code>
+               <dd>Reset the stream and make an attempt to read
+for input past end of file.  This is the default for tty stream.
+
+          </dl>
+
+          <br><dt><code>overflow(</code><var>OvAction</var><code>)</code>
+          <dd>Specifies what to do when output
+overflows the current record size.  This option
+has no effect on an input stream.  <var>OvAction</var> is one of the following.
+
+               <dl>
+
+               <br><dt><code>error</code>
+               <dd>It's an error.
+
+               <br><dt><code>truncate</code>
+               <dd>Discard the overflow characters.
+
+               <br><dt><code>flush</code>
+               <dd>Write out the overflow partial record (line). 
+No characters are discarded.  This is the default under
+UNIX and Windows.
+
+          </dl>
+
+          <br><dt><code>seek(SeekOption)</code>
+          <dd>Request seeking method that will
+be performed on the file.  <var>SeekOption</var> is defined as follows:
+
+               <dl>
+
+               <br><dt><code>error</code>
+               <dd>It's an error to issue a seeking command on
+the stream.  This is the default for a tty stream.
+
+               <br><dt><code>previous</code>
+               <dd>The seeking request will be made only to
+a previous input/output position.  <code>stream_position/3</code> is the only
+predicate that can be used to seek on the stream.  This is the default
+for both text and binary streams.
+
+               <br><dt><code>byte</code>
+               <dd>Seeking to an arbitrary byte position on the
+stream.  This option also permits <code>seek(previous)</code>. 
+Both <code>stream_position/3</code> and <code>seek/4</code> work on the stream.
+
+               <br><dt><code>record</code>
+               <dd>Seeking to the beginning of an arbitrary
+record in the file stream.  This option is not available under UNIX or Windows.
+
+          </dl>
+
+          <br><dt><code>flush(</code><var>FlushType</var><code>)</code>
+          <dd>Request flushing method for an output
+stream.  This option has no effect on an input stream.  It can be one of the
+following.
+
+               <dl>
+
+               <br><dt><code>error</code>
+               <dd>It's an error to try to flush an output stream.
+
+               <br><dt><code>flush</code>
+               <dd>Write out all the characters buffered.  This is
+the default under UNIX and Windows.
+
+          </dl>
+
+          <br><dt><code>trim</code>
+          <dd>Turns on the trimming on the file stream. 
+Trimming means that trailing blanks are deleted in input records. The
+default is no trimming. See <code>format</code> below.
+
+          <br><dt><code>system(</code><var>SysAttrs</var><code>)</code>
+          <dd>This option is provided to allow extensions.
+
+               <dl>
+
+               <br><dt><var>SysAttrs</var>
+               <dd>
+ must be
+an atom and is passed to the <code>QU_open()</code> function, which can be
+redefined by the user. The default version of <code>QU_open()</code> will report an
+error, causing a <code>permission_error</code> to be raised, if system(<var>SysAttrs</var>)
+is specified.
+
+          </dl>
+
+          <br><dt><code>format(</code><var>Format</var><code>)</code>
+          <dd>Specifies the file format
+(see <a href="fli-ios-sst-fmt.html#fli-ios-sst-fmt">fli-ios-sst-fmt</a>). 
+For Prolog
+running under UNIX and Windows, the default format is <code>format(delimited(lf))</code>
+for text stream, <code>format(variable)</code> for binary stream, and
+<code>format(delimited(tty))</code> for tty file. Users will not
+normally need to use the <code>format(</code><var>Format</var><code>)</code> options directly. 
+<var>Format</var> is one of:
+
+               <dl>
+
+               <br><dt><code>variable</code>
+               <dd>Each record in the file has its own
+length.  There are no delimiter characters between records.  The
+Prolog system removes the trailing blank characters for each input
+record it reads if the <code>trim</code> option is set.
+
+               <br><dt><code>delimited(lf)</code>
+               <dd>For an application program's point of view,
+a single &lt;LFD&gt; (ASCII code 10) terminates each record in the
+file. Under Windows, however, what's actually stored in the file is
+the sequence &lt;RET&gt;&lt;LFD&gt;.
+
+               <br><dt><code>delimited(tty)</code>
+               <dd><var>FileSpec</var> is a terminal device, a
+pseudo-terminal device, or a terminal emulator.  The Prolog
+input/output system treats this format like <code>QP_DELIM_LF</code> as far
+as record termination is concerned.
+
+          </dl>
+
+          <br><dt>
+          <dd>If one of these delimiters is specified, the Prolog system removes
+        the delimiter characters at the end of record for input. The line
+        border code (specified by <code>end_of_line</code> option) is returned
+        instead as the character code at the end of the record.  Prolog system
+        also puts delimiter characters at the end of record when a record is
+        written out.
+
+     </dl>
+<br><dt>
+     <dd>
+When no format has been specified, the format is
+decided as follows: if there is no line border code and trimming is
+off, then <code>format(variable)</code> is used; otherwise <code>format(delimited(lf))</code> is
+used.
+
+     <br><dt><var>Stream</var>
+     <dd><dfn>stream_object</dfn> the resulting opened Prolog stream.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>open/3</code> is equivalent to <code>open/4</code> with <var>Options</var>=<code>[]</code>.
+
+   <p><code>open/4</code> is designed to work on various file systems under
+different operating systems.
+
+   <p><var>Stream</var> is used as an argument to Prolog input and output
+predicates.
+
+   <p><var>Stream</var> can also be converted to the corresponding foreign
+representation through <code>stream_code/2</code> and used in foreign code to
+perform input/output operations.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>domain_error</code>
+     <dd>
+   <var>Mode</var> is not one of <code>read</code>, <code>write</code> or <code>append</code>. 
+   <var>Options</var> has an undefined option or an element in <var>Options</var>
+is out of the domain of the option.
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+   <var>FileSpec</var> or <var>Mode</var> is not instantiated. 
+   <var>Options</var> argument is not ground.
+
+     <p><code>type_error</code>
+<br><dt>
+     <dd>
+   <var>FileSpec</var> or <var>Mode</var> is not an atom type. 
+   <var>Options</var> is not a list type or an element in <var>Options</var>
+   is not a correct type for open options.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+   The specified <var>FileSpec</var> does not exist.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+   Can not open <var>FileSpec</var> with specified <var>Mode</var> and <var>Options</var>.
+
+     <br><dt><code>resource_error</code>
+     <dd>
+   There are too many files opened.
+
+   </dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>If an option is specified more than once the rightmost option takes
+precedence.
+
+   <p>Prolog streams are in general classified as tty streams, text streams,
+or binary streams.  A Prolog stream is a tty stream if the format of
+the stream is set to <code>format(delimited(tty))</code>, or if no format is
+specified and <var>FileSpec</var> refers to a terminal (decided by the function
+<code>isatty(3)</code>).  Prolog provides a special service to print prompts for a
+tty input stream.  A text stream corresponds to a text file.  The
+Prolog system removes the control characters of the text stream.  A
+binary stream is a stream of bytes; the <em>Prolog system</em> returns the
+actual characters stored in the file.  Specifying <code>binary</code> or
+<code>text</code> along with <code>trim</code> and <code>end_of_line</code> options will
+result in a hybrid of binary and text streams.
+
+   <p>Defaults are provided for <var>Options</var> in <code>QU_stream_param()</code>
+function.  This description is based on those input/output defaults.
+
+   <p><var>Format</var> is seldom set by the user.  It is only
+useful in case the user has redefined <code>QU_open()</code>.
+
+<h4 class="subheading">Examples</h4>
+
+     <ol type=1 start=1>
+
+     <li>Opening a stream that behaves like a C standard I/O stream without
+maintaining correct line count and line position.
+     <pre class="example">          open(FileSpec, Mode, [binary, seek(byte),
+                  eof_action(eof_code)], Stream).
+          </pre>
+
+     <li>Opening a non-buffered stream
+     <pre class="example">               open(FileSpec, Mode, [record(0)], Stream).
+          </pre>
+
+     <li>On UNIX systems, if <var>FileSpec</var> is <code>/dev/tty</code>, it means that the file is the default tty for the Prolog system.  Terminal is used interactively.
+        </ol>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>open_null_stream/1</code>, <code>close/1</code>,
+<code>QP_prepare_stream/[3,4]</code> <code>QP_fopen()</code>, <code>QP_fdopen()</code>,
+<code>QU_open()</code>
+
+   <a href="fli-emb-how-iou.html#fli-emb-how-iou">fli-emb-how-iou</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-open_null_stream.html#mpg-ref-open_null_stream">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-op.html#mpg-ref-op">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

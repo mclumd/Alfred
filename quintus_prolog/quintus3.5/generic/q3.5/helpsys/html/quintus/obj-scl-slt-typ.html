@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Types</h5>
+
+   <p>A slot's type restricts the kinds of values it may contain. The slot
+is specified in the slot description by one of the following Prolog
+terms with the corresponding meaning.  Most of these will be
+familiar, but the last four, <code>address</code>, <code>term</code>, <var>Class</var> and
+<code>pointer(</code><var>Type</var><code>)</code>, require some additional explanation:
+
+     <dl>
+
+     <br><dt><b>Type</b>
+     <dd><b>Description</b>
+
+     <br><dt><code>integer</code>
+     <dd>32-bit signed integer
+
+     <br><dt><code>short</code>
+     <dd>16-bit signed integer
+
+     <br><dt><code>char</code>
+     <dd>8-bit signed integer
+
+     <br><dt><code>unsigned_short</code>
+     <dd>16-bit unsigned integer
+
+     <br><dt><code>unsigned_char</code>
+     <dd>8-bit unsigned integer
+
+     <br><dt><code>float</code>
+     <dd>32-bit floating point number
+
+     <br><dt><code>double</code>
+     <dd>64-bit floating point number
+
+     <br><dt><code>atom</code>
+     <dd>Prolog atom (32-bit pointer)
+
+     <br><dt><code>address</code>
+     <dd>32-bit address
+
+     <p>The address type is intended for use with foreign code. 
+A slot of this type might store an address returned from
+a foreign function. That address might, in turn, be used
+in calling another foreign function or with the
+<code>assign/2</code> predicate or with arithmetic operators such
+as <code>integer_at</code>. Hence, most Prolog programmers can
+safely ignore this type.
+
+     <br><dt><code>term</code>
+     <dd>Prolog term
+
+     <p>The term type is for general Prolog terms. Such a slot
+can hold any of the other types. However, if you know
+a slot will be used to hold only values of a particular
+type, it is more efficient to specify that type in the class
+definition.
+
+     <p>Storing a term containing free variables is similar to
+asserting a clause containing free variables into the
+Prolog database. The free variables in the term are replaced
+with new variables in the stored copy. And, when you
+fetch the term from the slot, you are really fetching a
+copy of the term, again with new variables.
+
+     <br><dt><var>Class</var>
+     <dd>where <var>Class</var> is the name of a defined class
+
+     <p>The class type is for any object in a class defined with
+Quintus Objects. Such a slot holds an object of its class
+or one of that class's descendants, or the <code>null</code> object (see
+<a href="obj-scl-slt-null.html#obj-scl-slt-null">obj-scl-slt-null</a>).
+
+     <br><dt><code>pointer(</code><var>Type</var><code>)</code>
+     <dd>where <var>Type</var> is an atom
+
+     <p>The pointer type is intended for use with the Structs Package, ProXT
+or ProXL.  It is similar to the <code>address</code> type, except that access to this
+slot yields, and update to this slot expects, a term of arity 1 whose
+functor is Type and whose argument is the address. Again, most Prolog
+programmers can safely ignore this type. 
+</dl>
+
+   <p>Please note that there is no <code>unsigned_int</code> or <code>unsigned_long</code>
+type, because Prolog itself currently cannot represent such a number. 
+You should represent such numbers as type <code>integer</code> with care. 
+Arithmetic operations on unsigned integers represented this way will
+work as expected, however comparisons will not!  This is inherent in
+using Prolog to manipulate 32 bit unsigned numbers in general; it is
+not specific to Quintus Objects.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-scl-slt-ini.html#obj-scl-slt-ini">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-scl-slt-vis.html#obj-scl-slt-vis">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-scl-slt.html#obj-scl-slt">Up</a>
+</ul>
+</div>
+   </body></html>
+

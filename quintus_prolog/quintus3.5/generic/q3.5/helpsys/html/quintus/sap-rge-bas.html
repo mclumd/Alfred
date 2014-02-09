@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Introduction</h4>
+
+   <p>The purpose of the Runtime Generator is to provide a convenient and
+cost-effective way to distribute Prolog application programs to
+end-users.  Initially a Prolog application should be developed using
+the Development System.  The Development System allows the application
+developer to load, run, modify and debug programs interactively,
+without having to leave the environment.  When an application program
+has been completed, the Runtime Generator product allows a developer
+to create a production version of the application, ready to be shipped
+to end-users.  This version of the application is called a
+<dfn>runtime system</dfn>.
+
+   <p>The important points to note about runtime systems are:
+     <ol type=1 start=1>
+
+     <li>They can easily be deployed, because they do not require any
+authorization codes in order to run. 
+<li>They are smaller than programs built on top of the Development System, since
+they do not include program development features such as the compiler, the
+debugger and the Emacs interface
+        </ol>
+
+   <p>The process of building a runtime system is almost identical to the
+process of building a <dfn>stand-alone program</dfn> with the Development
+System, and both of these processes are documented in
+<a href="sap-srs.html#sap-srs">sap-srs</a>.  The compiler <code>qpc</code> is used to compile
+your Prolog source files into Quintus Object Format (QOF) files, and
+these are then linked together using the link editor <code>qld</code>. 
+Both <code>qpc</code> and <code>qld</code> require a <code>-D</code>
+command-line option when building a stand-alone program; the
+default is to build a runtime system.
+
+   <p>It is recommended that before turning an application program into a runtime
+system you first build it as a stand-alone program.  This way, if there are any
+problems, you will have the debugger available to help you eliminate them.
+
+   <p>Once you have built a stand-alone program, it should be very easy to rebuild
+the application as a runtime system.  This section describes the few
+points that may need to be considered in making this transition:
+     <ol type=1 start=1>
+
+     <li>Some built-in predicates are not available in runtime systems, since they
+are intended for use in program development rather than for use in application
+programs.  See <a href="sap-rge-dspn.html#sap-rge-dspn">sap-rge-dspn</a>. 
+<li>Runtime systems do not have the normal Prolog top level.  Instead, you
+must specify a starting point for the program by defining the
+predicate <code>runtime_entry/1</code>.  This predicate also allows you to
+specify what is to be done after an abort occurs.  See
+<a href="sap-rge-pro.html#sap-rge-pro">sap-rge-pro</a>. 
+<li>Runtime systems have different default behavior on a <kbd>^C</kbd>
+interrupt.  Instead of giving the user a set of choices, the system
+immediately aborts. See <a href="sap-rge-iha.html#sap-rge-iha">sap-rge-iha</a>. 
+<li>   If your runtime system contains dependencies on "non-standard" shared
+   libraries, or on one or more shared object files (specified in calls to
+   <code>load_foreign_executable/1</code>), then in order to be able to deliver the
+   runtime system to a different machine you will need either
+
+          <ol type=a start=1>
+
+          <li>   to make the system completely self-contained
+   by replacing the shared object files and libraries with equivalent archive
+   files when building it; or
+<li>   to ensure that all necessary shared libraries and shared object files
+   are available on the target machine.
+
+          </ol>
+
+     <p>See <a href="sap-rge-sos.html#sap-rge-sos">sap-rge-sos</a> for more information on this issue.
+        </ol>
+
+   <p>Another difference between runtime systems and programs running under the
+Development System is that runtime systems suppress informative error messages,
+on the basis that such messages are intended for the application developer, not
+the application user.  For example, if a runtime system consults a file, no
+message is printed to the screen to indicate this.  If you wanted some such
+message to appear at runtime, you would have to program it yourself.
+
+   <p>Error messages are not suppressed, however.  If you want to suppress
+the printing of some (or all) error messages you can do it by
+providing a definition for the predicate <code>message_hook/3</code>.  See
+<a href="ref-msg-umf-ipm.html#ref-msg-umf-ipm">ref-msg-umf-ipm</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-rge-dspn.html#sap-rge-dspn">Next</a>
+<li><a rel="up" accesskey="u" href="sap-rge.html#sap-rge">Up</a>
+</ul>
+</div>
+   </body></html>
+

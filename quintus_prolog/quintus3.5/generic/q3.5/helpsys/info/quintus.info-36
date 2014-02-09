@@ -1,0 +1,1435 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxl-ev-spec-mev1,  Next: pxl-ev-spec-mev2,  Prev: pxl-ev-spec-ev2,  Up: pxl-ev-spec
+
+Multiple events selected by a single mask
+.........................................
+
+   In this case, there is a whole family of events that are selected by
+a single mask, `substructure_redirect'. By registering a callback for
+one you will also get the others.
+
+   These events are typically selected by the Window Manager to
+intercept and modify top level window requests according to its
+policies.
+
+   Circulate Request Event.  The server generates a `circulate_request'
+event when there is any attempt to change the stacking order of a
+window.  Specify with:
+     circulate_request
+
+   Configure Request Event.  The server generates a `configure_request'
+event when there is any attempt to change the configuration of a window.
+Specify with:
+     configure_request
+
+   Map Request Event.  The server generates a `map_request' event when
+the functions `map_raised' and `map_window' are called, so mapping
+attempts can be intercepted.  Specify with:
+     map_request
+
+
+File: quintus.info,  Node: pxl-ev-spec-mev2,  Next: pxl-ev-spec-sev2,  Prev: pxl-ev-spec-mev1,  Up: pxl-ev-spec
+
+Multiple events selected by different masks
+...........................................
+
+   Two different masks, `structure_notify' and `substructure_notify'
+select essentially the same set of events, except that in the first
+case, the user gets the events that occur in the Window and in the
+second, the events that occur in its subwindows.
+
+   To accommodate this, the event specification has an extra argument,
+whose value is either `self' or `child'. If omitted, it defaults to
+`self', except for the case of `create_notify' as explained below.
+
+   Remember that registering a callback for any of these events means
+that the Window will also be getting the others.
+
+   Circulate Notify Event.  The server generates a `circulate_notify'
+event when a window is restacked.
+
+   To receive this event when the window itself is affected, specify
+either:
+     circulate_notify
+     circulate_notify(self)
+
+   To receive this event when a child window is affected, specify:
+     circulate_notify(child)
+
+   Configure Notify Event.  The server generates a `configure_notify'
+event when there is any change to a window's configuration, i.e.
+position, size, etc.
+
+   To receive this event when the window itself is affected, specify
+either:
+     configure_notify
+     configure_notify(self)
+
+   To receive this event when a child window is affected, specify:
+     configure_notify(child)
+
+   Destroy Notify Event.  The server generates a `destroy_notify' event
+when a window is destroyed.
+
+   To receive this event when the window itself is affected, specify
+either:
+     destroy_notify
+     destroy_notify(self)
+
+   To receive this event when a child window is affected, specify:
+     destroy_notify(child)
+
+   Gravity Notify Event.  The server generates a `gravity_notify' event
+when a window is moved because its parent's size changed.
+
+   To receive this event when the window itself is affected, specify
+either:
+     gravity_notify
+     gravity_notify(self)
+
+   To receive this event when a child window is affected, specify:
+     gravity_notify(child)
+
+   Map Notify Event.  The server generates a `map_notify' event when a
+window changes state from unmapped to mapped.
+
+   To receive this event when the window itself is affected, specify
+either:
+     map_notify
+     map_notify(self)
+
+   To receive this event when a child window is affected, specify:
+     map_notify(child)
+
+   Unmap Notify Event.  The server generates an `unmap_notify' event
+when a window changes state from mapped to unmapped.
+
+   To receive this event when the window itself is affected, specify
+either:
+     unmap_notify
+     unmap_notify(self)
+
+   To receive this event when a child window is affected, specify:
+     unmap_notify(child)
+
+   Reparent Notify Event.  The server generates a `reparent_notify'
+event when the parent of a window changes.
+
+   To receive this event when the window itself is affected, specify
+either:
+     reparent_notify
+     reparent_notify(self)
+
+   To receive this event when a child window is affected, specify:
+     reparent_notify(child)
+
+   Create Notify Event.  The server generates a `create_notify' event
+when a window is created.  A newly created window does not receive this
+event, its parent does.  Specify with either:
+     create_notify
+     create_notify(child)
+
+
+File: quintus.info,  Node: pxl-ev-spec-sev2,  Next: pxl-ev-spec-asel,  Prev: pxl-ev-spec-mev2,  Up: pxl-ev-spec
+
+Single events selected by multiple masks
+........................................
+
+   The `motion_notify' event is selected by a number of masks, including
+the `motion_hint' mask (1).
+
+   In ProXL they are separated into two different specifications, which
+are mutually exclusive.
+
+   Motion Notify Event.  In this case, the server will steadily
+generate `motion_notify' events while the mouse is moving, or the
+program warps it, but only if the motion of the pointer begins and ends
+in the same window. The number of events generated can easily overwhelm
+your application, if it has to do any significant amount of computation
+for each one.
+
+   If specified without options, the events will be generated
+independently of the state of the mouse buttons:
+     motion_notify
+
+   To specify mouse movements only while any of a particular set of
+mouse buttons are pressed, use:
+     motion_notify(+BUTTONLIST)
+
+   Where BUTTONLIST is a list that can contain the integers `1' to `5'.
+As a special case, the empty list degenerates into the first
+specification.
+
+   Motion Notify Hint Event.  In this case, the server will generate
+only one `motion_notify' event to let your application know that the
+mouse pointer moved. You have to explicitly query the pointer using
+`get_pointer_attributes' to find out where the mouse pointer ended up.
+
+   If specified without options, the event will be generated
+independently of the state of the mouse buttons:
+     motion_notify_hint
+
+   To specify mouse movement only while any of a particular set of mouse
+buttons are pressed, use:
+     motion_notify_hint(+BUTTONLIST)
+
+   Where BUTTONLIST is a list that can contain the integers `1' to `5'.
+As a special case, the empty list degenerates into the first
+specification.
+
+   ---------- Footnotes ----------
+
+   (1) Specifies that the user is only interested in knowing when there
+has been a movement, but does not need to know the complete path of the
+mouse pointer
+
+
+File: quintus.info,  Node: pxl-ev-spec-asel,  Prev: pxl-ev-spec-sev2,  Up: pxl-ev-spec
+
+Events that are always selected
+...............................
+
+   This category includes all the events that X11 will send to your
+application, regardless of whatever you want them or not. Well behaved
+programs must be able to handle them appropriately.
+
+   Mapping Notify Event.  The server generates a `mapping_notify' event
+when any of the following are changed by another client:
+   * The mapping between keyboard "keycodes" and "keysyms".
+
+   * The mapping between physical modifier keys and logical modifiers.
+
+   * The mapping between physical mouse buttons and logical buttons.
+
+   ProXL handles the necessary adjustments to your environment
+automatically, but you should be aware that it has changed. Specify
+with:
+     mapping_notify
+
+   Client Message Event.  A `client_message' event is generated when
+clients use `send_event', to communicate with your application.
+Specify with:
+     client_message
+
+   Selection Clear Event.  The server generates a `selection_clear'
+event when a new owner is defined for a property. The current owner of
+the selection gets this event.  Specify with:
+     selection_clear
+
+   Selection Notify Event.  A `selection_notify' event is sent by a
+client, not the server. The owner of a selection sends it to a
+requester to announce that the selection has been converted to the
+appropriate format and stored as a property, or that the conversion
+could not be performed.
+
+   Specify with:
+     selection_notify
+
+   Selection Request Event.  A `selection_request' event is generated
+when another client requests the selection owned by the window.
+
+   Specify with:
+     selection_request
+
+
+File: quintus.info,  Node: pxl-ev-fld,  Next: pxl-ev-act,  Prev: pxl-ev-spec,  Up: pxl-ev
+
+Event Fields
+------------
+
+* Menu:
+
+* pxl-ev-fld-but::                      button_press and button_release Events
+* pxl-ev-fld-cnot::                     circulate_notify Event
+* pxl-ev-fld-creq::                     circulate_request Event
+* pxl-ev-fld-cm::                       client_message Event
+* pxl-ev-fld-cmnot::                    colormap_notify Event
+* pxl-ev-fld-cnfnot::                   configure_notify Event
+* pxl-ev-fld-cnfreq::                   configure_request Event
+* pxl-ev-fld-crenot::                   create_notify Event
+* pxl-ev-fld-desnot::                   destroy_notify Event
+* pxl-ev-fld-elnot::                    enter_notify and leave_notify Events
+* pxl-ev-fld-exp::                      expose Event
+* pxl-ev-fld-foc::                      focus_in and focus_out Events
+* pxl-ev-fld-grexp::                    graphics_expose Event
+* pxl-ev-fld-noexp::                    no_expose Event
+* pxl-ev-fld-grav::                     gravity_notify Event
+* pxl-ev-fld-keynot::                   keymap_notify Event
+* pxl-ev-fld-key::                      key_press and key_release Events
+* pxl-ev-fld-mapnot::                   map_notify Event
+* pxl-ev-fld-unmapnot::                 unmap_notify Event
+* pxl-ev-fld-mapgnot::                  mapping_notify Event
+* pxl-ev-fld-mapreq::                   map_request Event
+* pxl-ev-fld-motnot::                   motion_notify Event
+* pxl-ev-fld-propnot::                  property_notify Event
+* pxl-ev-fld-repnot::                   reparent_notify Event
+* pxl-ev-fld-reszreq::                  resize_request Event
+* pxl-ev-fld-selclr::                   selection_clear Event
+* pxl-ev-fld-selnot::                   selection_notify Event
+* pxl-ev-fld-selreq::                   selection_request Event
+* pxl-ev-fld-visnot::                   visibility_notify Event
+* pxl-ev-fld-def::                      default Event
+
+   Callbacks can optionally specify a list of field values that are to
+be unified with the contents of the X11 event record, and/or used as
+arguments to the callback goal. ProXL handles all the conversion
+between the C objects and data structures that the X server delivers,
+and the Prolog objects and data structures that your callback is given.
+Thus, your application is given symbolic atoms instead of numbers
+whenever possible, and furthermore, it is safe for your application to
+assert these objects in the data base.
+
+   This section describes the field specifications that can be used for
+each event and the possible values that these values can take. See the
+X11 documentation for more details on what individual values mean.
+
+
+File: quintus.info,  Node: pxl-ev-fld-but,  Next: pxl-ev-fld-cnot,  Up: pxl-ev-fld
+
+`button_press' and `button_release' Events
+..........................................
+
+   The fields that can be unified in `button_press' and
+`button_release' events are:
+  1. `type(T)' unifies T with either, `button_press' or
+     `button_release', depending on the event.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of:
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window that the event is
+     reported to.
+
+  6. `root(R)' unifies R with the root ProXL Window that the event
+     occurred under.
+
+  7. `subwindow(S)' unifies S with the child ProXL window where the
+     event occurred or `none'If the event occurred in the window itself.
+
+  8. `time(T)' unifies T with the server time, in milliseconds, when
+     the event occurred.
+
+  9. `x(X)' unifies X with the x pointer coordinate, relative to the
+     window origin.
+
+ 10. `y(Y)' unifies Y with the y pointer coordinate, relative to the
+     window origin.
+
+ 11. `position(X, Y)' unifies X and Y with the pointer x and y
+     coordinates, respectively, relative to the window origin.
+
+ 12. `x_root(X)' unifies X with the x coordinate, relative to the root
+     window origin.
+
+ 13. `y_root(Y)' unifies Y with the y coordinate, relative to the root
+     window origin.
+
+ 14. `root_position(X, Y)' unifies X and Y with the x and y
+     coordinates, respectively, relative to the root window origin.
+
+ 15. `state(BUTTONS, MODIFIERS)' unifies BUTTONS with a term of the
+     form:
+
+          buttons(B1, B2, B3, B4, B5)
+
+     where each argument of the term is unified with the state of the
+     corresponding pointer button just before the event, and has the
+     value `up' or `down'.
+
+     Unifies MODIFIERS with a term of the form:
+
+          modifiers(SHIFT, CONTROL, LOCK,
+                    MOD1, MOD2, MOD3, MOD4, MOD5)
+
+     where each argument of the term is unified with the state of the
+     corresponding modifier key just before the event, and has the value
+     `up' or `down'.
+
+ 16. `button(B)' unifies B with an integer between `1' and `5'
+     corresponding to the button that changed state.
+
+ 17. `same_screen(B)' unifies B, a boolean value, with one of
+    `true'
+          If the mouse pointer is currently on the same screen as the
+          window receiving the event.
+
+    `false'
+          If the mouse pointer was actively grabbed by a client, before
+          the automatic grab could take place.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-cnot,  Next: pxl-ev-fld-creq,  Prev: pxl-ev-fld-but,  Up: pxl-ev-fld
+
+`circulate_notify' Event
+........................
+
+   The fields that can be unified in `circulate_notify' events are:
+  1. `type(T)' unifies T with `circulate_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of:
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `event(E)' unifies E with the ProXL Window receiving the event.
+
+  6. `window(W)' unifies W with the ProXL Window that was restacked.
+     This can be the same as the window receiving the event, or one of
+     its children.
+
+  7. `place(P)' unifies P with one of
+    `on_top'
+          If the window was raised to the top of the stack
+
+    `on_bottom'
+          If the window was placed at the bottom of the stack
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-creq,  Next: pxl-ev-fld-cm,  Prev: pxl-ev-fld-cnot,  Up: pxl-ev-fld
+
+`circulate_request' Event
+.........................
+
+   The fields that can be unified in `circulate_request' events are:
+  1. `type(T)' unifies T with `circulate_request'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `parent(P)' unifies P with the parent ProXL Window of the window
+     being restacked. This is the window that selected the event.
+
+  6. `window(W)' unifies W with the ProXL Window that is being
+     restacked.
+
+  7. `place(P)' unifies P with one of
+    `on_top'
+          If the window was raised to the top of the stack
+
+    `on_bottom'
+          If the window was placed at the bottom of the stack
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-cm,  Next: pxl-ev-fld-cmnot,  Prev: pxl-ev-fld-creq,  Up: pxl-ev-fld
+
+`client_message' Event
+......................
+
+   The fields that can be unified in `client_message' events are:
+  1. `type(T)' unifies T with `client_message'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window receiving the event.
+
+  6. `message_type(M)' unifies M with a ProXL Atom that specifies to the
+     receiving client how to interpret the data.
+
+  7. `format(F)' unifies F with one of the integers `8', `16' or `32'
+     to specify the format of the data.
+
+  8. `data(D)' unifies D with a list of the data sent in the event.
+     This will be one of:
+    A list of 20 C `char' elements
+          If the format is `8'.
+
+    A list of 10 C `short' elements
+          If the format is `16'.
+
+    A list of 20 C `int' elements
+          If the format is `32'.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-cmnot,  Next: pxl-ev-fld-cnfnot,  Prev: pxl-ev-fld-cm,  Up: pxl-ev-fld
+
+`colormap_notify' Event
+.......................
+
+   The fields that can be unified in `colormap_notify' events are:
+  1. `type(T)' unifies T with `colormap_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window whose associated
+     colormap or attribute changes.
+
+  6. `colormap(C)' unifies C with the ProXL Colormap being installed or
+     the constant `none' if the Colormap was destroyed.
+
+  7. `new(N)' unifies N, a boolean value, with one of
+    `true'
+          If the `colormap' attribute has been changed.
+
+    `false'
+          If the colormap is installed or uninstalled.
+
+  8. `state(S)' unifies S with one of
+    `installed'
+          If the colormap is installed.
+
+    `uninstalled'
+          If the colormap is uninstalled.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-cnfnot,  Next: pxl-ev-fld-cnfreq,  Prev: pxl-ev-fld-cmnot,  Up: pxl-ev-fld
+
+`configure_notify' Event
+........................
+
+   The fields that can be unified in `configure_notify' events are:
+  1. `type(T)' unifies T with `configure_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `event(E)' unifies E with the ProXL Window that selected the event.
+
+  6. `window(W)' unifies W with the ProXL Window whose configuration
+     has changed.
+
+  7. `x(X)' unifies X with the x coordinate, relative to the window's
+     parent origin.
+
+  8. `y(Y)' unifies Y with the y coordinate, relative to the window's
+     parent origin.
+
+  9. `position(X, Y)' unifies X and Y with the x and y coordinates
+     respectively, relative to the window's parent origin.
+
+ 10. `width(W)' unifies W with the width in pixels of the window.
+
+ 11. `height(H)' unifies H with the height in pixels of the window.
+
+ 12. `size(W, H)' unifies W and H with the width and height in pixels,
+     respectively, of the window.
+
+ 13. `border_width(W)' unifies W with the width of the window's border
+     in pixels.
+
+ 14. `above(A)' unifies A with the sibling ProXL Window that the window
+     is immediately on top of, or the constant `none' if the window is
+     on the bottom of the stack with respect to its siblings.
+
+ 15. `override_redirect(B)' unifies B with the boolean value of the
+     window's `override_redirect' attribute, one of:
+    `true'
+          If the client wants the window to be exempt from interception
+          of the request by the Window Manager.
+
+    `false'
+          If the Window Manager is allowed to modify the request.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-cnfreq,  Next: pxl-ev-fld-crenot,  Prev: pxl-ev-fld-cnfnot,  Up: pxl-ev-fld
+
+`configure_request' Event
+.........................
+
+   The fields that can be unified in `configure_request' events are:
+  1. `type(T)' unifies T with `configure_request'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `parent(P)' unifies P with the ProXL Window that is the parent of
+     the window being reconfigured. This is the window that selected
+     the event.
+
+  6. `window(W)' unifies W with the ProXL Window being reconfigured.
+
+  7. `x(X)' unifies X with one of :
+    An integer
+          The requested x coordinate value, relative to the window's
+          parent origin.
+
+    `none'
+          If no value was specified by the requestor.
+
+  8. `y(Y)' unifies Y with one of:
+    An integer
+          The requested y coordinate value, relative to the window's
+          parent origin.
+
+    `none'
+          If no value was specified by the requestor.
+
+  9. `position(X, Y)' unifies X and Y with:
+    An integer
+          The requested coordinate value, respectively, relative to the
+          window's parent origin.
+
+    `none'
+          If no value was specified by the requestor.
+
+ 10. `width(W)' unifies W with one of:
+    An integer
+          The requested width value of the window, in pixels.
+
+    `none'
+          If no value was specified by the requestor.
+
+ 11. `height(H)' unifies H with one of:
+    An integer
+          The requested height value of the window, in pixels.
+
+    `none'
+          If no value was specified by the requestor.
+
+ 12. `size(W, H)' unifies W and H with:
+    An integer
+          The requested width and height values, respectively, in
+          pixels.
+
+    `none'
+          If no value was specified by the requestor.
+
+ 13. `border_width(W)' unifies W with one of:
+    An integer
+          The requested width value of the window's border, in pixels.
+
+    `none'
+          If no value was specified by the requestor.
+
+ 14. `above(A)' unifies A with one of:
+    A Window
+          The sibling ProXL Window to be used for the requested
+          re-stacking operation.
+
+    `none'
+          If the requestor, either specified `none' as the sibling
+          window, or did not specify it.
+
+ 15. `detail(D)' unifies D with one of:
+    `above'
+          If the window requests to be placed above the given sibling,
+          or at the top of the stack (in this case, sibling must be
+          `none').
+
+    `below'
+          If the window requests to be placed just below the given
+          sibling, or at the bottom of the stack (in this case, sibling
+          must be `none').
+
+    `top_if'
+          If the window requests to be placed at the top of the stack
+          if the given sibling obscures it. A value of `none' for
+          sibling means any sibling.
+
+    `bottom_if'
+          If the window requests to be placed at the bottom of the
+          stack if it obscures the given sibling. A value of `none' for
+          sibling means any sibling.
+
+    `opposite'
+          If the window requests to be placed at the top of the stack
+          if the given sibling obscures it, or at the bottom of the
+          stack if it obscures the given sibling. A value of `none' for
+          sibling means any sibling.
+
+    `none'
+          If no value was specified by the requestor.
+
+ 16. `value_mask(V)' unifies V with a list of the fields in original
+     request that were specified. The values that it can contain are
+     `x, y, width, height, border_width, sibling, stack_mode'.
+
+
+File: quintus.info,  Node: pxl-ev-fld-crenot,  Next: pxl-ev-fld-desnot,  Prev: pxl-ev-fld-cnfreq,  Up: pxl-ev-fld
+
+`create_notify' Event
+.....................
+
+   The fields that can be unified in `create_notify' events are:
+  1. `type(T)' unifies T with `create_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `parent(P)' unifies P with the parent ProXL Window of the created
+     window.
+
+  6. `window(W)' unifies W with the ProXL Window just created.
+
+  7. `x(X)' unifies X with the x coordinate of the created window,
+     relative to its parent.
+
+  8. `y(Y)' unifies Y with the y coordinate of the created window,
+     relative to its parent.
+
+  9. `position(X, Y)' unifies X and Y with the x and y coordinates,
+     respectively, of the created window, relative to its parent.
+
+ 10. `width(W)' unifies W with the width in pixels of the window.
+
+ 11. `height(H)' unifies H with the height in pixels of the window.
+
+ 12. `size(W, H)' unifies W and H with the width and height in pixels,
+     respectively, of the window.
+
+ 13. `border_width(W)' unifies W with the width of the window's border
+     in pixels.
+
+ 14. `override_redirect(B)' unifies B with the boolean value of the
+     `override_redirect' attribute of the window, one of:
+    `true'
+          If the client wants the window to be exempt from interception
+          of the request by the Window Manager.
+
+    `false'
+          If the Window Manager is allowed to modify the request.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-desnot,  Next: pxl-ev-fld-elnot,  Prev: pxl-ev-fld-crenot,  Up: pxl-ev-fld
+
+`destroy_notify' Event
+......................
+
+   The fields that can be unified in `destroy_notify' events are:
+  1. `type(T)' unifies T with `destroy_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `event(E)' unifies E with the ProXL Window that selected the event.
+
+  6. `window(W)' unifies W with the Window that was destroyed.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-elnot,  Next: pxl-ev-fld-exp,  Prev: pxl-ev-fld-desnot,  Up: pxl-ev-fld
+
+`enter_notify' and `leave_notify' Events
+........................................
+
+   The fields that can be unified in `enter_notify' and `leave_notify'
+events are:
+  1. `type(T)' unifies T with `enter_notify' or `leave_notify'
+     according to the event.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window that receives the
+     event.
+
+  6. `root(R)' unifies R with the root Window that the event occurred
+     under.
+
+  7. `subwindow(S)' unifies S with the child ProXL window where the
+     event occurred or `none' if the event occurred in the window
+     itself.
+
+  8. `time(T)' unifies T with the server time, in milliseconds, when
+     the event occurred.
+
+  9. `x(X)' unifies X with the x coordinate, relative to the window
+     origin.
+
+ 10. `y(Y)' unifies Y with the y coordinate, relative to the window
+     origin.
+
+ 11. `position(X, Y)' unifies X and Y with the x and y coordinates
+     respectively, relative to the window origin.
+
+ 12. `x_root(X)' unifies X with the x coordinate, relative to the root
+     window origin.
+
+ 13. `y_root(Y)' unifies Y with the y coordinate, relative to the root
+     window origin.
+
+ 14. `root_position(X, Y)' unifies X and Y with the x and y
+     coordinates, respectively, relative to the root window origin.
+
+ 15. `mode(M)' unifies M with one of
+    `normal'
+          If the event was caused by a normal mouse pointer movement or
+          a pointer warp.
+
+    `grab'
+          If the event was caused by a grab.
+
+    `ungrab'
+          If the event was caused by an ungrab.
+
+ 16. `detail(D)' unifies D with one of
+    `ancestor'
+          If the movement came from/ended up in a ProXL Window who is a
+          direct ancestor of the receiving window.
+
+    `virtual'
+          If the movement just "passed through" the receiving window
+          because of its position in the hierarchy on its way to a
+          window in the same hierarchy.
+
+    `inferior'
+          If the movement came from/ended up in a ProXL Window who is
+          an inferior of the receiving window.
+
+    `nonlinear'
+          If the movement came from/ended up in a sibling or "cousin"
+          window.
+
+    `nonlinear_virtual'
+          If the movement "passed through" this window on its way to a
+          sibling or "cousin" window.
+
+ 17. `same_screen(B)' unifies B, a boolean value, with one of
+    `true'
+          If the mouse pointer is currently on the same screen as the
+          window receiving the event.
+
+    `false'
+          If the mouse pointer was actively grabbed by a client, before
+          the automatic grab could take place.
+
+ 18. `focus(F)' unifies F, a boolean, with one of
+    `true'
+          If the receiving window is the focus window, or an inferior
+          of the focus window.
+
+    `false'
+          If the focus is assigned to another window hierarchy.
+
+ 19. `state(BUTTONS, MODIFIERS)' unifies BUTTONS with a term of the
+     form:
+
+          buttons(B1, B2, B3, B4, B5)
+
+     where each argument of the term is unified with the state of the
+     corresponding pointer button just before the event, and has the
+     value `up' or `down'.
+
+     Unifies MODIFIERS with a term of the form:
+
+          modifiers(SHIFT, CONTROL, LOCK,
+                    MOD1, MOD2, MOD3, MOD4, MOD5)
+
+     where each argument of the term is unified with the state of the
+     corresponding modifier key just before the event, and has the value
+     `up' or `down'.
+
+
+File: quintus.info,  Node: pxl-ev-fld-exp,  Next: pxl-ev-fld-foc,  Prev: pxl-ev-fld-elnot,  Up: pxl-ev-fld
+
+`expose' Event
+..............
+
+   The fields that can be unified in `expose' events are:
+  1. `type(T)' unifies T with `expose'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window receiving the event.
+
+  6. `x(X)' unifies X with the x coordinate of the upper-left corner of
+     the exposed region, relative to the window origin.
+
+  7. `y(Y)' unifies Y with the y coordinate of the upper-left corner of
+     the exposed region, relative to the window origin.
+
+  8. `position(X, Y)' unifies X and Y with the x and y coordinates,
+     respectively, of the upper-left corner of the exposed region,
+     relative to the window origin.
+
+  9. `width(W)' unifies W with the width in pixels of the exposed
+     region.
+
+ 10. `height(H)' unifies H with the height in pixels of the exposed
+     region.
+
+ 11. `size(W, H)' unifies W and H with the width and height in pixels,
+     respectively, of the exposed region.
+
+ 12. `count(C)' unifies C with an integer giving the approximate number
+     of remaining contiguous `expose' events that were generated as a
+     result of a single function call. If it is zero, no more `expose'
+     events for this window follow.
+
+
+File: quintus.info,  Node: pxl-ev-fld-foc,  Next: pxl-ev-fld-grexp,  Prev: pxl-ev-fld-exp,  Up: pxl-ev-fld
+
+`focus_in' and `focus_out' Events
+.................................
+
+   The fields that can be unified in `focus_in' and `focus_out' events
+are:
+
+  1. `type(T)' unifies T with `focus_in' or `focus_out' according to
+     the event.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window receiving the event.
+
+  6. `mode(M)' unifies M with one of
+    `normal'
+          If the keyboard is not grabbed.
+
+    `grab'
+          If the event is triggered by the start of a keyboard grab.
+
+    `ungrab'
+          If the event is triggered by the keyboard being ungrabbed.
+
+    `while_grabbed'
+          If the focus changes while the keyboard is grabbed.
+
+  7. `detail(D)' unifies D with an atom identifying the relationship
+     between the window that receives the event, the window that lost
+     the focus, the window that got the focus, and the window that
+     contained the pointer at the time of the focus change . One of:
+        * `ancestor'
+
+        * `virtual'
+
+        * `inferior'
+
+        * `nonlinear'
+
+        * `nonlinear_virtual'
+
+        * `pointer'
+
+        * `pointer_root'
+
+        * `detail_none'
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-grexp,  Next: pxl-ev-fld-noexp,  Prev: pxl-ev-fld-foc,  Up: pxl-ev-fld
+
+`graphics_expose' Event
+.......................
+
+   The fields that can be unified in `graphics_expose' events are:
+  1. `type(T)' unifies T with `graphics_expose'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `drawable(D)' unifies D with either the ProXL Window or ProXL
+     Pixmap that was the destination of the graphics request.
+
+  6. `x(X)' unifies X with the x coordinate of the upper-left corner of
+     the region, relative to the drawable origin.
+
+  7. `y(Y)' unifies Y with the y coordinate of the upper-left corner of
+     the region, relative to the drawable origin.
+
+  8. `position(X, Y)' unifies X and Y with the x and y coordinates,
+     respectively, of the upper-left corner of the region, relative to
+     the drawable origin.
+
+  9. `width(W)' unifies W with the width in pixels of the region.
+
+ 10. `height(H)' unifies H with the height in pixels of the region.
+
+ 11. `size(W, H)' unifies W and H with the width and height in pixels,
+     respectively, of the exposed region.
+
+ 12. `count(C)' unifies C with an integer giving the approximate number
+     of remaining contiguous `graphics_expose' events that were
+     generated as a result of a single request.
+
+ 13. `major_code(M)' unifies M with the name of the graphics request
+     that produced the event . One of
+        * `copy_area'
+
+        * `copy_plane'
+
+ 14. `minor_code(M)' unifies M with an integer giving the request minor
+     code.
+
+
+File: quintus.info,  Node: pxl-ev-fld-noexp,  Next: pxl-ev-fld-grav,  Prev: pxl-ev-fld-grexp,  Up: pxl-ev-fld
+
+`no_expose' Event
+.................
+
+   The fields that can be unified in `no_expose' events are:
+  1. `type(T)' unifies T with `no_expose'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `drawable(D)' unifies D with either the ProXL Window or ProXL
+     Pixmap that was the destination of the graphics request.
+
+  6. `major_code(M)' unifies M with the name of the graphics request
+     that produced the event . One of
+        * `copy_area'
+
+        * `copy_plane'
+
+  7. `minor_code(M)' unifies M with an integer giving the request minor
+     code.
+
+
+File: quintus.info,  Node: pxl-ev-fld-grav,  Next: pxl-ev-fld-keynot,  Prev: pxl-ev-fld-noexp,  Up: pxl-ev-fld
+
+`gravity_notify' Event
+......................
+
+   The fields that can be unified in `gravity_notify' events are:
+  1. `type(T)' unifies T with `gravity_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `event(E)' unifies E with the ProXL Window that receives the event.
+
+  6. `window(W)' unifies W with the ProXL Window that was moved because
+     of its `win_gravity' attribute.
+
+  7. `x(X)' unifies X with the new x coordinate of the window, relative
+     to the its parent.
+
+  8. `y(Y)' unifies Y with the new y coordinate of the window, relative
+     to its parent.
+
+  9. `position(X, Y)' unifies X and Y with the new x and y coordinates
+     of the window, respectively, relative to its parent.
+
+
+File: quintus.info,  Node: pxl-ev-fld-keynot,  Next: pxl-ev-fld-key,  Prev: pxl-ev-fld-grav,  Up: pxl-ev-fld
+
+`keymap_notify' Event
+.....................
+
+   The fields that can be unified in `keymap_notify' events are:
+  1. `type(T)' unifies T with `keymap_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window that was reported in
+     the immediately preceding `enter_notify' or `focus_in' event.
+
+  6. `key_vector(K)' unifies K with a list of 32 8-bit integers, for a
+     total of 256 bits, where each bit represents the state of the
+     corresponding keycode. Use `key_state/2' to interpret the results.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-key,  Next: pxl-ev-fld-mapnot,  Prev: pxl-ev-fld-keynot,  Up: pxl-ev-fld
+
+`key_press' and `key_release' Events
+....................................
+
+   The fields that can be unified in `key_press' and `key_release'
+events are:
+  1. `type(T)' unifies T with `key_press' or `key_release' according to
+     the event.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window that receives the
+     event.
+
+  6. `root(R)' unifies R with the root Window that the event occurred
+     under.
+
+  7. `subwindow(S)' unifies S with the child ProXL window where the
+     event occurred or `none' if the event occurred in the window
+     itself.
+
+  8. `time(T)' unifies T with the server time, in milliseconds, when
+     the event occurred.
+
+  9. `x(X)' unifies X with the x pointer coordinate, relative to the
+     window origin, if the receiving window is on the same screen as the
+     root window. Otherwise it is 0.
+
+ 10. `y(Y)' unifies Y with the y pointer coordinate, relative to the
+     window origin, if the receiving window is on the same screen as
+     the root window. Otherwise it is 0.
+
+ 11. `position(X, Y)' unifies X and Y with the x and y pointer
+     coordinates, respectively, relative to the window origin, if the
+     receiving window is on the same screen as the root window.
+     Otherwise they are 0.
+
+ 12. `x_root(X)' unifies X with the x pointer coordinate, relative to
+     the root window origin, if the receiving window is on the same
+     screen as the root window, otherwise with 0.
+
+ 13. `y_root(Y)' unifies Y with the y pointer coordinate, relative to
+     the root window origin, if the receiving window is on the same
+     screen as the root window, otherwise with 0.
+
+ 14. `root_position(X, Y)' unifies X and Y with the pointer x and y
+     coordinates, respectively, relative to the root window origin, if
+     the receiving window is on the same screen as the root window.
+     Otherwise they are both 0.
+
+ 15. `state(BUTTONS, MODIFIERS)' unifies BUTTONS with a term of the
+     form:
+
+          buttons(B1, B2, B3, B4, B5)
+
+     where each argument of the term is unified with the state of the
+     corresponding pointer button just before the event, and has the
+     value `up' or `down'.
+
+     Unifies MODIFIERS with a term of the form:
+
+          modifiers(SHIFT, CONTROL, LOCK,
+                    MOD1, MOD2, MOD3, MOD4, MOD5)
+
+     where each argument of the term is unified with the state of the
+     corresponding modifier key just before the event, and has the value
+     `up' or `down'.
+
+ 16. `keycode(K)' unifies K with the server-dependent integer keycode
+     associated with the physical key.
+
+ 17. `keysym(K)' unifies K with the server-independent keysym
+     associated with the physical key.
+
+ 18. `chars(C)' unifies C with the list of ASCII characters associated
+     with the physical key, if there is one, or the empty list, if
+     there isn't one.
+
+ 19. `length(L)' unifies L with the length of the ASCII string
+     associated with the physical key.
+
+ 20. `same_screen(B)' unifies B, a boolean value, with one of
+    `true'
+          If the mouse pointer is currently on the same screen as the
+          window receiving the event.
+
+    `false'
+          If the mouse pointer and the window are on different screens.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-mapnot,  Next: pxl-ev-fld-unmapnot,  Prev: pxl-ev-fld-key,  Up: pxl-ev-fld
+
+`map_notify' Event
+..................
+
+   The fields that can be unified in `map_notify' events are:
+  1. `type(T)' unifies T with `map_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `event(E)' unifies E with the ProXL Window that selected the event.
+
+  6. `window(W)' unifies W with the ProXL Window that is being mapped.
+
+  7. `override_redirect(B)' unifies B with the boolean value of the
+     `override_redirect' attribute of the window, one of
+    `true'
+          If the client wants the window to be exempt from interception
+          of the request by the Window Manager.
+
+    `false'
+          If the Window Manager is allowed to modify the request.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-unmapnot,  Next: pxl-ev-fld-mapgnot,  Prev: pxl-ev-fld-mapnot,  Up: pxl-ev-fld
+
+`unmap_notify' Event
+....................
+
+   The fields that can be unified in `unmap_notify' events are:
+  1. `type(T)' unifies T with `unmap_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `event(E)' unifies E with the ProXL Window that selected the event.
+
+  6. `window(W)' unifies W with the ProXL Window that is being mapped.
+
+  7. `from_configure(F)' unifies F, a boolean value, with one of
+    `true'
+          If the event was generated as a result of a resizing of the
+          window's parent and the window itself has a `win_gravity'
+          attribute of `unmap'.
+
+    `false'
+          Otherwise.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-mapgnot,  Next: pxl-ev-fld-mapreq,  Prev: pxl-ev-fld-unmapnot,  Up: pxl-ev-fld
+
+`mapping_notify' Event
+......................
+
+   The fields that can be unified in `mapping_notify' events are:
+  1. `type(T)' unifies T with `mapping_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window receiving the event.
+
+  6. `request(R)' unifies R with one of
+    `modifier'
+          If the modifier keys have been remapped.
+
+    `keyboard'
+          If the keyboard has been remapped.
+
+    `pointer'
+          If the pointer buttons have been remapped.
+
+  7. `first_keycode(F)' unifies F with the first in a range of keycodes
+     with new mappings, if the value of REQUEST is `modifier' or
+     `keyboard'. For `pointer', its value is 0.
+
+  8. `count(C)' unifies C with an integer indicating the number of
+     keycodes with altered mappings, if the REQUEST is `modifier' or
+     `keyboard'. For `pointer', its value is 0.
+
+
+File: quintus.info,  Node: pxl-ev-fld-mapreq,  Next: pxl-ev-fld-motnot,  Prev: pxl-ev-fld-mapgnot,  Up: pxl-ev-fld
+
+`map_request' Event
+...................
+
+   The fields that can be unified in `map_request' events are:
+  1. `type(T)' unifies T with `map_request'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `parent(P)' unifies P with the ProXL parent Window of the window
+     being mapped.
+
+  6. `window(W)' unifies W with the ProXL Window requesting to be
+     mapped.
+

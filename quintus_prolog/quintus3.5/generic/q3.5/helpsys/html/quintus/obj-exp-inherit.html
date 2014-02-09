@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>inherit/1</code> directive</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- inherit </code><var>+ClassName</var><code> </code><var>+Op</var><code> </code><var>+Name</var><code>/</code><var>+Arity</var><code>, </code><var><small class="dots">...</small></var><code>.</code>
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>ClassName</var>
+     <dd><dfn>atom</dfn>
+
+     <br><dt><var>Op</var>
+     <dd><dfn>message_operator</dfn>
+
+     <br><dt><var>Name</var>
+     <dd><dfn>atom</dfn>
+
+     <br><dt><var>Arity</var>
+     <dd><dfn>integer</dfn>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>ClassName</var> names the class from which the
+message should be inherited, <var>Op</var> indicates which kind of message it is,
+and <var>Name</var> and <var>Arity</var> indicate the name and arity of the message to be
+inherited. You may include several inheritance specifications in one
+directive.
+
+<h4 class="subheading">Caveat</h4>
+
+   <p>Be careful of the precedences of the message
+operator and the <code>/</code> operator. You may need to use parentheses.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>Suppose classes <code>toy</code> and <code>truck</code> are defined as follows:
+
+<pre class="example">     :-class toy.
+     Self &lt;- create.
+     Self &gt;&gt; size(small).
+     Self &gt;&gt; rolls(false).
+     :- end_class toy.
+     
+     :- class truck.
+     Self &lt;- create.
+     Self &gt;&gt; size(small).
+     Self &gt;&gt; rolls(true).
+     :- end_class truck.
+     </pre>
+
+   <p>Then <code>toy_truck</code> inherits its size from <code>toy</code> and the fact that it rolls from <code>truck</code>:
+
+<pre class="example">     :- class toy_truck = toy + truck.
+     :- inherit
+             toy &lt;- (create/O),
+             toy &lt;- (size/1),
+             truck &lt;- (rolls/1).
+     :- end_class toy_truck.
+     </pre>
+
+   <p>Note that this is just a toy example.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>uninherit/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-exp-instance_method.html#obj-exp-instance_method">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-exp-fetch_slot.html#obj-exp-fetch_slot">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-exp.html#obj-exp">Up</a>
+</ul>
+</div>
+   </body></html>
+

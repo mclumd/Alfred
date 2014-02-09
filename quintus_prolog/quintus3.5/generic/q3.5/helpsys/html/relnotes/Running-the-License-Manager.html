@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Running the License Manager</h3>
+
+   <p>Having installed Quintus Prolog, the license file must then be set up
+with a license code in order to run <code>prolog</code>, <code>qpc</code>, etc. 
+This is achieved with the license manager program <code>qplm</code>, which
+resides in the Quintus runtime directory (for example
+<code></code><var>QuintusDir</var><code>/bin3.5/linux</code>).
+
+   <p>The first step is to initialize the license file with <kbd>qplm -i </kbd><var>site name</var><kbd></kbd>. 
+The site name given to <code>qplm</code> here should be exactly the same as supplied
+with the code from SICS since it is used to generate the code. 
+For example:
+
+<pre class="example">     % <kbd>qplm -i "Hallatrow Designers Inc."</kbd>
+     </pre>
+
+   <p>The next step is to add the products and codes. This is done with
+the command <kbd>qplm -a </kbd><var>product</var><kbd> </kbd><var>users</var><kbd> </kbd><var>code</var><kbd></kbd>. 
+The <var>product</var> argument is a string that comprises the product name
+(<code>prolog</code> in this case) the platform and the version number. E.g., the
+Linux release thus requires a code for <code>prolog/linux/3.5</code>.
+
+   <p>The <var>users</var> argument specifies the number of regular users of
+Quintus Prolog at this site and <var>code</var> is a 16 character string that is
+supplied by SICS. To add a code for a 5 user license, issue the command:
+
+<pre class="example">     % <kbd>qplm -a prolog/</kbd><var>archdir</var><kbd>/3.5 5 thiscodewontwork</kbd>
+     </pre>
+
+   <p>SICS also provides temporary licenses that expire on a given date. 
+The expiration date can be added with the command <kbd>qplm -a
+</kbd><var>product</var><kbd> </kbd><var>users</var><kbd> </kbd><var>expire</var><kbd> </kbd><var>code</var><kbd></kbd>, where <var>expire</var>
+is an expiration date with the format YYYY-MM-DD.  The following example
+adds a 2 user license that expires on 17 May 2004:
+
+<pre class="example">     % <kbd>qplm -a prolog/</kbd><var>archdir</var><kbd>/3.5 2 2004-05-17 thisalsowontwork</kbd>
+     </pre>
+
+   <p>You can print the information in the license file, including site name
+and products licensed with the <kbd>qplm -p</kbd> command.
+
+   <p>You can delete regular users from the license file if they no longer
+use the product with the command <kbd>qplm -d </kbd><var>product</var><kbd> </kbd><var>username</var><kbd></kbd>.
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="The-License-Directory.html#The%20License%20Directory">The License Directory</a>: 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">Release Notes</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="The-Sys-Component.html#The%20Sys%20Component">Next</a>
+<li><a rel="previous" accesskey="p" href="Running-the-Installation-Script.html#Running%20the%20Installation%20Script">Previous</a>
+<li><a rel="up" accesskey="u" href="Installation-Guide.html#Installation%20Guide">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

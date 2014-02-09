@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>module/2</code> <dfn>declaration</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- module(</code><var>+ModuleName</var><code>, </code><var>+PublicPred</var><code>)</code>.
+
+   <p>Declares the file in which the declaration appears to be a
+module-file named <var>ModuleName</var>, with public predicates
+<var>PublicPred</var>. Must appear as the first term in the file.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>ModuleName</var> <dfn>atom</dfn>
+     <dd>an atom
+
+     <br><dt><var>PublicPred</var> <dfn>list of simple_pred_spec</dfn>
+     <dd>List of
+predicate specifications of the form <var>Name/Arity</var>.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The definition of a module is not limited to a single file, because a
+module-file may contain commands to load other files.  If <code>myfile</code>,
+a module-file for <var>ModuleName</var>, contains an embedded command to
+load <code>yourfile</code> and if <code>yourfile</code> is not itself a module-file, then
+all the predicates in <code>yourfile</code> are loaded into module
+<var>ModuleName</var>.
+
+   <p>If the export list is not properly specified, there will be a warning
+or error message at compile time.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>At compile time:
+     <dl>
+
+     <br><dt><code>context_error</code>
+     <dd>
+Declaration appears other than as the first term in
+a file being loaded.
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>ModuleName</var> not instantiated.
+
+     <br><dt><code>type_error</code>
+     <dd>
+<var>PredSpecList</var> is not a list of simple_pred_spec
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>module/1</code>
+<a href="ref-mod.html#ref-mod">ref-mod</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-module1.html#mpg-ref-module1">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-mode.html#mpg-ref-mode">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

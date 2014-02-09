@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>name/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>name(</code><var>+Constant</var><code>, </code><var>-Chars</var><code>)</code>
+
+   <p><code>name(</code><var>-Constant</var><code>, </code><var>+Chars</var><code>)</code>
+
+   <p><var>Chars</var> is the list consisting of the ASCII character codes comprising
+the printed representation of <var>Constant</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Constant</var> <dfn>atomic</dfn>
+     <dd>
+
+     <br><dt><var>Chars</var> <dfn>chars</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Initially, either <var>Constant</var> must be instantiated to a number or
+an atom, or <var>Chars</var> must be instantiated to a proper list of
+character codes (containing no variables).
+
+   <p>If <var>Constant</var> is initially instantiated to an atom or number,
+<var>Chars</var> will be unified with the list of character codes that make up
+its printed representation.
+
+   <p>If <var>Constant</var> is uninstantiated and <var>Chars</var> is initially
+instantiated to a list of characters that corresponds to the correct
+syntax of a number (either integer or float),
+<var>Constant</var> will be bound to that number; otherwise <var>Constant</var>
+will be instantiated to an atom containing exactly those characters.
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     | ?- <kbd>name(foo, L).</kbd>
+     
+     L = [102,111,111]
+     </pre>
+
+<pre class="example">     | ?- <kbd>name('Foo', L).</kbd>
+     
+     L = [70,111,111]
+     </pre>
+
+<pre class="example">     | ?- <kbd>name(431, L).</kbd>
+     
+     L = [52,51,49]
+     </pre>
+
+<pre class="example">     | ?- <kbd>name(X, [102,111,111]).</kbd>
+     
+     X = foo
+     </pre>
+
+<pre class="example">     | ?- <kbd>name(X, [52,51,49]).</kbd>
+     
+     X = 431
+     </pre>
+
+<pre class="example">     | ?- <kbd>name(X, "15.0e+12").</kbd>
+     
+     X = 1.5e+13
+     </pre>
+
+   <p>There are atoms that can be read and written by Prolog, and
+that can be converted to chars by <code>name/2</code>, but that it can
+<em>not</em> construct.  One example of this is the atom <code>0</code>:
+<pre class="example">     | ?- <kbd>X = '0', atom(X), name(X, L).</kbd>
+     
+     X = '0',
+     L = [48]
+     </pre>
+
+<pre class="example">     | ?- <kbd>name(X, [48]), atom(X).</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>name(X, [48]), integer(X).</kbd>
+     
+     X = 0
+     </pre>
+
+   <p>This anomaly is present in DEC-10 Prolog and C-Prolog. 
+<code>name/2</code> is retained for compatibility with them. 
+New programs should mainly use <code>atom_chars/2</code> (see <a href="ref-lte-c2t.html#ref-lte-c2t">ref-lte-c2t</a>) or
+<code>number_chars/2</code> (see <a href="ref-lte-c2t.html#ref-lte-c2t">ref-lte-c2t</a>) as appropriate.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+                If Constant and Chars are both uninstantiated
+
+     <br><dt><code>type_error</code>
+     <dd>
+                If Constant is not a constant
+
+     <br><dt><code>domain_error</code>
+     <dd>
+        Chars is not a list of ASCII codes
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <a href="ref-lte-c2t.html#ref-lte-c2t">ref-lte-c2t</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-nl.html#mpg-ref-nl">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-multifile_assertz.html#mpg-ref-multifile_assertz">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

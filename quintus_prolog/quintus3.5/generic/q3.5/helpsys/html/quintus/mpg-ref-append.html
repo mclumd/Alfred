@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>append/3</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>append</code><var>(+*List1, +*List2,
++*List3)</var>
+
+   <p>True when all three arguments are lists, and the members of
+<var>List3</var> are the members of <var>List1</var> followed by the members of
+<var>List2</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>List1</var> <dfn>term</dfn>
+     <dd>a list
+
+     <br><dt><var>List2</var> <dfn>term</dfn>
+     <dd>a list
+
+     <br><dt><var>List3</var> <dfn>term</dfn>
+     <dd>a list consisting of <var>List1</var> followed by <var>List2</var>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Appends lists <var>List1</var> and <var>List2</var> to form <var>List3</var>:
+
+<pre class="example">     | ?- <kbd>append([a,b], [a,d], X).</kbd>
+     
+     X = [a,b,a,d]
+     
+     | ?- <kbd>append([a], [a], [a]).</kbd>
+     
+     no
+     | ?- <kbd>append(2, [a], X).</kbd>
+     
+     no
+     </pre>
+
+   <p>Takes <var>List3</var> apart:
+<pre class="example">     | ?- <kbd>append(X, [e], [b,e,e]).</kbd>
+     
+     X = [b,e]
+     
+     | ?- <kbd>append([b|X], [e,r], [b,o,r,e,r]).</kbd>
+     
+     X = [o,r]
+     
+     | ?- <kbd>append(X, Y, [h,i]).</kbd>
+     
+     X = [],
+     Y = [h,i] <kbd>;</kbd>
+     
+     X = [h],
+     Y = [i] <kbd>;</kbd>
+     
+     X = [h,i],
+     Y = [] <kbd>;</kbd>
+     
+     no
+     </pre>
+
+<h4 class="subheading">Backtracking</h4>
+
+   <p>Suppose L is bound to a
+proper list (see <a href="lib-lis-prl.html#lib-lis-prl">lib-lis-prl</a>).  That is, it has the form
+[<var>T1</var>,<small class="dots">...</small>,<var>Tn</var>] for some <var>n</var>.  In that instance, the following things apply:
+     <ol type=1 start=1>
+
+     <li><code>append(</code><var>L</var><code>, </code><var>X</var><code>, </code><var>Y</var><code>)</code> has at most one solution, whatever <var>X</var> and <var>Y</var> are, and
+cannot backtrack at all. 
+<li><code>append(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>L</var><code>)</code> has at most <var>n+1</var> solutions, whatever <var>X</var> and <var>Y</var> are, and
+though it can backtrack over these it cannot run away without finding
+a solution. 
+<li><code>append(</code><var>X</var><code>, </code><var>L</var><code>, </code><var>Y</var><code>)</code>, however, can backtrack indefinitely if <var>X</var> and <var>Y</var> are
+variables.
+        </ol>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>The following examples are
+perfectly ordinary uses of <code>append/3</code>:
+
+   <p>To enumerate adjacent pairs of elements from a list:
+<pre class="example">     next_to(X, Y, /*in*/ List3) :-
+             append(_, [X,Y|_], List3).
+     </pre>
+
+   <p>To check whether Word1 and Word2 are the same except for
+a single transposition.  (<code>append/5</code> in <code>library(lists)</code> would be
+better for this task.)
+<pre class="example">     one_transposition(Word1, Word2) :-
+             append(Prefix, [X,Y|Suffix], Word1),
+             append(Prefix, [Y,X|Suffix], Word2).
+     
+     | ?- <kbd>one_transposition("fred", X).</kbd>
+     X = "rfed" <kbd>;</kbd>
+     X = "ferd" <kbd>;</kbd>
+     X = "frde" <kbd>;</kbd>
+     no
+     </pre>
+
+   <p>Given a list of words and commas, to backtrack through the phrases
+delimited by commas:
+<pre class="example">     comma_phrase(List3, Phrase) :-
+             append(F, [','|Rest], List3),
+             !,
+             (   Phrase = F
+             ;   comma_phrase(Rest, Phrase)
+             ).
+     comma_phrase(List3, List3).
+     
+     | ?- <kbd>comma_phrase([this,is,',',um,',',an,
+                            example], X).</kbd>
+     X = [this,is] <kbd>;</kbd>
+     X = [um] <kbd>;</kbd>
+     X = [an,example] <kbd>;</kbd>
+     no
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>length/2</code>
+<a href="lib-lis.html#lib-lis">lib-lis</a>
+<code>library(lists)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-uni.html#mpg-ref-uni">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-and.html#mpg-ref-and">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

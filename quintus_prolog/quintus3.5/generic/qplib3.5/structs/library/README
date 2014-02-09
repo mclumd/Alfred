@@ -1,0 +1,411 @@
+BACKGROUND
+
+The structs package allows Prolog to hold pointers to C data structures,
+and to access and store into fields in those data structures.
+Currently, the only representation for a pointer supported by Quintus
+Prolog is an integer, so it isn't possible to guarantee that Prolog
+can't confuse a pointer with an ordinary Prolog term.  What this package
+does is to represent such a pointer as a term with the type of the
+structure or array as its functor and the integer which is the address
+of the actual data as its only argument.  We will refer such terms as
+"foreign terms."
+
+
+IMPORTANT CAVEATS
+
+You should not count on future versions of the struct package to
+continue to represent foreign terms as compound Prolog terms.  In
+particular, you should never explicitly take apart a foreign term using
+unification or functor/3 and arg/3.  You may use the predicate
+foreign_type/2 to find the type of a foreign term, and cast/3 (casting
+a foreign term to address) to get the address part of a foreign term.
+You may also use cast/3 to cast an address back to a foreign term.  You
+should use null_foreign_term/2 to check if a foreign term is null, or
+to create a null foreign term of some type.
+
+It should never be necessary to explicitly take apart foreign terms.
+
+
+FOREIGN TYPES
+
+There are two sorts of objects that Prolog may want to handle:
+atomic and compound.  Atomic objects include numbers and atoms, and
+compound objects include data structures and arrays.  To be more
+precise about it, an atomic type is defined by one of the following:
+
+	    integer		32 bit signed integer
+	    short		16 bit signed integer
+	    char		8 bit signed integer
+	    unsigned_integer	32 bit unsigned integer (but Prolog can
+				only handle 31 bits unsigned)
+	    unsigned_short	16 bit unsigned integer
+	    unsigned_char	8 bit unsigned integer
+	    float		32 bit floating-point number
+	    double		64 bit floating-point number
+	    atom		32 bit Prolog atom number.  Unique
+				for different atoms, but not consistent
+				across Prolog sessions.
+	    string		32 bit pointer to 0-terminated character
+				array.  Represented as an atom in Prolog.
+	    address		an untyped address.  Like pointer(_), but
+				structs does no type checking for you.
+				Represented as a Prolog integer.
+	    opaque		Unknown type.  Cannot be represented in
+				Prolog.  A pointer to an opaque object
+				may be manipulated.
+
+And compound types are defined by one of:
+
+	    pointer(Type)	a 32 bit pointer to a thing of type Type.
+	    array(Num,Type)	A chunk of memory holding Num (an
+				integer) things of type Type
+	    array(Type)		A chunk of memory holding some number of
+				things of type Type.  This type does not
+				allow bounds checking, so it should be used
+				with great care.  It is also not possible to
+				use this sort of array as an element in an
+				array, or in a struct or union.
+	    struct(Fields)	A compound structure.  Fields is a list
+				of Field_name:Type pairs.  Each
+				Field_name is an atom, and each Type
+				is any valid type.  
+	    union(Members)	A union as in C.  Members is a list of
+				Member_name:Type pairs.  Each Member_name
+				is an atom, and each Type is any valid
+				type.  The space allocated for one of
+				these is the maximum of the spaces needed
+				for each member.  It is not permitted to
+				store into union (you must get a member
+				of the union to store into, as in C).
+
+C programmers will recognize that the kinds of data supported by
+this package were designed for the C language.  They should also
+work for other languages, but programmers must determine the proper
+type declarations in those languages.  The table above makes clear
+the storage requirements and interpretation of each type.
+
+Note that there is one important difference between the structs package
+and C:  the structs package permits declarations of pointers to arrays.
+A pointer to an array is distinguished from a pointer to a single
+element.  For example
+
+	pointer(array(char))
+
+is probably a more appropriate declaration of a C string type than
+
+	pointer(char)
+
+which is the orthodox way to declare a string in C.  Note that the
+structs_to_c tool described below does generate proper (identical)
+C declarations for both of these structs declarations.
+
+
+DECLARING TYPES
+
+Programmers may declare new named data structures with the following
+procedure:
+
+	:- foreign_type
+	    Type_name = Type,
+	    ...,
+	    Type_name = Type.
+
+Where Type_name is an atom, and Type defines either an atomic
+or compound type, or is a previously-defined type name.
+
+In Prolog, atomic types are represented by the natural atomic term
+(integer, float, or atom).  Compound structures are represented by
+terms whose functor is the name of the type, and whose only argument
+is the address of the data.  So a term foo(123456) represents the
+thing of type foo that exists at machine address 123456.  And a term
+integer(123456) represents the integer that lives in memeory at
+address 123456, NOT the number 123456.
+
+For types that are not named, a type name is generated using the names
+of associated types and the dollar sign character ($), and possibly a
+number.  Therefore, users should not use $ in their type names.
+
+
+
+
+USING STRUCTS WITH THE PROLOG DEVELOPMENT SYSTEM AND QPC
+
+The structs package is divided into two parts:  the part necessary to
+process foreign declarations, and the part that defines all the structs
+predicates (other than the foriegn_type/1 declaration predicate).  The
+former file is not (usually) needed while your application is running,
+while the latter part certainly is.  By separating structs into two
+files, you may avoid including the structs declaration code in your
+application.
+
+In order to declare a foreign type or use foreign types in a
+foreign function declaration, you must first load the file
+library(structs_decl).  Ordinarily, you would probably do this by
+including a :- ensure_loaded or use_module call in your file.
+Unfortunately, this will not allow qpc to compile your file.  In order
+both to use your file in the development system, and to compile it with
+qpc, put the following line in your files that define foreign types or
+use foreign types in foreign function declarations:
+
+    :- load_files(library(structs_decl), [when(compile_time),if(changed)]).
+
+The when(compile_time) tells qpc to load structs_decl into qpc, and not
+to record a dependency on it.  This means that structs_decl will not be
+part of your statically linked application.
+
+Files that just USE structs are much simpler.  Just add
+
+    :- ensure_loaded(library(structs)).
+
+to those files.
+
+There is another important complication.  If you have type declarations
+in one file (call it A) that use types declared in another file (B), you
+must declare (at least) a compile_time dependency.  So in file A, you'd
+need to have the line:
+
+    :- load_files('B', [when(compile_time),if(changed)]).
+
+This does not allow predicates in A to call predicates in B.  If you
+need this, too, you should instead include in file A the line:
+
+    :- load_files('B', [when(both),if(changed)]).
+
+You will also need to ensure that B is compiled to a QOF file before
+trying to qpc A.  This requires that if A is a module file, so must B be.
+If A is not a module file, then B need not be a module file (but it may
+be).  If you use the UNIX make utility to maintain object files, you
+might then want to add the following line to your Makefile:
+
+    A.qof:	B.qof
+
+
+CHECKING FOREIGN TERM TYPES
+
+The type of a foreign term may determined by the goal
+
+    foreign_type(+Foreign_term, -Type_name)
+
+foreign_type/2 will fail if Foreign_term is not a foreign term.
+
+
+CREATING AND DESTROYING FOREIGN TERMS
+
+Prolog can create or destroy foreign terms using
+
+    new(+Type, -Datum),
+    new(+Type, +Size, -Datum) and
+    dispose(+Datum),
+
+where Type is an atom specifying what type of foreign term is to be
+allocated, and Datum is the foreign term.  The Datum returned by
+new/[2,3] is not initialized in any way.  dispose/1 is a dangerous
+operation, since once the memory is disposed, it may be used for
+something else later.  If Datum is later accessed, the results will
+be unpredictable.  New/3 is only used to allocate arrays whose
+size is not known beforehand, as defined by array(Type), rather
+than array(Type,Size).
+
+
+ACCESSING AND MODIFYING FOREIGN TERM CONTENTS
+
+Prolog can get or modify the contents of a foriegn term with the
+procedures
+
+    get_contents(+Datum, ?Part, -Value) and
+    put_contents(+Datum, +Part, +Value).
+
+It can also get a pointer to a field or element of a foreign term
+with the procedure
+
+    get_address(+Datum, ?Part, -Value).
+
+For all three of these, Datum must be a foreign term, and Part
+specifies what part of Datum Value is.  If Datum is an array, Part
+should be an integer index into the array, where 0 is the first
+element.  For a pointer, Part should be the atom 'contents' and
+Value will be what the pointer points to.  For a struct, Part should
+be a field name, and Value will be the contents of that field.  In
+the case of get_contents/3 and get_address/3, if Part is unbound,
+then get_contents will backtrack through all the valid parts of
+Datum, binding both Part and Value.  A C programmer might thing of
+get_contents(Foo, Bar, Baz) as being like Baz = Foo->Bar, and
+put_contents(Foo, Bar, Baz) as being like Foo->Bar = Baz, and
+get_address(Foo, Bar, Baz) as being like Baz = &Foo->Bar.
+
+The hitch is that only atomic and pointer types can be got and put
+by get_contents/3 and put_contents/3.  This is because Prolog can
+only hold pointers to C structures, not the structures themselves.
+This isn't quite as bad as it might seem, though, since usually
+structures contain pointers to other structures, anyway.  When a
+structure directly contains another structure, Prolog can get a
+pointer to it with get_address/3.
+
+
+CASTING
+
+Prolog can "cast" one type of foreign term to another.  This means that
+the foreign term is treated just as if it where the other type.  This is
+done with the
+
+    cast(+Foreign0, +New_type, -Foreign)
+
+procedure.  Foreign is the foreign term which is the same data as
+Foreign0, only is of foreign type New_type.  Foreign0 is not affected.
+This is much like casting in C.
+
+Casting a foreign term to 'address' will get you the raw address of a
+foreign term.  This is not often necessary, but it is occasionally
+useful in order to obtain an indexable value to use in the first
+argument of a dynamic predicate you are maintaining.  An 'address' may
+also be casted to a proper foreign type.
+
+This predicate should be used with great care, as it is quite easy to
+get into trouble with this.
+
+
+NULL FOREIGN TERMS
+
+'NULL' foreign terms may be handled.  The predicate
+
+    null_foreign_term(?Term, ?Type)
+
+holds when Term is a foreign term of Type, but is NULL (the address
+is 0).  At least one of Term and Type must be bound.  This can be
+used to generate NULL foreign terms, or to check a foreign term to
+determine whether or not it is NULL.
+
+
+INTERFACING WITH FOREIGN CODE
+
+Foreign terms may be passed between Prolog and other languages
+through the foreign interface.
+
+To use this, all foreign types to be passed between Prolog and another
+language must be declared with (foreign_type)/1 before the foreign/[2,3]
+clauses specifying the foreign functions.
+
+The structs package extends the foreign type specifications recognized
+by the foreign interface.  In addition to the types already recognized
+by the foreign interface, any atomic type recognized by the structs
+package is understood, as well as a pointer to any named structs type.
+
+For example, if you have a function
+
+	char nth_char(string, n)
+	    char *string;
+	    int n;
+	    {
+		return string[n];
+	    }
+
+You might use it from Prolog as follows:
+
+	:- foreign_type cstring = array(char).
+
+	foreign(nth_char, c, nth_char(+pointer(cstring), +integer, [-char])).
+
+This allows the predicate nth_char/3 to be called from Prolog to
+determine the nth character of a C string.
+
+Note that all existing foreign interface type specifications are
+uneffected, in particular address/[0,1] continue to pass addresses to
+and from Prolog as plain integers.
+
+
+EXAMINING TYPE DEFINITIONS AT RUNTIME
+
+The above described procedures should be sufficient for most needs.
+This module does, however, provide a few procedures to allow
+programmers to access type definitions.  These may be a convenience
+for debugging, or in writing tools to manipulate type definitions.
+
+The following procedures allow programmers to find the definition
+of a given type:
+
+    type_definition(?Type, -Definition) and
+    type_definition(?Type, -Definition, -Size)
+
+allow programmers to find the definition of a given type.  Type is
+an atom naming a type, Definition is the definition of that type,
+and Size is the number of bytes occupied by a foreign term of this
+type.  Size will be the atom unknown if the size of an object of
+that type is not known.  Such types may not be used as fields in
+structs or unions, or in arrays.  However, pointers to them may be
+created.  If Type is not bound at call time, these procedures will
+backtrack through all current type definitions.
+
+A definition looks much like the definition given when the type was
+defined with type/1, except that it has been simplified.  Firstly,
+intermediate type names have been elided.  For example, if foo is
+defined as foo=integer, and bar as bar=foo, then
+type_definition(bar, integer) would hold.  Also, in the definition
+of a compound type, types of parts are always defined by type names,
+rather than complex specifications.  So if the type of a field in a
+struct was defined as pointer(fred), it will show up in the
+definition as '$fred'.  Of course, type_definition('$fred',
+pointer(fred)) would hold, also.
+
+The following predicates allow the programmer to determine whether
+or not a given type is atomic:
+
+    atomic_type(?Type)
+    atomic_type(?Type, -Primitive_type)
+    atomic_type(?Type, -Primitive_type, -Size)
+
+Type is an atomic.  See the discussion above for the definition of
+an atomic type.  Primitive_type is the primitive type that Type is
+defined in terms of.  Size is the number of bytes occupied by an
+object of type Type, or the atom unknown, as above.  If Type is
+unbound at call time, these predicates will backtrack through all
+the currently defined atomic types.
+
+
+STRUCTS_TO_C
+
+Included with structs is the program structs_to_c.  This program reads
+in a Prolog file containing structs declarations, and generates a .h
+file containing equivalent declarations to be #included in your C
+programs.  Each type you declare in your .pl file will have a
+corresponding typedef in the .h file.
+
+If you wish to use this tool, you will have to build an executable
+yourself, as the default installation procedure doesn't build
+structs_to_c, in order to save space.  To build structs_to_c, cd
+into the structs library directory (where this README file is), and type
+
+	% make structs_to_c
+
+This will make a host and operating system specific executable file
+structs_to_c, which you should move to an appropriate directory, for
+example /usr/local/bin.
+
+
+TIPS
+
+Most important tip:  don't subvert the structs type system by looking
+inside foreign terms to get the address, or use functor/3 to get the
+type.  This has two negative effects:  firstly, if the structs package
+should change its representation of foreign terms, your code will not
+work.  But more importantly, you are more likely to get type
+mismatches, and likely to get unwrapped terms where you expect wrapped
+ones or even doublly wrapped terms.
+
+Remember that a foreign term fred(123456) is not of type fred, but a
+pointer to fred.  Looked at another way, what resides in memory at
+address 123456 is of type fred.
+
+The wrapper put on a foreign term signifies the type of that foreign
+term.  If you declare a type to be pointer(opaque) because you want to
+view that pointer to be opaque, then when you get something of this
+type, it will be printed as opaque(456123).  This is not very
+informative.  It is better to declare
+
+	fred = opaque,
+	thing = struct([...,
+		    part:pointer(fred),
+		    ...
+		]).
+
+so that when you get the contents of part member of a thing, it is
+wrapped as fred(456123).

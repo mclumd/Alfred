@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Opening The User-Defined Stream</h5>
+
+   <p>Depending on the specific user-defined stream, there are different operations
+needed for the stream.  A stream that operates on a file needs to open
+the file; a stream that operates for inter-process communication needs to
+build the connection to different process.  Our example stream operates
+on files, so we just open the file to get file descriptor.  The parameters
+of our function and local variables in the function are also listed.
+
+<pre class="example">     QP_stream *
+     open_bin(filename, modename, error_num)
+         char   *filename, *modename;
+         int    *error_num;
+         {
+             BinStream       *stream;
+             QP_stream       *option;
+             int             fd, mode;
+     
+             switch (*modename) {
+             case 'r': mode = QP_READ;
+                       fd = open(filename, O_RDONLY, 0000);
+                       break;
+             case 'w': mode = QP_APPEND;
+                       fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC,
+                                           0666);
+                       break;
+             case 'a': mode = QP_APPEND;
+                       fd = open(filename, O_WRONLY|O_CREAT, 0666);
+                       break;
+             default:  *error_num = QP_E_BAD_MODE;
+                       return QP_NULL_STREAM;
+             }
+             if (fd &lt; 0) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+     
+             ......  allocate space and set user-stream fields  ......
+             ......  set up QP_stream structure fields  ......
+             ......  register the created QP_stream  ......
+     
+             return &amp;stream-&gt;qpinfo;
+         }
+     </pre>
+
+   <p>This function can be called from Prolog using the Prolog calling C
+interface described in <a href="fli-p2f.html#fli-p2f">fli-p2f</a>. The address returned by this
+function is converted into the Prolog representation of a stream
+using <code>stream_code/2</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-cps-all.html#fli-ios-cps-all">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-cps-sst.html#fli-ios-cps-sst">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-cps.html#fli-ios-cps">Up</a>
+</ul>
+</div>
+   </body></html>
+

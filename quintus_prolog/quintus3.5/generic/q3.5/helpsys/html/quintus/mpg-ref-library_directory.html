@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">library_directory/1 <dfn>extendable</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile library_directory/1.</code>
+<code>library_directory(</code><var>*DirSpec</var><code>)</code>
+
+   <p>Defines a library directory. Used by predicates taking
+<dfn>file_spec</dfn> as input argument.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>DirSpec</var> <dfn>file_spec</dfn>
+     <dd>Either an atom giving the path to a file, or
+<var>PathAlias(DirSpec)</var>, where PathAlias is defined by a
+<code>file_search_path</code> rule (see the reference page for
+<code>file_search_path/2</code>).
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The dynamic, multifile <code>library_directory/1</code> facts reside in module user. 
+They define directories to search when a file specification
+<code>library(</code><var>File</var><code>)</code> is expanded to the full path.
+
+   <p>There are a set of predefined <code>library_directory/1</code> facts, but
+users may also define their own libraries simply by asserting the
+appropriate <code>library_directory/1</code> facts into module user.  To
+locate a library file, the <code>library_directory/1</code> facts are tried
+one by one in the same sequence they appear in the Prolog database.
+
+   <p>The <code>file_search_path</code> mechanism is an extension of the
+<code>library_directory</code> scheme.  See <code>file_search_path/2</code> and
+<a href="ref-fdi.html#ref-fdi">ref-fdi</a>.
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     | ?- <kbd>assert(library_directory('/usr/joe_bob/prolog/libs')).</kbd>
+     
+     yes
+     | ?- <kbd>ensure_loaded(library(flying)).</kbd>
+     % loading file /usr/joe_bob/prolog/libs/flying.qof
+     ...
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>absolute_file_name/[2,3]</code>,
+<code>assert/[1,2]</code>,
+<code>dynamic/1</code>,
+<code>file_search_path/2</code>,
+<code>listing/1</code>,
+<code>load_files/[1,2]</code>
+
+   <a href="ref-fdi.html#ref-fdi">ref-fdi</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-line_count.html#mpg-ref-line_count">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-length.html#mpg-ref-length">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

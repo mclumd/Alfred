@@ -1,0 +1,228 @@
+  SCCS: %W% %G%
+  README: Quintus Prolog Gnu Emacs interface documentation
+
+  The following is a brief introduction to the Quintus Prolog Gnu Emacs
+  interface. Refer to the Quintus Prolog manual for further details.
+
+  For changes made in the 3.2 release, see "CHANGES FOR 3.2" at the end.
+
+  For changes made in the 3.4 release, see "CHANGES FOR 3.4" at the end.
+
+  For changes made in the 3.4.3 release, see "CHANGES FOR 3.4.3" at the end.
+
+
+  The interface can be invoked in two ways; 1) From the shell command
+  line by typing "prolog +" or 2) From within GNU Emacs by typing the
+  command M-x run-prolog. For invoking the interface from the shell
+  command line refer to the Quintus Prolog manual. In either case, to
+  ensure that Emacs finds the Quintus support code you should load
+  qp-setup.el from your ~/.emacs initialization file (Windows users,
+  see below for details).
+
+  UNIX: Assuming quintus is installed in /usr/local/qp add the
+        following line to your ~/.emacs file:
+
+        (load "/usr/local/qp/editor3.4/gnu/qp-setup")
+
+  Win32: Assuming quintus is installed in C:\quintus (the default) add
+        the following line to your ~/.emacs file:
+
+        (load "C:/quintus/editor3.4/gnu/qp-setup")
+
+  Windows users: The notation ~/.emacs denotes the file ".emacs" in
+  whatever folder Emacs considers to be your "home" folder. The
+  easiest way to find this file is to select the item "Edit init file"
+  from the Emacs "Options" menu if it exists. If it does not exist
+  type:
+    C-f ~/.emacs RET
+  (C-f means hold down the Ctrl key together with the "F" key)
+  which tells Emacs to open or create the file. Then add a line as
+  above and save the file with
+    C-x C-s
+
+  In the same directory as qp-setup.el is a file, "qp-sample.el", that
+  contains some other, optional, customization steps. For extra speed,
+  if it has not been done already, you can compile the Emacs lisp code
+  using M-X byte-compile-file for each .el file in editor3.4/gnu from
+  within Emacs.
+
+  BEWARE!!!!! The existing GNU Emacs lisp directories (standard
+  distribution) contains a file "prolog.el" which defines a version of
+  the Prolog interface. In order to avoid any clash, place the Quintus
+  Prolog - GNU Emacs interface library pathname before all others in
+  the load-path. This is not a problem if qp-setup.el is loaded from
+  your .emacs init file.
+
+  From within Emacs, to achieve the same result, use the command
+  "M-x load-file" and navigate to qp-setup.el. (Windows users: M-x is
+  the same as typing the escape key followed by the "X" key.)
+
+  To run prolog you may then type "M-x run-prolog", which causes the
+  current buffer to display the Quintus Prolog logo and the prolog
+  prompt.
+
+  KEY BINDINGS
+  ------------
+  Within the prolog buffer (called *prolog*) a certain set of key
+  bindings are in effect. They are:
+
+                 "\t"          prolog-indent-command
+                 "ESC  \C-f"   forward-term
+                 "ESC  \C-b"   backward-term
+                 "ESC  d"      kill-prolog-word
+                 "ESC   DEL"   backward-kill-prolog-word
+                 "ESC  ."      find-definition
+                 "ESC  ,"      find-more-definition
+                 "\C-c\C-c"    interrupt-prolog
+
+  But the most useful commands are inherited from the "comint"
+  package. In particular "M-p" for finding previous commands. Once in
+  the "*prolog*" buffer, hit "C-h m" for a full description of the key
+  bindings.
+
+  find-definition works with tags. So M-* runs pop-tag-mark, which is
+  very useful for jumping around in source files.
+
+  In the prolog buffer the command "M-x cd" changes the directory of
+  both the buffer and the prolog process. Equivalently, a unix(cd(+Path)),
+  changes both default directories as well.
+
+  In order to enable the source-linked debugger, execute the command
+  "M-x enable-prolog-source-debugger", this is the default; to disable
+  it, do "M-x disable-prolog-source-debugger".
+
+  Within a buffer in prolog-mode, the following key bindings are
+  available:
+
+                 "ESC  \C-a"   beginning-of-clause
+		 "ESC  \C-e"   end-of-clause
+                 "ESC  \C-k"   kill-clause
+                 "ESC  h"      mark-clause	   
+                 "ESC  f"      forward-prolog-word
+	         "ESC  b"      backward-prolog-word
+                 "ESC  k"      prolog-compile
+                 "ESC  i"      prolog-compile (for backward compatibility)  
+		 "ESC  d"      kill-prolog-word
+                 "ESC  DEL"    backward-kill-prolog-word
+                 "ESC  ."      find-definition
+                 "ESC  ,"      find-more-definition
+		 "ESC C-b"     backward-term
+		 "ESC C-f"     forward-term
+		 "ESC C-q"     prolog-indent-clause
+		 "\t"          prolog-indent-line
+
+  INDENTATION
+  ----------- 
+  In prolog-mode the TAB and Linefeed keys provide a method of
+  indenting user prolog code according to a few rules. There are two
+  variables which control indentation in prolog mode. They are:
+
+  1) body-predicate-indent: Default value 8. The column at which the
+     body of a predicate is to begin. 
+  
+  2) if-then-else-indent: Default value 4. Offset within an
+     if-then-else statement. This offset is measured beginning at the
+     column of the first term in the condition. All subsequent lines
+     are indented according to the previous line. ';' and '|' are
+     indented according to the column of the corresponding '('. Nested
+     if-then-else constructs are handled in the same way. Note that
+     this variable refers to the offset for clauses in the "then" part
+     alone. Within the "else" part indentation depends on the
+     indentation of the previous line. 
+
+
+  QUI-EMACS INTERFACE
+  -------------------
+  
+  This allows users to invoke Gnu Emacs from QUI (Quintus User
+  Interface) and from the debugger. The interface when invoked from
+  the QUI main window comes up with a scratch buffer - "*qui-emacs*"
+  in qui-mode. When invoked from the debugger the file containing the
+  predicate you are currently debugging is displayed and the scratch
+  buffer "*qui-emacs*" is hidden. Qui-mode is equivalent to
+  prolog-mode in the regular Prolog/Emacs interface. This is the mode
+  that all files with ".pl" extension are placed in when first edited.
+  The only key bindings which have been disabled are the ones which
+  allow for manipulating queries sent to Prolog. This function is
+  handled by the QUI main window. The files that define this interface
+  are qui.el, qui_filter.el, qui_cmds.el and qui_aux.el.  Please refer
+  to the QUI manual for further details about this interface and on
+  how to invoke it.
+
+
+CHANGES FOR 3.2
+---------------
+
+The entire QP-GNU interface never sets the mark (except for mark-clause)!
+
+The interface works with XEmacs 19.x where x > 9, and GNU Emacs 19.x. It
+*might* work with 18.57.
+
+The Prolog process behaves as a proper "comint" package. (users should
+not see any changes as a result of this except for the the next point).
+
+You have comint's fancier command history as opposed to the goal
+history in 3.1.1. ^X-^E and ^X-^Y have been rebound to similar
+functionality provided by the comint package.
+You can go to any previous goal and hit return and this resubmits that goal.
+
+The interface does not try to prevent you from deleting the prompt anymore.
+
+Use the filename completion that comes with comint. It is bound
+to the key "\M-\t" just like in a shell. We don't have the file
+qpfile-compl.el
+
+prolog-consult-predicate() has disappeared. It used to be bound to M-C-x.
+
+A whole bunch of cleanups. The q*.el files in this directory had about
+5400 lines. Now it is down to 4000 lines. That is still about 2000 lines
+too much, I think!
+
+- Anil Nair
+
+The help system has interesting properties with XEmacs (formerly known
+as Lucid emacs). The help "text" buffers behave like XEmac's "man" pages
+-- that is, cross references are mouse-able, written in italics, and are
+highlighted when the mouse is over them. The middle mouse button will
+follow cross references or call help on the word the mouse is over. This
+makes it behave very much like the qui help system. The help "menu"
+buffers behave like "dired", that is, each entry is highlighted when the
+mouse is over it and the middle button (button2) will take you to that
+reference.
+
+A "prolog-mode-hook" and a "comint-prolog-hook" is provided. These hooks
+are called whenever a buffer is opened in prolog-mode and whenever a
+prolog process is started, respectively.
+
+A new sample file is provided, "qp-sample.el", which gives some examples
+of the kinds of things you might want to add to your .emacs to get the
+full kick out of using this interface.
+
+- Tom Howland
+
+
+CHANGES FOR 3.4
+---------------
+
+The interface does set the mark in find-definition, to make C-x C-x work.
+
+The interface works with GNU Emacs 19.x and 20.x.  It *might* work with
+GNU Emacs 18.x and XEmacs.
+
+The source linked debugger was added.
+
+- Mats Carlsson
+
+CHANGES FOR 3.4.3
+---------------
+
+Updated the Emacs code to work with recent versions of FSF Emacs and
+XEmacs.
+
+Added qp-setup.el for easier setup of the Quintus Emacs support.
+
+CHANGES FOR 3.5
+---------------
+
+The manual/1 command now brings up the corresponding *info* node if
+available.

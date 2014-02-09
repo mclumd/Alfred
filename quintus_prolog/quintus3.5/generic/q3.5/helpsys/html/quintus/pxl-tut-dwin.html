@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Displaying a Window on the Screen</h4>
+
+   <p>First, let's put up a window.  Type the command, 'prolog', into a shell
+window running under the X window system, and load the ProXL
+library:
+
+<pre class="example">     % <kbd>prolog</kbd>
+     
+     Quintus Prolog Release 3.5 (Sun 4, SunOS 5.5)
+     
+     | ?- <kbd>[library(proxl)].</kbd>
+     </pre>
+
+   <p>You will be greeted with many messages about files being loaded, and
+finally will get another Prolog prompt.  Now let's create a window:
+
+<pre class="example">     | ?- <kbd>create_window(Window, [mapped(true)]),
+          retractall(win(_)),
+          assert(win(Window)).</kbd>
+     
+     Window = window(2376568)
+     </pre>
+
+   <p>After a few moments, a window should appear on your screen.  Some
+window managers may require you to choose a position for the window.
+
+   <p>That's all there is to putting a window on the screen.  You will notice
+that we didn't specify very much.  We didn't say how big to make the
+window, nor where on the screen to put it, nor what color to make it,
+etc.  All these parameters, and many more, are defaulted for us by
+ProXL.  The only thing we did specify was <code>mapped(true)</code>. In X,
+<dfn>mapping</dfn> a window makes it visible if its parent window is visible. 
+Since we didn't specify a parent window for the window we're creating,
+the root window of the default screen is its parent, and the root window
+is always mapped.  So by specifying the attribute <code>mapped(true)</code>, we
+make the new window visible.
+
+   <p>The second argument of <code>create_window/2</code> is a list; this is called an
+<dfn>attribute</dfn> list.  We could have put many different attributes in
+this list, to specify any of the attributes of the window mentioned
+above as having been defaulted.  A complete list of the attributes
+supported by windows can be found in <a href="pxl-win.html#pxl-win">pxl-win</a>, but
+for this example we won't need to use very many of them.
+
+   <p>We use <code>assert/1</code> to remember the window we've created so that we can
+use it later.  This is a good idea while you are experimenting with
+ProXL, but isn't usually necessary in actual programs.  Using
+<code>retractall/1</code> to initialize the table first is just standard Prolog
+wisdom, avoiding any problems if this tutorial is run more than once.
+
+   <p>Notice that this window is quite small; the default window size is 100
+by 100 pixels.  If we're going to display a message in this window,
+we'll need it to be bigger.
+
+<pre class="example">     | ?- <kbd>win(Window),
+          put_window_attributes(Window, [size(250,100)]).</kbd>
+     
+     Window = window(2376568)
+     </pre>
+
+   <p>This makes the window 250 by 100 pixels, more than big enough for our
+purposes.  The call to <code>win/1</code> gets back the window we just created, and
+<code>put_window_attributes/2</code> changes the window's size.
+
+   <p><code>put_window_attributes/2</code> is much like <code>create_window/2</code>, except
+that it allows you to specify new attributes for an existing window,
+and <code>create_window/2</code> lets you specify attributes for a window to be
+newly created.  We could have specified <code>size(250,100)</code> in the call
+to <code>create_window/2</code>, if we had thought of it then.
+
+   <p>If you try this, one of two things may happen:  the window may be
+changed to the right size, or it may not.  The reason is that X allows
+the window manager to have control over top level window sizes and
+positions.  An application can try to change these things, but the
+window manager decides whether to allow it or not.  The theory behind
+this is that the <em>user</em> should be in control of his windows, and the
+window manager is his tool in implementing his wishes.  If this last
+goal didn't work for you, don't worry.  Try to get your window manager
+to give the test window enough space for the message, and ignore the
+fact that the message isn't centered.  The final version of this
+program will center the message.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-tut-dtxt.html#pxl-tut-dtxt">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-tut.html#pxl-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

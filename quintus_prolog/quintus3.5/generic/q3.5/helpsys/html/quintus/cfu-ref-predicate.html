@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_predicate()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     QP_pred_ref QP_predicate(name_string, arity, module_string)
+     char *name_string;
+     int   arity;
+     char *module_string;
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Before a Prolog predicate can be called from a
+foreign language it must be looked up.  The C functions
+<code>QP_predicate()</code> and <code>QP_pred()</code> perform this function.  The lookup
+step could have been folded into the functions that make the query,
+but if a predicate was to be called many times the redundant, if
+hidden, predicate lookup would be a source of unnecessary overhead. 
+Instead, <code>QP_predicate()</code> or <code>QP_pred()</code> can be called just once per
+predicate.  The result can then be stored in a variable and used as
+necessary.
+
+   <p>Both <code>QP_predicate()</code> and <code>QP_pred()</code> return a <code>QP_pred_ref()</code>, which
+represents a Prolog predicate.
+
+   <p><code>QP_predicate()</code> is the most convenient way of looking up a
+callable Prolog predicate.  It is simply passed the name and module
+of the predicate to be called as strings, the arity as an integer, and
+returns a <code>QP_pred_ref()</code>, which is used to make the actual call to Prolog.
+
+   <p><code>QP_predicate()</code> can only be used to look up predicates that
+have been declared callable from foreign code.  If some other predicate,
+or a predicate that does not exist, is looked up, <code>QP_ERROR</code>
+is returned.  This protects you from attempting to call a predicate that
+isn't yet ready to be called.
+
+<h4 class="subheading">Return Value</h4>
+
+     <dl>
+
+     <br><dt><code>QP_pred_ref</code>
+     <dd>a valid predicate reference
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>if the predicate called hasn't been declared callable or
+doesn't exist
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_pred()</code>, <code>QP_query()</code>, <code>QP_open_query()</code>, <code>QP_next_solution()</code>, <code>QP_cut_query()</code>, <code>QP_close_query()</code>
+
+   <a href="fli-ffp.html#fli-ffp">fli-ffp</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-prepare_stream.html#cfu-ref-prepare_stream">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-pred.html#cfu-ref-pred">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

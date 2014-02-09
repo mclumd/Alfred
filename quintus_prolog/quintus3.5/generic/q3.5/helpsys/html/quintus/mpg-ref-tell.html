@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>tell/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>tell(</code><var>+FileOrStream</var><code>)</code>
+
+   <p>makes <var>FileOrStream</var> the current output stream.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>FileOrStream</var> <dfn>file_spec</dfn> or <dfn>stream_object</dfn>
+     <dd>file specification or stream object. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>If there is an open output stream currently associated with the filename,
+and that stream was opened by <code>tell/1</code>, then it is made the current output
+stream;
+
+   <p>Otherwise, the specified file is opened for output and made the
+current output stream.  If the file does not exist, it is created.  If
+it is not possible to open the file (because of protections, for
+example), <code>tell/1</code> raises an exception.
+
+   <p>Different file names (names that do not unify) represent different
+streams (even if they correspond to the same file). Therefore,
+assuming <code>food</code> and <code>./food</code> represent the same file, the following
+sequence will open two streams, both connected to the same file:
+<pre class="example">     tell(food)
+     ...
+     tell('./food')
+     </pre>
+
+   <p>It is important to remember to close streams when you have finished with
+them.  Use <code>told/0</code> (<a href="ref-iou-sfh-cst.html#ref-iou-sfh-cst">ref-iou-sfh-cst</a>) or <code>close/1</code> (<a href="ref-iou-sfh-cst.html#ref-iou-sfh-cst">ref-iou-sfh-cst</a>).
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>FileOrStream</var> is not instantiated enough.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>FileOrStream</var> is neither a filename nor a stream.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+                <var>FileOrStream</var> exists but cannot be opened.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+                <var>FileOrStream</var> not currently open for input, and
+                <code>fileerrors</code> flag is <code>on</code>. 
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>told/0</code>, <code>telling/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-telling.html#mpg-ref-telling">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-tab.html#mpg-ref-tab">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

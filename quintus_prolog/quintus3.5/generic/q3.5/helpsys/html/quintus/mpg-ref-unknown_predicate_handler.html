@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>unknown_predicate_handler/3</code> <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile unknown_predicate_handler/3.</code>
+
+   <p><code>unknown_predicate_handler(</code><var>+Goal, +Module, -NewGoal</var><code>)</code>
+
+   <p>User definable hook to trap calls to unknown predicates
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Goal</var> <dfn>callable</dfn>
+     <dd>Any Prolog term
+
+     <br><dt><var>Module</var> <dfn>atom</dfn>
+     <dd>Any atom that is a current module
+
+     <br><dt><var>NewGoal</var> <dfn>callable</dfn>
+     <dd>Any callable Prolog term
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>When Prolog comes across a call to an
+unknown predicate and the <code>unknown</code> flag is set to <code>error</code>, Prolog
+makes a call to <code>unknown_predicate_handler/3</code> in module <code>user</code> with
+the first two arguments bound. <var>Goal</var> is bound to the call to the
+undefined predicate and <var>Module</var> is the module in which that
+predicate is supposed to be defined. If the call to
+<code>unknown_predicate_handler/3</code> succeeds then Prolog replaces the
+call to the undefined predicate with the call to <var>NewGoal</var>.  By
+default <var>NewGoal</var> is called in module <code>user</code>.  This can be
+overridden by making <var>NewGoal</var> have the form <var>Module:SomeGoal</var>.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>The following clause gives the
+same behaviour as setting <code>unknown(_,fail)</code>.
+<pre class="example">     unknown_predicate_handler(_, _, fail).
+     </pre>
+
+   <p>The following clause causes calls to undefined predicates whose names
+begin with <code>xyz_</code> in module <code>m</code> to be trapped to <code>my_handler/1</code> in module
+<code>n</code>.  Predicates with names not beginning with this character
+sequence are not affected.
+<pre class="example">     unknown_predicate_handler(G, m, n:my_handler(G)) :-
+         functor(G,N,_),
+         atom_chars(N,Chars),
+         append("xyz_" _, Chars).
+     </pre>
+
+<h4 class="subheading">Tips</h4>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>unknown/2</code>, <code>prolog_flag/3</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-use_module.html#mpg-ref-use_module">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-unknown.html#mpg-ref-unknown">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

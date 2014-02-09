@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Protecting a Particular Goal</h5>
+
+   <p>The built-in predicate <code>on_exception/3</code> enables you to handle
+exceptions to a specific goal:
+
+   <p><code>on_exception(</code><var>?ExceptionCode, +ProtectedGoal, +Handler</var><code>)</code>
+
+   <p><var>ProtectedGoal</var> is executed.  If all goes well, it will behave just as if
+you had written <var>ProtectedGoal</var> without the <code>on_exception/3</code> wrapper. 
+If an exception is raised while <var>ProtectedGoal</var> is running, Prolog will
+abandon <var>ProtectedGoal</var> entirely.  Any bindings made by
+<var>ProtectedGoal</var> will be undone, just as if it had failed.  Side-effects,
+such as asserts and retracts, are not undone, just as they are not undone when
+a goal fails.  After undoing the bindings, Prolog tries to unify the exception
+code raised with the <var>ExceptionCode</var> argument.  If this unification
+succeeds, <var>Handler</var> will be executed as if you had written
+<pre class="display">     
+     <var>ExceptionCode</var>=&lt;the actual exception code&gt;,
+     <var>Handler</var>
+     </pre>
+
+   <p>If this unification fails, Prolog will keep searching up the ancestor list
+looking for another exception handler.  If it reaches Prolog's top level (or a
+break level) without having found a call to <code>on_exception/3</code> with a matching
+<var>ExceptionCode</var>, an appropriate error message is printed (using
+<code>print_message/2</code>).
+
+   <p><var>ProtectedGoal</var> need not be determinate.  That is, backtracking into
+<var>ProtectedGoal</var> is possible, and the exception handler becomes reactivated
+in this case.  However, if <var>ProtectedGoal</var> is determinate, then the call
+to <code>on_exception/3</code> is also determinate.
+
+   <p>Setting up an exception handler with <code>on_exception/3</code> is cheap provided that
+<var>ProtectedGoal</var> is an ordinary goal.  Some efficiency is lost, in the
+current implementation, if <var>ProtectedGoal</var> is of the form
+<var>(Goal1,Goal2)</var> or <var>(Goal1;Goal2)</var>.
+
+   <p>The <var>ProtectedGoal</var> is logically <em>inside</em> the <code>on_exception/3</code>
+form, but the <var>Handler</var> is <em>not</em>.  If an exception is raised inside
+the <var>Handler</var>, this <code>on_exception/3</code> form will <em>not</em> be
+reactivated.  If you want an exception handler that protects itself,
+you have to program it, perhaps like this:
+<pre class="example">     recursive_on_exception_handler(Err, Goal, Handler) :-
+         on_exception(Err, Goal,
+             recursive_on_exception_handler(Err, Handler, Handler)).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-hex-hup.html#ref-ere-hex-hup">Next</a>
+<li><a rel="up" accesskey="u" href="ref-ere-hex.html#ref-ere-hex">Up</a>
+</ul>
+</div>
+   </body></html>
+

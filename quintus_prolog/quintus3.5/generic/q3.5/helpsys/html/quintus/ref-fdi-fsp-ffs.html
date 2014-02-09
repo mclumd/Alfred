@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Frequently Used File Specifications</h5>
+
+   <p>Frequently used <code>file_search_path/2</code> facts are best defined using
+the initialization file <code>prolog.ini</code>
+, which is
+consulted at startup time by the Development System.  Therefore, with
+reference to the examples from <a href="ref-fdi-fsp-def.html#ref-fdi-fsp-def">ref-fdi-fsp-def</a>,
+clauses like one following should be placed in the <code>prolog.ini</code> file so
+that they are automatically available to user programs after startup:
+
+<pre class="example">     :- multifile file_search_path/2.
+     :- dynamic file_search_path/2.
+     file_search_path(home, '/usr/jackson').
+     file_search_path(qp_directory, home('prolog/qp')).
+     file_search_path(demo, 'etc/demo').
+     </pre>
+
+   <p>If it is necessary to avoid multiple definitions of the same fact,
+this would be useful, for example, when restoring a saved state saved
+by <code>save_program/1</code> at which time the <code>prolog.ini</code> file is consulted
+again, a predicate such as <code>add_my_search_path/2</code> can be defined in
+the <code>prolog.ini</code> file.
+<pre class="example">     add_my_search_path(Name, FileSpec) :-
+         file_search_path(Name, FileSpec),
+         !.
+     add_my_search_path(Name, FileSpec) :-
+         assert(file_search_path(Name, FileSpec)).
+     </pre>
+
+   <p>This predicate only asserts a clause into the database if it is not
+already defined.  Then, using goals of the following form avoids
+multiple definitions:
+
+<pre class="example">     :- add_my_search_path(home, '/usr/jackson').
+     :- add_my_search_path(demo, 'etc/demo').
+     :- add_my_search_path(qp_directory, home('prolog/qp')).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-fdi-fsp-fde.html#ref-fdi-fsp-fde">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-fdi-fsp-def.html#ref-fdi-fsp-def">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-fdi-fsp.html#ref-fdi-fsp">Up</a>
+</ul>
+</div>
+   </body></html>
+

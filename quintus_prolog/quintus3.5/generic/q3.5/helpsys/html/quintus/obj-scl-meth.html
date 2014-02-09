@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Methods</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="obj-scl-meth-getput.html#obj-scl-meth-getput">obj-scl-meth-getput</a>:                  Get and Put Methods
+<li><a accesskey="2" href="obj-scl-meth-dir.html#obj-scl-meth-dir">obj-scl-meth-dir</a>:                     Direct Slot Access
+<li><a accesskey="3" href="obj-scl-meth-send.html#obj-scl-meth-send">obj-scl-meth-send</a>:                    Send Methods
+<li><a accesskey="4" href="obj-scl-meth-credes.html#obj-scl-meth-credes">obj-scl-meth-credes</a>:                  Create and Destroy Methods
+<li><a accesskey="5" href="obj-scl-meth-ins.html#obj-scl-meth-ins">obj-scl-meth-ins</a>:                     Instance Methods
+</ul>
+
+   <p>Some methods are defined by method clauses, between the
+<code>class/1</code> directive and the end of the class's definition. Others
+are generated automatically. There are three kinds of messages in
+Quintus Objects, distinguished by the message operator they occur
+with:
+
+     <dl>
+
+     <br><dt><code>&gt;&gt;</code>
+     <dd>A get message, which is typically used to fetch values from an object's slots.
+
+     <br><dt><code>&lt;&lt;</code>
+     <dd>A put message, which is typically used to store values in an object's slots.
+
+     <br><dt><code>&lt;-</code>
+     <dd>A send message, which is used for other operations on or involving an object. 
+</dl>
+
+   <p>Quintus Objects automatically generates some get and put methods. And,
+it expects particular message names with the send operator for create
+and destroy methods. For the most part, however, you are free to use
+any message operators and any message names that seem appropriate.
+
+   <p>A method clause has one of these message operators as the principal
+functor of its head. Its first argument, written to the left of the
+message operator, is a variable. By convention, we use the variable
+<code>Self</code>. Its second argument, written to the right of the message
+operator, is a term whose functor is the name of the message and whose
+arguments are its arguments.
+
+   <p>For example, in the class whose definition begins as follows, a
+0-argument send message named <code>increment</code> is defined. No parentheses are
+needed in the clause head, because the precedence of the <code>&lt;-</code> message
+operator is lower than that of the <code>:-</code> operator.
+
+<pre class="example">     :- class counter = [public count:integer = 0].
+     
+     Self &lt;- increment :-
+             Self &gt;&gt; count (X0),
+             X1 is X0 + 1,
+             Self &lt;&lt; count (X1).
+     </pre>
+
+   <p>Its definition uses the automatically generated get and put methods
+for the public slot <code>count</code>.
+
+   <p>It may look as though this technique is directly adding clauses to the
+<code>&gt;&gt;/2</code>, <code>&lt;&lt;/2</code> and <code>&lt;-/2</code> predicates, but the method clauses are
+transformed by term expansion, at compile time.  However, the method
+clauses have the effect of extending the definitions of those
+predicates.
+
+   <p>Methods are defined by Prolog clauses, so it is possible for them to
+fail, like Prolog predicates, and it is possible for them to be
+nondeterminate, producing multiple answers, upon backtracking. The
+rest of this section describes different kinds of methods.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="obj-scl-slt.html#obj-scl-slt">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-scl.html#obj-scl">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,1835 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: mpg-ref-debug,  Next: mpg-ref-debugging,  Prev: mpg-ref-db_reference,  Up: mpg-ref
+
+`debug/0' "development"
+-----------------------
+
+Synopsis
+--------
+
+   `debug'
+
+   Turns on the debugger in debug mode.
+
+Description
+-----------
+
+   `debug/0' turns the debugger on and sets it to debug mode.  Turning
+the debugger on in debug mode means that it will stop at the next
+spypoint encountered in the current execution.
+
+   The effect of this predicate can also be achieved by typing the
+letter `d' after a `^c' interrupt (see *Note ref-iex-int::).
+
+   If you are runnning Prolog with QUI then `debug/0' will cause the
+debugger window to be popped open.
+
+   This predicate is not supported in runtime systems.
+
+See Also
+--------
+
+   `spy/1',`add_spypoint/1',`trace/0', `nodebug/0'
+
+
+File: quintus.info,  Node: mpg-ref-debugging,  Next: mpg-ref-discontiguous,  Prev: mpg-ref-debug,  Up: mpg-ref
+
+`debugging/0' "development"
+---------------------------
+
+Synopsis
+--------
+
+   `debugging'
+
+   Prints out current debugging state
+
+Description
+-----------
+
+   `debugging/0' displays information on the terminal about the current
+debugging state.  It shows
+   * The top-level state of the debugger, which is one of
+    `debug'
+          The debugger is on but will not show anything or stop for user
+          interaction until a spypoint is reached.
+
+    `trace'
+          The debugger is on and will show everything.  As soon as you
+          type a goal, you will start seeing a debugging trace.  After
+          printing each trace message, the debugger may or may not stop
+          for user interaction:  this depends on the type of leashing
+          in force (see below).
+
+    `zip'
+          The debugger is on but will not show anything or stop for user
+          interaction until a spypoint is reached. The debugger does
+          not even keep any information of the execution of the goal
+          till the spypoint is reached and hence you will not be able
+          to see the ancestors of the goal when you reach the spypoint.
+
+    `off'
+          The debugger is off.
+
+     The top-level state can be controlled by the predicates `debug/0',
+     `nodebug/0', `trace/0', `notrace/0' and `prolog_flag/3'.
+
+   * The type of leashing in force.  When the debugger prints a message
+     saying that it is passing through a particular port (one of Call,
+     Exit, Head, Done, Redo, or Fail) of a particular procedure, it
+     stops for user interaction only if that port is leashed.  The
+     predicate `leash/1' can be used to select which of the seven ports
+     you want to be leashed.
+
+   * All the current spypoints.  Spypoints are controlled by the
+     predicates `spy/1', `nospy/1', `add_spypoint/1',
+     `remove_spypoint/1' and `nospyall/0'.
+
+   This predicate is not supported in runtime systems.
+
+
+File: quintus.info,  Node: mpg-ref-discontiguous,  Next: mpg-ref-display,  Prev: mpg-ref-debugging,  Up: mpg-ref
+
+`discontiguous/1' "declaration"
+-------------------------------
+
+Synopsis
+--------
+
+   `:- discontiguous +PREDSPEC'
+
+   Declares the clauses of the predicates defined by PREDSPECS to be
+discontiguous in the source file (suppresses compile-time warnings).
+
+Arguments
+---------
+
+PREDSPEC "gen_pred_spec_tree"
+     a skeletal predicate specification
+
+Exceptions
+----------
+
+`type_error'
+
+`context_error'
+     "declaration appeared in query"
+
+See Also
+--------
+
+   *Note ref-mdb-dsp::.
+
+
+File: quintus.info,  Node: mpg-ref-display,  Next: mpg-ref-dynamic,  Prev: mpg-ref-discontiguous,  Up: mpg-ref
+
+`display/1'
+-----------
+
+Synopsis
+--------
+
+   `display(+TERM)'
+
+   Displays TERM on the standard output stream .
+
+Arguments
+---------
+
+TERM "term"
+Description
+-----------
+
+   Ignores operator declarations and shows all compound terms in
+standard prefix form.
+
+Tips
+----
+
+   `display/1' is a good way of finding out how Prolog parses a term
+with several operators.  `display(Term)' is equivalent to
+
+     write_term(Term, [quoted(false),ignore_ops(true)])
+
+   Output is not terminated by a full-stop; therefore, if you want the
+term to be acceptable as input to `read/[1,2]', you must send the
+terminating full-stop to the output stream yourself.  `display/1' does
+not put quotes around atoms and functors.
+
+Example
+-------
+
+     | ?- display(a+b).
+     +(a,b)
+     yes
+
+     | ?- read(X), display(X), nl.
+     |: a + b * c.
+     +(a,*(b,c))
+     
+     X = a+b*c
+     
+     | ?-
+
+See Also
+--------
+
+   `write/[1,2]', `write_term/[2,3]'
+
+
+File: quintus.info,  Node: mpg-ref-dynamic,  Next: mpg-ref-ensure_loaded,  Prev: mpg-ref-display,  Up: mpg-ref
+
+`dynamic/1' "declaration"
+-------------------------
+
+Synopsis
+--------
+
+   `:-dynamic +PREDSPECS'
+
+   Declares the predicates in PREDSPECS to be dynamic.
+
+Arguments
+---------
+
+PREDSPECS "pred_spec_forest"
+     A single predicate specification of the form NAME/ARITY, or a
+     sequence of predicate specifications separated by commas.  NAME
+     must be an atom and ARITY an integer in the range 0..255.  [MOD]
+
+Description
+-----------
+
+Exceptions
+----------
+
+`type_error'
+
+`context_error'
+     If the declaration contradicts previous declaration or clauses for
+     the same predicate in the file; or
+
+     cannot call `dynamic/1' as a goal.
+
+`permission_error'
+     Cannot redefine built-in predicate, `dynamic/1'.
+
+Comments
+--------
+
+   To declare a grammar rule GRAM/N dynamic, the arity of PREDSPEC must
+be N+2.
+
+See Also
+--------
+
+   *Note ref-mdb-dsp::.
+
+
+File: quintus.info,  Node: mpg-ref-ensure_loaded,  Next: mpg-ref-erase,  Prev: mpg-ref-dynamic,  Up: mpg-ref
+
+`ensure_loaded/1'
+-----------------
+
+Synopsis
+--------
+
+   `ensure_loaded(+FILES)'
+
+   Load the specified Prolog source and/or QOF file(s) into memory, if
+not already loaded and up to date.
+
+Arguments
+---------
+
+FILES "file_spec" or "list of file_spec" [MOD]
+     a file specification or a list of file specifications; a `.pl' or
+     `.qof' extension may be omitted in a file specification.
+
+Description
+-----------
+
+   Loads each of the specified files except for files that have
+previously been loaded and that have not been changed since they were
+last loaded.
+
+   In the case of non-module-files, a file is not considered to have
+been previously loaded if it was loaded into a different module.  For
+restrictions on non-module QOF-files, and how they can be loaded, see
+`load_files/[1,2]'.  In this case the file is loaded again and a warning
+message is printed to let you know that two copies of the file have
+been loaded (into two different modules).  If you _want_ two copies of
+the file, you can avoid the warning message by changing the
+`ensure_loaded/1' command to a `compile/1' command.  If you do not want
+multiple copies of the file, make the file a module-file.
+
+   When `ensure_loaded/1' is called from an embedded command in a file
+being compiled by `qpc', each specified file is compiled from source
+into QOF unless there is already a QOF file that is more recent than
+the source.
+
+   When `ensure_loaded/1' is called in a runtime system, all predicates
+will be loaded as dynamic predicates and therefore this code will run
+slower.  The reason for this is that the compiler is not available in
+runtime systems.
+
+   This predicate is defined as:
+     ensure_loaded(Files) :-
+             load_files(Files, [if(changed),
+                        load_type(latest)]).
+
+   For further details on loading files, see *Note ref-lod::.
+
+Exceptions
+----------
+
+`instantiation_error'
+     M or FILES is not ground.
+
+`type_error'
+     In M or in FILES.
+
+`existence_error'
+     A specified file does not exist.  If the `fileerrors' flag is
+     `off', the predicate fails instead of raising this exception.
+
+`permission_error'
+     A specified file is protected.  If the `fileerrors' flag is `off',
+     the predicate fails instead of raising this exception.
+
+See Also
+--------
+
+   `compile/1', `load_files/[1,2]'.
+
+
+File: quintus.info,  Node: mpg-ref-erase,  Next: mpg-ref-qua,  Prev: mpg-ref-ensure_loaded,  Up: mpg-ref
+
+`erase/1'
+---------
+
+Synopsis
+--------
+
+   `erase(+REF)'
+
+   Erases from the database the dynamic clause or recorded term
+referenced by REF.
+
+Arguments
+---------
+
+REF "db_reference"
+Description
+-----------
+
+   Erases from the database the dynamic clause or recorded term
+referenced by REF.  (Recorded terms are described in *Note
+ref-mdb-idb::.)
+
+   REF must be a database reference to an existing clause or recorded
+term.
+
+   `erase/1' is not sensitive to the source module; that is, it can
+erase a clause even if that clause is neither defined in nor imported
+into the source module.
+
+Exceptions
+----------
+
+`instantiation_error'
+     If REF is not instantiated.
+
+`type_error'
+     If REF is not a database reference.
+
+`existence_error'
+     if REF is not a database reference to an existing clause or
+     recorded term.
+
+See Also
+--------
+
+   `abolish/[1,2]', `assert/2', `dynamic/1', `retract/1',
+`retractall/1'.
+
+
+File: quintus.info,  Node: mpg-ref-expand_term,  Next: mpg-ref-extern,  Prev: mpg-ref-qua,  Up: mpg-ref
+
+`expand_term/2' "hookable"
+--------------------------
+
+Synopsis
+--------
+
+   `expand_term(+TERM1, -TERM2)'
+
+   Transforms grammar rules into Prolog clauses before they are
+compiled.  Normally called by the compiler, but can be called directly.
+The transform can be customized by defining the hook `term_expansion/2'.
+
+Arguments
+---------
+
+TERM1 "term"
+
+TERM2 "term"
+Description
+-----------
+
+   Usually called by the built-in Load Predicates and not directly by
+user programs.
+
+   Normally used to translate grammar rules, written with `-->/2', into
+ordinary Prolog clauses, written with `:-/2'.  If TERM1 is a grammar
+rule, then TERM2 is the corresponding clause.  Otherwise TERM2 is simply
+TERM1 unchanged.
+
+   If TERM1 is not of the proper form, or if TERM2 does not unify with
+its clausal form, `expand_term/2' simply fails.
+
+   Calls `term_expansion/2'.
+
+Exceptions
+----------
+
+   Prints messages for exceptions raised by `term_expansion/2'.
+
+Examples
+--------
+
+   See examples in *Note ref-gru-tra::.
+
+See Also
+--------
+
+   `term_expansion/2', `phrase/[2,3]', `'C'/3', `-->/2' *Note ref-gru::
+
+
+File: quintus.info,  Node: mpg-ref-extern,  Next: mpg-ref-fail,  Prev: mpg-ref-expand_term,  Up: mpg-ref
+
+`extern/1' "declaration"
+------------------------
+
+Synopsis
+--------
+
+   `:-extern(+EXTERNSPEC)'
+
+   Declares a Prolog predicate to be callable from functions written in
+other languages.
+
+Arguments
+---------
+
+EXTERNSPEC "extern_spec" [MOD]
+     a term of the form NAME(ARGSPEC, ARGSPEC, ...)
+
+    NAME
+          the name of the Prolog predicate
+
+    ARGSPEC
+          an argument specification for each argument of the predicate.
+          Each should be one of the following where T is a foreign
+          type name.
+                +integer    +float    +single   +double
+                -integer    -float    -single   -double
+               
+                +atom       +term     +string
+                -atom       -term     -string
+               
+                +string     +address(T)
+                -string     -address(T)
+
+Description
+-----------
+
+   `extern/1' is used to make Prolog predicates callable from functions
+written in other languages.  `extern/1' must appear as a compile-time
+declaration; furthermore, it may not appear in files loaded into
+runtime systems.  The user has to declare as callable each Prolog
+predicate that is to be called from foreign functions.  Any Prolog
+predicate can be declared to be callable from foreign functions,
+including system built-ins and predicates that do not currently have
+definitions.  Predicates must be declared callable before they can
+actually be called from a function written in a foreign language.
+
+   Arguments are passed to the foreign interface as specified in
+EXTERNSPEC:
+
+`+'
+     indicates that an argument is to be passed to Prolog from a
+     foreign function.
+
+`-'
+     indicates that an argument is to be passed from Prolog to the
+     foreign function.
+
+   Unlike the interface enabling Prolog to call functions written in
+other languages, when foreign functions call Prolog there are no return
+values or corresponding designators in EXTERNSPEC.
+
+   When a Prolog predicate is declared to be callable, an interface
+predicate is created in the current module.  The arity of the interface
+predicate is the same as that of the Prolog predicate.  The name of the
+interface predicate is that of the Prolog predicate with an underscore
+prepended.  The interface predicate is made available to the user as a
+hook to the "callability" of the Prolog predicate; for instance, the
+callability of the predicate can be saved by putting the interface
+predicate in a QOF file via `save_predicates/2', then reloaded like any
+other predicate.  The interface predicate can also be abolished like
+any other predicate; this also has the effect of making the previously
+callable Prolog predicate no longer available to foreign functions.  A
+call to any interface predicate simply fails.
+
+   For more details about passing arguments from the foreign interface,
+see the chapter on the foreign language interface.
+
+Exceptions
+----------
+
+`instantiation_error'
+     EXTERNSPEC is uninstantiated
+
+     Some ARGSPEC in EXTERNSPEC is uninstantiated or is a term that is
+     insufficiently instantiated
+
+`type_error'
+     EXTERNSPEC is instantiated but is not a callable term
+
+     Some ARGSPEC in EXTERNSPEC is not a callable term
+
+`domain_error'
+     Some ARGSPEC in EXTERNSPEC is not one of the forms listed above
+
+Examples
+--------
+
+   It can be quite useful to make the system built-in `call/1' available
+to foreign functions.  Combined with term manipulation in C, doing so
+provides an evaluator for arbitrary Prolog queries.  This can be done
+by loading a Prolog file containing the declaration
+
+     :- extern(call(+term)).
+
+   Prolog's `call/1' is then available to C via a function like
+
+     call_prolog(term)
+     QP_term_ref term;
+     {
+         QP_pred_ref call;
+         call = QP_predicate("call",1,"user");
+         QP_query(call, term);
+     }
+
+   For the sake of brevity, this example does not check return values
+for failure or errors.  Doing so is generally recommended.  Of course,
+as is the case in Prolog, it is faster to call a Prolog predicate
+directly.
+
+
+File: quintus.info,  Node: mpg-ref-fail,  Next: mpg-ref-false,  Prev: mpg-ref-extern,  Up: mpg-ref
+
+`fail/0'
+--------
+
+Synopsis
+--------
+
+   `fail'
+
+   Always fails.
+
+
+File: quintus.info,  Node: mpg-ref-false,  Next: mpg-ref-file_search_path,  Prev: mpg-ref-fail,  Up: mpg-ref
+
+`false/0'
+---------
+
+Synopsis
+--------
+
+   `false'
+
+   Same as `fail/0'.
+
+
+File: quintus.info,  Node: mpg-ref-file_search_path,  Next: mpg-ref-fileerrors,  Prev: mpg-ref-false,  Up: mpg-ref
+
+`file_search_path/2' "extendable"
+---------------------------------
+
+Synopsis
+--------
+
+   `:- multifile file_search_path/2.'
+
+   `file_search_path(*PATHALIAS, *DIRSPEC)'
+
+   Defines a symbolic name for a directory or a path.  Used by
+predicates taking "file_spec" as input argument.
+
+Arguments
+---------
+
+PATHALIAS "atom"
+     A string that represents the path given by DIRSPEC.
+
+DIRSPEC "file_spec"
+     Either a string giving the path to a file or directory, or
+     PATHALIAS(DIRSPEC), where PATHALIAS is defined by another
+     `file_search_path/2' rule.
+
+Description
+-----------
+
+   `file_search_path/2' is a dynamic, multifile predicate. It resides
+in module `user'.
+
+   The `file_search_path' mechanism provides an extensible way of
+specifying a sequence of directories to search to locate a file.  For
+instance, if a filename is given as a structure term,
+`library(basics)'.  The principle functor of the term, `library', is
+taken to be another `file_search_path/2' definition of the form
+     file_search_path(library, LibPath)
+
+   and file `basics' is assumed to be relative to the path given by
+LIBPATH.  LIBPATH may also be another structure term, in which case
+another `file_search_path/2' fact gives its definition.  The search
+continues until the path is resolved to an atom.
+
+   There may also be several definitions for the same PATHALIAS.
+Certain predicates, such as `load_files/[1,2]' and
+`absolute_file_name/[2,3]', search all these definitions until the path
+resolves to an existing file.
+
+   There are several system defined search paths, such as `quintus',
+`runtime', `library', `system', `helpsys'.  These are initialized at
+system startup, and used by some of the system predicates, but they may
+be redefined by the user.  Furthermore, the user may create extra
+`file_search_path's to define certain paths, and these may be used
+exactly as the predefined system paths.  See *Note ref-fdi:: for more
+detail.
+
+Examples
+--------
+
+     | ?- assert(file_search_path(home, '/usr/joe_bob')).
+     
+     yes
+     | ?- assert(file_search_path(review, home('movie/review'))).
+     
+     yes
+     | ?- compile(review(blob)).
+     % compiling /usr/joe_bob/movie/review/blob.pl
+
+See Also
+--------
+
+   `absolute_file_name/[2,3]', `assert/[1,2]', `dynamic/1',
+`library_directory/1', `listing/1', `load_files/[1,2]',
+
+   *Note ref-fdi::.
+
+
+File: quintus.info,  Node: mpg-ref-fileerrors,  Next: mpg-ref-findall,  Prev: mpg-ref-file_search_path,  Up: mpg-ref
+
+`fileerrors/0'
+--------------
+
+Synopsis
+--------
+
+   `fileerrors'
+
+   Cancels the effect of `nofileerrors/0'.
+
+Description
+-----------
+
+   Sets the `fileerrors' flag to its default state, `on', in which an
+exception is raised by `see/1', `tell/1', and `open/3' if the specified
+file cannot be opened.
+
+   The `fileerrors' flag is only disabled by an explicit call to
+`nofileerrors/0', or via `prolog_flag/[2,3]', which can also be used to
+obtain the current value of the `fileerrors' flag.  See *Note
+ref-lps-ove::, for more information on the `fileerrors' flag.
+
+See Also
+--------
+
+   `nofileerrors/0', `prolog_flag/[2,3]'
+
+
+File: quintus.info,  Node: mpg-ref-findall,  Next: mpg-ref-float,  Prev: mpg-ref-fileerrors,  Up: mpg-ref
+
+`findall/3'
+-----------
+
+Synopsis
+--------
+
+   `findall(+TEMPLATE, +*GENERATOR, -LIST)'
+
+   Collects in LIST all the instances of TEMPLATE for which the goal
+GENERATOR succeeds. A special case of `bagof/3', where all free
+variables in the generator are taken to be existentially quantified.
+
+Arguments
+---------
+
+TEMPLATE "term"
+
+GENERATOR "callable" [MOD]
+     a goal to be proved as if by `call/1'.
+
+LIST "list of terms"
+Description
+-----------
+
+   A special case of `bagof/3', where all free variables in the
+generator are taken to be existentially quantified, as if by means of
+the `^' operator.
+
+   Because `findall/3' avoids the relatively expensive variable
+analysis done by `bagof/3', using `findall/3' where appropriate rather
+than `bagof/3' can be considerably more efficient.
+
+Examples
+--------
+
+   To illustrate the differences among `findall/3', `setof/3', and
+`bagof/3':
+     | ?- [user].
+     | foo(1,2).
+     | foo(1,2).
+     | foo(2,3).
+     |
+     % user compiled in module user, 0.100 sec 352 bytes
+     
+     yes
+     | ?- bagof(X, foo(X,Y), L).
+     
+     X = _3342,
+     Y = 2,
+     L = [1,1] ;
+     
+     X = _3342,
+     Y = 3,
+     L = [2] ;
+     
+     no
+
+     | ?- bagof(X, Y^foo(X,Y), L).
+     
+     X = _3342,
+     Y = _3361,
+     L = [1,1,2] ;
+     
+     no
+
+     | ?- findall(X, foo(X,Y), L).
+     
+     X = _3342,
+     Y = _3384,
+     L = [1,1,2] ;
+     
+     no
+
+     | ?- setof(X, foo(X,Y), L).
+     
+     X = _3342,
+     Y = 2,
+     L = [1] ;
+     
+     X = _3342,
+     Y = 3,
+     L = [2] ;
+     
+     no
+
+Exceptions
+----------
+
+   As for `call/1'.
+
+See Also
+--------
+
+   `setof/3', `bagof/3', `^/2'
+
+   *Note ref-all::
+
+
+File: quintus.info,  Node: mpg-ref-float,  Next: mpg-ref-flush_output,  Prev: mpg-ref-findall,  Up: mpg-ref
+
+`float/1' "meta-logical"
+------------------------
+
+Synopsis
+--------
+
+   `float(+TERM)'
+
+   TERM is currently instantiated to a float.
+
+Arguments
+---------
+
+TERM "term"
+Example
+-------
+
+     | ?- float(Term1).
+     
+     no
+     | ?- float(5.2).
+     
+     yes
+
+See Also
+--------
+
+   `atom/1', `atomic/1', `number/1', `var/1', `compound/1',
+`callable/1', `nonvar/1', `simple/1'
+
+
+File: quintus.info,  Node: mpg-ref-flush_output,  Next: mpg-ref-foreign,  Prev: mpg-ref-float,  Up: mpg-ref
+
+`flush_output/1'
+----------------
+
+Synopsis
+--------
+
+   `flush_output(+STREAM)'
+
+   Forces the buffered output of the stream STREAM to be sent to the
+associated device.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog stream
+
+Description
+-----------
+
+   Sends the current buffered output of an output stream STREAM to the
+actual output device, which is usually a disk or a tty device.
+`flush_output/1' fails if STREAM does not permit flushing or the bottom
+layer flushing function of STREAM is not properly defined.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`permission_error'
+     An error occurred in flushing out the buffered output.
+
+Comments
+--------
+
+   If the host operating system, such as UNIX, buffers an output file
+stream, the output may be written to the disk some time after
+`flush_output/1' succeeds.
+
+See Also
+--------
+
+   `nl/[0,1]', `QP_flush()', `QU_flush_output()', `ttyflush/0'
+
+
+File: quintus.info,  Node: mpg-ref-foreign,  Next: mpg-ref-foreign_file,  Prev: mpg-ref-flush_output,  Up: mpg-ref
+
+`foreign/[2,3]' "hook"
+----------------------
+
+Synopsis
+--------
+
+   `:- discontiguous foreign/2, foreign/3.'
+
+   `foreign(*ROUTINE, *FOREIGNSPEC)'
+
+   `foreign(*ROUTINE, *LANGUAGE, *FOREIGNSPEC)'
+
+   Describes the interface between Prolog and the foreign ROUTINE. The
+user has to define a `foreign/3' or the fact for every foreign function
+that is to be called from Prolog. Used by `load_foreign_files/2' and
+`load_foreign_executable/2'.
+
+Arguments
+---------
+
+ROUTINE "atom"
+     An atom that names a foreign code ROUTINE
+
+LANGUAGE "atom"
+     An atom that names the LANGUAGE in which ROUTINE is written. It
+     must be one of `c', `pascal' or `fortran'.
+
+FOREIGNSPEC "foreign_spec"
+     A term of the form PREDNAME(ARGSPEC, ARGSPEC, ...) where:
+
+    PREDNAME
+          the name of the Prolog predicate
+
+    ARGSPEC
+          an argument specification (for each argument of the
+          predicate) One of the following:
+                +integer    +float    +single   +double
+                -integer    -float    -single   -double
+               [-integer]  [-float]  [-single] [-double]
+               
+                 +atom      +term     +string
+                 -atom      -term     -string
+                [-atom]    [-term]   [-string]
+               
+                +string(N)    +address(T)
+                -string(N)    -address(T)
+               [-string(N)]  [-address(T)]
+
+
+          where N is a positive integer and T is a foreign type name.
+
+Description
+-----------
+
+   `foreign/2' is a special case of `foreign/3' where LANGUAGE is C.
+`foreign/2' is for backward compatibility.
+
+   The user has to define a `foreign/3' fact for every foreign function
+that is to be called from Prolog. Note that ROUTINE does not have to be
+the same as PREDICATENAME. Arguments are passed to the foreign function
+as specified in FOREIGNSPECS
+
++TYPE
+     specifies that an argument is to be passed to the foreign function.
+
+-TYPE
+     specifies that an argument is to be received from the foreign
+     function.
+
+[-TYPE]
+     argument is used to obtain the return value of a foreign function
+     call.  At most one "return value" argument can be specified.
+
+   For more details about the passing arguments through the foreign
+interface, see *Note fli-ffp-ppc-api::.
+
+   The `foreign/3' facts are used only in the context of a
+`load_foreign_files/2' command and can be removed once the foreign
+files are loaded.
+
+   If you have `foreign/3' facts in different files, Prolog will warn
+you that `foreign/3' has been previously defined in another file.  This
+is generally not a problem if you are using the module system.
+
+   `load_foreign_files/2' will only look for `foreign/3' facts defined
+in its source module.
+
+Exceptions
+----------
+
+   Errors in the specification of `foreign/3' will only be detected at
+`load_foreign_files/2' time. Otherwise defining a `foreign/3' fact is
+just like defining any other Prolog fact.
+
+Tips
+----
+
+   A good practice in loading several foreign files is to insert the
+call to `load_foreign_files/2' into the file that defines `foreign/3'
+as an embedded command. For example,
+             foreign(f11, c, f11(+integer)).
+             foreign(f12, c, f12(+atom, -atom)).
+             foreign_file('f1', [f11, f12]).
+             :- load_foreign_files('f1', []),
+                abolish([foreign/3,foreign_file/2]).
+
+Examples
+--------
+
+   `solve()' is a C function that takes three integer coeffecients of a
+quadratic equation and returns the two solutions.  We assume that the
+solutions are not imaginary numbers.
+
+                                                                 _a.pl_
+     
+     foreign(solve, c, solve(+integer, +integer, +integer,
+                             -double, -double)).
+     foreign_file('a', [solve]).
+     :- load_foreign_files(['a'], ['-lm']),
+        abolish([foreign/3, foreign_file/2]).
+
+                                                                  _a.c_
+     
+     void solve(a, b, c, f1, f2)
+         long int a, b, c;
+         double *f1;
+         double *f2;
+         {
+             *f1 = (-b + sqrt(b*b - 4*a*c)) / 2 * a;
+             *f2 = (-b - sqrt(b*b - 4*a*c)) / 2 * a;
+         }
+
+See Also
+--------
+
+   `load_foreign_files/2', `foreign_file/2', `extern/1' *Note fli-p2f::
+
+
+File: quintus.info,  Node: mpg-ref-foreign_file,  Next: mpg-ref-format,  Prev: mpg-ref-foreign,  Up: mpg-ref
+
+`foreign_file/2' "hook"
+-----------------------
+
+Synopsis
+--------
+
+   `:- discontiguous foreign_file/2.'
+
+   `foreign_file(+OBJECTFILE, +FOREIGNFUNCTIONS)'
+
+   Describes the foreign functions in OBJECTFILE to interface to.  The
+user has to define a `foreign_file/2' fact for every object file that is
+to be loaded into Prolog.
+
+Arguments
+---------
+
+OBJECTFILE "file_spec"
+     The foreign object file
+
+FOREIGNFUNCTIONS "list of atom"
+     A list of foreign function symbols that will be obtained from
+     OBJECTFILE.
+
+Description
+-----------
+
+   The user has to define a `foreign_file/2' fact for every object file
+that is to be loaded into Prolog. The FOREIGNFUNCTIONS gives the list
+of foreign symbols that are to be found in the given object file.  When
+a foreign file is loaded using `load_foreign_files/2', Prolog looks for
+a `foreign_file/2' fact for that object file and finds the address of
+each symbol listed in the `foreign_file/2' fact.  Prolog also expects a
+`foreign/3' definition for each symbol in the second argument of the
+`foreign_file/2' fact.
+
+   For more details about the foreign interface, see *Note
+fli-p2f-uso-ffi::.
+
+   The `foreign_file/2' facts are used only in the context of a
+`load_foreign_files/2' command and can be removed once the foreign
+files are loaded.
+
+   If you have `foreign_file/2' facts in different files, Prolog will
+warn you that `foreign_file/2' has been previously defined in another
+file.
+
+   `load_foreign_files/2' will only look for `foreign_file/2' facts
+defined in its source module.
+
+Exceptions
+----------
+
+   Errors in the specification of `foreign_file/2' will only be
+detected when `load_foreign_files/2' is called. Otherwise defining a
+`foreign_file/2' fact is just like defining any other Prolog fact.
+
+Examples
+--------
+
+   See example under `foreign/[2,3]'.
+
+Tips
+----
+
+   See Tip under `foreign/[2,3]'
+
+See Also
+--------
+
+   `load_foreign_files/2', `foreign/[2,3]'
+
+
+File: quintus.info,  Node: mpg-ref-format,  Next: mpg-ref-functor,  Prev: mpg-ref-foreign_file,  Up: mpg-ref
+
+`format/[2,3]'
+--------------
+
+Synopsis
+--------
+
+   `format(+CONTROL, +ARGUMENTS)'
+
+   `format(+STREAM, +CONTROL, +ARGUMENTS)'
+
+   Interprets the ARGUMENTS according to the CONTROL string and prints
+the result on the current or specified output stream.
+
+Arguments
+---------
+
+STREAM "stream_object"
+
+CONTROL "list of char" or "atom"
+     either an atom or a string, which can contain control sequences of
+     the form `~<N><C>'
+
+    <C>
+          a format control option
+
+    <N>
+
+    is its optional argument.
+          <N> must be a non-negative integer.
+
+
+     Any characters that are not part of a control sequence are written
+     to the current output stream.
+
+ARGUMENTS "term"
+     list of arguments, which will be interpreted and possibly printed
+     by format control options.  If there is only one argument then
+     this argument need not be enclosed in a list.
+
+Description
+-----------
+
+   *Please note:* In the case where there is only one argument and that
+argument is a list, then that argument must be enclosed in a list.
+
+   If <N> can be specified, then it can be the character `*'.  In this
+case <N> will be taken as the next argument from ARGUMENTS.
+
+   The following control options cause formatted printing of the next
+element from ARGUMENTS to the current output stream.  The argument must
+be of the type specified, or `format/1' will raise a consistency error.
+`~<N>a'
+     argument is an atom, which is printed without quoting. The maximum
+     number of characters printed is <N>. If <N> is omitted the entire
+     atom is printed.
+
+          | ?- format('~a', foo).
+          foo
+
+`~<N>c'
+     argument is a numeric ASCII code (0 =< code =< 127), which is
+     printed <N> times.  If <N> is omitted, it defaults to 1.
+
+          | ?- format('~2c', 97).
+          aa
+
+`~<N>e'
+     argument is a floating-point number, which is printed in
+     exponential notation with precision <N>.  The form of output is
+     (in left-to-right order):
+
+        * an optional `-',
+
+        * a digit,
+
+        * a `.' if <N> is greater than 0,
+
+        * <N> digits,
+
+        * an `e',
+
+        * a `+' or a `-', and
+
+        * two or more digits.
+
+     If <N> is omitted, it defaults to 6.
+
+          | ?- format('~3e', 1.33333).
+          1.333e+00
+
+     See *Note ref-ari-ove:: for detailed information on precision.
+
+     *Notes:*
+       1. `~<N>e' coerces integers to floats
+
+       2. If n is greater than 60, only 60 digits will be printed.
+
+`~<N>E'
+     same as ~<N>e, except `E' is used for exponentiation instead of
+     `e'.
+
+          | ?- format('~3E', 1.33333).
+          1.333E+00
+
+`~<N>f'
+     argument is a floating-point number, which is printed in
+     non-exponential format, with <N> digits to the right of the
+     decimal point.  If <N> is omitted, it defaults to 6.  If <N> is
+     equal to 0, no decimal point is printed.
+
+          | ?- format('~3f', 1.33333).
+          1.333
+
+     *Notes:*
+       1. `~<N>f' coerces integers to floats
+
+       2. If n is greater than 60, only 60 digits will be printed.
+
+     See the section on floating-point arithmetic for detailed
+     information on precision.
+
+`~<N>g'
+     argument is a floating-point number, which is printed in either
+     ~<N>e or ~<N>f form, whichever gives the best precision in minimal
+     space, with the exception that no trailing zeroes are printed
+     unless one is necessary immediately after the decimal point to make
+     the resultant number syntactically valid.  At most <N> significant
+     digits are printed.  If <N> is omitted, it defaults to 6.
+          | ?- format('~g', 1000000000.0).
+          1e+09
+          
+          | ?- format('~20g', 1000000000.0).
+          1000000000
+
+     See the section on floating-point arithmetic for detailed
+     information on precision.
+
+`~<N>G'
+     same as ~<N>g, except `E' is used for exponentiation instead of
+     `e'.
+
+          | ?- format('~G', 1000000.0).
+          1E+06
+
+`~<N>d'
+     argument is an integer, which is printed as a signed decimal
+     number, shifted right <N> decimal places.  If <N> is omitted, it
+     defaults to 0.  If <N> is 0, the decimal point is not printed.
+
+          | ?- format('~d', 29).
+          29
+          
+          | ?- format('~1d', 29).
+          2.9
+
+`~<N>D'
+     same as ~<N>d, except that commas are inserted to separate groups
+     of three digits to the left of the decimal point.
+
+          | ?- format('~1D', 29876).
+          2,987.6
+
+`~<N>r'
+     argument is an integer, which is printed in radix <N> (where 2 =<
+     n =< 36) using the digits 0-9 and the letters `a-z'.  If <N> is
+     omitted, it defaults to 8.
+
+          | ?- format('~2r', 13).
+          1101
+          
+          | ?- format('~r', 13).
+          15
+          
+          | ?- format('~16r', 13).
+          d
+
+`~<N>R'
+     same as ~<N>r, except it uses the digits 0-9 and the letters `A-Z'
+     instead of `a-z'.
+
+          | ?- format('~16R', 13).
+          D
+
+`~<N>s'
+     argument is a string (list of numeric ASCII codes), from which at
+     most the first <N> codes are printed as ASCII characters. If <N>
+     is zero or if <N> is omitted, it defaults to the length of the
+     string. If the string is shorter than <N> then all the ASCII codes
+     that make up the string are printed.
+
+          | ?- format('~s', ["string"]).
+          string
+          
+          | ?- format('~3s', ["string"]).
+          str
+          
+          | ?- format('~a', "string").
+          ! Consistency error: a and
+            [115,116,114,105,110,103] are inconsistent
+          ! the argument for the format control
+            option "a" must be of type "atom".
+          ! goal:  format('~a',
+            [115,116,114,105,110,103])
+
+   The following control options can take an argument of any type:
+`~i'
+     argument is ignored.
+
+          | ?- format('~i', 10).
+
+`~k'
+     argument is passed to `write_canonical/[1,2]'.
+
+          | ?- format('~k', 'A'+'B').
+          +('A','B')
+
+`~p'
+     argument is passed to `print/[1,2]'.
+
+          | ?- asserta((portray(X+Y) :-
+                   write(X), write(' plus '),
+                   write(Y))).
+          
+          | ?- format('~p', 'A'+'B').
+          A plus B
+
+`~q'
+     argument is passed to `writeq/[1,2]'.
+
+          | ?- format('~q', 'A'+'B').
+          'A'+'B'
+
+`~w'
+     argument is passed to `write/[1,2]'.
+
+          | ?- format('~w', 'A'+'B').
+          A+B
+
+   The following control options do not have a corresponding argument:
+`~~'
+     prints one `~'.
+
+          | ?- format('~~', []).
+          ~
+
+`~<N>n'
+     prints <N> newline characters.  If <N> is omitted, it defaults to
+     1.
+
+          | ?- format('begin~nend', []).
+          begin
+          end
+
+`~N'
+     prints nothing if at the beginning of a line, otherwise prints one
+     newline character.
+
+          | ?- format('~Nbegin~N~Nend', []).
+          begin
+          end
+
+   The following control options manipulate column boundaries (tab
+positions).  These column boundaries only apply to the line currently
+being written.  A column boundary is initially assumed to be in line
+position 0.
+
+`~<N>|'
+     sets a column boundary at line position <N> and moves the cursor to
+     that line position.  If <N> is omitted, a column boundary is set
+     at the current line position.  See extended example below (also
+     see *Note ref-iou-cou-fou::).
+
+`~<N>+'
+     sets a column boundary at <N> positions past the previous column
+     boundary and moves the cursor to that line position.  If <N> is
+     omitted, it defaults to 8.  See extended example below.
+
+`~<N>t'
+     When fewer characters are written between two column boundaries
+     than the width of the column, the space remaining in the column is
+     divided equally amongst all the `~t''s, if any, in the column, and
+     each ~t fills its allotted space with characters of ASCII code <N>.
+     If <N> is omitted, it defaults to ASCII 32 (space).  <N> can also
+     be of the form `<C>, where <C> is the fill character.  See
+     extended example below.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`consistency_error'
+     wrong number of arguments
+
+`domain_error'
+     wrong format option type
+
+Examples
+--------
+
+   1.  The following is an extended example of the use of
+`format/[2,3]' and the character escaping facility.
+
+     | ?- prolog_flag(character_escapes, _, on).
+     
+     yes
+     | ?- compile(user).
+     | toc(Rel) :-
+         format('Table of Contents ~t ~a~72|~*n', [i,3]),
+         format('~tTable of Contents~t~72|~*n', 2),
+         format("1. Documentation supplement for ~s~1f \c
+           ~`.t ~d~72|~*n", ["Quintus Prolog Release ",Rel,2,2]),
+         format("~t~*+~w Definition of the term \"loaded\" \c
+           ~`.t ~d~72|~n", [3,1-1,2]),
+         format("~t~*+~w Finding all solutions ~`.t ~d~72|~n", [3,1-2,3]),
+         format("~t~*+~w Searching for a file in a library \c
+           ~`.t ~d~72|~n", [3,1-3,4]),
+         format("~t~*+~w New Built-in Predicates ~`.t ~d~72|~n", [3,1-4,5]),
+         format("~t~*+~w write_canonical (?Term) ~`.t ~d~72|~n", [7,1-4-1,5]),
+         format("~*+.~n~*+.~n~*+.~n", [20,20,20]),
+         format("~t~*+~w File Specifications ~`.t ~d~72|~n", [3,1-7,17]),
+         format("~t~*+~w multifile(+PredSpec) ~`.t ~d~72|~n", [7,1-7-1,18]).
+     | ^D
+     % user compiled, 20.783 sec 4888 bytes
+     
+     yes
+     | ?- toc(1.5).
+                                Table of Contents
+     
+     1. Documentation supplement for Quintus Prolog Release 1.5 ........... 2
+     
+        1-1 Definition of the term "loaded" ............................... 2
+        1-2 Finding all solutions ......................................... 3
+        1-3 Searching for a file in a library ............................. 4
+        1-4 New Built-in Predicates ....................................... 5
+            1-4-1 write_canonical (?Term) ................................. 5
+                         .
+                         .
+                         .
+        1-7 File Specifications .......................................... 17
+            1-7-1 multifile(+PredSpec) ................................... 18
+     
+     yes
+
+   2.  Misc. examples:
+     | ?- X=12, format('X =:= ~2d', X).     `% These three'
+     | ?- X=12, format("X=:= ~2d", X).      `%  have the'
+     | ?- X=12, format('X =:= ~*d', [2,X]). `%  same results'
+     
+     | ?- format('~s', ["string"]).     `% These two have'
+     | ?- format('string', []).         `% the same results'
+     
+     | ?- X=12, Y= 123, format('X = ~d, Y = ~d', [X,Y]).
+
+See Also
+--------
+
+   `write_canonical/[1,2]', `print/[1,2]', `write/[1,2]' *Note ref-iou::
+
+
+File: quintus.info,  Node: mpg-ref-functor,  Next: mpg-ref-garbage_collect,  Prev: mpg-ref-format,  Up: mpg-ref
+
+`functor/3' "meta-logical"
+--------------------------
+
+Synopsis
+--------
+
+   `functor(+Term, -Name, -Arity)'
+
+   `functor(-Term, +Name, +Arity)'
+
+   Succeeds if the principal functor of term TERM has name NAME and
+arity ARITY.
+
+Arguments
+---------
+
+TERM "term"
+
+NAME "atom"
+
+ARITY "arity"
+Description
+-----------
+
+   There are two ways of using this predicate:
+  1. If TERM is initially instantiated, then
+        * if TERM is a compound term, NAME and ARITY are unified with
+          the name and arity of its principal functor.
+
+        * if TERM is an atom or number, NAME is unified with TERM, and
+          ARITY is unified with 0.
+
+  2. If TERM is initially uninstantiated, NAME and ARITY must both be
+     instantiated, and
+        * if ARITY is an integer in the range 1..255, then NAME must be
+          an atom, and TERM becomes instantiated to the most general
+          term having the specified NAME and ARITY; that is, a term
+          with distinct variables for all of its arguments.
+
+        * if ARITY is 0, then NAME must be an atom or a number, and it
+          is unified with TERM.
+
+Examples
+--------
+
+
+     | ?- functor(foo(a,b), N, A).
+     
+     N = foo,
+     A = 2
+     
+     | ?- functor(X, foo, 2).
+     
+     X = foo(_1,_2)
+
+   *Please note:*  `_1' and `_2' are anonymous variables.  The term
+`foo(_1,_2)' is the "most general" term that has name foo and arity 2.
+     | ?- functor(X, 2, 0).
+     
+     X = 2
+
+Exceptions
+----------
+
+`instantiation_error'
+     TERM and either NAME or ARITY are uninstantiated.
+
+`type_error'
+     NAME is not atomic when ARITY is 0, or ARITY is not an integer.
+
+`representation_error'
+     TERM is uninstantiated and ARITY is an integer > 255.
+
+See Also
+--------
+
+   `arg/3', `name/2', `=../2'
+
+   *Note ref-lte-act::
+
+
+File: quintus.info,  Node: mpg-ref-garbage_collect,  Next: mpg-ref-garbage_collect_atoms,  Prev: mpg-ref-functor,  Up: mpg-ref
+
+`garbage_collect/0'
+-------------------
+
+Synopsis
+--------
+
+   `garbage_collect'
+
+   Explicitly invokes the garbage collector.
+
+Description
+-----------
+
+   This predicate invokes the garbage collector to reclaim data
+structures in the heap that are no longer accessible to the computation.
+
+   No expansion of the heap is done, even if `gc_margin' kilobytes
+cannot be reclaimed (see *Note ref-lps-flg-cha::). This means that
+calls to this predicate are effective only when the heap contains a
+significant amount of garbage.
+
+   The cut may be used in conjunction with `garbage_collect/0' to allow
+code that works in cycles and builds up large data structures to run
+for more cycles without running out of memory.  The cut removes any
+alternatives that may be pending, thus potentially freeing up garbage
+that could not otherwise be collected.
+
+Example
+-------
+
+   In the code fragment:
+     cycle(X) :- big_goal(X, X1), cycle(X1).
+
+   if `cycle/1' is to run for a long time, and if `big_goal/2'
+generates a lot of garbage, then rewrite the code like this:
+     cycle(X) :- big_goal(X, X1), !, garbage_collect, cycle(X1).
+
+Tip
+---
+
+   Use of the `!, garbage_collect' idiom is only desirable when you
+notice that your code does frequent garbage collections.  It will allow
+the garbage collector to collect garbage more effectively, and the
+cycle will run without demanding increasing amounts of memory.
+
+See Also
+--------
+
+   `gc/0', `prolog_flag(gc_margin,_,_)', `nogc/0', `statistics/2'
+
+
+File: quintus.info,  Node: mpg-ref-garbage_collect_atoms,  Next: mpg-ref-gc,  Prev: mpg-ref-garbage_collect,  Up: mpg-ref
+
+`garbage_collect_atoms/0'
+-------------------------
+
+Synopsis
+--------
+
+   `garbage_collect_atoms'
+
+   Invokes the atom garbage collector.
+
+Description
+-----------
+
+   This predicate invokes the atom garbage collector to discard atoms
+that are no longer accessible to the computation, reclaiming their
+space.
+
+Tips
+----
+
+   A program can use the `atoms' keyword to `statistics/2' to determine
+if a call to `garbage_collect_atoms/0' would be appropriate.
+
+See Also
+--------
+
+   `garbage_collect/0', `statistics/2'
+
+
+File: quintus.info,  Node: mpg-ref-gc,  Next: mpg-ref-gen,  Prev: mpg-ref-garbage_collect_atoms,  Up: mpg-ref
+
+`gc/0'
+------
+
+Synopsis
+--------
+
+   `gc'
+
+   Enables the garbage collector.
+
+Description
+-----------
+
+   As if defined by:
+     gc :- prolog_flag(gc, _, on).
+
+   The garbage collection is enabled by default.
+
+   `gc' needs to be called only if the user has disabled te garbage
+collector by calling `nogc' or `prolog_flag(gc,_,off)'.
+
+
+File: quintus.info,  Node: mpg-ref-gen,  Next: mpg-ref-generate_message_hook,  Prev: mpg-ref-gc,  Up: mpg-ref
+
+'QU_messages':generate_message/3 "extendable"
+---------------------------------------------
+
+Synopsis
+--------
+
+   `:- multifile 'QU_messages':generate_message/3.'
+
+   `generate_message(+MESSAGETERM, -S0, -S)'
+
+   For a given MESSAGETERM, generates a list composed of CONTROL-ARG
+pairs and the atom `nl'.  This can be translated into a nested list of
+CONTROL-ARG pairs, which can be used as input to
+`print_message_lines/3'.
+
+Arguments
+---------
+
+MESSAGETERM "term"
+     May be any term.
+
+S0 "list of pair"
+     the resulting list of CONTROL-ARG pairs.
+
+S "list of pair"
+     the remaining list.
+
+Description
+-----------
+
+   Clauses for `generate_message/3' underly all messages from Prolog.
+They may be examined and altered.  They are found in
+`messages(language('QU_messages'))', which by default is
+`qplib('embed/english/QU_messages.pl')'.
+
+   The purpose of this predicate is to allow you to totally redefine the
+content of Prolog's messages.  In particular, it is possible to
+translate all the messages from English into some other language.
+
+   This predicate should _not_ be modified if all you want to do is
+modify or add a few messages:  `user:generate_message_hook/3' is
+provided for that purpose.
+
+   The Prolog system uses the built-in predicate `print_message/2' to
+print all its messages.  When `print_message/2' is called, it calls
+     user:generate_message_hook(Message,L,[])
+
+   to generate the message.  If that fails,
+     'QU_messages':generate_message(Message,L,[])
+
+   is called instead.
+
+   If `generate_message/3' succeeds, L is assumed to have been bound to
+a list whose elements are either CONTROL-ARGS pairs or the atom `nl'.
+Each CONTROL-ARG pair should be such that the call
+     format(user_error, CONTROL, ARGS)
+
+   is valid.  The atom `nl' is used for breaking the message into lines.
+Using the format specification `~n' (new-line) is discouraged, since the
+routine that actually prints the message (see `user:message_hook/3' and
+`print_message_lines/3') may need to have control over newlines.
+
+   `'QU_messages':generate_message/3' is not included by default in
+runtime systems, since end-users of application programs should
+probably not be seeing any messages from the Prolog system.  If a
+runtime system does require the messages facility its source code
+should include a goal such as:
+     :- ensure_loaded(library(
+             language('QU_messages'))).
+
+   If there is a call to `print_message/2' when
+`'QU_messages':generate_message/3' is undefined, or if
+`generate_message/3' fails for some reason, the message term itself is
+printed.  Here is an example of what happens when `generate_message/3'
+fails.
+     | ?- print_message(error,unexpected_error(37)).
+     ! unexpected_error(37)
+
+   `generate_message/3' failed because the message term was not
+recognized.  In the following example `print_message/2' is being called
+by the default exception handler.
+     | ?- write(A,B).
+     ! Instantiation error in argument 1 of write/2
+     ! goal:  write(_2107,_2108)
+     
+     | ?- abolish('QU_messages':generate_message/3).
+     ...
+     | ?- write(A,B).
+     ! instantiation_error(write(_2187,_2188),1)
+
+   Note that a call to `'QU_messages':generate_message/3' simply fails
+if the predicate is undefined; an `existence_error' is never signalled.
+
+Examples
+--------
+
+   The following example shows how the output of  `generate_message/3'
+is translated and passed to `print_message_lines/3'.
+
+     gen_message_and_print_lines(Msg, Stream, Prefix) :-
+             generate_message(Msg, L, []),
+             lines(L, Lines, []),
+             print_message_lines(Stream, Prefix, Lines)
+     
+     lines([]) --> [].
+     lines([H|T]) --> line(H), [nl], lines(T).
+     
+     line([]) --> [].
+     line([Control-Args|T]) --> [Control-Args], line(T).
+
+Errors
+------
+
+   When `print_message/2' calls `'QU_messages':generate_message/3' it
+handles any exceptions that arise by printing out an error message.  It
+then writes out the original message.
+
+See Also
+--------
+
+   `print_message/2', `message_hook/3', `format/[2,3]',
+`print_message_lines/3', `user:generate_message_hook/3',
+`QU_messages':query_abbreviation/2'
+
+   *Note ref-msg::
+
+
+File: quintus.info,  Node: mpg-ref-generate_message_hook,  Next: mpg-ref-get,  Prev: mpg-ref-gen,  Up: mpg-ref
+
+generate_message_hook/3 "hook"
+------------------------------
+
+Synopsis
+--------
+
+   `:- multifile generate_message_hook/3.'
+
+   `generate_message_hook(+MESSAGETERM, -S0, -S)'
+
+   A way for the user to override the call to
+`'QU_messages':generate_message/3' in `print_message/2'.
+
+Arguments
+---------
+
+MESSAGETERM "term"
+     May be any term.
+
+S0 "list of pair"
+     the resulting list of CONTROL-ARGS pairs.
+
+S "list of pair"
+     the remaining list.
+
+Description
+-----------
+
+   For a given MESSAGETERM, generates the list of CONTROL-ARGS pairs
+required for `print_message_lines/3' to format the message for display.
+
+   This is the same as `'QU_messages':generate_message/3' except that
+it is a hook.  It is intended to be used when you want to override
+particular messages from the Prolog system, or when you want to add
+some messages.  If  you are using your own exception classes (see
+`raise_exception') it may be useful to provide generate_message_hook
+clauses for those exceptions so that the `print_message/2' (and thus
+the default exception handler that calls `print_message/2') can print
+them out nicely.
+
+   The Prolog system uses the built-in predicate `print_message/2' to
+print all its messages.  When `print_message/2' is called, it calls
+     user:generate_message_hook(Message,L,[])
+
+   to generate the message.  If that fails,
+     'QU_messages':generate_message(Message,L,[])
+
+   is called instead.
+
+   If `generate_message_hook/3' succeeds, L is assumed to have been
+bound to a list whose elements are either CONTROL-ARGS pairs or the
+atom `nl'.  Each CONTROL-ARGS pair should be such that the call
+     format(user_error, CONTROL, ARGS)
+
+   is valid.  The atom `nl' is used for breaking the message into
+lines.  Using the format specification `~n' (new-line) is discouraged,
+since the routine that actually prints the message (see
+`user:message_hook/3' and `print_message_lines/3') may need to have
+control over newlines.
+
+   It is recommended that you declare this predicate multifile when you
+define clauses for it so that different packages that define clauses
+for it can be used together.
+
+Examples
+--------
+
+   * When a package is put in a module, it can still supply clauses
+     like this:
+          :- multifile user:generate_message_hook/3.
+          user:generate_message_hook(hello_world) -->
+                  ['hello world'-[],nl].
+
+     Note that the terminating `nl' is required.
+
+Tips
+----
+
+See also:
+---------
+
+   `'QU_messages':generate_message/3', `print_message/2',
+`message_hook/3', `format/[2,3]', `print_message_lines/3'
+

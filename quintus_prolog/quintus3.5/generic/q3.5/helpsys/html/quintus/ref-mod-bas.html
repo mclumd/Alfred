@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Basic Concepts</h4>
+
+   <p>Each predicate in a program is identified by its <dfn>module</dfn>, as well as by
+its name and arity.
+
+   <p>A module defines a set of predicates, some of which have the property
+of being <dfn>public</dfn>.  Public predicates are predicates that can be
+<dfn>imported</dfn> by other modules, which means that they can then be
+called from within those modules.  Predicates that are not public are
+<dfn>private</dfn> to the module in which they are defined; that is, they
+cannot be called from outside that module (except by explicitly
+overriding the modularity rules as described in <a href="ref-mod-vis.html#ref-mod-vis">ref-mod-vis</a>).
+
+   <p>There are two kinds of importation:
+
+     <ol type=1 start=1>
+
+     <li>A module <var>M1</var> may import a specified set of predicates from another
+module <var>M2</var>.  All the specified predicates should be public in <var>M2</var>. 
+<li>A module <var>M1</var> may import all the public predicates of another module
+<var>M2</var>.
+        </ol>
+
+   <p>Built-in predicates do not need to be imported; they are automatically
+available from within any module.
+
+   <p>There is a special module called <code>user</code>, which is used by default when
+predicates are being defined and no other module has been specified.
+
+   <p>If you are using a program written by someone else, you need not be
+concerned as to whether or not that program has been made into a module. 
+The act of loading a module from a file using <code>compile/1</code>,
+or <code>ensure_loaded/1</code> (see <a href="ref-lod.html#ref-lod">ref-lod</a>) will automatically import
+all the public predicates in that module.  Thus the command
+<pre class="example">     :- ensure_loaded(library(basics)).
+     </pre>
+
+   <p>will load the basic list-processing predicates from the library and make
+them available.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-def.html#ref-mod-def">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-ove.html#ref-mod-ove">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

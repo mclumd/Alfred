@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">FORTRAN Interface</h5>
+
+   <p>If the FORTRAN file <code>f.f</code> is compiled as shown below, then loading the
+Prolog file as shown will produce the indicated results.
+
+<pre class="example">
+                                        <div align="right"><em>f.f</em>
+     </div>
+     
+     C       f1(+integer, [-integer])
+             integer function f1(a)
+                 integer a
+                 f1 = a + 9
+                 return
+             end
+     
+     C       f2(-integer)
+             subroutine f2(a)
+                 integer a
+                 a = 99
+                 return
+             end
+     
+     C       f11(+atom, [-atom])
+             integer function f11(a)
+                 integer a
+                 f11 = a
+                 return
+             end
+     
+     C       f21(+atom, -atom)
+             subroutine f21(a,b)
+                 integer a
+                 integer b
+                 b = a
+                 return
+             end
+     
+     C       f3(+float, [-float])
+             real function f3(a)
+                 real a
+                 f3 = a + 9.0
+                 return
+             end
+     
+     C       f4(-float)
+             subroutine f4(a)
+                 real a
+                 a = 9.9
+                 return
+             end
+     
+     C       f5(+string(10), [-string(10)])
+             character*10 function f5(s)
+             character*10 s
+                     f5 = s
+                     return
+             end
+     
+     C       f6(-string(10))
+             subroutine f6(s)
+             character*10 s
+                     s = 'output'
+                     return
+             end
+     </pre>
+
+   <p>At the command level:
+<pre class="example">     % <kbd>f77 -c f.f</kbd>
+     </pre>
+
+   <p>Produces the object file.
+<pre class="example">
+                                       <div align="right"><em>f.pl</em>
+     </div>
+     
+     foreign_file(f, [f1_, f2_, f11_, f21_, f3_, f4_, f5_, f6_]).
+     
+     foreign(f1_,  fortran, f1(+integer, [-integer])).
+     foreign(f2_,  fortran, f2(-integer)).
+     foreign(f11_, fortran, f11(+atom, [-atom])).
+     foreign(f21_, fortran, f21(+atom, -atom)).
+     foreign(f3_,  fortran, f3(+float, [-float])).
+     foreign(f4_,  fortran, f4(-float)).
+     foreign(f5_,  fortran, f5(+string(10),[-string(10)])).
+     foreign(f6_,  fortran, f6(-string(10))).
+     
+     :- load_foreign_files([f], ['-lF77']),
+        abolish(foreign_file,2),
+        abolish(foreign,3).
+     </pre>
+
+   <p>Loading the Prolog file (see <code>foreign/3</code>) into
+Prolog and invoking the following query gives the following results:
+<pre class="example">     | ?- <kbd>f1(1,X1), f2(X2), f11(foo,X11), f21(foo,X21), f3(1.5,X3), f4(X4),
+          f5('parameter',X5), f6(X6).</kbd>
+     
+     X1 = 10,
+     X2 = 99,
+     X11 = X21 = foo,
+     X3 = 10.5,
+     X4 = 9.89999 ;
+     X5 = parameter ;
+     X6 = output ;
+     
+     no
+     </pre>
+
+   <p>When you load FORTRAN code into a C program, you must ensure
+        that any necessary FORTRAN run-time support code is loaded as well. 
+        The FORTRAN run-time library is divided into three parts in UNIX
+        systems based on 4.2BSD:
+
+     <ul>
+
+     <li>        <code>/usr/lib/libF77.a</code> -- this contains "mathematical" functions
+        such as <code>sin()</code> and <code>catan()</code>, bit-handling functions, and support
+        for character operations such as character assignment, concatenation,
+        and comparison.  You will almost always need to load this library
+        file. 
+<li>        <code>/usr/lib/libI77.a</code> -- this contains the support routines for
+        FORTRAN input/output operations.  If you are loading subroutines
+        that do not perform FORTRAN input/output, you will not need to
+        load this file.  Note that there is currently no way of attaching
+        a Prolog stream to a FORTRAN channel.  We recommend that any
+        FORTRAN subroutines to be loaded into Quintus Prolog
+        perform input/output by calling C functions. 
+<li>        <code>/usr/lib/libU77.a</code> -- this contains interface routines that
+        provide access to UNIX system calls.  They are needed because the
+        UNIX system calls expect strings in C format, which differs from
+        FORTRAN format.  If you are not calling any of the UNIX system
+        calls from FORTRAN, you will not need to load this file.
+
+   </ul>
+
+   <p>UNIX systems based on System V have <code>libF77.a</code> and <code>libI77.a</code> but not
+        <code>libU77.a</code>.
+
+   <p>To ensure that these libraries will be loaded, use the linker
+        options <code>-lF77</code>, <code>-lI77</code>, or <code>-lU77</code> respectively.
+
+   <p>You should check your FORTRAN documentation for advice about
+        combining FORTRAN subroutines with a C main program.
+
+   <p><strong>Notes:</strong>
+     <ol type=1 start=1>
+
+     <li>Passing of unsized strings (for example, use of the <code>string</code> argument
+specification
+in a <code>foreign/3</code> fact) is not supported in this interface.  Instead, padded
+strings (the <code>string(</code><var>N</var><code>)</code> argument specification) must be used. 
+<li>The names of subroutines passed to the predicates <code>foreign_file/2</code> and
+<code>foreign/3</code>
+must end with an underscore (<code>_</code>) to comply with the
+way in which <code>f77</code> generates external symbols. 
+<li>The FORTRAN run-time library has been seen documented as <code>-lf77</code>. 
+As case is significant in loader options, be sure to load this
+library using <code>-lF77</code>.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-fex-poi.html#fli-p2f-fex-poi">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-fex-pas.html#fli-p2f-fex-pas">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-fex.html#fli-p2f-fex">Up</a>
+</ul>
+</div>
+   </body></html>
+

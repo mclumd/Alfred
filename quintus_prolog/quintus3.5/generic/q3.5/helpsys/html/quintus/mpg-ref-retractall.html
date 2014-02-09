@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>retractall/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>retractall(</code><var>+Head</var><code>)</code>
+
+   <p>Removes every clause in module <var>M</var> whose head matches <var>Head</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Head</var> <dfn>callable</dfn> [MOD]
+     <dd>Head of a Prolog clause.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>Head</var> must be instantiated to a term that looks
+like a call to a dynamic procedure. 
+For example, to retract all the clauses of <code>foo/3</code>, you would write
+<pre class="example">     | ?- <kbd>retractall(foo(_,_,_)).</kbd>
+     </pre>
+
+   <p><var>Head</var> may be preceded by a <var>M</var>: prefix, in which case the
+clauses are retracted from module <var>M</var> instead of the calling module.
+
+   <p><code>retractall/1</code> could be defined (less efficiently) as
+<pre class="example">     retractall(Head) :-
+             clause(Head, _, Ref),
+             erase(Ref),
+             fail ; true.
+     </pre>
+
+   <p>or
+<pre class="example">     retractall(Head) :-
+             retract((Head :- _Body)),
+             fail ; true.
+     </pre>
+
+   <p><code>retractall/1</code> is useful for erasing all the clauses of a dynamic
+procedure without forgetting that it is dynamic; <code>abolish/1</code> will
+not only erase all the clauses, but will also forget absolutely
+everything about the procedure.  <code>retractall/1</code> only erases the
+clauses. This is important if the procedure is called later on.
+
+   <p>Since <code>retractall/1</code> erases <em>all</em> the dynamic clauses whose
+heads match <var>Head</var>, it has no choices to make, and is
+determinate.  If there are no such clauses, it succeeds trivially. 
+None of the variables in <var>Head</var> will be instantiated by this
+command.  For example,
+<pre class="example">     | ?- <kbd>listing(baz/2).</kbd>
+     
+     baz(a,1).
+     baz(b,2).
+     baz(a,3).
+     baz(b,4).
+     
+     yes
+     | ?- <kbd>retractall(baz(a, X)).</kbd>
+     
+     X = _798
+     
+     | ?- <kbd>listing(baz/2).</kbd>
+     
+     baz(b,2).
+     baz(b,4).
+     
+     yes
+     </pre>
+
+   <p>The space previously occupied by a retracted clause is reclaimed. 
+This reclamation is not necessarily immediate, but it
+is not delayed until backtracking past the call of <code>retractall/1</code>,
+as in some implementations.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+if <var>Head</var> or <var>Module</var> is uninstantiated.
+
+     <br><dt><code>type_error</code>
+     <dd>
+if <var>Head</var> is not of type callable.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+if the procedure corresponding to <var>Head</var>
+is built-in or has a static definition.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>abolish/[1,2]</code>,
+<code>assert/1</code>,
+<code>dynamic/1</code>,
+<code>erase/1</code>,
+<code>retract/1</code>
+
+   <a href="ref-mdb-bas.html#ref-mdb-bas">ref-mdb-bas</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-runtime_entry.html#mpg-ref-runtime_entry">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-retract.html#mpg-ref-retract">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

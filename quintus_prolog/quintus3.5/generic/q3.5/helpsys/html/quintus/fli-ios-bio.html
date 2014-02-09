@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Built-in C Functions And Macros For I/O</h4>
+
+   <p>Several builtin functions and macros are defined to enable Prolog streams
+to be manipulated in foreign code. This section lists each of these
+functions. In this list, the character <code>#</code> is used to denote a C macro,
+which is defined in <code>&lt;quintus/quintus.h&gt;</code>. 
+Full descriptions of each of these functions can be found in the
+individual reference pages.
+
+     <dl>
+
+     <br><dt><b>Open a stream</b>
+     <dd>
+<code>QP_fopen()</code>: open a text file or a binary file as a Prolog stream.
+
+     <p><code>QP_fdopen()</code>: create a text stream or a binary stream from a file
+descriptor.
+
+     <br><dt><b>Close a stream</b>
+     <dd>
+<code>QP_close()</code>: close a Prolog stream
+
+     <p><code>QP_fclose()</code>: close a Prolog stream, same as <code>QP_close()</code>.
+
+     <br><dt><b>Input from a stream</b>
+     <dd>
+<code>#QP_getchar()</code>: get a character from the Prolog current input stream.
+
+     <p><code>#QP_getc()</code>: get a character from a Prolog input stream.
+
+     <p><code>QP_fgetc()</code>: get a character from a Prolog input stream.
+
+     <p><code>#QP_peekchar()</code>: look a character ahead from the Prolog current input
+stream.
+
+     <p><code>#QP_peekc()</code>: look a character ahead from a Prolog input stream.
+
+     <p><code>QP_fpeekc()</code>: look a character ahead from a Prolog input stream.
+
+     <p><code>QP_ungetc()</code>: unget the previous read character from a Prolog input
+input stream.
+
+     <p><code>#QP_skipline()</code>: skip the current input record of the Prolog current
+input stream.
+
+     <p><code>#QP_skipln()</code>: skip the current input record of a Prolog input stream.
+
+     <p><code>QP_fskipln()</code>: skip the current input record of a Prolog input stream.
+
+     <p><code>QP_fgets()</code>: get a string from a Prolog input stream.
+
+     <p><code>QP_fread()</code>: read several items of data from a Prolog input stream.
+
+     <br><dt><b>Output to a stream and flush output stream buffer:</b>
+     <dd>
+<code>#QP_putchar()</code>: put a character on the Prolog current output stream.
+
+     <p><code>#QP_putc()</code>: put a character on a Prolog output stream.
+
+     <p><code>QP_fputc()</code>: put a character on a Prolog output stream.
+
+     <p><code>#QP_newline()</code>: terminates an output record for the Prolog current
+output stream.
+
+     <p><code>#QP_newln()</code>: terminates an output record for a Prolog output stream.
+
+     <p><code>QP_fnewln()</code>: terminates an output record for a Prolog output stream.
+
+     <p><code>QP_puts()</code>: put a character string on the Prolog current output stream.
+
+     <p><code>QP_fputs()</code>: put a character string on a Prolog output stream.
+
+     <p><code>QP_fwrite()</code>: write several items of data on a Prolog output stream.
+
+     <p><code>QP_tab()</code>: put the specified character the number of times specified
+on a Prolog output stream.
+
+     <p><code>QP_tabto()</code>: put the specified character up to the specified line position
+on a Prolog output stream.
+
+     <p><code>QP_printf()</code>: print formatted output on the Prolog current output stream.
+
+     <p><code>QP_fprintf()</code>: print formatted output on a Prolog output stream.
+
+     <p><code>QP_vfprintf()</code>: print formatted output of a varargs argument list on
+a Prolog output stream.
+
+     <p><code>QP_flush()</code>: flush output on a Prolog output stream
+
+     <br><dt><b>Get stream position and seek to a new position in a stream:</b>
+     <dd>
+<code>QP_getpos()</code>: Get the current position for a Prolog stream.
+
+     <p><code>QP_setpos()</code>: position a Prolog stream back to a previous read/written
+position.
+
+     <p><code>QP_rewind()</code>: reposition a Prolog stream back to the beginning
+
+     <p><code>QP_seek()</code>: seek to a random position in a Prolog stream
+
+     <br><dt><b>Get counts in a stream:</b>
+     <dd>
+<code>#QP_char_count()</code>: obtain the character count for a Prolog stream.
+
+     <p><code>#QP_line_count()</code>: obtain the line count for a Prolog stream.
+
+     <p><code>#QP_line_position()</code>: obtain the line position for a Prolog stream.
+
+     <br><dt><b>End of line (record) and End of file test:</b>
+     <dd>
+<code>#QP_eoln()</code>: test end of record condition for an input stream.
+
+     <p><code>#QP_eof()</code>: test end of file condition for an input stream.
+
+     <br><dt><b>Set current stream:</b>
+     <dd>
+<code>QP_setinput()</code>: set the Prolog current input stream.
+
+     <p><code>QP_setoutput()</code>: set the Prolog current output stream.
+
+     <br><dt><b>Error number related functions:</b>
+     <dd>
+<code>QP_ferror()</code>: test error condition for a Prolog stream.
+
+     <p><code>QP_clearerr()</code>: clear the previous error on a Prolog stream.
+
+     <p><code>QP_errmsg()</code>: get the corresponding error message from a QP error
+number.
+
+     <p><code>QP_perror()</code>: print an error message based on a QP error number.
+
+   </dl>
+
+   <p>Finally, there are five global stream variables accessible in foreign
+code.  These are streams, not file descriptors.  It makes no sense to
+pass these to system calls that expect file descriptors.  The
+values in these variables should not be changed by an assignment
+statement.  These variables are:
+
+     <dl>
+
+     <br><dt><code>QP_stream *QP_stdin</code>
+     <dd>user input stream, it is referred as
+<code>user_input</code> (or <code>user</code>) in Prolog.
+
+     <br><dt><code>QP_stream *QP_stdout</code>
+     <dd>user output stream, it is referred as
+<code>user_output</code> (or <code>user</code>) in Prolog.
+
+     <br><dt><code>QP_stream *QP_stderr</code>
+     <dd>user error stream, it is referred as
+<code>user_error</code> in Prolog.
+
+     <br><dt><code>QP_stream *QP_curin</code>
+     <dd>current input stream
+
+     <br><dt><code>QP_stream *QP_curout</code>
+     <dd>current output stream
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-bci.html#fli-ios-bci">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-uds.html#fli-ios-uds">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios.html#fli-ios">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Exit And Done Ports</h5>
+
+   <p>The exit and done ports are shown by an arrow to the right of a goal,
+pointing away from it.  This indicates the successful completion of a
+goal.  The exit port is distinguished from the done port by having a
+forked tail; this is meant to reflect the fact that this is only one
+of possibly many solutions to this goal. The done port signifies a
+determinate exit. This will help you find goals that are
+nondeterminate and shouldn't be.
+
+<pre class="example">                         descendant(X, Y) :-
+                                 parent(X, Y). ===&gt;
+                         descendant(X, Z) :-
+                                 parent(X, Y),
+                                 descendant(Y, Z).
+     </pre>
+
+<div align="center">The Exit Port</div>
+
+<pre class="example">                         descendant(X, Y) :-
+                                 parent(X, Y). ---&gt;
+                         descendant(X, Z) :-
+                                 parent(X, Y),
+                                 descendant(Y, Z).
+     </pre>
+
+<div align="center">The Done Port</div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-sld-sps-red.html#dbg-sld-sps-red">Next</a>
+<li><a rel="previous" accesskey="p" href="dbg-sld-sps-cal.html#dbg-sld-sps-cal">Previous</a>
+<li><a rel="up" accesskey="u" href="dbg-sld-sps.html#dbg-sld-sps">Up</a>
+</ul>
+</div>
+   </body></html>
+

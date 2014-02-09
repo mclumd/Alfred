@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Recoverable Errors</h4>
+
+   <p>Recoverable errors are handled by the ProXL Error handler and
+are any of the following types:
+     <dl>
+
+     <br><dt><code>bad_request</code>
+     <dd>If the request made to the X Server was invalid.
+
+     <br><dt><code>bad_value</code>
+     <dd>If an integer argument is out of range.
+
+     <br><dt><code>bad_window</code>
+     <dd>If a Window argument is invalid.
+
+     <br><dt><code>bad_pixmap</code>
+     <dd>If a Pixmap argument is invalid.
+
+     <br><dt><code>bad_atom</code>
+     <dd>If an Atom argument is invalid.
+
+     <br><dt><code>bad_cursor</code>
+     <dd>If a Cursor argument is invalid.
+
+     <br><dt><code>bad_font</code>
+     <dd>If a Font argument is invalid.
+
+     <br><dt><code>bad_match</code>
+     <dd>If there is an argument mismatch.
+
+     <br><dt><code>bad_drawable</code>
+     <dd>If an argument is not a Window or Pixmap.
+
+     <br><dt><code>bad_access</code>
+     <dd>If the operation can't be performed.
+
+     <br><dt><code>bad_alloc</code>
+     <dd>If there are insufficient resources.
+
+     <br><dt><code>bad_color</code>
+     <dd>If there is no such colormap.
+
+     <br><dt><code>bad_gc</code>
+     <dd>If a GC argument is invalid.
+
+     <br><dt><code>bad_id_choice</code>
+     <dd>If the choice is not in the appropriate range
+or is already in use.
+
+     <br><dt><code>bad_name</code>
+     <dd>If the named Font or Color do not exist.
+
+     <br><dt><code>bad_length</code>
+     <dd>If the request length is incorrect.
+
+     <br><dt><code>bad_implementation</code>
+     <dd>If your server is defective. 
+</dl>
+
+   <p>ProXL routines do extensive checking of their arguments to try and
+detect invalid parameters before actually making a call to the
+X server. However, it is impossible to cover all the cases, and
+sometimes recoverable errors are signaled by the server.
+
+   <p>Recoverable errors invoke a user-definable error handler. Under ProXL,
+the default error handler provided prints an error message and
+presents a list of options to the user.
+
+   <p>The user can provide her own error handler routine, but it <em>must</em>
+be written in C and follow the guidelines set up for handlers under
+X11. The user should read the Xlib X11 documentation on errors and error
+handling before attempting to do this.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-eh-fat.html#pxl-eh-fat">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-eh-bas.html#pxl-eh-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-eh.html#pxl-eh">Up</a>
+</ul>
+</div>
+   </body></html>
+

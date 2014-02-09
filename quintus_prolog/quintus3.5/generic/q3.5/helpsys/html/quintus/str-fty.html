@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Foreign Types</h3>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="str-fty-dty.html#str-fty-dty">str-fty-dty</a>:                          Declaring Types
+</ul>
+
+   <p>There are two sorts of objects that Prolog may want to handle:
+<dfn>atomic</dfn> and <dfn>compound</dfn>.  <dfn>Atomic</dfn> objects include numbers and
+atoms, and <dfn>compound</dfn> objects include data structures and arrays. 
+To be more precise about it, an atomic type is defined by one of the
+following.  A long integer is 64 bits on DEC Alpha platforms and 32
+bits on other Quintus Prolog platforms.  Long integers are however truncated to 32
+bits (sign-extended) by the Prolog system:
+
+     <dl>
+
+     <br><dt><code>long</code>
+     <dd>long signed integer (but see above)
+
+     <br><dt><code>integer</code>
+     <dd>32 bit signed integer
+
+     <br><dt><code>short</code>
+     <dd>16 bit signed integer
+
+     <br><dt><code>char</code>
+     <dd>8 bit signed integer
+
+     <br><dt><code>unsigned_long</code>
+     <dd>long unsigned integer (but see above)
+
+     <br><dt><code>unsigned_integer</code>
+     <dd>32 bit unsigned integer (but Prolog can only handle 31 bits unsigned)
+
+     <br><dt><code>unsigned_short</code>
+     <dd>16 bit unsigned integer
+
+     <br><dt><code>unsigned_char</code>
+     <dd>8 bit unsigned integer
+
+     <br><dt><code>float</code>
+     <dd>32 bit floating-point number
+
+     <br><dt><code>double</code>
+     <dd>64 bit floating-point number
+
+     <br><dt><code>atom</code>
+     <dd>32 bit Prolog atom number.  Unique for different atoms, but not
+consistent across Prolog sessions.
+
+     <br><dt><code>string</code>
+     <dd>long pointer to 0-terminated character array.  Represented as an atom in Prolog.
+
+     <br><dt><code>address</code>
+     <dd>an untyped address.  Like <code>pointer(_)</code>, but <code>structs</code>
+does no type checking for you. Represented as a Prolog integer.
+
+     <br><dt><code>opaque</code>
+     <dd>Unknown type.  Cannot be represented in Prolog.  A pointer to
+an opaque object may be manipulated. 
+</dl>
+
+   <p>And compound types are defined by one of:
+     <dl>
+
+     <br><dt><code>pointer</code><var>(Type)</var><code></code>
+     <dd>a long pointer to a thing of type <var>Type</var>.
+
+     <br><dt><code>array</code><var>(Num,Type)</var><code></code>
+     <dd>A chunk of memory holding <var>Num</var> (an
+integer) things of type <var>Type</var>.
+
+     <br><dt><code>array(</code><var>Type</var><code>)</code>
+     <dd>A chunk of memory holding some number of things of
+type <var>Type</var>.  This type does not allow bounds checking, so it
+should be used with great care.  It is also not possible to use this
+sort of array as an element in an array, or in a struct or union.
+
+     <br><dt><code>struct(</code><var>Fields</var><code>)</code>
+     <dd>A compound structure.  <var>Fields</var> is a list
+of <var>Field</var>_name:<var>Type</var> pairs.  Each <var>Field</var>_name is an
+atom, and each <var>Type</var> is any valid type.
+
+     <br><dt><code>union(</code><var>Members</var><code>)</code>
+     <dd>A union as in C.  <var>Members</var> is a list of
+<var>Member</var>_name:<var>Type</var> pairs. Each <var>Member</var>_name is an
+atom, and each <var>Type</var> is any valid type.  The space allocated for
+one of these is the maximum of the spaces needed for each member.  It
+is not permitted to store into a union (you must get a member of the
+union to store into, as in C). 
+</dl>
+
+   <p>C programmers will recognize that the kinds of data supported by
+this package were designed for the C language.  They should also
+work for other languages, but programmers must determine the proper
+type declarations in those languages.  The table above makes clear
+the storage requirements and interpretation of each type.
+
+   <p>Note that there is one important difference between the <code>structs</code> package
+and C:  the <code>structs</code> package permits declarations of pointers to arrays. 
+A pointer to an array is distinguished from a pointer to a single
+element.  For example
+<pre class="example">             pointer(array(char))
+     </pre>
+
+   <p>is probably a more appropriate declaration of a C string type than
+<pre class="example">             pointer(char)
+     </pre>
+
+   <p>which is the orthodox way to declare a string in C.  Note that the
+<code>structs_to_c</code> tool described below does generate proper (identical)
+C declarations for both of these <code>structs</code> declarations.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="str-usq.html#str-usq">Next</a>
+<li><a rel="up" accesskey="u" href="str.html#str">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

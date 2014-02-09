@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Example: assertz</h5>
+
+   <p>Consider the procedure <code>foo/0</code> defined by
+
+<pre class="example">     :- dynamic foo/0.
+     foo :- assertz(foo), fail.
+     </pre>
+
+   <p>Each call to <code>foo/0</code> asserts a new last clause for <code>foo/0</code>.  After
+the Nth call to <code>foo/0</code> there will be N+1 clauses for <code>foo/0</code>. 
+When <code>foo/0</code> is first called, a
+virtual copy of the procedure is made, effectively freezing the definition
+of <code>foo/0</code> for that call.  At the time of the call,
+<code>foo/0</code> has exactly one clause.  Thus, when
+<code>fail/0</code> forces backtracking, the call to <code>foo/0</code> simply fails:
+it finds no alternatives.  For example,
+
+<pre class="example">     | ?- <kbd>compile(user).</kbd>
+     | <kbd>:- dynamic foo/0.</kbd>
+     | <kbd>foo :- assertz(foo), fail.</kbd>
+     | <kbd>^D</kbd>
+     % user compiled in module user, 0.100 sec 2.56 bytes
+     
+     yes
+     | ?- <kbd>foo.</kbd>  % The asserted clause is not found
+     
+     no
+     | ?- <kbd>foo.</kbd>  % A later call does find it, however
+     
+     yes
+     | ?-
+     </pre>
+
+   <p>Even though the virtual copy of <code>foo/0</code> being run by the first call is
+not changed by the assertion, the Prolog database is.  Thus, when a
+second call to <code>foo/0</code> is made, the virtual copy for that call
+contains two clauses.  The first clause fails, but on backtracking
+the second clause is found and the call succeeds.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mdb-exa-rtr.html#ref-mdb-exa-rtr">Next</a>
+<li><a rel="up" accesskey="u" href="ref-mdb-exa.html#ref-mdb-exa">Up</a>
+</ul>
+</div>
+   </body></html>
+

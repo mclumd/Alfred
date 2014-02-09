@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Prolog Process Calling Prolog Process</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ipc-rpc-p2p-save_servant.html#ipc-rpc-p2p-save_servant">ipc-rpc-p2p-save_servant</a>:             save_servant(+SavedState)
+<li><a accesskey="2" href="ipc-rpc-p2p-create_servant.html#ipc-rpc-p2p-create_servant">ipc-rpc-p2p-create_servant</a>:           create_servant(+Machine, +SavedState, +OutFile)
+<li><a accesskey="3" href="ipc-rpc-p2p-call_servant.html#ipc-rpc-p2p-call_servant">ipc-rpc-p2p-call_servant</a>:             call_servant(+Goal)
+<li><a accesskey="4" href="ipc-rpc-p2p-bag_of_all_servant.html#ipc-rpc-p2p-bag_of_all_servant">ipc-rpc-p2p-bag_of_all_servant</a>:       bag_of_all_servant(?Template, +Goal, -Bag)
+<li><a accesskey="5" href="ipc-rpc-p2p-set_of_all_servant.html#ipc-rpc-p2p-set_of_all_servant">ipc-rpc-p2p-set_of_all_servant</a>:       set_of_all_servant(?Template, +Goal, -Set)
+<li><a accesskey="6" href="ipc-rpc-p2p-reset_servant.html#ipc-rpc-p2p-reset_servant">ipc-rpc-p2p-reset_servant</a>:            reset_servant
+<li><a accesskey="7" href="ipc-rpc-p2p-shutdown_servant.html#ipc-rpc-p2p-shutdown_servant">ipc-rpc-p2p-shutdown_servant</a>:         shutdown_servant
+</ul>
+
+   <p>When the master is a Prolog program, a very flexible interface is
+supported because the nondeterminacy of the two Prolog programs can be
+combined.  Also, general Prolog data structures can be passed between the
+programs easily, since both programs support the same data types.  Using
+this interface, a complex Prolog system can achieve significant parallel
+evaluation, by using a servant on another processor and communicating over
+a network.  The routines described below allow a master to have only a
+single servant process.  (They could be extended without much difficulty
+to support multiple servants and servants being masters of other servants,
+if that proves important.)
+
+   <p>There are two sides to any interface:  here we have the calling
+Prolog program (the master), and the called Prolog program (the servant). 
+Each must perform certain functions that allow them to cooperate.
+
+   <p>For a master to use a servant, the master must first create it.  This is
+done by starting a Prolog process that will be the servant.  The system
+creates that process by running a saved state previously created by
+the programmer.  After the servant has been created and is running, the
+master may send it goals to evaluate using <code>call_servant/1</code> and
+<code>bag_of_all_servant/3</code>.  All goals sent to the servant are evaluated in
+the database of the servant, which is disjoint from the database of the
+master.  This means that all programs that the servant will execute must
+either already be in the saved state that was initially loaded, or a goal
+must be sent to the servant telling it to compile (or consult) the
+appropriate files.  One could also use remote call to have the servant
+evaluate an <code>assert/1</code>.
+
+   <p>For an example of using a Prolog servant from Prolog, see the <code>IPC/RPC/demo</code>
+library directory (<code>qplib('IPC/RPC/demo')</code>).
+
+   <p>All the following predicates are defined in the module <code>qpcallqp</code>.  To
+be able to use them, the master program must first load them by entering
+the directive:
+<pre class="example">     :- use_module(library(qpcallqp)).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-cpp.html#ipc-rpc-cpp">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc-ove.html#ipc-rpc-ove">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc.html#ipc-rpc">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Passing Floats</h5>
+
+<pre class="example">     Prolog:  +float
+     C:       double x;
+     </pre>
+
+   <p>The C double-precision float is converted to a Prolog float,
+   which is passed to the Prolog call.  If the C double contains garbage,
+   Prolog will receive that garbage as a double-precision floating-point
+   number.  Many C compilers will allow the parameter declaration to
+   be <code>float</code> instead of <code>double</code> because they always convert
+   single-precision floating-point arguments to double-precision. 
+   However, C compilers conforming to the new ANSI standard will not
+   do this, so it is recommended that <code>double</code> be used.
+
+<pre class="example">     Prolog:  +single
+     ANSI C:  float x;
+     </pre>
+
+   <p>The C single-precision float is converted to a Prolog float,
+   which is passed to the Prolog call.  If the C float contains garbage,
+   Prolog will receive that garbage as a single-precision floating-point
+   number.
+
+   <p>Normally, this type of argument is not used; however, C
+   compilers conforming to the new ANSI standard can pass single
+   precision floats to Prolog
+   without first converting them to double.  It is not recommended
+   that floats be passed as <code>single</code> until you have verified that
+   your C compiler behaves as desired.
+
+<pre class="example">     Prolog:  +double
+     C:       double x;
+     </pre>
+
+   <p>The C double-precision float is converted to a Prolog float,
+   which is passed to the Prolog call.  If the C float contains garbage,
+   Prolog will receive that garbage as a double-precision floating-point
+   number.
+
+<pre class="example">     Prolog:  -float
+     C:       float *x;
+     </pre>
+
+   <p>A pointer to a C float is passed to the foreign interface. 
+   When Prolog returns a solution, a Prolog floating-point number is
+   expected in the
+   corresponding argument of the call.  The foreign interface converts
+   that number into a C float and writes it at the location supplied. 
+   The previous contents of the location are destroyed.  If the
+   Prolog call does not return a floating-point number in the appropriate
+   position, a type error is raised and the contents of the location
+   is unchanged.
+
+<pre class="example">     Prolog:  -single
+     C:       float *x;
+     </pre>
+
+   <p>A pointer to a C float is passed to the foreign interface. 
+   When Prolog returns a solution, a Prolog floating-point number is
+   expected in the
+   corresponding argument of the call.  The foreign interface converts
+   that number into a C float and writes it at the location supplied. 
+   The previous contents of the location are destroyed.  If the
+   Prolog call does not return a floating-point number in the appropriate
+   position, a type error is raised and the contents of the location
+   is unchanged.
+
+   <p>When the foreign language calling Prolog is C, this type of
+   argument is not normally used; however, C compilers conforming
+   to the new ANSI standard can return single precision floats from
+   Prolog without first converting them to double.  It is not
+   recommended that floats be passed as <code>single</code> until you have
+   verified that your C compiler behaves as desired.
+
+<pre class="example">     Prolog:  -double
+     C:       double *x;
+     </pre>
+
+   <p>A pointer to a C double is passed to the foreign interface. 
+   When Prolog returns a solution, a Prolog floating-point number is
+   expected in the corresponding argument of the call.  The foreign
+   interface converts that number into a C double and writes it at
+   the location supplied.  The previous contents of the location will
+   be destroyed.  If the Prolog call does not return a floating-point
+   number in the appropriate position, a type error is signaled and the
+   contents of the location is unchanged.
+
+   <p>It is assumed that the interface will overwrite this float with
+   Prolog's result.  When Prolog returns, its floating-point number
+   is converted to double-precision and written onto the space
+   for the foreign double.  The previous contents of the C double
+   will be lost.  If the Prolog call does not return a floating-point
+   number, a type error is raised and the result is unchanged.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-dat-cat.html#fli-ffp-dat-cat">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-dat-int.html#fli-ffp-dat-int">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-dat.html#fli-ffp-dat">Up</a>
+</ul>
+</div>
+   </body></html>
+

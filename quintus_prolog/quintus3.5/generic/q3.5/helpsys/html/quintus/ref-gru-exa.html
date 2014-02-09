@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">An Example</h4>
+
+   <p>As an example, here is a simple grammar that parses an arithmetic
+expression (made up of digits and operators) and computes its value. 
+Create a file containing the following rules:
+
+<pre class="example">
+                                 <div align="right"><em>grammar.pl</em>
+     </div>
+     
+     expr(Z) --&gt; term(X), "+", expr(Y), {Z is X + Y}.
+     expr(Z) --&gt; term(X), "-", expr(Y), {Z is X - Y}.
+     expr(X) --&gt; term(X).
+     
+     term(Z) --&gt; number(X), "*", term(Y), {Z is X * Y}.
+     term(Z) --&gt; number(X), "/", term(Y), {Z is X / Y}.
+     term(Z) --&gt; number(Z).
+     
+     number(C) --&gt; "+", number(C).
+     number(C) --&gt; "-", number(X), {C is -X}.
+     number(X) --&gt; [C], {"0"=&lt;C, C=&lt;"9", X is C - "0"}.
+     </pre>
+
+   <p>In the last rule, C is the ASCII code of a decimal digit.
+
+   <p>This grammar can now be used to parse and evaluate an expression by means
+of the built-in predicates <code>phrase/2</code> and <code>phrase/3</code>.  For example,
+<pre class="example">     | ?- <kbd>[grammar]</kbd>.
+     | ?- <kbd> phrase(expr(Z), "-2+3*5+1").</kbd>
+     
+     Z = 14
+     
+     | ?- <kbd> phrase(expr(Z), "-2+3*5", Rest).</kbd>
+     
+     Z = 13,
+     Rest = [] <kbd>;</kbd>
+     
+     Z = 1,
+     Rest = "*5" <kbd>;</kbd>
+     
+     Z = -2,
+     Rest = "+3*5" <kbd>;</kbd>
+     
+     no
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-gru-tra.html#ref-gru-tra">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-gru-gru.html#ref-gru-gru">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-gru.html#ref-gru">Up</a>
+</ul>
+</div>
+   </body></html>
+

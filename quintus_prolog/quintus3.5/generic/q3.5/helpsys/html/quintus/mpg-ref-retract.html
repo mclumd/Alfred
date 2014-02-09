@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>retract/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>retract(</code><var>+*Clause</var><code>)</code>
+
+   <p>Removes the first occurrence of dynamic clause <var>Clause</var> from
+module <var>M</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Clause</var> <dfn>callable</dfn> [MOD]
+     <dd>A valid Prolog clause.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>retract/1</code> erases the first clause in the database that matches
+<var>Clause</var>.  <var>Clause</var> is retracted in module <var>M</var> if
+specified.  Otherwise, <var>Clause</var> is retracted in calling module.
+
+   <p><code>retract/1</code> is nondeterminate. 
+If control backtracks into
+the call to <code>retract/1</code>, successive clauses matching <var>Clause</var> are
+erased.  If and when no clauses match, the call to <code>retract/1</code> fails.
+
+   <p><var>Clause</var> must be of one of the forms:
+     <ul>
+
+     <li><var>Head</var>
+<li><code></code><var>Head</var><code> :- </code><var>Body</var><code></code>
+<li><code></code><var>Module</var><code>:</code><var>Clause</var><code></code>
+</ul>
+
+   <p>where <var>Head</var> is of type callable and the principal functor of <var>Head</var> is the
+name of a dynamic procedure.  If specified, <var>Module</var> must be an atom.
+
+   <p><code>retract(</code><var>Head</var><code>)</code> means retract the unit-clause <var>Head</var>.  The exact
+same effect can be achieved by <code>retract((</code><var>Head</var><code> :- true))</code>.
+
+   <p><var>Body</var> may be uninstantiated, in which case it will match any body.  In
+the case of a unit-clause it will be bound to <code>true</code>.  Thus, for
+example,
+<pre class="example">     | ?- <kbd>retract((foo(X) :- Body)), fail.</kbd>
+     </pre>
+
+   <p>is guaranteed to retract all the clauses for <code>foo/1</code>, including any
+unit-clauses, providing of course that <code>foo/1</code> is dynamic.
+
+   <p>Since <code>retract/1</code> is nondeterminate it is important if you only
+want to retract a single clause to use a cut to eliminate the alternatives
+generated.  See <a href="ref-mdb-rcd-efu.html#ref-mdb-rcd-efu">ref-mdb-rcd-efu</a> for more information on the use of
+cuts with <code>retract/1</code>.
+
+   <p><code>retract/1</code> searches for the clause to remove in the same way that
+<code>clause/2</code> does.  (And, like <code>clause/2</code>, it uses first argument indexing
+to speed up this search when possible.)  Therefore it is redundant to call
+<code>clause/2</code> immediately before calling <code>retract/1</code> on the clause it
+returns.  That is, the call to <code>clause/2</code> in the following program fragment
+can be removed without changing its effect.
+<pre class="example">     ... clause(H,B), retract((H:-B)), ...
+     </pre>
+
+   <p>The space occupied by a clause that is retracted is reclaimed. 
+The reclamation does not necessarily happen immediately, but is not
+delayed until backtracking past the call to <code>retract/1</code>, as in some
+implementations.
+
+   <p>WARNING: <code>retract/1</code> is a nondeterminate procedure.  Thus, we can use
+
+<pre class="example">     | ?- <kbd>retract((foo(X) :- Body)), fail</kbd>.
+     </pre>
+
+   <p>to retract all clauses for <code>foo/1</code>.  However, when <code>retract/1</code> is
+used determinately; for example, to retract a single clause, it is crucial
+that you cut away unintended chice points to avoid "freezing" the retracted
+<var>Clause</var>, disabling tail recursion optimization, or runaway retraction on the
+unexpected failure of a subsequent goal. See <a href="ref-mdb-rcd-efu.html#ref-mdb-rcd-efu">ref-mdb-rcd-efu</a> for further
+discussion.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <p>Same as <code>assert/1</code>.
+
+   </dl>
+
+<h4 class="subheading">See Also:</h4>
+
+   <p><code>abolish/[1,2]</code>,
+<code>assert/1</code>,
+<code>dynamic/1</code>,
+<code>erase/1</code>,
+<code>retractall/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-retractall.html#mpg-ref-retractall">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-restore.html#mpg-ref-restore">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

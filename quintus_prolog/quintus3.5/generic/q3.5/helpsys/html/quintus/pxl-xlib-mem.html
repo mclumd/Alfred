@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Memory Management</h4>
+
+   <p>Memory management is a complex issue for ProXL.  In C, programmers are
+used to having to keep track of their resources; in Prolog, however,
+resource reclamation is done by the Prolog garbage collector.
+
+   <p>Unfortunately, it's not that simple.  The X Window System does not make
+this possible.  For example, there is no way to tell whether or not a
+given colormap is used by any windows, nor is there a way to tell the X
+server that a colormap should be reclaimed when no more windows require
+it.  The only function provided by X actually destroys the colormap
+immediately, and any windows that use that colormap find themselves
+without any colormap.
+
+   <p>Fonts are another matter.  Since the only X resource that can refer to
+a font is a GC, and since ProXL GCs are not shared with other languages
+or other processes, ProXL can be careful about freeing a font that is
+relied on by some GC.
+
+   <p>There is another difficulty, though:  ProXL has no way of knowing whether
+or not the user's Prolog code is holding onto a font explicitly.  For
+example, the user may assert it into the Prolog database, or pass it
+around as an argument throughout his program.  To Prolog, this font
+looks just like any other term; it has no way of knowing that it
+represents a foreign term.  This means that the Prolog garbage
+collector cannot collect foreign terms.
+
+   <p>All this means that ProXL has two different mechanisms for freeing
+resources.  Most resources can only be freed by explicit action, and the
+resource is freed immediately (the next time the output buffer is
+flushed).  GCs and fonts are instead released.  <dfn>Releasing</dfn> an X
+resource means that (you are proclaiming that) Prolog does not have any
+references to the resource.  When no X resources refer to the
+released resource, it will be freed.  Fonts can only be referred to by
+GCs.  GCs can be referred to by drawables.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-xlib-mix.html#pxl-xlib-mix">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-xlib-shr.html#pxl-xlib-shr">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-xlib.html#pxl-xlib">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>remove_advice/3</code> <dfn>development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>remove_advice(</code><var>+Goal</var><code>,</code><var>+*Port</var><code>,</code><var>+*Action</var><code>)</code>
+
+   <p>remove the association of an action with entry to a port of a
+procedure. <code>remove_advice/3</code> will only succeed when <var>Port</var> is
+<dfn>var</dfn> or one of {<code>call</code>, <code>exit</code>, <code>done</code>, <code>redo</code>, <code>fail</code>}, and <var>Action</var> is
+<dfn>var</dfn> or <dfn>callable</dfn>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Goal</var> <dfn>callable</dfn> [MOD]
+     <dd>a term to be unified against a calling
+goal of existing advice.
+
+     <br><dt><var>Port</var> <dfn>term</dfn>
+     <dd>any term.
+
+     <br><dt><var>Action</var> <dfn>term</dfn> [MOD]
+     <dd>any term. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>remove_advice/3</code> removes the association of an advice action with a goal
+and port, undoing the effect of <code>add_advice/3</code>.
+
+   <p>This predicate is not supported in runtime systems.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+if an argument is not sufficiently instantiated.
+
+     <br><dt><code>type_error</code>
+     <dd>
+if <var>Goal</var> or <var>Action</var> is not a callable, or a module prefix is
+not an atom, or <var>Port</var> is not an atom.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+if <var>Port</var> is not a valid port.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+if a specified procedure is built-in.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>add_advice/3</code>, <code>current_advice/3</code>, <code>check_advice/[0,1]</code>, <code>nocheck_advice/[0,1]</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-remove_spypoint.html#mpg-ref-remove_spypoint">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-recordz.html#mpg-ref-recordz">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

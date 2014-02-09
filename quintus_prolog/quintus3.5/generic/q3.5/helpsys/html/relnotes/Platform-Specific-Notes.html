@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Platform Specific Notes</h3>
+
+   <p>Please refer to the table in <a href="../quintus/fli-p2f-uso.html#fli-p2f-uso">Using Shared Object Files and Archive Files</a> for
+platform specific instructions for building shared object files and
+archive files.
+
+     <dl>
+<dt><b>Digital Alpha</b>
+     <dd>Quintus Prolog was revived for this platform in Release 3.4:
+
+          <ul>
+<li>32 bit integers and pointers are used internally. However, the functions
+<code>QP_get_integer()</code> and <code>QP_put_integer()</code> take long integer
+arguments, and <code>integer</code> in the foreign language interface
+corresponds to long integers in foreign code.  In the Structs package,
+the <code>long</code> type corresponds to long integers whereas the <code>integer</code>
+type corresponds to integers.  Long integers are however truncated to 32
+bits (sign-extended) by the Prolog system.
+
+          <li>In foreign code interfacing Prolog via the foreign language interface,
+pointers and long integers are assumed to occupy 64 bits.  Hence, such
+code must be compiled in native mode, i.e. not using the <code>cc</code>
+option <code>-xtaso_short</code>.  Furthermore, <code>qld</code> will link
+executables with the <code>-taso</code> option, so as to ensure that all
+pointers fit in 32 bits internally.
+
+     </ul>
+
+     <br><dt><b>Silicon Graphics</b>
+     <dd>Up to and including release 3.3, Quintus Prolog ran under IRIX 6.2 or later
+and used the O32 ABI.  Later releases run under IRIX 6.2 or later and
+use the N32 ABI.
+
+     <br><dt><b>Sparc Solaris</b>
+     <dd>Up to and including release 3.3, Quintus Prolog
+did not comply with the SPARC ABI; later releases do.
+
+     <br><dt><b>IBM RS/6000</b>
+     <dd>Quintus Prolog was revived for this platform in Release 3.4,
+under AIX 4.3, and complies with the AIX 4.3 32-bit ABI.
+
+     <br><dt><b>HP-UX</b>
+     <dd>Up to and including release 3.3, Quintus Prolog
+did not comply with the HP-PA ABI; later releases do.
+
+     <br><dt><b>Linux</b>
+     <dd>Quintus Prolog was ported to this platform in Release 3.5, under Red Hat
+Linux 9, i.e. it requires <code>glibc 2.3</code>. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">Release Notes</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="Installing-under-Windows.html#Installing%20under%20Windows">Previous</a>
+<li><a rel="up" accesskey="u" href="Installation-Guide.html#Installation%20Guide">Up</a>
+</ul>
+</div>
+   </body></html>
+

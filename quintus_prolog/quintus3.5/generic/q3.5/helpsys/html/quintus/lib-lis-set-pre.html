@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Predicates Related to Sets</h5>
+
+   <p>The following predicates are relevant to sets, but are not in
+<code>library(sets)</code>:
+     <dl>
+
+     <br><dt><code>length(</code><var>-List</var><code>, </code><var>+Integer</var><code>)</code>
+     <dd>built-in predicate:  do not use
+this if <var>Set</var> might contain duplicates.  See <a href="ref-all.html#ref-all">ref-all</a> for
+more information.
+
+     <br><dt><code>append(</code><var>+*List1</var><code>, </code><var>+*List2</var><code>, </code><var>+*List3</var><code>)</code>
+     <dd>built-in predicate:  only use
+<code>append/3</code> this way when <var>Set1</var> and <var>Set2</var> are known to
+be disjoint, and put a comment in your code explaining the hack.
+
+     <br><dt><code>member(</code><var>?Elem</var><code>, </code><var>?Set</var><code>)</code>
+     <dd>in <code>library(basics)</code> (<a href="lib-lis-basics-member.html#lib-lis-basics-member">lib-lis-basics-member</a>)
+
+     <br><dt><code>memberchk(</code><var>?Elem</var><code>, </code><var>?Set</var><code>)</code>
+     <dd>in <code>library(basics)</code> (<a href="lib-lis-basics-memberchk.html#lib-lis-basics-memberchk">lib-lis-basics-memberchk</a>)
+
+     <br><dt><code>subseq0(</code><var>+Set</var><code>, </code><var>?SubSet</var><code>)</code>
+     <dd>in <code>library(lists)</code> (<a href="lib-lis-lists.html#lib-lis-lists">lib-lis-lists</a>):
+you can only use <code>subseq0/2</code> to generate
+subsets of a given <var>Set</var>, not to test whether a given <var>SubSet</var> is a
+subset of a given <var>Set</var>, because <code>subseq0/2</code> preserves the
+order of the elements, which is irrelevant to sets.  However, you
+<em>can</em> use it to generate subsets of an ordered set, as the
+order of the elements <em>does</em> matter there.
+
+     <br><dt><code>subseq1(</code><var>+Set</var><code>, </code><var>?ProperSubSet</var><code>)</code>
+     <dd>in <code>library(lists)</code> (<a href="lib-lis-lists.html#lib-lis-lists">lib-lis-lists</a>):
+you can only use <code>subseq1/2</code> to generate
+proper subsets of a given <var>Set</var>, not to test whether a given <var>SubSet</var> is a
+proper subset of a given <var>Set</var>, because <code>subseq1/2</code> preserves the
+order of the elements, which is irrelevant to sets.  However, you
+<em>can</em> use it to generate proper subsets of an ordered set, as the
+order of the elements <em>does</em> matter there.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-lis-set-sets.html#lib-lis-set-sets">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-lis-set.html#lib-lis-set">Up</a>
+</ul>
+</div>
+   </body></html>
+

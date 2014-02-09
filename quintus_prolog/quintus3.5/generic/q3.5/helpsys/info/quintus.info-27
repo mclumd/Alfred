@@ -1,0 +1,1297 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: lib-txp-sub-midstring,  Next: lib-txp-sub-substring,  Up: lib-txp-sub
+
+`midstring/[3,4,5,6]'
+.....................
+
+   The `midstring/N' family has four members:
+   * `midstring(ABC, B, AC, LENA, LENB, LENC)'
+
+   * `midstring(ABC, B, AC, LENA, LENB)'
+
+   * `midstring(ABC, B, AC, LENA)'
+
+   * `midstring(ABC, B, AC)'
+
+   The principal routine for taking apart an atom is `midstring/6'.
+
+`midstring/6'
+     is true when
+        * ABC, B, and AC are all atoms.
+
+        * ABC can be broken into three pieces A, B, and C,
+
+        * AC is the concatenation of A and C,
+
+        * LENA is the length of A,
+
+        * LENB is the length of B, and
+
+        * LENC is the length of C.
+
+   Either ABC or both B and AC should be instantiated.  Apart from this
+restriction, `midstring/6' is a genuine relation, and all the other
+arguments can be solved for.
+
+   How can you be expected to remember all these arguments?  The
+arguments fall into two groups:  three text objects and three integers.
+The three integers form a little picture of what you want.
+                 |   LenA    |     LenB    |  LenC   |
+         ABC=     a a a a a a B B B B B B B c c c c c
+
+   So the order of the three integer arguments is the same as the order
+of the substrings whose lengths they are.  Note that none of these
+arguments is a "position" in any string:  all three of them are to be
+understood as _lengths_ of strings.
+
+   The order of the text arguments was chosen to extend the order used
+by `substring/5' (see *Note lib-txp-sub-substring::).  Generally, you
+are more likely to know ABC than B or AC, and you are more likely to
+know B than AC.  For example, a common use of the `midstring/[3,4,5,6]'
+family is to ask "if B is deleted from ABC, what results?", which can
+be done by asking
+     | ?- midstring(this_is_abc, is, AC, _, _, _).
+     
+     AC = th_is_abc ;
+     
+     AC = this__abc ;
+     
+     no
+
+   Earlier in this section we saw `midstring/4' used to append two
+strings.  Now we can see how that works:
+     | ?- midstring(BC, B, C, 0).
+
+   is true when BC can be broken into three parts, A, B, and C, such
+that 0 is the length of A, the lengths of B and C are unconstrained,
+and C is the concatenation of A and C.
+
+   Another way to see this is that
+     | ?- midstring (ABC, B, AC, N).
+
+   is true when ABC is obtained by inserting B just after the Nth
+character of AC.
+
+   Some other examples using the `midstring/N' family:
+   * To delete 7 characters from `I"m going, Tom', retaining the first 4
+     characters:
+          | ?- midstring('I''m going, Tom', _, Answer, 4, 7).
+          
+          Answer = 'I''m Tom'
+
+     To search for the text `ab' in `abracadabra':
+          | ?- midstring(abracadabra, ab, _, Offset).
+          
+          Offset = 0 ;
+          Offset = 7 ;
+          no
+
+   * To divide WHOLE into FRONT and BACK, where the length of FRONT is
+     known:
+          | ?- midstring(Whole, Front, Back, 0, FrontLength).
+
+   * To divide WHOLE into FRONT and BACK, where the length of BACK is
+     known:
+          | ?- midstring(Whole, Front, Back, 0, _, BackLength).
+
+   * To insert PART into FRINGES at a given OFFSET from the left,
+     yielding WHOLE:
+          | ?- midstring(Whole, Part, Fringes, Offset).
+
+   * To insert PART into FRINGES at a given OFFSET from the right,
+     yielding WHOLE:
+          | ?- midstring(Whole, Part, Fringes, _, _, Offset).
+
+   * To delete DROP characters from WHOLE, starting at a given OFFSET
+     from the left, yielding Short:
+          | ?- midstring(Whole, _, Short, Offset, Drop).
+
+   * To delete DROP characters from WHOLE, starting at a given OFFSET
+     from the right, yielding SHORT:
+          | ?- midstring(Whole, _, Short, _, Drop, Offset).
+
+   * To determine the LENGTH of TEXT:
+          | ?- midstring(Text, Text, '', 0, Length, 0).
+
+
+   It would not be useful to try to memorize these examples.  Instead,
+remember the _picture_:
+     ABC,  B,  AC,  LenA,  LenB,  LenC
+
+   Note that `midstring/[3,4,5,6]' has been carefully designed so that
+you can extract and insert from either the left or the right with equal
+facility, and so that successive calls to extract related fragments
+will require a minimum of arithmetic.  For example, suppose we want to
+break a text ABCD into four pieces, where the lengths of B and D are
+known.  We think about the picture
+             ABCD = '' (ABC) D
+             ABC  = A (B) C
+             AC   = A (C) ''
+
+   and then write
+     four_parts(ABCD, A, B, C, D, LenB, LenD) :-
+             /* this is an example */
+             midstring(ABCD, ABC, D, 0, _, LenD),
+             midstring(ABC, B, AC, LenA, LenB),
+             midstring(AC, C, A, LenA, _, 0).
+
+
+File: quintus.info,  Node: lib-txp-sub-substring,  Next: lib-txp-sub-subchars,  Prev: lib-txp-sub-midstring,  Up: lib-txp-sub
+
+`substring/[4,5]'
+.................
+
+   Very often you are not interested in the third argument that
+`midstring/[3,4,5,6]' return.  This argument is not returned or
+constructed by `substring/[4,5]'.  In fact, `substring/[4,5]' were
+designed first, and `midstring/[3,4,5,6]' were developed from it to
+provide string insertion and deletion.
+
+   * `substring(+ABC, ?B, ?LENA, ?LENB, ?LENC)'
+
+   * `substring(+ABC, ?B, ?LENA, ?LENB)'
+
+
+   are true when
+   * ABC and B are both atoms,
+
+   * ABC can be broken into three pieces A, B, and C,
+
+   * LENA is the length of A,
+
+   * LENB is the length of B, and
+
+   * LENC is the length of C.
+
+   The ABC argument must be instantiated.  The B argument may be
+instantiated (this provides a string search facility) but need not be.
+This is the reason for the argument order:  arguments that are strict
+inputs should precede other arguments, and `substring/5' has precisely
+one strict input.
+
+   The point of `substring/5' is to let you work from the right-hand
+end of the text as easily as from the left-hand end.  But the fact that
+Prolog is based on relations rather than functions means that this one
+operation can replace both substring and string search operations.
+
+   Thus to determine where `a' occurs in `abracadabra',
+     | ?- substring(abracadabra, a, Offset, _).
+     
+     Offset = 0 ;
+     Offset = 3 ;
+     Offset = 5 ;
+     Offset = 7 ;
+     Offset = 10 ;
+     no
+
+   This is the preferred way of searching for a substring in Quintus
+Prolog.  Note that if you use `substring/5' to search for a substring,
+you can then extract the preceding or following characters thus:
+     | ?- substring(Text, Pattern, L_Before, L_Pattern, L_After),
+     |    substring(Text, Before, 0, L_Before, _),
+     |    substring(Text, After, _, L_After, 0).
+
+   Again, this is not guesswork, but is arrived at by thinking about
+the picture
+     Text = Before (Pattern) After
+          = '' (Before) Pattern After
+          = Before Pattern (After) ''
+
+   There are two other predicates in this family:
+
+     index(Pattern, String, Offset) :-
+             substring(String, Pattern, Offset, _).
+     
+     string_search(Pattern, String, Offset) :-
+             substring(String, Pattern, Offset, _).
+
+   `index/3' is retained for compatibility with earlier releases of
+`library(strings)'.  It will be withdrawn in a future release.  If you
+have code that uses `index/3', you should replace calls to `index/3' by
+calls to `string_search/3', which is an exact synonym for it.
+
+
+File: quintus.info,  Node: lib-txp-sub-subchars,  Next: lib-txp-sub-spa,  Prev: lib-txp-sub-substring,  Up: lib-txp-sub
+
+`subchars/[4,5]'
+................
+
+   `subchars/[4,5]' are identical to `substring/[4,5]' (*Note
+lib-txp-sub-substring::) except that the second argument, B, is a list
+of character codes, not a text object.
+
+`subchars(+ABC, ?B, ?LENA, ?LENB, ?LENC)'
+
+`subchars(+ABC, ?B, ?LENA, ?LENB)'
+     are true when
+        * ABC is a text object,
+
+        * B is a list of character codes (it may be empty),
+
+        * ABC can be broken into three pieces A, B, and C,
+
+        * LENA is the length of A,
+
+        * LENB is the length of B, and
+
+        * LENC is the length of C.
+
+     | ?- subchars(frederica, Name, 4, 4).
+     
+     Name = "eric"
+
+   These predicates avoid constructing an atom that you may have no
+further use for.
+
+
+File: quintus.info,  Node: lib-txp-sub-spa,  Prev: lib-txp-sub-subchars,  Up: lib-txp-sub
+
+The "span" family
+.................
+
+   The midstring, substring, and subchars families give you a way of
+taking strings apart when you know the lengths of the substrings you
+want, or when you know a particular substring.
+
+   The "span" family gives you another way of taking strings apart.
+The family contains three sub-families:  `span_left/[3,4,5]', which
+scan from the left, `span_right/[3,4,5]', which scan from the right, and
+`span_trim/[3,4,5]', which scans from both ends towards the middle.
+
+`span_left(+TEXT, +SET, ?LENA, ?LENB, ?LENC)'
+
+`span_left(+TEXT, +SET, ?LENA, ?LENB)'
+
+`span_left(+TEXT, +SET, ?LENA)'
+     are true when
+        * TEXT is a text object,
+
+        * SET specifies a set of characters (see below), and
+
+        * TEXT can be broken into three pieces A, B, C, such that
+             - LENA is the length of A,
+
+             - LENB is the length of B,
+
+             - LENC is the length of C,
+
+             - no character in A belongs to the SET,
+
+             - every character in B belongs to the SET,
+
+             - B is not empty (so some character of TEXT must belong to
+               the SET),
+
+             - C contains the rest of TEXT (it may contain characters
+               from SET), and
+
+             - A and B are as long as possible.
+
+
+     The SET is
+        * an atom A.  A character belongs to such a SET if and only if
+          it occurs in the name of A.  The atom `''' represents an
+          empty SET.
+
+        * a non-empty list of character codes [C1,...,CN].  A character
+          belongs to set a SET if and only if it occurs among the
+          character codes C1,...,CN.
+
+        * `not(X)', where X is an atom or non-empty list of characters.
+          A character belongs to such a SET if and only if it does
+          _not_ belong to the set X.
+
+   The first two arguments must be instantiated.  Given them, the
+remaining three arguments are uniquely determined.  The last three
+arguments give you a picture of how the text is divided:
+                 |   LenA    |    LenB     |  LenC   |
+         Text=    a a a a a a B B B B B B B c c c c c
+                              \____Set____/
+
+   where SET embraces the characters in the B substring.  By design,
+the SET argument occupies the same position in the argument list of
+this predicate that B does in the argument list of `substring/[4,5]' or
+`midstring/[3,4,5,6]'.  The fact that the last three arguments of
+`span_left/5' follow this convention means that you can use
+`midstring/[3,4,5,6]', `substring/[4,5]', or `subchars/[4,5]' to
+extract whichever substring interests you.
+
+   For example, to skip leading spaces in STRING, yielding TRIMMED, you
+would write
+     | ?- span_left(String, not(" "), Before),
+     |    substring(String, Trimmed, Before, _, 0).
+
+   Note that this fails if there are no non-blank characters in STRING.
+To extract the first blank-delimited TOKEN from STRING, yielding a TOKEN
+and the REST of the string, you would write
+     | ?- span_left(String, not(" "), Before, Length, After),
+     |    substring(String, Token, Before, Length, After),
+     |    substring(String, Rest, _, After, 0).
+
+`span_right(+TEXT, +SET, ?LENA, ?LENB, ?LENC)'
+
+`span_right(+TEXT, +SET, ?LENB, ?LENC)'
+
+`span_right(+TEXT, +SET, ?LENC)'
+     are true when
+        * TEXT is a text object,
+
+        * SET specifies a set of characters, and
+
+        * TEXT can be broken into three pieces A, B, C, such that
+             - LENA is the length of A,
+
+             - LENB is the length of B,
+
+             - LENC is the length of C,
+
+             - no character in C belongs to the SET,
+
+             - every character in B belongs to the SET,
+
+             - B is not empty (so some character of TEXT must belong to
+               the SET), and
+
+             - C and B are as long as possible.
+
+
+   These three predicates are exactly like `span_left/[3,4,5]' except
+that they work from right to left instead of from left to right.  In
+particular, the picture
+                 |   LenA    |    LenB     |  LenC   |
+         Text=    a a a a a a B B B B B B B c c c c c
+                              \____Set____/
+
+   applies.
+
+   Finally, there are predicates that scan from both ends:
+
+`span_trim(+TEXT, +SET, ?LENA, ?LENB, ?LENC)'
+     is true when
+        * TEXT is a text object,
+
+        * SET specifies a set of characters, and
+
+        * TEXT can be broken into three pieces A, B, C, such that
+             - LENA is the length of A,
+
+             - LENB is the length of B,
+
+             - LENC is the length of C,
+
+             - every character in A belongs to the SET,
+
+             - every character in C belongs to the SET,
+
+             - A and C are as long as possible, and
+
+             - B is not empty.
+
+
+   The SET argument of `span_trim/5' has the same form as the SET
+argument of `span_left/[3,4,5]' or `span_right/[3,4,5]', but there is
+an important difference in how it is used: in `span_trim/5' the SET
+specifies the characters that are to be trimmed away.  The picture is
+                 |   LenA    |    LenB     |  LenC   |
+         Text=    a a a a a a B B B B B B B c c c c c
+                  \___Set___/               \__Set__/
+
+   There is a special case of `span_trim/5' that enables you to strip
+particular characters from both ends of a string.  These unwanted
+characters are designated in SET in `span_trim/3':
+     span_trim(String, Set, Trimmed) :-
+             span_trim(String, Set, Before, Length, After),
+             substring(String, Trimmed, Before, Length, After).
+
+   A further specialization, `span_trim/2', is intended for trimming
+blanks from fixed-length records:
+     span_trim(String, Trimmed) :-
+              span_trim(String, " ", Before, Length, After),
+              substring(String, Trimmed, Before, Length, After).
+
+   For example,
+     | ?- span_trim('  abc    ', " ", B, L, A).
+     B = 2
+     L = 3
+     A = 4
+     
+     | ?- substring('  abc    ', Trimmed, 2, 3, 4).
+     Trimmed = abc
+     
+     | ?- span_trim(' an   example ', Trimmed).
+     Trimmed = 'an   example'
+
+   Note that the last example leaves the group of three internal blanks
+intact.  There are no predicates in `library(strings)' for compressing
+such blanks.
+
+   In manipulating text objects, do not neglect the possibility of
+combining the "span" family with `subchars/[4,5]' or
+`midstring/[3,4,5,6]'.
+
+
+File: quintus.info,  Node: lib-txp-ato,  Next: lib-txp-ctypes,  Prev: lib-txp-sub,  Up: lib-txp
+
+Generating Atoms
+----------------
+
+   `library(strings)' defines three predicates for generating atoms.
+
+`gensym(+PREFIX, -ATOM)'
+     is equivalent to `concat_atom([PREFIX, N], ATOM)', where N is the
+     next number in the sequence associated with PREFIX.  Notionally,
+     each PREFIX has its own counter, starting with zero.  PREFIX must
+     be an atom.  Examples:
+          | ?- gensym(a, X).
+          
+          X = a1
+          
+          | ?- gensym(a, X).
+          
+          X = a2
+          
+          | ?- gensym(b, X).
+          
+          X = b1
+          
+          | ?- gensym(1, X).
+          
+          no
+
+`gensym(-ATOM)'
+     uses the PREFIX `%'.  Example:
+          | ?- gensym(X).
+          
+          X = '%58'
+
+`cgensym(+PREFIX, ?ATOM)'
+     if ATOM is a variable, it generates a new atom using `gensym/2'.
+     Otherwise, PREFIX and ATOM should be atoms.  The name is to be
+     read as "conditionally generate symbol".
+
+   These predicates are included for compatibility with the DEC-10
+Prolog library, which has contained them for several years.
+`cgensym/2' will do nothing to ATOM if it is already bound; otherwise it
+is just like `gensym/2'.
+
+
+File: quintus.info,  Node: lib-txp-ctypes,  Next: lib-txp-nte,  Prev: lib-txp-ato,  Up: lib-txp
+
+Case Conversion -- `library(ctypes)'
+------------------------------------
+
+   There are no case conversion operations in the supported
+`library(strings)' package.  In the ASCII and EBCDIC character sets,
+case conversion is well defined, because each letter is either an
+uppercase letter (which has a unique lowercase equivalent) or a
+lowercase letter (which has a unique uppercase equivalent).  Not all of
+the character sets have this property.
+
+   There are case conversion operations in `library(ctypes)'.  They are
+`to_lower(?UPPER, ?LOWER)'
+     which is true when UPPER and LOWER are valid character codes, and
+     either UPPER is the code of an uppercase letter that has a unique
+     lowercase equivalent, and LOWER is the code of that unique
+     lowercase equivalent, or UPPER is the code of some other
+     character, and LOWER is the same as UPPER.  Note that this means
+     that if LOWER is the code of a lowercase letter that is the unique
+     equivalent of some uppercase letter, there are two solutions for
+     UPPER.
+
+`to_upper(?LOWER, ?UPPER)'
+     which is true when LOWER and UPPER are valid character codes, and
+     either LOWER is the code of a lowercase letter that has a unique
+     uppercase equivalent; and UPPER is the code of that unique
+     uppercase equivalent, or LOWER is the code of some other
+     character, and UPPER is the same as LOWER.  Note that this means
+     that if UPPER is the code of an uppercase letter that is the unique
+     equivalent of some lowercase letter, there are two solutions for
+     LOWER.
+
+   In the ASCII and EBCDIC character sets, these definitions behave as
+one would expect.  But consider the case of Greek.
+
+   Capital sigma is undeniably an uppercase letter; yet it has two
+lowercase equivalents:  one for use at the end of words and one for use
+elsewhere.  This means that `to_upper/2' would map both medial and
+final lowercase sigma to uppercase sigma, but that `to_lower/2' would
+leave uppercase sigma unchanged.  A similar problem exists in German,
+where `ss' is a lowercase letter whose uppercase equivalent is the
+_pair_ of letters `SS'.
+
+   Because of such problems, `library(caseconv)' is only adequate for
+ASCII or EBCDIC.  This package defines two groups of predicates.  The
+predicates in the first group test the case of a name.  Those in the
+second group convert the case of a name or a non-empty list of
+character codes.
+
+`lower(+TEXT)'
+     is true if TEXT contains no uppercase letters.
+
+`upper(+TEXT)'
+     is true if TEXT contains no lowercase letters.
+
+`mixed(+TEXT)'
+     is true if TEXT contains at least one lowercase letter and and
+     least one uppercase letter.
+
+   In each case, TEXT may contain other things than letters.  If
+`mixed(TEXT)' is true, then `lower(TEXT)' and `upper(TEXT)' must both
+be false.  However, `lower(TEXT)' and `upper(TEXT)' can both be true if
+X contains no letters at all.  Examples:
+     | ?- lower(a).
+     
+     yes
+     
+     | ?- lower(quixotic).
+     
+     yes
+     
+     | ?- lower('Quixotic').
+     
+     no
+
+     | ?- lower(**).
+     
+     yes
+     
+     | ?- upper(a).
+     
+     no
+     
+     | ?- upper('QUIXOTIC').
+     
+     yes
+
+     | ?- upper('Quixotic').
+     
+     no
+     
+     | ?- upper(**).
+     
+     yes
+     
+     | ?- mixed(quixotic).
+     
+     no
+
+     | ?- mixed('QUIXOTIC').
+     
+     no
+     
+     | ?- mixed('!$Quixotic<<<').
+     
+     yes
+     
+     | ?- mixed(**).
+     
+     no
+
+`lower(+GIVEN, ?LOWER)'
+     unifies LOWER with a lowercase version of GIVEN.  Uppercase
+     letters are converted to lowercase, and no other changes are made.
+     `lower(LOWER)' is true.
+
+`upper(+GIVEN, ?UPPER)'
+     unifies UPPER with an uppercase version of GIVEN.  Lowercase
+     letters are converted to uppercase, and no other changes are made.
+     `upper(UPPER)' is true.
+
+`mixed(+GIVEN, ?MIXED)'
+     unifies MIXED with a mixed-case version of GIVEN.  In each block
+     of consecutive letters, the first letter is converted to uppercase
+     and the following letters are converted to lowercase.  No other
+     changes are made.  `mixed(MIXED)' is true if and only if GIVEN
+     contained at least two adjacent letters; otherwise `upper(MIXED)'
+     is true.
+
+   In each of these predicates, GIVEN may be an atom or a non-empty
+list of character codes.  If GIVEN is a number, these predicates will
+quietly fail.  The action of these predicates on other terms is not
+defined.  The second argument is unified with a term of the same type
+as GIVEN, containing the same number of characters.
+
+   Examples (assuming that `library(printchars)' has been loaded):
+     | ?- lower("Are other character sets a REAL problem?", X).
+     
+     X = "are other character sets a real problem?"
+     
+     | ?- upper('Yes, they are!', X).
+     
+     X = 'YES, THEY ARE!'
+     
+     | ?- mixed('what a nuisance', X).
+     
+     X = 'What A Nuisance'
+
+     | ?- upper(1.2e3, X).
+     
+     no
+     
+     | ?- lower('1.2E3', X).
+     
+     X = '1.2e3'
+
+   Note that numbers cannot be converted by these predicates.
+
+
+File: quintus.info,  Node: lib-txp-nte,  Prev: lib-txp-ctypes,  Up: lib-txp
+
+Note
+----
+
+
+File: quintus.info,  Node: lib-xml,  Next: lib-neg,  Prev: lib-txp,  Up: lib
+
+XML Parsing and Generation
+==========================
+
+   `library(xml)' is a package for parsing XML with Prolog, which
+provides Prolog applications with a simple "Document Value Model"
+interface to XML documents.  A description of the subset of XML that it
+supports can be found at:
+`http://homepages.tesco.net/binding-time/xml.pl.html'
+
+   The package, originally written by Binding Time Ltd., is in the
+public domain and unsupported.  To use the package, enter the query:
+
+     | ?- use_module(library(xml)).
+
+   The package represents XML documents by the abstract data type
+DOCUMENT, which is defined by the following grammar:
+
+DOCUMENT       ::=                           { well-formed document }
+               `xml(ATTRIBUTES,CONTENT)'     
+               |                             { malformed document }
+               `malformed(ATTRIBUTES,CONTENT)'
+
+ATTRIBUTES     ::= `[]'                      
+               |                             
+               `[NAME=CHARDATA|ATTRIBUTES]'  
+
+CONTENT        ::= `[]'                      
+               |   `[CTERM|CONTENT]'         
+
+CTERM          ::= `pcdata(CHARDATA)'        { text }
+               |   `comment(CHARDATA)'       { an XML comment }
+               |                             { a Namespace }
+               `namespace(URI,PREFIX,ELEMENT)'
+               |                             { <TAG>..</TAG> encloses
+               `element(TAGATTRIBUTES,CONTENT)'CONTENT or <TAG /> if empty }
+               |                             { A PI <? NAME CHARDATA ?> }
+               `instructions(NAME,CHARDATA)' 
+               |   `cdata(CHARDATA)'         { <![CDATA[CHARDATA]]>  }
+               |   `doctype(TAG,DOCTYPEID)'  { DTD <!DOCTYPE .. > }
+               |   `unparsed(CHARDATA)'      { text that hasn't been
+                                             parsed }
+               |   `out_of_context(TAG)'     { TAG is not closed }
+
+TAG            ::= "atom"                    { naming an element }
+
+NAME           ::= "atom"                    { not naming an element }
+
+URI            ::= "atom"                    { giving the URI of a
+                                             namespace }
+
+CHARDATA       ::= "chars"                   { see *Note
+                                             mpg-ref-aty-ety:: }
+
+DOCTYPEID      ::=                           
+               `public(CHARDATA,CHARDATA)'   
+               |   `system(CHARDATA)'        
+               |   `local'                   
+
+   The following predicates are exported by the package:
+
+`xml_parse(+CHARS, -DOCUMENT[, +OPTIONS])'
+     Parses CHARS, a "chars", to DOCUMENT, a DOCUMENT.  CHARS is not
+     required to represent strictly well-formed XML.
+
+     OPTIONS is a list of zero or more of the following, where BOOLEAN
+     must be `true' or `false':
+
+    `format(BOOLEAN)'
+          Indent the element content (default `true').
+
+    `extended_characters(BOOLEAN)'
+          Use the extended character entities for XHTML (default
+          `true').
+
+    `remove_attribute_prefixes(BOOLEAN)'
+          Remove namespace prefixes from attributes when it's the same
+          as the prefix of the parent element (default `false').
+
+`xml_parse(-CHARS, +DOCUMENT[, +OPTIONS])'
+     Generates CHARS, a "chars", from DOCUMENT, a DOCUMENT.  If
+     DOCUMENT is not a valid DOCUMENT term representing well-formed
+     XML, an exception is raised.
+
+     In this usage of the predicate, the only option available is
+     `format/1'.
+
+`xml_subterm(+TERM, ?SUBTERM)'
+     Unifies SUBTERM with a sub-term of TERM, a DOCUMENT. This can be
+     especially useful when trying to test or retrieve a deeply-nested
+     subterm from a document.
+
+`xml_pp(+DOCUMENT)'
+     "Pretty prints" DOCUMENT, a DOCUMENT, on the current output stream.
+
+
+File: quintus.info,  Node: lib-neg,  Next: lib-ofi,  Prev: lib-xml,  Up: lib
+
+Negation
+========
+
+* Menu:
+
+* lib-neg-bas::                         Introduction --- library(not)
+* lib-neg-nop::                         The ``is-not-provable'' Operator
+* lib-neg-not::                         ``is-not-provable'' vs. ``is-not-true'' --- not(Goal)
+* lib-neg-ine::                         Inequality
+* lib-neg-once::                        Forcing Goal Determinacy --- once(Goal)
+* lib-neg-sum::                         Summary
+
+
+File: quintus.info,  Node: lib-neg-bas,  Next: lib-neg-nop,  Up: lib-neg
+
+Introduction -- `library(not)'
+------------------------------
+
+   This section describes the predicates provided by `library(not)':
+`not/1', `\=/2', `~=/2', and `once/1'.  For comparison purposes, the
+negation facilities that are built into the Prolog system are also
+described.
+
+
+File: quintus.info,  Node: lib-neg-nop,  Next: lib-neg-not,  Prev: lib-neg-bas,  Up: lib-neg
+
+The "is-not-provable" Operator
+------------------------------
+
+   DEC-10 Prolog, C-Prolog, and Quintus Prolog all provide an
+"is-not-provable" operator `\+'.  The meaning of
+
+     \+ Goal
+
+   is that the Prolog system is unable to find any solution for Goal as
+it currently stands.
+
+   In operational terms, we have
+     \+ Goal :-
+         ( call(Goal) -> fail
+         ; true
+         ).
+
+   In DEC-10 Prolog and C-Prolog, this is exactly how `\+' is
+implemented.  In Quintus Prolog there is a slight difference:  the
+Quintus Prolog compiler supports `(IF -> THEN ; ELSE)' directly, so a
+clause of the form
+     p :-
+          q,
+          \+ R,
+          s.
+
+   is compiled as if you had written
+     p :-
+          q,
+          ( R -> fail ; true ),
+          s.
+
+   If `\+' were not known to the compiler, the form R would be built as
+a data structure and passed to `\+' to interpret, which would be slower
+and would require more memory.  The extra efficiency of having `\+'
+handled directly by the compiler is well worth having.
+
+
+File: quintus.info,  Node: lib-neg-not,  Next: lib-neg-ine,  Prev: lib-neg-nop,  Up: lib-neg
+
+"is-not-provable" vs. "is-not-true" -- `not(GOAL)'
+--------------------------------------------------
+
+   If the difference between the Prolog "is-not-provable"  operator
+(`\+') and the standard negation operator of logic is not taken into
+account, you may find that some of your programs will behave in an
+unexpected manner.  Here is an example:
+
+     man(john).
+     man(adam).
+     
+     woman(sue).
+     woman(eve).
+     
+     married(adam, eve).
+     
+     married(X) :-
+             married(X, _).
+     married(X) :-
+             married(_, X).
+     
+     human(X) :-
+             man(X).
+     human(X) :-
+             woman(X).
+
+   The question
+     | ?- \+ married(Who).
+
+   is a perfectly good one, to which one might at first glance expect
+the response to be `john' or `sue'.  However, the meaning of this
+clause to Prolog is
+
+     is it the case that the term `married(Who)' has
+     no provable instances?
+
+   to which the answer is `no', as `married(adam)' is an instance of
+`married(Who)' and is provable by Prolog.  The question
+     | ?- \+ dead(X).
+
+   is also a perfectly good one, and after perhaps complaining that
+`dead/1' is undefined, Prolog will report the answer `yes', because
+`dead(X)' has no instance that can be proven from this database.  In
+effect, this means "for all X, `dead(X)' is not provable".  Even though
+"`dead(adam)' is not provable" is a true consequence of this statement,
+Prolog will _not_ report `X = adam' as a solution of this question.
+This is not the function of `\+/1'.
+
+   Note also that "`dead(adam)' is false" is _not_ a valid consequence
+of this database, even though "`dead(adam)' is not provable" is true.
+To deduce one from the other requires the use of the "Closed World
+Assumption", which can be paraphrased as "anything that I do not know
+and cannot deduce is not true".  See any good book on logic programming
+(such as FOUNDATIONS OF LOGIC PROGRAMMING by John Lloyd,
+Springer-Verlag 1984) for a fuller explanation of this.
+
+   We would very often like an operation that corresponds to logical
+negation.  That is, we would like to ask
+     | ?- not married(X).
+
+   and have Prolog tell us the names of some people who are not married,
+or to ask
+     | ?- not dead(X).
+
+   and have Prolog name some people who are not dead.  The unprovability
+operator will not do this for us.  However, we _can_ use `\+/1' as if
+it were negation, but only for certain tasks under some conditions that
+are not very restrictive.
+
+   The first condition is that if you want to simulate `not(P)' with
+`\+(P)', you must first ensure that you have complete information about
+P.  That is, your program must be such that every true ground instance
+of P can be proved in finite time, and that every false ground instance
+of P will fail in finite time.  Database programs often have this
+property.
+
+   Even then, given a non-ground instance of P, `not(P)' would be
+expected to bind some of the variables of P.  But by design, `\+(P)'
+_never_ binds any variables of P.  Therefore the second condition is
+that when you call `\+(P)', P should be ground, or `\+(P)' will not
+simulate `not(P)' properly.
+
+   Checking the first condition requires an analysis of the entire
+program.  Checking that P is ground is relatively simple.  Therefore,
+the library file `library(not)' defines an operation
+
+     not GOAL
+
+   which checks whether its GOAL argument is ground, and if it is,
+attempts to prove `\+ GOAL'.  Actually, the check done is somewhat
+subtler than that.  The simulation can be sound even when some variables
+remain; for example, if `left_in_stock(Part, Count)' has at most one
+solution for any value of `Part', then
+     \+ (left_in_stock(Part,Count), Count < 10)
+
+   is perfectly sound provided you do not use `Count' elsewhere in the
+clause.  You can tell `not/1' that you take responsibility for a
+variable's being safe by existentially quantifying it (see the
+description of `setof/3'), so
+
+     not Count^(left_in_stock(Part,Count), Count < 10)
+
+   demands only that `Part' must be ground.  Even so, this is not
+particularly good style, and you would be better off adding a predicate
+     fewer_in_stock_than(Part, Limit) :-
+             left_in_stock(Part, Count),
+             Count < Limit.
+
+   and asking the question
+     not fewer_in_stock_than(Part, 10)
+
+   If you want to find instances that do not satisfy a certain test,
+you can generally enumerate likely candidates and check each one.  For
+example,
+     | ?- human(H), not married(H).
+     
+     H = john ;
+     
+     H = sue
+     
+     | ?- man(M), not dead(M).
+     
+     M = john ;
+     
+     M = adam
+
+   The present library definition of `not/1' warns you when you would
+get the wrong answer, and offers you the choice of aborting the
+computation or accepting possible incorrect results.
+
+
+File: quintus.info,  Node: lib-neg-ine,  Next: lib-neg-once,  Prev: lib-neg-not,  Up: lib-neg
+
+Inequality
+----------
+
+* Menu:
+
+* lib-neg-ine-nop::                     Term1 \= Term2
+* lib-neg-ine-snd::                     Term1 ~= Term2
+
+   DEC-10 Prolog, C-Prolog, and Quintus Prolog provide two inequality
+operations:
+`TERM1 \== TERM2'
+     TERM1 is not currently identical to TERM2
+
+`EXPR1 =\= EXPR2'
+     EXPR1 and EXPR2 are arithmetic expressions with different values
+
+   `=\=/2' is reasonably straightforward.  Either it is true, and will
+remain true, or it is false, and will remain false, or the Prolog
+system will report an error if it cannot determine which.  Thus `1 =\=
+2' is true, `1 =\= 1.0' is false, and `_ =\= 3' will result in an error
+exception.
+
+   `\==/2' is not really a logical relation, but a meta-logical relation
+like `var/1'.  It tests whether two terms are exactly identical, down
+to having the same variables in the same places.  It either succeeds or
+fails; and if it fails it will continue to do so, but if it succeeds it
+may fail later on.  For example,
+     | ?- X \== Y,  % succeeds
+     |    X  =  Y,  % succeeds, unifying X and Y
+     |    X \== Y.  % FAILS, now that X and Y are unified
+     
+     no
+
+   It is safe to use `==/2' and `\==/2' to test the equality of terms
+when you know in advance that the terms will be ground by the time the
+test is made.
+
+
+File: quintus.info,  Node: lib-neg-ine-nop,  Next: lib-neg-ine-snd,  Up: lib-neg-ine
+
+`TERM1 \= TERM2'
+................
+
+   `library(not)' defines another inequality predicate, as do the
+C-Prolog and DEC-10 Prolog libraries:
+
+`TERM1 \= TERM2'
+     TERM1 and TERM2 do not unify
+
+   This means exactly the same thing as
+     \+ TERM1 = TERM2
+
+   and is subject to the same problems as the use of unprovability to
+simulate negation.  However, when the terms are ground, it is more
+efficient than `\==/2'.
+
+
+File: quintus.info,  Node: lib-neg-ine-snd,  Prev: lib-neg-ine-nop,  Up: lib-neg-ine
+
+`TERM1 ~= TERM2'
+................
+
+   Obviously, if we can have a version of `\+/2' that checks whether it
+is safe to proceed, we can have a version of `\=/2' that does the same.
+So `library(not)' also defines a "sound inequality" predicate
+
+`TERM1 ~= TERM2'
+     TERM1 and TERM2 are not equal
+
+   There are three cases:  it may succeed, or fail, or warn you that
+there is not enough information yet to tell.  Note that `~=/2' is a bit
+more clever than `not(T1 = T2)' would be:
+     f(X, a) ~= f(Y, b)
+
+   will succeed (correctly) even though
+     not(f(X,a) = f(Y,b))
+
+   would complain about the unbound variables `X' and `Y'.
+
+   As `~=/2' is sound and `\=/2' is not, we recommend that you use
+`~=/2' rather than `\=/2' in your Prolog code.
+
+
+File: quintus.info,  Node: lib-neg-once,  Next: lib-neg-sum,  Prev: lib-neg-ine,  Up: lib-neg
+
+Forcing Goal Determinacy -- `once(GOAL)'
+----------------------------------------
+
+   We have seen that
+     \+ Goal
+
+   and
+     ( Goal -> false ; true )
+
+   have the same effect.  The form
+     ( Goal -> true ; false )
+
+   is also useful:  it commits to the first solution of Goal.
+
+   This operation has a name:
+     once GOAL
+
+   `once/1' is useful when you have a nondeterminate definition for
+GOAL, but in this case you want to solve it determinately.  For
+example, to find out if there are any married couples, you could use
+     once married(_, _)
+
+   If the predicate is really determinate in concept, it is better to
+make it determinate in definition as well, rather than to use `once/1'.
+
+
+File: quintus.info,  Node: lib-neg-sum,  Prev: lib-neg-once,  Up: lib-neg
+
+Summary
+-------
+
+   `library(not)' defines
+     not Goal
+     Term1 \= Term2
+     Term1 ~= Term2
+     once(Goal)
+
+   The tests
+     \+ Goal
+     Term1 \== Term2
+     Expr1 =\= Expr2
+
+   are built into Quintus Prolog already, and are described in the
+reference pages.
+
+
+File: quintus.info,  Node: lib-ofi,  Next: lib-lfi,  Prev: lib-neg,  Up: lib
+
+Operations on Files
+===================
+
+* Menu:
+
+* lib-ofi-bas::                         Introduction --- library(files)
+* lib-ofi-bfi::                         Built-in Operations on Files
+* lib-ofi-rdf::                         Renaming and Deleting Files
+* lib-ofi-cfe::                         Checking To See If A File Exists
+* lib-ofi-oth::                         Other Related Library Files
+
+
+File: quintus.info,  Node: lib-ofi-bas,  Next: lib-ofi-bfi,  Up: lib-ofi
+
+Introduction -- `library(files)'
+--------------------------------
+
+   The package `library(files)' provides operations on individual
+files, such as renaming, deleting, opening, and checking for existence.
+
+   You may also find `library(directory)' of interest (see *Note
+lib-lfi::).
+
+
+File: quintus.info,  Node: lib-ofi-bfi,  Next: lib-ofi-rdf,  Prev: lib-ofi-bas,  Up: lib-ofi
+
+Built-in Operations on Files
+----------------------------
+
+   The following operations on files are described in the reference
+pages.
+
+`absolute_file_name(+RELFILENAME, ?ABSFILENAME)'
+     takes a filename RELFILENAME (typically typed in by the user of a
+     program) and unifies it with the normalized ABSFILENAME.
+
+     Beware:  `absolute_file_name/2' mimics the filename resolution done
+     by commands such as `compile/1'.  It is meant primarily for
+     looking up Prolog source files.  If you want to find the absolute
+     filename of any other file, `absolute_file_name/2' may not be
+     appropriate.  See `file_member_of_directory/2' in *Note
+     lib-lfi-fdi::.
+
+`close(+FILENAMEORSTREAM)'
+     if FILENAMEORSTREAM is an atom, it refers to a DEC-10-compatible
+     stream connected to the file of that name; otherwise it is a stream
+     object.  In either case, the associated stream is closed.
+
+`current_stream(?ABSFILENAME, ?MODE, ?STREAM)'
+     is true if STREAM is a stream connected to file ABSFILENAME, and
+     currently open in mode MODE.  `current_stream/2' can be used to
+     list currently open streams and the files to which they are
+     connected.
+
+`library_directory(?DIRECTORY)'
+     unifies DIRECTORY with an entry from the user-modifiable table of
+     directories to be searched for library files.
+
+`open(+FILENAME, +MODE, -STREAM)'
+     opens a new STREAM connected to the file named by FILENAME.  If
+     MODE is `write' (`append') it will (may) create a new file.
+
+`see(+FILENAMEORSTREAM)'
+     opens the file or stream FILENAMEORSTREAM for input if it is not
+     already open.
+
+`tell(+FILENAMEORSTREAM)'
+     opens the file or stream FILENAMEORSTREAM for output if it is not
+     already open.
+
+`unix(cd(+DIRECTORY))'
+     selects DIRECTORY as the default directory for relative file names.
+     This is also known as the current working directory.  To find out
+     what the default directory currently is, type
+          | ?- absolute_file_name(., CurrentDirectory).
+
+
+File: quintus.info,  Node: lib-ofi-rdf,  Next: lib-ofi-cfe,  Prev: lib-ofi-bfi,  Up: lib-ofi
+
+Renaming and Deleting Files
+---------------------------
+
+   `library(files)' defines four predicates pertaining to deleting and
+renaming files.  `rename/2' and `dec10_rename/2' are identical
+replacements for the DEC-10 Prolog/C-Prolog `rename/2' command.  They
+should only be used to convert old code to Quintus Prolog.  New
+programs should use `delete_file/1' and `rename_file/2'.
+
+`delete_file(+FILENAME)'
+     FILENAME should be an atom naming a file that currently exists and
+     can be deleted.  If so, the file it names is deleted, and the
+     command succeeds.  If not, an error exception is raised.  and the
+     command fails.  Examples:
+          | ?- delete_file('ask.otl').
+          
+          yes
+          
+          | ?- delete_file('does_not_exist').
+          ! Existence error in delete_file/1
+          ! file nosuch does not exist
+          ! O/S error : No such file or directory
+          ! goal:  delete_file(does_not_exist)
+
+          | ?- unix(system('cat </dev/null >search.d/tmp')),
+               unix(system('chmod a-w search.d')),
+               delete_file('search.d/tmp').
+          ! O/S error : Permission denied
+          ! goal:  delete_file('search.d/tmp')
+
+          | ?- delete_file("tmp").
+          ! Type error in argument 1 of delete_file/1
+          ! symbol expected, but [116,109,112] found
+          ! goal:  delete_file([116,109,112])
+          
+          | ?- unix(system('rm tmp')).
+          rm: override protection 444 for tmp? n
+          yes             % did NOT delete the file
+          
+          | ?- delete_file(tmp).
+          
+          yes             % **DID** delete the file
+
+     This last example is important:  the `rm' command (see `rm(1)')
+     checks the permission bits of the file (see `chmod(1)') and asks
+     you whether you really want to delete a file that you do not have
+     write permission for, even if you have permission to delete it.
+     `delete_file/1' does not do this.
+
+`rename_file(+OLDNAME, +NEWNAME)'
+     OLDNAME should be an atom naming a file that currently exists and
+     can be renamed, and NEWNAME should be a valid filename to which
+     the file can be renamed.  If so, the file will be renamed, and the
+     command will succeed.  If not, an error exception will be raised.
+     Examples:
+          | ?- rename_file(does_not_exist, imaginary).
+          ! Existence error in rename_file/2
+          ! file does_not_exist does not exist
+          ! O/S error : No such file or directory
+          ! goal:  rename_file(does_not_exist,imaginary)
+
+     `rename_file/2' and `delete_file/1' have no effect on currently
+     open streams, whether opened by `open/3', `see/1', or `tell/1'.
+
+     What will happen if you continue to use streams that used to be
+     connected to files affected by these commands is system-dependent.
+     Under UNIX, input will continue to come from a file as if it had
+     not been renamed, and output will continue to go to a file as if
+     it had not been renamed.  For example:
+
+          % prolog
+          | ?- compile(library(files)).
+          <output of compile/1>
+          yes
+          
+          | ?- open(fred, write, OutputStream),
+               open(fred, read,  InputStream ),
+               delete_file(fred),
+               format(OutputStream, 'foo.~n', []),
+               flush_output(OutputStream),
+               read(InputStream, Term),
+               close(OutputStream),
+               close(InputStream).
+          
+          OutputStream = '$stream'(10,3),
+          InputStream = '$stream'(11,4),
+          Term = foo
+
+`rename(+OLDNAME, +NEWNAME)'
+     This command is identical to `dec10_rename/2' below.
+
+`dec10_rename(+OLDNAME, +NEWNAME)'
+     This predicate is similar, but not identical, to the DEC-10
+     Prolog/C-Prolog command `rename/2', and is provided solely for the
+     sake of compatibility.  If you are converting existing DEC-10
+     Prolog or C-Prolog code to Quintus Prolog, the fact that
+     `rename/2' does close the file and is sensitive to the
+     `fileerrors' flag should be useful.  In new programs we recommend
+     the use of `rename_file/2' and `delete_file/1'.  OLDNAME and
+     NEWNAME must be atoms, otherwise an error is reported and the
+     command fails (this is not affected by the setting of the
+     `fileerrors' flag).  If NEWNAME is `[]', the file named by OLDNAME
+     is deleted, otherwise it is renamed to NEWNAME.  If the rename
+     cannot be performed, what happens next depends on the setting of
+     the `fileerrors' flag (see the reference page for `prolog_flag/3').
+     If `fileerrors' is `on', an error exception is raised.  If
+     `fileerrors' is `off', the command fails quietly.  Examples:
+          | ?- prolog_flag(fileerrors, Setting).
+          
+          Setting = on
+          
+          | ?- dec10_rename(2, 1).
+          ! Type error in argument 1 of dec10_rename/2
+          ! symbol expected, but 2 found
+          ! goal:  dec10_rename(2,1)
+
+          | ?- dec10_rename(does_not_exist, []).
+          ! Existence error in dec10_rename/2
+          ! file does_not_exist does not exist
+          ! O/S error : No such file or directory
+          ! goal:  dec10_rename(does_not_exist,[])
+          
+          | ?- prolog_flag(fileerrors, _, off).
+          
+          yes
+
+          | ?- dec10_rename("old", "new").
+          ! Type error in argument 1 of dec10_rename/2
+          ! symbol expected, but [111,108,100] found
+          ! goal:  dec10_rename([111,108,100],[110,101,119])
+          
+          | ?- dec10_rename(does_not_exist, []).
+          
+          no
+

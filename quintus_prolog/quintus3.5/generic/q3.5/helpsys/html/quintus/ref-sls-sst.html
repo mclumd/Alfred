@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Saved-States</h4>
+
+   <p>Saved-states are just a special case of QOF files.  The
+<code>save_program/[1,2]</code> predicate will save the entire Prolog database into
+a QOF file, and then in addition will make that QOF file executable. 
+Under UNIX, the
+QOF file is made executable by making the first line of the file be a
+<code>sh(1)</code> script. This script runs the executable that the QOF file was saved
+from, telling it to load the QOF file.
+
+   <p>So, if a saved-state is created as follows:
+
+<pre class="example">     | ?- <kbd>save_program(</kbd><var>savedstate</var><kbd>).</kbd>
+     </pre>
+
+   <p>then if we look at the first line of the file we will see something like the
+following. Note that <code>+L</code> is a Prolog command line option to load a QOF
+file (<code>$0</code> will be the name of the QOF file and <code>$*</code> will be any other
+arguments given when it is run).
+
+<pre class="example">     % head -1 <var>savedstate</var>
+     exec /usr/local/quintus/bin3.5/sun4-5/prolog +L $0 $*
+     </pre>
+
+   <p>This QOF file can then be run
+from the command line as follows:
+
+<pre class="example">     % <var>savedstate</var>
+     </pre>
+
+   <p>In addition to the user's code from the Prolog database, a saved-state
+saved by <code>save_program/[1,2]</code> also contains Prolog system
+information such as flag settings, debugging information and so forth. 
+When the saved-state is loaded this system state is also restored,
+which is convenient for continued development.
+
+   <p>Apart from being made executable, and containing additional Prolog
+system information, a saved-state saved through
+<code>save_program/[1,2]</code> is just a standard QOF file.  This means that
+it can be used anywhere you would otherwise use a QOF file, for such
+things as loading into Prolog, linking together with other QOF files,
+and linking into executables (see <a href="sap-srs.html#sap-srs">sap-srs</a> for information
+on these linking capabilities).
+
+   <p>A saved-state, or any QOF file, can be restored using the <code>restore/1</code>
+predicate from within Prolog:
+
+<pre class="example">     | ?- <kbd>restore(</kbd><var>savedstate</var><kbd>).</kbd>
+     </pre>
+
+   <p>The <code>restore/1</code> predicate will re-execute the running
+executable (using the <code>execv(3)</code> system call) in order to obtain
+a completely new environment, and will then load the QOF file. If the QOF
+file was saved with <code>save_program/[1,2]</code> then this will restore exactly
+the same Prolog database state as when the saved-state was saved. 
+In runtime systems, however, it is the application program's responsibility
+to load the file into the restarted executable,
+see <a href="mpg-ref-restore.html#mpg-ref-restore">mpg-ref-restore</a> and <a href="sap-srs-sqf.html#sap-srs-sqf">sap-srs-sqf</a>.
+
+   <p>Note that the executable that will be re-executed by <code>restore/1</code> is the
+one currently running.  This may be different from the one named in the
+first line in the QOF file, if that QOF file was saved from some different
+executable. To use the executable that originally saved the QOF file you
+should return to the command interpreter and run the QOF file directly. 
+To use the executable you are currently running, you should use
+<code>restore/1</code>.
+
+   <p>If the loaded QOF file has object file dependencies then those object files
+will be re-linked and re-loaded as part of loading the QOF file. If
+the object file cannot be found or linked, then an exception will be
+raised.  Similarly, QOF dependencies are also reloaded at this point.
+
+   <blockquote>
+
+        <p><strong>Windows caveat:</strong>
+
+        <p>Under Windows, it is not possible to replace a running executable with
+another. 
+Under Windows, <code>restore/1</code> will instead start a new
+sub-process and then terminate the running process. For more details see
+the Microsoft documentation for <code>execv()</code>.
+
+        <p>In a Windows command prompt window, the command interpreter does not wait
+when a process executes an <code>execv()</code> library call. Thus after
+<code>restore/1</code>, the program gives the appearance of running in the
+background.
+
+        <p><strong>Please note:</strong> The QOF file saved by <code>save_program/2</code> does <em>not</em>
+contain any of the Prolog code that is statically linked into the
+executable.  Only the Prolog database (both compiled and dynamic)
+that has been built since the executable started running is saved. 
+This is done to avoid code duplication in
+the saved-state. However, this does mean that if the QOF-file is
+loaded into a different executable, then the program may be missing
+some code that it assumes should be there, because it was present in
+the original executable. An example would be a saved-state that was
+saved from an executable containing Quintus' ProWINDOWS add-on
+product. If that saved-state is loaded into a normal Prolog executable
+without ProWINDOWS then any calls to ProWINDOWS will not work (they
+will generate undefined predicate exceptions). The correct thing to do
+is clearly to make sure that you use either the original executable,
+or an executable that contains the necessary programs, or you load the
+necessary programs in addition to loading the saved-state QOF file. 
+</blockquote>
+
+   <p>The <code>save_program/2</code> predicate can be used to specify an initial goal
+that will be run when the saved-state is re-loaded. This usage of
+<code>save_program/2</code> replaces the most common uses of the old <code>save/[1,2]</code>
+predicates that are no longer available. For example:
+
+<pre class="example">     | ?- <kbd>save_program(saved_state,initial_goal([a,b,c])).</kbd>
+     </pre>
+
+   <p>When <code>saved_state</code> is loaded <code>initial_goal/1</code> will be called. This allows
+saved-states to be generated that will immediately start running the user's
+program when they are executed. In addition to this <code>save_program/2</code>
+facility there is also a comprehensive facility for programs to set up
+initializations to be run when they are loaded or otherwise started. This
+is described below in <a href="ref-sls-igs.html#ref-sls-igs">ref-sls-igs</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sls-ssl.html#ref-sls-ssl">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-sls-for.html#ref-sls-for">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sls.html#ref-sls">Up</a>
+</ul>
+</div>
+   </body></html>
+

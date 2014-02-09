@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Concatenation Functions</h5>
+
+   <p><code>library(strings)</code> defines a set of concatenation functions. 
+Each of them takes a list of constants as its first argument, and
+returns the concatenation of the names of the constants as its second
+argument.  They are
+
+     <dl>
+
+     <br><dt><code>concat_atom(</code><var>+ListOfConstants</var><code>, </code><var>-Atom</var><code>)</code>
+     <dd>
+unifies <var>Atom</var> with the atom whose name is the concatenation
+of the names of the <var>ListOfConstants</var>.
+
+     <br><dt><code>concat_atom(</code><var>+ListOfConstants</var><code>, </code><var>Separator</var><code>, </code><var>-Atom</var><code>)</code>
+     <dd>like
+<code>concat_atom/2</code>, except that the elements of <var>Atom</var> are separated
+by <var>Separator</var>.
+
+     <br><dt><code>concat_chars(</code><var>+ListOfConstants</var><code>, </code><var>-Chars</var><code>)</code>
+     <dd>
+unifies <var>Chars</var> with the list of character codes that is the
+concatenation of the names of the <var>ListOfConstants</var>.
+
+     <br><dt><code>concat_chars(</code><var>+ListOfConstants</var><code>, </code><var>+Separator</var><code>, </code><var>-Chars</var><code>)</code>
+     <dd>like <code>concat_chars/2</code>, except that
+the elements of <var>Chars</var> are separated by <var>+Separator</var>. 
+</dl>
+
+   <p>Simplified versions of these predicates could have been defined thus:
+<pre class="example">     concat_atom(Constants, Atom) :-
+             concat_chars(Constants, Chars),
+             atom_chars(Atom, Chars).
+     </pre>
+
+<pre class="example">     concat_chars([], []).
+     concat_chars([Constant|Constants], Chars0) :-
+             name(Constant, Name),
+             append(Name, Chars1, Chars0),
+             concat_chars(Constants, Chars1).
+     </pre>
+
+   <p>There is one additional "feature":  in place of a constant, you may supply
+a non-empty list of character codes.  For example,
+<pre class="example">     | ?- <kbd>concat_atom([fred_,27], X).</kbd>
+     
+     X = fred_27
+     </pre>
+
+   <p>and
+<pre class="example">     | ?- <kbd>concat_atom([fred,"_",27], X).</kbd>
+     
+     X = fred_27
+     </pre>
+
+   <p>both work.  Beware:  an empty list of character codes, <code>""</code>, is in fact
+the atom written <code>[]</code>. Because of this ambiguity it is not possible to
+write a predicate that will accept <em>any</em> atom and <em>any</em> list of
+character codes, because <code>"" = []</code> is both. 
+<code>[]</code> is the atom <code>[]</code>, which has two punctuation marks in its name. 
+This is for compatibility with other Edinburgh Prologs. 
+So while you might expect
+
+<pre class="example">     | ?- <kbd>concat_atom([fr,"",ed], fred).</kbd>
+     
+     no
+     </pre>
+
+   <p>you will in fact get
+<pre class="example">     | ?- <kbd>concat_atom([fr,"",ed], X).</kbd>
+     
+     X = 'fr[]ed'
+     </pre>
+
+   <p>This "feature" of allowing non-empty lists of character codes is thus
+sufficiently confusing that it is likely to be withdrawn in future
+releases of the Quintus library, and is retained in this release for
+backward compatibility with earlier releases of the library.  The
+concatenation functions themselves will remain.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="lib-txp-con.html#lib-txp-con">Up</a>
+</ul>
+</div>
+   </body></html>
+

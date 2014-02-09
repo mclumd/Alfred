@@ -1,0 +1,1351 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: obj-exp-undefine_method,  Next: obj-exp-uninherit,  Prev: obj-exp-store_slot,  Up: obj-exp
+
+`undefine_method/3'
+-------------------
+
+Synopsis
+--------
+
+   `undefine_method(+OBJ, +NAME, +ARITY)'
+
+Arguments
+---------
+
+OBJ
+     "object"
+
+NAME
+     "atom"
+
+ARITY
+     "integer"
+
+Description
+-----------
+
+   Remove OBJ's current instance method for the NAME/ARITY message.
+After executing this goal, sending this message to OBJ executes the
+class's default method for the message.
+
+   NAME/ARITY must have been declared to be an instance method for the
+class of OBJ.
+
+   If OBJ has no current instance method for the NAME/ARITY message,
+the predicate has no effect.
+
+Exceptions
+----------
+
+`instantiation_error'
+     any argument is unbound.
+
+`type_error'
+     OBJ is not a compound term, NAME is not an atom, or ARITY is not
+     an integer.
+
+`domain_error'
+     MESSAGE does not specify an instance method for the class of OBJ.
+
+See Also
+--------
+
+   `define_method/3', `instance_method/1'
+
+
+File: quintus.info,  Node: obj-exp-uninherit,  Prev: obj-exp-undefine_method,  Up: obj-exp
+
+`uninherit/1' directive
+-----------------------
+
+Synopsis
+--------
+
+   `:- uninherit +CLASS +OP +NAME/+ARITY, ... .'
+
+Arguments
+---------
+
+CLASS
+     "atom"
+
+OP
+     "message_operator"
+
+NAME
+     "atom"
+
+ARITY
+     "integer"
+
+Description
+-----------
+
+   This prevents the class within whose scope this directive appears
+from inheriting the NAME/ARITY method of type OP from ancestor CLASS.
+
+   If CLASS is unbound, the specified message is uninherited from all
+ancestors that define it.
+
+Caveat
+------
+
+   Note that if you define a message for your class, you do not need to
+uninherit that message from its superclasses: it will automatically be
+shadowed.
+
+   Be careful of the precedences of the message operator and the `/'
+operator. You may need to use parentheses.
+
+Examples
+--------
+
+     :- uninherit someclass << (foo/1),
+                  someclass >> (foo/1).
+
+   This prevents the get and put methods for the slot `foo' from being
+inherited from any ancestors of class `someclass'. In effect, it makes
+the `foo' slot a protected slot for this class.
+
+See Also
+--------
+
+   `inherit/1'
+
+
+File: quintus.info,  Node: obj-glo,  Next: obj-bas,  Prev: obj-exp,  Up: obj
+
+Glossary
+========
+
+"abstract class"
+     A class that cannot have instances. Abstract classes are helpful
+     in designing a class hierarchy, to contain the common parts of
+     several concrete classes.
+
+"ancestor"
+     One of a class's superclasses, one of its superclasses's
+     superclasses, etc. Sometimes, for convenience, ancestor includes
+     the class itself, along with its proper ancestors.
+
+"child"
+     A synonym for subclass.
+
+"class"
+     A class is defined by a description of the information its
+     instances contain and the messages they respond to.  Every object
+     is an instance of one and only one class.
+
+"concrete class"
+     A class that can have instances. Most classes are concrete.
+
+"create method"
+     Specifies what actions should be taken when an instance of a class
+     is created. A create method frequently provides initial slot
+     values or specifies an action to be performed by the new object. A
+     create message is sent to each new object by the `create/2'
+     predicate. A create message is a kind of send message.
+
+"descendant"
+     One of a class's subclasses, one of its subclasses's subclasses,
+     etc. Sometimes the word descendant includes the class itself,
+     along with its proper descendants.
+
+"destroy method"
+     Specifies what actions should be taken when an instance of a class
+     is destroyed. A destroy message is sent to an object by the
+     `destroy/1' predicate. A destroy message is a kind of send message.
+
+"direct slot access"
+     Fetching or storing a slot value without sending a message to the
+     object. This should be used with care!
+
+     Quintus Objects allows direct access to a class's slots only
+     within its method definitions, via the `fetch_slot/2' and
+     `store_slot/2' predicates.
+
+"get message"
+     A message that inquires about some aspect of an object.  Typically
+     used to fetch slot values. Get methods are automatically generated
+     for public slots. Get messages are written with the `>>' operator.
+
+"inheritance"
+     The process by which a class's slots and methods are determined
+     from an ancestor.
+
+"initial value"
+     The value a slot is initialized to when an object is created.
+     Every slot has a default initial value, which depends upon its
+     type. You may specify different initial values in a class
+     definition.
+
+"instance"
+     Another word for object. The word instance draws attention to the
+     class of which the object is an instance.
+
+"instance method"
+     A method that may be defined differently for each instance of a
+     class. The class may have a default method for this message, which
+     is overridden by installing an instance method for a particular
+     object.
+
+"message"
+     A command to an object to perform an operation or to modify
+     itself, or an inquiry into some aspect of the object.  In Quintus
+     Objects, a message is either a get message, a put message or a
+     send message. The syntax for sending a message to an object is
+
+          OBJECT OPERATOR MESSAGE
+
+
+     where OPERATOR is one of the following:
+
+    `>>'
+          get message
+
+    `<<'
+          put message
+
+    `<-'
+          send message
+
+"method"
+     A class's implementation of a particular message. You send
+     messages to an object, but you define methods for a class.
+
+"method clause"
+     A Prolog clause used to define a method for a class. A method
+     clause has one of `<-/2', `<</2' or `>>/2' as the principal
+     functor of its head, and it can only appear within the scope of
+     its class's definition. A method's definition may contain more
+     than one message clause.
+
+"mixin class"
+     A class that is intended to be combined (mixed in) with other
+     classes, via multiple inheritance, to define new subclasses.
+
+"multiple inheritance"
+     When a class names more than one superclass.  Typically, it
+     inherits slots and methods from each.  In Quintus Objects, two
+     different superclasses should not use the same slot name. And, if
+     a message is defined by more than one superclass, the class
+     definition must specify which method to inherit.
+
+"object"
+     A modifiable data item that holds information and responds to
+     messages. Another word for instance.
+
+"parent class"
+     A synonym for superclass.
+
+"private slot"
+     A private slot is, by default, only accessible within methods of
+     the class itself.  Not even the descendants of the class may
+     access its private slots, except through the class's methods. Get
+     and put methods are not automatically generated for a private
+     slot, so it is only accessed via the methods you define. If the
+     visibility of a slot is not specified, it is private, rather than
+     public or protected.
+
+"protected slot"
+     A protected slot is, by default, only accessible within methods of
+     the class itself and its descendants. Get and put methods are not
+     automatically generated for a protected slot, so it is only
+     accessed via the methods you define. If the visibility of a slot
+     is not specified, it is private, rather than public or protected.
+
+
+     Quintus Objects `protected' is similar to `protected' in C++.
+
+"public slot"
+     A public slot is accessible via its own get and put methods, which
+     are generated for it automatically. If no visibility is specified,
+     a slot is private, rather than public or protected.
+
+"put message"
+     A message that modifies some aspect of an object.  Typically used
+     to store slot values. Put methods are automatically generated for
+     public slots. Put messages are written with the `<<' operator.
+
+"send message"
+     The most common sort of message. Used for performing an operation
+     on an object or for performing an action that depends upon an
+     object. Send messages are written with the `<-' operator.
+
+"send super"
+     When a method for a class executes a shadowed superclass's method.
+     This allows a class to put a "wrapper" around its superclass's
+     method, making it unnecessary to duplicate the method just to make
+     a small extension to it.
+
+"shadow"
+     When a class defines its own method for a message defined by one
+     of its ancestors, the new method hides or "shadows" the ancestor's
+     method. The new class's descendants will inherit its method for
+     that message, rather than its ancestors. That is, a class always
+     inherits the "closer" of two methods for a message.
+
+"slot"
+     A part of an instance that holds an individual datum.  Like a
+     member of a C struct or a field of a Pascal record.
+
+"subclass"
+     A class that is a more specific case of a particular class.  This
+     is the opposite of superclass. A class does not name its
+     subclasses; they are inferred.
+
+"superclass"
+     A class that is a more general case of a particular class.  Each
+     class lists its superclasses.
+
+"term class"
+     A class whose instances are represented as ordinary Prolog terms.
+     The functor of these objects need not be the name of the class,
+     and the arity need not be one.
+
+"term slot"
+     A slot that can hold any Prolog term.
+
+"uninherit"
+     Specify that a method from a superclass should not be inherited.
+     This is similar to shadowing the superclass's method, but does not
+     specify a replacement for it.
+
+"visibility"
+     A slot may be defined to be either `public', `protected', or
+     `private'.  By default, if no visibility is specified, a slot is
+     private.
+
+
+File: quintus.info,  Node: pbn,  Next: pxl,  Prev: obj,  Up: Top
+
+The PrologBeans Package
+***********************
+
+* Menu:
+
+* pbn-bas:: Introduction
+* pbn-feat:: Features
+* pbn-exa:: A First Example
+* pbn-java:: Java Interface
+* pbn-pro:: Prolog Interface
+* pbn-exs:: Examples
+
+
+File: quintus.info,  Node: pbn-bas,  Next: pbn-feat,  Up: pbn
+
+Introduction
+============
+
+   PrologBeans is a package for integrating Java and Prolog
+applications.  The main idea is to let Java and Prolog run in separate
+processes.  It is usually a bad idea to let Java and Prolog coexist in
+the same process, as their respective virtual machines tend to compete
+over resources such as memory and UNIX signals.
+
+   The current version of the package is designed to be used when Java
+applications need to send queries to a Prolog server (and less intended
+for showing a GUI from a Prolog program). One typical application is to
+connect Java based web applications to a Prolog server (see examples
+later).
+
+
+[See printed or HTML manual.]
+ PrologBeans setup where the Prolog application serves several users
+accessing both via a web application server and a Java GUI.
+
+   The PrologBeans package is split into the file `prologbeans.jar', to
+be used in the Java application, and the `library(prologbeans)' module,
+to be used in the Prolog part of the application, i.e. the "Prolog
+server".
+
+   All PrologBeans examples can be found in the
+`qplib('prologbeans/demo')' directory, which is one of the directories
+covered by the `demo' file search path.
+
+
+File: quintus.info,  Node: pbn-feat,  Next: pbn-exa,  Prev: pbn-bas,  Up: pbn
+
+Features
+========
+
+   The current version of PrologBeans is designed to be used mainly as
+a connection from Java to Prolog.  Current features are:
+
+   * Socket based communication
+
+   * Allows Java application and Prolog server to run on different
+     machines
+
+   * Multiple Java applications can connect to same Prolog server
+
+   * Java applications can make use of several Prolog servers
+
+   * Allows Java Applets to access Prolog server
+
+   * Platform independent (e.g. any platform where Prolog and Java
+     exist)
+
+   * Simplifies the use of Prolog in Java application servers (Tomcat,
+     etc)
+
+   * Prohibits unwanted use of Prolog server by host control (only
+     specified hosts can access the Prolog server)
+
+   * Supports Java servlet sessions
+
+   * Supports JNDI lookup (Java Naming and Directory Interface)
+
+   Coming features:
+   * Connection pooling (several connections in application   servers
+     and several running Prolog servers for better performance)
+
+   * More advanced options for querying the Prolog server
+
+   * Better support for communication from Prolog to Java (e.g.    a
+     Java server that the Prolog application can connect to)
+
+   * Support for launching Prolog and loading Prolog programs
+     from a Java application
+
+
+
+File: quintus.info,  Node: pbn-exa,  Next: pbn-java,  Prev: pbn-feat,  Up: pbn
+
+A First Example
+===============
+
+   This section provides an example to illustrate how PrologBeans can be
+used. This application has a simple Java GUI where the user can enter
+expressions that will be evaluated by an expression evaluation server.
+
+     import java.awt.*;
+     import java.awt.event.*;
+     import javax.swing.*;
+     import se.sics.prologbeans.*;
+     
+     public class EvaluateGUI implements ActionListener {
+     
+       private JTextArea text = new JTextArea(20, 40);
+       private JTextField input = new JTextField(36);
+       private JButton evaluate = new JButton("Evaluate");
+       private PrologSession session = new PrologSession();
+     
+       public EvaluateGUI() {
+         JFrame frame = new JFrame("Prolog Evaluator");
+         Container panel = frame.getContentPane();
+         panel.add(new JScrollPane(text), BorderLayout.CENTER);
+         JPanel inputPanel = new JPanel(new BorderLayout());
+         inputPanel.add(input, BorderLayout.CENTER);
+         inputPanel.add(evaluate, BorderLayout.EAST);
+         panel.add(inputPanel, BorderLayout. SOUTH);
+         text.setEditable(false);
+         evaluate.addActionListener(this);
+         input.addActionListener(this);
+     
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         frame.pack();
+         frame.setVisible(true);
+       }
+     
+       public void actionPerformed(ActionEvent event) {
+         try {
+           Bindings bindings = new Bindings().bind("E",
+                               input.getText() + '.');
+           QueryAnswer answer =
+             session.executeQuery("evaluate(E,R)", bindings);
+           Term result = answer.getValue("R");
+           if (result != null) {
+             text.append(input.getText() + " = " + result + '\n');
+             input.setText("");
+           } else {
+             text.append("Error: " + answer.getError() + "\n");
+           }
+         } catch (Exception e) {
+           text.append("Error when querying Prolog Server: " +
+                       e.getMessage() + '\n');
+         }
+       }
+     
+       public static void main(String[] args) {
+         new EvaluateGUI();
+       }
+     }
+
+   The Java code above first sets up the GUI with a text area for
+showing results, a text field for entering expressions, and a button for
+requesting an evaluation (the constructor `EvaluateGUI()'). It will
+also add itself as `ActionListener' on both the text field and the
+button. The method `actionPerformed(ActionEvent event)' will be called
+whenever the user has pressed <RET> or clicked on the button.
+`actionPerformed' first binds the variable E to the value of the text
+field, and then sends the query to the Prolog server with
+`session.executeQuery("evaluate(E,R)", bindings);'. If everything goes
+well, the Prolog server will return an answer (bound to R), which will
+be appended to the text area.
+
+     :- module(evaluate,[main/0,my_predicate/2]).
+     :- use_module(library(prologbeans)).
+     :- use_module(library(charsio), [read_from_chars/2]).
+     
+     %% Register acceptable queries and start the server (using default port)
+     main:-
+         register_query(evaluate(C,P), my_predicate(C,P)),
+         start.
+     
+     %% We have received a list of characters,
+     %% which needs to be converted into an expression
+     my_predicate(Chars, P) :-
+         read_from_chars(Chars, X),
+         P is X.
+
+   The Prolog code above first defines the module and imports the needed
+modules. Then, in the `main/0' predicate, it configures the server to
+answer queries on the form `evaluate(C,P)' and starts the server. The
+last few lines defines the predicate `my_predicate(Chars, P)', which is
+the predicate that performs the evaluation. Note that the expression to
+evaluate is represented as a list of characters and must be converted
+into a term before evaluation.
+
+   *Please note*: the environment variable `QP_PATH' as used here is
+meant to be a shorthand for QUINTUS-DIRECTORY, and does not need to be
+set explicitly.
+
+   To start the example, first start the Prolog server by going to the
+`qplib('prologbeans/demo')' directory and type:
+
+     % prolog +l EVALUATE.PL
+     | ?- main.
+
+   To start the GUI type (from the same directory as above):
+
+     > java -classpath "%QP_PATH%\java3.5\prologbeans.jar;." EvaluateGUI (Windows), or
+     % java -classpath "$QP_PATH/java3.5/prologbeans.jar:." EvaluateGUI (UNIX)
+
+
+File: quintus.info,  Node: pbn-java,  Next: pbn-pro,  Prev: pbn-exa,  Up: pbn
+
+Java Interface
+==============
+
+   The Java interface is centered around the class `PrologSession',
+which represents a connection (or session) to a Prolog server.
+`PrologSession' contains static methods for looking up named
+`PrologSession' instances using JNDI (Java Naming and Directory
+Interface) as well as methods for querying the Prolog server.  Other
+important classes are: `QueryAnswer', which contains the answer for a
+query sent to the Prolog server; `Term', which represents a Prolog
+term; and `Bindings', which supports stuffing of variable values used
+in queries.
+
+   General information about Java, Servlets and JNDI is available at the
+Java Technology site: `http://java.sun.com/'
+
+   A brief description of the methods in the provided Java classes are
+presented below.
+
+   The `PrologSession' object is the connection to the Prolog server.
+The constructor `PrologSession()' creates a `PrologSession' with the
+default settings (`host = localhost, port = 8066'.  `PrologSession'
+contains the following methods:
+
+ - Method on PrologSession: static PrologSession getPrologSession
+          `(String name)'
+     returns the `PrologSession' registered in JNDI with the given
+     name.  Use this method in application servers where services are
+     registered using JNDI. *Please note*: the application server must
+     be configured to register the `PrologSession' with the given name
+     for this method to work. See Tomcat configuration in *Note
+     pbn-exs-tomcat::.
+
+ - Method on PrologSession: static PrologSession getPrologSession
+          `(String name, HTTPSession session)'
+     returns the `PrologSession' registered in JNDI with the given
+     name.  The `PrologSession' will make use of sessions and the
+     session id will be the same as in the `HTTPSession'. Use this
+     method in web application servers with support for servlets and
+     `HTTPSession' (and when support for sessions is desired).
+
+ - Method on PrologSession: String getHost `()'
+     returns the host of the Prolog server (exactly as registered in
+     `setHost').
+
+ - Method on PrologSession: void setHost `(String prologServerHost)'
+     sets the host of the Prolog server (default `localhost'). Either
+     IP-address or host name is allowed.
+
+ - Method on PrologSession: int getPort `()'
+     returns the port of the Prolog server.
+
+ - Method on PrologSession: void setPort `(int port)'
+     sets the port of the Prolog server (default `8066').
+
+ - Method on PrologSession: void connect `()'
+     connects to the Prolog server. By default the `executeQuery' will
+     automatically connect to the server when called.
+
+ - Method on PrologSession: void setAutoConnect `(boolean autoConnect)'
+     sets the connection mode of this `PrologSession'. If set to `true'
+     it will ensure that it is connected to the Prolog server as soon
+     as a call to `executeQuery' or anything else causing a need for
+     communication happens. This is by default set to `true'
+
+ - Method on PrologSession: boolean isAutoConnecting `()'
+     returns the state of the AutoConnect mode.
+
+ - Method on PrologSession: QueryAnswer executeQuery `(String query)'
+     sends a query to the Prolog server and waits for the answer before
+     returning the `QueryAnswer'. Anonymous variables (underscore,
+     `_'), will be ignored, and thus not accessible in the
+     `QueryAnswer'.  `executeQuery' throws `IOException' if
+     communication problems with the server occurs. *Please note*:
+     `executeQuery' will only return one answer.
+
+ - Method on PrologSession: QueryAnswer executeQuery `(String query,
+          Bindings bindings)'
+     sends a query to the Prolog server and waits for the answer before
+     returning the `QueryAnswer'. `Bindings' are variable bindings for
+     the given QUERY and will ensure that the values are stuffed
+     correctly.  An example:
+          QueryAnswer answer =
+             executeQuery("evaluate(In,Out)",
+                          new Bindings().bind("In","4*9."));
+
+   The `QueryAnswer' contains the answer (new bindings) for a query (or
+the error that occurred during the query process).  `QueryAnswer'
+inherits from `Bindings', and extends and modifies it with the
+following methods:
+
+ - Method on QueryAnswer: Term getValue `(String variableName)'
+     returns the value of the given variable. If there is a value a
+     `Term' (a parsed Prolog term) is returned, otherwise `null' is
+     returned. All bindings from the query are available in the
+     `QueryAnswer'.
+
+ - Method on QueryAnswer: boolean queryFailed `()'
+     returns `true' if the query failed (e.g. the Prolog returned `no').
+     In this case, there will be no answers (no new bindings, and
+     `isError' will return `false').
+
+ - Method on QueryAnswer: boolean isError `()'
+     returns `true' if there was an error.
+
+ - Method on QueryAnswer: String getError `()'
+     returns the error message (which is only set if there was an error,
+     otherwise it will be `null').
+
+   The `Term' object is for representing parsed Prolog terms, and has
+the following methods:
+
+ - Method on Term: boolean isAtom `()'
+     returns `true' if the `Term' is an atom.
+
+ - Method on Term: boolean isInteger `()'
+     returns `true' if the `Term' is an integer.
+
+ - Method on Term: boolean isFloat `()'
+     returns `true' if the `Term' is a floating-point number.
+
+ - Method on Term: boolean isCompound `()'
+     returns `true' if the `Term' is a compound term.
+
+ - Method on Term: boolean isList `()'
+     returns `true' if and only if `Term' is a compound term with
+     principal functor `./2'.
+
+ - Method on Term: boolean isString `()'
+     returns `true' if the `Term' an instance of `PBString' (which can
+     be used for fast string access by a type-cast to `PBString' and
+     the use of the method `getString()' that returns the string).
+
+
+ - Method on Term: boolean isVariable `()'
+     returns `true' if the `Term' is a variable.
+
+ - Method on Term: int intValue `()'
+     returns the `int' value of the integer.
+
+ - Method on Term: long longValue `()'
+     returns the `long' value of the integer.
+
+ - Method on Term: float floatValue `()'
+     returns the `float' value of the floating-point number.
+
+ - Method on Term: double doubleValue `()'
+     returns the `double' value of the floating-point number.
+
+ - Method on Term: String getName `()'
+     returns the functor name of the `Term' (see `functor/3').  If the
+     Term represents a variable (`isVariable()' returns `true'), the
+     variable name is returned.
+
+ - Method on Term: int getArity `()'
+     returns the number of arguments of this term (e.g. `parent(A1,A2)'
+     would return 2) (see `functor/3').  If the term is not a compound
+     term, `getArity()' will return 0.
+
+ - Method on Term: Term getArgument `(int index)'
+     returns the `Term' representing the argument at the position given
+     by INDEX. If there are no arguments, or if an argument with the
+     specified index does not exist, `IndexOutOfBoundsException' will
+     be thrown.  The first argument has index one (see `arg/3').
+
+   `Bindings' is used for binding variables to values in a query sent
+to the Prolog. The values will be automatically stuffed before they are
+sent to the Prolog server.
+
+ - Method on Bindings: void bind `(String name, int value)'
+     binds the variable with the given name to the given value. *Please
+     note*: this method is also available for values of type `long',
+     `float', `double', and `Term'.
+
+ - Method on Bindings: void bind `(String name, String value)'
+     binds the variable with the given name to the given value.  The
+     value will be seen as a list of `UNICODE' character codes in
+     Prolog.
+
+ - Method on Bindings: void bindAtom `(String name, String value)'
+     binds the variable with the given name to the given value. *Please
+     note*: this method will encode the String as an atom when querying
+     the Prolog server.
+
+
+File: quintus.info,  Node: pbn-pro,  Next: pbn-exs,  Prev: pbn-java,  Up: pbn
+
+Prolog Interface
+================
+
+   The Prolog interface is based on the idea of a Prolog server that
+provides its service by answering queries from external applications
+(typically Java applications). The Prolog interface in PrologBeans is
+defined in `library(prologbeans)', which implements the Prolog server
+and exports the following predicates:
+
+`start'
+`start(+OPTIONS)'
+     starts the Prolog server using the options specified. OPTIONS
+     should be a list of zero or more of:
+
+    `port(?VAL)'
+          an integer denoting the port number of the Prolog server
+          (default: 8066). If `VAL' is a variable then some unused port
+          will be selected by the OS, the actual port number can be
+          obtained with `get_server_property/1', typically from a
+          `server_started' event listener.
+
+    `accepted_hosts(+VAL)'
+          a list of atoms denoting the hosts (in form of IP-addresses)
+          that are accepted by the Prolog server (default:
+          `['127.0.0.1']').
+
+    `session_timeout(+VAL)'
+          an integer denoting the duration of a session in seconds. The
+          session will be removed if it has been inactive more than
+          this timeout when the session garbage collect starts. If the
+          session timeout is set to zero there will be no garbage
+          collect on sessions (default: `0').
+
+    `session_gc_timeout(+VAL)'
+          an integer denoting the minimum time in seconds between two
+          consecutive session garbage collections. If the timeout is
+          set to zero there will be no garbage collect on sessions
+          (default: `0').
+
+     For example:
+
+          :- start([port(7500),
+                    accepted_hosts(['127.0.0.1','99.8.7.6'])]).
+
+`shutdown'
+`shutdown(+Mode)'
+     shuts down the server and closes the sockets and the streams after
+     processing all available input. There are three modes:
+    `now'
+          as soon as possible (default).
+
+    `no_sessions'
+          after all sessions have ended (all sessions have either been
+          explicitly removed by request of the client application, or
+          they have been garbage collected). *Please note*: there can
+          still be connections to the Prolog server even when all
+          sessions have ended.
+
+    `no_connections'
+          after all connections to the Prolog server are closed.
+          *Please note*: there can still be user sessions left when all
+          connections have been closed.
+
+`register_query(+QUERY, :PREDICATETOCALL, +SESSIONVAR)'
+     registers a query and the corresponding predicate. Before the
+     registration any previously registered query matching `Query' will
+     be removed (as if `unregister_query(Query)' was called).  The
+     predicate, `PredicateToCall' will be called, as if by
+     `once(PredicateToCall)', when a query matching `Query' is
+     received. Before calling the query, the variable SESSIONVAR, if
+     given, is bound to the id of the current session. Session ids are
+     typically generated in web applications that track users and mark
+     all consecutive web-accesses with the same session id.
+
+`unregister_query(+QUERY)'
+     unregisters all queries matching QUERY.
+
+`session_get(+SESSIONID, +PARAMETERNAME, +DEFAULTVALUE, -VALUE)'
+     returns the value of a given parameter in a given session. If no
+     value exists, it will return the default value.  Arguments:
+    SESSIONID
+          is the id of the session for which values have been stored
+
+    PARAMETERNAME
+          an atom, is the name of the parameter to retrieve
+
+    DEFAULTVALUE
+          is the value that will be used if no value is stored
+
+    VALUE
+          is the stored value or the default value if nothing was stored
+
+`session_put(+SESSIONID, +PARAMETERNAME, +VALUE)'
+     stores the value of the given parameter. *Please note*: any
+     pre-existing value for this parameter will be overwritten. Note
+     that `session_put/3' will not be undone when backtracking (the
+     current implementation is based on `assert').  Arguments:
+
+    SESSIONID
+          is the id of the session for the values to store
+
+    PARAMETERNAME
+          an atom, is the name of the parameter to store
+
+    VALUE
+          the value to be stored
+
+`register_event_listener(+EVENT, :PREDICATETOCALL, -ID)'
+`register_event_listener(+EVENT, :PREDICATETOCALL)'
+     Registers `PREDICATETOCALL' to be called (as if by
+     `once(PREDICATETOCALL)') when the event matching `EVENT' occurs
+     (event matching is on principal functor only). If the goal fails or
+     raises an exception a warning is written to `user_error' but the
+     failure or exception is otherwise ignored. Arguments:
+
+    EVENT
+          is the event template, see below.
+
+    PREDICATETOCALL
+          an arbitrary goal.
+
+    ID
+          becomes bound to a (ground) term that can be used with
+          `unregister_event_listener/1' to remove this event listener.
+
+     The predefined events are as follows:
+
+    `session_started(+SESSIONID)'
+          called before the first call to a query for this session
+
+    `session_ended(+SESSIONID)'
+          called before the session is about to be garbage collected
+          (removed)
+
+    `server_started'
+          called when the server is about to start (enter its main loop)
+
+    `server_shutdown'
+          called  when the server is about to shut down
+
+     Attempt to register an event listener for other events than the
+     predefined events will throw an exception.
+
+     More than one listeners can be defined for the same event. They
+     will be called in some unspecified order when the event occurs.
+
+`unregister_event_listener(+ID)'
+     Unregister a previously registered event listener. The ID is the
+     value returned by the corresponding call to
+     `register_event_listener/3'. It is an error to attempt to
+     unregister an event listener more than once.
+
+`'
+
+File: quintus.info,  Node: pbn-exs,  Prev: pbn-pro,  Up: pbn
+
+Examples
+========
+
+* Menu:
+
+* pbn-exs-mbd:: Embedding Prolog in Java Applications
+* pbn-exs-srv:: Application Servers
+* pbn-exs-tomcat:: Configuring Tomcat for PrologBeans
+
+
+File: quintus.info,  Node: pbn-exs-mbd,  Next: pbn-exs-srv,  Up: pbn-exs
+
+Embedding Prolog in Java Applications
+-------------------------------------
+
+   If you have an advanced Prolog application that needs a GUI you can
+write a stand-alone Java application that handles the GUI and set up
+the Prolog server to call the right predicates in the Prolog
+application.
+
+   An example of how to do this can be found in the
+`qplib('prologbeans/demo')' directory (`evaluate.pl', see the example
+code in *Note pbn-exa::).
+
+   Another example of this is `pbtest.pl', which illustrates several
+advanced features like:
+   * registering several queries
+
+   * listening to server events (`server_started')
+
+   * shutting down the Prolog server from Java
+
+   * starting up the Prolog server from Java
+
+   * using dynamic (OS assigned) ports for the Java/Prolog communication
+   The example is run by executing the Java program `PBTest':
+     > java -classpath "%QP_PATH%\java3.5\prologbeans.jar;." PBTest (Windows), or
+     % java -classpath "$QP_PATH/java3.5/prologbeans.jar:." PBTest (UNIX)
+
+
+File: quintus.info,  Node: pbn-exs-srv,  Next: pbn-exs-tomcat,  Prev: pbn-exs-mbd,  Up: pbn-exs
+
+Application Servers
+-------------------
+
+   If you want to get your Prolog application to be accessible from an
+intranet or the Internet you can use this package to embed the Prolog
+programs into a Java application server such as Tomcat, WebSphere, etc.
+
+   An example of how to do this is provided in `sessionsum.pl'.  This
+example uses sessions to keep track of users so that the application
+can hold a state for a user session (as in the example below, remember
+the sum of all expressions evaluated in the session).
+
+     <% page import = "se.sics.prologbeans.*" %>
+     <html>
+     <head><title>Sum Calculator</title></head>
+     <body bgcolor="white">
+     <font size=4>Prolog Sum Calculator, enter expression to evaluate:
+     <form><input type=text name=query></form>
+     <%
+        PrologSession pSession =
+        PrologSession.getPrologSession("prolog/PrologSession", session);
+     
+        String evQuery = request.getParameter("query");
+        String output = "";
+        if (evQuery != null) {
+          Bindings bindings = new Bindings().bind("E",evQuery + '.');
+          QueryAnswer answer =
+             pSession.executeQuery("sum(E,Sum,Average,Count)", bindings);
+          Term average = answer.getValue("Average");
+          if (average != null) {
+             Term sum = answer.getValue("Sum");
+             Term count = answer.getValue("Count");
+     
+             output = "<h4>Average =" + average + ", Sum = "
+             + sum + " Count = " + count + "</h4>";
+          } else {
+             output = "<h4>Error: " + answer.getError() + "</h4>";
+          }
+       }
+     %>
+     <%= output  %><br></font>
+     <p><hr>Powered by Quintus Prolog
+     </body></html>
+
+   The example shows the code of a JSP (Java Server Page). It makes use
+of the method `PrologSession.getPrologSession(String jndiName,
+HTTPSession session)', which uses JNDI to look up a registered
+`PrologSession', which is connected to the Prolog server. The variable
+SESSION is in a JSP bound to the current `HTTPSession', and the
+variable REQUEST is bound to the current `HTTPRequest'.  Since the
+`HTTPSession' object `session' is specified all queries to the Prolog
+server will contain a session id. The rest of the example shows how to
+send a query and output the answer.
+
+   Example usage of sessions is shown below, and is from
+`sessionsum.pl':
+
+     :- module(sessionsum,[main/0,sum/5]).
+     :- use_module(library(prologbeans)).
+     :- use_module(library(charsio), [read_from_chars/2]).
+     
+     %% Register the acceptable queries (session based)
+     main:-
+         register_query(sum(C,Sum,Average,Count),
+                        sum(C,Session,Sum,Average,Count),
+                        Session),
+         start.
+     
+     %% The sum predicate which gets the information from a session database,
+     %% makes some updates and then stores it back in to the session store
+     %% (and returns the information back to the application server)
+     sum(ExprChars, Session, Sum, Average, Count) :-
+         session_get(Session, sum, 0, OldSum),
+         session_get(Session, count, 0, OldCount),
+         read_from_chars(ExprChars, Expr),
+         Val is Expr,
+         Sum is OldSum + Val,
+         Count is OldCount + 1,
+         Average is Sum / Count,
+         session_put(Session, sum, Sum),
+         session_put(Session, count, Count).
+
+   In this example a query `sum/4' is registered to use a predicate
+`sum/5' where one of the variables, SESSION will be bound to the
+session id associated to the query. The `sum/5' predicate uses the
+`session_get/4' predicate to access stored information about the
+particular session, and then it performs the evaluation of the
+expression. Finally, it updates and stores the values for this session.
+
+
+File: quintus.info,  Node: pbn-exs-tomcat,  Prev: pbn-exs-srv,  Up: pbn-exs
+
+Configuring Tomcat for PrologBeans
+----------------------------------
+
+   This section will briefly describe how to set up a Tomcat server so
+that is it possible to test the example JSPs. Some knowledge about how
+to run Tomcat and how to set up your own web application is required.
+Detailed information about Tomcat is available at
+`http://jakarta.apache.org/tomcat/'.
+
+   Assuming that you are positioned in the Tomcat installation
+directory, do the following:
+  1. Add the `prologbeans.jar' to the `common/lib/' directory.  Note
+     that this will give all Tomcat applications access to the
+     PrologBeans system. There are other options for importing
+     `prologbeans.jar' that might be better for your type of
+     application.
+
+  2. In the `conf/server.xml' file add the following (after the Tomcat
+     Root Context tags - shown as the first lines below):
+          [...]
+          <!-- Tomcat Root Context -->
+          <!--
+            <Context path="" docBase="ROOT" debug="0"/>
+          -->
+          
+          
+          <DefaultContext>
+             <Resource name="prolog/PrologSession" auth="Container"
+                       type="se.sics.prologbeans.PrologSession"/>
+          
+             <ResourceParams name="prolog/PrologSession">
+               <parameter>
+                 <name>factory</name>
+                 <value>org.apache.naming.factory.BeanFactory</value>
+               </parameter>
+               <parameter>
+                 <name>port</name>
+                 <value>8066</value>
+               </parameter>
+             </ResourceParams>
+          </DefaultContext>
+          [...]
+     This will register a `PrologSession' instance under the name
+     `prolog/PrologSession' so that it is possible to do a JNDI lookup.
+
+  3. In your application's `web.xml' file, found in Tomcat's
+     `webapps/your_application/WEB-INF' directory, you need the
+     following resource reference:
+              <resource-ref>
+                <res-ref-name>prolog/PrologSession</res-ref-name>
+                <res-type>se.sics.prologbeans.PrologSession</res-type>
+                <res-auth>Container</res-auth>
+              </resource-ref>
+
+  4. Copy the example JSP files that you want to use (`sessionsum.jsp'
+     and `evaluate.jsp') into the Tomcat web application directory
+     (`webapps/your_application').
+
+  5. Start the Tomcat server.
+
+  6. Start the example that you want to test (*Note pbn-exa:: shows how
+     to start one of the examples).
+
+
+
+File: quintus.info,  Node: pxl,  Next: pxt,  Prev: pbn,  Up: Top
+
+The ProXL Package
+*****************
+
+* Menu:
+
+* pxl-ev::                              Events and Callbacks
+* pxl-eh::                              Handling Errors Under ProXL
+* pxl-evf::                             Event Handling Functions
+* pxl-bas::                             Introduction
+* pxl-tut::                             Tutorial
+* pxl-util::                            Utility Functions
+* pxl-wmf::                             Window Manager Functions
+* pxl-col::                             Colors and Colormaps
+* pxl-crs::                             Cursors
+* pxl-dis::                             Displays and Screens
+* pxl-prim::                            Drawing Primitives
+* pxl-font::                            Fonts
+* pxl-graf::                            Graphics Attributes and Graphics Contexts
+* pxl-xlib::                            ProXL for Xlib speakers
+* pxl-bmp::                             Pixmaps and Bitmaps
+* pxl-win::                             Windows
+
+
+File: quintus.info,  Node: pxl-bas,  Next: pxl-tut,  Prev: pxl-evf,  Up: pxl
+
+Introduction
+============
+
+* Menu:
+
+* pxl-bas-ben::                         User Benefits
+* pxl-bas-feat::                        ProXL Features
+* pxl-bas-win::                         Windows
+* pxl-bas-lin::                         Drawing and filling lines and shapes
+* pxl-bas-txt::                         Drawing text
+* pxl-bas-pix::                         Drawing Pixmaps and drawing into Pixmaps
+* pxl-bas-graf::                        Graphics attributes of drawables
+* pxl-bas-crs::                         Cursors
+* pxl-bas-inf::                         Inferring arguments
+* pxl-bas-attr::                        Attributes:  Specifying properties of ProXL objects
+* pxl-bas-tyi::                         Handling keyboard and mouse input
+* pxl-bas-dis::                         Displays and Screens
+
+   ProXL is an interface between Quintus Prolog and the X Window System
+(Version 11 Release 2 or later).  ProXL permits the rapid development
+of X-based applications using Prolog's interactive development
+facilities.  Essentially all functionality of X is made available
+through Prolog calls and callbacks.  ProXL is built directly on the
+standard Xlib interface, and ProXL code is inter-operable with Xlib C
+code.
+
+   ProXL is not available under Windows.
+
+
+File: quintus.info,  Node: pxl-bas-ben,  Next: pxl-bas-feat,  Up: pxl-bas
+
+User Benefits
+-------------
+
+   * For the X window-application developer: ProXL provides the power
+     of Prolog to test and debug application code interactively.
+
+   * For the Prolog programmer: ProXL adds the functionality of the X
+     window system to permit Prolog to control interactive
+     window-oriented applications.
+
+   * For the newcomer to X: ProXL provides an excellent and succinct
+     attribute-oriented interface to the basic features of X.
+
+   * For the application vendor: ProXL enables X development in
+     combination with Prolog's rapid-prototyping capabilities.
+     Interactive access to other standard packages is also available
+     through Quintus Prolog's C language interface and Database
+     Interface product.
+
+
+File: quintus.info,  Node: pxl-bas-feat,  Next: pxl-bas-win,  Prev: pxl-bas-ben,  Up: pxl-bas
+
+ProXL Features
+--------------
+
+   * Support for all X protocol functionality:
+        -         multiple displays and screens
+
+        -         nested windows
+
+        -         colors
+
+        -         all X visual types
+
+        -         pixmaps and bitmaps
+
+        -         fonts, both fixed and variable width
+
+        -         cursors, standard and custom
+
+        -         all X drawing primitives
+
+        -         all X graphics context functionality
+
+        -         window and font properties
+
+        -         window manager interface
+
+        -         selections and cut buffers
+
+        -         events
+
+   * ProXL objects have state:
+        -         Objects know their display and screen; no need to
+          specify separately.
+
+        -         Windows and Pixmaps know their graphics context (GC);
+                 there is no need to specify GC when drawing.
+
+        -         Graphics Contexts remember their state.
+
+   * Primitives "get" and "put" operate on lists of attributes:
+        -         Attributes allow accessing or setting only desired
+          information.
+
+        -         All attributes have defaults.
+
+        -         Access from Prolog is uniform across objects.
+
+        -         X asymmetries are smoothed and regularized.
+
+   * Inference built-in to locate correct X resources:
+        -         Specify a window, pixmap, or GC where font is needed.
+
+        -         Specify a window or pixmap where a GC is needed.
+
+        -         Specify a screen or display where a colormap is
+          needed.
+
+        -         Specify anything where a display is needed.
+
+        -         Default screen and display simplify coding.
+
+   * Callbacks in Prolog:
+        -         Specify Prolog code to call when certain events
+          happen.
+
+        -         Call Prolog procedures with any arguments.
+
+        -         Flexible mechanism for terminating event-handling
+          loop.
+
+        -         Pass context-specific data to callback procedure.
+
+        -         Return result from event-handling loop.
+
+          Callbacks are executed even while Prolog is waiting for you to
+          type a goal.
+
+   * Program in Prolog:
+        - Prolog's interactive environment simplifies code prototyping
+          and testing.
+
+        - Programs are much more compact than in other languages (ProXL
+          code typically uses one-third as much code as C)
+
+   * Interoperability with C code:
+        - Extend existing C/Xlib programs in Prolog with ProXL.
+
+        - Integrate further C/Xlib code with ProXL applications.
+
+
+   This manual is addressed to people who know how to use the X window
+system, but not necessarily how to program it.  For some readers, much
+of introduction will be familiar.  You might want to read those
+sections that describe features peculiar to ProXL: *Note pxl-bas-attr::,
+*Note pxl-bas-inf::, and *Note pxl-bas-tyi-cbk::, and then skip ahead
+to the tutorial in *Note pxl-tut::.  If you have written programs in
+Xlib, you might also find *Note pxl-xlib:: helpful.
+
+   X is a very subtle system, and the ProXL manual does not try to
+document it all.  Therefore, it may occasionally be necessary to refer
+to a good reference on X. A major source of information on X is the X
+manual for your system.  Since X programming is often done in the C
+language, a good place to turn for detail on some of the esoteric
+features of X is a reference on Xlib.  Another good way to learn about
+X is to experiment with ProXL.
+
+
+File: quintus.info,  Node: pxl-bas-win,  Next: pxl-bas-lin,  Prev: pxl-bas-feat,  Up: pxl-bas
+
+Windows
+-------
+
+   A "window" is a rectangular area of the screen.  X supports nested
+windows, where child windows are only visible insofar as they are
+within the boundary of their parent.  Every application window has a
+"parent window", which the window is physically inside.  Every screen
+has a single "root window", which is the entire contents of the screen.
+The root window does not have a parent, of course.  A window's
+descendents are called its "inferiors".  All drawing into a window is
+confined, or "clipped", to the window's boundaries, including all
+drawing into the window's inferiors.  Sibling windows can overlap, in
+which case the "stacking order" of the windows becomes important, as
+one window can cover, or "occlude", all or part of another.  Drawing
+into a window will not affect parts of the window that are occluded.
+
+   A window can be "mapped", that is, put on the screen, or not.  If a
+window is not mapped, it cannot be seen, nor can any of its inferiors,
+whether or not they are mapped.  This means that a window can be
+created once, and then mapped and unmapped at will without having to
+destroy and later recreate it.  A window is said to be "viewable" if
+all of its ancestors are mapped.  A window is said to be "visible" if
+it is viewable, and furthermore, it is not occluded by any siblings.
+
+   The window manager is distinct from the X server.  In X, the user (by
+using a window manager) almost always has control over where and how
+large top level windows appear on the screen.  Windows nested within top
+level windows, on the other hand, are completely under program control.
+The window manager, in fact, is simply another X program running
+alongside your applications.  This means that the user can change the
+look and feel of the windows at any time by changing to another window
+manager.
+
+
+File: quintus.info,  Node: pxl-bas-lin,  Next: pxl-bas-txt,  Prev: pxl-bas-win,  Up: pxl-bas
+
+Drawing and filling lines and shapes
+------------------------------------
+
+   Drawing in ProXL is fairly straightforward, and quite powerful.
+ProXL has primitives to
+   * draw points, lines, polygons, rectangles, arcs, ellipses (and
+     circles)
+
+   * fill closed figures with arbitrary patterns
+
+   * draw or fill multiple items
+
+   * clear windows
+
+   * copy part of one drawable into another.
+
+   Programming in ProXL requires a certain way of looking at drawing and
+graphics in general.  Think of a line or an ellipse not as an permanent
+object, but as a temporary pattern of pixels on the screen.  When you
+draw a line, you are turning bits on.  The next thing you do may turn
+them off.  Or they may be turned off when a user overlays your window
+with another.  The line that you draw has no permanence.  This property
+of X, call it "procedural drawing," makes for a programming style in
+which you first open the windows you will need, and then do all drawing
+in callback routines (*Note pxl-bas-tyi-cbk::).  If you want the line
+to seem to stay around, you have to explicitly provide for it to be
+repainted whenever it is damaged or obscured by a later event; see
+*Note pxl-bas-tyi-rfr:: on refreshing windows.
+
+   The primitives for drawing or filling a single shape take just the
+arguments you would expect:
+
+   * the destination window
+
+   * the parameters determining the shape to be drawn.
+
+   The primitives for drawing or filling multiple objects are also
+fairly simple.  They each take
+
+   * the destination window
+
+   * a list of Prolog terms, each specifying the parameters of a shape
+     to be drawn or filled.
+
+   In all of the drawing commands, and elsewhere in ProXL, the X
+coordinates are given relative to the left edge of the enclosing window
+, and Y coordinates are given relative to the "top" edge.
+

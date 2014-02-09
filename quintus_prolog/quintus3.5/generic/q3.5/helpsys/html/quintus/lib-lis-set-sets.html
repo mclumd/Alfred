@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Set Processing -- <code>library(sets)</code></h5>
+
+   <p>The <code>library(sets)</code> package represents sets as lists with no
+repeated elements.  Some of the predicates provided by
+this package may return sensible answers if given
+arguments that contain repeated elements, but that is a lucky
+accident.  When in doubt, use <code>list_to_set/2</code> to convert from a
+list (with possibly repeated elements) to a set.  For a list
+of predicates related to set manipulation that are not in the <code>library(sets)</code>
+package, see <a href="lib-lis-set-pre.html#lib-lis-set-pre">lib-lis-set-pre</a>.  For some applications, <em>ordered</em> sets are
+more appropriate; see <a href="lib-lis-ordsets.html#lib-lis-ordsets">lib-lis-ordsets</a> for more information.
+
+   <p>The predicates defined in <code>library(sets)</code> are described below:
+     <dl>
+
+     <br><dt><code>add_element(</code><var>+Elem</var><code>, </code><var>+Set1</var><code>, </code><var>-Set2</var><code>)</code>
+     <dd>is true when <var>Set1</var> and
+<var>Set2</var> are sets represented as unordered lists,
+and <code></code><var>Set2</var><code> = </code><var>Set1</var><code> U {</code><var>Elem</var><code>}</code>.  <code>add_element/3</code> may only be
+used to calculate <var>Set2</var> given <var>Elem</var> and <var>Set1</var>.  However, it
+is permissible for <var>Set1</var> to be  a list with a variable at
+the end; in this case, <code>add_element/3</code> will add new elements to the end of
+<var>Set2</var>.
+
+     <br><dt><code>del_element(</code><var>+Elem</var><code>, </code><var>+Set1</var><code>, </code><var>-Set2</var><code>)</code>
+     <dd>is true when <var>Set1</var> and
+<var>Set2</var> are sets represented as unordered lists,
+and <code></code><var>Set2</var><code> = </code><var>Set1</var><code> \ {</code><var>Elem</var><code>}</code>.  <code>del_element/3</code> may only be used
+to calculate <var>Set2</var> given <var>Elem</var> and <var>Set1</var>.  If <var>Set1</var> does not
+contain <var>Elem</var>, <var>Set1</var> and <var>Set2</var>
+will be equal.  If <var>Set1</var> contains more than one copy of <var>Elem</var>
+(in which case <var>Set1</var> is not really a set representation), only the
+first copy of <var>Elem</var> will be
+removed.  See <code>delete/3</code> in <code>library(lists)</code> (<a href="lib-lis-lists.html#lib-lis-lists">lib-lis-lists</a>) for a predicate that
+removes all copies of a given element. 
+When <var>Set1</var> and <var>Set2</var> are identical, there are
+infinitely many <var>Elem</var>s that would make this predicate
+true, so we could not solve for <var>Elem</var>. 
+Therefore, we do not attempt to solve for <var>Elem</var> in <em>any</em>
+case, which is why it is a <code>+</code> argument.
+
+     <br><dt><code>is_set(</code><var>+Set</var><code>)</code>
+     <dd>is true when <var>Set</var> is a proper list that contains
+no repeated elements (that is, a proper set).  <code>is_set/1</code> does not check for
+any particular order.  If <var>Set</var> is not a proper list, <code>is_set/1</code>
+fails.
+
+     <br><dt><code>disjoint(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>)</code>
+     <dd>is true when <var>Set1</var> and <var>Set2</var> have
+ no elements in common.  <code>disjoint/2</code> is the opposite of <code>intersect/2</code> (below).
+
+     <br><dt><code>select(</code><var>?Element</var><code>, </code><var>?Set</var><code>, </code><var>?Residue</var><code>)</code>
+     <dd>
+is true when <var>Set</var> is a
+list, <var>Element</var> occurs in <var>Set</var>, and <var>Residue</var> is
+everything in <var>Set</var> except <var>Element</var> (the order of elements is preserved). 
+To ensure termination, either <var>Set</var> or <var>Residue</var> should be proper. 
+<code>select/3</code> works on lists as well as on sets.
+
+     <p><code>select/3</code> is closely related to the predicate <code>select/4</code> in <code>library(lists)</code>
+(<a href="lib-lis-lists.html#lib-lis-lists">lib-lis-lists</a>).  Although <code>select/3</code> is normally used to solve for
+<var>Element</var> and <var>Residue</var>,
+you can read <code>select(</code><var>X</var><code>, </code><var>S</var><code>, </code><var>Y</var><code>, </code><var>R</var><code>)</code> as dq"replace <var>X</var> by <var>Y</var> in <var>S</var> giving <var>R</var>",
+and <code>select(</code><var>X</var><code>, </code><var>S</var><code>, </code><var>R</var><code>)</code> can be read as "replace <var>X</var> by <em>nothing</em>
+in <var>S</var> giving <var>R</var>".
+     <pre class="example">          | ?- <kbd>select(a, [a,r,a], R).</kbd>
+          
+          R = [r,a] <kbd>;</kbd>
+          
+          R = [a,r] <kbd>;</kbd>
+          
+          no
+          
+          | ?- <kbd>select(a, [a,r,a], e, R).</kbd>
+          
+          R = [e,r,a] <kbd>;</kbd>
+          
+          R = [a,r,e] <kbd>;</kbd>
+          
+          no
+          </pre>
+
+     <br><dt><code>selectchk</code><var>(+Element, +Set, ?Residue)</var><code></code>
+     <dd>is to <code>select/3</code> what
+<code>memberchk/2</code> is to <code>member/2</code> in <code>library(basics)</code>.  That is, it locates
+the first occurrence of <var>Element</var> in <var>Set</var> and deletes it,
+returning the resulting list in <var>Residue</var>.  It is steadfast in
+<var>Residue</var>.
+
+     <br><dt><code>pairfrom(</code><var>?Set</var><code>, </code><var>?Element1</var><code>, </code><var>?Element2</var><code>, </code><var>?Residue</var><code>)</code>
+     <dd>is true
+ when <var>Set</var> is a set, <var>Element1</var> occurs in <var>Set</var>, <var>Element2</var>
+occurs in <var>Set</var> after <var>Element1</var>, and <var>Residue</var> is everything in <var>Set</var>
+except <var>Element1</var> and <var>Element2</var>.  The point of <code>pairfrom/4</code> is to select
+pairs of elements from a set without selecting the same pair
+twice in different orders. 
+To ensure termination, either <var>Set</var> or <var>Residue</var> should be proper. 
+<code>pairfrom/4</code> works on lists as well as on sets.
+
+     <br><dt><code>intersect(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>)</code>
+     <dd>is true when <var>Set1</var> and <var>Set2</var> have
+ a member in common.  It assumes that both sets are known, and that you
+ do not need to know which element it is that they share.
+
+     <br><dt><code>intersect/3</code>
+     <dd>is an obsolete predicate and should not be used in new
+programs.
+
+     <br><dt><code>subset(</code><var>+SubSet</var><code>, </code><var>+Set</var><code>)</code>
+     <dd>
+ is true when each member of <var>SubSet</var>
+occurs in <var>Set</var>.  <code>subset/2</code> can only be used to test two given sets;
+it cannot be used to generate subsets.
+
+     <p>To generate subsets, use <code>subseq0/[2,3]</code> or <code>subseq1/[2,3]</code> from
+<code>library(lists)</code> (<a href="lib-lis-lists.html#lib-lis-lists">lib-lis-lists</a>); they will generate
+each subset (or each proper subset) (and, for the three-argument
+versions, its complement) precisely once, but cannot be used
+for testing whether a given set is a subset of another.  Note
+that they generate sub-<em>sequences</em>; to really generate
+sub-<em>sets</em> they would have to enumerate all the permutations of
+each subsequence, which would be quite costly.
+
+     <br><dt><code>seteq(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>)</code>
+     <dd>is true when <var>Set1</var> is a subset
+of <var>Set2</var>, and vice-versa.  Since set
+representations should not contain duplicates, we could
+check whether one is a permutation of the other.  The method used
+by <code>seteq/2</code> works even if <var>Set1</var> and <var>Set2</var> do contain duplicates.
+
+     <br><dt><code>list_to_set(</code><var>+List</var><code>, </code><var>?Set</var><code>)</code>
+     <dd>is true when <var>List</var> and <var>Set</var>
+ are lists, and <var>Set</var> contains the same elements
+as <var>List</var> in the same order, except that <var>Set</var> contains no duplicates. 
+ <var>List</var> and <var>Set</var> are thus equal when considered as sets. 
+<code>list_to_ord_set/2</code> is faster at
+converting a list to a set, but the method used by <code>list_to_set/2</code>
+preserves as much of the original ordering as possible.
+
+     <br><dt><code>intersection(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Intersection</var><code>)</code>
+     <dd>is true when
+ <var>Intersection</var> is the intersection of <var>Set1</var> and <var>Set2</var>,
+taken in a particular order.  In fact it is precisely the
+elements of <var>Set1</var> taken in their original order, with elements not
+in <var>Set2</var>
+deleted.  If <var>Set1</var> contains duplicates, so may <var>Intersection</var>.
+
+     <br><dt><code>intersection(</code><var>+Sets</var><code>, </code><var>?Intersection</var><code>)</code>
+     <dd>is true when <var>Sets</var> is
+ a proper list of sets,
+and <var>Intersection</var> is the intersection of all the sets in <var>Sets</var>.  In
+fact, <var>Intersection</var> is precisely the elements of the head of <var>Sets</var>,
+with elements that do not occur in all of the other sets dropped. 
+ <var>Sets</var> must not be empty.
+
+     <br><dt><code>subtract(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Difference</var><code>)</code>
+     <dd>is like <code>intersection/3</code>, but
+here it is the elements of <var>Set1</var> that
+<em>are</em> in <var>Set2</var> that are deleted.
+
+     <br><dt><code>symdiff(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Diff</var><code>)</code>
+     <dd>is true when <var>Diff</var> is the
+ symmetric difference of <var>Set1</var> and <var>Set2</var>;
+that is, if each element of <var>Diff</var> occurs in one of <var>Set1</var> and <var>Set2</var>,
+but not both.  The construction method is such that the answer
+will contain no duplicates even if <var>Set1</var> and <var>Set2</var> do.
+
+     <br><dt><code>setproduct(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?CartesianProduct</var><code>)</code>
+     <dd>is
+true when <var>Set1</var> is a set (list) and <var>Set2</var> is a set (list) and
+ <var>CartesianProduct</var> is a set of <var>Elt1</var>-<var>Elt2</var> pairs, with a pair
+for each element <var>Elt1</var> of <var>Set1</var> and <var>Elt2</var> of <var>Set2</var>.  For example,
+     <pre class="example">          | ?- <kbd>setproduct([b,a], [1,2], Product).</kbd>
+          
+          Product = [[b-1],[b-2],[a-1],[a-2]]
+          </pre>
+
+     <br><dt><code>union(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Union</var><code>)</code>
+     <dd>is true when <var>Union</var> is the
+elements of <var>Set1</var> that do not occur in <var>Set2</var>, followed by all
+the elements of <var>Set2</var>, that is, when the following are true:
+
+     <pre class="example">          subtract(<var>Set1</var>, <var>Set2</var>, <var>Diff</var>)
+          append(<var>Diff</var>, <var>Set2</var>, <var>Union</var>.
+          </pre>
+
+     <br><dt><code>union(</code><var>+Sets</var><code>, </code><var>?Union</var><code>)</code>
+     <dd>
+is true when <var>Sets</var> is a list of sets and <var>Union</var> is the union of all
+the sets in <var>Sets</var>.  <var>Sets</var> must be a proper list, but it may be empty.
+
+     <br><dt><code>union(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Union</var><code>, </code><var>?Difference</var><code>)</code>
+     <dd>added to keep <code>sets.pl</code>
+and <code>ordsets.pl</code> parallel.  This predicate is true when the following
+are true:
+
+     <pre class="example">          union(Set1, Set2, Union),
+          subtract(Set1, Set2, Difference).
+          </pre>
+
+     <br><dt><code>power_set(</code><var>?Set</var><code>, </code><var>?PowerSet</var><code>)</code>
+     <dd>
+is true when <var>Set</var> is a list and <var>PowerSet</var> is a list of all
+the subsets of <var>Set</var>.  The elements of <var>PowerSet</var> are ordered
+so that if <var>A</var> and <var>B</var> are subsets of <var>Set</var> and <var>B</var> is a subset of <var>A</var>
+(for example, <var>Set</var>=[1,2,3], <var>A</var>=[1,3], <var>B</var>=[3]) then <var>A</var> will appear before
+<var>B</var> in <var>PowerSet</var>.  Note that
+<code>length(</code><var>PowerSet</var><code>) = 2^length(</code><var>Set</var><code>)</code>,
+so this is only useful for a small <var>Set</var>.
+     <pre class="example">          | ?- <kbd>power_set([a,b], X).</kbd>
+          X = [[a,b],[a],[b],[]]
+          </pre>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-lis-set-pre.html#lib-lis-set-pre">Next</a>
+<li><a rel="up" accesskey="u" href="lib-lis-set.html#lib-lis-set">Up</a>
+</ul>
+</div>
+   </body></html>
+

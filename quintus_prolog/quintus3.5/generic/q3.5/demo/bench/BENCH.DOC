@@ -1,0 +1,129 @@
+
+/* @(#)BENCH.DOC	28.2 02/11/91 */
+
+
+                           QUINTUS PROLOG BENCHMARKS
+
+  This  note  accompanies a number of Quintus benchmarks used to compare Prolog
+performance across  machines.    These  benchmarks  are  usually  adaquate  for
+obtaining  a  reasonable  picture  of  how  basic  Prolog performance will vary
+between different machines  and  machine  models.    Note  that  it  is  "basic
+execution  performance"  that is being tested.  The benchmarks do not deal with
+input/output performance, paging performance for very  large  applications,  or
+any  other  kind  of  operating  system interface performance.  Also, while the
+benchmarks have been used to compare different Prolog implementations,  Quintus
+does  not  regard  the  benchmarks as being particularly comprehensive for this
+task.  When using benchmarks to compare implementations it is very important to
+compare  the  memory  space  required  by the compiled code as well as the time
+performance.  Quintus is aware of techniques  that  can  offer  marginal  speed
+benefits  at  a  large cost in memory space.  Such techniques perform well when
+analyzing just the speed for small benchmarks but  are  unrealistic  for  large
+applications where they tend to get swamped by paging performance.
+
+  The three benchmarks provided are described in the following sections.
+
+
+Naive Reverse
+
+  This  is  the  classic  Prolog  benchmark and is the standard measurement for
+Logical Inferences per Second (LIPS).  Being a very simple benchmark it is  not
+really   useful   for   comparing   implementations  -  indeed  special  vendor
+optimization for this benchmark has tended to make it fairly useless  for  this
+purpose.    However  it  does remain a good, quick rule of thumb that is useful
+when  comparing  the  same  Prolog  implementation  across  the  same  hardware
+architecture.    The  general computing and AI literature tends to mention LIPS
+quite a lot.  An examination of the benchmark will  show  that  one  should  be
+cautious  about  LIPS claims!  While this is the classic benchmark, there is no
+standard way of writing the test harness to  measure  the  results.    Quintus'
+version  makes  sure  that  the overhead costs are factored out of the results.
+This  is  often  done  incorrectly  by  other  programmers  which  can  produce
+significant  variations  in published results.  The term LIPS is sometimes more
+generally used to describe the number of Inferences/Second in  larger  program.
+In  Prolog,  Inferences/Second  will  mean Procedure-calls/Second.  In the more
+general use of LIPS someone will time an application, calculate the  number  of
+procedure  calls  that occur and produce a Procedure-calls/Second figure.  This
+is usually less than the "optimal" LIPS figure that  will  be  given  by  Naive
+Reverse.   While this practice occurs, Quintus does not really find it a useful
+way to state benchmark data.  It  is  highly  questionable  what  counts  as  a
+"procedure  call"  in a system with compiler optimizations.  Quintus prefers to
+use Naive Reverse as the definition of LIPS, treat  LIPS  as  just  a  rule  of
+thumb,  and  to give explicit space and time data and source code for all other
+benchmarks.
+
+  To run the benchmark do:
+
+            % prolog
+
+            | ?- [demo(nrev)].
+                    /* Note the memory space required for compiled code */
+            | ?- lots.
+            | ?- bench(5000).
+
+  The call to lots will run the benchmark with various numbers  of  iterations.
+The lower values will not usually be accurate due to the small unit of time. To
+get a good measurement call bench/1 with a large count,  using  the  data  from
+lots to help you pick a good high number that will run in reasonable time (5000
+is shown here).
+
+
+AI Expert Prolog benchmark set
+
+  These benchmarks were written by Fernando Pereira  of  SRI  to  test  various
+different  aspects  of  a Prolog implementation.  The benchmarks concentrate on
+"basic exection" performance and do  not  perform  any  input/output  or  other
+operating system interface functions.  They were written by someone with a deep
+understanding of Prolog  implementation  with  the  goal  of  testing  distinct
+implementation  areas.  Quintus  has  seen  a  number of similar benchmark sets
+intended to uncover implementation  performance  but  which  have  been  poorly
+designed  and  often do not really test what they claim to.  Quintus feels that
+this AI Expert set is better than any other similar set that Quintus has  seen.
+While  this  is  a  good  set of small benchmarks, Quintus does not see them as
+being fully comprehensive.
+
+  These benchmarks were used for a comparison of different PC and  MAC  Prologs
+in  the June 1987 issue of AI Expert magazine (published by Miller Freeman, 500
+Howard st, San Francisco, CA 94105, 415-397-1881).  AI  Expert  has  also  made
+versions available on various bulletin boards.
+
+  To use the benchmarks do:
+
+            % prolog
+
+            | ?- [demo(benches)].
+                    /* Note the memory space required for compiled code */
+            | ?- test_benches.
+
+  This  will  generate a table of benchmark names and the time taken to execute
+each of them once.  Although the time shown is for  a  single  iteration,  each
+benchmark  is  run  for  a  reasonable number of iterations, as determined by a
+bench_mark/4 fact for each test.    Note  that  these  bench_mark/4  facts  are
+distributed  through  the  code which will normally elicit a style warning from
+Quintus Prolog when the file is compiled.  This style check is turned off
+at the beginning off the file and is turned on again at the end of the file.
+
+  Also supplied is an AWK script which might prove useful  when  comparing  two
+sets of data from benches.pl.  On a Unix system this would be used as follows:
+
+            % awk -f benches.awk  data_a  data_b
+
+  where  data_a  and data_b are files which just contain the data lines printed
+by benches.pl (no headings or blank lines). The awk script prints out the  data
+in two columns with a final ratio column showing the speed increase from data_a
+to data_b.
+
+
+Travelling Knight Puzzle:
+This is a porgram to find all paths of knight-moves on a chessboard of size N,
+starting at (1,1) and finishing at (1,N), and visiting each square on the board 
+no more than once.
+
+ Invoke the program by
+
+    ?- tour(N).         % for an arbitrary NxN board, or
+
+    ?- tour.            % in the case where N=5 (73,946 solutions) 
+
+    ?- tour_slowly.     % is like tour/0 except that it uses a list to
+                        % represent the path of squares visited so far.
+ 
+

@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Short lived connections</h5>
+
+   <p>The operating system limits the number of simultaneous connections open
+by a process at one time. The limit various with different operating systems
+but is typically 64 connections.
+
+   <p>If the number is too small for your application, consider making
+connections persist only long enough for a send or receive.  This way
+at most one connection would be alive at any time.
+
+   <p>Here is an example of how you might implement sending and receiving in
+terms of short lived connections.
+
+<pre class="example">     send(To,Term):-    % +To, +Term
+         my_address(MyAddress),
+         tcp_connect(To, Socket),
+         tcp_send(Socket, MyAddress-Term),
+         tcp_shutdown(Socket).
+     
+     receive(From,Term):-  % -From, -Term
+         repeat,
+         tcp_select(term(Socket, From-Term)),
+         !,
+         tcp_shutdown(Socket).
+     </pre>
+
+   <p>In the above example, it is assumed that all processes are servers,
+and have asserted the address obtained from a call to
+<code>tcp_create_listener/2</code> into <code>my_address/1</code>.
+
+   <p>The performance penalty of short lived connections is the time for
+making and breaking connections, which is actually quite fast.  For
+comparison, the time it takes to create and then destroy a connection to
+a server is hundreds of times slower than sending a character to the
+server, but is comparable to the time it takes to send a large term to
+the server.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-mco-shutdown1.html#ipc-tcp-mco-shutdown1">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-mco.html#ipc-tcp-mco">Up</a>
+</ul>
+</div>
+   </body></html>
+

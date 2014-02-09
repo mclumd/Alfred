@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>statistics/[0,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>statistics</code>
+
+   <p>Displays statistics relating to memory usage and
+execution time.
+
+   <p><code>statistics(</code><var>+Keyword</var><code>, </code><var>-List</var><code>)</code>
+
+   <p><code>statistics(</code><var>*Keyword</var><code>, </code><var>*List</var><code>)</code>
+
+   <p>Obtains individual statistics.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Keyword</var> <dfn>atom</dfn>
+     <dd>keyword such as <code>runtime</code>
+
+     <br><dt><var>List</var> <dfn>list of integer</dfn>
+     <dd>list of statistics (see following table)
+</dl>
+
+   <p>Times are given in milliseconds and sizes are given
+in bytes.
+
+     <dl>
+
+     <br><dt><code>runtime</code>
+     <dd>[cpu time used by Prolog, cpu time since last call to
+<code>statistics/[0,2]</code>]
+
+     <br><dt><code>system_time</code>
+     <dd>[cpu time used by the operating system, cpu time used by
+the system since the last call to <code>statistics/[0,2]</code>]
+
+     <br><dt><code>real_time</code>
+     <dd>[wall clock time since 00:00 GMT 1/1/1970, wall clock time
+since the last call to <code>statistics/[0,2]</code>]
+
+     <br><dt><code>memory</code>
+     <dd>[total virtual memory in use, total virtual memory free]
+
+     <br><dt><code>stacks</code>
+     <dd>[total global stack memory, total local stack memory]
+
+     <br><dt><code>program</code>
+     <dd>[program space, 0]
+
+     <br><dt><code>global_stack</code>
+     <dd>[global stack in use, global stack free]
+
+     <br><dt><code>local_stack</code>
+     <dd>[local stack in use, local stack free]
+
+     <br><dt><code>trail</code>
+     <dd>[size of trail, 0]
+
+     <br><dt><code>garbage_collection</code>
+     <dd>[number of GCs, freed bytes, time spent]
+
+     <br><dt><code>stack_shifts</code>
+     <dd>[number of global stack area shifts, number of local
+stack area shifts, time spent shifting]
+
+     <br><dt><code>atoms</code>
+     <dd>[number of atoms, atom space in use, atom space free]
+
+     <br><dt><code>atom_garbage_collection</code>
+     <dd>[number of AGCs, freed bytes, time spent]
+
+     <br><dt><code>core</code>
+     <dd>(same as memory)
+
+     <br><dt><code>heap</code>
+     <dd>(same as program)
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>statistics/0</code> displays various statistics
+relating to memory usage, runtime and garbage collection, including
+information about which areas of memory have overflowed and how much time
+has been spent expanding them.
+
+   <p>Garbage collection statistics are
+initialized to zero when a Prolog session starts (this includes
+sessions started from saved-states created by <code>save_program/[1,2]</code>,
+and includes re-starts caused when <code>restore/1</code> is used).  The
+statistics increase until the session is over.
+
+   <p><code>statistics/2</code> is usually used with <var>Keyword</var> instantiated to
+a keyword such as <code>runtime</code> and <var>List</var> unbound.  The predicate
+then binds <var>List</var> to a list of statistics related to the keyword. 
+It can be used in programs that depend on current runtime
+statistical information for their control strategy, and in programs
+that choose to format and write out their own statistical summaries.
+
+   <p>If keyword is <code>garbage_collection</code> the list returned contains three elements:
+     <ul>
+
+     <li>the number of garbage collections performed since the
+beginning of the Prolog session. 
+<li>the number of bytes of heap space freed by those
+garbage collections. 
+<li>the number of milliseconds spent performing
+those garbage collections. 
+</ul>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>The output from
+<code>statistics/0</code> looks like this:
+<pre class="example">     memory (total)     377000 bytes: 350636 in use,  26364 free
+        program space   219572 bytes
+           atom space    (2804 atoms)  61024 in use,  43104 free
+        global space     65532 bytes:   9088 in use,  56444 free
+           global stack   6984 bytes
+           trail                          16 bytes
+           system                       2088 bytes
+        local stack      65532 bytes:    356 in use,  65176 free
+           local stack                   332 bytes
+           system                         24 bytes
+     
+      0.000 sec. for 0 global and 0 local space shifts
+      0.000 sec. for 0 garbage collections
+                       which collected 0 bytes
+      0.000 sec. for 0 atom garbage collections
+                       which collected 0 bytes
+      0.233 sec. runtime
+     </pre>
+
+   <p>To report information on the runtime of
+a predicate <code>p/0</code>, add the following to your program:
+<pre class="example">     :- statistics(runtime, [T0|_]),
+        p,
+        statistics(runtime, [T1|_]),
+        T is T1 - T0,
+        format('p/0 took ~3d sec.~n', [T]).
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <a href="ref-mgc-ove-sta.html#ref-mgc-ove-sta">ref-mgc-ove-sta</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-stream_code.html#mpg-ref-stream_code">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-tcm.html#mpg-ref-tcm">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

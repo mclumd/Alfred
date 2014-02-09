@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Concatenation</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="lib-txp-con-cfu.html#lib-txp-con-cfu">lib-txp-con-cfu</a>:                      Concatenation Functions
+</ul>
+
+   <p>There are two approaches to concatenation.  One is to provide
+a concatenation <em>function</em> that takes some number of text
+objects and yields their concatenation.  The other is to
+provide a concatenation <em>relation</em>.
+
+   <p>Quintus Prolog provides a built-in concatenation relation
+for lists, namely <code>append/3</code>.  This concatenation
+relation can perforce be applied to lists of character codes.
+
+<pre class="example">     | ?- <kbd>ensure_loaded(library(printchars)).</kbd>
+     
+     | ?- <kbd>append("app", "end", X).</kbd>
+     
+     X = "append"
+     
+     | ?- <kbd>append(X, "end", "intend").</kbd>
+     
+     X = "int"
+     
+     | ?- <kbd>append(_, [C|_], "to be written"),</kbd>
+     |    <kbd>put(C), fail.</kbd>
+     
+     to be written
+     no
+     </pre>
+
+   <p><code>library(strings)</code> contains a concatenation relation for text objects. 
+This relation was inherited from the DEC-10 Prolog library.  The
+original code was written to support <code>gensym/2</code> (described in <a href="lib-txp-ato.html#lib-txp-ato">lib-txp-ato</a>)
+and then generalized.
+
+     <dl>
+
+     <br><dt><code>concat(</code><var>?Text1</var><code>, </code><var>+Constant2</var><code>, </code><var>?Text3</var><code>)</code>
+     <dd>
+is true when <var>Text1</var> and <var>Text3</var> are the same kind of
+text object, <var>Constant2</var> is any sort of constant, and
+     <pre class="example">          name(<var>Text1</var>, Name1),
+          name(<var>Constant2</var>, Name2),
+          name(<var>Text3</var>, Name3),
+          append(Name1, Name2, Name3)
+          </pre>
+
+     <p>is true.  It can be used to solve for <var>Text1</var> given the
+other two arguments or to solve for <var>Text3</var> given the
+other two arguments, but unlike <code>append/3</code> it cannot be used to
+solve for <var>Constant2</var>. 
+</dl>
+
+   <p>This definition is retained for backwards
+compatibility with the DEC-10 Prolog and C-Prolog libraries, and with
+earlier versions of the Quintus library.  <code>concat/3</code> may be
+removed from future versions of the Quintus library.
+
+   <p>There is a proper concatenation relation that is exactly
+analogous to <code>append/3</code>:
+     <dl>
+
+     <br><dt><code>string_append(</code><var>?A</var><code>, </code><var>?Z</var><code>, </code><var>?AZ</var><code>)</code>
+     <dd>
+is true when <var>A</var>, <var>Z</var>, and <var>AZ</var> are all atoms, and
+</dl>
+
+<pre class="example">     name(A, NameA),
+     name(Z, NameZ),
+     name(AZ, NameAZ)
+     append(NameA, NameZ, NameAZ)
+     </pre>
+
+   <p>is true.  It can be used to solve for any one of its arguments
+given the other two.
+
+   <p>As a point of interest, <code>string_append/3</code> could have been defined
+using <code>midstring/4</code>, which is defined below.
+<pre class="example">     append_strings(A, Z, AZ) :-
+             midstring(AZ, A, Z, 0).
+     </pre>
+
+   <p>Examples:
+<pre class="example">     | ?- <kbd>concat(app, end, X).</kbd>
+     X = append
+     
+     | ?- <kbd>string_append(app, end, X).</kbd>
+     X = append
+     
+     | ?- <kbd>concat(X, end, append).</kbd>
+     X = app
+     
+     | ?- <kbd>string_append(X, end, append).</kbd>
+     X = app
+     
+     | ?- <kbd>concat(app, X, append).  % SURPRISE!</kbd>
+     no
+     
+     | ?- <kbd>string_append(app, X, append).</kbd>
+     X = end
+     
+     | ?- <kbd>concat(app, 137, X).</kbd>
+     X = app137
+     
+     | ?- <kbd>string_append(app, 137, X).</kbd>
+     no
+     
+     | ?- <kbd>concat(X, Y, ab).  % SURPRISE!</kbd>
+     no
+     
+     | ?- <kbd>string_append(X, Y, ab).</kbd>
+     X = '', Y = ab <kbd>;</kbd>
+     X = a, Y = b <kbd>;</kbd>
+     X = ab, Y = '' <kbd>;</kbd>
+     no
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-lct.html#lib-txp-lct">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-cto.html#lib-txp-cto">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp.html#lib-txp">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

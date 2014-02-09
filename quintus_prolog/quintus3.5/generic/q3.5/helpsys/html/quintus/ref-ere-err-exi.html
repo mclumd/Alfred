@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Existence Errors</h5>
+
+   <p>An existence error occurs when a predicate attempts to access something that
+does not exist.  For example, trying to compile a file that
+does not exist, erasing a database reference that has already been erased.  A
+less obvious example:  reading past the end of file marker in a stream is
+regarded as asking for an object (the next character) that does not exist.
+
+   <p>The exception code associated with an existence error is
+<pre class="example">     existence_error(<var>Goal, ArgNo, ObjectType, Culprit, Message</var>)
+     </pre>
+
+     <dl>
+
+     <br><dt><var>ArgNo</var>
+     <dd>index of argument of <var>Goal</var> where <var>Culprit</var> appears
+
+     <br><dt><var>ObjectType</var>
+     <dd>expected type of non-existent object
+
+     <br><dt><var>Culprit</var>
+     <dd>name for the non-existent object
+
+     <br><dt><var>Message</var>
+     <dd>the constant <code>0</code> or <code>''</code>, or
+<br><dt>
+     <dd>
+some additional information provided by the operating system or other
+support system indicating why <var>Culprit</var> is thought not to exist. 
+</dl>
+
+   <p>For example, <code>see('../brother/niece')</code> might raise the exception
+<pre class="example">     existence_error(see('../brother/niece'),
+             1, file, '/usr/stella/parent/brother/niece',
+             errno(20))
+     </pre>
+
+   <p>where the <var>Message</var> encodes the system error <code>ENOTDIR</code> (some component
+of the path is not a directory).
+
+   <p>As a general rule, if <var>Culprit</var> was provided in the goal as some sort of
+context-sensitive name, the Prolog system will try to resolve it to an
+absolute name, as shown here, so that you can see whether the problem is
+just that the name was resolved in the wrong context.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-err-per.html#ref-ere-err-per">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-err-rep.html#ref-ere-err-rep">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere-err.html#ref-ere-err">Up</a>
+</ul>
+</div>
+   </body></html>
+

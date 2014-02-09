@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>subsumes_chk/2</code> <dfn>meta-logical</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>subsumes_chk(</code><var>+General, +Specific</var><code>)</code>
+
+   <p>True when <var>General</var> subsumes <var>Specific</var>; that is, when
+<var>Specific</var> is an instance of <var>General</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>General</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>Specific</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>In previous releases,
+<code>subsumes_chk/2</code> was available as a library predicate.  In release
+2.5, it was made part of the system because it was found to be useful
+in applications such as writing theorem provers.  The built-in
+predicate behaves identically to the original version of
+<code>subsumes_chk/2</code> but is much more efficient.
+
+   <p>Term subsumption is a sort of one-way unification.  Term <var>S</var> and <var>T</var> unify
+if they have a common instance, and unification in Prolog instantiates
+both terms to that common instance.  <var>S</var> subsumes <var>T</var> if <var>T</var> is already an
+instance of <var>S</var>.  For our purposes, <var>T</var> is an <dfn>instance</dfn> of <var>S</var> if there
+is a substitution that leaves <var>T</var> unchanged and makes <var>S</var> identical to <var>T</var>.
+
+<h4 class="subheading">Comments</h4>
+
+   <p>There are two other related predicates defined
+in <code>library(subsumes)</code>, <code>subsumes/2</code> and <code>variant/2</code>.  These predicates are
+defined in terms of <code>subsumes_chk/2</code>, and they are still available
+in that library package.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>library(subsumes)</code>, <code>library(occurs)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-tab.html#mpg-ref-tab">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-style_check.html#mpg-ref-style_check">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

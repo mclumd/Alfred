@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Using Kanji characters</h5>
+
+   <p>To permit the use of Kanji characters in atoms, variable names,
+predicate names, messages and comments you need to set the environment
+variable <code>QUINTUS_KANJI_FLAG</code> to <code>true</code> before starting Prolog.
+
+   <p>When the Kanji flag is set, an 8-bit character codes (that is, a
+character code between 128 and 255) is assumed to be part of a
+multi-byte sequence representing a Kanji character.  Such characters
+are treated, for the purposes of Prolog's syntax, as if they were
+lower-case alphabetic characters.  The Kanji flag does not affect
+character I/O, or the conversion between atoms and lists of character
+codes using <code>name/2</code> or <code>atom_chars/2</code>.  In the case of I/O, two (or more)
+character codes will need to be read or written for every Kanji
+character.  Similarly, an atom made up of Kanji characters will be
+transformed by <code>name/2</code> or <code>atom_chars/2</code> into a list of twice (or more
+than twice) as many 8-bit character codes.
+
+     <dl>
+
+     <br><dt>JIS
+     <dd>   (Japanese Industry Standard) is the Japanese analogue to ASCII. 
+        This includes two standards: JIS-X0201, which defines half-size
+        Katakana characters, represented in one byte and JIS-X0208
+        (called "JIS" code) that defines 6349 Kanji and 453 non-Kanji
+        characters stored in two bytes, using the lower seven bits of
+        each byte.
+
+     <br><dt>SHIFT-JIS
+     <dd>Is JIS code shifted so that the high bit is used (so it doesn't
+        interfere with some MSDOS control codes and special characters).
+
+     <br><dt>JLE 1.0 EUC
+     <dd>Is Sun's Japanese Language Environment. For each codeset this
+        defines exactly one possible character set:
+     <pre class="example">          <b>codeset</b>                  <b>byte(s) representation</b>
+          0:      ASCII           0xxxxxxx
+          1:      JIS-X0208       1xxxxxxx 1xxxxxxx
+          2:      JIS-X0201       10001110 1xxxxxxx
+          3:      Gaiji           10001111 1xxxxxxx 1xxxxxxx
+          </pre>
+
+     <p>Codeset 1 is JIS code with the hit bits set; Gaiji is a user-defined
+        character set.
+
+     <br><dt>DEC
+     <dd>   This is a standard used by Digital. All I know about this is that
+        character codes 0-127 indicate a one byte ASCII character, and the
+        codes 128-255 indicates a two byte Kanji character. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ref-msg-ime-btm.html#ref-msg-ime-btm">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-msg-ime.html#ref-msg-ime">Up</a>
+</ul>
+</div>
+   </body></html>
+

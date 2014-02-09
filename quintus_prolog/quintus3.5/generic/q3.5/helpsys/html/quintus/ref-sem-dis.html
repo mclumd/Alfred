@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Disjunction</h4>
+
+   <p>As we have seen, the goals in the body of a sentence  are  linked
+by  the  operator <code>,</code>, which can be interpreted as conjunction (<code>and</code>). 
+It is sometimes convenient to use an additional operator <code>|</code>, standing
+for  disjunction  (<code>or</code>).  (The  precedence  of  <code>|</code>  is  such that it
+dominates <code>,</code> but is dominated by <code>:-</code>.)  An example is the clause (A), which can be read as (B).
+<pre class="example">     grandfather(X, Z) :-
+          (   mother(X, Y)
+          |   father(X, Y)
+          ),
+          father(Y, Z). (A)
+     </pre>
+
+<pre class="display">     
+     ``For any X, Y, and Z,
+         X has Z as a grandfather if
+         either the mother of X is Y
+             or the father of X is Y,
+         and the father of Y is Z.'' (B)
+     </pre>
+
+   <p>Such uses of disjunction can usually be eliminated by defining  an
+extra predicate.  For instance, (A) is equivalent to (C)
+<pre class="example">     grandfather(X, Z) :- parent(X, Y), father(Y, Z).
+     parent(X, Y) :- mother(X, Y).
+     parent(X, Y) :- father(X, Y). (C)
+     </pre>
+
+   <p>Therefore, disjunction will not be mentioned further in  the  following
+more formal description of the semantics of clauses.
+
+   <p>For historical reasons, the token <code>|</code>, when used outside a list, is
+actually an alias for <code>;</code>.  The aliasing is performed when terms
+are read in, so that (D) is read as if it were (E) thus you can use
+<code>;</code> instead of <code>|</code> for disjunction if you like.
+
+<pre class="example">     a :- b | c. (D)
+     </pre>
+
+<pre class="example">     a :- b ; c. (E)
+     </pre>
+
+   <p>Note the double use of the <code>.</code> character.  Here it is used as
+a sentence terminator, while in other instances it may be used in a string of
+symbols that make up an atom (for example, the list functor <code>.</code>).  The
+rule used to disambiguate terms is that a <code>.</code> followed by a
+<dfn>layout-character</dfn> is regarded as the sentence
+terminator <code>full-stop</code>, where a
+layout-character is defined to be any character less than or equal to ASCII 32
+(this includes space, tab, newline, and all control characters).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sem-sec.html#ref-sem-sec">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-sem-typ.html#ref-sem-typ">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sem.html#ref-sem">Up</a>
+</ul>
+</div>
+   </body></html>
+

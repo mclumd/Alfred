@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>listing/[0,1]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>listing</code>
+
+   <p><code>listing(</code><var>+PredSpecs</var><code>)</code>
+
+   <p>Prints the clauses of all the dynamic procedures currently in the
+Prolog database, or of <var>PredSpecs</var>, to the current output stream,
+using <code>portray_clause/1</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>PredSpecs</var> <dfn>gen_pred_spec_tree_var</dfn> [MOD]
+     <dd>a predicate specification, or a
+list of predicate specifications or atoms
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>If <var>Predicate</var> is an atom, then <code>listing/1</code> lists the dynamic
+procedures for all predicates of that name, as for <code>listing/0</code>
+
+   <p>If <var>PredSpecs</var> is a predicate specification of the form
+<var>Name</var>/<var>Arity</var>, only the clauses for the specified predicate
+are listed.
+
+   <p><var>PredSpecs</var> can be a list of predicate specifications and/or
+atoms; for example,
+<pre class="example">     | ?- <kbd>listing([concatenate/3, reverse, go/0]).</kbd>
+     </pre>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>You could list the entire program to a file using the command
+<pre class="example">     | ?- <kbd>tell(file), listing, told.</kbd>
+     </pre>
+
+   <p>Note that <code>listing/[0,1]</code> does not work on compiled procedures.
+
+   <p><code>listing/1</code> is dependent on the source module.  As a special case,
+<pre class="example">     | ?- <kbd>listing(mod:_).</kbd>
+     </pre>
+
+   <p>will list all the dynamic predicates in module mod.  However,
+<code>listing/0</code> is not dependent on the source module; it refers instead
+to the type-in module.
+
+   <p>Variables may be included in predicate specifications given to
+<code>listing/1</code>.  For example, you can list clauses for <code>f</code> in any
+current module with:
+<pre class="example">     | ?- <kbd>listing(_:f).</kbd>
+     </pre>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>Under the Emacs interface, there is a facility
+for finding the source code definition for a specified compiled or
+dynamic procedure and reading it into an edit buffer.  This is likely
+to be more helpful than <code>listing/1</code> in most cases.  See
+<a href="ema-emi-key.html#ema-emi-key">ema-emi-key</a> for more information.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-load_files.html#mpg-ref-load_files">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-line_position.html#mpg-ref-line_position">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

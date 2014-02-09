@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>check_typed_event/[2,3]</code></h4>
+
+<pre class="example">     check_typed_event(+<var>Type</var>, ?<var>XEvent</var>)
+     check_typed_event(+<var>Displayable</var>, +<var>Type</var>, ?<var>XEvent</var>)
+     </pre>
+
+   <p>Succeed only if there is an event of the given <var>Type</var> in the
+event queue for the given <var>Displayable</var>, which if omitted,
+is the default Display. Other events in the queue are not discarded. 
+If there is no matching event in the queue,
+they fail, and do not block waiting for events. The output buffer is
+flushed only on failure.
+
+   <p>The user can pass an existing <var>XEvent</var> X11 structure, which is then
+destructively filled with the received event's contents, or an unbound
+variable. In the latter case, <code>check_typed_event/[2,3]</code> will unify
+<var>XEvent</var> with a private, local structure, which the user
+can not hang on to, but is guaranteed
+not to change its value until the next call to an event getting routine.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-evf-check_typed_window_event.html#pxl-evf-check_typed_window_event">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-evf-check_mask_event.html#pxl-evf-check_mask_event">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-evf.html#pxl-evf">Up</a>
+</ul>
+</div>
+   </body></html>
+

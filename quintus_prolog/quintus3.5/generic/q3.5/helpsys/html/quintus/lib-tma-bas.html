@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Introduction</h4>
+
+   <p>There are two ways of looking at Prolog data structures.  One is the
+proper "object-level" logical way, in which you think of arguments as
+values.  The other is the "meta-logical" way, in which you see them
+not as lists or trees (or whatever your object-level data types are),
+but as "terms".
+
+   <p>Prolog has the following built-in operations that operate on terms
+as such:
+
+     <dl>
+
+     <br><dt><code>functor(</code><var>+Term</var><code>, </code><var>-Name</var><code>, </code><var>-Arity</var><code>)</code>
+     <dd>
+is true when <var>Term</var> is a term, and the principal function symbol of
+<var>Term</var> is <var>Name</var>, and the arity (number of arguments) of <var>Term</var> is
+<var>Arity</var>.  Alternatively, you may think of this as being true when
+<var>Term</var> is a term and the principal functor of <var>Term</var> is
+<var>Name</var>/<var>Arity</var>. 
+All constants, including numbers, are their own principal function symbols,
+so <code>functor(1.3, 1.3, 0)</code> is true.  This may be used to find the
+functor of a given term, or to construct a term having a given functor.
+
+     <br><dt><code>arg(</code><var>+Argnum</var><code>, </code><var>+Term</var><code>, </code><var>-Arg</var><code>)</code>
+     <dd>
+is true when <var>Term</var> is a non-variable, <var>Argnum</var> is a positive integer,
+and <var>Arg</var> is the <var>Argnum</var>th argument of <var>Term</var>.  Argument numbering
+starts at 1.  This can only be used to find <var>Arg</var>; <var>Argnum</var> and <var>Term</var>
+must be given.
+
+     <br><dt><code></code><var>+-Term</var><code> =.. </code><var>+-List</var><code></code>
+     <dd>
+is true when <var>Term</var> is a term, <var>List</var> is its principal function symbol
+and the list of the remaining arguments.  Use of <code>=../2</code>
+can nearly always be avoided, and should be whenever possible, as it is very
+slow and uses memory unnecessarily (see <a href="bas-eff-bdm.html#bas-eff-bdm">bas-eff-bdm</a>).
+
+     <br><dt><code>copy_term(</code><var>+Term</var><code>, </code><var>-Copy</var><code>)</code>
+     <dd>
+unifies <var>Copy</var> with an alphabetic variant of <var>Term</var> that contains
+all new variables (see <a href="lib-tma-subsumes.html#lib-tma-subsumes">lib-tma-subsumes</a>). 
+That is, <code>copy_term/2</code> makes a copy of <var>Term</var> by replacing
+each distinct variable in <var>Term</var> by a new variable that occurs
+nowhere else in the system, and unifies <var>Copy</var> with the result.
+
+     <br><dt><code>compare(</code><var>-Order</var><code>, </code><var>+Term1</var><code>, </code><var>+Term2</var><code>)</code>
+     <dd> compares
+<var>Term1</var> and <var>Term2</var> with respect to <var>Order</var>, which may
+be one of <code>&lt;</code>, <code>&gt;</code>, or <code>=</code>.  If <var>Order</var> is <code>=</code>, the comparison is
+actually done with respect to the <code>==/2</code> operator on terms. 
+</dl>
+
+   <p>The system also includes the term comparison predicates <code>==/2</code>,
+<code>\==/2</code>, <code>@&lt;/2</code>, <code>@&gt;/2</code>, <code>@&gt;/2</code>, <code>@=&lt;/2</code>. 
+See <a href="ref-lte.html#ref-lte">ref-lte</a> for more details.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-tma-trm.html#lib-tma-trm">Next</a>
+<li><a rel="up" accesskey="u" href="lib-tma.html#lib-tma">Up</a>
+</ul>
+</div>
+   </body></html>
+

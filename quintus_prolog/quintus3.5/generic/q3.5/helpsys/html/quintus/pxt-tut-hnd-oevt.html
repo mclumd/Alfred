@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Other Events Types</h5>
+
+   <p>Many X applications require input from sources other than the X event
+queue. The X Toolkit provides a way for registering procedures to be
+invoked when there is input coming from a source such as UNIX file. 
+The call to <code>xtAppAddInput/6</code> accomplishes that. The first argument in
+<code>xtAppAddInput/6</code> is the application context, the UNIX file descriptor
+for the input source is second, the third is the input condition mask and the
+next two arguments are the predicate and client data. An Id is returned in
+the final argument, which can be used to unregister the procedure.
+
+   <p>Another useful facility in the X Toolkit allows applications to
+register callback procedures to be invoked when a specified interval
+has elapsed. The call to <code>xtAppAddTimeOut/5</code> accomplishes that. The
+time interval is measured in milliseconds and the registered procedure
+must be of arity 2, where the first argument is the client data and
+the second is the interval id. Following is an extension to the first
+example, which sets a timer when the push button is activated. This in
+turn activates a procedure some 2 seconds later.
+
+<pre class="example">     timer(_ClientData,_IntervalId) :-
+            write('Button pressed approximately 2 seconds earlier...'),
+            nl.
+     
+     set_timer(Widget,Interval,_CallData) :-
+            xtWidgetToApplicationContext(Widget, App),
+            xtAppAddTimeOut(App,Interval,timer,_,_Id).
+     
+     time :-
+            xtAppInitialize(App,'Test',[],Shell),
+            xmCreatePushButton(Shell,push_button,
+                               [xmNactivateCallback([callback(set_timer,2000)]),
+                                xmNwidth(100),
+                                xmNheight(100)],
+                               Button),
+            xtManageChild(Button),
+            xtRealizeWidget(Shell),
+            xtAppMainLoop(App).
+     </pre>
+
+   <p>The X Toolkit includes another type of callback mechanism, known as a
+WorkProc, that provides a limited form of background processing. It
+allows the application to invoke a callback whenever there are no
+events pending.  The application can register WorkProc procedures
+using the call to <code>xtAppAddWorkProc/4</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxt-tut-hnd-evhl.html#pxt-tut-hnd-evhl">Next</a>
+<li><a rel="previous" accesskey="p" href="pxt-tut-hnd-evh.html#pxt-tut-hnd-evh">Previous</a>
+<li><a rel="up" accesskey="u" href="pxt-tut-hnd.html#pxt-tut-hnd">Up</a>
+</ul>
+</div>
+   </body></html>
+

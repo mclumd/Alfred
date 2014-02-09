@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Widget Callbacks</h5>
+
+   <p>One type of events corresponds to changes in the widget state. They
+are known as widget callbacks and each widget has its own set of them. 
+There is a logical connection between the type of the widgets and
+their callbacks.  For example, the push button widget has a callback,
+which is activated when it is pressed.
+
+   <p>There are few alternative ways of registering callback procedures. 
+First, the callbacks are widget resources whose values are the
+corresponding procedures, therefore they can be set as such at
+creation. In addition, the X Toolkit provides a way for callbacks to
+be set explicitly.  This can be done with the predicates
+<code>xtAddCallback/4</code> and <code>xtAddCallbacks/3</code>.
+
+   <p>In <code>xtAddCallback/4</code> the first argument is the widget for which the
+callback is registered, the second is the callback name. The third
+argument is the name of the procedure to be called and the last
+argument is some data that the programmer wants to pass to the
+callback procedure. In <code>xtAddCallbacks/3</code> the last argument is a
+list of terms of type <code>callback(</code><var>Predicate</var><code>,</code><var>ClientData</var><code>)</code> where
+<var>Predicate</var> is the name of the procedure to be called and
+<var>ClientData</var> is the data that the programmer wants to pass to the
+callback procedure. If the callback is set as a widget resource then
+the resource value is of the same term as used in the
+<code>xtAddCallbacks/3</code> list. For example,
+<pre class="example">        xmCreatePushButton(Shell,push_button,
+          [xmNactivateCallback(callback(pressed,'Hello Quintus!'))])
+     </pre>
+
+   <p>would add a callback to the push button at creation time.
+
+   <p>The callback procedures must be of arity 3. The first argument is the
+widget for which the callback was registered.  The second argument is
+reserved for data that the programmer may want pass to the procedure
+and the last argument is used by the Motif widgets to pass widget
+specific data to the application.
+
+   <p>Following is an extension of the first example showing how to register
+a widget callback using <code>xtAddCallbacks/3</code>:
+
+<pre class="example">     create_button :-
+             xtAppInitialize(App,'Demo',[],Shell),
+             xmCreatePushButton(Shell,push_button,
+                                [xmNwidth(100), xmNheight(100)],Button),
+             xtManageChild(Button),
+             xtAddCallback(Button,xmNactivateCallback,pressed,
+                           'Hello Quintus!'),
+             xtRealizeWidget(Shell),
+             xtAppMainLoop(App).
+     
+     pressed(Widget, ClientData, CallData) :-
+             write(Widget), nl,
+             write(ClientData), nl,
+             write(CallData), nl.
+     </pre>
+
+   <p>To remove callbacks use <code>xtRemoveCallback</code>, <code>xtRemoveCallbacks</code>,
+or <code>xtRemoveAllCallbacks</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxt-tut-hnd-trans.html#pxt-tut-hnd-trans">Next</a>
+<li><a rel="up" accesskey="u" href="pxt-tut-hnd.html#pxt-tut-hnd">Up</a>
+</ul>
+</div>
+   </body></html>
+

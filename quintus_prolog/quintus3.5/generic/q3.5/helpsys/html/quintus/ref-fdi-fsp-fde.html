@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Filename Defaults</h5>
+
+   <p>Some of the predicates that take file specification arguments not only
+can search for a file among the directories defined by
+<code>file_search_path/2</code> facts (if a path alias is used), but also can
+help the user in finding the correct file by adding appropriate
+extensions and/or looking for the most recent file by comparing
+modification times.
+
+   <p><code>load_files/[1,2]</code> (and the predicates defined in terms
+of <code>load_files/2</code>), uses the following algorithm to find the
+most appropriate file to load:
+     <ol type=1 start=1>
+
+     <li>if the file specification is of the form <var>PathAlias</var>(<var>FileName</var>),
+retrieve the first directory in the search path associated with
+<var>PathAlias</var> and  apply the algorithm below in that
+directory (for instance, if <code>library(strings)</code> are given, look in
+the first library directory, with <var>FileName</var> set to <code>strings</code>):
+<li>if <code></code><var>FileName</var><code></code> exists, load it. 
+<li>if <code></code><var>FileName</var><code>.pl</code> exists, but not <code></code><var>FileName</var><code>.qof</code>, load <code></code><var>FileName</var><code>.pl</code>
+<li>if <code></code><var>FileName</var><code>.qof</code> exists, but not <code></code><var>FileName</var><code>.pl</code>, load <code></code><var>FileName</var><code>.qof</code>
+<li>if both <code></code><var>FileName</var><code>.pl</code> and <code></code><var>FileName</var><code>.qof</code> exist, load the one
+that was most recently modified. 
+<li>if the file specification contained a path alias, retrieve the next
+directory in the path and retry from (2).
+        </ol>
+
+   <p>For example,
+<pre class="example">     | ?- <kbd>[user].</kbd>
+     | <kbd>:- multifile file_search_path/2.</kbd>
+     | <kbd>:- dynamic file_search_path/2.</kbd>
+     | <kbd>file_search_path(home, '/usr').</kbd>
+     | <kbd>file_search_path(home, '/usr/prolog').</kbd>
+     | <kbd>end_of_file.</kbd>        % (or <kbd>&lt;^D&gt;</kbd>)
+     % user compiled in module user, 0.034 sec 284 bytes
+     
+     yes
+     </pre>
+
+   <p>In this case the directory <code>/usr</code> is searched first and <code>/usr/prolog</code>
+second.  Therefore, if the file <code>foo.pl</code> exists in both of these
+directories, the following query will compile <code>foo.pl</code> in the directory
+<code>/usr</code> (on the condition that <code>foo.qof</code> does not exist).
+
+<pre class="example">      | ?- <kbd>compile(library(foo)).</kbd>
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-fdi-fsp-pre.html#ref-fdi-fsp-pre">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-fdi-fsp-ffs.html#ref-fdi-fsp-ffs">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-fdi-fsp.html#ref-fdi-fsp">Up</a>
+</ul>
+</div>
+   </body></html>
+

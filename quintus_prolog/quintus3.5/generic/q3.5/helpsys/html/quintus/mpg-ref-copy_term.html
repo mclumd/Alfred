@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>copy_term/2</code> <dfn>meta-logical</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>copy_term(</code><var>+Term, -Copy</var><code>)</code>
+
+   <p>Makes a copy of <var>+Term</var>
+in which all variables have been replaced by new variables
+that occur nowhere outside the newly created term.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>Copy</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+     <ul>
+
+     <li>This is precisely the effect that would have been obtained from the
+definition below, although the system implementation of
+<code>copy_term/2</code> is more efficient.
+
+     <pre class="example">          copy_term(Term, Copy) :-
+             recorda(copy, copy(Term), DBref),
+             instance(DBref, copy(Temp)),
+             erase(DBref),
+             Copy = Temp.
+          </pre>
+
+     <li>When you call <code>clause/[2,3]</code> or <code>instance/2</code>, you get a new copy
+of the term stored in the database, in precisely
+the same sense that <code>copy_term/2</code> gives you a new copy. 
+<li>Used in writing interpreters for logic-based languages. 
+</ul>
+
+<h4 class="subheading">Example</h4>
+
+     <ul>
+
+     <li>A naive way to attempt to find out whether one term is a copy of another:
+
+     <pre class="example">          identical_but_for_variables(X, Y) :-
+             \+ \+ (
+                numbervars(X, 0, N),
+                numbervars(Y, 0, N),
+                X = Y
+             ).
+          </pre>
+
+     <p>This solution is sometimes sufficient, but will not work if the two terms
+have any variables
+in common. 
+</p><li>If you want the test to succeed even when the two terms do have
+some variables in common, you need to copy one of them; for example,
+     <pre class="example">          identical_but_for_variables(X, Y) :-
+             \+ \+ (
+                copy_term(X, Z),
+                numbervars(Z, 0, N),
+                numbervars(Y, 0, N),
+                Z = Y
+             ).
+          </pre>
+
+   </ul>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>atomic/1</code>, <code>float/1</code>, <code>integer/1</code>,
+<code>nonvar/1</code>, <code>number/1</code>, <code>var/1</code>, <code>simple/1</code>,
+<code>compound/1</code>, <code>callable/1</code>, <code>ground/1</code>, <code>simple/1</code>,
+<code>db_reference/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-current_advice.html#mpg-ref-current_advice">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-consult.html#mpg-ref-consult">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

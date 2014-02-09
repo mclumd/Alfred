@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Defining File Search Paths</h5>
+
+   <p>The information about which directories to search when an alias
+is encountered, is defined by the dynamic, multifile predicate
+<code>file_search_path/2</code>. The clauses for this predicate are located in
+module <var>user</var>, and have the following form:
+
+<pre class="example">     file_search_path(<var>PathAlias</var>, <var>DirectorySpec</var>).
+     </pre>
+
+     <dl>
+
+     <br><dt><var>PathAlias</var>
+     <dd>must be an atom. It can be used as an alias for
+<var>DirectorySpec</var>
+
+     <br><dt><var>DirectorySpec</var>
+     <dd>Can either be an atom, spelling out the name of
+a directory, or a compound term using other path aliases to define the location
+of the directory.
+
+   </dl>
+
+   <p>The directory path may be absolute, as in (A) or relative as in (B),
+which defines a path relative to the current working directory.
+
+   <p>Then, files may be referred to by using file specifications of the
+form similar to <code>library(</code><var>file</var><code>)</code>.  For example, (C), names the file
+<code>/usr/jackson/.login</code>, while (D) specifies the path <code>etc/demo/my_demo</code>
+relative to the current working directory.
+
+<pre class="example">     file_search_path(home, '/usr/jackson'). (A)
+     
+     file_search_path(demo, 'etc/demo'). (B)
+     
+     home('.login') (C)
+     
+     demo(my_demo) (D)
+     </pre>
+
+   <p>As mentioned above, it is also possible to have multiple definitions
+for the same alias. If clauses (E) and (F) define the <code>home</code> alias,
+then to locate the file specified by (G) each <code>home</code> directory is
+searched in sequence for the file <code>.login</code>.  If <code>/usr/jackson/.login</code>
+exists, it is used.  Otherwise, <code>/u/jackson/.login</code> is used if it
+exists.
+
+<pre class="example">     file_search_path(home, '/usr/jackson'). (E)
+     file_search_path(home, '/u/jackson'). (F)
+     
+     home('.login') (G)
+     </pre>
+
+   <p>The directory specification may also be a term of arity 1, in which
+case it specifies that the argument of the term is relative to the
+<code>file_search_path/2</code> defined by its functor.  For example, (H)
+defines a directory relative to the directory given by the <code>home</code>
+alias.  Therefore, the alias <code>qp_directory</code> represents the search
+path <code>/usr/jackson/prolog/qp</code> followed by <code>/u/jackson/prolog/qp</code>.  Then,
+the file specification (I) refers to the file (J), if it exists. 
+Otherwise, it refers to the file (K), if it exists.
+
+<pre class="example">     file_search_path(qp_directory, home('prolog/qp')). (H)
+     
+     qp_directory(test) (I)
+     
+     /usr/jackson/prolog/qp/test (J)
+     
+     /u/jackson/prolog/qp/test (K)
+     </pre>
+
+   <p>Aliases such as <code>home</code> or <code>qp_directory</code> are useful
+because even if the <code>home</code> directory changes, or the
+<code>qp_directory</code> is moved to a different location, only the
+appropriate <code>file_search_path/2</code> facts need to be changed. 
+Programs relying on these paths are not affected by the change of
+directories because they make use of file specifications of the form
+<code>home(</code><var>file</var><code>)</code> and <code>qp_directory(</code><var>file</var><code>)</code>.
+
+   <p>All built-in predicates that take file specification arguments allow
+these specifications to include path aliases defined by
+<code>file_search_path/2</code> facts.  These predicates are:
+
+     <ul>
+
+     <li><code>absolute_file_name/[2,3]</code>
+<li><code>compile/1</code>
+<li><code>consult/1</code>
+<li><code>ensure_loaded/1</code>
+<li><code>load_files/[1,2]</code>
+<li><code>open/[2,3]</code>
+<li><code>restore/1</code>
+<li><code>save_module/2</code>
+<li><code>save_predicates/2</code>
+<li><code>save_program/[1,2]</code>
+<li><code>see/1</code>
+<li><code>tell/1</code>
+<li><code>use_module/[1,2,3]</code>
+</ul>
+
+   <p><strong>Notes:</strong>
+     <ol type=1 start=1>
+
+     <li>The <code>file_search_path/2</code> database may contain directories that do
+not exist or are syntactically invalid (as far as the operating system
+is concerned).  If an invalid directory is part of the database, the
+system will fail to find any files in it, and the directory will
+effectively be ignored. 
+<li>This facility is provided so that one can load library or other files
+without knowing their absolute file names, but this does not restrict
+the way a file can be accessed.  It is <em>strongly</em> suggested that
+writing to a file not be done using the <var>PathAlias</var>(<var>FileSpec</var>)
+facility.  (One could write to <var>PathAlias</var>(<var>FileSpec</var>) but this
+may not have the desired effect, since the system will write to one of
+possibly many files depending upon the current order of the clauses in
+the <code>file_search_path/2</code> predicate.)  The absolute name of the file
+to which one is writing should be known.  To find the absolute name of
+a library file, for example, one can type
+     <pre class="example">           | ?- <kbd>absolute_file_name(library(</kbd><var>FileSpec</var><kbd>), </kbd><var>AbsFileName</var><kbd>).</kbd>
+          </pre>
+
+     <li><code>file_search_path/2</code>  must be defined in the default module <code>user</code>
+ -- definitions in any other module will not be found.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-fdi-fsp-ffs.html#ref-fdi-fsp-ffs">Next</a>
+<li><a rel="up" accesskey="u" href="ref-fdi-fsp.html#ref-fdi-fsp">Up</a>
+</ul>
+</div>
+   </body></html>
+

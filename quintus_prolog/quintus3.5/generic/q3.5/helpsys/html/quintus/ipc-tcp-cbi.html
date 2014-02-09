@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The Callback Interface</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ipc-tcp-cbi-create_input_callback2.html#ipc-tcp-cbi-create_input_callback2">ipc-tcp-cbi-create_input_callback2</a>:   tcp_create_input_callback(+Socket, +Goal)
+<li><a accesskey="2" href="ipc-tcp-cbi-destroy_input_callback1.html#ipc-tcp-cbi-destroy_input_callback1">ipc-tcp-cbi-destroy_input_callback1</a>:  tcp_destroy_input_callback(+Socket)
+<li><a accesskey="3" href="ipc-tcp-cbi-input_callback2.html#ipc-tcp-cbi-input_callback2">ipc-tcp-cbi-input_callback2</a>:          tcp_input_callback(*Socket, *Goal)
+<li><a accesskey="4" href="ipc-tcp-cbi-create_timer_callback3.html#ipc-tcp-cbi-create_timer_callback3">ipc-tcp-cbi-create_timer_callback3</a>:   tcp_create_timer_callback(+Timeval, +Goal, -TimerId)
+<li><a accesskey="5" href="ipc-tcp-cbi-destroy_timer_callback1.html#ipc-tcp-cbi-destroy_timer_callback1">ipc-tcp-cbi-destroy_timer_callback1</a>:  tcp_destroy_timer_callback(+TimerId)
+<li><a accesskey="6" href="ipc-tcp-cbi-timer_callback2.html#ipc-tcp-cbi-timer_callback2">ipc-tcp-cbi-timer_callback2</a>:          tcp_timer_callback(*Timerid, *Goal)
+<li><a accesskey="7" href="ipc-tcp-cbi-accept2.html#ipc-tcp-cbi-accept2">ipc-tcp-cbi-accept2</a>:                  tcp_accept(+PassiveSocket, -Socket)
+</ul>
+
+   <p>The tcp package supplies a callback interface, which is a way of
+arranging for a predicate to be called whenever some tcp event occurs. 
+This is especially useful for applications that can not wait at one of
+the <code>tcp_select</code> predicates.  A callback is a predicate that is called when
+some condition is met.  Callbacks are called when your process is in
+some wait state.  It uses the callback facility described in relation to
+the Quintus supplied C functions <code>QP_select()</code> and <code>QP_add_input()</code>.
+
+   <p>For example, applications that use the callbacks defined in the Quintus
+X Toolkit interface (<code>xif</code>) use callbacks extensively.  Before the
+callback interface to <code>library(tcp)</code> was provided, there was no way for a
+graphics program to both service its callbacks and service <code>library(tcp)</code>
+without polling.
+
+   <p>Although this interface may seem primitive, it has the advantage of
+being able to be used by separate subcomponents of a larger system since
+the requirement that the application wait at <code>tcp_select/[1,2]</code> is lifted.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-cfu.html#ipc-tcp-cfu">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-ups.html#ipc-tcp-ups">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp.html#ipc-tcp">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

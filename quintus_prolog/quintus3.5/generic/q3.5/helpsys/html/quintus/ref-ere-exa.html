@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">An Example</h4>
+
+   <p>Suppose you want a routine that is given a filename and a prompt
+string.  This routine is to open the file if it can; otherwise it
+is to prompt the user for a replacement name.  If the user enters
+an empty name, it is to fail.  Otherwise, it is to keep asking the
+user for a name until something works, and then it is to return
+the stream that was opened.  (There is no need to return the file
+name that was finally used.  We can get it from the stream.)
+
+<pre class="example">     :- use_module(library(prompt), [
+             prompted_line/2
+        ]).
+     
+     open_output(FileName, Prompt, Stream) :-
+             on_exception(Error,
+                 open(FileName, write, Stream),
+                 (   file_error(Error) -&gt;
+                     print_message(warning, Error),
+                     retry_open_output(Prompt, Stream)
+                 ;   raise_exception(Error)
+                 )).
+     
+     file_error(domain_error(open(_,_,_), 1, _, _, _)).
+     file_error(existence_error(open(_,_,_), 1, _, _, _)).
+     file_error(permission_error(open(_,_,_), _, _, _, _)).
+     
+     retry_open_output(Prompt, Stream) :-
+             prompted_line(Prompt, Chars),
+             atom_chars(FileName, Chars),
+             FileName \== '',
+             open_output(FileName, Prompt, Stream).
+     </pre>
+
+   <p>What this example does <em>not</em> catch is as interesting as what it does. 
+All instantiation errors, type errors, context errors, and range
+errors are re-raised, as they represent errors in the program.
+
+   <p>As the previous example shows, you generally do not want to catch <em>all</em>
+exceptions that a particular goal might raise.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-ecr.html#ref-ere-ecr">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-err.html#ref-ere-err">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere.html#ref-ere">Up</a>
+</ul>
+</div>
+   </body></html>
+

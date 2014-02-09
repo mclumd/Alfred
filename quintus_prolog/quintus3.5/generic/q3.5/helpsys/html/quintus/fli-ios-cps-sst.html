@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Defining a Stream Structure</h5>
+
+   <p>The first field of the user-defined stream structure must be of type
+<code>QP_stream</code>.  Other fields in the user-defined stream structure can
+be anything that is required to operate on the user-defined stream. 
+The Prolog input/output system passes a <code>QP_stream</code>
+pointer as the first argument to the bottom layer functions;
+casting this to the user-defined stream structure enables other fields in
+the user-defined stream to be accessed. 
+The example below declares a binary stream structure as:
+<pre class="example">     typedef struct
+         {
+             QP_stream qpinfo;
+             int fd;                 /* UNIX file descriptor */
+             int last_rdsize;        /* size of last returned record */
+             unsigned char buffer[Buffer_Size];      /* I/O buffer */
+         } BinStream;
+     
+     #define CoerceBinStream(x) ((BinStream *)(x))
+     </pre>
+
+   <p>The field <code>qpinfo</code> stores information about the binary stream known to
+the Prolog input/output system.  There is a <code>buffer</code> field in the structure
+since the I/O buffer is allocated by the user.   The macro
+<code>CoerceBinStream</code> is used to convert a pointer to <code>QP_stream</code> into a
+pointer to <code>BinStream</code>. We use this macro to convert the pointer
+so that fields in the <code>BinStream</code> structure can be accessed.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-cps-opn.html#fli-ios-cps-opn">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-cps-sum.html#fli-ios-cps-sum">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-cps.html#fli-ios-cps">Up</a>
+</ul>
+</div>
+   </body></html>
+

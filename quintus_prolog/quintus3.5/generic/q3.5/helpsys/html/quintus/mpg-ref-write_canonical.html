@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>write_canonical/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>write_canonical(</code><var>+Term</var><code>)</code>
+
+   <p><code>write_canonical(</code><var>+Stream, +Term</var><code>)</code>
+
+   <p>Writes <var>Term</var> to the current or specified output stream in
+standard syntax.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>a valid
+Prolog stream, which is open for output
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>the term to be written
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Equivalent to
+<code>write_term/[2,3]</code> with the options:
+<pre class="example">     [quoted(true),ignore_ops(true),numbervars(false),char_escapes(false)]
+     </pre>
+
+   <p>This predicate is provided so that <var>Term</var>, if written to a
+file, can be read back by <code>read/[1,2]</code> regardless of special
+characters in <var>Term</var> or prevailing operator declarations.
+
+   <p>Does not terminate its output with a full-stop,
+which is required by <code>read/[1,2]</code>.
+
+   <p>In general, one can only read (using <code>read/[1,2]</code>) a term written by
+<code>write_canonical/1</code> if the value of the <code>character_escapes</code> flag is the
+same when the term is read as when it was written.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>).
+
+<h4 class="subheading">Examples</h4>
+
+   <p>The following sequence will succeed:
+<pre class="example">     ...
+     open(FileName, write, StreamOut),
+     write_canonical(StreamOut, Term),
+     write(StreamOut, '.'),
+     nl(StreamOut),
+     close(StreamOut),
+     ...
+     open(FileName, read, StreamIn),
+     read(StreamIn, Term),
+     close(StreamIn),
+     ...
+     </pre>
+
+   <p>To contrast <code>write/[1,2]</code> and <code>write_canonical/[1,2]</code>:
+<pre class="example">     | ?- <kbd>write({'A' + '$VAR'(0) + [a]}).</kbd>
+     
+     {A+A+[a]}
+     
+     | ?- <kbd>write_canonical({'A' + '$VAR'(0) + [a]}).</kbd>
+     
+     {}(+(+('A','$VAR'(0)),.(a,[])))
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>write_term/[2,3]</code>,
+<code>write/[1,2]</code>,
+<code>writeq/[1,2]</code>,
+<code>read/[1,2]</code>
+
+   <a href="ref-iou-tou-cha.html#ref-iou-tou-cha">ref-iou-tou-cha</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-write_term.html#mpg-ref-write_term">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-write.html#mpg-ref-write">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

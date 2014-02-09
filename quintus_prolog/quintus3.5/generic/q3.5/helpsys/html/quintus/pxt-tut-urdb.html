@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Using The Resource Database</h4>
+
+   <p>As mentioned earlier, most widget resources can be specified through
+the resource database. According to some authors this is the preferred
+way of resource setting as opposed to hard wiring in the program. 
+During the initialization of the application the resource manager
+loads the resource database. Most end-users take advantage of that
+mechanism in customizing their applications without the need to
+recompile or know anything about programming. There are few places
+where the resource information may reside but the usual place is the
+file <code>.Xdefaults</code> in the user's home directory. Also, the application
+may keep a file of the application defaults settings in the directory:
+<code>/usr/lib/X11/app-defaults</code>, and the filename must match the
+application name.
+
+   <p>More on the syntax of specifying resource values can be found in any
+book on the X Toolkit. Following is another reimplementation of the
+first example with the widget resources and translations set through
+the resource database.
+
+<pre class="example">     button_pressed(_Widget,_Event,[Param]) :-
+             write(Param), nl.
+     
+     create_button :-
+             xtAppInitialize(App,'Test',[],Shell),
+             xmCreateLabel(Shell,button,[],Button),
+             xtManageChild(Button),
+             xtAppAddActions(App, [action(foo,button_pressed)]),
+             xtRealizeWidget(Shell),
+             xtAppMainLoop(App).
+     </pre>
+
+   <p>Entries in the resource file:
+
+<pre class="example">     Test.button.translations: #augment &lt;Btn1Down&gt;:foo("Hello Quintus")
+     Test.button.labelString:           "Press Here"
+     Test.button.height:                100
+     Test.button.width:                 100
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxt-tut-xlib.html#pxt-tut-xlib">Next</a>
+<li><a rel="previous" accesskey="p" href="pxt-tut-hnd.html#pxt-tut-hnd">Previous</a>
+<li><a rel="up" accesskey="u" href="pxt-tut.html#pxt-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

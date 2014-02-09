@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Using Structs with QPC</h3>
+
+   <p>The <code>structs</code> package is divided into two parts:
+     <ul>
+
+     <li>the part necessary to process foreign declarations
+<li>the part that defines all the <code>structs</code> predicates (other than the
+<code>foreign_type/2</code> declaration predicate). 
+</ul>
+
+   <p>The former file is not (usually) needed while your application is
+running, while the latter part certainly is.  By separating <code>structs</code>
+into two files, you may avoid including the <code>structs</code> declaration code
+in your application.
+
+   <p>In order to declare a foreign type or use foreign types in a
+foreign function declaration, you must first load the file
+<code>library(structs_decl)</code>.  Ordinarily, you would probably do this by
+including an <code>ensure_loaded/1</code> or <code>use_module/[1,2,3]</code> call in your file. 
+Unfortunately, this will not allow <code>qpc</code> to compile your file.  In order
+both to use your file in the development system, and to compile it with
+<code>qpc</code>, put the following line in your files that define foreign types or
+use foreign types in foreign function declarations:
+<pre class="example">         :- load_files(library(structs_decl),
+                       [when(compile_time),if(changed)]).
+     </pre>
+
+   <p>The <code>when(compile_time)</code> tells <code>qpc</code> to load <code>library(structs_decl)</code> into <code>qpc</code>, and not
+to record a dependency on it.  This means that <code>library(structs_decl)</code> will not be
+part of your statically linked application.
+
+   <p>If you accidentally use
+<pre class="example">          :- ensure_loaded(library(structs_decl)).
+     </pre>
+
+   <p>it will compile in the development system, but when you <code>qpc</code> the file you will
+get a warning.
+
+   <p>Files that just <em>use</em> <code>structs</code> are much simpler.  Just add this to those files:
+<pre class="example">         :- ensure_loaded(library(structs)).
+     </pre>
+
+   <p>There is another important complication.  If you have type declarations
+in one file (call it A) that use types declared in another file (B), you
+must declare (at least) a compile_time dependency.  So in file A, you'd
+need to have the line:
+<pre class="example">         :- load_files('B', [when(compile_time),if(changed)]).
+     </pre>
+
+   <p>This does not allow predicates in A to call predicates in B.  If you
+need this, too, you should instead include in file A the line:
+<pre class="example">         :- load_files('B', [when(both),if(changed)]).
+     </pre>
+
+   <p>You will also need to ensure that B is compiled to a QOF file before
+trying to <code>qpc</code> A.  This requires that if A is a module-file, so must B be. 
+If A is not a module-file, then B need not be a module-file (but it may
+be).  If you use the <code>make</code> utility to maintain object files, you
+might then want to add the following line to your <code>Makefile</code>:
+<pre class="example">         A.qof:      B.qof
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="str-cft.html#str-cft">Next</a>
+<li><a rel="previous" accesskey="p" href="str-fty.html#str-fty">Previous</a>
+<li><a rel="up" accesskey="u" href="str.html#str">Up</a>
+</ul>
+</div>
+   </body></html>
+

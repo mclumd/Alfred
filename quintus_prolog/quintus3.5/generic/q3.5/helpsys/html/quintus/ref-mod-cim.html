@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Debugging Code in a Module</h4>
+
+   <p>Having loaded a module to be debugged, you can trace through its execution
+in the normal way.  When the debugger stops at a port, the procedure being
+debugged is displayed with its module name as a prefix unless the module is
+<code>user</code>.
+
+   <p>The predicate <code>spy/1</code>  depends on the source module. 
+It can be useful to override this during debugging.  For example,
+<pre class="example">     | ?- <kbd>spy mod1:f/3.</kbd>
+     </pre>
+
+   <p>puts a spypoint on <code>f/3</code> in module <code>mod1</code>.
+
+   <p>It can also be useful to call directly a predicate that is private to its
+module in order to test that it is doing the right thing.  This can be done
+by prefixing the goal with its module; for example,
+<pre class="example">     | ?- <kbd>mod1:f(a,b,X).</kbd>
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-mle.html#ref-mod-mle">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-mpc.html#ref-mod-mpc">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,1397 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxl-ev-fld-motnot,  Next: pxl-ev-fld-propnot,  Prev: pxl-ev-fld-mapreq,  Up: pxl-ev-fld
+
+`motion_notify' Event
+.....................
+
+   The fields that can be unified in `motion_notify' events are:
+  1. `type(T)' unifies T with `motion_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window that receives the
+     event.
+
+  6. `root(R)' unifies R with the root Window that the event occurred
+     under.
+
+  7. `subwindow(S)' unifies S with the child ProXL window where the
+     event occurred or `none' if the event occurred in the window
+     itself.
+
+  8. `time(T)' unifies T with the server time, in milliseconds, when
+     the event occurred.
+
+  9. `x(X)' unifies X with the x pointer coordinate, relative to the
+     window origin, if the receiving window is on the same screen as
+     the root window. Otherwise it is 0.
+
+ 10. `y(Y)' unifies Y with the y pointer coordinate, relative to the
+     window origin, if the receiving window is on the same screen as
+     the root window. Otherwise it is 0.
+
+ 11. `position(X, Y)' unifies X and Y with the x and y pointer
+     coordinates, respectively, relative to the window origin, if the
+     receiving window is on the same screen as the root window.
+     Otherwise they are 0.
+
+ 12. `x_root(X)' unifies X with the x pointer coordinate, relative to
+     the root window origin, if the receiving window is on the same
+     screen as the root window, otherwise with 0.
+
+ 13. `y_root(Y)' unifies Y with the y pointer coordinate, relative to
+     the root window origin, if the receiving window is on the same
+     screen as the root window, otherwise with 0.
+
+ 14. `root_position(X, Y)' unifies X and Y with the pointer x and y
+     coordinates, respectively, relative to the root window origin, if
+     the receiving window is on the same screen as the root window.
+     Otherwise they are both 0.
+
+ 15. `state(BUTTONS, MODIFIERS)' unifies BUTTONS with a term of the
+     form:
+
+          buttons(B1, B2, B3, B4, B5)
+
+     where each argument of the term is unified with the state of the
+     corresponding pointer button just before the event, and has the
+     value `up' or `down'.
+
+     Unifies MODIFIERS with a term of the form:
+
+          modifiers(SHIFT, CONTROL, LOCK,
+                    MOD1, MOD2, MOD3, MOD4, MOD5)
+
+     where each argument of the term is unified with the state of the
+     corresponding modifier key just before the event, and has the value
+     `up' or `down'.
+
+ 16. `is_hint(H)' unifies H with one of
+    `normal'
+          If the event is a normal `motion_notify' event.
+
+    `hint'
+          If the event is a hint that the mouse pointer moved.  This
+          will always be the case if the event selected is
+          `motion_notify_hint'.
+
+ 17. `same_screen(B)' unifies B, a boolean value, with one of
+    `true'
+          If the mouse pointer is currently on the same screen as the
+          window receiving the event.
+
+    `false'
+          If the the mouse pointer and the window are on different
+          screens.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-propnot,  Next: pxl-ev-fld-repnot,  Prev: pxl-ev-fld-motnot,  Up: pxl-ev-fld
+
+`property_notify' Event
+.......................
+
+   The fields that can be unified in `property_notify' events are:
+  1. `type(T)' unifies T with `property_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window who owns the property
+     that changed.
+
+  6. `atom(A)' unifies A with the name of the property that changed.
+
+  7. `time(T)' unifies T with the server time, in milliseconds, when
+     the event occurred.
+
+  8. `state(S)' unifies S with one of
+    `new_value'
+          If the property has a new value.
+
+    `delete'
+          If the property has been deleted.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-repnot,  Next: pxl-ev-fld-reszreq,  Prev: pxl-ev-fld-propnot,  Up: pxl-ev-fld
+
+`reparent_notify' Event
+.......................
+
+   The fields that can be unified in `reparent_notify' events are:
+  1. `type(T)' unifies T with `reparent_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `event(E)' unifies E with the ProXL Window that receives the event.
+
+  6. `window(W)' unifies W with the ProXL Window that has been
+     reparented.
+
+  7. `parent(P)' unifies P with the ProXL Window that is the new parent.
+
+  8. `x(X)' unifies X with the x coordinate of the upper-left corner of
+     the window, relative to its new parent's origin.
+
+  9. `y(Y)' unifies Y with the y coordinate of the upper-left corner of
+     the window, relative to its new parent's origin.
+
+ 10. `position(X, Y)' unifies X and Y with the x and y coordinates,
+     respectively, of the upper-left corner of the window, relative to
+     its new parent's origin.
+
+ 11. `override_redirect(B)' unifies B with the boolean value of the
+     `override_redirect' attribute of the window, one of
+    `true'
+          If the client wants the window to be exempt from interception
+          of the request by the Window Manager.
+
+    `false'
+          If the Window Manager is allowed to modify the request.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-reszreq,  Next: pxl-ev-fld-selclr,  Prev: pxl-ev-fld-repnot,  Up: pxl-ev-fld
+
+`resize_request' Event
+......................
+
+   The fields that can be unified in `resize_request' events are:
+  1. `type(T)' unifies T with `resize_request'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window whose size is being
+     changed.
+
+  6. `width(W)' unifies W with the requested width in pixels of the
+     window.
+
+  7. `height(H)' unifies H with the requested height in pixels of the
+     window.
+
+  8. `size(W, H)' unifies W and H with the requested width and height
+     in pixels, respectively, of the window.
+
+
+File: quintus.info,  Node: pxl-ev-fld-selclr,  Next: pxl-ev-fld-selnot,  Prev: pxl-ev-fld-reszreq,  Up: pxl-ev-fld
+
+`selection_clear' Event
+.......................
+
+   The fields that can be unified in `selection_clear' events are:
+  1. `type(T)' unifies T with `selection_clear'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window that receives the
+     event, and is losing the selection.
+
+  6. `selection(S)' unifies S with the atom giving the name of the
+     selection.
+
+  7. `time(T)' unifies T with the last-changed time, in milliseconds,
+     recorded for the selection.
+
+
+File: quintus.info,  Node: pxl-ev-fld-selnot,  Next: pxl-ev-fld-selreq,  Prev: pxl-ev-fld-selclr,  Up: pxl-ev-fld
+
+`selection_notify' Event
+........................
+
+   The fields that can be unified in `selection_notify' events are:
+  1. `type(T)' unifies T with `selection_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `requester(R)' unifies R with the ProXL Window that requested the
+     selection.
+
+  6. `selection(S)' unifies S with the atom name of the requested
+     selection.
+
+  7. `target(T)' unifies T with the atom name for the data type that
+     the selection was converted to.
+
+  8. `property(P)' unifies P with the atom name of the Window property
+     where the converted selection was stored, or `none' if the
+     conversion could not be performed.
+
+  9. `time(T)' unifies T with the server time, in milliseconds, when
+     the selection was stored.
+
+
+File: quintus.info,  Node: pxl-ev-fld-selreq,  Next: pxl-ev-fld-visnot,  Prev: pxl-ev-fld-selnot,  Up: pxl-ev-fld
+
+`selection_request' Event
+.........................
+
+   The fields that can be unified in `selection_request' events are:
+  1. `type(T)' unifies T with `selection_request'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `owner(O)' unifies O with the ProXL Window that owns the selection.
+
+  6. `requester(R)' unifies R with the ProXL Window that requests the
+     selection.
+
+  7. `selection(S)' unifies S with the atom name of the selection
+     requested
+
+  8. `target(T)' unifies T with the atom name for the data type the
+     selection is requested in.
+
+  9. `property(P)' unifies P with the atom name of the property on
+     which the translated data should be stored.
+
+ 10. `time(T)' unifies T with the server time, in milliseconds, when
+     the selection was requested.
+
+
+File: quintus.info,  Node: pxl-ev-fld-visnot,  Next: pxl-ev-fld-def,  Prev: pxl-ev-fld-selreq,  Up: pxl-ev-fld
+
+`visibility_notify' Event
+.........................
+
+   The fields that can be unified in `visibility_notify' events are:
+  1. `type(T)' unifies T with `visibility_notify'.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+  5. `window(W)' unifies W with the ProXL Window that receives the
+     event.
+
+  6. `state(S)' unifies S with one of:
+    `unobscured'
+          If the window is viewable and completely unobscured.
+
+    `partially_obscured'
+          If the window is viewable and partially obscured.
+
+    `fully_obscured'
+          If the window is fully obscured by another window.
+
+
+
+File: quintus.info,  Node: pxl-ev-fld-def,  Prev: pxl-ev-fld-visnot,  Up: pxl-ev-fld
+
+`default' Event
+...............
+
+   ProXL allows the user to register a default callback that will be
+executed if there is no registered callback for the event received, or
+if all the registered callbacks failed. This is mostly a convenience
+feature for debugging purposes, as only a few of the event fields can
+be used.
+
+   The fields that can be unified in `default' events are:
+  1. `type(T)' unifies T with the actual event name.
+
+  2. `serial(S)' unifies S with the serial number of the last request
+     processed by the server.
+
+  3. `send_event(B)' unifies B, a boolean value, with one of
+    `true'
+          If the event was sent by another client.
+
+    `false'
+          If the event was sent by the server.
+
+  4. `display(D)' unifies D with the ProXL Display the event was read
+     from.
+
+
+File: quintus.info,  Node: pxl-ev-act,  Prev: pxl-ev-fld,  Up: pxl-ev
+
+Activating the callback mechanism
+---------------------------------
+
+* Menu:
+
+* pxl-ev-act-handle_events::            handle_events/[0,1,2,3]
+* pxl-ev-act-dispatch_event::           dispatch_event/[1,2,3]
+* pxl-ev-act-exit::                     Exit Variables
+
+   ProXL provides three mechanisms for handling events and activating
+callbacks.  First of all, events are handled whenever Prolog is waiting
+for input.  This includes while Prolog is reading input from the
+terminal, even under the Quintus User Interface.  The also includes
+while debugging.  Events are not handled while Prolog computations are
+under way (Prolog is not interruped to handle events).
+
+   In situations where the program needs to wait while events are being
+handled, the predicates `handle_events/N' are appropriate.  For those
+cases where more flexibility is required, there are many predicates
+described in *Note pxl-evf:: that will return events.  These can be
+used in conjunction with `dispatch_event/N', described below, to handle
+callbacks.  Alternatively, callbacks need not be used:  you can handle
+the event any way you like.
+
+
+File: quintus.info,  Node: pxl-ev-act-handle_events,  Next: pxl-ev-act-dispatch_event,  Up: pxl-ev-act
+
+`handle_events/[0,1,2,3]'
+.........................
+
+   To wait while callbacks are being handled, use one of:
+     handle_events
+     handle_events(-EXITCOND)
+     handle_events(-EXITCOND, +CONTEXT)
+
+   `handle_events' will enter a failure-driven loop listening for
+events on all open ProXL displays, and executing callbacks.  It exits
+when either any of the callbacks binds its "exit variable" to a value
+that unifies with EXITCOND, or when all ProXL Windows that have
+associated callbacks have been destroyed (in which case ExitCond will
+be unified with `none').
+
+   If the DISPLAYABLE is omitted, the default Display is used.
+
+   If EXITCOND is omitted, it defaults to `none'.
+
+   CONTEXT is passed to any callbacks that want it, and may be used to
+cause callbacks to behave differently in different contexts.  If
+omitted, it defaults to an anonymous variable.
+
+   For backward compatibility,
+     handle_events(+DISPLAYABLE, -EXITCOND, +CONTEXT)
+
+   is equivalent to `handle_events(ExitCond, Context)'.  The
+Displayable is ignored.
+
+
+File: quintus.info,  Node: pxl-ev-act-dispatch_event,  Next: pxl-ev-act-exit,  Prev: pxl-ev-act-handle_events,  Up: pxl-ev-act
+
+`dispatch_event/[1,2,3]'
+........................
+
+   To activate the callbacks registered for a single X event, use one
+of:
+     dispatch_event(+XEVENT)
+     dispatch_event(+XEVENT, -EXITCOND)
+     dispatch_event(+XEVENT, -EXITCOND, +CONTEXT)
+
+   `dispatch_event(+XEVENT)' will trigger any ProXL callbacks
+associated with the supplied XEVENT and succeed, even if there were no
+callbacks registered for the event.
+
+   `dispatch_event(+XEVENT, -EXITCOND)' triggers the ProXL callbacks
+associated with the supplied XEVENT and succeeds either if all the
+ProXL Windows associated with the event's Display were destroyed, or if
+any of the callbacks binds its "exit variable" to a value that unifies
+with EXITCOND.  If the callback uses contexts, `dispatch_event/2' will
+pass an anonymous variable.
+
+   `dispatch_event(+XEVENT, -EXITCOND, +CONTEXT)' is like
+`dispatch_event/2', but gives the CONTEXT argument to the callback, for
+further discrimination.
+
+
+File: quintus.info,  Node: pxl-ev-act-exit,  Prev: pxl-ev-act-dispatch_event,  Up: pxl-ev-act
+
+Exit Variables
+..............
+
+   The ProXL callback mechanism allows the user to specify an "exit
+variable" associated with each callback routine. After the successful
+execution of a callback routine, ProXL examines the exit variable, if
+it exists.
+
+   If the callback succeeded and the exit variable was bound by the
+callback to a value that unifies with the EXITCOND given,
+`handle_events/[1,2,3]', and `dispatch_event/[2,3]' succeed, with
+EXITCOND bound to the value given by the callback routine.
+
+
+File: quintus.info,  Node: pxl-prim,  Next: pxl-font,  Prev: pxl-dis,  Up: pxl
+
+Drawing Primitives
+==================
+
+* Menu:
+
+* pxl-prim-cca::                        Clearing and Copying Areas
+* pxl-prim-pnt::                        Drawing Points
+* pxl-prim-lin::                        Drawing Lines
+* pxl-prim-poly::                       Drawing and Filling Polygons
+* pxl-prim-rect::                       Drawing and Filling Rectangles
+* pxl-prim-arcs::                       Drawing and Filling Arcs
+* pxl-prim-ell::                        Drawing and Filling Ellipses and Circles
+* pxl-prim-txt::                        Drawing Text
+
+   This section documents ProXL's drawing primitives.
+
+   In most of these procedures, a graphics context may optionally be
+supplied.  If one is not, the current graphics attributes of the
+destination drawable determine the behavior of the drawing.
+
+
+File: quintus.info,  Node: pxl-prim-cca,  Next: pxl-prim-pnt,  Up: pxl-prim
+
+Clearing and Copying Areas
+--------------------------
+
+* Menu:
+
+* pxl-prim-cca-clear_area::             clear_area/[5,6]
+* pxl-prim-cca-clear_window::           clear_window/1
+* pxl-prim-cca-copy_area::              copy_area/[8,9]
+* pxl-prim-cca-copy_plane::             copy_plane/[9,10]
+
+
+File: quintus.info,  Node: pxl-prim-cca-clear_area,  Next: pxl-prim-cca-clear_window,  Up: pxl-prim-cca
+
+`clear_area/[5,6]'
+..................
+
+     clear_area(+WINDOW, +X, +Y,
+                     +WIDTH, +HEIGHT)
+     clear_area(+WINDOW, +X, +Y,
+                     +WIDTH, +HEIGHT, +EXPOSURES)
+
+   Clear the region of WINDOW defined by X, Y, WIDTH, and HEIGHT.
+EXPOSURES is either `true' or `false' (default `false') indicating
+whether exposure events should be generated.  The cleared portion of
+the window is filled with the window's background.
+
+
+File: quintus.info,  Node: pxl-prim-cca-clear_window,  Next: pxl-prim-cca-copy_area,  Prev: pxl-prim-cca-clear_area,  Up: pxl-prim-cca
+
+`clear_window/1'
+................
+
+     clear_window(+WINDOW)
+
+   Clear WINDOW.  The window is filled with its background.
+
+
+File: quintus.info,  Node: pxl-prim-cca-copy_area,  Next: pxl-prim-cca-copy_plane,  Prev: pxl-prim-cca-clear_window,  Up: pxl-prim-cca
+
+`copy_area/[8,9]'
+.................
+
+     copy_area(+DST, +DST_X, +DST_Y, +SRC, +SRC_X, +SRC_Y,
+               +WIDTH, +HEIGHT)
+     copy_area(+DST, +SRC, +GC, +DST_X, +DST_Y, +SRC_X, +SRC_Y,
+               +WIDTH, +HEIGHT)
+
+   Copy a region of SRC into DST.  SRC_X, SRC_Y, WIDTH, and HEIGHT
+define the part of SRC that is to be copied, and DST_X and DST_Y
+specify where in DST the are is to be copied.
+
+
+File: quintus.info,  Node: pxl-prim-cca-copy_plane,  Prev: pxl-prim-cca-copy_area,  Up: pxl-prim-cca
+
+`copy_plane/[9,10]'
+...................
+
+     copy_plane(+DST, +DST_X, +DST_Y, +SRC, +SRC_X, +SRC_Y,
+                +WIDTH, +HEIGHT, +PLANE)
+     copy_plane(+DST, +SRC, +GC, +DST_X, +DST_Y, +SRC_X, +SRC_Y,
+                +WIDTH, +HEIGHT, +PLANE)
+
+   Copy some bit planes from a region of SRC into DST.  SRC_X, SRC_Y,
+WIDTH, and HEIGHT define the part of SRC that is to be copied, and
+DST_X and DST_Y specify where in DST the are is to be copied.  PLANE is
+a bit mask (i.e. an integer) specifying which planes to copy.
+
+
+File: quintus.info,  Node: pxl-prim-pnt,  Next: pxl-prim-lin,  Prev: pxl-prim-cca,  Up: pxl-prim
+
+Drawing Points
+--------------
+
+* Menu:
+
+* pxl-prim-pnt-draw_point::             draw_point/[3,4]
+* pxl-prim-pnt-draw_points::            draw_points/[2,3]
+* pxl-prim-pnt-draw_points_relative::   draw_points_relative/[2,3]
+
+
+File: quintus.info,  Node: pxl-prim-pnt-draw_point,  Next: pxl-prim-pnt-draw_points,  Up: pxl-prim-pnt
+
+`draw_point/[3,4]'
+..................
+
+     draw_point(+DRAWABLE, +X, +Y)
+     draw_point(+DRAWABLE, +GC, +X, +Y)
+
+   Draw a single pixel point at X, Y in DRAWABLE.
+
+
+File: quintus.info,  Node: pxl-prim-pnt-draw_points,  Next: pxl-prim-pnt-draw_points_relative,  Prev: pxl-prim-pnt-draw_point,  Up: pxl-prim-pnt
+
+`draw_points/[2,3]'
+...................
+
+     draw_points(+DRAWABLE, +POINTS)
+     draw_points(+DRAWABLE, +GC, +POINTS)
+
+   Draw single pixel points in DRAWABLE.  POINTS is a list of
+`point(X,Y)' terms, each specifying the location of one point.
+
+
+File: quintus.info,  Node: pxl-prim-pnt-draw_points_relative,  Prev: pxl-prim-pnt-draw_points,  Up: pxl-prim-pnt
+
+`draw_points_relative/[2,3]'
+............................
+
+     draw_points_relative(+DRAWABLE, +POINTS)
+     draw_points_relative(+DRAWABLE, +GC, +POINTS)
+
+   Draw single pixel points in DRAWABLE.  POINTS is a list of
+`point(X,Y)' terms, each specifying an x and y offset from the previous
+point.  The first point is absolute.
+
+
+File: quintus.info,  Node: pxl-prim-lin,  Next: pxl-prim-poly,  Prev: pxl-prim-pnt,  Up: pxl-prim
+
+Drawing Lines
+-------------
+
+* Menu:
+
+* pxl-prim-lin-draw_line::              draw_line/[5,6]
+* pxl-prim-lin-draw_lines::             draw_lines/[2,3]
+* pxl-prim-lin-draw_lines_relative::    draw_lines_relative/[2,3]
+* pxl-prim-lin-draw_segments::          draw_segments/[2,3]
+
+
+File: quintus.info,  Node: pxl-prim-lin-draw_line,  Next: pxl-prim-lin-draw_lines,  Up: pxl-prim-lin
+
+`draw_line/[5,6]'
+.................
+
+     draw_line(+DRAWABLE, +X1, +Y1, +X2, +Y2)
+     draw_line(+DRAWABLE, +GC, +X1, +Y1, +X2, +Y2)
+
+   Draw a line in DRAWABLE from (X1,Y1) to (X2,Y2).
+
+
+File: quintus.info,  Node: pxl-prim-lin-draw_lines,  Next: pxl-prim-lin-draw_lines_relative,  Prev: pxl-prim-lin-draw_line,  Up: pxl-prim-lin
+
+`draw_lines/[2,3]'
+..................
+
+     draw_lines(+DRAWABLE, +POINTS)
+     draw_lines(+DRAWABLE, +GC, +POINTS)
+
+   Draw connected lines in DRAWABLE.  POINTS is a list of `point(X,Y)'
+terms, each specifying the location of one vertex.
+
+
+File: quintus.info,  Node: pxl-prim-lin-draw_lines_relative,  Next: pxl-prim-lin-draw_segments,  Prev: pxl-prim-lin-draw_lines,  Up: pxl-prim-lin
+
+`draw_lines_relative/[2,3]'
+...........................
+
+     draw_lines_relative(+DRAWABLE, +POINTS)
+     draw_lines_relative(+DRAWABLE, +GC, +POINTS)
+
+   Draw connected lines in DRAWABLE.  POINTS is a list of `point(X,Y)'
+terms, each specifying an x and y offset from the previous point.  The
+first point is absolute.
+
+
+File: quintus.info,  Node: pxl-prim-lin-draw_segments,  Prev: pxl-prim-lin-draw_lines_relative,  Up: pxl-prim-lin
+
+`draw_segments/[2,3]'
+.....................
+
+     draw_segments(+DRAWABLE, +SEGMENTS)
+     draw_segments(+DRAWABLE, +GC, +SEGMENTS)
+
+   Draw disconnected line segments in DRAWABLE.  SEGMENTS is a list of
+`segment(X1,Y1,X2,Y2)' terms.  Lines are drawn from each X1, Y1 to each
+corresponding X2, Y2.
+
+
+File: quintus.info,  Node: pxl-prim-poly,  Next: pxl-prim-rect,  Prev: pxl-prim-lin,  Up: pxl-prim
+
+Drawing and Filling Polygons
+----------------------------
+
+* Menu:
+
+* pxl-prim-poly-draw_polygon::          draw_polygon/[2,3]
+* pxl-prim-poly-draw_polygon_relative:: draw_polygon_relative/[2,3]
+* pxl-prim-poly-fill_polygon::          fill_polygon/[3,4]
+* pxl-prim-poly-fill_polygon_relative:: fill_polygon_relative/[3,4]
+
+
+File: quintus.info,  Node: pxl-prim-poly-draw_polygon,  Next: pxl-prim-poly-draw_polygon_relative,  Up: pxl-prim-poly
+
+`draw_polygon/[2,3]'
+....................
+
+     draw_polygon(+DRAWABLE, +POINTS)
+     draw_polygon(+DRAWABLE, +GC, +POINTS)
+
+   Draw a polygon in DRAWABLE.  POINTS is a list of `point(X,Y)' terms,
+each specifying the location of one vertex of the polygon.  This
+procedure does not correspond directly to any Xlib function.
+
+
+File: quintus.info,  Node: pxl-prim-poly-draw_polygon_relative,  Next: pxl-prim-poly-fill_polygon,  Prev: pxl-prim-poly-draw_polygon,  Up: pxl-prim-poly
+
+`draw_polygon_relative/[2,3]'
+.............................
+
+     draw_polygon_relative(+DRAWABLE, +POINTS)
+     draw_polygon_relative(+DRAWABLE, +GC, +POINTS)
+
+   Draw a polygon in DRAWABLE.  POINTS is a list of `point(X,Y)' terms,
+each specifying the location of one vertex of the polygon relative to
+the previous point.  This procedure does not correspond directly to any
+Xlib function.
+
+
+File: quintus.info,  Node: pxl-prim-poly-fill_polygon,  Next: pxl-prim-poly-fill_polygon_relative,  Prev: pxl-prim-poly-draw_polygon_relative,  Up: pxl-prim-poly
+
+`fill_polygon/[3,4]'
+....................
+
+     fill_polygon(+DRAWABLE, +POINTS, +SHAPE)
+     fill_polygon(+DRAWABLE, +GC, +POINTS, +SHAPE)
+
+   Draw a filled polygon in DRAWABLE.  POINTS is a list of `point(X,Y)'
+terms, each specifying the location of one vertex of the polygon.
+SHAPE is either `complex', meaning the polygon may contain intersecting
+edges, `nonconvex', meaning no edges intersect, or `convex', meaning
+that no edges intersect, and further, the polygon is wholly convex.
+
+
+File: quintus.info,  Node: pxl-prim-poly-fill_polygon_relative,  Prev: pxl-prim-poly-fill_polygon,  Up: pxl-prim-poly
+
+`fill_polygon_relative/[3,4]'
+.............................
+
+     fill_polygon_relative(+DRAWABLE, +POINTS, +SHAPE)
+     fill_polygon_relative(+DRAWABLE, +GC, +POINTS, +SHAPE)
+
+   Draw a filled polygon.  POINTS is a list of `point(X,Y)' terms, each
+specifying the location of one vertex of the polygon relative to the
+previous point.  SHAPE is either `complex', meaning the polygon may
+contain intersecting edges, `nonconvex', meaning no edges intersect, or
+`convex', meaning that no edges intersect, and further, the polygon is
+wholly convex.
+
+
+File: quintus.info,  Node: pxl-prim-rect,  Next: pxl-prim-arcs,  Prev: pxl-prim-poly,  Up: pxl-prim
+
+Drawing and Filling Rectangles
+------------------------------
+
+* Menu:
+
+* pxl-prim-rect-draw_rectangle::        draw_rectangle/[5,6]
+* pxl-prim-rect-draw_rectangles::       draw_rectangles/[2,3]
+* pxl-prim-rect-fill_rectangle::        fill_rectangle/[5,6]
+* pxl-prim-rect-fill_rectangles::       fill_rectangles/[2,3]
+
+
+File: quintus.info,  Node: pxl-prim-rect-draw_rectangle,  Next: pxl-prim-rect-draw_rectangles,  Up: pxl-prim-rect
+
+`draw_rectangle/[5,6]'
+......................
+
+     draw_rectangle(+DRAWABLE, +X, +Y, +WIDTH, +HEIGHT)
+     draw_rectangle(+DRAWABLE, +GC, +X, +Y, +WIDTH, +HEIGHT)
+
+   Draw a rectangle in DRAWABLE.  The upper left corner of the rectangle
+is at X, Y, and its size is WIDTH x HEIGHT.
+
+
+File: quintus.info,  Node: pxl-prim-rect-draw_rectangles,  Next: pxl-prim-rect-fill_rectangle,  Prev: pxl-prim-rect-draw_rectangle,  Up: pxl-prim-rect
+
+`draw_rectangles/[2,3]'
+.......................
+
+     draw_rectangles(+DRAWABLE, +RECTANGLES)
+     draw_rectangles(+DRAWABLE, +GC, +RECTANGLES)
+
+   Draw rectangles in DRAWABLE.  RECTANGLES is a list of
+`rectangle(X,Y,WIDTH,HEIGHT)' terms specifying the position and size of
+each rectangle.
+
+
+File: quintus.info,  Node: pxl-prim-rect-fill_rectangle,  Next: pxl-prim-rect-fill_rectangles,  Prev: pxl-prim-rect-draw_rectangles,  Up: pxl-prim-rect
+
+`fill_rectangle/[5,6]'
+......................
+
+     fill_rectangle(+DRAWABLE, +X, +Y, +WIDTH, +HEIGHT)
+     fill_rectangle(+DRAWABLE, +GC, +X, +Y, +WIDTH, +HEIGHT)
+
+   Draw a filled rectangle in DRAWABLE.  The upper left corner of the
+rectangle is at X, Y, and its size is WIDTH x HEIGHT.
+
+
+File: quintus.info,  Node: pxl-prim-rect-fill_rectangles,  Prev: pxl-prim-rect-fill_rectangle,  Up: pxl-prim-rect
+
+`fill_rectangles/[2,3]'
+.......................
+
+     fill_rectangles(+DRAWABLE, +RECTANGLES)
+     fill_rectangles(+DRAWABLE, +GC, +RECTANGLES)
+
+   Draw filled rectangles in DRAWABLE.  RECTANGLES is a list of
+`rectangle(X,Y,WIDTH,HEIGHT)' terms specifying the position and size of
+each rectangle.
+
+
+File: quintus.info,  Node: pxl-prim-arcs,  Next: pxl-prim-ell,  Prev: pxl-prim-rect,  Up: pxl-prim
+
+Drawing and Filling Arcs
+------------------------
+
+* Menu:
+
+* pxl-prim-arcs-draw_arc::              draw_arc/[7,8]
+* pxl-prim-arcs-draw_arcs::             draw_arcs/[2,3]
+* pxl-prim-arcs-fill_arc::              fill_arc/[7,8]
+* pxl-prim-arcs-fill_arcs::             fill_arcs/[2,3]
+
+
+File: quintus.info,  Node: pxl-prim-arcs-draw_arc,  Next: pxl-prim-arcs-draw_arcs,  Up: pxl-prim-arcs
+
+`draw_arc/[7,8]'
+................
+
+     draw_arc(+DRAWABLE, +X, +Y, +WIDTH, +HEIGHT, +THETA1, +THETA2)
+     draw_arc(+DRAWABLE, +GC, +X, +Y, +WIDTH, +HEIGHT, +THETA1, +THETA2)
+
+   Draw an arc in DRAWABLE.  The arc is specified in terms of the
+rectangle that would enclose the ellipse of which this arec is a part,
+and the angles, in degrees from the center right of the ellipse, to draw
+between.  X, Y, WIDTH, and HEIGHT specify the bounding rectangle,
+THETA1 specifies the starting angle, and THETA2 specifies the ending
+angle.  Angles may be integers or floats.
+
+
+File: quintus.info,  Node: pxl-prim-arcs-draw_arcs,  Next: pxl-prim-arcs-fill_arc,  Prev: pxl-prim-arcs-draw_arc,  Up: pxl-prim-arcs
+
+`draw_arcs/[2,3]'
+.................
+
+     draw_arcs(+DRAWABLE, +ARCS)
+     draw_arcs(+DRAWABLE, +GC, +ARCS)
+
+   Draw arcs in DRAWABLE.  Each arc is specified in terms of the
+rectangle that would enclose the ellipse of which this arec is a part,
+and the angles, in degrees from the center right of the ellipse, to draw
+between.  ARCS is a list of `arc(X,Y,WIDTH,HEIGHT,THETA1,THETA2)'
+terms, where X, Y, WIDTH, and HEIGHT specify the bounding rectangle,
+Theta1 specifies the starting angle, and Theta2 specifies the ending
+angle.  Angles may be integers or floats.
+
+
+File: quintus.info,  Node: pxl-prim-arcs-fill_arc,  Next: pxl-prim-arcs-fill_arcs,  Prev: pxl-prim-arcs-draw_arcs,  Up: pxl-prim-arcs
+
+`fill_arc/[7,8]'
+................
+
+     fill_arc(+DRAWABLE, +X, +Y, +WIDTH, +HEIGHT, +THETA1, +THETA2)
+     fill_arc(+DRAWABLE, +GC, +X, +Y, +WIDTH, +HEIGHT, +THETA1, +THETA2)
+
+   Draw a filled arc in DRAWABLE.  The arc is specified in terms of the
+rectangle that would enclose the ellipse of which this arec is a part,
+and the angles, in degrees from the center right of the ellipse, to draw
+between.  X, Y, WIDTH, and HEIGHT specify the bounding rectangle,
+THETA1 specifies the starting angle, and THETA2 specifies the ending
+angle.  Angles may be integers or floats.
+
+
+File: quintus.info,  Node: pxl-prim-arcs-fill_arcs,  Prev: pxl-prim-arcs-fill_arc,  Up: pxl-prim-arcs
+
+`fill_arcs/[2,3]'
+.................
+
+     fill_arcs(+DRAWABLE, +ARCS)
+     fill_arcs(+DRAWABLE, +GC, +ARCS)
+
+   Draw filled arcs in DRAWABLE.  Each arc is specified in terms of the
+rectangle that would enclose the ellipse of which this arec is a part,
+and the angles, in degrees from the center right of the ellipse, to draw
+between.  ARCS is a list of `arc(X,Y,WIDTH,HEIGHT,THETA1,THETA2)'
+terms, where X, Y, WIDTH, and HEIGHT specify the bounding rectangle,
+Theta1 specifies the starting angle, and Theta2 specifies the ending
+angle.  Angles may be integers or floats.
+
+
+File: quintus.info,  Node: pxl-prim-ell,  Next: pxl-prim-txt,  Prev: pxl-prim-arcs,  Up: pxl-prim
+
+Drawing and Filling Ellipses and Circles
+----------------------------------------
+
+* Menu:
+
+* pxl-prim-ell-draw_ellipse::           draw_ellipse/[5,6]
+* pxl-prim-ell-draw_ellipses::          draw_ellipses/[2,3]
+* pxl-prim-ell-fill_ellipse::           fill_ellipse/[5,6]
+* pxl-prim-ell-fill_ellipses::          fill_ellipses/[2,3]
+
+   An ellipses is specified by its bounding rectangle, much the same as
+the primitives for drawing and filling rectangles in *Note
+pxl-prim-rect:: above.  To draw or fill a circle, just specify a square
+bounding rectangle.
+
+
+File: quintus.info,  Node: pxl-prim-ell-draw_ellipse,  Next: pxl-prim-ell-draw_ellipses,  Up: pxl-prim-ell
+
+`draw_ellipse/[5,6]'
+....................
+
+     draw_ellipse(+DRAWABLE, +X, +Y, +WIDTH, +HEIGHT)
+     draw_ellipse(+DRAWABLE, +GC, +X, +Y, +WIDTH, +HEIGHT)
+
+   Draw an ellipse in DRAWABLE.  X, Y, WIDTH, and HEIGHT specify the
+rectangle that would enclose the ellipse.
+
+
+File: quintus.info,  Node: pxl-prim-ell-draw_ellipses,  Next: pxl-prim-ell-fill_ellipse,  Prev: pxl-prim-ell-draw_ellipse,  Up: pxl-prim-ell
+
+`draw_ellipses/[2,3]'
+.....................
+
+     draw_ellipses(+DRAWABLE, +RECTANGLES)
+     draw_ellipses(+DRAWABLE, +GC, +RECTANGLES)
+
+   Draw ellipses in DRAWABLE.  RECTANGLES is a list of
+`rectangle(X,Y,WIDTH,HEIGHT)' terms, each specifying the rectangle that
+would enclose an ellipse.
+
+
+File: quintus.info,  Node: pxl-prim-ell-fill_ellipse,  Next: pxl-prim-ell-fill_ellipses,  Prev: pxl-prim-ell-draw_ellipses,  Up: pxl-prim-ell
+
+`fill_ellipse/[5,6]'
+....................
+
+     fill_ellipse(+DRAWABLE, +X, +Y, +WIDTH, +HEIGHT)
+     fill_ellipse(+DRAWABLE, +GC, +X, +Y, +WIDTH, +HEIGHT)
+
+   Draw a filled ellipse in DRAWABLE.  X, Y, WIDTH, and HEIGHT specify
+the rectangle that would enclose the ellipse.
+
+
+File: quintus.info,  Node: pxl-prim-ell-fill_ellipses,  Prev: pxl-prim-ell-fill_ellipse,  Up: pxl-prim-ell
+
+`fill_ellipses/[2,3]'
+.....................
+
+     fill_ellipses(+DRAWABLE, +RECTANGLES)
+     fill_ellipses(+DRAWABLE, +GC, +RECTANGLES)
+
+   Draw filled ellipses in DRAWABLE.  RECTANGLES is a list of
+`rectangle(X,Y,WIDTH,HEIGHT)' terms, each specifying the rectangle that
+would enclose an ellipse.
+
+
+File: quintus.info,  Node: pxl-prim-txt,  Prev: pxl-prim-ell,  Up: pxl-prim
+
+Drawing Text
+------------
+
+* Menu:
+
+* pxl-prim-txt-draw_string::            draw_string/[4,5]
+* pxl-prim-txt-draw_image_string::      draw_image_string/[4,5]
+* pxl-prim-txt-draw_text::              draw_text/[4,5]
+
+   This section describes the commands for drawing text strings.  The
+commands for determining how much space will be occupied by a given
+string are documented in *Note pxl-font-siz::.  Fonts in general are
+documented in *Note pxl-font::.
+
+   In all of these primitives, the string to be drawn may be either a
+Prolog atom or a "chars", that is a list of character codes.  This
+later form is quite handy for code that builds up strings to be drawn
+by appending together strings, since it is not necessary to turn them
+into atoms in order to draw them.
+
+
+File: quintus.info,  Node: pxl-prim-txt-draw_string,  Next: pxl-prim-txt-draw_image_string,  Up: pxl-prim-txt
+
+`draw_string/[4,5]'
+...................
+
+     draw_string(+DRAWABLE, +X, +Y, +STRING)
+     draw_string(+DRAWABLE, +GC, +X, +Y, +STRING)
+
+   Draw a text string in DRAWABLE.  STRING is drawn with the origin
+point of the first character at postion X, Y.  STRING may be either a
+Prolog atom, or a list of character codes.
+
+   Note that this operation affects only pixels in DRAWABLE where the
+characters _are_; the "background" part of the characters does not
+affect DRAWABLE.  If you want the entire area of DRAWABLE occupied by
+string to be effected, use `draw_image_string'.
+
+
+File: quintus.info,  Node: pxl-prim-txt-draw_image_string,  Next: pxl-prim-txt-draw_text,  Prev: pxl-prim-txt-draw_string,  Up: pxl-prim-txt
+
+`draw_image_string/[4,5]'
+.........................
+
+     draw_image_string(+DRAWABLE, +X, +Y, +STRING)
+     draw_image_string(+DRAWABLE, +GC, +X, +Y, +STRING)
+
+   Draw a text string in DRAWABLE.  STRING is drawn with the origin
+point of the first character at postion X, Y.  STRING may be either a
+Prolog atom, or a list of character codes.  This drawing operation sets
+the background bits of each character to DRAWABLE's background color
+(or GC's background color, if GC is specified).
+
+
+File: quintus.info,  Node: pxl-prim-txt-draw_text,  Prev: pxl-prim-txt-draw_image_string,  Up: pxl-prim-txt
+
+`draw_text/[4,5]'
+.................
+
+     draw_text(+DRAWABLE, +X, +Y, +TEXTITEMS)
+     draw_text(+DRAWABLE, +GC, +X, +Y, +TEXTITEMS)
+
+   Draw strings in DRAWABLE, with mixed fonts and flexible inter-string
+spacing.  TEXTITEMS is a list of `textitem(STRING,DELTA)' and
+`textitem(STRING,DELTA,FONT)' terms, where STRING is the string (Prolog
+atom or list of character codes) to be printed, DELTA is the number of
+extra pixels to skip over horizontally before drawing string, and, for
+`textitem/3' terms, FONT is the font in which to draw String and any
+following strings in TEXTITEMS until Font is changed again.  Text
+printed after the call to `draw_text' will not be affected by the call.
+
+   Note that this will not print text on multiple lines.  This is
+equivalent to doing several calls to `draw_string', possibly with calls
+to `put_graphics_attributes/3' between, but more efficient.  There is no
+similar primitive that is equivalent to multiple calls to
+`draw_image_string'.
+
+
+File: quintus.info,  Node: pxl-graf,  Next: pxl-xlib,  Prev: pxl-font,  Up: pxl
+
+Graphics Attributes and Graphics Contexts
+=========================================
+
+* Menu:
+
+* pxl-graf-graf::                       Graphics Attributes
+* pxl-graf-find::                       Finding and Changing Graphics Attributes
+* pxl-graf-cre::                        Creating and Destroying GCs
+* pxl-graf-cgc::                        Checking GC validity
+
+   The X window system requires one to set up many parameters to
+drawing commands before using the drawing primitives.  For example, the
+command to draw a line in X does not have a way to specify the width of
+the line, or whether it will be dashed.  These parameters must be
+specified ahead of time.  Fortunately, there are defaults for all of
+these parameters, as discussed below, so you only need to worry about
+the parameters whose defaults don't suit you.
+
+   In ProXL, there are two ways to do this.  You may specify the drawing
+parameters for the object you are drawing into, or you may specify them
+in a separate data structure, called a "graphics context", or "gc", and
+give the gc as an argument to the drawing commands.  You may do
+whichever is more convenient at the time.  You may mix these methods as
+you like.
+
+
+File: quintus.info,  Node: pxl-graf-graf,  Next: pxl-graf-find,  Up: pxl-graf
+
+Graphics Attributes
+-------------------
+
+   Much of the behavior of the drawing commands described in *Note
+pxl-prim:: is determined by the graphics attributes of the destination
+drawable (or of the gc, if one is supplied as argument).  Following is
+a list of the graphics attributes and their meaning.
+
+`function(V)'
+     How source and destination are combined.  Possible values are
+     `clear', `and', `and_reverse', `copy', `and_inverted', `noop',
+     `xor', `or', `nor', `equiv', `invert', `or_reverse',
+     `copy_inverted', `or_inverted', `nand', and `set'. Default is
+     `copy'.
+
+`plane_mask(V)'
+     A bitmask specifying which planes of destination are affected by
+     operations.  Default is all planes (i.e., -1).
+
+`foreground(V)'
+     Foreground pixel value.  Default is the pixel value for black.
+
+`background(V)'
+     Background pixel value.  Default is the pixel value for white.
+
+`line_width(V)'
+     Width of drawn lines, in pixels.  A value of 0 means "thin" lines.
+     These may be drawn somewhat faster than width 1 lines.  Default
+     is 0.
+
+`line_style(V)'
+     How (and if) lines are to be dashed.  Possible values are `solid',
+     `double_dash', or `on_off_dash'.  Default is `solid'.
+
+`cap_style(V)'
+     How wide lines are to be capped.  Possible values are `not_last',
+     `butt', `round', and `projecting'.  Default is `butt'.
+
+`join_style(V)'
+     How wide connecting lines are to be joined.  Possible values are
+     `miter', `round', and `bevel'.  Default is `miter'.
+
+`fill_style(V)'
+     How filling is to be done.  Possible values are `solid', `tiled',
+     `opaque_stippled', and `stippled'.  Default is `solid'.
+
+`fill_rule(V)'
+     How to decide which parts of a figure are to be filled when the
+     lines specifying the figure cross.  Possible values are
+     `odd_even_rule' or `winding_rule'.  Default is `odd_even_rule'.
+
+`arc_mode(V)'
+     How arcs are to be filled.  Possible values are `pie_slice' or
+     `chord'.  Default is `pie_slice'.
+
+`tile(V)'
+     The pixmap for tiling operations.  This is only used if
+     `file_style(tiled)' is selected.  Default is a pixmap of
+     unspecified size filled with the foreground color.
+
+`stipple(V)'
+     A 1 plane pixmap (a bitmap) for stipple operations.  This is only
+     used if `file_style(opaque_stippled)' or `file_style(stippled)' is
+     selected.  The default is a bitmap of unspecified size filled with
+     0.
+
+`ts_x_origin(V)'
+     X offset for tile and stipple operations.  Default is 0.
+
+`ts_y_origin(V)'
+     Y offset for tile and stipple operations.  Default is 0.
+
+`ts_origin(X, Y)'
+     Same as `ts_x_origin(X), ts_y_origin(Y)'.
+
+`font(V)'
+     The font used for text display.  The default is implementation
+     dependent.
+
+`subwindow_mode(V)'
+     Should drawing operations affect mapped subwindows of a windows
+     being drawn into?  Possible values are `clip_by_children' and
+     `include_inferiors'.  Default is `clip_by_children'.
+
+`graphics_exposures(V)'
+     Should graphics exposure events be generated when copying from a
+     window?  Possible values are `true' and `false'.  Default is
+     `true'.
+
+`clip_x_origin(V)'
+     X origin for clipping.  Default is 0.
+
+`clip_y_origin(V)'
+     Y origin for clipping.  Default is 0.
+
+`clip_origin(X, Y)'
+     Same as `clip_x_origin(X), clip_y_origin(Y)'.
+
+`clip(V)'
+     Specifies how to restrict drawing operations to the destination.
+     V may be `none', a bitmap, or a list of `rectangle(X, Y, Width,
+     Height)' terms.  If it is a bitmap, only pixels in the destination
+     corresponding to 1 bits in the bitmap will be affected by drawing.
+     If a list of `rectangle/4' terms, only pixels in the destination
+     that fall within one of the rectangles will be affected.  Default
+     is `none'.
+
+`clip(LIST, ORDER)'
+     same as `clip(List)', except that LIST must be a list of
+     `rectangle(X, Y, Width, Height)' terms, and further, ORDER
+     describes the order of the terms in the list.  Possible values are
+     `unsorted', `y_sorted', `y_x_sorted', and `y_x_banded'. The
+     default is that this attribute doesn't apply, since by default
+     there is no clipping.
+
+`dashes(V)'
+     A list of alternating integer on and off lengths for dashed lines.
+     This attribute is only used when `line_style(double_dash)' or
+     `line_style(on_off_dash)' are selected.  Default value is `[4, 4]'
+     (which is the same as `[4]' since the list is used cyclically).
+
+`dash_offset(V)'
+     An integer specifying where in the `dashes(V)' list to begin
+     drawing.  Default is 0.
+
+   For more detailed information on particular attributes, see any good
+book on programming the X Window System.  There are several good
+references on Xlib, the C interface to the X Window System.
+
+   If you are still confused about graphics attributes, the easiest, and
+often most effective, way to understand them is to experiment.  ProXL
+makes this very easy.  Simply open a window and use the drawing
+commands to draw into it.  Then experiment with changing graphics
+attributes until you get the effect you want.
+
+
+File: quintus.info,  Node: pxl-graf-find,  Next: pxl-graf-cre,  Prev: pxl-graf-graf,  Up: pxl-graf
+
+Finding and Changing Graphics Attributes
+----------------------------------------
+
+* Menu:
+
+* pxl-graf-find-get_graphics_attributes::get_graphics_attributes/2
+* pxl-graf-find-put_graphics_attributes::put_graphics_attributes/2
+* pxl-graf-find-exa::                   Example
+
+   These primitives take a "gcable" as argument, and return or change
+the graphics attributes of that gcable.  A gcable is either a window, a
+pixmap, or a gc.  By specifying a window or pixmap in calls to these
+primitives, you are finding or changing the behavior of drawing
+commands on that window or pixmap when no gc is specified in the call.
+
+
+File: quintus.info,  Node: pxl-graf-find-get_graphics_attributes,  Next: pxl-graf-find-put_graphics_attributes,  Up: pxl-graf-find
+
+`get_graphics_attributes/2'
+...........................
+
+     get_graphics_attributes(+GCABLE, ?ATTRIBS)
+
+   GCABLE is a gcable, and ATTRIBS is a list of (some of) its current
+Attribute settings.
+
+
+File: quintus.info,  Node: pxl-graf-find-put_graphics_attributes,  Next: pxl-graf-find-exa,  Prev: pxl-graf-find-get_graphics_attributes,  Up: pxl-graf-find
+
+`put_graphics_attributes/2'
+...........................
+
+     put_graphics_attributes(+GCABLE, +ATTRIBS)
+
+   Gc is a gc, and ATTRIBS is a list of new Attribute settings.  It is
+important that the user _not_ change a default GC.  All valid gcs
+except for default gcs have the next field set to NULL (0).
+
+
+File: quintus.info,  Node: pxl-graf-find-exa,  Prev: pxl-graf-find-put_graphics_attributes,  Up: pxl-graf-find
+
+Example
+.......
+
+   This is very important, so it's worth taking a moment to give an
+example.  If you have a window that you wish to drawing 5-pixel-wide
+solid (not dashed) lines in, and you want the ends of the line segments
+to be rounded, you might do:
+     graphics_attributes(Window, [line_width(5), cap_style(round)])
+
+   That's all there is to it.  You don't need to specify the
+`line_style(solid)' attribute, because this is the default.  You may
+count on the defaults; they are often what you want anyway.  It is
+perfectly possible to create a window and start drawing into it without
+setting any graphics attributes, because the defaults may be good
+enough.
+
+
+File: quintus.info,  Node: pxl-graf-cre,  Next: pxl-graf-cgc,  Prev: pxl-graf-find,  Up: pxl-graf
+
+Creating and Destroying GCs
+---------------------------
+
+* Menu:
+
+* pxl-graf-cre-create_gc::              create_gc/[2,3]
+* pxl-graf-cre-release_gc::             release_gc/1
+* pxl-graf-cre-use::                    Using Gcs
+* pxl-graf-cre-shr::                    Sharing and Cloning of Gcs
+
+   The following procedures may be used to create and destroy GCs.
+
+
+File: quintus.info,  Node: pxl-graf-cre-create_gc,  Next: pxl-graf-cre-release_gc,  Up: pxl-graf-cre
+
+`create_gc/[2,3]'
+.................
+
+     create_gc(-GC, +ATTRIBS)
+     create_gc(-GC, +DRAWABLE, +ATTRIBS)
+
+   GC is a newly-created gc with attributes specified by ATTRIBS.
+DRAWABLE is a drawable, which indicates things like the appropriate
+depth; DRAWABLE defaults to the root window of the default display.
+
+
+File: quintus.info,  Node: pxl-graf-cre-release_gc,  Next: pxl-graf-cre-use,  Prev: pxl-graf-cre-create_gc,  Up: pxl-graf-cre
+
+`release_gc/1'
+..............
+
+     release_gc(+GC)
+
+   Inform ProXL that GC is no longer being "held onto" by the
+programmer.  As soon as no drawables refer to it, GC will be destroyed.
+
+   _Warning_:  A gc is considered to be "held onto" when it is created,
+or when it is got from a drawable (e.g. `get_window_attributes').  It
+is the responsibility of the programmer to ensure that she is not
+releasing a gc that is being held by another branch of her code.  For
+example, If a gc is created, asserted somewhere, and put into a
+drawable, and later is accessed through the drawable, the programmer
+_must not_ release it at this point, since it is still in the database
+and may be used.  _Be careful_.
+
+
+File: quintus.info,  Node: pxl-graf-cre-use,  Next: pxl-graf-cre-shr,  Prev: pxl-graf-cre-release_gc,  Up: pxl-graf-cre
+
+Using Gcs
+.........
+
+   As we have said, using gcs and using graphics attributes of drawables
+may be freely intermixed.  For example, you may have an application
+that usually wants a certain set of graphics attributes for a window,
+but occasionally wants a very different set.  You could handle this by
+setting up the graphics attributes of the window, and changing them
+when necessary.  Or you could create two gcs, one with each of the
+needed sets of graphics attributes, and specify the correct gc in each
+drawing command.  Or you could set the graphics attributes of the
+window to the most often needed configuration, and create a separate gc
+with the alternate set of attributes, and only specify a gc argument in
+drawing commands when you need the alternate set.  Each of these
+approaches has its advantages and disadvantages; which you choose is up
+to you.
+
+   It is also possible to set the gc a drawable will use when no gc is
+specified in a drawing command.  If you need to create many windows or
+pixmaps with the same graphics attributes, this is an efficient way to
+do it.  You create the gc with the attributes needed by all these
+windows, and then when you create the windows, you specify this as
+their gc.
+
+
+File: quintus.info,  Node: pxl-graf-cre-shr,  Prev: pxl-graf-cre-use,  Up: pxl-graf-cre
+
+Sharing and Cloning of Gcs
+..........................
+
+   Internally, each drawable has a gc.  All of the drawing primitives
+that allow an optional gc will use this gc when no gc is specified.  By
+setting a drawable's gc, it is possible to have several drawables share
+a common gc.  Then, by changing this gc, you have changed the drawing
+behavior (when no gc is specified in the drawing command) of all the
+drawables that share this gc.
+
+   It is important, however, to understand the difference between
+changing the graphics attributes of a drawable and changing the graphics
+attributes of a gc.  When you change the graphics attributes of a
+drawable, if any other drawable shares that gc, then the gc is cloned
+before modifying it.  This means that changing the graphics attributes
+of a drawable _cannot_ change the graphics attributes of any other
+drawable.  However, changing the graphics attributes of a gc _will_
+change the graphics attributes of any drawable that uses that gc.
+
+   In fact, when you create a drawable but don't specify any graphics
+attributes, that drawable shares a gc with any other drawables that that
+haven't specified any graphics attributes.  But the first time you
+specify graphics attributes for that drawable, its gc will be cloned.
+From then on, unless you explicitly give it a gc, its gc will not be
+shared, so any changes you make to its graphics attributes will be
+entirely private to that drawable.
+

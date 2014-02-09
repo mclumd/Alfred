@@ -1,0 +1,1313 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: cfu-ref-QU_open,  Next: cfu-ref-QU_stream_param,  Prev: cfu-ref-QU_initio,  Up: cfu-ref
+
+`QU_open()' user-redefinable
+----------------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     QP_stream *QU_open(stream_option, system_option, error_number)
+     QP_stream *stream_option;
+     char      *system_option;
+     int       *error_number;
+
+   The embedding function for creating a stream opened through
+`open/[3,4]' or `QP_fopen()'.
+
+   Creates a stream and returns the `QP_stream' pointer for that stream.
+
+Description
+-----------
+
+   STREAM_OPTION specifies the options for the stream to be created.
+
+   SYSTEM_OPTION specifies the system-dependent stream option specified
+in the option of `system(OPTION)' in `open/4'.  If there is no
+system-dependent option, the `system_option' field is the empty string,
+`""'.
+
+   The functionality of `QU_open()' is illustrated in these steps
+`open/4' uses to create a Prolog stream:
+  1. Set up the default stream options through `QU_stream_param()'.
+
+  2. Changes the stream options obtained in the previous step based on
+     the options specified in `open/4'.
+
+  3. Calls `QU_open()' with the stream options resulted in the previous
+     two steps to create the stream.
+
+  4. Register the stream created by `QU_open()' through
+     `QP_register_stream()'.
+
+  5. Converts the stream pointer returned by `QU_open()' to the Prolog
+     representation of the stream through `stream_code/2'.
+
+   The process required to implement `QU_open()' is similar to
+implementing a customized Prolog stream.  (see *Note fli-ios-cps::).
+There are only a few differences.
+  1. The stream options are specified as a parameter in a call to
+     `QU_open()', so `QU_open()' does not need to call
+     `QU_stream_param()'.
+
+  2. `QU_open()' may need to parse SYSTEM_OPTION string to recognize
+     the option specified in that string.   Notice that the core Prolog
+     system itself does not make use of any information specified in
+     SYSTEM_OPTION.  It simply takes the string specified in `open/4'
+     and passes it to `QU_open()' without any alteration.
+
+  3. `QU_open()' does not need to register the stream it creates.  The
+     caller of `QU_open()' will register it.
+
+   Implementation of `QU_fdopen()' is similar to `QU_open()' except
+that the file stream is already opened and the opened file descriptor is
+passed through the parameter FILE_DES.
+
+Return Value
+------------
+
+   If any error occurs during the creation of the stream,
+`QP_NULL_STREAM' is returned and the error code for the error condition
+is set in the third parameter, ERROR_NUMBER.  The error code could be
+any of the host operating system error numbers, QP error numbers or a
+user-defined error number.  `QU_fdopen()' requires an addition
+parameter, FILE_DES, which is the opened file descriptor for the stream
+to be created.
+
+Examples
+--------
+
+   The following is the source code for an implementation of
+`QU_open()' function and `QU_fdopen()' function in C.
+
+     #include <fcntl.h>
+     #include <errno.h>
+     #include <sys/file.h>
+     #include <sys/types.h>
+     #include <sys/stat.h>
+     
+     #ifndef L_SET
+     #define L_SET   0
+     #endif
+     #ifndef L_INCR
+     #define L_INCR  1
+     #endif
+     #ifndef L_XTND
+     #define L_XTND  2
+     #endif
+     
+     #include <quintus/quintus.h>
+     
+     extern  char *ttyname();
+
+     QP_stream *
+     QU_fdopen(option, sys_option, error_num, file_des)
+         QP_stream   *option;
+         char        *sys_option;
+         int         *error_num, file_des;
+         {
+             QP_stream       *stream;
+             extern long     lseek();
+             extern QP_stream *QU_tty_open(), *QU_text_open(),
+                              *QU_raw_open();
+     
+             if (sys_option && *sys_option != '\0') {
+                 *error_num = QP_E_SYS_OPTION;
+                 return QP_NULL_STREAM;
+             }
+             *error_num = 0;
+             if (option->format == QP_FMT_UNKNOWN) {
+                 if (option->line_border==QP_NOLB &&
+                     option->trim==0)
+                     option->format = QP_VAR_LEN;
+                                      /* binary file */
+                 else
+                     option->format = QP_DELIM_LF;
+             }
+
+             switch (option->mode) {
+             case QP_READ:
+             case QP_WRITE:
+                 option->magic.byteno = 0;
+                 if (option->seek_type != QP_SEEK_ERROR) {
+                     struct stat     statbuf;
+     
+                     if (fstat(file_des, &statbuf) == 0 &&
+                        (statbuf.st_mode & S_IFMT) == S_IFREG)
+                         if ((option->magic.byteno =
+                              lseek(file_des,0L,L_INCR))==-1) {
+                             *error_num = errno;
+                             return QP_NULL_STREAM;
+                         }
+                 }
+                 break;
+             case QP_APPEND:
+                 if ((option->magic.byteno =
+                              lseek(file_des,0L,L_XTND)) == -1)
+                 {
+                      *error_num = errno;
+                     return QP_NULL_STREAM;
+                 }
+                 break;
+             default:
+                 *error_num = QP_E_BAD_MODE;
+                 return QP_NULL_STREAM;
+             }
+
+             switch (option->format) {
+             case QP_DELIM_TTY:
+                 stream = QU_tty_open(option, error_num,
+                                      file_des);
+                 break;
+             case QP_DELIM_LF:
+                 stream = QU_text_open(option, error_num,
+                                       file_des);
+                 break;
+             case QP_VAR_LEN:
+                 stream = QU_raw_open(option, error_num,
+                                      file_des);
+                 break;
+             default:
+                 *error_num = QP_E_BAD_FORMAT;
+                 return QP_NULL_STREAM;
+             }
+             return stream;
+         }
+
+     QP_stream *
+     QU_open(option, sys_option, error_num)
+         QP_stream   *option;
+         char        *sys_option;  /* not useful in this
+                                      version */
+         int         *error_num;
+         {
+             QP_stream       *stream;
+             int             fd;
+             char            *filename;
+             struct stat     statbuf;
+     
+             *error_num = 0;
+             if (! (filename = option->filename)) {
+                 *error_num = QP_E_FILENAME;
+                 return QP_NULL_STREAM;
+             }
+             switch (option->mode) {
+             case QP_READ:
+                 fd = open(filename, O_RDONLY, 0000);
+                 break;
+             case QP_WRITE:
+                 fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC,
+                           0666);
+                 break;
+             case QP_APPEND:
+                 fd = open(filename, O_WRONLY|O_CREAT, 0666);
+                 break;
+             default:
+                 *error_num = QP_E_BAD_MODE;
+                 return QP_NULL_STREAM;
+             }
+
+             if (fstat(fd, &statbuf) == 0) {
+                 if ((statbuf.st_mode & S_IFMT) == S_IFDIR) {
+                     (void) close(fd);
+                     *error_num = QP_E_DIRECTORY;
+                     return QP_NULL_STREAM;
+                 }
+             }
+             if (fd < 0) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+             if (option->format == QP_DELIM_TTY &&
+                                   !(isatty(fd)) ) {
+                 *error_num = QP_E_BAD_FORMAT;
+                 (void) close(fd);
+                 return QP_NULL_STREAM;
+             }
+             if ((stream=QU_fdopen(option, sys_option,
+                                   error_num, fd))
+                             == QP_NULL_STREAM) {
+                 (void) close(fd);
+                 return QP_NULL_STREAM;
+             }
+             if (stream->format == QP_DELIM_TTY) {
+                 char        *tty_id;
+                 if (! (tty_id = ttyname(fd)) )
+                     tty_id = "/PROLOG DEFAULT TTYS";
+                 (void) QP_add_tty(stream, tty_id);
+             }
+             return stream;
+         }
+
+   The following is the source code for the implementation of
+`QU_tty_open()' in C.  `QU_tty_open()' is called in the `QU_fdopen()'
+source code listed above.  (`QU_text_open()' and `QU_raw_open()' are
+also called in `QU_fdopen()'.  The source code for these two functions
+is not listed here, but they are shipped with Quintus Prolog.)
+     #include <fcntl.h>
+     #include <errno.h>
+     
+     #include <quintus/quintus.h>
+     
+     extern  char *QP_malloc();
+     
+     #define Min_Buffer_Size         4
+     
+     struct TtyStream
+         {
+             QP_stream qpinfo;
+             int fd;
+             unsigned char buffer[Min_Buffer_Size];
+         };
+     
+     #define CoerceTtyStream(x) ((struct TtyStream *)(x))
+     
+     static int
+     tty_read(stream, bufptr, sizeptr)
+         QP_stream           *stream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             int n;
+             extern int errno;
+             register struct TtyStream
+                      *u = CoerceTtyStream(stream);
+     
+             n = read(u->fd, (char*)u->buffer,
+                             (int)u->qpinfo.max_reclen);
+             if (n > 0) {
+                 *bufptr  = u->buffer;
+                 *sizeptr = n;
+                 if (u->buffer[n-1] == '\n')
+                     return QP_FULL;
+                 else
+                     return QP_PART;
+             } else if (n == 0) {
+                 *sizeptr = 0;
+                 return QP_EOF;
+             } else {
+                 u->qpinfo.errno = errno;
+                 return QP_ERROR;
+             }
+         }
+
+     static int
+     tty_write(stream, bufptr, sizeptr)
+         QP_stream           *stream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             struct TtyStream  *u = CoerceTtyStream(stream);
+             int                n, len=(int) *sizeptr;
+             char              *buf = (char *) *bufptr;
+     
+             if (len==0) {   /* be sure to set *sizeptr
+                                and *bufptr */
+                 *sizeptr = u->qpinfo.max_reclen;
+                 *bufptr = u->buffer;
+                 return QP_SUCCESS;
+             }
+             while ((n = write(u->fd, buf, len)) > 0 && n
+                     < len) {
+                 buf += n;
+                 len -= n;
+             }
+             if (n >= 0) {
+                 *sizeptr = u->qpinfo.max_reclen;
+                 *bufptr = u->buffer;
+                 return QP_SUCCESS;
+             } else {
+                 u->qpinfo.errno = errno;
+                 return QP_ERROR;
+             }
+         }
+
+     static int
+     tty_close(stream)
+         QP_stream   *stream;
+         {
+             struct TtyStream *u = CoerceTtyStream(stream);
+             int fd = u->fd;
+     
+             QP_free(stream);
+             if (close(fd) < 0)
+                 return QP_ERROR;
+             return QP_SUCCESS;
+         }
+
+     QP_stream *
+     QU_tty_open(option, error_num, fd)
+         register        QP_stream       *option;
+         int         *error_num, fd;
+         {
+             struct  TtyStream       *stream;
+     
+             if (option->seek_type != QP_SEEK_ERROR) {
+                 *error_num = QP_E_SEEK_TYPE;
+                 return QP_NULL_STREAM;
+             }
+             stream = (struct  TtyStream *)
+                       QP_malloc(sizeof(*stream) +
+                 ((option->max_reclen <= Min_Buffer_Size) ? 0
+                     : option->max_reclen - Min_Buffer_Size) );
+             stream->qpinfo = *option;
+             QP_prepare_stream(&stream->qpinfo, stream->buffer);
+             stream->fd = fd;
+             stream->qpinfo.close = tty_close;
+             if (option->mode != QP_READ)  {
+                 stream->qpinfo.write =
+                 stream->qpinfo.flush = tty_write;
+             } else
+                 stream->qpinfo.read  = tty_read;
+             return (QP_stream *) stream;
+         }
+
+See Also
+--------
+
+   `open/4', `QU_fdopen()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-QU_stream_param,  Prev: cfu-ref-QU_open,  Up: cfu-ref
+
+`QU_stream_param()' user-redefinable
+------------------------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     void QU_stream_param(filename, mode, format, option)
+     char          *filename;
+     int            mode;
+     unsigned char  format;
+     QP_stream     *option;
+
+   Embedding function, which sets up default values of user-accessible
+fields in a Prolog stream structure.
+
+Arguments
+---------
+
+FILENAME
+     name of the file to be opened.  If the stream does not have a
+     filename, the FILENAME is the empty string, `""'.  If the FILENAME
+     is `/dev/tty', the caller requests `QU_stream_param()' to set the
+     field values as a tty stream.
+
+MODE
+        * `QP_READ' for an input stream.
+
+        * `QP_WRITE' for an output stream.
+
+        * `QP_APPEND' for an output stream opened in append mode.
+
+FORMAT
+     format of the stream, which could have one of the following values:
+
+        * `QP_DELIM_LF'
+
+        *        *        *        *        * `QP_VAR_LEN'
+
+        * `QP_DELIM_TTY'
+
+        * `QP_FMT_UNKNOWN'
+
+OPTION
+     pointer to a `QP_stream' structure whose fields are to be set up.
+
+Description
+-----------
+
+   The format is used in assisting `QU_stream_param()' to determine the
+best values for the other member fields of the `QP_stream' structure.
+
+   All of the fields listed below of the `QP_stream' structure,
+described in *Note fli-ios-sst::, are set by `QU_stream_param()'. Under
+UNIX, they are given the indicated values:
+
+field
+     value
+
+`filename'
+     FILENAME argument to `QU_stream_param()'
+
+`mode'
+     MODE argument to `QU_stream_param()'
+
+`format'
+     FORMAT argument to `QU_stream_param()'
+
+`max_reclen'
+     8192 bytes for a file, 256 bytes for a tty
+
+`line_border'
+     `QP_LF'
+
+`file_border'
+     `QP_EOF'
+
+`peof_act'
+     `QP_PASTEOF_ERROR'
+
+`prompt'
+     "" (empty string)
+
+`trim'
+     0
+
+`seek_type'
+     `QP_SEEK_PREVIOUS' for a file, `QP_SEEK_ERROR' for a tty
+
+`flush_type'
+     `QP_FLUSH_FLUSH'
+
+`overflow'
+     `QP_OV_FLUSH'
+
+`errno'
+     0
+
+`magic'
+     (byteno) 0
+
+`read'
+     `bad_read' -- a function that returns `QP_ERROR'
+
+`write'
+     `bad_write' -- a function that returns `QP_ERROR'
+
+`flush'
+     `bad_flush' -- a function that returns `QP_ERROR'
+
+`seek'
+     `bad_seek' -- a function that returns `QP_ERROR'
+
+`close'
+     `bad_close' -- a function that returns `QP_ERROR'
+
+
+File: quintus.info,  Node: too,  Next: pindex,  Prev: cfu,  Up: Top
+
+Command Reference Pages
+***********************
+
+* Menu:
+
+* too-too::                             Command Line Utilities
+
+
+File: quintus.info,  Node: too-too,  Up: too
+
+Command Line Utilities
+======================
+
+* Menu:
+
+* too-too-prolog::                      prolog --- Quintus Prolog Development System
+* too-too-qcon::                        qcon --- QOF consolidator
+* too-too-qgetpath::                    qgetpath --- Get parameters of Quintus utilities and runtime applications
+* too-too-qld::                         qld --- QOF link editor
+* too-too-qnm::                         qnm --- print QOF file information
+* too-too-qpc::                         qpc --- Quintus Prolog compiler
+* too-too-qplm::                        qplm --- Quintus Prolog license manager
+* too-too-qsetpath::                    qsetpath --- Set parameters of Quintus utilities and runtime applications
+
+   The reference pages for the Quintus supplied command line utilities
+follow, in alphabetical order.
+
+   * `prolog(1)'
+
+   * `qcon(1)'
+
+   * `qgetpath(1)'
+
+   * `qld(1)'
+
+   * `qnm(1)'
+
+   * `qpc(1)'
+
+   * `qplm(1)'
+
+   * `qsetpath(1)'
+
+   * `qui(1)'
+
+   Once these files are installed in `library('q3.5')', you can access
+them on-line by typing, for example,
+     % man qpc
+
+   Refer to *Note int-dir:: for the location of these reference pages
+in the Quintus directory hierarchy.
+
+
+File: quintus.info,  Node: too-too-prolog,  Next: too-too-qcon,  Up: too-too
+
+`prolog' -- Quintus Prolog Development System
+---------------------------------------------
+
+Synopsis
+--------
+
+     prolog [ +f ] [ +l file ] [ +L file ]
+          [ +p [path-name] ] [ +P [path-name] ] [+tty ]
+          [ +z user's-arguments | + [emacs-arguments] ]
+
+     qpwin [ +f ] [ +l file ] [ +L file ]
+          [ +p [path-name] ] [ +P [path-name] ] [+tty ]
+          [ +z user's-arguments | + [emacs-arguments] ]
+
+Description
+-----------
+
+   `prolog' is the command to invoke the Quintus Prolog  Development
+ System.   The prompt `| ?-' indicates that the execution      of
+Quintus Prolog Development System is in  top-level  mode.       In
+this  mode,  Prolog  queries  may be issued and executed
+interactively.  A program written in the Prolog  programming
+language  can  be compiled during the execution of `prolog' as
+additional information for subsequent execution.  The Prolog
+command `halt/[0,1]' is used to exit from prolog; under the      GNU
+Emacs editor, exit is `^x^c'.
+
+   Under Windows, `prolog.exe' is a console-based      program that can
+run in a command prompt window, whereas `qpwin.exe'      runs in its
+own window and directs the Prolog standard streams to that      window.
+`qpwin.exe' is a "windowed" executable; see      *Note
+sap-srs-qld-iin::.
+
+   Compiled programs can be saved into a file as a saved-state.
+The  file  can  be  restored  either  through Quintus Prolog
+built-in restore command or issued as a  command  to the command
+interpreter.   The UNIX command `head -1 SAVED-STATE' displays      how
+the SAVED-STATE file is restored  in  the  latter  case.       The
+SAVED-STATE  file  can  also  be passed to `qld(1)' to be      linked
+into an executable program.
+
+   `prolog' depends on preset paths to locate the license      files,
+Prolog  libraries,  system-dependent  foreign      object files, and
+certain executables.  There are three main      paths,
+QUINTUS-DIRECTORY,  RUNTIME-DIRECTORY and HOST-TYPE,      which are set
+during the installation of the  Quintus      Prolog Development System.
+The paths can be checked with      `qgetpath(1)', and changed with
+`qsetpath(1)'.   Upon  startup,      `prolog' checks the files in
+`QUINTUS-DIRECTORY/licenseQUINTUS-VERSION' for authorization of
+execution.       Under UNIX, `prolog' locates its libraries under the
+directory      `QUINTUS-DIRECTORY/generic/qplibQUINTUS-VERSION'  where
+   QUINTUS-VERSION is the Quintus Prolog release number built
+into  the executables.       Under Windows, `prolog' locates its
+libraries under the directory      `QUINTUS-DIRECTORY/src'.
+`prolog' searches the system dependent      foreign object files in
+directories based on HOST-TYPE.
+
+   Quintus Prolog Development System can be linked  with  other
+Quintus  products,  and  user's  application  programs.  For more
+detail, see `qld(1)', `qpc(1)', and the add-on products QUI, ProXT,
+and ProXL, which are shipped with Quintus Prolog.
+
+Options
+-------
+
+   Any argument that does not match options described in this section
+and does not start with a `+' is regarded as a user's argument.  The
+user's arguments may be obtained using the prolog command
+`unix(argv(ListOfArgs))'.  If a user's argument needs to begin with a
+`+', it should be issued as `++' instead or given after the `+z'
+option.  Double pluses will be translated into a single plus, so the
+user's code will not see the `++'.  Arguments beginning with `+' are
+reserved for prolog, and an unrecognized argument starting with a `+'
+is treated as an error.
+
+`+  EMACS-ARGUMENTS'
+     Invoke Quintus Prolog with the Emacs interface.  Any arguments
+     following `+' are taken as arguments to the Emacs editor.  If the
+     environment variable `QUINTUS_EDITOR_PATH' is set then that Emacs
+     invoked.  Otherwise, by default, GNU emacs is assumed to be in the
+     path as `emacs'.
+
+`+f'
+     Fast start.  The initialization file `prolog.ini' will not be read
+     upon startup.
+
+`+l FILE'
+     Load the specified file upon startup.  FILE can be a Prolog or a
+     QOF file, and it may be specified either as a string (e.g.
+     `file', `~/prolog/file.pl') or as a file search path specification
+     (e.g. `library(file)', `home(language(file))').  Note, however,
+     that the latter needs to be quoted to escape the shell
+     interpretation of the parentheses.  Giving the extension is not
+     necessary; if both source (`.pl') and QOF (`.qof') files exist, the
+     more recent of the two will be loaded.
+
+`+L FILE'
+     Similar to `+l' but the user's environment variable `PATH' will be
+     searched for the specified FILE.
+
+`+p [PATH-NAME]'
+     Print the Prolog file search path definitions that begin with the
+     string PATH-NAME (e.g. `library' if `+p lib' is specified);
+     PATH-NAME is optional, and if not given, all file search path
+     definitions are printed; Prolog exits after producing the required
+     output to `stdout'.
+
+`+P [PATH-NAME]'
+     Similar to `+p', but the absolutized versions of the file search
+     path definitions are printed.
+
+`+tty'
+     Force the three standard stream associated with a Prolog process
+     to act as tty streams.  A tty stream is usually line buffered and
+     handles prompt automatically.
+
+`+z USER'S-ARGUMENTS'
+     Any arguments following `+z' are taken as user's arguments.
+     User's arguments can then be obtained through
+     `unix(argv(ListOfArgs))'.
+
+Environment
+-----------
+
+     }
+
+`PAGER'
+     A program to use for interactively delivering the help-system's
+     output to the screen.  The default is either `more' or `pg'
+     depending on the host operating system.
+
+`PATH'
+     Directories to search for the executables and saved-states.
+
+`QUINTUS_LISP_PATH'
+     Absolute filename for the Emacs-Lisp directories.  The default is:
+     `QUINTUS-DIRECTORY/editorQUINTUS-VERSION/gnu'.
+
+`QUINTUS_EDITOR_PATH'
+     Absolute filename of the GNU Emacs executable.  By default the
+     command `emacs' is looked for in your path.
+
+`SHELL'
+     Default shell interpreter to be used for Prolog commands
+     `unix(shell)' and `unix(shell(COMMAND))'.
+
+Files
+-----
+
+`FILE.pl'
+     Prolog source file
+
+`FILE.qof'
+     Quintus Object File (QOF) files
+
+`prolog.ini'
+     Quintus Prolog initialization file, looked up in the home directory
+
+`/tmp/qp*'
+     Temporary files for loading foreign object files and for Emacs
+     editor interface
+
+`QUINTUS-DIRECTORY/licenseQUINTUS-VERSION'
+     Location of license files
+
+See Also
+--------
+
+   `qgetpath(1)', `qld(1)', `qpc(1)', `qsetpath(1)', `unix/1',
+`QP_initialize()'
+
+   *Note ref-pro::
+
+
+File: quintus.info,  Node: too-too-qcon,  Next: too-too-qgetpath,  Prev: too-too-prolog,  Up: too-too
+
+`qcon' -- QOF consolidator
+--------------------------
+
+Synopsis
+--------
+
+      qcon [ -wx ] -o output-filename
+
+Description
+-----------
+
+   `qcon' consolidates the specified QOF file filename into a machine
+specific object file.  There is no default name for the output file.
+Therefore, the `-o' option must be specified.  `qcon' is normally called
+from `qld(1)' and is not intended to be called by the user directly.
+
+Options
+-------
+
+`-w'
+     Normally, `qcon' issues warning messages for undefined procedures.
+     This option instructs `qcon' to suppress such messages.
+
+`-x'
+     This option instructs `qcon' to issue warnings regarding
+     procedures that are either not called or not defined.  `-x'
+     overrides the `-w' option.
+
+`-o OUTPUT-FILENAME'
+     This option is used to specify a name for the object file.
+
+See Also
+--------
+
+   `qld(1)', `qnm(1)', `qpc(1)', `qsetpath(1)'
+
+
+File: quintus.info,  Node: too-too-qgetpath,  Next: too-too-qld,  Prev: too-too-qcon,  Up: too-too
+
+`qgetpath' -- Get parameters of Quintus utilities and runtime applications
+--------------------------------------------------------------------------
+
+Synopsis
+--------
+
+      qgetpath [ -abhqr ] filename ...
+
+Description
+-----------
+
+   `qgetpath' displays preset parameters defined in the Quintus Prolog
+executable files, printing the result to the standard output.  The
+executable files specified must be Quintus Prolog utilities, such as
+`qpc' and `qld', runtime applications built using the Quintus Prolog
+Runtime Generator, `prolog'(1), or executables generated with `qld'(1).
+
+   There are five paths, ADD-ONS STRING, RUNTIME-DIRECTORY, QUINTUS
+DIRECTORY, HOST TYPE and BANNER MESSAGE.  ADD-ONS STRING identifies the
+Quintus add-on products that are included in the executable.
+RUNTIME-DIRECTORY and QUINTUS-DIRECTORY are used in the executable to
+find certain files relative to those paths. HOST TYPE identifies the
+platform of the executable.  BANNER MESSAGE is the banner displayed
+upon the start-up of the executable.  The paths except BANNER MESSAGE
+can be obtained through prolog command `prolog_flag(PATH FLAG,
+VARIABLE)' where PATH FLAG is `add_ons' for ADD-ONS STRING ,
+`runtime_directory' for RUNTIME-DIRECTORY, `quintus_directory' for
+QUINTUS-DIRECTORY, and `host_type' for HOST TYPE.
+
+Options
+-------
+
+`-a'
+     Display the ADD-ONS STRING in the specified executables.
+
+`-r'
+     Display the RUNTIME-DIRECTORY in the specified executables.
+
+`-q'
+     Display the QUINTUS-DIRECTORY in the specified executables.
+
+`-h'
+     Display the HOST TYPE in the specified executables.
+
+`-b'
+     Display the BANNER MESSAGE in the specified executables
+
+See Also
+--------
+
+   `prolog(1)', `qsetpath(1)'
+
+
+File: quintus.info,  Node: too-too-qld,  Next: too-too-qnm,  Prev: too-too-qgetpath,  Up: too-too
+
+`qld' -- QOF link editor
+------------------------
+
+Synopsis
+--------
+
+     qld [-cCdDEghkNqrRsSvwWxY] [ -o output ] [ -llibrary ]
+         [ -L library-directory ] [ -a quintus-product ]
+         [ -f path-name:path-spec ]
+         [ -F path-name:path-spec ]
+         [ -p path-name ]
+         [ -P path-name ]
+         filename ... [ -LD ld-options ]
+
+Description
+-----------
+
+   `qld' links the specified QOF files together with the Kernel QOF
+file.  This results in a single QOF file, which is then consolidated
+into a machine object file.  Finally, the native compiler/linker is
+invoked to link this object file with the Kernel object file and
+produce an executable image.  The default Kernel QOF file is
+`RUNTIME-DIRECTORY/qprte.qof'.  Under UNIX, the default Kernel Object
+file is `RUNTIME-DIRECTORY/qprte.o'; under Windows it consists of
+`RUNTIME-DIRECTORY/qprte.lib' and `RUNTIME-DIRECTORY/qpeng.lib' (see
+`qsetpath(1)' and `qgetpath(1)').
+
+   If any of the specified files depends on a foreign file, then that
+file will be included in the call to the C compiler or linker if the
+`-d' option is specified.  A QOF file depends on a foreign file if its
+source contains an embedded `load_foreign_files/2' or
+`load_foreign_executable/1' command for that file (the `-D' option of
+`qnm(1)' shows the dependencies of a QOF file; see `qnm(1)').
+
+   A filename in the command line could be either a QOF file with `.qof'
+suffix, an object file, a shared object file (UNIX only), an import
+library (Windows only), or an archive file.  If the filename specified
+is a machine object file, it will be passed as an argument to the C
+compiler or linker.  If the command line file does not exist, the same
+file with a `.qof' suffix is tried.
+
+   File names may be specified either as regular paths (e.g. `file.qof',
+`~/home/file.o') or as Prolog file search paths, such as
+`library(file)', `home(system(file.o))', etc.  Note that the file
+search path specifications may need to be quoted to escape the shell's
+interpretation of the parentheses.
+
+   The intermediate QOF and object files are deleted when `qld' exits
+(unless the `-k' options is specified; see below).  By default, these
+files are stored in the directory `/tmp'.  The environment variable
+`TMPDIR' may be set to specify another directory to be used instead for
+temporary files. If `TMPDIR' is set to a non-existent directory or to a
+directory to which the user does not have read and write permissions
+then the default value of `TMPDIR' is used for temporary files.
+
+Options
+-------
+
+`-a QUINTUS-PRODUCT'
+     Specifies that the libraries for a particular Quintus product that
+     is sold separately are to be used.  These Quintus products are
+     normally installed in the QUINTUS-DIRECTORY.  List this directory
+     to find the valid directory names for these products.   This
+     option is equivalent to one or more `-L' switches.  Note that the
+     libraries shipped with Quintus Prolog (`qui', `proxt', and
+     `proxl') are automatically available in the system, and,
+     therefore, require no `-a' flag.
+
+`-c'
+     If this option is specified, `qld' terminates after producing a
+     machine object file.  It does not call the C compiler or linker to
+     produce an executable image.  If an output filename is not
+     specified with the `-o' option, the file is named `a.o' under UNIX
+     and `a.obj' under Windows.  No foreign files, e.g. foreign
+     dependencies, are included in the output file.  The resulting
+     object file may be passed to `qld' again on a different command
+     (with `-N'), or it may be passed directly to the linker.
+
+`-d'
+     This flag is always used when `qpc(1)' calls `qld'.  It causes all
+     QOF files on which any of the specified files depends to be linked
+     in as well, and any machine object files on which any of the linked
+     QOF files depends to be passed to the C compiler or linker.  A QOF
+     file depends on another QOF file if the source for the first
+     contains an embedded command to load the source of the second.  A
+     QOF file depends on an object file if its source contains an
+     embedded `load_foreign_files/2' or `load_foreign_executable/1'
+     command of the object file.
+
+     `-f PATH-NAME:PATH-SPEC'Similar to the `-L' option, but
+     PATH-NAME:PATH-SPEC defines a general file search path, which
+     instructs `qld' to look for a file in directory PATH-SPEC whenever
+     a file specification of the form `PATH-NAME(FILE-SPEC)' is
+     encountered in QOF file dependencies or on the command line.  The
+     PATH-NAME and the directory, PATH-SPEC, are separated by a colon
+     (`:'), and, therefore, PATH-NAME cannot contain a colon.  If
+     PATH-SPEC is given in the file search path form (as in
+     `library:mylib(library)'), then the argument must be quoted to
+     escape the shell's interpretation of the parentheses.  PATH-SPEC
+     may be `.' or null, in which case `.' is assumed.
+
+     There may be a list of path definitions (i.e. `-f' or `-F'
+     options) for the same PATH-NAME.  `qld' searches the list, just
+     like `prolog' and `qpc', whenever it needs to expand a file search
+     path specification.  The `-f' options appends (like assertz in
+     `prolog' and `qpc') the new path to the end of the list of paths
+     for PATH-NAME, while `-F' prepends (like asserta in `prolog' and
+     `qpc').
+
+`-g'
+     This option is not used by `qld', but is intended for the linker.
+     If some of the specified object files or object dependency files
+     are compiled with the debug flag, this option should be specified
+     to preserve the debugging information in the executable.
+
+`-h'
+     Hides or "locks" the predicates in the file so that they are not
+     visible to the debugger.  Such predicates will have predicate
+     property "locked" when they are linked or loaded into a Prolog
+     system.
+
+`-k'
+     With this option, the intermediate files are not deleted.
+
+`-lLIBRARY'
+     This option is not used by `qld', but is intended for the linker,
+     which is called to link with the specified library to product the
+     executable.
+
+`-o OUTPUT'
+     The default output file names may be overridden using this option.
+     For executable files, the default name is `a.out' under UNIX or
+     `a.exe' under Windows.  With the `-r' or `-R' options, the default
+     name is `a.qof'.  With the `-c' or `-C' options, the default name
+     is `a.o' under UNIX or `a.obj' under Windows.
+
+`-p PATH-NAME'
+     The files search path definitions for PATH-NAME are printed. If
+     PATH-NAME is `*' then all file search path definitions are printed.
+
+`-q'
+     Like the `-r' option but also adds a Kernel QOF file `qprte.qof'
+     or `qprel.qof'. This option should very rarely be necessary.
+
+`-r'
+     If this option is specified, `qld' terminates after linking
+     together all the specified QOF files to make a new QOF file.  No
+     Kernel QOF file is not linked in.  If an output filename is not
+     specified with the `-o' option, the file is named `a.qof'.
+
+     If `-d' is not used in conjunction with this option, then it is
+     recommended that the output file, as specified by the `-o' option,
+     be in the current working directory.  This way, any dependencies
+     of the output QOF file on other files will be correct.  Otherwise,
+     the dependencies would only be correct when absolute, as opposed to
+     relative, paths had been specified in the sources.  This matters
+     only if this file is to be used in a future call to `qld' with the
+     `-d' option specified.
+
+`-s'
+     This option is not used by `qld', but is intended for the linker,
+     which is called to actually generate the executable.  The `-s'
+     option instructs the linker to strip the executable. *Please
+     note:* that once the executable is stripped then the dynamic
+     foreign interface including the Prolog builtins
+     `load_foreign_files/2' and `load_foreign_executables/1' cannot
+     work.
+
+`-v'
+     When this option is specified, `qld' echoes its activities,
+     including calls to subcomponents and `ld.sh'
+
+`-w'
+     This option suppresses warnings regarding undefined procedures.
+
+`-x'
+     When this option is specified, `qld' gives warnings about the
+     predicates that are not called, as well as those that are
+     undefined.  Also, a warning message will be printed if either of
+     the user-definable predicates (`portray/1' and
+     `user_error_handler/4') is undefined.  (Such warnings are normally
+     suppressed for these predicates.)  The `-x' option overrides the
+     `-w' option.
+
+`-C'
+     UNIX only. Same as `-c', except that the object dependencies of QOF
+     files are also linked into the created object file.  The object
+     file so produced can be directly passed to the C compiler, linker,
+     or `qld -N' to generate the executable.
+
+`-D'
+     If this option is used, `qld' links the specified files with the
+     Development Kernel rather than the Runtime Kernel.  The
+     Development Kernel QOF file, `RUNTIME-DIRECTORY/qprel.qof', is
+     linked with the specified QOF file, and the Development Kernel
+     object file(s).  Under UNIX, the Development Kernel Object file is
+     `RUNTIME-DIRECTORY/qprel.o'; under Windows it consists of
+     `RUNTIME-DIRECTORY/qprel.lib' and `RUNTIME-DIRECTORY/qpeng.lib'.
+     The `-D' option may not be used in conjunction with the `-E'
+     option.
+
+`-E'
+     This option tells `qld' to link the specified files with the
+     Extended Runtime Kernel rather than the Runtime Kernel (see *Note
+     sap-srs::).  The Extended Runtime Kernel QOF file,
+     `RUNTIME-DIRECTORY/qprex.qof', is linked with the specified QOF
+     file, and the default Kernel object file.  Under UNIX, the default
+     Kernel Object file is `RUNTIME-DIRECTORY/qprte.o'; under Windows
+     it consists of `RUNTIME-DIRECTORY/qprte.lib' and
+     `RUNTIME-DIRECTORY/qpeng.lib' The `-E' option may not be used in
+     conjuction with the `-D' option.
+
+`-F PATH-NAME:PATH-SPEC'
+     Similar to `-f', but the path is added at the front of the list of
+     paths for PATH-NAME.  Note that `-F library:LIBRARY-DIRECTORY' is
+     identical to `-L LIBRARY-DIRECTORY'.
+
+`-L LIBRARY-DIRECTORY'
+     File specifications of the form `library(FILESPEC)' are searched
+     for in the library search paths when that file is linked.  The
+     initial search paths are the same as in the Development System
+     (see `prolog(1)').  Additional directories may be prepended to the
+     list of library search paths with this option.  Note that the
+     command line is parsed from left to right.  Also note that the
+     `-L' must be followed by a space; otherwise, `qld' assumes that
+     the option specifies a library directory for the linker.
+
+     Library directories may also be specified with the `-f' and `-F'
+     options.  Note that LIBRARY-DIRECTORY may be a path to a directory
+     (e.g. `dir', `~/dir') or a file search path specification of the
+     form `mylib(library)'.  In the latter case, the PATH-NAME `mylib'
+     must be defined by a `-f' or `-F' option.
+
+`-LDIRECTORY'
+     UNIX only. Same as the `-L' option to the C compiler and linker,
+     and specifies a directory in which the linker looks for library
+     files.  This option is simply passed to the linker.
+
+`-LD'
+     All remaining options are simply passed to the linker.
+
+`-N'
+     Don't link in any Kernel files (e.g. `qprel.qof'/`qprel.o',
+     `qprex.qof'/`qprte.o' or `qprte.qof'/`qprte.o') from the runtime
+     directory.  This option is only useful for producing an executable
+     image from a machine object file that was created from QOF files
+     using `qld' (see `-C').
+
+`-P PATH-NAME'
+     Similar to `-p', but the absolutized versions of the file search
+     paths are also printed.
+
+`-R'
+     Similar to `-r', but it does not include the resulting
+     dependencies.  This flag is mainly useful for clearing the
+     dependencies from the QOF file (for example, when they get
+     absolutized by `save_program/[1,2]' or `save_modules/2').
+
+`-S'
+     Use archive files instead of shared object files.  Where a qof
+     file contains a dependency on a shared object file, if an archive
+     file exists with the same name but with an archive file extension,
+     then this is substituted for the shared object file in the call to
+     the linker.
+
+     Note that if the shared object file that is being substituted
+     contains dependencies to other shared libraries then these have to
+     be included in the `qld' command line.  Running `ldd(1)' on a
+     shared object file will indicate whether it has such dependencies.
+
+`-W'
+     Windows only. Pass the argument `-subsystem:windows', instead of
+     `-subsystem:console', to the linker so that a windowed executable
+     is built, rather than a console-based one.  The window properties
+     of executables built with `-W' can be controlled by the
+     environment variable `CONSOLE'; see below.  Other properties of
+     the Windows component of such executables built with `-W' can be
+     controlled with "resource files".
+
+     `qld' recognizes files with the `.res' extension as resource files
+     and treats them like object files, passing them to the linker.
+     Resource files are generated from `.rc' files using the `rc'
+     program supplied with Microsoft Visual C++. They contain various
+     information relating to the Windows component of an application,
+     such as the program name, icon and key bindings.  The file
+     `messages(system('qpwin.res'))' contains such data for the Quintus
+     Prolog window.  Thus, the `qpwin.exe' executable can be generated
+     with the command:
+          C:\> qld -WDdo qpwin.exe messages(system(qpwin.res))
+
+     The Quintus Prolog resource source file is in
+     `QUINTUS-DIRECTORY\src\embed\qpwin.rc' and this references the
+     icon file `QUINTUS-DIRECTORY\src\embed\qp.ico', which `rc' also
+     incorporates into `qpwin.res'.
+
+`-Y'
+     Windows only. Pass the option `/dll' to the linker.  See *Note
+     sap-rge-dll:: for details.
+
+Environment
+-----------
+
+`TMPDIR'
+     Directory for creating temporary files.  The default is `/usr/tmp'.
+
+`CONSOLE'
+     Windows only.  Controls the window properties executables build
+     with `-W'.  The value should be a comma separated list of:
+
+    `sl:INT'
+          history buffer size (default 200)
+
+    `cols:INT'
+          number of columns (default 80)
+
+    `rows:INT'
+          number of rows (default 24)
+
+    `x:INT'
+          X position in pixels
+
+    `y:INT'
+          Y position in pixels
+
+     For example, setting `CONSOLE' to `sl:400,rows:32' before starting
+     `qpwin' yields a window with 32 rows and a history buffer of size
+     400.
+
+Files
+-----
+
+`file.qof'
+     Quintus Object File (QOF) files
+
+`$TMPDIR/qp*.{qof,o,obj}'
+     intermediate QOF and object files
+
+`RUNTIME-DIRECTORY/qcon'
+     the QOF consolidator
+
+`RUNTIME-DIRECTORY/qprel.{o,lib}'
+     Development Kernel object code
+
+`RUNTIME-DIRECTORY/qprte,{o,lib}'
+     Runtime Kernel object code
+
+`RUNTIME-DIRECTORY/qpeng.lib'
+     Windows only.  Common Kernel object code, used with the two
+     previous items
+
+`RUNTIME-DIRECTORY/qprel.qof'
+     Development Kernel QOF code
+
+`RUNTIME-DIRECTORY/qprte.qof'
+     Runtime Kernel QOF code
+
+`RUNTIME-DIRECTORY/qprex.qof'
+     Extended Runtime Kernel QOF code
+
+`RUNTIME-DIRECTORY/ld.sh'
+     Front End script to the UNIX linker
+
+See Also
+--------
+
+   `cc(1)', `ld(1)', `qcon(1)', `qgetpath(1)', `qnm(1)', `qpc(1)',
+`qsetpath(1)'
+
+
+File: quintus.info,  Node: too-too-qnm,  Next: too-too-qpc,  Prev: too-too-qld,  Up: too-too
+
+`qnm' -- print QOF file information
+-----------------------------------
+
+Synopsis
+--------
+
+     qnm [-PADFMU] [ [-m module] [-n name] [-a arity]]
+         [-p proc#] [-o] filename ...
+
+Description
+-----------
+
+   `qnm' prints information about each QOF file named in the argument
+list.  The command line options specify the information required.  The
+default behavior, if no command line option is given, is identical to
+the behavior of the `-P' option.  Except where noted, only the first
+valid command line option is accepted per invocation of `qnm';
+subsequent options are ignored.  Each filename must be a QOF file.
+
+Options
+-------
+
+`-P'
+     Print information about all procedures that are defined or called
+     in each QOF file.
+
+
+     Information for a procedure is preceded by a decimal number that is
+     unique for that QOF file.  This is followed by letter codes
+     indicating the procedure state and properties. The letter codes
+     are:
+
+    `U'
+          undefined
+
+    `S'
+          static
+
+    `D'
+          dynamic
+
+    `M'
+          multifile
+
+    `F'
+          foreign
+
+    `V'
+          volatile
+
+    `L'
+          locked
+
+
+     If the procedure is neither foreign nor multifile, the second
+     letter is omitted.
+
+
+     The state and property information is followed by the module, name
+     and arity of the procedure, in the format MODULE:NAME/ARITY.
+     Procedure information is sorted alphabetically by procedure name.
+     Internal procedure names and modules that have been made anonymous
+     are printed as `$anon'.
+
+`-A'
+     Print all atoms referenced in each QOF file.  Each atom is
+     preceded by a number that is unique for that QOF file.  Atoms are
+     sorted alphabetically.  Internal atoms that have been made
+     anonymous are printed as `$anon'.
+
+`-D'
+     Print the names of all QOF or object files and library directories
+     on which each QOF file depends.
+
+`-F'
+     Print the number of source files contained in the QOF file.
+
+`-M'
+     Print information about modules contained in the QOF file.  This
+     information consists of the name of each module, its export list,
+     and its meta-predicates.
+
+`-U'
+     Print information about all procedures that are called but not
+     defined in each QOF file.  Information about undefined procedures
+     is in the same format as when using the `-P' flag.
+
+`-m MODULE'
+     Print information about procedures in module MODULE.  This option
+     may be used in conjunction with the `-n' and `-a' options.
+
+`-n NAME'
+     Print information about procedures named NAME.  This option may be
+     used in conjunction with the `-m' and `-a' options.
+
+`-a ARITY'
+     Print information about procedures with arity ARITY.  This option
+     may be used in conjunction with the `-m' and `-n' options.
+
+`-p PROC#'
+     Print information about the procedure numbered PROC#.  Procedure
+     numbers are as given by the `-P' option.
+
+`-o'
+     Prepend to each output line the name of its QOF file.  The `-o'
+     flag may be used in addition to any valid combination of options.
+
+See Also
+--------
+
+   `nm(1)', `qpc(1)', `qld(1)'
+

@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Generating QOF Files and Dependencies</h5>
+
+   <p>When Prolog files contain embedded commands to compile other files,
+each Prolog source file is compiled into a separate QOF file with one
+exception: if a module-file contains a command to load a non-module
+file, then the non-module-file is compiled directly into the QOF file
+corresponding to the module-file.  That is, there is no separate QOF
+file for a non-module-file that is loaded into a module unless it is
+loaded into the default module <code>user</code>.  Each QOF file is written into
+the same directory as the corresponding Prolog source file.
+
+   <p>Embedded <code>ensure_loaded/1</code> and <code>use_module/[1,2,3]</code> commands also
+cause the specified files to be compiled <em>unless</em> there is a
+corresponding QOF file more recent than the corresponding Prolog
+source file.  For example,
+<pre class="example">     :- ensure_loaded(file).
+     </pre>
+
+   <p>causes <code>file.pl</code> to be compiled unless there is a <code>file.qof</code> more recent
+than the source.  In the case where the QOF file is more recent than
+the <code>.pl</code> file, then the file is not compiled again.  However, the QOF
+file's dependencies are checked and recompiled if not up to date.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-dep-exa.html#sap-srs-dep-exa">Next</a>
+<li><a rel="up" accesskey="u" href="sap-srs-dep.html#sap-srs-dep">Up</a>
+</ul>
+</div>
+   </body></html>
+

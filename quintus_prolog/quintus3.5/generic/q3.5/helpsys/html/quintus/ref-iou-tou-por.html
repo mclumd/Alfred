@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Using the <code>portray</code> hook</h5>
+
+   <p><code>print/1</code> is called from within the system in two places:
+
+     <ol type=1 start=1>
+
+     <li>to print the bindings of variables after a question has succeeded
+<li>to print a goal during debugging
+        </ol>
+
+   <p>By default, the effect of <code>print/1</code> is the same as that of
+<code>write/1</code>, but you can change its effect
+by providing clauses for the hook predicate <code>portray/1</code>.
+
+   <p>If <var>X</var> is a variable, then it is printed using <code>write(</code><var>X</var><code>)</code>. 
+Otherwise the user-definable procedure <code>portray(</code><var>X</var><code>)</code> is called. 
+If this succeeds, then it is assumed
+that <var>X</var> has been printed and <code>print/1</code> exits (succeeds). 
+Note that <code>print/1</code> always calls <code>portray/1</code> in module
+<code>user</code>. 
+Therefore, to be visible to <code>print/1</code>, <code>portray/1</code> must
+either be defined in or imported into module <code>user</code>.
+
+   <p>If the call to <code>portray/1</code> fails, and if <var>X</var> is a compound term, then
+<code>write/1</code> is used to write the principal functor of <var>X</var> and
+<code>print/1</code> is called recursively on its arguments.  If <var>X</var>
+is atomic, it is written using <code>write/1</code>.
+
+   <p>When <code>print/1</code> has to print a list, say <code>[X1,X2,...,Xn]</code>, it passes
+the whole list to <code>portray/1</code>.  As usual, if <code>portray/1</code> succeeds,
+it is assumed to have printed the entire list, and <code>print/1</code> does
+nothing further with this term.  Otherwise <code>print/1</code> writes the
+list using bracket notation, calling <code>print/1</code> on each element of the
+list in turn.
+
+   <p>Since <code>[X1,X2,...,Xn]</code> is simply a different way of
+writing <code>.(X1,[X2,...,Xn])</code>, one might expect <code>print/1</code> to be called
+recursively on the two arguments <code>X1</code> and <code>[X2,...,Xn]</code>, giving <code>portray/1</code>
+a second
+chance at <code>[X2,...,Xn]</code>.  This does <em>not</em> happen; lists are a
+special case in which <code>print/1</code> is called separately for each of
+<code>X1,X2,...Xn</code>.
+
+   <p>If you would like lists of character codes printed
+        by <code>print/1</code> using double-quote notation, you should
+        include <code>library(printchars)</code> (described in  <a href="lib.html#lib">lib</a>)
+ as part of your version
+        of <code>portray/1</code>.
+
+   <p>Often it is desirable to define clauses for <code>portray/1</code> in different files. 
+This can be achieved either by declaring it multifile in each of the files, or
+by using <code>library(addportray)</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iou-tou-pcl.html#ref-iou-tou-pcl">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-iou-tou-dsp.html#ref-iou-tou-dsp">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-iou-tou.html#ref-iou-tou">Up</a>
+</ul>
+</div>
+   </body></html>
+

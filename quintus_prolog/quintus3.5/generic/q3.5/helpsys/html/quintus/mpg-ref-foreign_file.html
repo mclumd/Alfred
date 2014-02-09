@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>foreign_file/2</code> <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- discontiguous foreign_file/2.</code>
+
+   <p><code>foreign_file(</code><var>+ObjectFile, +ForeignFunctions</var><code>)</code>
+
+   <p>Describes the foreign functions in <var>ObjectFile</var> to interface to. 
+The user has to define a <code>foreign_file/2</code> fact for every object file that is
+to be loaded into Prolog.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>ObjectFile</var> <dfn>file_spec</dfn>
+     <dd>The foreign object file
+
+     <br><dt><var>ForeignFunctions</var> <dfn>list of atom</dfn>
+     <dd>A list of foreign
+function symbols that will be obtained from <var>ObjectFile</var>. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The user has to define a <code>foreign_file/2</code> fact for every object file that is
+to be loaded into Prolog. The <var>ForeignFunctions</var> gives
+the list of foreign symbols that are to be found in the given object file. 
+When a foreign file is loaded using <code>load_foreign_files/2</code>, Prolog looks
+for a <code>foreign_file/2</code> fact for that object file and finds the address of
+each symbol listed in the <code>foreign_file/2</code> fact. 
+Prolog also expects a <code>foreign/3</code> definition for each symbol in the
+second argument of the <code>foreign_file/2</code> fact.
+
+   <p>For more details about the foreign interface,
+see <a href="fli-p2f-uso-ffi.html#fli-p2f-uso-ffi">fli-p2f-uso-ffi</a>.
+
+   <p>The <code>foreign_file/2</code> facts are used only in the context of a
+<code>load_foreign_files/2</code> command and can be removed once the foreign
+files are loaded.
+
+   <p>If you have <code>foreign_file/2</code> facts in different files, Prolog will warn you
+that <code>foreign_file/2</code> has been previously defined in another file.
+
+   <p><code>load_foreign_files/2</code> will only look for <code>foreign_file/2</code> facts defined
+in its source module.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Errors in the specification of <code>foreign_file/2</code> will only be detected when
+<code>load_foreign_files/2</code> is called. Otherwise defining a <code>foreign_file/2</code> fact
+is just like defining any other Prolog fact.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>See example under <code>foreign/[2,3]</code>.
+
+<h4 class="subheading">Tips</h4>
+
+   <p>See Tip under <code>foreign/[2,3]</code>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>load_foreign_files/2</code>, <code>foreign/[2,3]</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-format.html#mpg-ref-format">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-foreign.html#mpg-ref-foreign">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

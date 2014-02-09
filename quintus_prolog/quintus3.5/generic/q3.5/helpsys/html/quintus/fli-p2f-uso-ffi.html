@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Loading Foreign Files</h5>
+
+   <p><code>load_foreign_files/2</code> is an alternative interface to
+<code>load_foreign_executable/1</code>, which constructs a shared object file
+from the list of object files and libraries given as its arguments
+and then maps the resulting shared object file into the Prolog
+address space. In general it is recommended that you take
+the responsibility for the construction of a shared object file and
+then use <code>load_foreign_executable/1</code> directly. 
+Using <code>load_foreign_files/2</code> is slower because it
+has to invoke the linker to construct the shared object file everytime the
+program is loaded. 
+A further disadvantage is that the linker may not be available at
+runtime on all systems.
+
+   <p>Example:
+<pre class="example">     % <kbd>cc -c </kbd><var>CFLAGS</var><kbd> math.c</kbd>
+     % <kbd>cc -c </kbd><var>CFLAGS</var><kbd> other.c</kbd>
+     % <kbd>prolog</kbd>
+     
+     | ?- <kbd>compile(foreign).</kbd>
+     | ?- <kbd>load_foreign_files([math,other],['-lm']).</kbd>
+     </pre>
+
+   <p>Again, the file <code>foreign</code> (or <code>foreign.pl</code>) contains the
+facts that describe how Prolog is to call the foreign functions. 
+If the extensions on filenames given in the first argument to
+<code>load_foreign_files/2</code> are omitted, the proper extension is automatically
+appended to them.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-uso-fex.html#fli-p2f-uso-fex">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-uso.html#fli-p2f-uso">Up</a>
+</ul>
+</div>
+   </body></html>
+

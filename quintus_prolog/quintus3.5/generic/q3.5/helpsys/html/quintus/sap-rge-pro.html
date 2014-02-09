@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Providing a Starting Point:  <code>runtime_entry/1</code></h4>
+
+   <p>The application developer <em>must</em> specify what is to happen when
+the program is started up.  This is done by defining the predicate
+<code>runtime_entry/1</code>.  When the runtime system is run, the goal
+(A) is invoked.  When that goal terminates, either by
+succeeding or by failing, the runtime system terminates.
+
+<pre class="example">     runtime_entry(start) (A)
+     </pre>
+
+   <p>Similarly, it is possible to specify what is to be done on an abort. 
+An abort happens when a call is made either to the built-in predicate
+<code>abort/0</code> or to the C routine <code>QP_action(QP_ABORT)</code>.  (By default, a
+call of <code>QP_action(QP_ABORT)</code> happens when a user types <kbd>^C</kbd>--
+see <a href="sap-rge-iha.html#sap-rge-iha">sap-rge-iha</a>).  At this point, the current computation is
+abandoned and the program is restarted with the goal (B).
+
+<pre class="example">     runtime_entry(abort) (B)
+     </pre>
+
+   <p>Effectively this replaces the original call to <code>runtime_entry(start)</code>,
+so that when this call succeeds or fails, the runtime system
+terminates For example (C) will obviously loop indefinitely until you
+interrupt it with a <kbd>^C</kbd>.  At that point it will abort, and since
+the goal <code>runtime_entry(abort)</code> will fail, the program will terminate.
+
+   <p>If you were to add the clause (D) you would make the program
+impervious to <kbd>^C</kbd> interrupts and quite hard to terminate.
+
+<pre class="example">     runtime_entry(start) :- go. (C)
+     go :- go.
+     
+     runtime_entry(abort) :- go. (D)
+     </pre>
+
+   <p>For this reason, it is recommended that you <em>not</em> write your code as
+(E) as this will cause your program to restart on <kbd>^C</kbd> or errors.
+
+   <p>Users of the module system should ensure that the predicate
+<code>runtime_entry/1</code> is defined in the module <code>user</code>, that is, not
+inside any user-defined module.  You may use a clause of the form (F)
+in a module-file to do this. (see <a href="ref-mod.html#ref-mod">ref-mod</a>).
+
+<pre class="example">     runtime_entry(_):- ... (E)
+     
+     
+     user:(runtime_entry(...):-...) (F)
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-rge-iha.html#sap-rge-iha">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-rge-dspn.html#sap-rge-dspn">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-rge.html#sap-rge">Up</a>
+</ul>
+</div>
+   </body></html>
+

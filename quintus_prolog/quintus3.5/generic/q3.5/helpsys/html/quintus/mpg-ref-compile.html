@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>compile/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>compile(</code><var>+Files</var><code>)</code>
+
+   <p>Compiles the specified Prolog source file(s) into memory.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Files</var> <dfn>file_spec</dfn> or <dfn>list of file_spec</dfn> [MOD]
+     <dd>a file
+specification or a list of file specifications; a <code>.pl</code> extensions may
+be omitted in file specifications. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Reads Prolog clauses from the specified file or files
+and adds them to the Prolog database, after first deleting any
+previous versions of the predicates they define.  Clauses for a single
+predicate must all be in the same file unless that predicate is
+declared to be <code>multifile</code>.
+
+   <p>If there are any directives in the file being loaded, that
+is, any terms with principal functor <code>:-/1</code> or <code>?-/1</code>, then
+these are executed as they are encountered.
+
+   <p>When <code>compile/1</code> is called from an embedded command in a file being compiled
+by <code>qpc</code>, the specified files are compiled from source into QOF.
+
+   <p>If desired, clauses and directives can be transformed as they are
+loaded.  This is done by providing a definition for
+<code>term_expansion/2</code> (see <code>load_files/[1,2]</code>).
+
+   <p>When <code>compile/1</code> is called in a runtime system, all predicates are loaded as
+dynamic predicates.  The reason for this is that the compiler is not available
+in runtime systems.
+
+   <p>This predicate is defined as if by:
+<pre class="example">     compile(Files) :-
+             load(Files, [load_type(compile)]).
+     </pre>
+
+   <p>For further details on loading files, see <a href="ref-lod.html#ref-lod">ref-lod</a>.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Same as for <code>load_files/[1,2]</code>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>multifile/1</code>, <code>dynamic/1</code>,
+<code>no_style_check/1</code>, <code>style_check/1</code>, <code>nofileerrors/0</code>,
+<code>fileerrors/0</code>, <code>source_file/1</code>, <code>term_expansion/2</code>,
+<code>prolog_load_context/2</code>, <code>load_files/[1,2]</code>, <code>ensure_loaded/1</code>,
+<code>use_module/[1,2,3]</code>, <code>volatile/1</code>, <code>initialization/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-compound.html#mpg-ref-compound">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-compare.html#mpg-ref-compare">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

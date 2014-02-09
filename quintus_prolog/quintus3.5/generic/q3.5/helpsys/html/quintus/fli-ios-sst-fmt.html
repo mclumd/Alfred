@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Format of A Stream</h5>
+
+<pre class="example">     open/4 option:  format(Format)
+     QP_stream:      unsigned char format
+     </pre>
+
+   <p>This field indicates the format of a stream.  The <code>format</code> tells the
+middle layer functions how to wrap (unwrap) a record. 
+Possible formats are:
+     <dl>
+
+     <br><dt><code>QP_VAR_LEN</code>
+     <dd>specified as <code>format(variable)</code> in <code>open/4</code>. 
+Each record in the file has its own length.  The middle layer input
+function trims the trailing blank characters in each record if trimming
+is turned on for the stream.
+
+     <p>The input/output system does not alter any character in each record
+for a <code>QP_VAR_LEN</code> format stream with no trimming and no line
+border code.
+
+     <br><dt><code>QP_DELIM_LF</code>
+     <dd>specified as <code>format(delimited(lf))</code> in <code>open/4</code>. 
+From an application program's point of view, each record in the file is
+terminated with a single &lt;LFD&gt;.  Under Windows,
+however, what's actually stored in the file is the sequence &lt;RET&gt;&lt;LFD&gt;.
+
+     <br><dt><code>QP_DELIM_TTY</code>
+     <dd>specified as <code>format(delimited(tty))</code> in <code>open/4</code>. 
+The file stream is a terminal device or a terminal emulator. 
+What characters delimit each record depends on the host operating system. 
+The Prolog input/output system treats this format like <code>QP_DELIM_LF</code>
+as far as record termination is concerned.
+
+     <p>The Prolog input/output system also automatically provides special
+services for streams with <code>QP_DELIM_TTY</code> format
+(see <a href="fli-ios-tty.html#fli-ios-tty">fli-ios-tty</a>). 
+</dl>
+
+   <p>For a delimited record format stream,
+the middle layer input function removes the delimiting character
+at the end of each record and
+the line border code for the stream is returned to a top layer
+input predicate (function) when the end of a record is reached. 
+The middle output layer output function adds the delimited
+character at the end of each record before the record is passed to the
+bottom layer write function.
+
+   <p>The <code>format</code> field may be set to <code>QP_FMT_UNKNOWN</code> when
+a stream structure is created if the format to be used is not known yet,
+for example, because the underlying device is not yet opened. 
+This format field must be set to a proper format before any I/O takes place
+on the stream.
+
+   <p>An example of this is
+when opening a Prolog stream through <code>open/[3,4]</code> or <code>QP_fopen()</code>
+without specifying the format. 
+The embedding open function, <code>QU_open()</code> is given the stream format
+<code>QP_FMT_UNKNOWN</code> and thus chooses an
+appropriate format for the stream based on the filename and options
+of the stream.
+
+   <p>Depending on the host operating system, some formats may be
+used more frequently than others. 
+<code>QP_DELIM_LF</code> and <code>QP_DELIM_TTY</code> are the most frequently used
+formats for a Prolog system running under UNIX or Windows. 
+<code>QP_VAR_LEN</code> is more frequently used under VMS.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-sst-mrl.html#fli-ios-sst-mrl">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-sst-mod.html#fli-ios-sst-mod">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-sst.html#fli-ios-sst">Up</a>
+</ul>
+</div>
+   </body></html>
+

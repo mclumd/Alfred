@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_string_from_atom(</code>), <code>QP_padded_string_from_atom()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     char *QP_string_from_atom(atom)
+     QP_atom atom;
+     </pre>
+
+<pre class="example">     int QP_padded_string_from_atom(p_atom, p_string, p_length)
+     QP_atom *p_atom;
+     char    *p_string;
+     int     *p_length;
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>QP_string_from_atom()</code> returns a pointer to a string representing
+<var>atom</var>. This string should not be overwritten by the foreign function.
+
+   <p><code>QP_padded_string_from_atom()</code> is useful for Pascal and FORTRAN
+and can be used for any language that has a C-compatible calling convention for
+passing integers and pointers (on the users platform). This is true
+for many Pascal and FORTRAN compilers running under UNIX.
+
+   <p><var>p_atom</var> and <var>p_length</var> can be seen as integers
+passed by reference. Fills in the character array of length <var>length</var> with
+the string representation of <var>atom</var>. The string is truncated or
+blank-padded to <var>length</var>. The length of the atom (not <var>length</var>) is
+returned as the function value.  In the above description <var>atom</var> refers
+to the argument passed by reference corresponding to the declared argument
+<var>p_atom</var> and similarly for <var>p_string</var> and
+<var>p_length</var>.
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>rev_atom()</code> is a C function that takes an atom and returns an atom
+whose string representation is the reverse of the string representation
+of the atom passed in.
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(rev_atom, c, rev_atom(+atom, [-atom])).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     QP_atom rev_atom(atom)
+     QP_atom atom;
+     {
+         char * string[MAX_ATOM_LEN];
+     
+         strcpy(string, QP_string_from_atom(atom));
+         reverse(string); /* reverses string in place */
+         return QP_atom_from_string(string);
+     }
+     
+     | ?- <kbd>rev_atom(draw, X).</kbd>
+     
+     X = ward
+     
+     yes
+     | ?-
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_atom_from_string()</code>,
+<code>QP_atom_from_padded_string()</code>
+
+   <a href="fli-p2f-atm.html#fli-p2f-atm">fli-p2f-atm</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-tab.html#cfu-ref-tab">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-skipln.html#cfu-ref-skipln">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

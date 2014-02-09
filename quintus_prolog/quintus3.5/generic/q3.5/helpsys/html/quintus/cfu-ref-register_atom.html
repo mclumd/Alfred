@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_register_atom()</code>, <code>QP_unregister_atom()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_register_atom(atom)
+     QP_atom atom;
+     </pre>
+
+<pre class="example">     int QP_unregister_atom(atom)
+     QP_atom atom;
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>garbage_collect_atoms/0</code> is able to locate all atoms accessible from Prolog
+code, but cannot trace atoms that are only accessible from foreign code.
+
+   <p><code>QP_register_atom()</code> registers an atom as referenced from foreign code
+so that if <code>garbage_collect_atoms/0</code> is called, the atom will not be
+reclaimed. <code>QP_unregister_atom()</code> unregisters the atom, so that if no
+other code (Prolog or foreign) refers to it, then it is a candidate for
+atom garbage collection.
+
+   <p>These functions use a reference counting mechanism to keep track of atoms
+that have been registered. As a result, it is safe to combine different
+libraries that register and unregister atoms multiple times; the atoms
+will not be reclaimed until everyone has unregistered them.
+
+<h4 class="subheading">Return Value</h4>
+
+   <p>the current reference count of the atom
+or <code>QP_ERROR</code> if an error occurs.
+
+<h4 class="subheading">Tips</h4>
+
+   <p>Atoms do not normally need to be registered when calling
+foreign code. The only situation where this is needed is when the atom is
+being stored in a global or static data structure before returning to Prolog
+code, to be accessed subsequently by later calls to the foreign code.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>garbage_collect_atoms/0</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-register_stream.html#cfu-ref-register_stream">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-query.html#cfu-ref-query">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

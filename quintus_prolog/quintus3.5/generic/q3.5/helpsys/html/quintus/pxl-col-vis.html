@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Visuals</h4>
+
+   <p>Visuals are Prolog terms of one of the following forms:
+
+<pre class="example">     gray(<var>Writable</var>, <var>Depth</var>, <var>Size</var>)
+     
+     direct_color(<var>Writable</var>, <var>Depth</var>, <var>Size</var>,<var>Bits_per_RGB</var>, <var>Rmask</var>, <var>Gmask</var>, <var>Bmask</var>)
+     
+     pseudo_color(<var>Writable</var>, <var>Depth</var>, <var>Size</var>, <var>Bits_per_RGB</var>)
+     </pre>
+
+   <p>Visual terms describe the color capability of a screen or window.  A
+<code>gray/3</code> visual means that pixel values in a window specify an entry in
+a colormap, but only one of the primary colors is actually used to
+drive the grayscale (or monochrome) display <a rel="footnote" href="#fn-1"><sup>1</sup></a>.  <code>direct_color/7</code> means
+that the window or screen support color hardware where separate
+bits in a pixel value specify entries in separate colormaps for each
+of the three primary colors.  <code>pseudo_color/4</code> means that each pixel
+value specifies an entry in a colormap, which specifies all three
+primary colors.  <var>Writable</var> is either <code>true</code> or <code>false</code>,
+indicating whether or not is is possible to allocate and change
+cells in a colormap.  <var>Depth</var> specifies the number of bitplanes that
+are supported on this screen or window.  <var>Size</var> is the number of
+user-accessible colormap entries; this will always be less than or
+equal to 2 to the power of <var>Depth</var>.  <var>Bits_per_RGB</var> is the number of bits
+used to specify each primary in a color specification.  In some
+sense, this is the <dfn>precision</dfn> of color specifications.  And
+finally, <var>Rmask</var>, <var>Gmask</var>, and <var>Bmask</var> are bit masks
+(i.e. integers) that specify which bits of a <code>direct_color</code> visual
+pixel specify the red, green, and blue primary, respectively.
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>X does not specify which
+color drives the display, so <var>R</var>, <var>G</var> and <var>B</var> should all be the
+same for grayscale visuals.</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-col-use.html#pxl-col-use">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-col-cs.html#pxl-col-cs">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-col.html#pxl-col">Up</a>
+</ul>
+</div>
+   </body></html>
+

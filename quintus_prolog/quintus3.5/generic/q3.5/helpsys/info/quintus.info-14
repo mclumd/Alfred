@@ -1,0 +1,1419 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: ref-mod-mle,  Next: ref-mod-ncl,  Prev: ref-mod-cim,  Up: ref-mod
+
+Modules and Loading through the Editor Interface
+------------------------------------------------
+
+   When you (re)load some Prolog code through the editor interface, the
+module into which the code is to be loaded is selected as follows.
+   * if the code begins with a module declaration, this is exactly the
+     same as loading that text from a file using the Load Predicates;
+
+   * otherwise, if the file containing the code has previously been
+     associated with some module other than `user', the code is
+     reloaded into that module;
+
+   * otherwise, if the type-in module is `user', the code is loaded
+     into `user';
+
+   * otherwise, you are prompted to confirm that you wish to load the
+     code into the type-in module -- if not, the load is abandoned.
+
+   Note that when a fragment of code has been loaded into a particular
+module other than `user', the editor will subsequently insist that that
+code belongs to that module.  In order to change this, the entire
+module must be reloaded.
+
+   When a module declaration is processed, the module is reinitialized;
+all predicates previously imported into that module are forgotten.
+Therefore, when only _part_ of a module-file is reloaded through the
+editor interface, that part should generally _not_ include the module
+declaration.
+
+   Loading an entire module through the editor interface is like loading
+the module via the Load Predicates in that all the public predicates in
+the module are imported into the type-in module.  The only difference
+is that in the case in which you load the module through the editor
+interface you will be prompted for confirmation before the importation
+takes place.  This is because there are situations in which you might
+want to reload a module via the editor interface without importing it
+into the type-in module; that is, situations in which you would not
+want to allow the importation to happen.  For example, suppose that the
+type-in module is the default `user', and that you have been modifying
+a module `m1' from which another module `m2' imports predicates, but
+from which `user' does not import anything.  In this case, you may want
+to reload `m1', using the editor interface, without importing it into
+`user'.
+
+   When a file that is not a module-file is loaded into several
+different modules, reloading all or part of it through the editor
+interface affects only the module into which it was most recently
+loaded.
+
+
+File: quintus.info,  Node: ref-mod-ncl,  Next: ref-mod-ilm,  Prev: ref-mod-mle,  Up: ref-mod
+
+Name Clashes
+------------
+
+   A "name clash" can arise if:
+  1. a module tries to import a predicate from some other module `m1'
+     and it has already imported a predicate with the same name and
+     arity from a module `m2';
+
+  2. a module tries to import a predicate from some other module `m1'
+     and it already contains a definition of a predicate with the same
+     name and arity; or
+
+  3. a module tries to define a predicate with the same name and arity
+     as one that it has imported.
+
+   Whenever a name clash arises, a message is displayed beginning with
+the words `NAME CLASH'.  If the module that is importing or defining
+the clashing predicate is not `user', then this message is just a
+warning, and the attempt to import or define the predicate simply
+fails.  Otherwise, if the module IS `user', the user is asked to choose
+from one of several options; for example,
+     NAME CLASH: f/3 is already imported into module user
+                 from module m1;
+                 do you want to override this definition with
+                 the one in m2? (y,n,p,s,a or ?)
+
+   The meanings of the four recognized replies are as follows:
+   * `y' means forget the previous definition of `f/3' from `m1' and use
+     the new definition of `f/3' from `m2' instead.
+
+   * `n' means retain the previous definition of `f/3' from `m1' and
+     ignore the new definition of `f/3' from `m2'.
+
+   * `p' (for proceed) means forget the previous definition of `f/3'
+     and of all subsequent predicate definitions in `m1' that clash
+     during the current load of `m2'.  Instead, use the new definitions
+     in `m2'.  When the `p' option is chosen, predicates being loaded
+     from `m1' into `m2' will cause no `NAME CLASH' messages for the
+     remainder of the load, though clashes with predicates from other
+     modules will still generate such messages.
+
+   * `s' (for suppress) means forget the new definition of `f/3' and of
+     all subsequent predicate definitions in `m1' that clash during the
+     current load of `m2'.  Instead, use the old definitions in `m2'.
+     When the `s' option is chosen, predicates being loaded from `m1'
+     into `m2' will cause no `NAME CLASH' messages for the remainder of
+     the load, though clashes with predicates from other modules will
+     still generate such messages.
+
+   * `?' gives brief help information.
+
+
+File: quintus.info,  Node: ref-mod-ilm,  Next: ref-mod-idp,  Prev: ref-mod-ncl,  Up: ref-mod
+
+Obtaining Information about Loaded Modules
+------------------------------------------
+
+* Menu:
+
+* ref-mod-ilm-def::                     Predicates Defined in a Module
+* ref-mod-ilm-vis::                     Predicates Visible in a Module
+
+`current_module(M)'
+     M is the name of a current module
+
+`current_module(M,F)'
+     F is the name of the file in which M'S module declaration appears
+
+
+File: quintus.info,  Node: ref-mod-ilm-def,  Next: ref-mod-ilm-vis,  Up: ref-mod-ilm
+
+Predicates Defined in a Module
+..............................
+
+   The built-in predicate `current_predicate/2' can be used to find the
+predicates that are defined in a particular module.
+
+   To backtrack through all of the predicates defined in module `m', use
+
+     | ?- current_predicate(_, m:Goal).
+
+   To backtrack through _all_ predicates defined in _any_ module, use
+     | ?- current_predicate(_, M:Goal).
+
+   This succeeds once for every predicate in your program.
+
+
+File: quintus.info,  Node: ref-mod-ilm-vis,  Prev: ref-mod-ilm-def,  Up: ref-mod-ilm
+
+Predicates Visible in a Module
+..............................
+
+   The built-in predicate `predicate_property/2' can be used to find the
+properties of any predicate that is visible to a particular module.
+
+   To backtrack through all of the predicates imported by module `m',
+use
+
+     | ?- predicate_property(m:Goal, imported_from(_)).
+
+   To backtrack through all of the predicates imported by module `m1'
+from module `m2', use
+
+     | ?- predicate_property(m1:Goal, imported_from(m2)).
+
+   For example, you can load the `basics' module from the library and
+then remind yourself of what predicates it defines like this:
+
+     | ?- compile(library(basics)).
+     % ... loading messages ...
+     
+     yes
+     | ?- predicate_property(P, imported_from(basics)).
+     
+     P = member(_2497,_2498) ;
+     P = memberchk(_2497,_2498) ;
+       .
+       .
+       .
+
+   This tells you what predicates are imported into the type-in module
+from `basics'.
+
+   You can also find _all_ imports into _all_ modules using
+     | ?- predicate_property(M1:G, imported_from(M2)).
+
+   To backtrack through all of the predicates exported by module `m',
+use
+
+     | ?- predicate_property(m:Goal, exported).
+
+   There is a library package, `library(showmodule)', which prints out
+information about current modules.  For more information see *Note
+lib::.
+
+
+File: quintus.info,  Node: ref-mod-idp,  Next: ref-mod-mne,  Prev: ref-mod-ilm,  Up: ref-mod
+
+Importing Dynamic Predicates
+----------------------------
+
+   Imported dynamic predicates may be asserted and retracted.  For
+example, suppose the following file is loaded via `use_module/1':
+
+     :- module(m1, [f/1]).
+     :- dynamic f/1.
+     f(0).
+
+   Then `f/1' can be manipulated as if it were defined in the current
+module.  For example,
+     | ?- clause(f(X), true).
+     
+     X = 0
+
+   The built-in predicate `listing/1' distinguishes predicates that are
+imported into the current source module by prefixing each clause with
+the module name.  Thus,
+
+     | ?- listing(f).
+     
+     m1:f(0).
+
+   However, `listing/1' does not prefix clauses with their module if
+they are defined in the source module itself.  Note that
+     | ?- listing.
+
+   can be used to see all the dynamic predicates defined in or imported
+into the current type-in module.  And
+     | ?- listing(m1:_).
+
+   can be used to see all such predicates that are defined in or
+imported into module `m1'.
+
+
+File: quintus.info,  Node: ref-mod-mne,  Next: ref-mod-met,  Prev: ref-mod-idp,  Up: ref-mod
+
+Module Name Expansion
+---------------------
+
+   The concept of a source module is explained in *Note ref-mod-som::.
+For any goal, the applicable source module is determined when the goal
+is compiled rather than when it is executed.
+
+   A procedure that needs to refer to the source module has arguments
+designated for module name expansion.  These arguments are expanded at
+compile time by the transformation
+     X -> M:X
+
+   where M is the name of the source module.  For example, the goal
+`call(X)' is expanded into `call(M:X)' and the goal `clause(Head,
+Body)' is expanded into `clause(M:Head, Body)'.
+
+   Module name expansion is avoided if the argument to be expanded is
+already a `:/2' term.  In this case it is unnecessary since the module
+to be used has already been supplied by the programmer.
+
+   The built-in predicates that use module name expansion, and the
+arguments requiring module name expansion are shown below.  These
+arguments are labeled `[MOD]' in the Arguments field of the reference
+page for each.
+
+   * `abolish(M:Pred)'
+
+   * `abolish(M:Name, Arity)'
+
+   * `assert(M:Term)'
+
+   * `assert(M:Term, Ref)'
+
+   * `asserta(M:Term)'
+
+   * `asserta(M:Term, Ref)'
+
+   * `assertz(M:Term)'
+
+   * `assertz(M:Term, Ref)'
+
+   * `bagof(T, M:P, S)'
+
+   * `call(M:Goal)'
+
+   * `check_advice(M:ListOfPredSpecs)'
+
+   * `clause(M:Head, Body)'
+
+   * `clause(M:Head, Body, Ref)'
+
+   * `compile(M:Files)'
+
+   * `consult(M:Files)'
+
+   * `current_advice(M1:Goal, Port, M2:Action)'
+
+   * `current_predicate(Name, M:Term)'
+
+   * `debugger(Current, M:New)'
+
+   * `ensure_loaded(M:Files)'
+
+   * `findall(T, M:Pred, List)'
+
+   * `initialization(M:Goal)'
+
+   * `listing(M:List)'
+
+   * `load_files(M:Files)'
+
+   * `load_files(M:Files, Options)'
+
+   * `load_foreign_files(M:Files, Libs)'
+
+   * `multifile_assertz(M:Term)'
+
+   * `nocheck_advice(M:ListOfPredSpecs)'
+
+   * `nospy(M:List)'
+
+   * `phrase(M:Phrase, S0)'
+
+   * `phrase(M:Phrase, S0, S)'
+
+   * `predicate_property(M:Goal, Property)'
+
+   * `remove_advice(M:Goal, Port, Action)'
+
+   * `retract(M:Term)'
+
+   * `retractall(M:Term)'
+
+   * `save_predicates(M:PredSpecs,File)'
+
+   * `save_program(File,M:Goal)'
+
+   * `setof(T, M:P, S)'
+
+   * `source_file(M:Term,File)'
+
+   * `source_file(M:PredSpec,ClauseNumber,File)'
+
+   * `spy(M:List)'
+
+   * `use_module(M:Files)'
+
+   * `use_module(M:File, IL)'
+
+   * `use_module(ExportModule, M:File, IL)'
+
+   * `volatile(M:PredSpec)'
+
+   * `X^(M:Goal)'
+
+   * `[M:File|Rest]'
+
+   In all of these predicates, `M:' can stand for multiple modules.  It
+is the innermost module that is used in this case.  For example,
+`call(m1:m2:m3:p)' calls `m3:p/0'.
+
+
+File: quintus.info,  Node: ref-mod-met,  Next: ref-mod-sum,  Prev: ref-mod-mne,  Up: ref-mod
+
+The `meta_predicate' Declaration
+--------------------------------
+
+   Sometimes a user-defined predicate will require module name
+expansion (see *Note ref-mod-mne::).  This can be specified by
+providing a `meta_predicate' declaration for that procedure.
+
+   Module name expansion is needed whenever the argument of a predicate
+has some module-dependent meaning.  For example, if this argument is a
+goal that is to be called, it will be necessary to know in which module
+to call it -- or, if the argument is a clause to be asserted, in which
+module it should go.
+
+   Consider, for example, a sort routine to which the name of the
+comparison predicate is passed as an argument.  In this example, the
+comparison predicate should be called with respect to the module
+containing the call to the sort routine.  Suppose that the sort routine
+is
+      mysort(+COMPAREPROC, +INPUTLIST, -OUTPUTLIST)
+
+   An appropriate `meta_predicate' declaration for this is
+      :- meta_predicate mysort(:, +, -).
+ The significant argument in the `mysort/3' term is the `:', which
+indicates that module name expansion is required for this argument.
+This means that whenever a goal `mysort(A, B, C)' appears in a clause,
+it will be transformed at load time into `mysort(M:A, B, C)', where M
+is the source module.  There are some exceptions to this compile-time
+transformation rule; the goal is not transformed if either of the
+following applies:
+  1.  A is of the form MODULE:GOAL.
+
+  2. A is a variable and the same variable appears in the head of the
+     clause in a module-name-expansion position.
+
+   The reason for (2) is that otherwise module name expansion could
+build larger and larger structures of the form MN: ... :M2:M1:GOAL.
+For example, consider the following program fragment adapted from the
+library (see `library(samsort)' for the full program):
+
+     :- module(samsort, [samsort/3]).
+     
+     :- meta_predicate
+             samsort(:, +, ?),
+             sam_sort(+, :, +, +, ?).
+     
+     samsort(_, [], []) :- !.
+     samsort(Order, List, Sorted) :-
+             sam_sort(List, Order, [], 0, Sorted).
+       .
+       .
+       .
+
+   Normally, the `sam_sort/5' goal in this example would have the
+module name of its second argument expanded thus:
+     sam_sort(List, samsort:Order, [], 0, Sorted)
+
+   because of the `meta_predicate' declaration.  However, in this
+situation the appropriate source module will have already been attached
+to ORDER because it is the first argument of `samsort/3', which also
+has a `meta_predicate' declaration.  Therefore it is not useful to
+attach the module name (`samsort') to ORDER in the call of `sam_sort/5'.
+
+   The argument of a `meta_predicate' declaration can be a term, or a
+sequence of terms separated by commas.  Each argument of each of these
+terms must be one of the following:
+
+`:'
+     requires module name expansion
+
+non-negative integer
+     same as `:'
+
+`+', `-', `*'
+     ignored
+
+   The reason for allowing a non-negative integer as an alternative to
+`:' is that this may be used in the future to supply additional
+information to the cross-referencer (`library(xref)') and to the Prolog
+compiler.  An integer N is intended to mean that that argument is a
+term that will be supplied N additional arguments.  Thus, in the
+example above where the meta-argument is the name of a comparison
+routine that would be called with two arguments, it would be
+appropriate to write the integer 2 instead of a `:'.
+
+   The reason for `+', `-' and `*' is simply so that the information
+contained in a DEC-10 Prolog-style "mode" declaration may be represented
+in the `meta_predicate' declaration if you wish.  There are many
+examples of `meta_predicate' declarations in the library.
+
+
+File: quintus.info,  Node: ref-mod-sum,  Prev: ref-mod-met,  Up: ref-mod
+
+Predicate Summary
+-----------------
+
+   * `current_module/[1,2]'
+
+   * `meta_predicate/1'
+
+   * `module/1'
+
+   * `module/2'
+
+   * `save_modules/2'
+
+   * `use_module/[1,2,3]'
+
+
+File: quintus.info,  Node: ref-mdb,  Next: ref-ere,  Prev: ref-ari,  Up: ref
+
+Modification of the Database
+============================
+
+* Menu:
+
+* ref-mdb-bas::                         Introduction
+* ref-mdb-dsp::                         Dynamic and Static Procedures
+* ref-mdb-dre::                         Database References
+* ref-mdb-acd::                         Adding Clauses to the Database
+* ref-mdb-rcd::                         Removing Clauses from the Database
+* ref-mdb-acl::                         Accessing Clauses
+* ref-mdb-exa::                         Modification of Running Code: Examples
+* ref-mdb-idb::                         The Internal Database
+* ref-mdb-sum::                         Summary of Predicates
+
+
+File: quintus.info,  Node: ref-mdb-bas,  Next: ref-mdb-dsp,  Up: ref-mdb
+
+Introduction
+------------
+
+   The family of assertion and retraction predicates described below
+enables you to modify a Prolog program by adding or deleting clauses
+while it is running.  These predicates should not be overused.   Often
+people who are experienced with other programming languages have a
+tendency to think in terms of global data structures, as opposed to
+data structures that are passed as procedure arguments, and hence they
+make too much use of assertion and retraction.  This leads to less
+readable and less efficient programs.
+
+   An interesting question in Prolog is what happens if a procedure
+modifies itself, by asserting or retracting a clause, and then fails.
+On backtracking, does the current execution of the procedure use new
+clauses that are added to the bottom of the procedure?
+
+     *Historical note:* In early releases of Quintus Prolog, changes to
+     the Prolog database became globally visible upon the success of
+     the built-in predicate modifying the database.  An unsettling
+     consequence was that the definition of a procedure could change
+     while it was being run.  This could lead to code that was
+     difficult to understand.  Furthermore, the memory performance of
+     the interpreter implementing these semantics was poor.  Worse yet,
+     the semantics rendered ineffective the added determinacy detection
+     available through indexing.
+
+   Quintus Prolog implements the "logical" view in updating dynamic
+predicates.  This means that the definition of a dynamic procedure that
+is visible to a call is effectively frozen when the call is made.  A
+procedure always contains, as far as a call to it is concerned, exactly
+the clauses it contained when the call was made.
+
+   A useful way to think of this is to consider that a call to a
+dynamic procedure makes a "virtual copy" of the procedure and then runs
+the copy rather than the original procedure.  Any changes to the
+procedure made by the call are immediately reflected in the Prolog
+database, but not in the copy of the procedure being run.  Thus,
+changes to a running procedure will not be visible on backtracking.  A
+subsequent call, however, makes and runs a copy of the modified Prolog
+database.  Any changes to the procedure that were made by an earlier
+call will now be visible to the new call.
+
+   In addition to being more intuitive and easy to understand, the new
+semantics allow interpreted code to execute with the same determinacy
+detection (and excellent memory performance) as static compiled code
+(see *Note bas-eff-ind::, for more information on determinacy
+detection).
+
+
+File: quintus.info,  Node: ref-mdb-dsp,  Next: ref-mdb-dre,  Prev: ref-mdb-bas,  Up: ref-mdb
+
+Dynamic and Static Procedures
+-----------------------------
+
+   All Prolog procedures are classified as being either "static" or
+"dynamic procedures".  Static procedures can be changed only by
+completely redefining them using the Load Predicates (see *Note
+ref-lod::).  Dynamic procedures can be modified by adding or deleting
+individual clauses using the assert and retract procedures.
+
+   If a procedure is defined by being compiled, it is static by default.
+If you need to be able to add, delete, or inspect the individual
+clauses of such a procedure, you must make the procedure dynamic.
+
+   There are two ways to make a procedure dynamic:
+   * If the procedure is to be compiled, then it must be declared to be
+     dynamic before it is defined.
+
+   * If the procedure is to be created by assertions only, then the
+     first `assert' operation on the procedure automatically makes it
+     dynamic.
+
+   A procedure is declared dynamic by preceding its definition with a
+declaration of the form:
+     :- dynamic PRED
+
+   where PRED must be a procedure specification of the form NAME/ARITY,
+or a sequence of such specifications, separated by commas.  For example,
+     :- dynamic exchange_rate/3, spouse_of/2,
+                gravitational_constant/1.
+
+   where `dynamic' is a built-in prefix operator.  If PRED is not of
+the specified form an exception is raised, and the declaration is
+ignored.
+
+   Note that the symbol `:- ' preceding the word `dynamic' is essential.
+If this symbol is omitted, a permission error is raised because it
+appears that you are trying to define a clause for the built-in
+predicate `dynamic/1'.  Although `dynamic/1' is a built-in predicate,
+it may only be used in declarations.
+
+   When a dynamic declaration is encountered in a file being compiled,
+it is considered to be a part of the redefinition of the procedures
+specified in its argument.  Thus, if you compile a file containing only
+     :- dynamic hello/0
+
+   the effect will be to remove any previous definition of `hello/0'
+from the database, and to make the procedure dynamic.  You cannot make a
+procedure dynamic retroactively.  If you wish to make an
+already-existing procedure dynamic it must be redefined.
+
+   It is often useful to have a dynamic declaration for a procedure
+even if it is to be created only by assertions.  This helps another
+person to understand your program, since it emphasizes the fact that
+there are no pre-existing clauses for this procedure, and it also
+avoids the possibility of Prolog stopping to tell you there are no
+clauses for this procedure if you should happen to call it before any
+clauses have been asserted.  This is because unknown procedure catching
+(see *Note dbg-bas-con-unk::) does not apply to dynamic procedures; it
+is presumed that a call to a dynamic procedure should simply fail if
+there are no clauses for it.
+
+   If a program needs to make an undefined procedure dynamic, this can
+be achieved by calling `clause/2' on that procedure.  The call will
+fail because the procedure has no clauses, but as a side-effect it will
+make the procedure dynamic and thus prevent unknown procedure catching
+on that procedure.  See the Reference page for details of `clause/2'.
+
+   Although you can simultaneously declare several procedures to be
+dynamic, as shown above, it is recommended that you use a separate
+dynamic declaration for each procedure placed immediately before the
+clauses for that procedure.  In this way when you reconsult or
+recompile the procedure using the editor interface, you will be
+reminded to include its dynamic declaration.
+
+   Dynamic procedures are implemented by interpretation, even if they
+are included in a file that is compiled.  This means that they are
+executed more slowly than if they were static, and also that can be
+printed out using `listing/0'.  Dynamic procedures, as well as static
+procedures, are indexed on their first argument; see *Note
+bas-eff-ind::.
+
+
+File: quintus.info,  Node: ref-mdb-dre,  Next: ref-mdb-acd,  Prev: ref-mdb-dsp,  Up: ref-mdb
+
+Database References
+-------------------
+
+   A "database reference" is a term that uniquely identifies a clause
+or recorded term (see *Note ref-mdb-idb::) in the database.  Database
+references are provided only to increase efficiency in programs that
+access the database in complex ways.  Use of a database reference to a
+clause can save repeated searches using `clause/2'.  However, it does
+_not_ normally pay to access a clause via a database reference when
+access via first argument indexing is possible.
+
+   Consistency checking is done whenever a reference is used; any
+attempt to use a reference to a clause that has been retracted will
+cause an existence error to be raised.
+
+   There is no restriction on the use of references.  References may be
+included in asserted clauses.  Database references to clauses and in
+clauses are preserved across saving and restoring via QOF files (see
+also *Note sap-srs-bas-cld::).
+
+   In release 3, a database reference reads and writes like a Prolog
+term of the form `'$ref'(INTEGER,INTEGER)'; however, it is actually
+represented as a distinguished atomic data type by the Prolog system.
+As a result, Prolog operations like `functor/3' and `arg/3' treat
+database references as they would numbers or atoms:
+
+     | ?- assert(foo,M).
+     
+     M = '$ref'(1296804,1)
+     
+     | ?- functor('$ref'(1296804,1), N, A).
+     
+     N = '$ref'(1296804,1),
+     A = 0
+     
+     | ?- arg(1, '$ref'(1296804,1), A).
+     
+     no
+     | ?-
+
+   Database references can be identified using the type test
+`db_reference/1'.
+
+   In previous releases of Quintus Prolog, operations such as the above
+were occasionally used on database references so that their components
+could be indexed on in asserted clauses.  Such operations have always
+been discouraged.  In release 3, full indexing is automatically
+available on the entire database reference, so it is unnecessary to
+have access to its components.
+
+   As in the past, the representation of database references may change
+in future releases, so programs should not rely on it.
+
+
+File: quintus.info,  Node: ref-mdb-acd,  Next: ref-mdb-rcd,  Prev: ref-mdb-dre,  Up: ref-mdb
+
+Adding Clauses to the Database
+------------------------------
+
+   The assertion predicates are used to add clauses to the database in
+various ways.  The relative position of the asserted clause with
+respect to other clauses for the same predicate is determined by the
+choice among `assert/1', `asserta/1', and `assertz/1'.  A database
+reference that uniquely identify the clause being asserted is
+established by providing an optional second argument to any of the
+assertion predicates.
+
+`assert(C)'
+     clause C is asserted in an arbitrary position in its predicate
+
+`assert(C,R)'
+     as `assert/1'; reference R is returned
+
+`asserta(C)'
+     clause C is asserted before existing clauses
+
+`asserta(C,R)'
+     as `asserta/1'; reference R is returned
+
+`assertz(C)'
+     clause C is asserted after existing clauses
+
+`assertz(C,R)'
+     as `assertz/1'; reference R is returned
+
+`multifile_assertz(C)'
+     add clause C to the end of a (possibly compiled) multifile
+     procedure
+
+
+File: quintus.info,  Node: ref-mdb-rcd,  Next: ref-mdb-acl,  Prev: ref-mdb-acd,  Up: ref-mdb
+
+Removing Clauses from the Database
+----------------------------------
+
+* Menu:
+
+* ref-mdb-rcd-efu::                     A Note on Efficient Use of retract/1
+
+   This section briefly describes the predicates used to remove the
+clauses and/or properties of a predicate from the system.
+
+     *Please note:*  Removing all of a predicate's clauses by
+     `retract/1' and/or `erase/1' (see *Note ref-mdb-rcd-efu::) does
+     not remove the predicate's properties (and hence its definition)
+     from the system.  The only way to completely remove a predicates
+     clauses _and_ properties is to use `abolish/[1,2]'.
+
+`retract(C)'
+     erase the first dynamic clause that matches C
+
+`retractall(H)'
+     erase every clause whose head matches H
+
+`abolish(F)'
+     abolish the predicate(s) specified by F
+
+`abolish(F,N)'
+     abolish the predicate named F of arity N
+
+`erase(R)'
+     erase the clause or recorded term (see *Note ref-mdb-idb::) with
+     reference R
+
+
+File: quintus.info,  Node: ref-mdb-rcd-efu,  Up: ref-mdb-rcd
+
+A Note on Efficient Use of `retract/1'
+......................................
+
+   _WARNING:_ `retract/1' is a nondeterminate procedure.  Thus, we can
+use
+
+     | ?- retract((foo(X) :- Body)), fail.
+
+   to retract all clauses for `foo/1'.  A nondeterminate procedure in
+Quintus Prolog uses a "choice point", a data  structure kept on an
+internal stack, to implement backtracking.  This applies to
+user-defined procedures as well as to built-in and library procedures.
+In a simple model, a choice point is created for each call to a
+nondeterminate procedure, and is deleted on determinate success or
+failure of that call, when backtracking is no longer possible.  In
+fact, Quintus Prolog improves upon this simple model by recognizing
+certain contexts in which choice points can be avoided, or are no
+longer needed.
+
+   The Prolog "cut" (`!') works by removing choice points, disabling
+the potential backtracking they represented.  A choice point can thus
+be viewed as an "outstanding call", and a "cut" as deleting outstanding
+calls.
+
+   To avoid leaving inconsistencies between the Prolog database and
+outstanding calls, a retracted clause is reclaimed only when the system
+determines that there are no choice points on the stack that could
+allow backtracking to the clause.  Thus, the existence of a single
+choice point on the stack can disable reclamation of retracted clauses
+for the procedure whose call created the choice point.  Space is
+recovered only when the choice point is deleted.
+
+   Often `retract/1' is used determinately; for example, to retract a
+single clause, as in
+     | ?- <do some stuff>
+           retract(Clause),
+          <do more stuff without backtracking>.
+
+   No backtracking by `retract/1' is intended.  Nonetheless, if Clause
+may match more than one clause in its procedure, a choice point will be
+created by `retract/1'.  While executing "<do more stuff without
+backtracking>", that choice point will remain on the stack, making it
+impossible to reclaim the retracted Clause.  Such  choice points can
+also disable tail recursion optimization.  If not cut away, the choice
+point can also lead to runaway retraction on the unexpected failure of a
+subsequent goal.  This can be avoided by simply cutting away the choice
+point with an explicit `cut' or a local cut (`->').  Thus, in the
+previous example, it is preferable to write either
+     | ?- <do some stuff>
+           retract(Clause),
+           !,
+          <do more stuff without backtracking>.
+
+   or
+
+     | ?- <do some stuff>
+          ( retract(Clause) -> true ),
+          <do more stuff without backtracking>.
+
+   This will reduce stack size and allow the earliest possible
+reclamation of retracted clauses.  Alternatively, you could use
+`retract_first/1', defined in `library(retract)'.
+
+
+File: quintus.info,  Node: ref-mdb-acl,  Next: ref-mdb-exa,  Prev: ref-mdb-rcd,  Up: ref-mdb
+
+Accessing Clauses
+-----------------
+
+Goal
+     Succeeds If:
+
+`clause(P,Q)'
+     there is a clause for a dynamic predicate with head P and body Q
+
+`clause(P,Q,R)'
+     there is a clause for a dynamic predicate with head P, body Q, and
+     reference R
+
+`instance(R,T)'
+     T is an instance of the clause or term referenced by R
+
+
+File: quintus.info,  Node: ref-mdb-exa,  Next: ref-mdb-idb,  Prev: ref-mdb-acl,  Up: ref-mdb
+
+Modification of Running Code: Examples
+--------------------------------------
+
+* Menu:
+
+* ref-mdb-exa-asz::                     Example: assertz
+* ref-mdb-exa-rtr::                     Example: retract
+* ref-mdb-exa-abo::                     Example: abolish
+
+   The following examples show what happens when a procedure is
+modified while it is running.  This can happen in two ways:
+  1. The procedure calls some other procedure that modifies it.
+
+  2. The procedure succeeds nondeterminately, and a subsequent goal
+     makes the modification.
+         In either case, the question arises as to whether the
+modifications take effect upon backtracking into the modified
+procedure.  In Quintus Prolog the answer is that they do not.  As
+explained in the overview to this section (see *Note ref-mdb-bas::),
+modifications to a procedure affect only calls to that procedure that
+occur after the modification.
+
+
+File: quintus.info,  Node: ref-mdb-exa-asz,  Next: ref-mdb-exa-rtr,  Up: ref-mdb-exa
+
+Example: assertz
+................
+
+   Consider the procedure `foo/0' defined by
+
+     :- dynamic foo/0.
+     foo :- assertz(foo), fail.
+
+   Each call to `foo/0' asserts a new last clause for `foo/0'.  After
+the Nth call to `foo/0' there will be N+1 clauses for `foo/0'.  When
+`foo/0' is first called, a virtual copy of the procedure is made,
+effectively freezing the definition of `foo/0' for that call.  At the
+time of the call, `foo/0' has exactly one clause.  Thus, when `fail/0'
+forces backtracking, the call to `foo/0' simply fails: it finds no
+alternatives.  For example,
+
+     | ?- compile(user).
+     | :- dynamic foo/0.
+     | foo :- assertz(foo), fail.
+     | ^D
+     % user compiled in module user, 0.100 sec 2.56 bytes
+     
+     yes
+     | ?- foo.  % The asserted clause is not found
+     
+     no
+     | ?- foo.  % A later call does find it, however
+     
+     yes
+     | ?-
+
+   Even though the virtual copy of `foo/0' being run by the first call
+is not changed by the assertion, the Prolog database is.  Thus, when a
+second call to `foo/0' is made, the virtual copy for that call contains
+two clauses.  The first clause fails, but on backtracking the second
+clause is found and the call succeeds.
+
+
+File: quintus.info,  Node: ref-mdb-exa-rtr,  Next: ref-mdb-exa-abo,  Prev: ref-mdb-exa-asz,  Up: ref-mdb-exa
+
+Example: retract
+................
+
+     | ?- assert(p(1)), assert(p(2)), assert(p(3)).
+     
+     yes
+     | ?- p(N), write(N), nl, retract(p(2)),
+          retract(p(3)), fail.
+     1
+     2
+     3
+     
+     no
+     | ?- p(N), write(N), fail.
+     1
+     no
+     | ?-
+
+   At the first call to `p/1', the procedure has three clauses.  These
+remain visible throughout execution of the call to `p/1'.  Thus, when
+backtracking is forced by `fail/0', N is bound to 2 and written.  The
+retraction is again attempted, causing backtracking into `p/1'.  N is
+bound to 3 and written out.  The call to `retract/1' fails.  There are
+no more clauses in `p/1', so the query finally fails.  A subsequent
+call to `p/1', made after the retractions, sees only one clause.
+
+
+File: quintus.info,  Node: ref-mdb-exa-abo,  Prev: ref-mdb-exa-rtr,  Up: ref-mdb-exa
+
+Example: abolish
+................
+
+     | ?- compile(user).
+     | :- dynamic q/1.
+     | q(1).
+     | q(2).
+     | q(3).
+     | ^D
+     % user compiled in modules user, 0.117 sec 260 bytes
+     
+     yes
+     | ?- q(N), write(N), nl, abolish(q/1), fail.
+     1
+     2
+     3
+     
+     no
+     | ?-
+
+   Procedures that are abolished while they have outstanding calls do
+not become invisible to those calls.  Subsequent calls however, will
+find the procedure undefined.
+
+
+File: quintus.info,  Node: ref-mdb-idb,  Next: ref-mdb-sum,  Prev: ref-mdb-exa,  Up: ref-mdb
+
+The Internal Database
+---------------------
+
+   The following predicates are provided solely for compatibility with
+other Prolog systems.  Their semantics can be understood by imagining
+that they are defined by the following clauses:
+     recorda(Key, Term, Ref) :-
+          functor(Key, Name, Arity),
+          functor(F, Name, Arity),
+          asserta('$recorded'(F,Term), Ref).
+     recordz(Key, Term, Ref) :-
+          functor(Key, Name, Arity),
+          functor(F, Name, Arity),
+          assertz('$recorded'(F,Term), Ref).
+     recorded(Key, Term, Ref) :-
+          functor(Key, Name, Arity),
+          functor(F, Name, Arity),
+          clause('$recorded'(F,Term), _, Ref).
+
+   The reason for the calls to `functor/3' in the above definition is
+that only the principal functor of the key is significant.  If KEY is a
+compound term, its arguments are ignored.
+
+     *Please note:* Equivalent functionality and performance, with
+     reduced memory costs, can usually be had through normal dynamic
+     procedures and indexing (see *Note ref-mdb-bas::, and indexing
+     tutorial in "Writing Efficient Programs" section).
+
+   In some implementations, database references are also represented by
+compound terms, and thus subject to the limitation described above.
+
+   `recorda(+KEY, +TERM, -REF)' records the  TERM in the internal
+database as the first item for the key KEY; a database reference to the
+newly-recorded term is returned in REF.
+
+   `recordz(+KEY, +TERM, -REF)' is like `recorda/3' except that it
+records the term as the last item in the internal database.
+
+   `recorded(*KEY, *TERM, *REF)' searches the internal database for a
+term recorded under the key KEY that unifies with TERM, and whose
+database reference unifies with REF.
+
+   `current_key(*KEYNAME, *KEYTERM)' succeeds when KEYNAME is the atom
+or integer that is the name of KEYTERM.  KEYTERM is an integer, atom,
+or compound term that is the key for a currently recorded term.
+
+
+File: quintus.info,  Node: ref-mdb-sum,  Prev: ref-mdb-idb,  Up: ref-mdb
+
+Summary of Predicates
+---------------------
+
+   * `abolish/[1,2]'
+
+   * `assert/[1,2]'
+
+   * `asserta/[1,2]'
+
+   * `assertz/[1,2]'
+
+   * `clause/[2,3]'
+
+   * `erase/1'
+
+   * `current_key/3'
+
+   * `instance/2'
+
+   * `recorda/3'
+
+   * `recorded/3'
+
+   * `recordz/3'
+
+   * `retract/1'
+
+   * `retractall/1'
+
+
+File: quintus.info,  Node: ref-all,  Next: ref-syn,  Prev: ref-sem,  Up: ref
+
+Sets and Bags:  Collecting Solutions to a Goal
+==============================================
+
+* Menu:
+
+* ref-all-bas::                         Introduction
+* ref-all-cse::                         Collecting a Sorted List
+* ref-all-cba::                         Collecting a Bag of Solutions
+* ref-all-lib::                         Library Support
+* ref-all-sum::                         Predicate Summary
+
+
+File: quintus.info,  Node: ref-all-bas,  Next: ref-all-cse,  Up: ref-all
+
+Introduction
+------------
+
+   When there are many solutions to a goal, and a list of all those
+solutions is desired, one means of collecting them is to write a
+procedure that repeatedly backtracks into that goal to get another
+solution.  In order to collect all the solutions together, it is
+necessary to use the database (via assertion) to hold the solutions as
+they are generated, because  backtracking to redo the goal would undo
+any list construction that had been done after satisfying the goal.
+
+   The writing of such a backtracking loop can be avoided by the use of
+one of the built-in predicates `setof/3', `bagof/3' and `findall/3',
+which are described below.  These provide a nice logical abstraction,
+whereas with a user-written backtracking loop the need for explicit
+side-effects (assertions) destroys the declarative interpretation of
+the code.  The built-in predicates are also more efficient than those a
+user could write.
+
+
+File: quintus.info,  Node: ref-all-cse,  Next: ref-all-cba,  Prev: ref-all-bas,  Up: ref-all
+
+Collecting a Sorted List
+------------------------
+
+* Menu:
+
+* ref-all-cse-equ::                     Existential Quantifier
+
+   `setof(TEMPLATE, GENERATOR, SET)' returns the set SET of all
+instances of TEMPLATE such that GENERATOR is provable, where that set
+is non-empty.  The term GENERATOR specifies a goal to be called as if
+by `call/1'.  SET is a set of terms represented as a list of those
+terms, without duplicates,  in the standard order for terms (see *Note
+ref-lte-cte::).
+
+   Obviously, the set to be enumerated should be finite, and should be
+enumerable by Prolog in finite time.  It is possible for the provable
+instances to contain variables, but in this case SET will only provide
+an imperfect representation of what is in reality an infinite set.
+
+   If GENERATOR is instantiated, but contains uninstantiated variables
+that do not also appear in TEMPLATE, then `setof/3' can succeed
+nondeterminately, generating alternative values for SET corresponding
+to different instantiations of the free variables of GENERATOR.  (It is
+to allow for such usage that SET is constrained to be non-empty.)  For
+example, if your program contained the clauses
+     likes(tom, beer).
+     likes(dick, beer).
+     likes(harry, beer).
+     likes(bill, cider).
+     likes(jan, cider).
+     likes(tom, cider).
+
+   then the call
+     | ?- setof(X, likes(X,Y), S).
+
+   might produce two alternative solutions via backtracking:
+     X = _872,
+     Y = beer,
+     S = [dick,harry,tom] ;
+     
+     X = _872,
+     Y = cider,
+     S = [bill,jan,tom] ;
+     
+     no
+
+   The call
+     | ?- setof((Y,S), setof(X,likes(X,Y),S), SS).
+
+   would then produce
+
+     Y = _402,
+     S = _417,
+     X = _440,
+     SS = [(beer,[dick,harry,tom]),(cider,[bill,jan,tom])] ;
+     
+     no
+
+
+File: quintus.info,  Node: ref-all-cse-equ,  Up: ref-all-cse
+
+Existential Quantifier
+......................
+
+   X `^' P is recognized as meaning "there exists an X such that P is
+true", and is treated as equivalent to simply calling P.  The use of
+the explicit existential quantifier outside `setof/3' and `bagof/3' is
+superfluous.
+
+   Variables occurring in GENERATOR will not be treated as free if they
+are explicitly bound within GENERATOR by an existential quantifier.  An
+existential quantification is written:
+     Y^Q
+
+   meaning "there exists a Y such that Q is true", where Y is some
+Prolog variable.  For example:
+     | ?- setof(X, Y^likes(X,Y), S).
+
+   would produce the single result
+     X = _400,
+     Y = _415,
+     S = [bill,dick,harry,jan,tom] ;
+     
+     no
+
+   in contrast to the earlier example.
+
+   Furthermore, it is possible to existentially quantify a term, where
+all the variables in that term are taken to be existentially quantified
+in the goal.  e.g.
+
+     A=term(X,Y), setof(Z, A^foo(X,Y,Z), L).
+
+   will treat X and Y as if they are existentially quantified.
+
+
+File: quintus.info,  Node: ref-all-cba,  Next: ref-all-lib,  Prev: ref-all-cse,  Up: ref-all
+
+Collecting a Bag of Solutions
+-----------------------------
+
+* Menu:
+
+* ref-all-cba-cal::                     Collecting All Instances
+
+   `bagof/3' is is exactly the same as `setof/3' except that the list
+(or alternative lists) returned will not be ordered, and may contain
+duplicates.  This relaxation saves time and space in execution.
+
+
+File: quintus.info,  Node: ref-all-cba-cal,  Up: ref-all-cba
+
+Collecting All Instances
+........................
+
+   `findall/3' is a special case of `bagof/3', where all free variables
+in the generator are taken to be existentially quantified.  Thus the
+use of the operator `^' is avoided.  Because `findall/3' avoids the
+relatively expensive variable analysis done by `bagof/3', using
+`findall/3' where appropriate rather than `bagof/3' can be considerably
+more efficient.
+
+   Previously, `findall/3' was available in `library(findall)'.
+
+
+File: quintus.info,  Node: ref-all-lib,  Next: ref-all-sum,  Prev: ref-all-cba,  Up: ref-all
+
+Library Support
+---------------
+
+   * `library(basics)'
+
+   * `library(lists)'
+
+   * `library(ordsets)'
+
+   * `library(sets)'
+
+
+File: quintus.info,  Node: ref-all-sum,  Prev: ref-all-lib,  Up: ref-all
+
+Predicate Summary
+-----------------
+
+   * `setof/3'
+
+   * `bagof/3'
+
+   * `findall/3'
+
+   * `^/2'
+
+
+File: quintus.info,  Node: ref-gru,  Next: ref-olh,  Prev: ref-fdi,  Up: ref
+
+Grammar Rules
+=============
+
+* Menu:
+
+* ref-gru-dcg::                         Definite Clause Grammars
+* ref-gru-gru::                         How to Use the Grammar Rule Facility
+* ref-gru-exa::                         An Example
+* ref-gru-tra::                         Translation of Grammar Rules into Prolog Clauses
+* ref-gru-sum::                         Summary of Predicates
+
+   This section describes Quintus Prolog's grammar rules, and the
+translation of these rules into Prolog clauses.  At the end of the
+section is a list of grammar-related built-in predicates.
+
+
+File: quintus.info,  Node: ref-gru-dcg,  Next: ref-gru-gru,  Up: ref-gru
+
+Definite Clause Grammars
+------------------------
+
+   Prolog's grammar rules provide a convenient notation for expressing
+definite clause grammars, which are useful for the analysis of both
+artificial and natural languages.
+
+   The usual way one attempts to make precise the definition of a
+language, whether it is a natural language or a programming lanaguage,
+is through a collection of rules called a "grammar".  The rules of a
+grammar define which strings of words or symbols are valid sentences of
+the language.  In addition, the grammar generally analyzes the sentence
+into a structure that makes its meaning more explicit.
+
+   A fundamental class of grammar is the context-free grammar (CFG),
+familiar to the computing community in the notation of "BNF"
+(Backus-Naur form). In CFGs, the words, or basic symbols, of the
+language are identified by "terminal symbols", while categories of
+phrases of the language are identified by non-terminal symbols.  Each
+rule of a CFG expresses a possible form for a non-terminal, as a
+sequence of terminals and non-terminals.  The analysis of a string
+according to a CFG is a parse tree, showing the constitutent phrases of
+the string and their hierarchical relationships.
+
+   Context-free grammars (CFGs) consist of a series of rules of the
+form:
+     NT --> BODY.
+
+   where NT is a non-terminal symbol and body is a sequence of one or
+more items separated by commas.  Each item is either a non-terminal
+symbol or a sequence of terminal symbols.  The meaning of the rule is
+that BODY is a possible form for a phrase of type NT. A non-terminal
+symbol is written as a Prolog atom, while a sequence of terminals is
+written as a Prolog list, whereas a terminal may be any Prolog term.
+
+   Definite clause grammars (DCGs) are a generalization of context-free
+grammars and rules corresponding to DCGs are referred to as "Grammar
+Rules".  A grammar rule in Prolog takes the general form
+     HEAD --> BODY.
+
+   meaning "a possible form for  HEAD  is  BODY".  Both  BODY  and
+HEAD  are sequences  of  one  or  more  items  linked  by  the
+standard  Prolog conjunction operator `,' (comma).
+
+   Definite clause grammars  extend  context-free  grammars  in  the
+following ways:
+
+   * A non-terminal symbol  may  be  any  Prolog  term  (other  than  a
+     variable or integer).
+
+   * A  terminal  symbol  may  be  any  Prolog  term.   To  distinguish
+     terminals  from  non-terminals,  a  sequence  of  one or more
+     terminal symbols is written within a grammar rule as a Prolog
+     list.   An  empty sequence  is  written  as the empty list `[]'.
+     If the terminal symbols are ASCII character codes, such lists can
+     be written (as elsewhere) as strings.  An empty sequence is
+     written as the empty list (`[]' or `""').
+
+   * Extra conditions, in the form of Prolog procedure  calls,  may  be
+     included  in  the  right-hand  side of a grammar rule.  These
+     extra conditions allow the explicit use of procedure calls in the
+     body of a rule to restrict the constitutents accepted.  Such
+     procedure calls are written enclosed in curly brackets (`{' and
+     `}').
+
+   * The left-hand side of a grammar rule consists of  a  non-terminal,
+     optionally  followed  by  a  sequence of terminals (again written
+     as a Prolog list).
+
+   * Alternatives may be stated explicitly in the right-hand side of  a
+     grammar rule, using the disjunction operator `;' (semicolon) as in
+     Prolog.  (The disjunction operator can also be written as `|'
+     (vertical-bar).)
+
+   * The cut symbol `!' (exclamation point) may be included in the
+     right-hand side of a grammar rule,  as  in  a  Prolog  clause.
+     The cut symbol does not need to be enclosed in curly brackets.
+     The conditional arrow `->' can also be used in grammar rules,
+     without the curly brackets.  However, all other control
+     predicates, `repeat/0' for example, can only be used within curly
+     brackets.  If you use the goal `repeat/0' without the brackets it
+     will be taken to be a non-terminal symbol.
+
+   * The extra arguments of non-terminals provide the means of building
+     structure (such as parse trees) in grammar rules.  As
+     non-terminals are "expanded" by matching against grammar rules,
+     structures are progressively built up in the course of the
+     unification process.
+
+   * The extra arguments of non-terminals can also provide a general
+     treatment of context dependency by carrying test and contextual
+     information.
+
+
+File: quintus.info,  Node: ref-gru-gru,  Next: ref-gru-exa,  Prev: ref-gru-dcg,  Up: ref-gru
+
+How to Use the Grammar Rule Facility
+------------------------------------
+
+   Following is a summary of the steps that enable you to construct and
+utilitze definte clause grammars:
+
+   STEPS:
+
+  1. Write a grammar, using `-->/2' to formulate rules.
+
+  2. Compile the file containing the grammar rules.  The Load
+     Predicates call `expand_term/2', which translates the grammar rules
+     into Prolog clauses.
+
+  3. Use `phrase/[2,3]' to parse or generate strings.
+
+   OPTIONAL STEPS:
+
+  1. Modify the way in which Prolog translates your grammar rules by
+     defining clauses for `term_expansion/2'.
+
+  2. In debugging or in using the grammar facility for more obscure
+     purposes it may be useful to understand more about `expand_term/2'
+     and `'C'/3'.
+
+
+File: quintus.info,  Node: ref-gru-exa,  Next: ref-gru-tra,  Prev: ref-gru-gru,  Up: ref-gru
+
+An Example
+----------
+
+   As an example, here is a simple grammar that parses an arithmetic
+expression (made up of digits and operators) and computes its value.
+Create a file containing the following rules:
+
+                                                           _grammar.pl_
+     
+     expr(Z) --> term(X), "+", expr(Y), {Z is X + Y}.
+     expr(Z) --> term(X), "-", expr(Y), {Z is X - Y}.
+     expr(X) --> term(X).
+     
+     term(Z) --> number(X), "*", term(Y), {Z is X * Y}.
+     term(Z) --> number(X), "/", term(Y), {Z is X / Y}.
+     term(Z) --> number(Z).
+     
+     number(C) --> "+", number(C).
+     number(C) --> "-", number(X), {C is -X}.
+     number(X) --> [C], {"0"=<C, C=<"9", X is C - "0"}.
+
+   In the last rule, C is the ASCII code of a decimal digit.
+
+   This grammar can now be used to parse and evaluate an expression by
+means of the built-in predicates `phrase/2' and `phrase/3'.  For
+example,
+     | ?- [grammar].
+     | ?-  phrase(expr(Z), "-2+3*5+1").
+     
+     Z = 14
+     
+     | ?-  phrase(expr(Z), "-2+3*5", Rest).
+     
+     Z = 13,
+     Rest = [] ;
+     
+     Z = 1,
+     Rest = "*5" ;
+     
+     Z = -2,
+     Rest = "+3*5" ;
+     
+     no
+

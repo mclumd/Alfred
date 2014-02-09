@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Visibility Rules</h4>
+
+   <p>By default, predicates defined in one module cannot be called from
+another module.  This section enumerates the exceptions to this--the
+ways in which a predicate can be <dfn>visible</dfn> to modules other than the
+one in which it is defined.
+     <ol type=1 start=1>
+
+     <li>The built-in predicates can be called from any module. 
+<li>Any predicate that is named in the <var>PublicPredList</var> of a module,
+and that is imported by some other module <var>M</var>, can be called from
+within <var>M</var>. 
+<li>Module Prefixing: Any predicate, whether public or not, can be called
+from any other module if its module is explicitly given as a prefix to
+the goal, attached with the <code>:/2</code> operator.  The module prefix
+overrides the default module.  For example,
+     <pre class="example">          :- mod:foo(X,Y).
+          </pre>
+
+     <p>always calls <code>foo/2</code> in module <var>mod</var>.  This is effectively a
+loophole in the module system, which allows you to override the normal
+module visibility rules.  It is intended primarily to facilitate program
+development and debugging, and it should not be used extensively since it
+subverts the original purposes of using the module system.
+
+     <p>Note that a predicate called in this way does not necessarily have to be
+defined in the specified module.  It may be imported into it.  It can even
+be a built-in predicate, and this is sometimes useful -- see
+<a href="ref-mod-som.html#ref-mod-som">ref-mod-som</a>, for an example.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-som.html#ref-mod-som">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-lod.html#ref-mod-lod">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

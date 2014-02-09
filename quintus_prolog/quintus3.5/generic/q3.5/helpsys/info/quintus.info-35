@@ -1,0 +1,1426 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxl-tut-hello,  Prev: pxl-tut-cbk,  Up: pxl-tut
+
+The 'hello.pl' Program
+----------------------
+
+   The ProXL source code file listed below encapsulates all of the
+concepts presented in the previous session as a single program.  This
+program appears in the file `demo('hello.pl')'.
+
+                                                             _hello.pl_
+     
+     :- module(proxl_hello, [hello/0]).
+     
+     :- use_module(library(proxl)).
+     
+     
+     %  hello
+     %  test program for message_window/7.
+     
+     hello :-
+             chosen_font(Fontspec),
+             current_font(Fontspec, Fontname),
+             !,
+             message_window('Hello, world!!', Fontname,
+                     goldenrod, forestgreen, cyan, black, _).
+     
+     
+     %  message_window(+Message, +Fontname, +Bg1, +Bg2, +Letters, +Shadow,
+     %       -Window)
+     %  Window is a window with Message, a Prolog atom, centered in it
+     %  in Fontname, an atom naming a font.  Bg1, Bg2, Letters and Shadow
+     %  are atoms naming colors.
+     
+     message_window(Message, Fontname, Bg1, Bg2, Letters, Shadow, Window) :-
+             load_font(Fontname, Font),
+             message_size(Message, Font, Window_width, Window_height,
+                     Xoffset, Yoffset, Xdisplacement, Ydisplacement),
+             alloc_color(Letters, Letters_pix),
+             alloc_color(Shadow, Shadow_pix),
+             background_pixmap(Bg1, Bg2, Bg),
+             create_cursor(gumby, Cursor),
+             create_window(Window,
+                     [   size(Window_width,Window_height), mapped(true),
+                         border_width(2), background(Bg), cursor(Cursor),
+                         property('WM_NAME', hello),
+                         callback(expose, [count(0)],
+                                 expose_message(Window,Message,Letters_pix,
+                                         Shadow_pix,Xoffset,Yoffset,
+                                         Xdisplacement,Ydisplacement)),
+                         callback(button_press, [], destroy_window(Window))
+                     ], [font(Font)]).
+
+                                                             _hello.pl_
+     
+     % message_size(+Message, +Font, -Window_width, -Window_height, -Xoffset,
+     %               -Yoffset, -Xdisplacement, -Ydisplacement)
+     %  Window_width and Window_height are the size of the smallest window
+     %  that will accomodate Message drawn with a drop shadow using font
+     %  Font.  Xoffset and Yoffset are the offset from the center of the
+     %  window at which we want to draw the string.  Since we want to keep
+     %  the message centered even when the window is resized, it's most
+     %  convenient to remember the offset from the center of the window,
+     %  which won't change.  Xdisplacement and Ydisplacement are the
+     %  distance the shadow should be displaced from the primary image,
+     %  computed as 1/5 of the font width and height, respectively.
+     
+     message_size(Message, Font, Window_width, Window_height,
+                     Xoffset, Yoffset, Xdisplacement, Ydisplacement) :-
+             get_font_attributes(Font, [height(Hei), max_width(Wid)]),
+             Xdisplacement is Wid//5,
+             Ydisplacement is Hei//5,
+             text_extents(Font, Message, Lbearing, Rbearing, _, Asc, Desc),
+             Xoffset is Lbearing-(Lbearing+Rbearing+Xdisplacement)//2,
+             Yoffset is Asc-(Asc+Desc+Ydisplacement)//2,
+             %  X and Y offset
+             Window_width is Lbearing+Rbearing+Xdisplacement+4,
+             Window_height is Asc+Desc+Ydisplacement+4.
+     
+     
+     %  background_pixmap(+Bg1, +Bg2, -Pixmap)
+     %  Pixmap is a newly allocated 4x4 background pixmap filled with our
+     %  background pattern.  Bg1 and Bg2 are the names of the colors to
+     %  use for this pixmap.
+     
+     background_pixmap(Bg1, Bg2, Pixmap) :-
+             alloc_color(Bg1, Bg1_pix),
+             alloc_color(Bg2, Bg2_pix),
+             create_pixmap(Pixmap, [size(4,4)], [foreground(Bg1_pix)]),
+             fill_rectangle(Pixmap, 0, 0, 3, 3),
+             put_graphics_attributes(Pixmap, [foreground(Bg2_pix)]),
+             draw_segments(Pixmap, [segment(0,0,3,3),segment(0,3,3,0)]).
+
+                                                             _hello.pl_
+     
+     %  expose_message(+Window, +Message, +Letters_pix, +Shadow_pix,
+     %       +Xoffset, +Yoffset, +Xdisplacement, +Ydisplacement)
+     %  Redisplay the contents of Window.  Window is a window created by
+     %  message_window/7, and Message is the message displayed in it.
+     %  Letters_pix and Shadow_pix are the pixel values to draw the
+     %  letters and shadow in, respectively.  Xoffset and Yoffset are
+     %  the pixel offset from the center of the window at which Message
+     %  should be drawn.  And Xdisplacement and Ydisplacement are the
+     %  pixel offset from the message at which the shadow should be drawn.
+     
+     expose_message(Window, Message, Letters_pix, Shadow_pix, Xoffset, Yoffset,
+                     Xdisplacement, Ydisplacement) :-
+             get_window_attributes(Window, [size(Width,Height)]),
+             X is Width//2 + Xoffset,        % compute position for message
+             Y is Height//2 + Yoffset,
+             Shadow_x is X+Xdisplacement,
+             Shadow_y is Y+Ydisplacement,
+             clear_window(Window),
+             put_graphics_attributes(Window, [foreground(Shadow_pix)]),
+             draw_string(Window, Shadow_x, Shadow_y, Message),
+             put_graphics_attributes(Window, [foreground(Letters_pix)]),
+             draw_string(Window, X, Y, Message).
+     
+     
+     %  chosen_font(-Fontname)
+     %  table of fonts to try.
+     
+     chosen_font('*-times-bold-i-*-24-*').   % First choice, for X11R3
+     chosen_font('vgb-25').                  % Second coice, or on X11R2
+     chosen_font('fixed').                   % Last choice ...
+     
+     
+     %  user:runtime_entry(+Context)
+     %  The main program for runtime systems.
+     
+     user:runtime_entry(start) :-
+             hello,
+             handle_events.                  % process callbacks till
+                                             % hello window is destroyed
+
+
+File: quintus.info,  Node: pxl-win,  Prev: pxl-bmp,  Up: pxl
+
+Windows
+=======
+
+* Menu:
+
+* pxl-win-atts::                        Window Attributes
+* pxl-win-wmi::                         Window Manager Interaction: Properties
+* pxl-win-cre::                         Creating and Destroying Windows
+* pxl-win-find::                        Finding and Changing Window Attributes
+* pxl-win-misc::                        Miscellaneous Window Primitives
+* pxl-win-sel::                         Selections
+* pxl-win-cwin::                        Checking Window Validity
+
+
+File: quintus.info,  Node: pxl-win-atts,  Next: pxl-win-wmi,  Up: pxl-win
+
+Window Attributes
+-----------------
+
+   The appearance and behavior of a window is largely determined by
+window attributes.  The ProXL primitives `create_window/2',
+`put_window_attributes/2', and `get_window_attributes/2' form a family
+whose first argument is a windowable and whose second argument is a
+list of attributes.  The first two primitives give attributes to a
+window, and the last allows you to inquire about the current state of a
+window.
+
+   The available attributes are listed here.  The right hand column
+describes the attribute, lists the values of the variable (describing
+them when necessary), and indicates the default value of V.
+
+Attribute
+     Description and values
+
+`parent(V)'
+     This window's parent window.  Defaults to the root window of
+     default screen on window creation.
+
+`x(V)'
+     Left edge of window, relative to parent window's inside left edge,
+     in pixels.  Default is 0.
+
+`y(V)'
+     Top edge of window, relative to parent window's inside top edge,
+     in pixels.  Default is 0.
+
+`position(X,Y)'
+     X and Y of window relative to parent upper left corner, in pixels.
+     Same as `x(X)', `y(Y)'.
+
+`width(V)'
+     Inside width of window in pixels.  Default is 100.
+
+`height(V)'
+     Inside height of window in pixels.  Default is 100.
+
+`size(W,H)'
+     Same as `width(W)', `height(H)'.
+
+`depth(V)'
+     Bits per pixel.  Default is parent's depth.  This attribute cannot
+     be modified once a window is created.
+
+`border_width(V)'
+     width of window's border, in pixels.  Default is 0.
+
+`class(V)'
+     Can this window be drawn in, or is it only for getting input?  V
+     is either:
+        * `input_output' (default)
+
+        * `input_only'
+
+     This attribute cannot be modified once a window is created.
+
+`visual(V)'
+     The window's visual.  Default is the visual of the window's
+     parent's screen.  See *Note pxl-col::.  This attribute cannot be
+     modified once a window is created.
+
+`background(V)'
+     The window's background.  V may be
+        * a pixel
+
+        * a pixmap
+
+        * `none' (default)
+
+        * `parent_relative'
+
+     Due to the design of the X window system itself, this attribute
+     cannot be determined, but only modified.
+
+`border(V)'
+     The pattern to be displayed in the window's border.  V may be
+        * a pixel
+
+        * a pixmap
+
+        * `copy_from_parent' (default)
+
+     Due to the design of the X window system itself, this attribute
+     cannot be determined, but only modified.
+
+`bit_gravity(V)'
+     Where to put the contents of the window if it is resized.  V may
+     be one of
+        * `north_west'
+
+        * `north'
+
+        * `north_east'
+
+        * `west'
+
+        * `center'
+
+        * `east'
+
+        * `south_west'
+
+        * `south'
+
+        * `south_east'
+
+        * `static'
+
+        * `forget' (default)
+
+`win_gravity(V)'
+     Where to put the subwindows of a window that has been resized.  V
+     may be one of
+        * `north_west'
+
+        * `north'
+
+        * `north_east'
+
+        * `west'
+
+        * `center'
+
+        * `east'
+
+        * `south_west'
+
+        * `south'
+
+        * `south_east'
+
+        * `static'
+
+        * `unmap' (default)
+
+`backing_store(V)'
+     Should the contents of this window be saved by the server when it
+     is occluded by another window?  V should be one of:
+        * `not_useful' (default)
+
+        * `when_mapped'
+
+        * `always'
+
+     Note that some screens don't support backing store, and even those
+     that do may not always provide it when asked.  Your application
+     must _always_ be prepared to repaint its own windows.
+
+`backing_bit_planes(V)'
+     If `backing_store' is used, which planes should be saved?  V is a
+     bit mask.  The default is to save all planes (i.e., V = -1).
+
+`backing_pixel(V)'
+     Specifies the bit values to put into unbacked planes when
+     restoring from backing store.  Default is 0.
+
+`save_under(V)'
+     Should what is under this window be saved so that when the window
+     is moved or unmapped, the newly exposed part of the screen can be
+     refreshed without asking any applications to do the work?  Like
+     `backing_store'(V), not all screens support this, and those that
+     do might not support it whenever asked to.  V may be either:
+
+        * `true'
+
+        * `false' (default)
+
+`event_mask(V)'
+     An integer bitmask indicating which events this window wants to
+     handle.  Note that if you use the ProXL callback mechanism, you
+     should not modify this attribute directly.
+
+`do_not_propagate_mask(V)'
+     An integer bitmask indicating which events not to propagate.  Any
+     event destined for this window not specified by either
+     `event_mask(V)' or `do_not_propagate_mask(V)' will be forwarded to
+     this window's parent.
+
+`override_redirect(V)'
+     Override redirection of map and configure requests?  Possible
+     values of V are
+    `false'
+          (default) A program, usually a window manager, can specify
+          that requests to map or reconfigure a child of a certain
+          window, usually the root, should be sent to it.  This allows a
+          window manager to decide not to allow top level windows to be
+          moved or reshaped, and to put title bars and special borders
+          on top level windows.
+
+    `true'
+          Map and configure requests should go directly to the server.
+          This allows you to pop up a window, say a menu, where you
+          want it, and without any adornments the window manager would
+          put on it.
+
+`colormap(V)'
+     V may be either:
+        * the colormap for this window
+
+        * `copy_from_parent' (default)
+
+`cursor(V)'
+     V may be either:
+    CURSOR
+          the cursor to display when the cursor is in this window
+
+    `none'
+          the parent window's cursor will be displayed.
+
+     Due to the design of the X window system itself, this attribute
+     cannot be determined, but only modified.
+
+`mapped(V)'
+     Is this window on the screen, providing that its parent is?
+     Possible values are
+    `false'
+          (default)
+
+    `true'
+
+    `viewable'
+          the window _is_ on the screen; that is, the window is mapped,
+          and its parent is viewable.  The root window is always
+          viewable.
+
+`gc(V)'
+     The default graphics context for this window.  The default is the
+     screen's default gc.  See *Note pxl-graf:: for more information.
+
+`property(N,V)'
+     V is the value of the N property of the window.  If N is unbound,
+     it will backtrack through all the properties of the window.  If N
+     is bound, it should be an atom.  See *Note pxl-win-wmi:: for
+     information on how to use the `property(N,V)' attribute to tell a
+     window manager how to handle your windows.
+
+`callback(E,F,V,C,G)'
+     Register G as the goal to call when event E is received by the
+     window.  F is a list of fields of the event to be accessed before
+     calling G, and V is a variable, which may be passed back to the
+     `handle_events' procedure in order to exit the `handle_events'
+     loop.  If V is `none', then no result will be passed to
+     `handle_events'.  C is the context of the call, which is specified
+     as the second argument to `handle_events/2'.  This allows a
+     callback's behavior to depend on the context in which it occurs.
+     See *Note pxl-ev:: for more information.
+
+`callback(E,F,V,G)'
+     Equivalent to `callback(E,F,V,_,G)'.
+
+`callback(E,F,G)'
+     Equivalent to `callback(E,F,`NONE',_,G)'.
+
+
+File: quintus.info,  Node: pxl-win-wmi,  Next: pxl-win-cre,  Prev: pxl-win-atts,  Up: pxl-win
+
+Window Manager Interaction: Properties
+--------------------------------------
+
+* Menu:
+
+* pxl-win-wmi-wnam::                    Giving the Window a Name
+* pxl-win-wmi-inam::                    Giving the  Window's Icon a Name
+* pxl-win-wmi-wsiz::                    Suggesting a Size and Shape for the Window
+* pxl-win-wmi-wini::                    Suggesting Icon, Initial State, and Other Features
+* pxl-win-wmi-trn::                     Transient windows
+* pxl-win-wmi-isz::                     Icon Sizes
+* pxl-win-wmi-oprop::                   Other Window Properties
+
+   In the X Window System, window managers largely control how an
+application's windows behave.  Applications inform the currently active
+window manager of important facts and hints about a window by storing
+properties of certain names and types on that window.  Each window
+manager determines what it will do with this information by itself;
+your application does _not_ have any control over it.
+
+   X does establish many conventions for what window managers are
+expected to do, and you are encouraged to use those conventions.
+However, at this stage in the development of the X Window System, most
+window managers do not follow all these conventions.  Keep this in mind
+when you are testing code that makes demands of window managers:  your
+test may be failing due to no fault in your program, but simply because
+the window manager you are using does not support the feature you
+require.
+
+   All interaction with the window manager is done through window
+properties.  As described above (see *Note pxl-win-atts::), window
+properties are window attributes of the form
+     property(Name,Value)
+
+   These can be set with `create_window' and `put_window_attributes'.
+
+
+File: quintus.info,  Node: pxl-win-wmi-wnam,  Next: pxl-win-wmi-inam,  Up: pxl-win-wmi
+
+Giving the Window a Name
+........................
+
+   The attribute `property(`'WM_NAME'',NAME)' specifies that NAME,
+which should be a Prolog atom, will be the name of the window it is an
+attribute of.  Remember that not all window managers will display a
+window's name.
+
+
+File: quintus.info,  Node: pxl-win-wmi-inam,  Next: pxl-win-wmi-wsiz,  Prev: pxl-win-wmi-wnam,  Up: pxl-win-wmi
+
+Giving the  Window's Icon a Name
+................................
+
+   The attribute `property(`'WM_ICON_NAME'',NAME)' specifies that NAME,
+which should be a Prolog atom, will be the name of the window's icon.
+
+
+File: quintus.info,  Node: pxl-win-wmi-wsiz,  Next: pxl-win-wmi-wini,  Prev: pxl-win-wmi-inam,  Up: pxl-win-wmi
+
+Suggesting a Size and Shape for the Window
+..........................................
+
+   There are many possible ways to suggest to a window manager the
+screen size and position of your window.  First, you may specify two
+separate sets of size and position hints.  The "normal" size hints are
+specified by the attribute
+
+     property('WM_NORMAL_HINTS',HINTS)
+
+   The "zoomed" size hints, that is, the large or "full screen" size
+hints, are specified by the attribute
+     property('WM_ZOOM_HINTS',HINTS)
+
+   In both cases, the HINTS specified should be a term of the form
+     wm_size_hints(POSITION,SIZE,MIN_SIZE,MAX_SIZE,RESIZE_INC,ASPECT)
+ The meaning of the arguments of the `wm_size_hints/6' term is as
+follows:
+
+Argument
+     Meaning
+
+POSITION
+     Specifies the window's position.  It may be either:
+    `none'
+          No hint is being made about the window's position.
+
+    `user_position(X,Y)'
+          This means that `position' (X,Y) is suggested, and that the
+          suggestion comes from the user.
+
+    `program_position(X,Y)'
+          This means that `position' (X,Y) is suggested, and that the
+          suggestion comes from the program.
+
+SIZE
+     Specifies the window's size.  It may be either:
+    `none'
+          meaning that no hint is being made about the window's size.
+
+    `user_size(W,H)'
+          W by H is the suggested size, and the suggestion comes from
+          the user.
+
+    `program_size(W,H)'
+          W by H is the suggested size, and the suggestion comes from
+          the program.
+
+MIN_SIZE
+     Specifies the minimum suggested size for the window.  The window
+     manager may choose to make the window smaller than this, if it
+     likes.  This may be either:
+
+    `none'
+          No hint is being made about the window's minimum size.
+
+    `size(W,H)'
+          W by H is the suggested minimum size.
+
+MAX_SIZE
+     Specifies the maximum suggested size for the window.  The window
+     manager may choose to make the window larger than this, if it
+     likes.  This may be either:
+
+    `none'
+          No hint is being made about the window's maximum size.
+
+    `size(W,H)'
+          W by H is the suggested maximum size.
+
+RESIZE_INC
+     Specifies the increments in which your application would like the
+     window to be resized.  This may be either:
+
+    `none'
+          No hint is being made about the window's resize increment.
+
+    `size(W,H)'
+          The window should be made wider or narrower in W pixel
+          increments and taller or shorter in H pixel increments.
+
+ASPECT
+     Specifies the minimum and maximum aspect ratio you would like the
+     window to have.  This may be either:
+
+    `none'
+          No hint is being made about the window's aspect ratio.
+
+    `MIN-MAX'
+          The  window's aspect ratio should be between MIN and MAX.
+          MIN and MAX should be (possibly floating point) numbers
+          specifying the ratio of width to height.
+
+   You may specify as many or as few of these arguments as you like,
+using `none' to avoid specifying a value.
+
+
+File: quintus.info,  Node: pxl-win-wmi-wini,  Next: pxl-win-wmi-trn,  Prev: pxl-win-wmi-wsiz,  Up: pxl-win-wmi
+
+Suggesting Icon, Initial State, and Other Features
+..................................................
+
+   To specify whether your window expects to get focus (keyboard
+ownership) from the window manager, how your window should appear
+initially, an picture to use in an icon, the icon's position, and what
+window group your window is in, specify the attribute
+     property('WM_HINTS',HINTS)
+
+   HINTS should be a term of the form
+     wm_hints(INPUT,INITIAL,ICON_PIX,ICON_WIN,ICON_POS,ICON_MASK,WINDOW_GROUP)
+
+   The meaning of the arguments of the `wm_hints/7' term is as follows:
+
+Argument
+     Meaning
+
+INPUT
+     Specifies whether your window expects to get focus (keyboard
+     ownership) from the window manager.  Possible values are:
+    `none'
+          No hint is being made about your about your application's
+          input needs.
+
+    `true'
+          Your application expects the window manager to give it focus.
+
+    `false'
+          The application will grab the focus when it wants it, or that
+          it never needs focus.
+
+INITIAL
+     Specifies the desired initial state of your window.  Possible
+     values are:
+
+    `none'
+          No hint is being made about the initial state of  your
+          application.
+
+    `dont_care'
+          The application does not care how it starts up.
+
+    `normal'
+          The window wants to come up in "normal" state, using its
+          normal hints.
+
+    `zoom'
+          The  window would like to start out "zoomed".
+
+    `iconic'
+          The window would like to start out iconified.
+
+    `inactive'
+          The  application is not often used, so your window manager
+          may want to put it in a special "inactive" menu.
+
+ICON_PIX
+     Specifies the image you'd like to have used in your window's icon.
+     It may be either:
+
+    `none'
+          You are not specifying an icon mask.
+
+    a one plane pixmap
+     See *Note pxl-win-wmi-isz:: below for information about how to
+     find out how big to make your pixmap.
+
+ICON_WIN
+     Specifies a window you'd like to have used as your window's icon.
+     It may be either:
+
+    `none'
+          You are not specifying an icon window.
+
+    a window
+
+ICON_POS
+     Specifies your suggested initial icon position.  It may be either:
+
+    `none'
+          You are not specifying an icon position.
+
+    `position(X,Y)'
+
+ICON_MASK
+     Specifies a suggested mask to use in conjunction with ICON_PIX to
+     determine the icon's image.  This allows for non-rectangular icons
+     on window managers that support them.  It may be either:
+
+    `none'
+          You are not specifying an icon image.
+
+    a one plane pixmap
+
+WINDOW_GROUP
+     Specifies a group of windows that should be iconified together.
+     It may be either:
+
+    `none'
+          You are not specifying a window group.
+
+    a window
+
+File: quintus.info,  Node: pxl-win-wmi-trn,  Next: pxl-win-wmi-isz,  Prev: pxl-win-wmi-wini,  Up: pxl-win-wmi
+
+Transient windows
+.................
+
+   To tell your window manager that a particular window is transient,
+for example a dialog box, you should give it an attribute
+     property('WM_TRANSIENT_FOR',WINDOW)
+
+   This means that your window is transient, and, in some sense,
+"belongs to" WINDOW.
+
+
+File: quintus.info,  Node: pxl-win-wmi-isz,  Next: pxl-win-wmi-oprop,  Prev: pxl-win-wmi-trn,  Up: pxl-win-wmi
+
+Icon Sizes
+..........
+
+   Some window managers will only support certain icon sizes.  These
+window managers store an attribute
+
+     property('WM_ICON_SIZE', wm_icon_size(LIST))
+
+   on the screen's root window.  You may use `get_window_attribute' to
+find out these icon sizes.  LIST will be a list of terms of the form
+     size_range(MIN_W,MIN_H,MAX_W,MAX_H,W_INC,H_INC)
+
+   where MIN_W and MIN_H specify a minimum icon width and height, MAX_W
+and MAX_H specify a maximum icon width and height, and W_INC and H_INC
+specify a width and height increment.  For example, if LIST were
+
+
+     [size_range(64,64,64,64,0,0), size_range(32,32,48,48,8,8)]
+
+   this would mean that legal sizes are 32 by 32, 40 by 40, 48 by 48,
+and 64 by 64.
+
+   You should not need to set this attribute, though you could if you
+wanted to.
+
+
+File: quintus.info,  Node: pxl-win-wmi-oprop,  Prev: pxl-win-wmi-isz,  Up: pxl-win-wmi
+
+Other Window Properties
+.......................
+
+   The `property(N,V)' window attribute is not limited to communicating
+with window managers.  It may be used for attaching arbitrary data to a
+window.  It is important to note that getting window properties is
+expensive, as it requires a round trip to the X server.  However
+properties are an effective way for multiple applications in separate
+address spaces to communicate.
+
+   As described in *Note pxl-win-atts::, the name argument N of a
+property attribute may be any atom.  The value argument V may be a
+pixmap, a colormap, a cursor, a font, an integer, a pixmap, an atom, a
+visual term, a window, or one of the following terms:
+
+Value
+     Meaning
+
+`arc/6'
+     Describes an arc.  See *Note pxl-prim-arcs:: for an explanation.
+
+`atom(TERM)'
+     TERM must be an atom.  To Prolog, this is much the same as simply
+     specifying TERM, but other applications may distinguish between
+     atoms and strings.
+
+`cardinal(INT)'
+     INT must be a non-negative integer.  To Prolog this is much like
+     simply specifying INT, but other applications may distinguish
+     between signed and unsigned integers.
+
+`point/2'
+     Describes a point or position.  See *Note pxl-prim-pnt:: for an
+     explanation.
+
+`rectangle/4'
+     Describes a rectangle or region.  See *Note pxl-prim-rect:: for an
+     explanation.
+
+`wm_hints/7'
+     As described in *Note pxl-win-wmi-wini::.
+
+`wm_size_hints/6'
+     As described in *Note pxl-win-wmi-wsiz::.
+
+`wm_icon_size/1'
+     As described in *Note pxl-win-wmi-isz::.
+
+
+File: quintus.info,  Node: pxl-win-cre,  Next: pxl-win-find,  Prev: pxl-win-wmi,  Up: pxl-win
+
+Creating and Destroying Windows
+-------------------------------
+
+* Menu:
+
+* pxl-win-cre-create_window::           create_window/[2,3]
+* pxl-win-cre-destroy_window::          destroy_window/1
+* pxl-win-cre-destroy_subwindows::      destroy_subwindows/1
+
+   The remainder of the section describes ProXL primitives.
+
+
+File: quintus.info,  Node: pxl-win-cre-create_window,  Next: pxl-win-cre-destroy_window,  Up: pxl-win-cre
+
+`create_window/[2,3]'
+.....................
+
+     create_window(-WINDOW, +ATTRIBS)
+     create_window(-WINDOW, +ATTRIBS, +GRAPHICS_ATTRIBS)
+
+   WINDOW is a newly-created window, and ATTRIBS is a ground list of
+window attributes.  If GRAPHICS_ATTRIBS is given, it is a list of
+graphics attributes to be given to the window.  The predicate
+`create_window/3' is as if defined by
+
+     create_window(Window, Attribs, Graphics_attribs):-
+             create_window(Window, Attribs),
+             put_graphics_attributes(Window, Graphics_attribs).
+
+   but it is more efficient.
+
+   See *Note pxl-graf:: for information about graphics attributes.
+
+
+File: quintus.info,  Node: pxl-win-cre-destroy_window,  Next: pxl-win-cre-destroy_subwindows,  Prev: pxl-win-cre-create_window,  Up: pxl-win-cre
+
+`destroy_window/1'
+..................
+
+     destroy_window(+WINDOW)
+
+   Deallocate space for WINDOW.  WINDOW should not be referred to
+anymore.  Note that WINDOW is not actually deallocated, but only put on
+a dead list, which can later be cleaned up by `clean_up/0'.  Also note
+that many things can be destroyed, but windows are special in that they
+are not marked as destroyed by this procedure, but are marked when they
+get an event indicating that WINDOW has been destroyed.  This is
+because a window may be destroyed by other procedures.
+
+
+File: quintus.info,  Node: pxl-win-cre-destroy_subwindows,  Prev: pxl-win-cre-destroy_window,  Up: pxl-win-cre
+
+`destroy_subwindows/1'
+......................
+
+     destroy_subwindows(+WINDOW)
+
+   Deallocate space for all subwindows of WINDOW.  As with
+`destroy_window/1', destroyed subwindows are put on a dead list.  See
+*Note pxl-win-cre-destroy_window::
+
+
+File: quintus.info,  Node: pxl-win-find,  Next: pxl-win-misc,  Prev: pxl-win-cre,  Up: pxl-win
+
+Finding and Changing Window Attributes
+--------------------------------------
+
+* Menu:
+
+* pxl-win-find-get_window_attributes::  get_window_attributes/[2,3]
+* pxl-win-find-put_window_attributes::  put_window_attributes/[2,3]
+* pxl-win-find-rotate_window_properties::rotate_window_properties/[2,3]
+* pxl-win-find-delete_window_properties::delete_window_properties/[1,2]
+* pxl-win-find-map_subwindows::         map_subwindows/1
+* pxl-win-find-unmap_subwindows::       unmap_subwindows/1
+
+
+File: quintus.info,  Node: pxl-win-find-get_window_attributes,  Next: pxl-win-find-put_window_attributes,  Up: pxl-win-find
+
+`get_window_attributes/[2,3]'
+.............................
+
+     get_window_attributes(+WINDOWABLE, +ATTRIBS)
+     get_window_attributes(+WINDOWABLE, +ATTRIBS, +GRAPHICS_ATTRIBS)
+
+   WINDOWABLE is a windowable, and ATTRIBS is a proper list of window
+Attribute settings.  Note that ATTRIBS MUST be a proper list.  If an
+element of ATTRIBS is an unbound variable, `get_window_attributes' will
+backtrack through all the window attributes of WINDOWABLE.
+
+   If GRAPHICS_ATTRIBS is given, it is a proper list of graphics
+attributes of WINDOWABLE.  The predicate `get_window_attributes/3' is
+as if defined by the following procedure, but it is more efficient.
+
+     get_window_attributes(Window, Attribs, Graphics_attribs):-
+          get_window_attributes(Window, Attribs),
+          get_graphics_attributes(Window, Graphics_attribs).
+
+   See *Note pxl-graf:: for information about graphics attributes.
+
+
+File: quintus.info,  Node: pxl-win-find-put_window_attributes,  Next: pxl-win-find-rotate_window_properties,  Prev: pxl-win-find-get_window_attributes,  Up: pxl-win-find
+
+`put_window_attributes/[2,3]'
+.............................
+
+     put_window_attributes(+WINDOWABLE, +ATTRIBS)
+     put_window_attributes(+WINDOWABLE, +ATTRIBS, +GRAPHICS_ATTRIBS)
+
+   WINDOWABLE is a windowable, and ATTRIBS is a ground list of
+attributes.  The window associated with WINDOWABLE is changed such that
+ATTRIBS is a list of its attributes.  There are a few attributes of a
+window that may not be changed once the window is created.  These are
+listed above, with the descriptions of the actual attributes.  Of
+course, if you specify a screen or display for WINDOWABLE, it doesn't
+make sense to change very many attributes, and it is recommended that
+you not change any.
+
+   If GRAPHICS_ATTRIBS is given, it is a list of graphics attributes to
+be given to the window.  The predicate `put_window_attributes/3' is as
+if defined by the following procedure, but it is more efficient.
+
+     put_window_attributes(Windowable, Attribs, Graphics_attribs):-
+          put_window_attributes(Windowable, Attribs),
+          put_graphics_attributes(Window, Graphics_attribs).
+
+   See *Note pxl-graf:: for information about graphics attributes.
+
+
+File: quintus.info,  Node: pxl-win-find-rotate_window_properties,  Next: pxl-win-find-delete_window_properties,  Prev: pxl-win-find-put_window_attributes,  Up: pxl-win-find
+
+`rotate_window_properties/[2,3]'
+................................
+
+     rotate_window_properties(+PROPERTIES, +ROTATION)
+     rotate_window_properties(+WINDOWABLE, +PROPERTIES, +ROTATION)
+
+   Rotate the values of PROPERTIES, a list of property names (atoms) on
+the window associated with WINDOWABLE (default is the root window of
+the default screen).  Items are moved toward the front of the list.
+For example, if ROTATION is 2, and PROPERTIES is
+
+     [prop1,prop2,prop3,prop4,prop5]
+
+   rotation changes PROPERTIES to
+
+     [prop3,prop4,prop5,prop1,prop2]
+
+   This predicate might be used, for example, to implemement a ring of
+selection service cut buffers.
+
+
+File: quintus.info,  Node: pxl-win-find-delete_window_properties,  Next: pxl-win-find-map_subwindows,  Prev: pxl-win-find-rotate_window_properties,  Up: pxl-win-find
+
+`delete_window_properties/[1,2]'
+................................
+
+     delete_window_properties(+PROPERTIES)
+     delete_window_properties(+WINDOWABLE, +PROPERTIES)
+
+   Remove PROPERTIES, a list of window property name atoms, from the
+window associated with WINDOWABLE, which defaults to the default screen.
+
+
+File: quintus.info,  Node: pxl-win-find-map_subwindows,  Next: pxl-win-find-unmap_subwindows,  Prev: pxl-win-find-delete_window_properties,  Up: pxl-win-find
+
+`map_subwindows/1'
+..................
+
+     map_subwindows(+WINDOW)
+
+   Map all subwindows of WINDOW.
+
+
+File: quintus.info,  Node: pxl-win-find-unmap_subwindows,  Prev: pxl-win-find-map_subwindows,  Up: pxl-win-find
+
+`unmap_subwindows/1'
+....................
+
+     unmap_subwindows(+WINDOW)
+
+   Unmap all subwindows of WINDOW.
+
+
+File: quintus.info,  Node: pxl-win-misc,  Next: pxl-win-sel,  Prev: pxl-win-find,  Up: pxl-win
+
+Miscellaneous Window Primitives
+-------------------------------
+
+* Menu:
+
+* pxl-win-misc-restack_window::         restack_window/2
+* pxl-win-misc-window_children::        window_children/[1,2]
+* pxl-win-misc-current_window::         current_window/[1,2]
+
+
+File: quintus.info,  Node: pxl-win-misc-restack_window,  Next: pxl-win-misc-window_children,  Up: pxl-win-misc
+
+`restack_window/2'
+..................
+
+     restack_window(+WINDOW, +STACKMODE)
+
+   Move WINDOW in stacking order as indicated by the value of STACKMODE:
+Value
+     Meaning
+
+`top'
+     Move WINDOW to the top of stack.
+
+`above(WIN2)'
+     Move WINDOW just above WIN2.
+
+`bottom'
+     Move WINDOW to the bottom of stack.
+
+`below(WIN2)'
+     Move WINDOW just below WIN2.
+
+`top_if'
+     Move WINDOW to the top of stack if any other window occludes it.
+
+`top_if(WIN2)'
+     Move WINDOW to the top if WIN2 occludes it.
+
+`bottom_if'
+     Move WINDOW to the bottom of stack if it occludes any other window.
+
+`bottom_if(WIN2)'
+     Move WINDOW to the bottom if it occludes WIN2.
+
+`opposite'
+     Move WINDOW to the top if any window occludes it, otherwise move
+     it to the bottom if it occludes any window.
+
+`opposite(WIN2)'
+     Move WINDOW to the top if WIN2 occludes it, otherwise move WINDOW
+     to the bottom if it occludes WIN2.
+
+
+File: quintus.info,  Node: pxl-win-misc-window_children,  Next: pxl-win-misc-current_window,  Prev: pxl-win-misc-restack_window,  Up: pxl-win-misc
+
+`window_children/[1,2]'
+.......................
+
+     window_children(-CHILDREN)
+     window_children(+WINDOWABLE, -CHILDREN)
+
+   CHILDREN is the list of all WINDOWABLE's children, in top-to-bottom
+stacking order.  WINDOWABLE defaults to the root window of the default
+screen.
+
+
+File: quintus.info,  Node: pxl-win-misc-current_window,  Prev: pxl-win-misc-window_children,  Up: pxl-win-misc
+
+`current_window/[1,2]'
+......................
+
+     current_window(?WINDOW)
+     current_window(?WINDOW, ?DISPLAY)
+
+   Tells whether WINDOW is a window that is known to ProXL.  If DISPLAY
+is specified, WINDOW is on that display.  If WINDOW is not bound,
+`current_window' backtracks through all windows.
+
+   A window is "known to ProXL" if it was created by ProXL, or if it was
+passed to ProXL by the X server or a foreign X procedure.  For example,
+if you call `current_window/1' in a fresh ProXL session, few windows
+will be returned.  If you call `window_children/1' before calling
+`current_window/1', many more windows will be returned, because the
+call to `window_children/1' asks ProXL to find all the top level windows
+on the default screen, most of which ProXL won't have seen before.
+
+
+File: quintus.info,  Node: pxl-win-sel,  Next: pxl-win-cwin,  Prev: pxl-win-misc,  Up: pxl-win
+
+Selections
+----------
+
+* Menu:
+
+* pxl-win-sel-set_selection_owner::     set_selection_owner/[2,3,4]
+* pxl-win-sel-get_selection_owner::     get_selection_owner/[2,3]
+* pxl-win-sel-convert_selection::       convert_selection/[4,5,6]
+
+
+File: quintus.info,  Node: pxl-win-sel-set_selection_owner,  Next: pxl-win-sel-get_selection_owner,  Up: pxl-win-sel
+
+`set_selection_owner/[2,3,4]'
+.............................
+
+     set_selection_owner(+SELECTION, +OWNER)
+     set_selection_owner(+SELECTION, +OWNER, +TIME)
+     set_selection_owner(+DISPLAYABLE, +SELECTION, +OWNER, +TIME)
+
+   Set the owner of SELECTION on DISPLAYABLE to be OWNER at TIME.
+SELECTION must be an atom, which names the selection to be owned.
+OWNER must be a valid window.  TIME must be `current_time' or a
+timestamp in milliseconds.  TIME defaults to `current_time'.
+
+
+File: quintus.info,  Node: pxl-win-sel-get_selection_owner,  Next: pxl-win-sel-convert_selection,  Prev: pxl-win-sel-set_selection_owner,  Up: pxl-win-sel
+
+`get_selection_owner/[2,3]'
+...........................
+
+     get_selection_owner(+SELECTION, -WINDOW)
+     get_selection_owner(+DISPLAYABLE, +SELECTION, -WINDOW)
+
+   Get the owner of SELECTION on DISPLAYABLE.  DISPLAYABLE defaults to
+the default display.
+
+
+File: quintus.info,  Node: pxl-win-sel-convert_selection,  Prev: pxl-win-sel-get_selection_owner,  Up: pxl-win-sel
+
+`convert_selection/[4,5,6]'
+...........................
+
+     convert_selection(+SELECTION, +TARGET, +PROPERTY, +REQUESTOR)
+     convert_selection(+SELECTION, +TARGET, +PROPERTY, +REQUESTOR, +TIME)
+     convert_selection(+DISPLAYABLE, +SELECTION, +TARGET, +PROPERTY, +REQUESTOR, +TIME)
+
+   Convert SELECTION on DISPLAYABLE to TARGET type, storing it under
+PROPERTY on window REQUESTOR at TIME.  TIME must be `current_time' or a
+timestamp in milliseconds.  TIME defaults to `current_time'.
+DISPLAYABLE defaults to the default display.
+
+
+File: quintus.info,  Node: pxl-win-cwin,  Prev: pxl-win-sel,  Up: pxl-win
+
+Checking Window Validity
+------------------------
+
+* Menu:
+
+* pxl-win-cwin-valid_window::           valid_window/1
+* pxl-win-cwin-valid_windowable::       valid_windowable/2
+* pxl-win-cwin-ensure_valid_window::    ensure_valid_window/2
+* pxl-win-cwin-ensure_valid_windowable::ensure_valid_windowable/3
+
+
+File: quintus.info,  Node: pxl-win-cwin-valid_window,  Next: pxl-win-cwin-valid_windowable,  Up: pxl-win-cwin
+
+`valid_window/1'
+................
+
+     valid_window(+WINDOW)
+
+   WINDOW is a valid window.  I.e., it has not been destroyed.
+
+
+File: quintus.info,  Node: pxl-win-cwin-valid_windowable,  Next: pxl-win-cwin-ensure_valid_window,  Prev: pxl-win-cwin-valid_window,  Up: pxl-win-cwin
+
+`valid_windowable/2'
+....................
+
+     valid_windowable(+WINDOWABLE, -WINDOW)
+
+   WINDOW is the valid window associated with WINDOWABLE.  WINDOWABLE
+must be a window, screen, or display.
+
+
+File: quintus.info,  Node: pxl-win-cwin-ensure_valid_window,  Next: pxl-win-cwin-ensure_valid_windowable,  Prev: pxl-win-cwin-valid_windowable,  Up: pxl-win-cwin
+
+`ensure_valid_window/2'
+.......................
+
+     ensure_valid_window(+WINDOW, +GOAL)
+
+   WINDOW is a valid window.  If it is not, an error message mentioning
+GOAL is printed, and execution aborts.
+
+
+File: quintus.info,  Node: pxl-win-cwin-ensure_valid_windowable,  Prev: pxl-win-cwin-ensure_valid_window,  Up: pxl-win-cwin
+
+`ensure_valid_windowable/3'
+...........................
+
+     ensure_valid_windowable(+WINDOWABLE, -WINDOW, +GOAL)
+
+   WINDOW is the valid window associated with WINDOWABLE.  WINDOWABLE
+must be a valid window, screen, or display.  If it is not,  an error
+message mentioning GOAL is printed, and execution aborts.
+
+
+File: quintus.info,  Node: pxl-ev,  Next: pxl-eh,  Up: pxl
+
+Events and Callbacks
+====================
+
+* Menu:
+
+* pxl-ev-bas::                          Introduction
+* pxl-ev-spec::                         Event Specification
+* pxl-ev-fld::                          Event Fields
+* pxl-ev-act::                          Activating the callback mechanism
+
+   In X11, the server communicates changes in the environment to the
+clients by sending "event" messages to them. Clients indicate specific
+interest in certain events by "selecting" them. Each X11 window has a
+bitmask that indicates the events it is interested in receiving and a
+bitmask that indicates the events it wants discarded.
+
+   ProXL extends the notion of X11 events by allowing the user to
+register Prolog "callback" routines with each window. In this section
+we discuss the basic notions of events and the callback mechanism.
+
+
+File: quintus.info,  Node: pxl-ev-bas,  Next: pxl-ev-spec,  Up: pxl-ev
+
+Introduction
+------------
+
+   Under X11, events are selected on a per window basis by ORing
+individual "event select" bitmasks into the `event_mask' attribute of
+the window. To determine which window gets an event, the X server
+searches the window hierarchy bottom up, starting with the innermost
+window where the event logically happened. If a window "selects" that
+particular event, it is sent to it. If the window "discards" that event,
+the event is thrown away and the search stops. If the window neither
+selects nor discards the event, the search resumes with its parent.
+Any event that propagates all the way up to the root window without
+being selected, is discarded anyway.
+
+   When using ProXL, in most cases, the user does not need to know
+about bitmasks. Events are selected by name, and Prolog routines are
+attached to Windows to handle the conditions.
+
+   The ProXL event handler mechanism receives X11 events, extracts
+user-specified values and calls the appropriate callback routine.
+
+   If there is no registered callback for a given event (including
+"default" handlers, as specified later), the event is quietly discarded.
+
+   If multiple callbacks are registered for an event in a Window (as
+might be the case for `button_press' or `button_release' events), they
+are tried sequentially until one succeeds, at which point the callback
+is considered satisfied and no more alternatives are tried.  If all the
+registered callbacks fail, the event is quietly discarded.
+
+   Callbacks are Window attributes, and are established using
+`put_window_attributes/N', or `create_window/N', using one of the
+following attribute formats:
+
+     callback(+EVENTSPEC, +EVENTVALUES, +EXITVAR, +CONTEXT, +GOAL)
+     callback(+EVENTSPEC, +EVENTVALUES, +EXITVAR, +GOAL)
+     callback(+EVENTSPEC, +EVENTVALUES, +GOAL)
+
+   where EVENTSPEC is a description of the event that should cause the
+user-supplied callback GOAL, a Prolog goal, to be called.
+
+   EVENTVALUES is either a list of the event fields that the user wants
+to be supplied as arguments to GOAL , or the term `xevent(E)', which
+instructs ProXL to deliver the whole event structure, in the same
+internal format used by the event handling functions described in *Note
+pxl-evf::.
+
+   EXITVAR, if supplied, is either a term that is bound by GOAL when
+the user wants to exit the event handling loop and return, or the atom
+`none'. If omitted, it defaults to `none' and GOAL is assumed to not
+contain an exit variable.
+
+   CONTEXT, if supplied, is a term that will be  unified with the
+CONTEXT argument supplied to `handle_events/[2,3]' when the callback
+GOAL is executed. If omitted, it defaults to `none'.  If the user calls
+`handle_events/[0,1]', GOAL will be called with CONTEXT unbound.
+
+
+File: quintus.info,  Node: pxl-ev-spec,  Next: pxl-ev-fld,  Prev: pxl-ev-bas,  Up: pxl-ev
+
+Event Specification
+-------------------
+
+* Menu:
+
+* pxl-ev-spec-ev1::                     Events uniquely selected by a single mask
+* pxl-ev-spec-ev2::                     Events that come in pairs selected by a single mask
+* pxl-ev-spec-mev1::                    Multiple events selected by a single mask
+* pxl-ev-spec-mev2::                    Multiple events selected by different masks
+* pxl-ev-spec-sev2::                    Single events selected by multiple masks
+* pxl-ev-spec-asel::                    Events that are always selected
+
+   Basically, events can be classified under four categories:
+  1. Those in which a single mask uniquely selects an event.
+
+  2. Those in which a single mask selects a number of events at once.
+
+  3. Those in which a number of masks might be required to select an
+     event.
+
+  4. Those that are always selected and do not require a mask.
+
+   This section describes the valid terms that can be used as an
+EVENTSPEC and their meanings. ProXL provides some additional
+discrimination mechanisms on top of X11 events that allow succinct
+specification of commonly selected events.
+
+   Note that some servers might not supply some of the events, if the
+underlying hardware can not support it, e.g. `key_release'. Event
+records have a set of common fields and event-specific fields.  This
+section briefly describes each event, and its ProXL specification.  The
+next section describes in detail the event fields.
+
+
+File: quintus.info,  Node: pxl-ev-spec-ev1,  Next: pxl-ev-spec-ev2,  Up: pxl-ev-spec
+
+Events uniquely selected by a single mask
+.........................................
+
+   Key Press Event.  The server generates a `key_press' event for every
+key that is pressed, including modifier keys.
+
+   Specify with:
+     key_press
+
+   Key Release Event.  The server generates a `key_release' event for
+every key that is released, including modifier keys.
+
+   Specify with:
+     key_release
+
+   Button Press Event.  The server generates a `button_press' event for
+every mouse button that is pressed.
+
+   If specified without options, it indicates any mouse button press:
+     button_press
+
+   To select any of a particular set of mouse buttons pressed, use:
+     button_press(+BUTTONLIST)
+
+   Where BUTTONLIST is a list that can contain the integers `1' to `5'.
+As a special case, the empty list degenerates into the first
+specification.
+
+   Button Release Event.  The server generates a `button_release' event
+for every mouse button that is released.
+
+   If specified without options, it selects any mouse button release:
+     button_release
+
+   To select any of a particular set of mouse buttons released, use:
+     button_release(+BUTTONLIST)
+
+   Where BUTTONLIST is a list that can contain the integers `1' to `5'.
+As a special case, the empty list degenerates into the first
+specification.
+
+   Enter Notify Event.  The server generates an `enter_notify' event
+when the mouse pointer enters a window or it is "virtually entered" by
+the pointer moving between two windows that do not have a parent-child
+relationship.
+
+   Specify with:
+     enter_notify
+
+   Leave Notify Event.  The server generates a `leave_notify' event
+when the mouse pointer leaves a window or it is "virtually leaved" by
+the pointer moving between two windows that do not have a parent-child
+relationship.
+
+   Specify with :
+     leave_notify
+
+   Keymap Event.  The server generates a `keymap_notify' event
+immediately after each `enter_notify' or `focus_in' event, as a way for
+the application to read the keyboard state.
+
+   Specify with:
+     keymap_notify
+
+   Expose Event.  The server generates `expose' events when a window
+becomes visible or previously invisible parts of a window become
+visible.
+
+   Specify with:
+     expose
+
+   Colormap Notify Event.  The server generates a `colormap_notify'
+event when the colormap changes.
+
+   Specify with:
+     colormap_notify
+
+   Property Notify Event.  The server generates a `property_notify'
+event when a window property changes.
+
+   Specify with:
+     property_notify
+
+   Visibility Notify Event.  The server generates a `visibility_notify'
+event when there is any change in the visibility of the specified
+window.
+
+   Specify with:
+     visibility_notify
+
+   Resize Request Event.  The server generates a `resize_request' event
+when there is any attempt to change the size of a window. This event is
+usually selected by the Window Manager to intercept resize attempts and
+modify the request according to its policies.
+
+   Specify with:
+     resize_request
+
+
+File: quintus.info,  Node: pxl-ev-spec-ev2,  Next: pxl-ev-spec-mev1,  Prev: pxl-ev-spec-ev1,  Up: pxl-ev-spec
+
+Events that come in "pairs" selected by a single mask
+.....................................................
+
+   In this case, when selecting the event, you get a complementary pair
+automatically. In other words, if you are interested in one of them,
+you probably are interested (or should be) in the other too.
+
+   Focus In and Focus Out events.  Both of these events are selected
+internally with a single mask, `focus_change', so even if you register
+a callback for only one, your window will also get the other one. You
+should always register a callback for both.
+
+   The server generates a `focus_in' event when the keyboard focus
+window changes as a result of an explicit `set_input_focus' call. The
+window that receives this event has the keyboard focus and will be
+receiving all keyboard input until it loses the focus.  Specify with:
+     focus_in
+
+   The server generates a `focus_out' event when the keyboard focus
+window changes as a result of an explicit `set_input_focus' call. The
+window that receives this event has lost the keyboard focus and
+therefore will not be receiving any more keyboard input.  Specify with:
+     focus_out
+
+   Graphics Events.  These events present a special problem, as they
+are not selected by the window's `event_mask' attribute, but by the GC
+`graphics_exposure'. Also, they apply to both Windows and Pixmaps.
+
+   These callbacks are not part of the of the Window, Pixmap or GC
+attributes . They are established and de-established dynamically as an
+optional parameter to the `copy_area' and `copy_plane' calls.
+
+   The `graphics_expose' event is generated by `copy_area' or
+`copy_plane' when the source area is not available because the region
+is clipped or obscured. Specify with
+     graphics_expose
+
+   The server generates a `no_expose' event when the source area for a
+`copy_area' or `copy_plane' request was completely available, and
+therefore the request was carried out successfully.  Specify with:
+     no_expose
+

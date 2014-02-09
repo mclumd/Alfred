@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">When Source Linking Is Not Possible</h4>
+
+   <p>Sometimes the debugger cannot find the source code for a predicate. 
+This will happen when there is no source code, or when the
+correspondence between the compiled code and source code cannot be
+determined.  For example, a dynamic predicate does not necessarily
+have source code, and so the debugger currently cannot show source. 
+Similarly, a meta-call (executing a term with <code>call/1</code>) does not
+have any source code.  The debugger also often cannot find the source
+code of clauses produced by <code>term_expansion/2</code>. Predicates that are
+compiled from <code>user</code> do not have source either!
+
+   <p>When source linking is not possible, the debugger will show as much of
+the clause as it knows in place of the source file, with the appropriate
+arrows.  At a head port, it will show the goal being called, followed by
+<code>:- ...</code> indicating that this goal will be matched with the head
+of a clause.  For the head of a predicate <code>descendent/2</code>, it might look
+like this:
+
+<pre class="example">                         ===&gt; dynamic_pred(_743) :- ...
+     </pre>
+
+   <p>At a call port whose source code cannot be shown, the debugger will
+show <code>... :-</code> followed by the goal, indicating that this goal is
+in some unknown clause.  The arrow will be as appropriate for that
+port.  The call port for a call to <code>descendant/2</code> might look like this:
+
+<pre class="example">                         ... :- ---&gt; descendant(peter, _749).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-sld-tra.html#dbg-sld-tra">Next</a>
+<li><a rel="previous" accesskey="p" href="dbg-sld-sps.html#dbg-sld-sps">Previous</a>
+<li><a rel="up" accesskey="u" href="dbg-sld.html#dbg-sld">Up</a>
+</ul>
+</div>
+   </body></html>
+

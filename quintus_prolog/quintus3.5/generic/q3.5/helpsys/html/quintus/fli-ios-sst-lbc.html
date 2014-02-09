@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Line Border Code</h5>
+
+<pre class="example">     open/4 option:  end_of_line(LineBorder)
+     QP_stream:      int line_border
+     </pre>
+
+   <p>The <code>line_border</code> field can be any integer
+greater than or equal to <code>QP_NOLB</code> (-1).  If the value
+is <code>QP_NOLB</code>, there is no line border code for the stream.
+
+   <p>For an input stream, the line border code is the value to be returned
+in getting a character when a stream is positioned at the end of a record. 
+(Notice that if the
+stream is a delimited record format stream, the delimited character
+has already been removed.) 
+If there is no line border code, the first character in the next record
+is returned at the end of a record. 
+Writing the line border code (i.e. with <code>put/[1,2]</code>) to an output stream
+signals the end of the
+current record.  Instead of writing out the line border code,
+the record is appropriately wrapped up based on the format of
+the stream, and the wrapped record is handed to the bottom layer
+write function of the stream.  This is just like a new line operation
+on the stream (e.g. <code>nl/[0,1]</code> or <code>QP_newln()</code>).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-sst-fbc.html#fli-ios-sst-fbc">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-sst-mrl.html#fli-ios-sst-mrl">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-sst.html#fli-ios-sst">Up</a>
+</ul>
+</div>
+   </body></html>
+

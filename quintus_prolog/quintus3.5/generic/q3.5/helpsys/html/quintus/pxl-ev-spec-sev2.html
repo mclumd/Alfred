@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Single events selected by multiple masks</h5>
+
+   <p>The <code>motion_notify</code> event is selected by a number of masks, including
+the <code>motion_hint</code> mask <a rel="footnote" href="#fn-1"><sup>1</sup></a>.
+
+   <p>In ProXL they are separated into two different specifications, which
+are mutually exclusive.
+
+   <p><b>Motion Notify Event.</b>
+In this case, the server will steadily generate <code>motion_notify</code> events
+while the mouse is moving, or the program warps it, but only if the
+motion of the pointer begins and ends in the same window. The number of
+events generated can easily
+overwhelm your application, if it has to do any significant amount of
+computation for each one.
+
+   <p>If specified without options, the events will be generated
+independently of the state of the mouse buttons:
+<pre class="example">     motion_notify
+     </pre>
+
+   <p>To specify mouse movements only while any of a particular set of mouse
+buttons are pressed, use:
+<pre class="example">     motion_notify(<var>+ButtonList</var>)
+     </pre>
+
+   <p>Where <var>ButtonList</var> is a list that can contain the integers <code>1</code>
+to <code>5</code>. As a special case,
+the empty list degenerates into the first specification.
+
+   <p><b>Motion Notify Hint Event.</b>
+In this case, the server will generate only one <code>motion_notify</code>
+event to let your application know that the mouse pointer moved. You
+have to explicitly query the pointer using <code>get_pointer_attributes</code>
+to find out where the mouse pointer ended up.
+
+   <p>If specified without options, the event will be generated
+independently of the state of the mouse buttons:
+<pre class="example">     motion_notify_hint
+     </pre>
+
+   <p>To specify mouse movement only while any of a particular set of mouse
+buttons are pressed, use:
+<pre class="example">     motion_notify_hint(<var>+ButtonList</var>)
+     </pre>
+
+   <p>Where <var>ButtonList</var> is a list that can contain the integers <code>1</code>
+to <code>5</code>. As a special case,
+the empty list degenerates into the first specification.
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>Specifies that the user is only
+interested in knowing when there has been a movement, but does
+not need to know the complete path of the mouse pointer</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-ev-spec-asel.html#pxl-ev-spec-asel">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-ev-spec-mev2.html#pxl-ev-spec-mev2">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-ev-spec.html#pxl-ev-spec">Up</a>
+</ul>
+</div>
+   </body></html>
+

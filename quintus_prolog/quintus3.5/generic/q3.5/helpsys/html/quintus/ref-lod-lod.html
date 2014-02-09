@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The Load Predicates</h4>
+
+   <p>Loading a program is accomplished by one of these predicates
+     <dl>
+
+     <br><dt><code>load_files(</code><var>File</var><code>)</code>
+     <dd>compiles source file or loads QOF file,
+whichever is the more recent.  <code>load_files(</code><var>File</var><code>)</code> can also be
+written as <code>[</code><var>File</var><code>]</code>.
+
+     <br><dt><code>compile(</code><var>File</var><code>)</code>
+     <dd>compiles source file.
+
+     <br><dt><code>consult(</code><var>File</var><code>)</code>
+     <dd>Same as <code>compile</code>
+
+     <br><dt><code>ensure_loaded(</code><var>File</var><code>)</code>
+     <dd>loads more recent of source and QOF files,
+unless the file has already been loaded and it has not been modified since it
+was loaded.
+
+     <br><dt><code>load_files(</code><var>File</var><code>, </code><var>Options</var><code>)</code>
+     <dd>loads file according to the specified
+options.  All the above predicates can be regarded as special cases of this
+one.
+
+     <br><dt><code>reconsult(</code><var>Files</var><code>)</code>
+     <dd>same as <code>consult</code>
+</dl>
+
+   <p>The following notes apply to all the Load Predicates:
+
+     <ol type=1 start=1>
+
+     <li>The <var>File</var> argument must be one of:
+          <ul>
+
+          <li>an atom that is the name of a file containing Prolog code; a <code>.pl</code> or a
+<code>.qof</code> suffix to a filename may be omitted (see <a href="ref-fdi-fsp-fde.html#ref-fdi-fsp-fde">ref-fdi-fsp-fde</a>;)
+<li>a list of any atom listed above;
+<li>the atom <code>user</code>
+</ul>
+
+     <blockquote>
+
+          <p><strong>Please note:</strong> If the filename is
+not a valid atom, it must be enclosed in single quotes.  For
+example,
+
+          <pre class="example">               load_files(expert)
+               load_files('Expert')
+               compile('/usr/joe/expert')
+               ensure_loaded('expert.pl')
+               </pre>
+
+     </blockquote>
+
+     <li>These predicates resolve relative file names in the same way as
+<code>absolute_file_name/2</code>.  For information on file names refer
+to <a href="ref-fdi.html#ref-fdi">ref-fdi</a>.
+
+     <li>The above predicates raise an exception if any of the files named in
+<var>File</var> does not exist, unless the <code>fileerrors</code> flag is set to <code>off</code> using <code>nofileerrors/0</code>.
+
+     <p>Errors detected during compilation, such as an attempt to redefine a built-in
+predicate, also cause exceptions to be raised.  However, these exceptions are
+caught by the compiler, and an appropriate error message is printed. 
+</p><li>There are a number of <dfn>style warnings</dfn> that may appear when a file is
+compiled.  These are designed to aid in catching simple errors in your
+programs, but some or all of them can be turned off if desired using <code>no_style_check/1</code>.  The possible
+style warnings are:
+          <ol type=a start=1>
+
+          <li>A named variable occurs only once in a clause.  Variables beginning with
+a <code>_</code> are considered not named. 
+<li>All the clauses for a predicate are not adjacent to one another in the file. 
+<li>A predicate is being redefined in a file different from the one in which it
+was previously defined.
+          </ol>
+
+     <li>By default, all clauses for a predicate are required to come from just
+one file.  A predicate must be declared <code>multifile</code> if its clauses
+are to be spread across several different files.  See the reference
+page for <code>multifile/1</code>. 
+<li>If a file being loaded is not a module-file, all the predicates
+defined in the file are loaded into the source module.  The form
+<code>load_files(Module:File)</code> can be used to load the file into the
+specified module.  See <a href="ref-mod-def.html#ref-mod-def">ref-mod-def</a>, for information about
+module-files.  If a file being loaded <em>is</em> a module-file, it is
+first loaded in the normal way, then the source module imports all the
+public predicates of the module-file except for <code>use_module</code> and
+<code>load_file</code> if you specify an import list. 
+<li>If there are any directives in the file being loaded, that
+is, any terms with principal functor <code>:-/1</code> or <code>?-/1</code>, then
+these are executed as they are encountered.  A common type of
+directive to have in a file is one that loads another
+file, such as
+     <pre class="example">           :- [otherfile].
+          </pre>
+      In this case, if otherfile is a
+relative filename it is resolved with respect to the directory
+containing the file that is being loaded, not the current working
+directory of the Prolog system.
+
+     <p>Any legal Prolog goal may be included as a directive. Note, however,
+that if the file is compiled by <code>qpc</code>, the goal will be executed by <code>qpc</code>,
+not when the <code>.qof</code> file is loaded or when application begins execution. 
+The <code>initialization/1</code> declaration provides this functionality. 
+There is no difference between a <code>:-/1</code> and a <code>?-/1</code>
+goal in a file being compiled.
+
+     </p><li>If <var>File</var> is the atom <code>user</code>, or <var>File</var> is a list, and
+during loading of the list <code>user</code> is encountered, procedures are to
+be typed directly into Prolog from the terminal.  A special prompt,
+<code>| </code>, is displayed at the beginning of every new clause entered
+from the terminal.  Continuation lines of clauses typed at the
+terminal are preceded by a prompt of five spaces.  When all clauses
+have been typed in, the last should be followed by an end-of-file
+character. 
+<li>Terms that are notational variants
+of Prolog terms, notably grammar terms, are expanded into Prolog code
+during compilation.  By defining the hook predicate
+<code>term_expansion/2</code> (in module user), you can specify any desired
+transformation to be done as clauses are loaded.
+
+     <li>Any predicates that need to be called during the compilation of a
+file, including <code>term_expansion/2</code> and all the predicates it calls,
+must be treated specially if you wish to be able to compile that file
+with <code>qpc</code>. See <a href="sap-srs-eci-crt.html#sap-srs-eci-crt">sap-srs-eci-crt</a> for information on this. 
+<li>The current load context (module, file, stream, directory) can be
+queried using <code>prolog_load_context/2</code>.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-lod-rpx.html#ref-lod-rpx">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-lod-ove.html#ref-lod-ove">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-lod.html#ref-lod">Up</a>
+</ul>
+</div>
+   </body></html>
+

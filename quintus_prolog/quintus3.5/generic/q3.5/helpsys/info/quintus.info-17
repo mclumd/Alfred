@@ -1,0 +1,1182 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: sap-srs-eci-inf,  Next: sap-srs-eci-sid,  Prev: sap-srs-eci-crt,  Up: sap-srs-eci
+
+Initialization Files
+....................
+
+   `qpc' is implemented as a normal runtime system.  Hence it has its
+own internal Prolog database.  All compile-time code must be loaded
+into this database so that `qpc' can run it.
+
+   The `-i' command-line option is used to specify an initialization
+file.  See the reference page for `qpc(1)'.
+
+
+File: quintus.info,  Node: sap-srs-eci-sid,  Next: sap-srs-eci-mec,  Prev: sap-srs-eci-inf,  Up: sap-srs-eci
+
+Side-Effects in Compile-Time Code
+.................................
+
+   One other way to add clauses to `qpc''s internal database is to
+assert them in an embedded command.  For example, the sequence:
+     :- asserta(f(x)).
+     :- f(X), write(X), nl.
+
+   in a file given to `qpc' will work just as it would if the file were
+compiled into the Development System.
+
+   There are some problems with asserting clauses like this.  One
+problem is that the asserted clauses will not be available at run-time.
+If the file had been loaded into the Development System, they would be
+available when the program was run.
+
+   Another problem arises if the compilation of one file depends on
+facts that are expected to be asserted into the database during the
+compilation of some other file.  An approach of this sort may be useful
+in the Development System, but it is contradictory to the notion of
+independent compilation (see the first figure), which is one of the
+important features of `qpc'.  This problem is not specific to asserting
+clauses; it arises with any compile-time side-effects that are intended
+to affect future compilation.
+
+   It is possible to avoid using separate compilation, by always
+recompiling your entire program every time any part of it is modified.
+It is still not generally safe to use compile-time side-effects in one
+file that affect the compilation of other files.  This is because the
+order in which files are compiled is different in `qpc'.  When `qpc'
+finds a command to compile a file, it looks in that file immediately to
+find out whether it is a module-file and if so what are its exports.
+But it does not actually compile the file immediately: it puts it on a
+queue to be compiled when the current file has been finished with.
+This is in contrast to compilation in the Development System, where
+embedded `compile/1' commands are processed immediately as they are
+encountered.
+
+   Therefore, it is strongly recommended that side-effects in
+compile-time code be avoided, or at least restricted so that only the
+compilation of the current file is affected.
+
+
+File: quintus.info,  Node: sap-srs-eci-mec,  Next: sap-srs-eci-spe,  Prev: sap-srs-eci-sid,  Up: sap-srs-eci
+
+Modules and Embedded Commands
+.............................
+
+   Embedded commands are called in the modules in which they are
+contained.  Sometimes this seems strange, since the module is really a
+property of the program being compiled into QOF, and the embedded
+command is to be interpreted not with respect to that program, but
+rather with respect to the internal database of `qpc'.
+
+
+File: quintus.info,  Node: sap-srs-eci-spe,  Next: sap-srs-eci-ctc,  Prev: sap-srs-eci-mec,  Up: sap-srs-eci
+
+Predicates Treated in a Special Way
+...................................
+
+   While `qpc' is compiling Prolog source into QOF, certain built-in
+predicates are treated in a special way.  Their behavior when used as
+embedded commands under `qpc' is different from their normal behavior.
+For example, (A) causes the file `foo.pl' to be compiled into `.qof'
+format, not, as you would expect from its normal meaning, into
+(`qpc''s) memory.
+
+
+     :- compile(foo). (A)
+
+   Similarly, if you define (B) in an initialization file, then the
+command (C) will cause foo to be compiled into QOF format after
+whatever goals you specified have been called.
+
+     my_compile(File) :- (B)
+         ...{some goals}...,
+         compile(File).
+
+     :- my_compile(foo). (C)
+
+   The `load_files/2' `when' option can be used to force a file to be
+loaded into memory at compile-time if so desired.
+
+   Note that the change of meaning of `compile/1' etc does not apply
+during the loading of an initialization file, only while compilation to
+`.qof' format is taking place.  Thus, if you put
+     :- my_compile(foo).
+
+   in your initialization file (after the definition of
+`my_compile/1'), then this would mean compile `foo.pl' into memory.
+
+   The predicates following this behavior are:
+
+`compile/1'
+     compile files
+
+`consult/1'
+     compile files
+
+`load_files/[1,2]'
+     compile files
+
+`ensure_loaded/1'
+     compile files
+
+`load_foreign_files/2'
+     compile links to foreign code
+
+`load_foreign_executable/1'
+     compile links to foreign code"
+
+`no_style_check/1'
+     disable style checking
+
+`op/3'
+     declare operator(s) (see *Note sap-srs-ode::)
+
+`reconsult/1'
+     compile files
+
+`style_check/1'
+     enable style checking
+
+`use_module/[1,2,3]'
+     compile module-files
+
+`./2'
+     (usually written [FILES]) compile files
+
+   Note that an embedded command of the form
+     :- compile(user).
+
+   will cause an error message from `qpc'.  The same is true for
+specifying `user' in embedded calls to `consult/1' and similar
+commands, as well as in the command line of `qpc'.  The reason for this
+restriction is to avoid possible confusion; under the Development
+System, giving `user' as the argument to one of these predicates allows
+you to enter clauses directly from the terminal.
+
+   Clauses for the predicates `foreign/[2,3]' and `foreign_file/2' are
+treated specially by `qpc'.  They are always assumed to be compile-time
+predicates, to be used by a subsequent embedded
+`load_foreign_executable/1' or `load_foreign_files/2' goal.  Therefore
+they are consulted into `qpc''s internal database rather than being
+compiled into QOF.
+
+
+File: quintus.info,  Node: sap-srs-eci-ctc,  Prev: sap-srs-eci-spe,  Up: sap-srs-eci
+
+Restriction on Compile-Time Code
+................................
+
+   Since `qpc' is itself a runtime system, any code to be run at
+compile-time must obey the same restrictions as for any other runtime
+system.  In particular, foreign code cannot be loaded into `qpc' with
+`load_foreign_executable/1' or `load_foreign_files/2'.  However, you
+can load QOF files into `qpc', and if the QOF file has object file
+dependencies, they will be loaded also.  For example, you might compile
+`file.pl' with `qpc' to get `file.qof':
+                                                              _file.pl_
+     
+     :- load_foreign_file([prog1], [])
+     :- load_foreign_executable(prog2)
+                                                             _file.qof_
+     
+        ... <dependency on object file prog1> ...
+        ... <dependency on shared object file prog2> ...
+
+   In this case, `file.pl' and `file.qof' both depend on the same
+object files.  However, while a runtime system can load `file.qof', it
+cannot load `file.pl', because `load_foreign_executable/1' and
+`load_foreign_files/2' are not available in the runtime kernel.
+
+
+File: quintus.info,  Node: sap-srs-ode,  Next: sap-srs-sqf,  Prev: sap-srs-eci,  Up: sap-srs
+
+Operator Declarations
+---------------------
+
+   An operator declaration is a call to the predicate `op/3' in an
+embedded command.  See *Note ref-syn-ops:: for more information about
+operator declarations.
+
+   An operator declaration takes effect when it is encountered and
+remains in force during compilation of the file and during runtime as
+in the Development System.
+
+
+File: quintus.info,  Node: sap-srs-sqf,  Next: sap-srs-dfi,  Prev: sap-srs-ode,  Up: sap-srs
+
+Saved-States and QOF files
+--------------------------
+
+   Saved-states may be created from within a stand-alone program or a
+runtime system in the normal way, using `save_program/[1,2]'.  A
+saved-state may be restored, using the built-in predicate `restore/1',
+or incrementally loaded using `load_files/[1,2]'.  As discussed in
+*Note ref-sls::, saved-states are just QOF files, and there is complete
+flexibility in how they can be selectively saved and loaded.  Saved
+states, and other selections of predicates and modules saved into QOF
+files, can also be directly used with `qld' to build a stand-alone
+program or runtime system.
+
+   Note that the `restore/1' command is not as useful to load a
+saved-state (or any QOF file) into a runtime system as the
+`load_files/[1,2]' command.  While a `restore/1' in a stand-alone
+program, just as in the Development System, restarts the running
+executable and then loads the argument QOF file, a runtime system only
+restarts the executable, and the file, preceded by a `+l' flag, is
+passed to the application program, which may elect to parse the
+arguments and then load the file.  Similarly, if a saved-state is
+created from a runtime system and then restarted from the command line,
+the executable will be started, but the options list need to be parsed
+and the file loaded by the application program (see *Note
+mpg-ref-restore::, and *Note ref-pro-arg:: or *Note too-too-prolog::
+for a description of the `+l' option).
+
+
+File: quintus.info,  Node: sap-srs-dfi,  Next: sap-srs-qui,  Prev: sap-srs-sqf,  Up: sap-srs
+
+Dynamic Foreign Interface
+-------------------------
+
+   Runtime systems cannot dynamically load (additional) foreign code.
+However, they can load QOF files and if those have object file
+dependencies then the object files will be dynamically loaded at that
+time.
+
+   It is possible to dynamically load foreign code into a stand-alone
+program using `load_foreign_executable/1' or `load_foreign_files/2'.
+
+
+File: quintus.info,  Node: sap-srs-qui,  Prev: sap-srs-dfi,  Up: sap-srs
+
+Linking with QUI
+----------------
+
+   During development of applications involving both Prolog and foreign
+code, it can be very useful to build a stand-alone program that
+includes QUI.  This way, you can use the QUI debugger for stepping
+through the Prolog code and a standard debugger such as `gdb(1)' for
+stepping through the foreign code.
+
+   A good way to do this is to create a file `qui.pl' containing just
+the one line:
+     :- ensure_loaded(library(qui)).
+
+   This should then be compiled to QOF in the normal way and linked
+into your application.  For example:
+     % qpc -D <application files> qui.pl
+
+   Then start up the resulting executable file using a command such as
+     % gdb a.out
+
+   See *Note fli-p2f-fcr:: for information about using a standard
+debugger in conjunction with a Prolog executable file.
+
+     *Please note:* The reason for putting the `ensure_loaded' command
+     in a file by itself, rather than including it in your application
+     code, is that it will not work if executed in an ordinary `prolog'
+     system that does not include QUI; it is not possible to load QUI
+     dynamically.
+
+
+File: quintus.info,  Node: sap-rge,  Next: sap-srs,  Up: sap
+
+The Runtime Generator
+=====================
+
+* Menu:
+
+* sap-rge-bas::                         Introduction
+* sap-rge-dspn::                        Predicates not supported by the Runtime Kernel
+* sap-rge-pro::                         Providing a Starting Point:  runtime_entry/1
+* sap-rge-iha::                         Control-c Interrupt Handling
+* sap-rge-sos::                         Shared vs. Static Object Files
+* sap-rge-dll::                         Building DLLs containing Prolog code
+* sap-rge-iap::                         Installing an Application:  runtime(File)
+
+
+File: quintus.info,  Node: sap-rge-bas,  Next: sap-rge-dspn,  Up: sap-rge
+
+Introduction
+------------
+
+   The purpose of the Runtime Generator is to provide a convenient and
+cost-effective way to distribute Prolog application programs to
+end-users.  Initially a Prolog application should be developed using
+the Development System.  The Development System allows the application
+developer to load, run, modify and debug programs interactively,
+without having to leave the environment.  When an application program
+has been completed, the Runtime Generator product allows a developer to
+create a production version of the application, ready to be shipped to
+end-users.  This version of the application is called a "runtime
+system".
+
+   The important points to note about runtime systems are:
+  1. They can easily be deployed, because they do not require any
+     authorization codes in order to run.
+
+  2. They are smaller than programs built on top of the Development
+     System, since they do not include program development features
+     such as the compiler, the debugger and the Emacs interface
+
+   The process of building a runtime system is almost identical to the
+process of building a "stand-alone program" with the Development
+System, and both of these processes are documented in *Note sap-srs::.
+The compiler `qpc' is used to compile your Prolog source files into
+Quintus Object Format (QOF) files, and these are then linked together
+using the link editor `qld'.  Both `qpc' and `qld' require a `-D'
+command-line option when building a stand-alone program; the default is
+to build a runtime system.
+
+   It is recommended that before turning an application program into a
+runtime system you first build it as a stand-alone program.  This way,
+if there are any problems, you will have the debugger available to help
+you eliminate them.
+
+   Once you have built a stand-alone program, it should be very easy to
+rebuild the application as a runtime system.  This section describes
+the few points that may need to be considered in making this transition:
+  1. Some built-in predicates are not available in runtime systems,
+     since they are intended for use in program development rather than
+     for use in application programs.  See *Note sap-rge-dspn::.
+
+  2. Runtime systems do not have the normal Prolog top level.  Instead,
+     you must specify a starting point for the program by defining the
+     predicate `runtime_entry/1'.  This predicate also allows you to
+     specify what is to be done after an abort occurs.  See *Note
+     sap-rge-pro::.
+
+  3. Runtime systems have different default behavior on a `^C'
+     interrupt.  Instead of giving the user a set of choices, the system
+     immediately aborts. See *Note sap-rge-iha::.
+
+  4.    If your runtime system contains dependencies on "non-standard"
+     shared    libraries, or on one or more shared object files
+     (specified in calls to    `load_foreign_executable/1'), then in
+     order to be able to deliver the    runtime system to a different
+     machine you will need either
+
+       a.    to make the system completely self-contained    by
+          replacing the shared object files and libraries with
+          equivalent archive    files when building it; or
+
+       b.    to ensure that all necessary shared libraries and shared
+          object files    are available on the target machine.
+
+
+     See *Note sap-rge-sos:: for more information on this issue.
+
+   Another difference between runtime systems and programs running
+under the Development System is that runtime systems suppress
+informative error messages, on the basis that such messages are
+intended for the application developer, not the application user.  For
+example, if a runtime system consults a file, no message is printed to
+the screen to indicate this.  If you wanted some such message to appear
+at runtime, you would have to program it yourself.
+
+   Error messages are not suppressed, however.  If you want to suppress
+the printing of some (or all) error messages you can do it by providing
+a definition for the predicate `message_hook/3'.  See *Note
+ref-msg-umf-ipm::.
+
+
+File: quintus.info,  Node: sap-rge-dspn,  Next: sap-rge-pro,  Prev: sap-rge-bas,  Up: sap-rge
+
+Predicates not supported by the Runtime Kernel
+----------------------------------------------
+
+   The predicates listed below are not supported by the Runtime Kernel,
+since their purpose is to aid the development process rather than to be
+used in application programs.  `qld' or `qcon' will print `Undefined'
+warning messages if you try to build a runtime system with calls to any
+of these predicates. At run time, these calls will raise existence
+errors in a runtime system.
+
+debugger:
+     `debug/0', `nodebug/0', `trace/0', `notrace/0', `spy/1',
+     `nospy/1', `nospyall/0', `debugging/0', `leash/1',
+     `add_spypoint/1', `current_spypoint/1', `remove_spypoint/1',
+
+help system:
+     `help/[0,1]', `manual/[0,1]'
+
+advice:
+     `add_advice/3', `check_advice/[0,1]', `current_advice/3',
+     `nocheck_advice/[0,1]', `remove_advice/3',
+
+program development:
+     `break/0'
+
+   If you call any of these predicates from compile-time code, such as
+from an embedded command or in a definition of `term_expansion/2', the
+call will raise existence errors when using `qpc'.
+
+   Any use of these predicates should be eliminated from both your
+run-time and your compile-time code, unless you can be sure that they
+won't be called or you don't mind them raising existence errors.
+
+   In addition, the predicates `load_foreign_files/2' and
+`load_foreign_executable/1' are not available in the Runtime Kernel but
+may be used in embedded commands.  That is, you can use them at compile
+time, in order to link foreign code into your program, but you cannot
+use them when the runtime system is running.
+
+   Since the compiler is not included in a runtime system, the effect of
+the load predicates is altered in a runtime system.  Whenever one of
+these predicates would normally compile a file into memory, it instead
+loads that file into memory as dynamic.  This is equivalent to
+
+     `load_files(file, all_dynamic(true)').
+
+   This should not normally make any significant difference, except
+that loading the file is faster and running it is slower.
+
+   The predicate `multifile_assertz/1' cannot be used on compiled
+(static) predicates in a runtime system.  This restriction does not
+apply to predicates that are loaded by `compile(FILE)' at run time,
+since such predicates are really loaded as dynamic.
+
+
+File: quintus.info,  Node: sap-rge-pro,  Next: sap-rge-iha,  Prev: sap-rge-dspn,  Up: sap-rge
+
+Providing a Starting Point:  `runtime_entry/1'
+----------------------------------------------
+
+   The application developer _must_ specify what is to happen when the
+program is started up.  This is done by defining the predicate
+`runtime_entry/1'.  When the runtime system is run, the goal (A) is
+invoked.  When that goal terminates, either by succeeding or by
+failing, the runtime system terminates.
+
+     runtime_entry(start) (A)
+
+   Similarly, it is possible to specify what is to be done on an abort.
+An abort happens when a call is made either to the built-in predicate
+`abort/0' or to the C routine `QP_action(QP_ABORT)'.  (By default, a
+call of `QP_action(QP_ABORT)' happens when a user types `^C'-- see
+*Note sap-rge-iha::).  At this point, the current computation is
+abandoned and the program is restarted with the goal (B).
+
+     runtime_entry(abort) (B)
+
+   Effectively this replaces the original call to
+`runtime_entry(start)', so that when this call succeeds or fails, the
+runtime system terminates For example (C) will obviously loop
+indefinitely until you interrupt it with a `^C'.  At that point it will
+abort, and since the goal `runtime_entry(abort)' will fail, the program
+will terminate.
+
+   If you were to add the clause (D) you would make the program
+impervious to `^C' interrupts and quite hard to terminate.
+
+     runtime_entry(start) :- go. (C)
+     go :- go.
+     
+     runtime_entry(abort) :- go. (D)
+
+   For this reason, it is recommended that you _not_ write your code as
+(E) as this will cause your program to restart on `^C' or errors.
+
+   Users of the module system should ensure that the predicate
+`runtime_entry/1' is defined in the module `user', that is, not inside
+any user-defined module.  You may use a clause of the form (F) in a
+module-file to do this. (see *Note ref-mod::).
+
+     runtime_entry(_):- ... (E)
+     
+     
+     user:(runtime_entry(...):-...) (F)
+
+
+File: quintus.info,  Node: sap-rge-iha,  Next: sap-rge-sos,  Prev: sap-rge-pro,  Up: sap-rge
+
+Control-c Interrupt Handling
+----------------------------
+
+   By default, `^c' causes a runtime system to abort its current
+computation and to restart with the goal `runtime_entry(abort)', exactly
+as if the built-in predicate `abort/0' had been called.  This behavior
+can be modified from C code by means of the system function
+`signal(2)'.  Such modification is done in exactly the same way as
+under a Development System; see the Reference Pages for further
+information.
+
+     *Windows Caveats:*
+
+        * In Windows 95/98, `^C' interrupt handling only works in
+          windowed executables, and only when waiting for input.
+
+        * In statically linked executables running under Windows NT,
+          `^C' interrupt handling only works when waiting for input.
+
+
+
+File: quintus.info,  Node: sap-rge-sos,  Next: sap-rge-dll,  Prev: sap-rge-iha,  Up: sap-rge
+
+Shared vs. Static Object Files
+------------------------------
+
+   A runtime system is a single executable program that should be easily
+transferable to a different machine. By default, the executable built
+by `qld' will use dynamic libraries where it can, such as the dynamic C
+library (`-lc' under UNIX, `/MD' under Windows).  This requires that a
+corresponding library exist on the target machine on which the
+executable will be run.
+
+   Under UNIX, you may encounter problems if libraries included in your
+executable are not installed in "standard places" -- e.g. in `/usr/lib'
+-- on the target machine.  For example, if you specify `-lX11', but the
+corresponding file `libX11.so.4.2' resides in `/usr/local/lib/X11'.
+Typically, a user has to set the `LD_LIBRARY_PATH' environment variable
+to find libraries in non-standard places, although another option at
+installation time might be to add a call to `ldconfig(8)' in
+`/etc/rc.local' to include the directory containing a shared library
+into the system-wide list of "standard places" to find shared
+libraries. The `ldd(1)' command lists the dynamic dependencies of an
+executable and whether or not these can be found.
+
+   The problem exists under Windows but the details are different. In
+particular Windows shared libraries are looked for in the folders
+specified by the `PATH' environment variable and in some further
+"standard places". Consult the Windows documentation for details.
+
+   In addition to shared libraries, your executable may contain shared
+object files, specified in calls to `load_foreign_executable/1'.  `qld'
+passes the absolute file paths for these files to the linker, which
+results in the dependencies for these shared object files being stored
+in the runtime system executable as absolute filenames.  Note that this
+problem can arise even if you have no foreign code of your own, if you
+are using the Quintus Prolog library or X interfaces.
+
+   A solution to the shared object files problem is to use the `-S'
+option with `qld', which tries to substitute archive files for shared
+object files where they exist.  If the shared object files have
+dependencies on other shared libraries then those libraries need to be
+explicitly listed in the `qld' command, as `qld' does not track these
+dependencies.  This makes your executable file larger, as the library
+code is stored within the executable rather than linked in at start-up
+time.  Each shared object file provided in the Quintus libraries has an
+equivalent archive file that can be substituted by the `qld -S' command.
+
+   For example, under UNIX, building a runtime system from the file in
+(A) with the command (B) produces an `a.out' file, which prints the
+date and time, as in (C).
+
+                                                              _test.pl_
+     
+     :- use_module(library(date)). (A)
+     
+     runtime_entry(start) :-
+             datime(X),
+             portray_date(X),
+             nl.
+
+     % qpc test.pl (B)
+
+     % ./a.out (C)
+     2:10:09 PM 1-Feb-91
+
+   This `a.out' file has a dependency on the Prolog library as well as
+on the C library, as shown by the `ldd(1)' command:
+     % ldd a.out
+         /usr/local/quintus/generic/qplib3.5/library/sun4-5/libpl.so
+         libc.so.1 => /usr/lib/libc.so.1.8
+
+   Under Windows, the example would be almost the same, with the
+difference that the default name of the executable produced by `qpc' is
+`a.exe' rather than `a.out'. To view dependencies you can type `dumbin
+/DEPENDENTS a.exe'.
+
+   Hence this runtime system will not work on a machine where Quintus
+Prolog is not installed.  To build a runtime system that does not have
+this dependency, it is necessary to call `qld -S' explicitly, rather
+than just calling `qpc test.pl' as shown above. Under UNIX, the
+necessary command sequence is:
+     % qpc -c test.pl
+     % qld -Sd test.qof
+
+   That is, `qpc' is called with the `-c' option so that it stops after
+producing a `.qof' file, rather than calling `qld'.  Then `qld' is
+called with the `-S' option so that it substitutes `libpl.a' for
+`libpl.so'.  The result is an executable that depends only on the C
+shared library:
+     % ldd a.out
+         ilbc.so.1 => /usr/lib/libc.so.1.8
+
+   This executable should run without problem on a different machine.
+
+   Under Windows, the linker does not automatically add all needed OS
+libraries. These need to be added explicitly as follows:
+
+     C:\> qpc -c test.pl
+     C:\> qld -Sd test.qof -LD qpconsoles.lib user32.lib gdi32.lib comdlg32.lib
+
+     *Windows notes:*
+
+       1. The `-S' and `-W' flags can be combined.
+
+       2. If the `-S' option is used, the `-LD' option must also be
+          used, together with the library references `qpconsoles.lib',
+          `user32.lib', `gdi32.lib', and `comdlg32.lib'.
+
+       3. If the Prolog code has a foreign executable dependency on
+          `myforeignex', a static library `myforeignexs.lib' needs to
+          be created.  The trailing `s' is significant (see below);
+          `qld' assumes this naming convention.  Here is an example of
+          the necessary sequence of commands to create a static
+          executable `myforeignex.exe':
+
+               C:\> cl /c /MD myforeignex.c
+               C:\> link /lib /OUT:myforeignexs.lib myforeignex.obj
+               C:\> qpc -c myprog.pl
+               C:\> qld -Sdvo myprog.exe myprog.qof -LD \
+                    user32.lib comdlg32.lib qpconsoles.lib gdi32.lib
+
+          The above command produces an executable that uses the static
+          version of the Runtime Kernel and has no DLL dependencies.
+          Statically linked applications can still dynamically load
+          foreign code DLLs, provided these DLLs do not call any of the
+          Quintus Prolog C API functions.
+
+          In order to distinguish static libraries from DLL import
+          libraries in foreign dependencies, the following naming
+          convention has been chosen.  If the `-S' option is used, when
+          processing a library dependency `qld' will first search for
+          the library with an `s' appended to its name, for example
+          `libqps.lib' for the Embedding Layer, and if not found it
+          tries the original name.
+
+
+
+File: quintus.info,  Node: sap-rge-dll,  Next: sap-rge-iap,  Prev: sap-rge-sos,  Up: sap-rge
+
+Building DLLs containing Prolog code
+------------------------------------
+
+* Menu:
+
+* sap-rge-dll-ini::                     Setting up the environment
+* sap-rge-dll-qpc::                     Compiling the Prolog code
+* sap-rge-dll-cc::                      Compiling the C code
+* sap-rge-dll-qld::                     Linking the DLL
+
+   This section is only relevant for Windows.
+
+   It is possible to build DLLs containing Prolog code to be linked
+dynamically into applications.  Packaging your code as a DLL promotes
+sharing and is also a requirement for applications where an application
+needs to dynamically link your code. An example illustrating this and
+other techniques that are useful when embedding Prolog in C is the
+Visual Basic interface source code; see `QUINTUS-DIRECTORY\src\vbqp'.
+
+   Applications typically look for DLLs in the same directory as the
+application itself and also in any directories specified in the `PATH'
+environment variable.  Applications also look in some system
+directories but that is less useful for our purposes.
+
+   The easiest way to ensure that the DLL (and the Quintus runtime DLLs)
+are found is to put the DLL together with the Quintus runtime DLLs in
+RUNTIME-DIRECTORY and then ensure that the `PATH' environment variable
+is set up to include that directory, as described below.
+
+   Another method, especially suitable for running on a machine where
+Quintus Prolog is not installed, is to put all the DLLs in the same
+directory as the application. This includes the DLL built as below and
+the appropriate Quintus runtime DLLs.
+
+   See the Microsoft documentation for more information about DLLs.
+
+   To build a DLL containing Prolog code, follow these steps:
+
+
+File: quintus.info,  Node: sap-rge-dll-ini,  Next: sap-rge-dll-qpc,  Up: sap-rge-dll
+
+Setting up the environment
+..........................
+
+   Set up your environment variables so that the Quintus binaries can be
+found. The batch file `RUNTIME-DIRECTORY\qpvars.bat' can be run for
+this purpose.
+
+
+File: quintus.info,  Node: sap-rge-dll-qpc,  Next: sap-rge-dll-cc,  Prev: sap-rge-dll-ini,  Up: sap-rge-dll
+
+Compiling the Prolog code
+.........................
+
+   Compile your Prolog code, e.g.
+     C:\> qpc -c vbqp.pl
+
+   The option `-c' ensures that only a Quintus object file (QOF) is
+produced, in this case `vbqp.qof'.
+
+
+File: quintus.info,  Node: sap-rge-dll-cc,  Next: sap-rge-dll-qld,  Prev: sap-rge-dll-qpc,  Up: sap-rge-dll
+
+Compiling the C code
+....................
+
+   Compile your C code, e.g.
+
+     C:\> cl /nologo /c /MD vbqp.c
+
+   The option `/MD' ensures that the DLL version of the C runtime
+libraries are used.  The option `/c' ensures that no linking is
+performed, only an object file is produced, in this case `vbqp.obj'.
+
+
+File: quintus.info,  Node: sap-rge-dll-qld,  Prev: sap-rge-dll-cc,  Up: sap-rge-dll
+
+Linking the DLL
+...............
+
+   Finally, use `qld' to link the DLL with the code produced in the
+previous steps and any additional libraries, e.g.
+
+     C:\> qld -Ydo vbqp.dll vbqp.qof vbqp.obj -LD oleaut32.lib
+
+     *Please note:* `qcon' will complain that there is no
+     `runtime_entry/1'. This can be ignored.
+
+   The option `-o' is used to name the resulting DLL, in this case
+`vbqp.dll'.  The option `-d' is used to ensure that any dependencies
+are also linked.  The option `-LD' passes the rest of the command line
+to the linker, in this case it causes the library `oleaut32.lib' to be
+linked with the resulting DLL.
+
+   The option `-Y' (new in this release) tells `qld' to produce a DLL as
+opposed to an ordinary EXE file.  A similar effect could be obtained
+with:
+
+     C:\> qld -do vbqp.dll vbqp.qof vbqp.obj -LD /dll oleaut32.lib
+
+
+File: quintus.info,  Node: sap-rge-iap,  Prev: sap-rge-dll,  Up: sap-rge
+
+Installing an Application:  runtime(FILE)
+-----------------------------------------
+
+   A runtime system is a single, executable program that can easily be
+transferred to a different machine.  However, in many cases,
+application programs require access to some auxiliary files in the
+course of their execution.  These may be files of Prolog code that are
+to be consulted at run time, or they may be data files in any arbitrary
+format.  If your application requires some such files, you may need to
+require users of the application to follow some installation procedure
+before they can use it.
+
+   One approach to this problem is to use the runtime file search path
+for accessing all your auxiliary files.  The default runtime file
+search path is the runtime directory where Prolog executables and
+objects are located.  You can modify this by putting a goal such as the
+following in your `prolog.ini' file.
+     :- retractall(file_search_path(runtime,_)),
+        assert(file_search_path(runtime,
+                               '/usr/fred/runtime_files')).
+
+   This allows you to use `runtime(FILE)' anywhere you need to specify
+a file, such as in calls to `open/3', `see/1', `consult/1' or
+`absolute_file_name/2'.  When you do this, the file will be sought in
+the directory `/usr/fred/runtime_files'.
+
+   When you have built a runtime system, you can change the runtime
+directory and thus the runtime file_search_path by means of the
+`qsetpath' utility program (see *Note too-too-qsetpath::).  This can be
+changed, perhaps from an installation shell script to be run by the end
+user.  The appropriate command is:
+     % qsetpath -rDIRECTORY RUNTIME-SYSTEM
+
+   The program RUNTIME-SYSTEM will then look in DIRECTORY for its
+runtime files.  Note that write permission will be needed on
+RUNTIME-SYSTEM for the `qsetpath' command to work.
+
+   There is another utility, `qgetpath' (see *Note too-too-qgetpath::),
+which can be used to print the runtime directory of a runtime system.
+For example,
+     % qgetpath -r RUNTIME-SYSTEM
+
+   writes the runtime directory to standard output.  See the `qsetpath'
+and `qgetpath' Reference Pages for more information.
+
+
+File: quintus.info,  Node: fli,  Next: ipc,  Prev: sap,  Up: Top
+
+Foreign Language Interface
+**************************
+
+* Menu:
+
+* fli-ffp::                             Foreign Functions Calling Prolog
+* fli-emb::                             Embedding Prolog Programs
+* fli-ios::                             Quintus Prolog Input / Output System
+* fli-ove::                             Overview
+* fli-p2f::                             Prolog Calling Foreign Code
+
+
+File: quintus.info,  Node: fli-ove,  Next: fli-p2f,  Prev: fli-ios,  Up: fli
+
+Overview
+========
+
+   The "Foreign Language Interface" is the protocol by which you can
+call functions written in other programming languages from Prolog (see
+*Note fli-p2f::), and by which you can call Prolog predicates from C
+(see *Note fli-ffp::).
+
+   In both cases you have to supply declarations in Prolog specifying
+the argument types of the function/predicate being called.  This is
+necessary so that the Prolog system can automatically make the necessary
+transformations of data as they are passed between the languages.  The
+declarations are compiled into special abstract machine instructions in
+order to minimize the cost of inter-language calls.
+
+   It is possible to specify that an argument is a Prolog term.  In this
+case a foreign function receiving such a term sees it as a special kind
+of object called a "QP_term_ref".  A set of functions is provided that
+allow foreign functions to manipulate terms via these QP_term_refs.
+Term passing is described in *Note fli-p2f-trm:: and *Note
+fli-ffp-a2s-trm::.  The functions for manipulating terms are described
+in *Note cfu::.
+
+   Some kinds of data are not best represented in Prolog.  It is better
+to keep such data in foreign data structures and just pass pointers to
+these structures to Prolog.  Given such pointers, Prolog arithmetic
+predicates such as `is/2' and `=:=/2' allow access to foreign data; see
+*Note ref-ari-aex::.  Foreign data can also be modified directly from
+Prolog using `assign/2', which is described in *Note cfu::.
+
+   Input/Output operations on Prolog streams can be performed in C.
+Functions, macros and variables for this purpose are summarized in
+*Note fli-ios-bio::.  The I/O system has been designed to make it
+maximally customizable at the C level.  The kinds of customization that
+you might want to do are to create a stream to read from or write to a
+socket, or to create a stream to read from an encrypted file.  The C
+level of the I/O system is described in *Note fli-ios::.
+
+   A number of functions are defined to aid in embedding Prolog programs
+into other software systems.  These functions all begin with the letters
+`QU' and they are defined in *Note fli-emb::.  The source of these
+functions is provided with the system, and you may define your own
+versions to replace them.  To do this you will need to link your
+routines with the development system to make your own customized
+version of the development system.  How to do this is described in
+*Note sap::.
+
+
+File: quintus.info,  Node: fli-emb,  Next: fli-ios,  Prev: fli-ffp,  Up: fli
+
+Embedding Prolog Programs
+=========================
+
+* Menu:
+
+* fli-emb-ove::                         Overview
+* fli-emb-lay::                         The Embedding Layer
+* fli-emb-how::                         How Embedding Works
+* fli-emb-sum::                         Summary of Functions
+
+
+File: quintus.info,  Node: fli-emb-ove,  Next: fli-emb-lay,  Up: fli-emb
+
+Overview
+--------
+
+   As outlined in *Note int-hig::, a constellation of new features
+greatly extends the relationship between Quintus Prolog code and
+foreign language code.  It is now possible to embed Prolog code in a
+program written in another language without restrictions.  Clearly, the
+first requirement for embedding Prolog code freely in foreign code is
+to be able to call Prolog from foreign code and vice versa.  C calling
+Prolog is a major new feature of release 3 and is discussed in *Note
+fli-ffp::.
+
+   A further requirement is that all types of data structures can be
+passed between Prolog and the foreign code.  Previously it was not
+possible to pass compound Prolog terms between Prolog and foreign code.
+In addition there were serious limitations on passing mathematical
+data.  release 3 adds
+   * the ability to access Prolog terms from the foreign language once
+     they are passed to it and perform Prolog operations on them.
+     (Discussed in detail in *Note fli-p2f:: and *Note fli-ffp::, and
+     in the reference pages cited there for term passing predicates and
+     functions).
+
+   * the ability to access data structures in a foreign language from
+     Prolog and to perform destructive operations on them.  (Discussed
+     in *Note fli-p2f-poi:: and `assign/2' and `is/2').
+
+   * 32 bit integers and 64 bit floats
+
+   With these new features, Quintus Prolog fulfills the full data
+passing requirement.
+
+   The foreign language interface is now fully bidirectional.  This in
+itself is not sufficient for embeddability in a strong sense.  The
+Prolog portions of the application must in addition be _well-behaved_.
+That is, they must not make any assumptions about how the operating
+system will handle such matters as memory and input/output operations.
+This is where the "embedding layer" of Quintus Prolog comes in.
+
+
+File: quintus.info,  Node: fli-emb-lay,  Next: fli-emb-how,  Prev: fli-emb-ove,  Up: fli-emb
+
+The Embedding Layer
+-------------------
+
+* Menu:
+
+* fli-emb-lay-onm::                     Contrasting Old and New Models
+
+   In many cases, the embedding layer will be transparent to the
+application developer.  It provides a full set of default functions for
+interaction between Prolog and the host operating system.  Frequently
+all you will need to do is use the extended FLI and let the defaults
+provided by Quintus Prolog take care of the operating system
+requirements concerning memory management and I/O.  However, Prolog no
+longer insists on controlling memory management and input/output
+operations, should this be impossible or undesirable in your
+application.  These default interfaces are fully user redefinable.
+
+   Memory management: Quintus Prolog release 3 does not have any
+restrictions on the underlying memory.  This is a crucial aspect of
+embeddability.  Any good Prolog implementation will start up with the
+minimum amount of memory necessary and expand and shrink depending on
+the memory needed to execute each goal. In previous releases of Quintus
+Prolog (as well as most other Prolog implementations) all the memory
+that Prolog used had to be contiguous.  So it was possible that if some
+foreign component of the application allocated memory from the top, it
+would disable Prolog from growing any further. With release 3, Quintus
+Prolog runs on discontiguous memory. Therefore Prolog can share the
+process's address space with memory allocated to Prolog interspersed
+with memory allocated by other components of the application.
+
+   The user can replace Quintus Prolog's low level memory management
+functions.  This is essential if the user has an application that would
+like to take care of all memory management and does not want Prolog to
+directly make system calls to the OS to allocate memory. This makes it
+easy to link Prolog with other components that have more rigid
+restrictions about its memory allocation.  (Discussed further in *Note
+fli-emb-how-mem::).
+
+   Input/Output: The user can create, access and manipulate Prolog I/O
+streams from foreign code.  This provides a unified way of performing
+I/O from Prolog as well as foreign code.  It also gives the user the
+ability to have I/O streams to sockets, pipes or even windows.
+Graphical user interfaces have become a natural Prolog component of an
+application.
+
+   The low level I/O functions can also be replaced.  This is essential
+if the user has a large application and wants to take care of all I/O
+without any direct calls from Prolog to the OS to perform I/O.   This
+is elaborated in *Note fli-emb-how-iou::.
+
+     *Windows caveat:* Redefining functions in the Embedding Layer only
+     works in executables built with `-S'; see *Note sap-rge-sos::.
+
+
+File: quintus.info,  Node: fli-emb-lay-onm,  Up: fli-emb-lay
+
+Contrasting Old and New Models
+..............................
+
+   To understand the motivation for the new "embeddability" layer,
+contrast the model of foreign language interface that previously held,
+as illustrated in the two following figures, with the new model
+illustrated in the figure "New Model".
+
+
+[See printed or HTML manual.]
+
+                Former Prolog interface to foreign code
+
+   The Old Model:
+
+   Under the one-directional foreign language interface, it was
+necessary to write a `main' program in Prolog as illustrated in the
+above figure The foreign language interface was able to call foreign
+code from this `main'.  There were basically two components, the Prolog
+Main, and the Foreign Program.  The foreign program itself could have
+all sorts of components.  However, from the point where the foreign
+code began, no more Prolog code could be inserted.  For instance, if
+you wanted to add a Prolog component to Module C of the program, it
+would be necessary to restructure the program to enable control to
+return to the Prolog `main', where the new Prolog code could be called,
+and then reinvoke the foreign code in Module C.
+
+   Another limitation of the old foreign interface was the possibility
+of conflicts between the foreign code called by the user's Prolog code
+and the foreign code used by the Quintus Prolog kernel.  For example,
+the Quintus Prolog kernel required total control of all memory
+allocation to ensure that the Prolog memory areas were contiguous.
+Therefore the users code could not use the system call `sbrk(2)' to
+allocate memory, but had to use the `malloc(3)' function provided with
+Quintus Prolog (see the following figure).  Now, however, the foreign
+functions used by the Quintus Prolog kernel forms the Embedding Layer
+and it is possible for the user to redefine these functions to conform
+to the requirements of his foreign code.
+
+
+[See printed or HTML manual.]
+
+          Prolog Kernel and Application calling Foreign Code
+
+   The New Model:
+
+   The new model can be represented as in the following figure.  The
+Embedding Layer contains C functions that establish defaults for memory
+management and I/O.  The user can redefine any of these modules so as
+to prevent conflicts between the application's C calls and the C calls
+made by the Quintus Prolog kernel.
+
+
+[See printed or HTML manual.]
+
+                               New Model
+
+
+File: quintus.info,  Node: fli-emb-how,  Next: fli-emb-sum,  Prev: fli-emb-lay,  Up: fli-emb
+
+How Embedding Works
+-------------------
+
+* Menu:
+
+* fli-emb-how-mai::                     Defining your own main()
+* fli-emb-how-mem::                     The Embedding Functions for Memory Management
+* fli-emb-how-iou::                     The Embedding Functions For Input/Output
+
+   The next three sections describe the major areas of Prolog that can
+be redefined to facilitate the embedding of Prolog code in foreign
+language applications:
+
+   * Initialization, i.e. `main()'
+
+   * Memory management
+
+   * Input/Output
+
+   Consider the details presented in these sections in the context of
+this overview of the process of creating a program with a Prolog
+component:
+
+  1. Write the foreign code (`prog.c') and the Prolog code
+     (`component.pl'), using the steps for the C calling Prolog
+     interface described in *Note fli-ffp-bas-sum:: to call the Prolog
+     predicates.  Most likely you will be defining a `main()' routine;
+     in this case be sure to call `QP_initialize()'.  An example is
+     found in the reference page.
+
+  2. Determine whether it is necessary to customize any of the API
+     modules for initialization, memory management or input/output.
+     This is discussed in *Note fli-emb-how-mai::, *Note
+     fli-emb-how-mem::, and *Note fli-emb-how-iou::.
+
+  3. If customization is required, and it seldom will be, rewrite the
+     relevant modules.
+
+  4. Produce the executable:
+       a. Compile `component.pl' using `qpc -c component.pl'
+
+       b. Compile `prog.c' using e.g. `cc -c prog.c'
+
+       c. Link the two using `qld'.  A typical call would be:
+               % qld -Dd component.qof prog.o -o BigApplication
+
+          You may also want to link in QUI in order to be able to use
+          the debugger, as described in *Note dbg-sld::.  The process
+          of linking QUI into an application is discussed in *Note
+          sap-srs-qui::.
+
+       d. Run BigApplication.  Debug, using standard debugging tools
+          such as `gdb(1)' for C code, and Prolog debugging tools for
+          Prolog code.
+
+
+   Quintus Prolog provides defaults for interfacing the operating
+system.  If customization is necessary in this area, a user must
+completely redefine, not just extend, the supplied functions.
+
+     *Please note:*  The default OS interface functions that can be
+     redefined all have names beginning with the prefix `QU_'.
+
+     The QU_ functions are like hooks in the sense that they provide
+     you with a place to insert code that changes Prolog's behavior.
+     However, we do not include Prolog hooks such as `message_hook/3'
+     in this discussion because the point of embedding is to call
+     Prolog code from foreign programs.  The Prolog hooks are used
+     independently of embedding.
+
+
+File: quintus.info,  Node: fli-emb-how-mai,  Next: fli-emb-how-mem,  Up: fli-emb-how
+
+Defining your own main()
+........................
+
+   Normally, when building an executable with `qld' the Quintus `main()'
+routine is linked in to the executable, which initializes the Prolog
+environment and calls `QP_toplevel()'.  `QP_toplevel()' will either:
+
+  1. Start an interactive top-level, which prompts for a command to be
+     typed; or
+
+  2. Call runtime(start) in the case of a runtime system (i.e. if `-D'
+     was omitted in the call to `qld').
+
+   However, you are not limited to using this default `main()'.  You can
+define your `main()' and have Prolog as a function call.
+
+   This should be done if the Prolog component(s) of your application
+are such that they may not be called in a given run of the program.  In
+that case, you would not want to initialize Prolog unless it became
+necessary.
+
+   An example of this sort of case is a program written in C that
+utilizes menus.  The end user can select a number of options.  One of
+these options involves further decision making, and runs an expert
+system written in Prolog.  If the user doesn't happen to select this
+menu option on a given occasion, there is no reason to use the
+resources involved in initializing Prolog.  So you would write a
+`main()' that is dependent upon this menu selection.  Once the user
+selects this option and thus starts up Prolog, however, subsequent
+invocations will recognize that Prolog is already initialized and will
+not do it again.
+
+   Another situation where it makes sense to "redefine" `main()' is
+where you already have a large application written in C or some other
+foreign language and you wish to extend it with a module written in
+Prolog without having to rewrite the top level of the existing program.
+
+   If you choose to use a different `main()', you should be aware that
+the default Quintus `main()' provides certain functionality, which will
+have to be included in the user-supplied `main()':
+
+   * Initialize memory, I/O.
+
+   * Set up command line arguments.
+
+   * Initialize file search paths, file tables and symbol tables.
+
+   * Do start up hooks associated with a statically linked component in
+     QOF files.
+
+   * Do any necessary restores, and any start up hooks associated with
+     the restored files.
+
+   The built-in function `QP_initialize()' takes care of these tasks.
+An example of a user-supplied `main()' can be found in the reference
+page for `QP_initialize()'.
+
+   The QP_* functions require that Prolog be initialized for memory
+management, etc.  Thus, whenever `main()' is redefined, it will be
+necessary to call `QP_initialize()'.  There is no harm in calling this
+routine more than once.  So people writing portions of large projects
+can safely assume Prolog isn't initialized, and call `QP_initialize()'.
+

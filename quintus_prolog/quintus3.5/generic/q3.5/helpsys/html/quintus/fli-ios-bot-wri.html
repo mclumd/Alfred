@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Bottom Layer Write Function</h5>
+
+<pre class="example">     int <var>&lt;write function&gt;</var>(qpstream, bufptr, sizeptr)
+            QP_stream         *qpstream;
+            unsigned char    **bufptr;
+            size_t            *sizeptr;
+     
+     Return Values:   QP_SUCCESS
+                      QP_ERROR
+     </pre>
+
+   <p>The bottom layer write function writes out a record from buffer address
+stored in <code>*bufptr</code> and the size of the record stored in <code>*sizeptr</code>. 
+Upon successful return, <code>*sizeptr</code> stores the maximum record size
+and <code>*bufptr</code> stores the address of the beginning of the
+buffer for the next output record.  The <code>magic</code> field
+in <code>qpstream</code> should be updated to the system-dependent file address
+(see <a href="fli-ios-sst-sda.html#fli-ios-sst-sda">fli-ios-sst-sda</a>)
+for the beginning of the next output record.  If there is no
+seek permission for the stream, the <code>magic</code> field may be ignored. 
+The <code>errno</code> field in <code>QP_stream</code> stores the error code
+if an error is detected in the function and <code>QP_ERROR</code> is returned. 
+The output record passed into the write function may be a partial record
+if output record overflows the output buffer for a stream
+that permits overflow.
+
+<pre class="example">     static int
+     bin_write(qpstream, bufptr, sizeptr)
+         QP_stream            *qpstream;
+         unsigned char       **bufptr;
+         size_t               *sizeptr;
+         {
+             BinStream  *stream = CoerceBinStream(qpstream);
+             int        n, len=(int) *sizeptr;
+             char        *buf = (char *) *bufptr;
+     
+             while ((n = write(stream-&gt;fd, buf, len)) &gt; 0 &amp;&amp; n &lt; len) {
+                 buf += n;
+                 len -= n;
+             }
+             if (n &gt;= 0) {
+                 qpstream-&gt;magic.byteno += *sizeptr;
+                 *sizeptr = qpstream-&gt;max_reclen;
+                 *bufptr  = stream-&gt;buffer;
+                 return QP_SUCCESS;
+             } else {
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+         }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-bot-flu.html#fli-ios-bot-flu">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-bot-rea.html#fli-ios-bot-rea">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-bot.html#fli-ios-bot">Up</a>
+</ul>
+</div>
+   </body></html>
+

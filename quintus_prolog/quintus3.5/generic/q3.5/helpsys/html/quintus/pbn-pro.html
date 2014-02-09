@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Prolog Interface</h3>
+
+   <p>The Prolog interface is based on the idea of a Prolog server that
+provides its service by answering queries from external applications
+(typically Java applications). The Prolog interface in PrologBeans
+is defined in <code>library(prologbeans)</code>, which implements the
+Prolog server and exports the following predicates:
+
+     <dl>
+
+     <br><dt><code>start</code>
+     <dd><dt><code>start(</code><var>+Options</var><code>)</code>
+     <dd>
+
+     <p>starts the Prolog server using the options specified. <var>Options</var>
+should be a list of zero or more of:
+
+          <dl>
+<dt><code>port(</code><var>?Val</var><code>)</code>
+          <dd>an integer denoting the port number of the Prolog server (default:
+8066). If <code></code><var>Val</var><code></code> is a variable then some unused port will be
+selected by the OS, the actual port number can be obtained with
+<code>get_server_property/1</code>, typically from a <code>server_started</code>
+event listener.
+
+          <br><dt><code>accepted_hosts(</code><var>+Val</var><code>)</code>
+          <dd>a list of atoms denoting the hosts (in form of IP-addresses) that are
+accepted by the Prolog server (default: <code>['127.0.0.1']</code>).
+
+          <br><dt><code>session_timeout(</code><var>+Val</var><code>)</code>
+          <dd>an integer denoting the duration of a session in seconds. The session will be
+removed if it has been inactive more than this timeout when the
+session garbage collect starts. If the session timeout is set
+to zero there will be no garbage collect on sessions
+(default: <code>0</code>).
+
+          <br><dt><code>session_gc_timeout(</code><var>+Val</var><code>)</code>
+          <dd>an integer denoting the minimum time in seconds between two consecutive
+session garbage collections. If the timeout is set to zero there will
+be no garbage collect on sessions (default: <code>0</code>). 
+</dl>
+
+     <p>For example:
+
+     <pre class="example">          :- start([port(7500),
+                    accepted_hosts(['127.0.0.1','99.8.7.6'])]).
+          </pre>
+
+     <br><dt><code>shutdown</code>
+     <dd><dt><code>shutdown(+Mode)</code>
+     <dd>
+
+     <p>shuts down the server and closes the sockets and the streams after
+processing all available input. There are three modes:
+          <dl>
+<dt><code>now</code>
+          <dd>as soon as possible (default). 
+<br><dt><code>no_sessions</code>
+          <dd>after all sessions have ended (all sessions have either been
+explicitly removed by request of the client application, or they have
+been garbage collected). <strong>Please note</strong>:
+there can still be connections to the Prolog server even when all
+sessions have ended. 
+<br><dt><code>no_connections</code>
+          <dd>after all connections to the Prolog server are closed. <strong>Please note</strong>:
+there can still be user sessions left when all connections have been closed.
+
+     </dl>
+
+     <br><dt><code>register_query(</code><var>+Query</var><code>, </code><var>:PredicateToCall</var><code>, </code><var>+SessionVar</var><code>)</code>
+     <dd>
+
+     <p>registers a query and the corresponding predicate. Before the registration
+any previously registered query matching <code>Query</code> will be removed (as if <code>unregister_query(Query)</code> was called).  The predicate,
+<code>PredicateToCall</code> will be called, as if by
+<code>once(PredicateToCall)</code>, when a query matching
+<code>Query</code> is received. Before calling the query, the variable
+<var>SessionVar</var>, if given, is bound to the id of the current
+session. Session ids are typically generated in web applications that
+track users and mark all consecutive web-accesses with the same
+session id.
+
+     <br><dt><code>unregister_query(</code><var>+Query</var><code>)</code>
+     <dd>unregisters all queries matching <var>Query</var>.
+
+     <br><dt><code>session_get(</code><var>+SessionID</var><code>, </code><var>+ParameterName</var><code>, </code><var>+DefaultValue</var><code>, </code><var>-Value</var><code>)</code>
+     <dd>
+
+     <p>returns the value of a given parameter in a given session. If no
+value exists, it will return the default value.  Arguments:
+          <dl>
+<dt><var>SessionID</var>
+          <dd> is the id of the session for which values have been stored
+<br><dt><var>ParameterName</var>
+          <dd>an atom, is the name of the parameter to retrieve
+<br><dt><var>DefaultValue</var>
+          <dd>is the value that will be used if no value is stored
+<br><dt><var>Value</var>
+          <dd>is the stored value or the default value if nothing was stored
+</dl>
+
+     <br><dt><code>session_put(</code><var>+SessionID</var><code>, </code><var>+ParameterName</var><code>, </code><var>+Value</var><code>)</code>
+     <dd>
+
+     <p>stores the value of the given parameter. <strong>Please note</strong>: any pre-existing
+value for this parameter will be overwritten. Note that
+<code>session_put/3</code> will not be undone when backtracking (the current
+implementation is based on <code>assert</code>).  Arguments:
+
+          <dl>
+<dt><var>SessionID</var>
+          <dd>is the id of the session for the values to store
+<br><dt><var>ParameterName</var>
+          <dd>an atom, is the name of the parameter to store
+<br><dt><var>Value</var>
+          <dd>the value to be stored
+</dl>
+
+     <br><dt><code>register_event_listener(</code><var>+Event</var><code>, </code><var>:PredicateToCall</var><code>, </code><var>-Id</var><code>)</code>
+     <dd><dt><code>register_event_listener(</code><var>+Event</var><code>, </code><var>:PredicateToCall</var><code>)</code>
+     <dd>
+
+     <p>Registers <code></code><var>PredicateToCall</var><code></code> to be called (as if by
+<code>once(</code><var>PredicateToCall</var><code>)</code>) when the event matching <code></code><var>Event</var><code></code> occurs
+(event matching is on principal functor only). If the goal fails or
+raises an exception a warning is written to <code>user_error</code> but the failure
+or exception is otherwise ignored. Arguments:
+
+          <dl>
+<dt><var>Event</var>
+          <dd>is the event template, see below. 
+<br><dt><var>PredicateToCall</var>
+          <dd>an arbitrary goal. 
+<br><dt><var>Id</var>
+          <dd>becomes bound to a (ground) term that can be used with
+<code>unregister_event_listener/1</code> to remove this event listener. 
+</dl>
+
+     <p>The predefined events are as follows:
+
+          <dl>
+<dt><code>session_started(</code><var>+SessionID</var><code>)</code>
+          <dd>called before the first call to a query for this session
+<br><dt><code>session_ended(</code><var>+SessionID</var><code>)</code>
+          <dd>called before the session is about to be garbage collected (removed)
+<br><dt><code>server_started</code>
+          <dd>called when the server is about to start (enter its main loop)
+<br><dt><code>server_shutdown</code>
+          <dd>called  when the server is about to shut down
+</dl>
+
+     <p>Attempt to register an event listener for other events than the
+predefined events will throw an exception.
+
+     <p>More than one listeners can be defined for the same event. They will be
+called in some unspecified order when the event occurs.
+
+     <br><dt><code>unregister_event_listener(</code><var>+Id</var><code>)</code>
+     <dd>
+
+     <p>Unregister a previously registered event listener. The <var>Id</var> is the
+value returned by the corresponding call to
+<code>register_event_listener/3</code>. It is an error to attempt to
+unregister an event listener more than once.
+
+     <br><dt><code></code>
+     <dd>
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pbn-exs.html#pbn-exs">Next</a>
+<li><a rel="previous" accesskey="p" href="pbn-java.html#pbn-java">Previous</a>
+<li><a rel="up" accesskey="u" href="pbn.html#pbn">Up</a>
+</ul>
+</div>
+   </body></html>
+

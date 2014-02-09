@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The ProXT programming model</h4>
+
+   <p>The ProXT programming model can be summarized best in the following
+program example, which creates a push button, and maps it on the screen.
+
+<pre class="example">     create_button :-
+             xtAppInitialize(App,'Demo',[],Shell),
+             xmCreatePushButton(Shell,push_button,
+                                [xmNwidth(100), xmNheight(100)],Button),
+             xtManageChild(Button),
+             xtRealizeWidget(Shell),
+             xtAppMainLoop(App).
+     </pre>
+
+   <p>First, the Toolkit must be initialized. The call to <code>xtAppInitialize/4</code>
+returns an application context and a shell widget,
+which is the root widget of the application. 
+The second argument is the application class, attributes can be specified
+in the third argument. 
+Then the push button widget is created as a child of the shell widget
+with the call to <code>xmCreatePushButton/4</code>. In order to be visible on
+the screen a widget must be managed. This is accomplished with the
+call to <code>xtManageChild/1</code>. Note that the shell widget should not be
+managed.  The next step is to realize every widget. This can be
+achieved by realizing the root widget.  <code>xtRealizeWidget/1</code>
+propagates the realization recursively to all of the children. Then
+the program must enter the event loop by calling <code>xtAppMainLoop/1</code>
+where the server dispatches events for the widgets in this application context
+and certain actions that occur within the application.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxt-tut-wid.html#pxt-tut-wid">Next</a>
+<li><a rel="previous" accesskey="p" href="pxt-tut-bas.html#pxt-tut-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="pxt-tut.html#pxt-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

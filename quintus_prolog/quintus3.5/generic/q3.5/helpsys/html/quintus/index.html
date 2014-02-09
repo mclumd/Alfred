@@ -1,0 +1,2401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1 class="settitle">Quintus Prolog</h1>
+
+<a name="TOC"></a>
+<div class="contents">
+<h2>Table of Contents</h2>
+<ul>
+<li><a name="toc_Top" href="index.html#Top">Quintus Prolog</a>
+<li><a name="toc_int" href="int.html#int">Introduction</a>
+<ul>
+<li><a href="int-man.html#int-man">About this Manual</a>
+<ul>
+<li><a href="int-man-ove.html#int-man-ove">Overview</a>
+<li><a href="int-man-org.html#int-man-org">Organization of the Manual</a>
+<li><a href="int-man-not.html#int-man-not">Notational Conventions</a>
+<ul>
+<li><a href="int-man-not-mod.html#int-man-not-mod">Goal Templates and Mode Annotations</a>
+<li><a href="int-man-not-exa.html#int-man-not-exa">Examples</a>
+<li><a href="int-man-not-osd.html#int-man-not-osd">Operating System Dependencies</a>
+</li></ul>
+<li><a href="int-man-bib.html#int-man-bib">Bibliographical Notes</a>
+</li></ul>
+<li><a href="int-hig.html#int-hig">Highlights of  release 3</a>
+<ul>
+<li><a href="int-hig-emb.html#int-hig-emb">Embeddability</a>
+<li><a href="int-hig-qof.html#int-hig-qof">QOF Loading and Saving</a>
+<li><a href="int-hig-qui.html#int-hig-qui">QUI: An X-based Development Environment</a>
+<li><a href="int-hig-sld.html#int-hig-sld">Source-linked Debugger</a>
+<li><a href="int-hig-oth.html#int-hig-oth">Other New Features</a>
+<li><a href="int-hig-com.html#int-hig-com">Compatibility Issues</a>
+<ul>
+<li><a href="int-hig-com-sst.html#int-hig-com-sst">Saved States</a>
+<li><a href="int-hig-com-erh.html#int-hig-com-erh">Error Reporting/Handling</a>
+</li></ul>
+<li><a href="int-hig-bip.html#int-hig-bip">New Built-in Predicates</a>
+<li><a href="int-hig-hok.html#int-hig-hok">New Hook Predicates</a>
+<li><a href="int-hig-rem.html#int-hig-rem">Removed Built-in Predicates</a>
+</li></ul>
+<li><a href="int-dir.html#int-dir">The Quintus Directory</a>
+<ul>
+<li><a href="int-dir-qdu.html#int-dir-qdu">Structure of the Quintus Directory under UNIX</a>
+<li><a href="int-dir-qdw.html#int-dir-qdw">Structure of the Quintus Directory under Windows</a>
+<li><a href="int-dir-spa.html#int-dir-spa">Search Paths</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_bas" href="bas.html#bas">User's Guide</a>
+<ul>
+<li><a href="bas-sta.html#bas-sta">Getting Started</a>
+<ul>
+<li><a href="bas-sta-ove.html#bas-sta-ove">Overview</a>
+<li><a href="bas-sta-sta.html#bas-sta-sta">Starting Prolog</a>
+<li><a href="bas-sta-exi.html#bas-sta-exi">Exiting Prolog</a>
+<li><a href="bas-sta-tpp.html#bas-sta-tpp">The Top-level Prolog Prompt</a>
+<li><a href="bas-sta-hlp.html#bas-sta-hlp">Using the On-line Help System</a>
+</li></ul>
+<li><a href="bas-lod.html#bas-lod">Loading Programs into Prolog</a>
+<ul>
+<li><a href="bas-lod-fil.html#bas-lod-fil">Loading a File into Prolog</a>
+<li><a href="bas-lod-qof.html#bas-lod-qof">Loading Pre-Compiled (QOF) Files</a>
+<li><a href="bas-lod-cif.html#bas-lod-cif">Commands in Files</a>
+<li><a href="bas-lod-syn.html#bas-lod-syn">Syntax Errors</a>
+<li><a href="bas-lod-sty.html#bas-lod-sty">Style Warnings</a>
+<li><a href="bas-lod-srs.html#bas-lod-srs">Saving and Restoring a Program State</a>
+<ul>
+<li><a href="bas-lod-srs-bin.html#bas-lod-srs-bin">Basic Information</a>
+</li></ul>
+<li><a href="bas-lod-uif.html#bas-lod-uif">Using an Initialization File</a>
+</li></ul>
+<li><a href="bas-run.html#bas-run">Running Programs</a>
+<ul>
+<li><a href="bas-run-ove.html#bas-run-ove">Overview</a>
+<li><a href="bas-run-iep.html#bas-run-iep">Interrupting the Execution of a Program</a>
+<li><a href="bas-run-ewi.html#bas-run-ewi">Errors, Warnings and Informational Messages</a>
+<li><a href="bas-run-und.html#bas-run-und">Undefined Predicates</a>
+<li><a href="bas-run-euc.html#bas-run-euc">Executing Commands from Prolog</a>
+<li><a href="bas-run-dpr.html#bas-run-dpr">Dynamic Predicates</a>
+<li><a href="bas-run-pro.html#bas-run-pro">Prompts</a>
+</li></ul>
+<li><a href="bas-lim.html#bas-lim">Limits in Quintus Prolog</a>
+<li><a href="bas-eff.html#bas-eff">Writing Efficient Programs</a>
+<ul>
+<li><a href="bas-eff-ove.html#bas-eff-ove">Overview</a>
+<li><a href="bas-eff-cut.html#bas-eff-cut">The Cut</a>
+<ul>
+<li><a href="bas-eff-cut-ove.html#bas-eff-cut-ove">Overview</a>
+<li><a href="bas-eff-cut-mpd.html#bas-eff-cut-mpd">Making Predicates Determinate</a>
+<li><a href="bas-eff-cut-cut.html#bas-eff-cut-cut">Placement of Cuts</a>
+<li><a href="bas-eff-cut-tbl.html#bas-eff-cut-tbl">Terminating a Backtracking Loop</a>
+</li></ul>
+<li><a href="bas-eff-ind.html#bas-eff-ind">Indexing</a>
+<ul>
+<li><a href="bas-eff-ind-ove.html#bas-eff-ind-ove">Overview</a>
+<li><a href="bas-eff-ind-dat.html#bas-eff-ind-dat">Data Tables</a>
+<li><a href="bas-eff-ind-det.html#bas-eff-ind-det">Determinacy Detection</a>
+</li></ul>
+<li><a href="bas-eff-lcd.html#bas-eff-lcd">Last Clause Determinacy Detection</a>
+<li><a href="bas-eff-det.html#bas-eff-det">The Quintus Determinacy Checker</a>
+<ul>
+<li><a href="bas-eff-det-det.html#bas-eff-det-det">Using the Determinacy Checker</a>
+<li><a href="bas-eff-det-dnd.html#bas-eff-det-dnd">Declaring Nondeterminacy</a>
+<li><a href="bas-eff-det-cou.html#bas-eff-det-cou">Checker Output</a>
+<li><a href="bas-eff-det-exa.html#bas-eff-det-exa">Example</a>
+<li><a href="bas-eff-det-opt.html#bas-eff-det-opt">Options</a>
+<li><a href="bas-eff-det-wha.html#bas-eff-det-wha">What is Detected</a>
+</li></ul>
+<li><a href="bas-eff-lco.html#bas-eff-lco">Last Call Optimization</a>
+<ul>
+<li><a href="bas-eff-lco-acp.html#bas-eff-lco-acp">Accumulating Parameters</a>
+<li><a href="bas-eff-lco-acl.html#bas-eff-lco-acl">Accumulating Lists</a>
+</li></ul>
+<li><a href="bas-eff-bdm.html#bas-eff-bdm">Building and Dismantling Terms</a>
+<li><a href="bas-eff-cdi.html#bas-eff-cdi">Conditionals and Disjunction</a>
+<li><a href="bas-eff-xref.html#bas-eff-xref">The Quintus Cross-Referencer</a>
+<ul>
+<li><a href="bas-eff-xref-bas.html#bas-eff-xref-bas">Introduction</a>
+<li><a href="bas-eff-xref-use.html#bas-eff-xref-use">Basic Use</a>
+<li><a href="bas-eff-xref-prx.html#bas-eff-xref-prx">Practice and Experience</a>
+</li></ul>
+</li></ul>
+</li></ul>
+<li><a name="toc_qui" href="qui.html#qui">The Quintus User Interface</a>
+<ul>
+<li><a href="qui-qui.html#qui-qui">Quintus User Interface</a>
+<ul>
+<li><a href="qui-qui-sta.html#qui-qui-sta">Starting Up QUI</a>
+<li><a href="qui-qui-exi.html#qui-qui-exi">Exiting QUI</a>
+</li></ul>
+<li><a href="qui-mai.html#qui-mai">QUI Main Window</a>
+<ul>
+<li><a href="qui-mai-mai.html#qui-mai-mai">Main Window Menu Bar</a>
+<ul>
+<li><a href="qui-mai-mai-fil.html#qui-mai-mai-fil"><b>File</b> Pulldown</a>
+<li><a href="qui-mai-mai-deb.html#qui-mai-mai-deb"><b>Debug</b> Pulldown</a>
+<li><a href="qui-mai-mai-hlp.html#qui-mai-mai-hlp"><b>Help</b> Pulldown</a>
+</li></ul>
+<li><a href="qui-mai-his.html#qui-mai-his">QUI Query History Menu</a>
+<li><a href="qui-mai-top.html#qui-mai-top">QUI Query Interpreter Sub-Window</a>
+<ul>
+<li><a href="qui-mai-top-poi.html#qui-mai-top-poi">Prolog Output and Input</a>
+<li><a href="qui-mai-top-key.html#qui-mai-top-key">Key Bindings</a>
+</li></ul>
+<li><a href="qui-mai-int.html#qui-mai-int">QUI Interrupt Button</a>
+<li><a href="qui-mai-nxa.html#qui-mai-nxa">QUI Next Answer Buttons</a>
+<li><a href="qui-mai-err.html#qui-mai-err">QUI Error Dialogue Window</a>
+</li></ul>
+<li><a href="qui-edi.html#qui-edi">Edit Windows</a>
+<ul>
+<li><a href="qui-edi-ewi.html#qui-edi-ewi">Invoking an Edit Window</a>
+<li><a href="qui-edi-fil.html#qui-edi-fil"><b>File</b> Pulldown</a>
+<li><a href="qui-edi-mis.html#qui-edi-mis"><b>Misc</b> Pulldown</a>
+<li><a href="qui-edi-hlp.html#qui-edi-hlp"><b>Help</b> Pulldown</a>
+<li><a href="qui-edi-key.html#qui-edi-key">Key Bindings</a>
+</li></ul>
+<li><a href="qui-ied.html#qui-ied">Interface to External Editors</a>
+<ul>
+<li><a href="qui-ied-ige.html#qui-ied-ige">Interface to GNU Emacs</a>
+<ul>
+<li><a href="qui-ied-ige-gem.html#qui-ied-ige-gem">Invoking GNU Emacs to Edit Files From QUI</a>
+<li><a href="qui-ied-ige-keq.html#qui-ied-ige-keq">Key Bindings in "qui" mode</a>
+</li></ul>
+</li></ul>
+<li><a href="qui-dbg.html#qui-dbg">QUI Debug Window</a>
+<li><a href="qui-hlp.html#qui-hlp">QUI Help Window</a>
+<ul>
+<li><a href="qui-hlp-hlp.html#qui-hlp-hlp">Invoking Help</a>
+<li><a href="qui-hlp-hwi.html#qui-hlp-hwi">Help Window</a>
+<ul>
+<li><a href="qui-hlp-hwi-sbs.html#qui-hlp-hwi-sbs">Selecting a Sub-Section from a Menu</a>
+<li><a href="qui-hlp-hwi-xre.html#qui-hlp-hwi-xre">Following Cross-References in Text</a>
+<li><a href="qui-hlp-hwi-top.html#qui-hlp-hwi-top">Selecting a Topic in Text</a>
+</li></ul>
+<li><a href="qui-hlp-hwm.html#qui-hlp-hwm">Help Window Menu Bar</a>
+<ul>
+<li><a href="qui-hlp-hwm-fil.html#qui-hlp-hwm-fil"><b>File</b> Pulldown</a>
+<li><a href="qui-hlp-hwm-got.html#qui-hlp-hwm-got"><b>Goto</b> Pulldown</a>
+<li><a href="qui-hlp-hwm-gto.html#qui-hlp-hwm-gto">Invoking <b>Goto</b> Options from Prolog Predicates</a>
+<li><a href="qui-hlp-hwm-his.html#qui-hlp-hwm-his"><b>History</b> Pulldown</a>
+<li><a href="qui-hlp-hwm-mis.html#qui-hlp-hwm-mis"><b>Misc</b> Pulldown -- Search</a>
+</li></ul>
+</li></ul>
+<li><a href="qui-ciq.html#qui-ciq">Customizing and Interfacing with QUI</a>
+<ul>
+<li><a href="qui-ciq-qrf.html#qui-ciq-qrf">The QUI Resource File</a>
+<li><a href="qui-ciq-cqr.html#qui-ciq-cqr">Customizing QUI Resources</a>
+<ul>
+<li><a href="qui-ciq-cqr-gre.html#qui-ciq-cqr-gre">Global Resources</a>
+<li><a href="qui-ciq-cqr-lme.html#qui-ciq-cqr-lme">Labels and Messages</a>
+<li><a href="qui-ciq-cqr-men.html#qui-ciq-cqr-men">Menu Entries</a>
+<li><a href="qui-ciq-cqr-key.html#qui-ciq-cqr-key">Key Bindings</a>
+<li><a href="qui-ciq-cqr-edr.html#qui-ciq-cqr-edr">Editor Resources</a>
+<li><a href="qui-ciq-cqr-res.html#qui-ciq-cqr-res">Debugger Resources</a>
+<li><a href="qui-ciq-cqr-hsr.html#qui-ciq-cqr-hsr">Help System Resources</a>
+</li></ul>
+<li><a href="qui-ciq-dpq.html#qui-ciq-dpq">Restrictions on developing programs under QUI</a>
+<ul>
+<li><a href="qui-ciq-dpq-hok.html#qui-ciq-dpq-hok">Hook Predicates</a>
+<li><a href="qui-ciq-dpq-ecf.html#qui-ciq-dpq-ecf">Embeddable C Function</a>
+<li><a href="qui-ciq-dpq-sig.html#qui-ciq-dpq-sig">UNIX Signal Handling</a>
+</li></ul>
+</li></ul>
+</li></ul>
+<li><a name="toc_ema" href="ema.html#ema">The Emacs Interface</a>
+<ul>
+<li><a href="ema-ove.html#ema-ove">Overview</a>
+<ul>
+<li><a href="ema-ove-ove.html#ema-ove-ove">Overview</a>
+<li><a href="ema-ove-eva.html#ema-ove-eva">Environment Variables</a>
+<li><a href="ema-ove-upe.html#ema-ove-upe">Using Prolog with the Emacs Editor</a>
+<ul>
+<li><a href="ema-ove-upe-ove.html#ema-ove-upe-ove">Overview</a>
+<li><a href="ema-ove-upe-tos.html#ema-ove-upe-tos">Terminal and Operating System Requirements</a>
+<li><a href="ema-ove-upe-epe.html#ema-ove-upe-epe">Entering Prolog and Emacs</a>
+<li><a href="ema-ove-upe-exi.html#ema-ove-upe-exi">Exiting Emacs</a>
+<li><a href="ema-ove-upe-ses.html#ema-ove-upe-ses">Suspending an Emacs Session</a>
+</li></ul>
+<li><a href="ema-ove-sld.html#ema-ove-sld">The Source Linked Debugger</a>
+<li><a href="ema-ove-aol.html#ema-ove-aol">Accessing the On-line Manual</a>
+<li><a href="ema-ove-lod.html#ema-ove-lod">Loading Programs</a>
+<ul>
+<li><a href="ema-ove-lod-bin.html#ema-ove-lod-bin">Basic Information</a>
+<li><a href="ema-ove-lod-buf.html#ema-ove-lod-buf">Loading an Entire Buffer</a>
+<li><a href="ema-ove-lod-reg.html#ema-ove-lod-reg">Loading a Region in a Buffer</a>
+<li><a href="ema-ove-lod-pro.html#ema-ove-lod-pro">Loading a Single Procedure</a>
+</li></ul>
+<li><a href="ema-ove-rep.html#ema-ove-rep">Repeating a Query</a>
+<ul>
+<li><a href="ema-ove-rep-rep.html#ema-ove-rep-rep">Repeating Queries under Gnu Emacs</a>
+</li></ul>
+<li><a href="ema-ove-pin.html#ema-ove-pin">Displaying Previous Input</a>
+<li><a href="ema-ove-loc.html#ema-ove-loc">Locating Procedures</a>
+</li></ul>
+<li><a href="ema-emi.html#ema-emi">The GNU Emacs Interface</a>
+<ul>
+<li><a href="ema-emi-ove.html#ema-emi-ove">Overview</a>
+<li><a href="ema-emi-key.html#ema-emi-key">Key Bindings</a>
+<li><a href="ema-emi-mod.html#ema-emi-mod">Prolog Mode</a>
+<li><a href="ema-emi-lay.html#ema-emi-lay">Prolog Source Code Layout Restrictions</a>
+<li><a href="ema-emi-keb.html#ema-emi-keb">Rebinding Keys in Your Initialization File</a>
+<li><a href="ema-emi-pge.html#ema-emi-pge">Programming the Prolog/GNU Emacs Interface</a>
+<ul>
+<li><a href="ema-emi-pge-gqu.html#ema-emi-pge-gqu">Submitting Prolog Queries from GNU Emacs</a>
+<li><a href="ema-emi-pge-lfp.html#ema-emi-pge-lfp">Invoking Emacs-Lisp Functions from Prolog</a>
+</li></ul>
+</li></ul>
+</li></ul>
+<li><a name="toc_vb" href="vb.html#vb">The Visual Basic Interface</a>
+<ul>
+<li><a href="vb-ove.html#vb-ove">Overview</a>
+<li><a href="vb-vbp.html#vb-vbp">How to Call Prolog from Visual Basic</a>
+<ul>
+<li><a href="vb-vbp-oc.html#vb-vbp-oc">Opening and Closing a Query</a>
+<li><a href="vb-vbp-sol.html#vb-vbp-sol">Finding the Solutions of a Query</a>
+<li><a href="vb-vbp-val.html#vb-vbp-val">Retrieving Variable Values</a>
+<li><a href="vb-vbp-sid.html#vb-vbp-sid">Evaluating a Query with Side-Effects</a>
+<li><a href="vb-vbp-excp.html#vb-vbp-excp">Handling Exceptions in Visual Basic</a>
+</li></ul>
+<li><a href="vb-use.html#vb-use">How to Use the Interface</a>
+<ul>
+<li><a href="vb-use-set.html#vb-use-set">Setting Up the interface</a>
+<li><a href="vb-use-ini.html#vb-use-ini">Initializing the Prolog engine</a>
+<li><a href="vb-use-dei.html#vb-use-dei">Deinitializing the Prolog Engine From VB</a>
+<li><a href="vb-use-lod.html#vb-use-lod">Loading the Prolog code</a>
+</li></ul>
+<li><a href="vb-ex.html#vb-ex">Examples</a>
+<ul>
+<li><a href="vb-ex-calc.html#vb-ex-calc">Example 1 - Calculator</a>
+<li><a href="vb-ex-tr.html#vb-ex-tr">Example 2 - Train</a>
+<li><a href="vb-ex-qn.html#vb-ex-qn">Example 3 - Queens</a>
+</li></ul>
+<li><a href="vb-sum.html#vb-sum">Summary of the Interface Functions</a>
+</li></ul>
+<li><a name="toc_dbg" href="dbg.html#dbg">The Debugger</a>
+<ul>
+<li><a href="dbg-bas.html#dbg-bas">Debugging Basics</a>
+<ul>
+<li><a href="dbg-bas-bas.html#dbg-bas-bas">Introduction</a>
+<li><a href="dbg-bas-pbx.html#dbg-bas-pbx">The Procedure Box Control Flow Model</a>
+<li><a href="dbg-bas-upe.html#dbg-bas-upe">Understanding Prolog Execution Using The Debugger</a>
+<li><a href="dbg-bas-tra.html#dbg-bas-tra">Traveling Between Ports</a>
+<ul>
+<li><a href="dbg-bas-tra-btc.html#dbg-bas-tra-btc">Basic Traveling Commands</a>
+<li><a href="dbg-bas-tra-spy.html#dbg-bas-tra-spy">Spypoints</a>
+<li><a href="dbg-bas-tra-tss.html#dbg-bas-tra-tss">Traveling Commands Sensitive to Spypoints</a>
+<li><a href="dbg-bas-tra-ccf.html#dbg-bas-tra-ccf">Commands That Change The Flow Of Control</a>
+</li></ul>
+<li><a href="dbg-bas-con.html#dbg-bas-con">Debugger Concepts</a>
+<ul>
+<li><a href="dbg-bas-con-tdz.html#dbg-bas-con-tdz">Trace Mode, Debug Mode, And Zip Mode</a>
+<li><a href="dbg-bas-con-lea.html#dbg-bas-con-lea">Leashing</a>
+<li><a href="dbg-bas-con-loc.html#dbg-bas-con-loc">Locked Predicates</a>
+<li><a href="dbg-bas-con-unk.html#dbg-bas-con-unk">Unknown Procedures</a>
+<li><a href="dbg-bas-con-cds.html#dbg-bas-con-cds">Current Debugging State</a>
+</li></ul>
+<li><a href="dbg-bas-sum.html#dbg-bas-sum">Summary of Predicates</a>
+</li></ul>
+<li><a href="dbg-sld.html#dbg-sld">The Source Linked Debugger</a>
+<ul>
+<li><a href="dbg-sld-bas.html#dbg-sld-bas">Introduction</a>
+<li><a href="dbg-sld-sps.html#dbg-sld-sps">Showing Your Place In The Source Code</a>
+<ul>
+<li><a href="dbg-sld-sps-cal.html#dbg-sld-sps-cal">The Call Port</a>
+<li><a href="dbg-sld-sps-edo.html#dbg-sld-sps-edo">The Exit And Done Ports</a>
+<li><a href="dbg-sld-sps-red.html#dbg-sld-sps-red">The Redo Port</a>
+<li><a href="dbg-sld-sps-fai.html#dbg-sld-sps-fai">The Fail Port</a>
+<li><a href="dbg-sld-sps-hea.html#dbg-sld-sps-hea">The Head Port</a>
+<li><a href="dbg-sld-sps-exc.html#dbg-sld-sps-exc">The Exception Port</a>
+</li></ul>
+<li><a href="dbg-sld-whe.html#dbg-sld-whe">When Source Linking Is Not Possible</a>
+<li><a href="dbg-sld-tra.html#dbg-sld-tra">Traveling Between Ports</a>
+<li><a href="dbg-sld-anc.html#dbg-sld-anc">Seeing Ancestor Frames</a>
+<li><a href="dbg-sld-men.html#dbg-sld-men">Debugger Menus</a>
+<ul>
+<li><a href="dbg-sld-men-fil.html#dbg-sld-men-fil">The File Menu</a>
+<li><a href="dbg-sld-men-opt.html#dbg-sld-men-opt">The Options Menu</a>
+<li><a href="dbg-sld-men-spy.html#dbg-sld-men-spy">The Spypoint Menu</a>
+<li><a href="dbg-sld-men-wme.html#dbg-sld-men-wme">The Window Menu</a>
+<li><a href="dbg-sld-men-tra.html#dbg-sld-men-tra">The Travel Menu</a>
+<li><a href="dbg-sld-men-hlp.html#dbg-sld-men-hlp">The Help Menu</a>
+</li></ul>
+<li><a href="dbg-sld-sta.html#dbg-sld-sta">The Status Panel</a>
+<li><a href="dbg-sld-oth.html#dbg-sld-oth">Other Windows</a>
+<ul>
+<li><a href="dbg-sld-oth-vbi.html#dbg-sld-oth-vbi">The Variable Bindings Window</a>
+<li><a href="dbg-sld-oth-sdw.html#dbg-sld-oth-sdw">The Standard Debugger Window</a>
+<li><a href="dbg-sld-oth-anc.html#dbg-sld-oth-anc">The Ancestors Window</a>
+<li><a href="dbg-sld-oth-mwi.html#dbg-sld-oth-mwi">Menus For These Windows</a>
+</li></ul>
+</li></ul>
+<li><a href="dbg-sdb.html#dbg-sdb">The Standard Debugger</a>
+<ul>
+<li><a href="dbg-sdb-dme.html#dbg-sdb-dme">Format of Debugging Messages</a>
+<ul>
+<li><a href="dbg-sdb-dme-hpm.html#dbg-sdb-dme-hpm">Format of Head Port Messages</a>
+<li><a href="dbg-sdb-dme-epm.html#dbg-sdb-dme-epm">Format of Exception Port Messages</a>
+</li></ul>
+<li><a href="dbg-sdb-opt.html#dbg-sdb-opt">Options Available during Debugging</a>
+<ul>
+<li><a href="dbg-sdb-opt-bas.html#dbg-sdb-opt-bas">Introduction</a>
+<li><a href="dbg-sdb-opt-bco.html#dbg-sdb-opt-bco">Basic Control Options</a>
+<li><a href="dbg-sdb-opt-pri.html#dbg-sdb-opt-pri">Printing Options</a>
+<li><a href="dbg-sdb-opt-adv.html#dbg-sdb-opt-adv">Advanced Control Options</a>
+<li><a href="dbg-sdb-opt-eop.html#dbg-sdb-opt-eop">Environment Options</a>
+<li><a href="dbg-sdb-opt-hop.html#dbg-sdb-opt-hop">Help Options</a>
+</li></ul>
+</li></ul>
+<li><a href="dbg-adv.html#dbg-adv">The Advice Facility</a>
+<ul>
+<li><a href="dbg-adv-uad.html#dbg-adv-uad">Use of Advice Predicates</a>
+<li><a href="dbg-adv-prf.html#dbg-adv-prf">Performance</a>
+<li><a href="dbg-adv-sum.html#dbg-adv-sum">Summary of Predicates</a>
+</li></ul>
+<li><a href="dbg-pro.html#dbg-pro">The Profiler</a>
+<ul>
+<li><a href="dbg-pro-upr.html#dbg-pro-upr">Use of the Profiler</a>
+<li><a href="dbg-pro-cou.html#dbg-pro-cou">Customized Output</a>
+<li><a href="dbg-pro-prf.html#dbg-pro-prf">Performance</a>
+<li><a href="dbg-pro-sum.html#dbg-pro-sum">Summary of Predicates</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_glo" href="glo.html#glo">Glossary</a>
+<ul>
+<li><a href="glo-glo.html#glo-glo">Glossary</a>
+</li></ul>
+<li><a name="toc_ref" href="ref.html#ref">The Prolog Language</a>
+<ul>
+<li><a href="ref-syn.html#ref-syn">Syntax</a>
+<ul>
+<li><a href="ref-syn-ove.html#ref-syn-ove">Overview</a>
+<li><a href="ref-syn-trm.html#ref-syn-trm">Terms</a>
+<ul>
+<li><a href="ref-syn-trm-ove.html#ref-syn-trm-ove">Overview</a>
+<li><a href="ref-syn-trm-int.html#ref-syn-trm-int">Integers</a>
+<li><a href="ref-syn-trm-flo.html#ref-syn-trm-flo">Floating-point Numbers</a>
+<li><a href="ref-syn-trm-ato.html#ref-syn-trm-ato">Atoms</a>
+<li><a href="ref-syn-trm-var.html#ref-syn-trm-var">Variables</a>
+<li><a href="ref-syn-trm-fte.html#ref-syn-trm-fte">Foreign Terms</a>
+</li></ul>
+<li><a href="ref-syn-cpt.html#ref-syn-cpt">Compound Terms</a>
+<ul>
+<li><a href="ref-syn-cpt-lis.html#ref-syn-cpt-lis">Lists</a>
+<li><a href="ref-syn-cpt-sli.html#ref-syn-cpt-sli">Strings As Lists</a>
+</li></ul>
+<li><a href="ref-syn-ces.html#ref-syn-ces">Character Escaping</a>
+<li><a href="ref-syn-ops.html#ref-syn-ops">Operators and their Built-in Predicates</a>
+<ul>
+<li><a href="ref-syn-ops-ove.html#ref-syn-ops-ove">Overview</a>
+<li><a href="ref-syn-ops-ops.html#ref-syn-ops-ops">Manipulating and Inspecting Operators</a>
+<li><a href="ref-syn-ops-res.html#ref-syn-ops-res">Syntax Restrictions</a>
+<li><a href="ref-syn-ops-bop.html#ref-syn-ops-bop">Built-in Operators</a>
+</li></ul>
+<li><a href="ref-syn-com.html#ref-syn-com">Commenting</a>
+<li><a href="ref-syn-spc.html#ref-syn-spc">Predicate Specifications</a>
+<li><a href="ref-syn-syn.html#ref-syn-syn">Formal Syntax</a>
+<ul>
+<li><a href="ref-syn-syn-ove.html#ref-syn-syn-ove">Overview</a>
+<li><a href="ref-syn-syn-not.html#ref-syn-syn-not">Notation</a>
+<li><a href="ref-syn-syn-sen.html#ref-syn-syn-sen">Syntax of Sentences as Terms</a>
+<li><a href="ref-syn-syn-trm.html#ref-syn-syn-trm">Syntax of Terms as Tokens</a>
+<li><a href="ref-syn-syn-tok.html#ref-syn-syn-tok">Syntax of Tokens as Character Strings</a>
+<li><a href="ref-syn-syn-nte.html#ref-syn-syn-nte">Notes</a>
+</li></ul>
+<li><a href="ref-syn-sum.html#ref-syn-sum">Summary of Predicates</a>
+</li></ul>
+<li><a href="ref-sem.html#ref-sem">Semantics</a>
+<ul>
+<li><a href="ref-sem-pro.html#ref-sem-pro">Programs</a>
+<li><a href="ref-sem-typ.html#ref-sem-typ">Types of Predicates Supplied with Quintus Prolog</a>
+<ul>
+<li><a href="ref-sem-typ-hok.html#ref-sem-typ-hok">Hook Predicates</a>
+<li><a href="ref-sem-typ-rpr.html#ref-sem-typ-rpr">Redefinable Predicates</a>
+</li></ul>
+<li><a href="ref-sem-dis.html#ref-sem-dis">Disjunction</a>
+<li><a href="ref-sem-sec.html#ref-sem-sec">Declarative and Procedural Semantics</a>
+<li><a href="ref-sem-cut.html#ref-sem-cut">The Cut</a>
+<li><a href="ref-sem-occ.html#ref-sem-occ">Occur Check</a>
+<li><a href="ref-sem-con.html#ref-sem-con">Control</a>
+</li></ul>
+<li><a href="ref-pro.html#ref-pro">Invoking Prolog</a>
+<ul>
+<li><a href="ref-pro-arg.html#ref-pro-arg">Prolog Command Line Argument Handling</a>
+<ul>
+<li><a href="ref-pro-arg-inf.html#ref-pro-arg-inf">The Initialization File</a>
+</li></ul>
+<li><a href="ref-pro-exi.html#ref-pro-exi">Exiting Prolog</a>
+</li></ul>
+<li><a href="ref-lod.html#ref-lod">Loading Programs</a>
+<ul>
+<li><a href="ref-lod-ove.html#ref-lod-ove">Overview</a>
+<li><a href="ref-lod-lod.html#ref-lod-lod">The Load Predicates</a>
+<li><a href="ref-lod-rpx.html#ref-lod-rpx">Redefining Procedures during Program Execution</a>
+<li><a href="ref-lod-lis.html#ref-lod-lis">Predicate List</a>
+</li></ul>
+<li><a href="ref-sls.html#ref-sls">Saving and Loading the Prolog Database</a>
+<ul>
+<li><a href="ref-sls-ove.html#ref-sls-ove">Overview of QOF Files</a>
+<li><a href="ref-sls-csr.html#ref-sls-csr">Compatibility with save/restore in previous releases</a>
+<li><a href="ref-sls-for.html#ref-sls-for">Foreign Code</a>
+<li><a href="ref-sls-sst.html#ref-sls-sst">Saved-States</a>
+<li><a href="ref-sls-ssl.html#ref-sls-ssl">Selective saving and loading of QOF files</a>
+<li><a href="ref-sls-igs.html#ref-sls-igs">Initializing Goals in Saved States</a>
+<ul>
+<li><a href="ref-sls-igs-ind.html#ref-sls-igs-ind">The Initialization Declaration</a>
+<li><a href="ref-sls-igs-vol.html#ref-sls-igs-vol">Volatile Predicates</a>
+<li><a href="ref-sls-igs-fto.html#ref-sls-igs-fto">Fine Tuning</a>
+</li></ul>
+<li><a href="ref-sls-lis.html#ref-sls-lis">Predicate List</a>
+</li></ul>
+<li><a href="ref-fdi.html#ref-fdi">Files and Directories</a>
+<ul>
+<li><a href="ref-fdi-fsp.html#ref-fdi-fsp">The File Search Path Mechanism</a>
+<ul>
+<li><a href="ref-fdi-fsp-def.html#ref-fdi-fsp-def">Defining File Search Paths</a>
+<li><a href="ref-fdi-fsp-ffs.html#ref-fdi-fsp-ffs">Frequently Used File Specifications</a>
+<li><a href="ref-fdi-fsp-fde.html#ref-fdi-fsp-fde">Filename Defaults</a>
+<li><a href="ref-fdi-fsp-pre.html#ref-fdi-fsp-pre">Predefined file_search_path Facts</a>
+<li><a href="ref-fdi-fsp-sys.html#ref-fdi-fsp-sys">The system file_search_path</a>
+<li><a href="ref-fdi-fsp-lip.html#ref-fdi-fsp-lip">The Library Paths</a>
+<li><a href="ref-fdi-fsp-lse.html#ref-fdi-fsp-lse">Editor Command for Library Search</a>
+</li></ul>
+<li><a href="ref-fdi-pre.html#ref-fdi-pre">List of Predicates</a>
+</li></ul>
+<li><a href="ref-iou.html#ref-iou">Input and Output</a>
+<ul>
+<li><a href="ref-iou-bas.html#ref-iou-bas">Introduction</a>
+<li><a href="ref-iou-str.html#ref-iou-str">About Streams</a>
+<ul>
+<li><a href="ref-iou-str-not.html#ref-iou-str-not">Programming Note</a>
+<li><a href="ref-iou-str-sca.html#ref-iou-str-sca">Stream Categories</a>
+</li></ul>
+<li><a href="ref-iou-tin.html#ref-iou-tin">Term Input</a>
+<ul>
+<li><a href="ref-iou-tin-trm.html#ref-iou-tin-trm">Reading Terms: The "Read" Predicates</a>
+<li><a href="ref-iou-tin-cpr.html#ref-iou-tin-cpr">Changing the Prompt</a>
+</li></ul>
+<li><a href="ref-iou-tou.html#ref-iou-tou">Term Output</a>
+<ul>
+<li><a href="ref-iou-tou-wrt.html#ref-iou-tou-wrt">Writing Terms: the "Write" Predicates</a>
+<li><a href="ref-iou-tou-cha.html#ref-iou-tou-cha">Common Characteristics</a>
+<li><a href="ref-iou-tou-dis.html#ref-iou-tou-dis">Distinctions Among the "write" Predicates</a>
+<li><a href="ref-iou-tou-dsp.html#ref-iou-tou-dsp">Displaying Terms</a>
+<li><a href="ref-iou-tou-por.html#ref-iou-tou-por">Using the <code>portray</code> hook</a>
+<li><a href="ref-iou-tou-pcl.html#ref-iou-tou-pcl">Portraying a Clause</a>
+</li></ul>
+<li><a href="ref-iou-cin.html#ref-iou-cin">Character Input</a>
+<ul>
+<li><a href="ref-iou-cin-ove.html#ref-iou-cin-ove">Overview</a>
+<li><a href="ref-iou-cin-cha.html#ref-iou-cin-cha">Reading Characters</a>
+<li><a href="ref-iou-cin-pee.html#ref-iou-cin-pee">Peeking</a>
+<li><a href="ref-iou-cin-ski.html#ref-iou-cin-ski">Skipping</a>
+<li><a href="ref-iou-cin-elf.html#ref-iou-cin-elf">Finding the End of Line and End of File</a>
+</li></ul>
+<li><a href="ref-iou-cou.html#ref-iou-cou">Character Output</a>
+<ul>
+<li><a href="ref-iou-cou-cha.html#ref-iou-cou-cha">Writing Characters</a>
+<li><a href="ref-iou-cou-nln.html#ref-iou-cou-nln">New Line</a>
+<li><a href="ref-iou-cou-tab.html#ref-iou-cou-tab">Tabs</a>
+<li><a href="ref-iou-cou-fou.html#ref-iou-cou-fou">Formatted Output</a>
+</li></ul>
+<li><a href="ref-iou-sfh.html#ref-iou-sfh">Stream and File Handling</a>
+<ul>
+<li><a href="ref-iou-sfh-sob.html#ref-iou-sfh-sob">Stream Objects</a>
+<li><a href="ref-iou-sfh-est.html#ref-iou-sfh-est">Exceptions related to Streams</a>
+<li><a href="ref-iou-sfh-sem.html#ref-iou-sfh-sem">Suppressing Error Messages</a>
+<li><a href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">Opening a Stream</a>
+<li><a href="ref-iou-sfh-cis.html#ref-iou-sfh-cis">Finding the Current Input Stream</a>
+<li><a href="ref-iou-sfh-cos.html#ref-iou-sfh-cos">Finding the current output stream</a>
+<li><a href="ref-iou-sfh-bos.html#ref-iou-sfh-bos">Backtracking through Open Streams</a>
+<li><a href="ref-iou-sfh-cst.html#ref-iou-sfh-cst">Closing a Stream</a>
+<li><a href="ref-iou-sfh-flu.html#ref-iou-sfh-flu">Flushing Output</a>
+</li></ul>
+<li><a href="ref-iou-sos.html#ref-iou-sos">Reading the State of Opened Streams</a>
+<ul>
+<li><a href="ref-iou-sos-spt.html#ref-iou-sos-spt">Stream Position Information for Terminal I/O</a>
+</li></ul>
+<li><a href="ref-iou-raf.html#ref-iou-raf">Random Access to Files</a>
+<li><a href="ref-iou-sum.html#ref-iou-sum">Summary of Predicates and Functions</a>
+<li><a href="ref-iou-lib.html#ref-iou-lib">Library Support</a>
+</li></ul>
+<li><a href="ref-ari.html#ref-ari">Arithmetic</a>
+<ul>
+<li><a href="ref-ari-ove.html#ref-ari-ove">Overview</a>
+<li><a href="ref-ari-eae.html#ref-ari-eae">Evaluating Arithmetic Expressions</a>
+<li><a href="ref-ari-acm.html#ref-ari-acm">Arithmetic Comparison</a>
+<li><a href="ref-ari-aex.html#ref-ari-aex">Arithmetic Expressions</a>
+<ul>
+<li><a href="ref-ari-aex-aca.html#ref-ari-aex-aca">Arithmetic calculations</a>
+<li><a href="ref-ari-aex-pee.html#ref-ari-aex-pee">Peeking into Memory</a>
+<li><a href="ref-ari-aex-bit.html#ref-ari-aex-bit">Bit-vector Operations</a>
+<li><a href="ref-ari-aex-cco.html#ref-ari-aex-cco">Character Codes</a>
+</li></ul>
+<li><a href="ref-ari-sum.html#ref-ari-sum">Predicate Summary</a>
+<li><a href="ref-ari-lib.html#ref-ari-lib">Library Support</a>
+</li></ul>
+<li><a href="ref-lte.html#ref-lte">Looking at Terms</a>
+<ul>
+<li><a href="ref-lte-met.html#ref-lte-met">Meta-logical Predicates</a>
+<ul>
+<li><a href="ref-lte-met-typ.html#ref-lte-met-typ">Type Checking</a>
+<li><a href="ref-lte-met-usu.html#ref-lte-met-usu">Unification and Subsumption</a>
+</li></ul>
+<li><a href="ref-lte-act.html#ref-lte-act">Analyzing and Constructing Terms</a>
+<li><a href="ref-lte-acl.html#ref-lte-acl">Analyzing and Constructing Lists</a>
+<li><a href="ref-lte-c2t.html#ref-lte-c2t">Converting between Constants and Text</a>
+<li><a href="ref-lte-anv.html#ref-lte-anv">Assigning Names to Variables</a>
+<li><a href="ref-lte-cpt.html#ref-lte-cpt">Copying Terms</a>
+<li><a href="ref-lte-cte.html#ref-lte-cte">Comparing Terms</a>
+<ul>
+<li><a href="ref-lte-cte-bas.html#ref-lte-cte-bas">Introduction</a>
+<li><a href="ref-lte-cte-sot.html#ref-lte-cte-sot">Standard Order of Terms</a>
+<li><a href="ref-lte-cte-sor.html#ref-lte-cte-sor">Sorting Terms</a>
+</li></ul>
+<li><a href="ref-lte-lib.html#ref-lte-lib">Library Support</a>
+<li><a href="ref-lte-sum.html#ref-lte-sum">Summary of Predicates</a>
+</li></ul>
+<li><a href="ref-lps.html#ref-lps">Looking at the Program State</a>
+<ul>
+<li><a href="ref-lps-ove.html#ref-lps-ove">Overview</a>
+<li><a href="ref-lps-app.html#ref-lps-app">Associating Predicates with their Properties</a>
+<li><a href="ref-lps-apf.html#ref-lps-apf">Associating Predicates with Files</a>
+<li><a href="ref-lps-flg.html#ref-lps-flg">Prolog Flags</a>
+<ul>
+<li><a href="ref-lps-flg-cha.html#ref-lps-flg-cha">Changing or Querying System Parameters</a>
+<li><a href="ref-lps-flg-rop.html#ref-lps-flg-rop">Parameters that can be Queried Only</a>
+</li></ul>
+<li><a href="ref-lps-lco.html#ref-lps-lco">Load Context</a>
+<ul>
+<li><a href="ref-lps-lco-sum.html#ref-lps-lco-sum">Predicate Summary</a>
+</li></ul>
+</li></ul>
+<li><a href="ref-iex.html#ref-iex">Interrupting Execution</a>
+<ul>
+<li><a href="ref-iex-int.html#ref-iex-int">Control-c Interrupts</a>
+<li><a href="ref-iex-iha.html#ref-iex-iha">Interrupt Handling</a>
+<ul>
+<li><a href="ref-iex-iha-cfc.html#ref-iex-iha-cfc">Changing Prolog's Control Flow from C</a>
+<li><a href="ref-iex-iha-ush.html#ref-iex-iha-ush">User-specified signal handlers</a>
+<li><a href="ref-iex-iha-cre.html#ref-iex-iha-cre">Critical Regions</a>
+</li></ul>
+<li><a href="ref-iex-sum.html#ref-iex-sum">Predicate/Function Summary</a>
+<li><a href="ref-iex-lib.html#ref-iex-lib">Library Support</a>
+</li></ul>
+<li><a href="ref-mgc.html#ref-mgc">Memory Use and Garbage Collection</a>
+<ul>
+<li><a href="ref-mgc-ove.html#ref-mgc-ove">Overview</a>
+<ul>
+<li><a href="ref-mgc-ove-rsp.html#ref-mgc-ove-rsp">Reclaiming Space</a>
+<li><a href="ref-mgc-ove-sta.html#ref-mgc-ove-sta">Displaying Statistics</a>
+</li></ul>
+<li><a href="ref-mgc-gcp.html#ref-mgc-gcp">Garbage Collection and Programming Style</a>
+<li><a href="ref-mgc-egc.html#ref-mgc-egc">Enabling and Disabling the Garbage Collector</a>
+<li><a href="ref-mgc-mgc.html#ref-mgc-mgc">Monitoring Garbage Collections</a>
+<li><a href="ref-mgc-gch.html#ref-mgc-gch">Interaction of Garbage Collection and Heap Expansion</a>
+<li><a href="ref-mgc-gcd.html#ref-mgc-gcd">Invoking the Garbage Collector Directly</a>
+<li><a href="ref-mgc-osi.html#ref-mgc-osi">Operating System Interaction</a>
+<li><a href="ref-mgc-ago.html#ref-mgc-ago">Atom Garbage Collection</a>
+<ul>
+<li><a href="ref-mgc-ago-agc.html#ref-mgc-ago-agc">The Atom Garbage Collector User Interface</a>
+<li><a href="ref-mgc-ago-pat.html#ref-mgc-ago-pat">Protecting Atoms in Foreign Memory</a>
+<li><a href="ref-mgc-ago-prm.html#ref-mgc-ago-prm">Permanent Atoms</a>
+<li><a href="ref-mgc-ago-are.html#ref-mgc-ago-are">Details of Atom Registration</a>
+</li></ul>
+<li><a href="ref-mgc-sum.html#ref-mgc-sum">Summary of Predicates</a>
+</li></ul>
+<li><a href="ref-mod.html#ref-mod">Modules</a>
+<ul>
+<li><a href="ref-mod-ove.html#ref-mod-ove">Overview</a>
+<li><a href="ref-mod-bas.html#ref-mod-bas">Basic Concepts</a>
+<li><a href="ref-mod-def.html#ref-mod-def">Defining a Module</a>
+<li><a href="ref-mod-n2m.html#ref-mod-n2m">Converting Non-module-files into Module-files</a>
+<li><a href="ref-mod-lod.html#ref-mod-lod">Loading a Module</a>
+<li><a href="ref-mod-vis.html#ref-mod-vis">Visibility Rules</a>
+<li><a href="ref-mod-som.html#ref-mod-som">The Source Module</a>
+<li><a href="ref-mod-tyi.html#ref-mod-tyi">The Type-in Module</a>
+<li><a href="ref-mod-dmo.html#ref-mod-dmo">Creating a Module Dynamically</a>
+<li><a href="ref-mod-mpc.html#ref-mod-mpc">Module Prefixes on Clauses</a>
+<ul>
+<li><a href="ref-mod-mpc-cmo.html#ref-mod-mpc-cmo">Current Modules</a>
+</li></ul>
+<li><a href="ref-mod-cim.html#ref-mod-cim">Debugging Code in a Module</a>
+<li><a href="ref-mod-mle.html#ref-mod-mle">Modules and Loading through the Editor Interface</a>
+<li><a href="ref-mod-ncl.html#ref-mod-ncl">Name Clashes</a>
+<li><a href="ref-mod-ilm.html#ref-mod-ilm">Obtaining Information about Loaded Modules</a>
+<ul>
+<li><a href="ref-mod-ilm-def.html#ref-mod-ilm-def">Predicates Defined in a Module</a>
+<li><a href="ref-mod-ilm-vis.html#ref-mod-ilm-vis">Predicates Visible in a Module</a>
+</li></ul>
+<li><a href="ref-mod-idp.html#ref-mod-idp">Importing Dynamic Predicates</a>
+<li><a href="ref-mod-mne.html#ref-mod-mne">Module Name Expansion</a>
+<li><a href="ref-mod-met.html#ref-mod-met">The <code>meta_predicate</code> Declaration</a>
+<li><a href="ref-mod-sum.html#ref-mod-sum">Predicate Summary</a>
+</li></ul>
+<li><a href="ref-mdb.html#ref-mdb">Modification of the Database</a>
+<ul>
+<li><a href="ref-mdb-bas.html#ref-mdb-bas">Introduction</a>
+<li><a href="ref-mdb-dsp.html#ref-mdb-dsp">Dynamic and Static Procedures</a>
+<li><a href="ref-mdb-dre.html#ref-mdb-dre">Database References</a>
+<li><a href="ref-mdb-acd.html#ref-mdb-acd">Adding Clauses to the Database</a>
+<li><a href="ref-mdb-rcd.html#ref-mdb-rcd">Removing Clauses from the Database</a>
+<ul>
+<li><a href="ref-mdb-rcd-efu.html#ref-mdb-rcd-efu">A Note on Efficient Use of <code>retract/1</code></a>
+</li></ul>
+<li><a href="ref-mdb-acl.html#ref-mdb-acl">Accessing Clauses</a>
+<li><a href="ref-mdb-exa.html#ref-mdb-exa">Modification of Running Code: Examples</a>
+<ul>
+<li><a href="ref-mdb-exa-asz.html#ref-mdb-exa-asz">Example: assertz</a>
+<li><a href="ref-mdb-exa-rtr.html#ref-mdb-exa-rtr">Example: retract</a>
+<li><a href="ref-mdb-exa-abo.html#ref-mdb-exa-abo">Example: abolish</a>
+</li></ul>
+<li><a href="ref-mdb-idb.html#ref-mdb-idb">The Internal Database</a>
+<li><a href="ref-mdb-sum.html#ref-mdb-sum">Summary of Predicates</a>
+</li></ul>
+<li><a href="ref-all.html#ref-all">Sets and Bags:  Collecting Solutions to a Goal</a>
+<ul>
+<li><a href="ref-all-bas.html#ref-all-bas">Introduction</a>
+<li><a href="ref-all-cse.html#ref-all-cse">Collecting a Sorted List</a>
+<ul>
+<li><a href="ref-all-cse-equ.html#ref-all-cse-equ">Existential Quantifier</a>
+</li></ul>
+<li><a href="ref-all-cba.html#ref-all-cba">Collecting a Bag of Solutions</a>
+<ul>
+<li><a href="ref-all-cba-cal.html#ref-all-cba-cal">Collecting All Instances</a>
+</li></ul>
+<li><a href="ref-all-lib.html#ref-all-lib">Library Support</a>
+<li><a href="ref-all-sum.html#ref-all-sum">Predicate Summary</a>
+</li></ul>
+<li><a href="ref-gru.html#ref-gru">Grammar Rules</a>
+<ul>
+<li><a href="ref-gru-dcg.html#ref-gru-dcg">Definite Clause Grammars</a>
+<li><a href="ref-gru-gru.html#ref-gru-gru">How to Use the Grammar Rule Facility</a>
+<li><a href="ref-gru-exa.html#ref-gru-exa">An Example</a>
+<li><a href="ref-gru-tra.html#ref-gru-tra">Translation of Grammar Rules into Prolog Clauses</a>
+<ul>
+<li><a href="ref-gru-tra-lgr.html#ref-gru-tra-lgr">Listing Grammar Rules</a>
+</li></ul>
+<li><a href="ref-gru-sum.html#ref-gru-sum">Summary of Predicates</a>
+</li></ul>
+<li><a href="ref-olh.html#ref-olh">On-line Help</a>
+<ul>
+<li><a href="ref-olh-bas.html#ref-olh-bas">Introduction</a>
+<li><a href="ref-olh-hfi.html#ref-olh-hfi">Help Files</a>
+<ul>
+<li><a href="ref-olh-hfi-ove.html#ref-olh-hfi-ove">Overview</a>
+<li><a href="ref-olh-hfi-mfi.html#ref-olh-hfi-mfi">Menus</a>
+<li><a href="ref-olh-hfi-xref.html#ref-olh-hfi-xref">Cross-References</a>
+<li><a href="ref-olh-hfi-hlp.html#ref-olh-hfi-hlp">Displaying help files</a>
+</li></ul>
+<li><a href="ref-olh-hlp.html#ref-olh-hlp">Emacs Commands for Using the Help System</a>
+<ul>
+<li><a href="ref-olh-hlp-mco.html#ref-olh-hlp-mco">Emacs Commands</a>
+<li><a href="ref-olh-hlp-sum.html#ref-olh-hlp-sum">Predicate Summary</a>
+</li></ul>
+</li></ul>
+<li><a href="ref-aos.html#ref-aos">Access to the Operating System</a>
+<ul>
+<li><a href="ref-aos-ove.html#ref-aos-ove">Overview</a>
+<li><a href="ref-aos-euc.html#ref-aos-euc">Executing Commands from Prolog</a>
+<ul>
+<li><a href="ref-aos-euc-cwd.html#ref-aos-euc-cwd">Changing the Working Directory</a>
+<li><a href="ref-aos-euc-oth.html#ref-aos-euc-oth">Other Commands</a>
+<li><a href="ref-aos-euc-spa.html#ref-aos-euc-spa">Spawning an Interactive Shell</a>
+</li></ul>
+<li><a href="ref-aos-ala.html#ref-aos-ala">Accessing Command Line Arguments</a>
+<ul>
+<li><a href="ref-aos-ala-ans.html#ref-aos-ala-ans">Arguments as Numbers or as Strings</a>
+<li><a href="ref-aos-ala-aac.html#ref-aos-ala-aac">Accessing Prolog's Arguments from C</a>
+</li></ul>
+<li><a href="ref-aos-sum.html#ref-aos-sum">Predicate Summary</a>
+<li><a href="ref-aos-lib.html#ref-aos-lib">Library Support</a>
+</li></ul>
+<li><a href="ref-ere.html#ref-ere">Errors and Exceptions</a>
+<ul>
+<li><a href="ref-ere-ove.html#ref-ere-ove">Overview</a>
+<li><a href="ref-ere-rex.html#ref-ere-rex">Raising Exceptions</a>
+<li><a href="ref-ere-hex.html#ref-ere-hex">Handling Exceptions</a>
+<ul>
+<li><a href="ref-ere-hex-pgo.html#ref-ere-hex-pgo">Protecting a Particular Goal</a>
+<li><a href="ref-ere-hex-hup.html#ref-ere-hex-hup">Handling Unknown Predicates</a>
+</li></ul>
+<li><a href="ref-ere-err.html#ref-ere-err">Error Classes</a>
+<ul>
+<li><a href="ref-ere-err-ins.html#ref-ere-err-ins">Instantiation Errors</a>
+<li><a href="ref-ere-err-typ.html#ref-ere-err-typ">Type Errors</a>
+<li><a href="ref-ere-err-dom.html#ref-ere-err-dom">Domain Errors</a>
+<li><a href="ref-ere-err-ran.html#ref-ere-err-ran">Range Errors</a>
+<li><a href="ref-ere-err-rep.html#ref-ere-err-rep">Representation Errors</a>
+<li><a href="ref-ere-err-exi.html#ref-ere-err-exi">Existence Errors</a>
+<li><a href="ref-ere-err-per.html#ref-ere-err-per">Permission Errors</a>
+<li><a href="ref-ere-err-con.html#ref-ere-err-con">Context Errors</a>
+<li><a href="ref-ere-err-cns.html#ref-ere-err-cns">Consistency Errors</a>
+<li><a href="ref-ere-err-syn.html#ref-ere-err-syn">Syntax Errors</a>
+<li><a href="ref-ere-err-res.html#ref-ere-err-res">Resource Errors</a>
+<li><a href="ref-ere-err-sys.html#ref-ere-err-sys">System Errors</a>
+</li></ul>
+<li><a href="ref-ere-exa.html#ref-ere-exa">An Example</a>
+<li><a href="ref-ere-ecr.html#ref-ere-ecr">Exceptions and Critical Regions</a>
+<li><a href="ref-ere-sum.html#ref-ere-sum">Summary of Predicates and Functions</a>
+<li><a href="ref-ere-sli.html#ref-ere-sli">Summary of Relevant Libraries</a>
+</li></ul>
+<li><a href="ref-msg.html#ref-msg">Messages</a>
+<ul>
+<li><a href="ref-msg-ove.html#ref-msg-ove">Overview</a>
+<li><a href="ref-msg-tbm.html#ref-msg-tbm">Implementation: Term-Based Messages</a>
+<li><a href="ref-msg-umf.html#ref-msg-umf">Examples of Using the Message Facility</a>
+<ul>
+<li><a href="ref-msg-umf-adm.html#ref-msg-umf-adm">Adding messages</a>
+<li><a href="ref-msg-umf-cmt.html#ref-msg-umf-cmt">Changing message text</a>
+<li><a href="ref-msg-umf-ipm.html#ref-msg-umf-ipm">Intercepting the printing of a message</a>
+<li><a href="ref-msg-umf-int.html#ref-msg-umf-int">Interaction</a>
+</li></ul>
+<li><a href="ref-msg-ime.html#ref-msg-ime">Internationalization of Quintus Prolog messages</a>
+<ul>
+<li><a href="ref-msg-ime-tra.html#ref-msg-ime-tra">Translating the Messages</a>
+<li><a href="ref-msg-ime-tit.html#ref-msg-ime-tit">Testing and Installing the Translated Messages</a>
+<li><a href="ref-msg-ime-btm.html#ref-msg-ime-btm">Building a Version of Prolog using the Translated Messages</a>
+<li><a href="ref-msg-ime-kan.html#ref-msg-ime-kan">Using Kanji characters</a>
+</li></ul>
+<li><a href="ref-msg-sum.html#ref-msg-sum">Summary of Predicates</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_sap" href="sap.html#sap">Creating Executables</a>
+<ul>
+<li><a href="sap-srs.html#sap-srs">Stand-Alone Programs &amp; Runtime Systems</a>
+<ul>
+<li><a href="sap-srs-bas.html#sap-srs-bas">Basic Concepts</a>
+<ul>
+<li><a href="sap-srs-bas-trm.html#sap-srs-bas-trm">Terminology</a>
+<li><a href="sap-srs-bas-sld.html#sap-srs-bas-sld">Shared Libraries and Delivering Execuatables</a>
+<li><a href="sap-srs-bas-sap.html#sap-srs-bas-sap">Stand-Alone Programs</a>
+<li><a href="sap-srs-bas-rsy.html#sap-srs-bas-rsy">Runtime Systems</a>
+<li><a href="sap-srs-bas-cld.html#sap-srs-bas-cld">Compiling and Linking</a>
+<li><a href="sap-srs-bas-rdk.html#sap-srs-bas-rdk">The Runtime Kernel vs. Development Kernel</a>
+</li></ul>
+<li><a href="sap-srs-qpc.html#sap-srs-qpc">Invoking <code>qpc</code>, the Prolog-to-QOF Compiler</a>
+<li><a href="sap-srs-qld.html#sap-srs-qld">Invoking <code>qld</code>, the QOF Link eDitor</a>
+<ul>
+<li><a href="sap-srs-qld-iin.html#sap-srs-qld-iin">Implicit invocation via <code>qpc</code></a>
+<li><a href="sap-srs-qld-ein.html#sap-srs-qld-ein">Explicit Invocation</a>
+</li></ul>
+<li><a href="sap-srs-dep.html#sap-srs-dep">Dependencies of QOF files</a>
+<ul>
+<li><a href="sap-srs-dep-qfd.html#sap-srs-dep-qfd">Generating QOF Files and Dependencies</a>
+<li><a href="sap-srs-dep-exa.html#sap-srs-dep-exa">Example</a>
+<li><a href="sap-srs-dep-mak.html#sap-srs-dep-mak">Using the <code>make(1)</code> utility</a>
+</li></ul>
+<li><a href="sap-srs-fsp.html#sap-srs-fsp">File Search Paths and qld</a>
+<li><a href="sap-srs-eci.html#sap-srs-eci">Embedded Commands and Initialization Files</a>
+<ul>
+<li><a href="sap-srs-eci-crt.html#sap-srs-eci-crt">Compile-time code vs. Runtime code</a>
+<li><a href="sap-srs-eci-inf.html#sap-srs-eci-inf">Initialization Files</a>
+<li><a href="sap-srs-eci-sid.html#sap-srs-eci-sid">Side-Effects in Compile-Time Code</a>
+<li><a href="sap-srs-eci-mec.html#sap-srs-eci-mec">Modules and Embedded Commands</a>
+<li><a href="sap-srs-eci-spe.html#sap-srs-eci-spe">Predicates Treated in a Special Way</a>
+<li><a href="sap-srs-eci-ctc.html#sap-srs-eci-ctc">Restriction on Compile-Time Code</a>
+</li></ul>
+<li><a href="sap-srs-ode.html#sap-srs-ode">Operator Declarations</a>
+<li><a href="sap-srs-sqf.html#sap-srs-sqf">Saved-States and QOF files</a>
+<li><a href="sap-srs-dfi.html#sap-srs-dfi">Dynamic Foreign Interface</a>
+<li><a href="sap-srs-qui.html#sap-srs-qui">Linking with QUI</a>
+</li></ul>
+<li><a href="sap-rge.html#sap-rge">The Runtime Generator</a>
+<ul>
+<li><a href="sap-rge-bas.html#sap-rge-bas">Introduction</a>
+<li><a href="sap-rge-dspn.html#sap-rge-dspn">Predicates not supported by the Runtime Kernel</a>
+<li><a href="sap-rge-pro.html#sap-rge-pro">Providing a Starting Point:  <code>runtime_entry/1</code></a>
+<li><a href="sap-rge-iha.html#sap-rge-iha">Control-c Interrupt Handling</a>
+<li><a href="sap-rge-sos.html#sap-rge-sos">Shared vs. Static Object Files</a>
+<li><a href="sap-rge-dll.html#sap-rge-dll">Building DLLs containing Prolog code</a>
+<ul>
+<li><a href="sap-rge-dll-ini.html#sap-rge-dll-ini">Setting up the environment</a>
+<li><a href="sap-rge-dll-qpc.html#sap-rge-dll-qpc">Compiling the Prolog code</a>
+<li><a href="sap-rge-dll-cc.html#sap-rge-dll-cc">Compiling the C code</a>
+<li><a href="sap-rge-dll-qld.html#sap-rge-dll-qld">Linking the DLL</a>
+</li></ul>
+<li><a href="sap-rge-iap.html#sap-rge-iap">Installing an Application:  runtime(<var>File</var>)</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_fli" href="fli.html#fli">Foreign Language Interface</a>
+<ul>
+<li><a href="fli-ove.html#fli-ove">Overview</a>
+<li><a href="fli-emb.html#fli-emb">Embedding Prolog Programs</a>
+<ul>
+<li><a href="fli-emb-ove.html#fli-emb-ove">Overview</a>
+<li><a href="fli-emb-lay.html#fli-emb-lay">The Embedding Layer</a>
+<ul>
+<li><a href="fli-emb-lay-onm.html#fli-emb-lay-onm">Contrasting Old and New Models</a>
+</li></ul>
+<li><a href="fli-emb-how.html#fli-emb-how">How Embedding Works</a>
+<ul>
+<li><a href="fli-emb-how-mai.html#fli-emb-how-mai">Defining your own main()</a>
+<li><a href="fli-emb-how-mem.html#fli-emb-how-mem">The Embedding Functions for Memory Management</a>
+<li><a href="fli-emb-how-iou.html#fli-emb-how-iou">The Embedding Functions For Input/Output</a>
+</li></ul>
+<li><a href="fli-emb-sum.html#fli-emb-sum">Summary of Functions</a>
+</li></ul>
+<li><a href="fli-p2f.html#fli-p2f">Prolog Calling Foreign Code</a>
+<ul>
+<li><a href="fli-p2f-bas.html#fli-p2f-bas">Introduction</a>
+<ul>
+<li><a href="fli-p2f-bas-sum.html#fli-p2f-bas-sum">Summary of steps</a>
+</li></ul>
+<li><a href="fli-p2f-uso.html#fli-p2f-uso">Using Shared Object Files and Archive Files</a>
+<ul>
+<li><a href="fli-p2f-uso-fex.html#fli-p2f-uso-fex">Loading Foreign Executables</a>
+<li><a href="fli-p2f-uso-ffi.html#fli-p2f-uso-ffi">Loading Foreign Files</a>
+</li></ul>
+<li><a href="fli-p2f-lnk.html#fli-p2f-lnk">Linking Foreign Functions to Prolog Procedures</a>
+<li><a href="fli-p2f-api.html#fli-p2f-api">Specifying the Argument Passing Interface</a>
+<li><a href="fli-p2f-int.html#fli-p2f-int">Passing Integers</a>
+<ul>
+<li><a href="fli-p2f-int-pas.html#fli-p2f-int-pas">Passing an Integer to a Foreign Function</a>
+<li><a href="fli-p2f-int-ret.html#fli-p2f-int-ret">Returning an Integer from a Foreign Function</a>
+<li><a href="fli-p2f-int-ifr.html#fli-p2f-int-ifr">An Integer Function Return Value</a>
+</li></ul>
+<li><a href="fli-p2f-flo.html#fli-p2f-flo">Passing Floats</a>
+<ul>
+<li><a href="fli-p2f-flo-pas.html#fli-p2f-flo-pas">Passing a Float to a Foreign Function</a>
+<li><a href="fli-p2f-flo-ret.html#fli-p2f-flo-ret">Returning a Float from a Foreign Function</a>
+<li><a href="fli-p2f-flo-fpf.html#fli-p2f-flo-fpf">A Floating-point Function Return Value</a>
+</li></ul>
+<li><a href="fli-p2f-atm.html#fli-p2f-atm">Passing Atoms</a>
+<ul>
+<li><a href="fli-p2f-atm-cat.html#fli-p2f-atm-cat">Passing Atoms in Canonical Form</a>
+<li><a href="fli-p2f-atm-spc.html#fli-p2f-atm-spc">Passing Atoms as Strings between Prolog and C</a>
+<li><a href="fli-p2f-atm-spf.html#fli-p2f-atm-spf">Passing Atoms as Strings to/from Pascal or FORTRAN</a>
+<li><a href="fli-p2f-atm-a2s.html#fli-p2f-atm-a2s">Converting between Atoms and Strings</a>
+</li></ul>
+<li><a href="fli-p2f-trm.html#fli-p2f-trm">Passing Prolog Terms</a>
+<ul>
+<li><a href="fli-p2f-trm-pas.html#fli-p2f-trm-pas">Passing a Prolog term to a Foreign Function</a>
+<li><a href="fli-p2f-trm-ret.html#fli-p2f-trm-ret">Returning a Prolog term from a Foreign Function</a>
+<li><a href="fli-p2f-trm-fft.html#fli-p2f-trm-fft">A Prolog term returned as a value of a Foreign Function</a>
+</li></ul>
+<li><a href="fli-p2f-poi.html#fli-p2f-poi">Passing Pointers</a>
+<li><a href="fli-p2f-pas.html#fli-p2f-pas">Important Prolog Assumptions</a>
+<li><a href="fli-p2f-fcr.html#fli-p2f-fcr">Debugging Foreign Code Routines</a>
+<li><a href="fli-p2f-lfe.html#fli-p2f-lfe">Implementation of <code>load_foreign_executable/1</code></a>
+<li><a href="fli-p2f-lff.html#fli-p2f-lff">Implementation of <code>load_foreign_files/2</code></a>
+<li><a href="fli-p2f-lsf.html#fli-p2f-lsf">Library support for linking foreign code</a>
+<li><a href="fli-p2f-fex.html#fli-p2f-fex">Foreign Code Examples:  UNIX</a>
+<ul>
+<li><a href="fli-p2f-fex-api.html#fli-p2f-fex-api">C Interface</a>
+<li><a href="fli-p2f-fex-pas.html#fli-p2f-fex-pas">Pascal Interface</a>
+<li><a href="fli-p2f-fex-for.html#fli-p2f-fex-for">FORTRAN Interface</a>
+<li><a href="fli-p2f-fex-poi.html#fli-p2f-fex-poi">Passing pointers between Prolog and Foreign Code</a>
+</li></ul>
+<li><a href="fli-p2f-sum.html#fli-p2f-sum">Summary of Predicates and Functions</a>
+<li><a href="fli-p2f-lib.html#fli-p2f-lib">Library Support</a>
+</li></ul>
+<li><a href="fli-ffp.html#fli-ffp">Foreign Functions Calling Prolog</a>
+<ul>
+<li><a href="fli-ffp-bas.html#fli-ffp-bas">Introduction</a>
+<ul>
+<li><a href="fli-ffp-bas-sum.html#fli-ffp-bas-sum">Summary of steps</a>
+</li></ul>
+<li><a href="fli-ffp-ppc.html#fli-ffp-ppc">Making Prolog Procedures Callable by Foreign Functions</a>
+<ul>
+<li><a href="fli-ffp-ppc-api.html#fli-ffp-ppc-api">Specifying the Argument Passing Interface: <code>extern/1</code></a>
+</li></ul>
+<li><a href="fli-ffp-dat.html#fli-ffp-dat">Passing Data to and from Prolog</a>
+<ul>
+<li><a href="fli-ffp-dat-int.html#fli-ffp-dat-int">Passing Integers</a>
+<li><a href="fli-ffp-dat-flo.html#fli-ffp-dat-flo">Passing Floats</a>
+<li><a href="fli-ffp-dat-cat.html#fli-ffp-dat-cat">Passing Atoms in Canonical Form</a>
+</li></ul>
+<li><a href="fli-ffp-a2s.html#fli-ffp-a2s">Converting Between Atoms and Strings</a>
+<ul>
+<li><a href="fli-ffp-a2s-str.html#fli-ffp-a2s-str">Passing Atoms as Strings</a>
+<li><a href="fli-ffp-a2s-trm.html#fli-ffp-a2s-trm">Passing Terms</a>
+<li><a href="fli-ffp-a2s-adr.html#fli-ffp-a2s-adr">Passing Addresses</a>
+</li></ul>
+<li><a href="fli-ffp-ccp.html#fli-ffp-ccp">Invoking a Callable Predicate from C</a>
+<ul>
+<li><a href="fli-ffp-ccp-lcp.html#fli-ffp-ccp-lcp">Looking Up a Callable Prolog Predicate</a>
+<li><a href="fli-ffp-ccp-dpq.html#fli-ffp-ccp-dpq">Making a Determinate Prolog Query</a>
+<li><a href="fli-ffp-ccp-inq.html#fli-ffp-ccp-inq">Initiating a Nondeterminate Prolog Query</a>
+<li><a href="fli-ffp-ccp-snq.html#fli-ffp-ccp-snq">Requesting a Solution to a Nondeterminate Prolog Query</a>
+<li><a href="fli-ffp-ccp-tnq.html#fli-ffp-ccp-tnq">Terminating a Nondeterminate Prolog Query</a>
+</li></ul>
+<li><a href="fli-ffp-exa.html#fli-ffp-exa">Examples</a>
+<ul>
+<li><a href="fli-ffp-exa-cpl.html#fli-ffp-exa-cpl">Calling Arbitrary Prolog Goals from C</a>
+<li><a href="fli-ffp-exa-fib.html#fli-ffp-exa-fib">Generating Fibonacci Numbers</a>
+<li><a href="fli-ffp-exa-ndp.html#fli-ffp-exa-ndp">Calling a Nondeterminate Predicate</a>
+<li><a href="fli-ffp-exa-nes.html#fli-ffp-exa-nes">Nested Prolog Queries</a>
+</li></ul>
+<li><a href="fli-ffp-ppl.html#fli-ffp-ppl">Calling Prolog from Pascal and FORTRAN</a>
+<li><a href="fli-ffp-sum.html#fli-ffp-sum">Summary of Predicates and Functions</a>
+<li><a href="fli-ffp-lib.html#fli-ffp-lib">Library Support</a>
+</li></ul>
+<li><a href="fli-ios.html#fli-ios">Quintus Prolog Input / Output System</a>
+<ul>
+<li><a href="fli-ios-ove.html#fli-ios-ove">Overview</a>
+<li><a href="fli-ios-iom.html#fli-ios-iom">Input/Output Model</a>
+<li><a href="fli-ios-sst.html#fli-ios-sst">Stream Structure</a>
+<ul>
+<li><a href="fli-ios-sst-fst.html#fli-ios-sst-fst">Filename of A Stream</a>
+<li><a href="fli-ios-sst-mod.html#fli-ios-sst-mod">Mode of A Stream</a>
+<li><a href="fli-ios-sst-fmt.html#fli-ios-sst-fmt">Format of A Stream</a>
+<li><a href="fli-ios-sst-mrl.html#fli-ios-sst-mrl">Maximum Record Length</a>
+<li><a href="fli-ios-sst-lbc.html#fli-ios-sst-lbc">Line Border Code</a>
+<li><a href="fli-ios-sst-fbc.html#fli-ios-sst-fbc">File Border Code</a>
+<li><a href="fli-ios-sst-pef.html#fli-ios-sst-pef">Reading Past End Of File</a>
+<li><a href="fli-ios-sst-pro.html#fli-ios-sst-pro">Prompt String</a>
+<li><a href="fli-ios-sst-trm.html#fli-ios-sst-trm">Record Trimming</a>
+<li><a href="fli-ios-sst-see.html#fli-ios-sst-see">Seek Type</a>
+<li><a href="fli-ios-sst-flu.html#fli-ios-sst-flu">Flushing An Output Stream</a>
+<li><a href="fli-ios-sst-obo.html#fli-ios-sst-obo">Output Stream Buffer Overflow</a>
+<li><a href="fli-ios-sst-sec.html#fli-ios-sst-sec">Storing Error Condition Of A Stream</a>
+<li><a href="fli-ios-sst-sda.html#fli-ios-sst-sda">System-Dependent Address In A File Stream</a>
+<li><a href="fli-ios-sst-bot.html#fli-ios-sst-bot">Bottom Layer Functions</a>
+</li></ul>
+<li><a href="fli-ios-tty.html#fli-ios-tty">TTY Stream</a>
+<li><a href="fli-ios-cps.html#fli-ios-cps">Defining A Customized Prolog Stream</a>
+<ul>
+<li><a href="fli-ios-cps-sum.html#fli-ios-cps-sum">Summary of Steps</a>
+<li><a href="fli-ios-cps-sst.html#fli-ios-cps-sst">Defining a Stream Structure</a>
+<li><a href="fli-ios-cps-opn.html#fli-ios-cps-opn">Opening The User-Defined Stream</a>
+<li><a href="fli-ios-cps-all.html#fli-ios-cps-all">Allocating Space And Setting Field Values For the User-Defined Stream</a>
+<li><a href="fli-ios-cps-sqs.html#fli-ios-cps-sqs">Setting Up The QP_stream Structure</a>
+<li><a href="fli-ios-cps-ire.html#fli-ios-cps-ire">Initialize and Register The Created Stream</a>
+<li><a href="fli-ios-cps-tty.html#fli-ios-cps-tty">TTY Group For TTY Stream</a>
+</li></ul>
+<li><a href="fli-ios-bot.html#fli-ios-bot">The Bottom Layer Functions</a>
+<ul>
+<li><a href="fli-ios-bot-rea.html#fli-ios-bot-rea">The Bottom Layer Read Function</a>
+<li><a href="fli-ios-bot-wri.html#fli-ios-bot-wri">The Bottom Layer Write Function</a>
+<li><a href="fli-ios-bot-flu.html#fli-ios-bot-flu">The Bottom Layer Flush Function</a>
+<li><a href="fli-ios-bot-see.html#fli-ios-bot-see">The Bottom Layer Seek Function</a>
+<li><a href="fli-ios-bot-clo.html#fli-ios-bot-clo">The Bottom Layer Close Function</a>
+</li></ul>
+<li><a href="fli-ios-uds.html#fli-ios-uds">Examples Of User-Defined Streams</a>
+<ul>
+<li><a href="fli-ios-uds-bst.html#fli-ios-uds-bst">Creating A Binary Stream</a>
+<li><a href="fli-ios-uds-est.html#fli-ios-uds-est">Creating A Stream To Read An Encrypted File</a>
+<li><a href="fli-ios-uds-sst.html#fli-ios-uds-sst">Creating A Stream Based On C Standard I/O Library</a>
+</li></ul>
+<li><a href="fli-ios-bio.html#fli-ios-bio">Built-in C Functions And Macros For I/O</a>
+<li><a href="fli-ios-bci.html#fli-ios-bci">Backward Compatibility I/O Issues</a>
+<ul>
+<li><a href="fli-ios-bci-def.html#fli-ios-bci-def">Default Stream</a>
+<li><a href="fli-ios-bci-usr.html#fli-ios-bci-usr">User_defined Streams</a>
+</li></ul>
+</li></ul>
+</li></ul>
+<li><a name="toc_ipc" href="ipc.html#ipc">Inter-Process Communication</a>
+<ul>
+<li><a href="ipc-tcp.html#ipc-tcp">tcp: Network Communication Package</a>
+<ul>
+<li><a href="ipc-tcp-csr.html#ipc-tcp-csr">The client/server relationship</a>
+<li><a href="ipc-tcp-utc.html#ipc-tcp-utc">Using tcp</a>
+<ul>
+<li><a href="ipc-tcp-utc-trace2.html#ipc-tcp-utc-trace2"><code>tcp_trace(</code><var>-OldValue</var><code>, </code><var>+On_or_Off</var><code>)</code></a>
+<li><a href="ipc-tcp-utc-watch_user2.html#ipc-tcp-utc-watch_user2"><code>tcp_watch_user(</code><var>-Old, +On_or_Off</var><code>)</code></a>
+<li><a href="ipc-tcp-utc-reset0.html#ipc-tcp-utc-reset0"><code>tcp_reset</code></a>
+</li></ul>
+<li><a href="ipc-tcp-mco.html#ipc-tcp-mco">Maintaining Connections</a>
+<ul>
+<li><a href="ipc-tcp-mco-create_listener2.html#ipc-tcp-mco-create_listener2"><code>tcp_create_listener(</code><var>?Address, -PassiveSocket</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-destroy_listener1.html#ipc-tcp-mco-destroy_listener1"><code>tcp_destroy_listener(</code><var>+PassiveSocket</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-listener1.html#ipc-tcp-mco-listener1"><code>tcp_listener(</code><var>?PassiveSocket</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-address_to_file2.html#ipc-tcp-mco-address_to_file2"><code>tcp_address_to_file(</code><var>+ServerFile</var><code>, </code><var>+Address</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-address_from_file2.html#ipc-tcp-mco-address_from_file2"><code>tcp_address_from_file(</code><var>+ServerFile</var><code>, </code><var>-Address</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-address_from_shell3.html#ipc-tcp-mco-address_from_shell3"><code>tcp_address_from_shell(</code><var>+Host</var><code>, </code><var>+ServerFile</var><code>, </code><var>-Address</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-address_from_shell4.html#ipc-tcp-mco-address_from_shell4"><code>tcp_address_from_shell(</code><var>+Host</var><code>, </code><var>+UserId</var><code>, </code><var>+ServerFile</var><code>, </code><var>-Address</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-connect2.html#ipc-tcp-mco-connect2"><code>tcp_connect(</code><var>+Address</var><code>, </code><var>-Socket</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-connected1.html#ipc-tcp-mco-connected1"><code>tcp_connected(</code><var>?Socket</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-connected2.html#ipc-tcp-mco-connected2"><code>tcp_connected(</code><var>?Socket,?PassiveSocket</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-shutdown1.html#ipc-tcp-mco-shutdown1"><code>tcp_shutdown(</code><var>+Socket</var><code>)</code></a>
+<li><a href="ipc-tcp-mco-slc.html#ipc-tcp-mco-slc">Short lived connections</a>
+</li></ul>
+<li><a href="ipc-tcp-trm.html#ipc-tcp-trm">Sending and Receiving Terms</a>
+<ul>
+<li><a href="ipc-tcp-trm-select1.html#ipc-tcp-trm-select1"><code>tcp_select(</code><var>-Term</var><code>)</code></a>
+<li><a href="ipc-tcp-trm-select2.html#ipc-tcp-trm-select2"><code>tcp_select(</code><var>+Timeout</var><code>, </code><var>-Term</var><code>)</code></a>
+<li><a href="ipc-tcp-trm-send2.html#ipc-tcp-trm-send2"><code>tcp_send(</code><var>+Socket</var><code>, </code><var>+Term</var><code>)</code></a>
+</li></ul>
+<li><a href="ipc-tcp-tim.html#ipc-tcp-tim">Time Predicates</a>
+<ul>
+<li><a href="ipc-tcp-tim-now1.html#ipc-tcp-tim-now1"><code>tcp_now(</code><var>-Timeval</var><code>)</code></a>
+<li><a href="ipc-tcp-tim-time_plus3.html#ipc-tcp-tim-time_plus3"><code>tcp_time_plus(</code><var>?Timeval1</var><code>, </code><var>?DeltaTime</var><code>, </code><var>?Timeval2</var><code>)</code></a>
+<li><a href="ipc-tcp-tim-schedule_wakeup2.html#ipc-tcp-tim-schedule_wakeup2"><code>tcp_schedule_wakeup(</code><var>+Timeval</var><code>, </code><var>+Term</var><code>)</code></a>
+<li><a href="ipc-tcp-tim-scheduled_wakeup2.html#ipc-tcp-tim-scheduled_wakeup2"><code>tcp_scheduled_wakeup(</code><var>?Timeval</var><code>, </code><var>?Term</var><code>)</code></a>
+<li><a href="ipc-tcp-tim-can.html#ipc-tcp-tim-can">Canceling Wakeups</a>
+<li><a href="ipc-tcp-tim-daily4.html#ipc-tcp-tim-daily4"><code>tcp_daily(</code><var>+Hour</var><code>, </code><var>+Minute</var><code>, </code><var>+Seconds</var><code>, </code><var>-Timeval</var><code>)</code></a>
+<li><a href="ipc-tcp-tim-date_timeval2.html#ipc-tcp-tim-date_timeval2"><code>tcp_date_timeval(</code><var>?Date</var><code>, </code><var>?Timeval</var><code>)</code></a>
+</li></ul>
+<li><a href="ipc-tcp-ups.html#ipc-tcp-ups">Using Prolog streams</a>
+<ul>
+<li><a href="ipc-tcp-ups-select_from1.html#ipc-tcp-ups-select_from1"><code>tcp_select_from(</code><var>-Term</var><code>)</code></a>
+<li><a href="ipc-tcp-ups-select_from2.html#ipc-tcp-ups-select_from2"><code>tcp_select_from(</code><var>+Timeout</var><code>, </code><var>-Term</var><code>)</code></a>
+<li><a href="ipc-tcp-ups-input_stream2.html#ipc-tcp-ups-input_stream2"><code>tcp_input_stream(</code><var>?Socket</var><code>, </code><var>-Stream</var><code>)</code></a>
+<li><a href="ipc-tcp-ups-output_stream2.html#ipc-tcp-ups-output_stream2"><code>tcp_output_stream(</code><var>?Socket</var><code>, </code><var>-Stream</var><code>)</code></a>
+</li></ul>
+<li><a href="ipc-tcp-cbi.html#ipc-tcp-cbi">The Callback Interface</a>
+<ul>
+<li><a href="ipc-tcp-cbi-create_input_callback2.html#ipc-tcp-cbi-create_input_callback2"><code>tcp_create_input_callback(</code><var>+Socket</var><code>, </code><var>+Goal</var><code>)</code></a>
+<li><a href="ipc-tcp-cbi-destroy_input_callback1.html#ipc-tcp-cbi-destroy_input_callback1"><code>tcp_destroy_input_callback(</code><var>+Socket</var><code>)</code></a>
+<li><a href="ipc-tcp-cbi-input_callback2.html#ipc-tcp-cbi-input_callback2"><code>tcp_input_callback(</code><var>*Socket</var><code>, </code><var>*Goal</var><code>)</code></a>
+<li><a href="ipc-tcp-cbi-create_timer_callback3.html#ipc-tcp-cbi-create_timer_callback3"><code>tcp_create_timer_callback(</code><var>+Timeval</var><code>, </code><var>+Goal</var><code>, </code><var>-TimerId</var><code>)</code></a>
+<li><a href="ipc-tcp-cbi-destroy_timer_callback1.html#ipc-tcp-cbi-destroy_timer_callback1"><code>tcp_destroy_timer_callback(</code><var>+TimerId</var><code>)</code></a>
+<li><a href="ipc-tcp-cbi-timer_callback2.html#ipc-tcp-cbi-timer_callback2"><code>tcp_timer_callback(</code><var>*Timerid</var><code>, </code><var>*Goal</var><code>)</code></a>
+<li><a href="ipc-tcp-cbi-accept2.html#ipc-tcp-cbi-accept2"><code>tcp_accept(</code><var>+PassiveSocket</var><code>, </code><var>-Socket</var><code>)</code></a>
+</li></ul>
+<li><a href="ipc-tcp-cfu.html#ipc-tcp-cfu">The C functions</a>
+<ul>
+<li><a href="ipc-tcp-cfu-create_listener.html#ipc-tcp-cfu-create_listener"><code>tcp_create_listener()</code></a>
+<li><a href="ipc-tcp-cfu-address_to_file.html#ipc-tcp-cfu-address_to_file"><code>tcp_address_to_file()</code></a>
+<li><a href="ipc-tcp-cfu-address_from_file.html#ipc-tcp-cfu-address_from_file"><code>tcp_address_from_file()</code></a>
+<li><a href="ipc-tcp-cfu-address_from_shell.html#ipc-tcp-cfu-address_from_shell"><code>tcp_address_from_shell()</code></a>
+<li><a href="ipc-tcp-cfu-connect.html#ipc-tcp-cfu-connect"><code>tcp_connect()</code></a>
+<li><a href="ipc-tcp-cfu-accept.html#ipc-tcp-cfu-accept"><code>tcp_accept()</code></a>
+<li><a href="ipc-tcp-cfu-select.html#ipc-tcp-cfu-select"><code>tcp_select()</code></a>
+<li><a href="ipc-tcp-cfu-shutdown.html#ipc-tcp-cfu-shutdown"><code>tcp_shutdown()</code></a>
+</li></ul>
+<li><a href="ipc-tcp-exa.html#ipc-tcp-exa">Examples</a>
+</li></ul>
+<li><a href="ipc-rpc.html#ipc-rpc">IPC/RPC: Remote Predicate Calling</a>
+<ul>
+<li><a href="ipc-rpc-ove.html#ipc-rpc-ove">Overview</a>
+<li><a href="ipc-rpc-p2p.html#ipc-rpc-p2p">Prolog Process Calling Prolog Process</a>
+<ul>
+<li><a href="ipc-rpc-p2p-save_servant.html#ipc-rpc-p2p-save_servant"><code>save_servant(</code><var>+SavedState</var><code>)</code></a>
+<li><a href="ipc-rpc-p2p-create_servant.html#ipc-rpc-p2p-create_servant"><code>create_servant(</code><var>+Machine, +SavedState, +OutFile</var><code>)</code></a>
+<li><a href="ipc-rpc-p2p-call_servant.html#ipc-rpc-p2p-call_servant"><code>call_servant(</code><var>+Goal</var><code>)</code></a>
+<li><a href="ipc-rpc-p2p-bag_of_all_servant.html#ipc-rpc-p2p-bag_of_all_servant"><code>bag_of_all_servant(</code><var>?Template</var><code>, </code><var>+Goal</var><code>, </code><var>-Bag</var><code>)</code></a>
+<li><a href="ipc-rpc-p2p-set_of_all_servant.html#ipc-rpc-p2p-set_of_all_servant"><code>set_of_all_servant(</code><var>?Template</var><code>, </code><var>+Goal</var><code>, </code><var>-Set</var><code>)</code></a>
+<li><a href="ipc-rpc-p2p-reset_servant.html#ipc-rpc-p2p-reset_servant"><code>reset_servant</code></a>
+<li><a href="ipc-rpc-p2p-shutdown_servant.html#ipc-rpc-p2p-shutdown_servant"><code>shutdown_servant</code></a>
+</li></ul>
+<li><a href="ipc-rpc-cpp.html#ipc-rpc-cpp">C Process Calling Prolog Process</a>
+<ul>
+<li><a href="ipc-rpc-cpp-pro.html#ipc-rpc-cpp-pro">The Prolog Side</a>
+<li><a href="ipc-rpc-cpp-save_ipc_servant.html#ipc-rpc-cpp-save_ipc_servant"><code>save_ipc_servant(</code><var>+SavedState</var><code>)</code></a>
+<li><a href="ipc-rpc-cpp-csi.html#ipc-rpc-cpp-csi">The C Side</a>
+<li><a href="ipc-rpc-cpp-create_servant.html#ipc-rpc-cpp-create_servant"><code>QP_ipc_create_servant()</code></a>
+<li><a href="ipc-rpc-cpp-lookup.html#ipc-rpc-cpp-lookup"><code>QP_ipc_lookup()</code></a>
+<li><a href="ipc-rpc-cpp-prepare.html#ipc-rpc-cpp-prepare"><code>QP_ipc_prepare()</code></a>
+<li><a href="ipc-rpc-cpp-next.html#ipc-rpc-cpp-next"><code>QP_ipc_next()</code></a>
+<li><a href="ipc-rpc-cpp-close.html#ipc-rpc-cpp-close"><code>QP_ipc_close()</code></a>
+<li><a href="ipc-rpc-cpp-shutdown_servant.html#ipc-rpc-cpp-shutdown_servant"><code>QP_ipc_shutdown_servant()</code></a>
+<li><a href="ipc-rpc-cpp-atom_from_string.html#ipc-rpc-cpp-atom_from_string"><code>QP_ipc_atom_from_string()</code></a>
+<li><a href="ipc-rpc-cpp-string_from_atom.html#ipc-rpc-cpp-string_from_atom"><code>QP_ipc_string_from_atom()</code></a>
+<li><a href="ipc-rpc-cpp-exa.html#ipc-rpc-cpp-exa">Examples</a>
+</li></ul>
+<li><a href="ipc-rpc-tra.html#ipc-rpc-tra">Tracing</a>
+<ul>
+<li><a href="ipc-rpc-tra-msg_trace.html#ipc-rpc-tra-msg_trace"><code>msg_trace(</code><var>-OldValue</var><code>, </code><var>+OnOrOff</var><code>)</code></a>
+</li></ul>
+<li><a href="ipc-rpc-bug.html#ipc-rpc-bug">Known Bugs</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_lib" href="lib.html#lib">Library</a>
+<ul>
+<li><a href="lib-bas.html#lib-bas">Introduction</a>
+<ul>
+<li><a href="lib-bas-dst.html#lib-bas-dst">Directory Structure</a>
+<li><a href="lib-bas-sta.html#lib-bas-sta">Status of Library Packages</a>
+<li><a href="lib-bas-dlp.html#lib-bas-dlp">Documentation of Library Packages</a>
+<ul>
+<li><a href="lib-bas-dlp-acc.html#lib-bas-dlp-acc">Accessing Code Comments</a>
+</li></ul>
+<li><a href="lib-bas-not.html#lib-bas-not">Notation</a>
+<ul>
+<li><a href="lib-bas-not-cco.html#lib-bas-not-cco">Character Codes</a>
+<li><a href="lib-bas-not-mod.html#lib-bas-not-mod">Mode Annotations</a>
+</li></ul>
+</li></ul>
+<li><a href="lib-lis.html#lib-lis">List Processing</a>
+<ul>
+<li><a href="lib-lis-bas.html#lib-lis-bas">Introduction</a>
+<li><a href="lib-lis-prl.html#lib-lis-prl">What is a "Proper" List?</a>
+<li><a href="lib-lis-lis.html#lib-lis-lis">Five List Processing Packages</a>
+<li><a href="lib-lis-basics.html#lib-lis-basics">Basic List Processing -- <code>library(basics)</code></a>
+<ul>
+<li><a href="lib-lis-basics-rel.html#lib-lis-basics-rel">Related Built-in Predicates</a>
+<li><a href="lib-lis-basics-member.html#lib-lis-basics-member"><code>member(</code><var>?Element</var><code>, </code><var>?List</var><code>)</code></a>
+<li><a href="lib-lis-basics-memberchk.html#lib-lis-basics-memberchk"><code>memberchk(</code><var>+Element</var><code>, </code><var>+List</var><code>)</code></a>
+<li><a href="lib-lis-basics-nonmember.html#lib-lis-basics-nonmember"><code>nonmember(</code><var>+Element</var><code>, </code><var>+List</var><code>)</code></a>
+</li></ul>
+<li><a href="lib-lis-lists.html#lib-lis-lists">Lists as Sequences -- <code>library(lists)</code></a>
+<li><a href="lib-lis-set.html#lib-lis-set">Lists as Sets</a>
+<ul>
+<li><a href="lib-lis-set-sets.html#lib-lis-set-sets">Set Processing -- <code>library(sets)</code></a>
+<li><a href="lib-lis-set-pre.html#lib-lis-set-pre">Predicates Related to Sets</a>
+</li></ul>
+<li><a href="lib-lis-ordsets.html#lib-lis-ordsets">Lists as Ordered Sets -- <code>library(ordsets)</code></a>
+<li><a href="lib-lis-listparts.html#lib-lis-listparts">Parts of lists -- <code>library(listparts)</code></a>
+</li></ul>
+<li><a href="lib-tma.html#lib-tma">Term Manipulation</a>
+<ul>
+<li><a href="lib-tma-bas.html#lib-tma-bas">Introduction</a>
+<li><a href="lib-tma-trm.html#lib-tma-trm">The Six Term Manipulation Packages</a>
+<li><a href="lib-tma-arg.html#lib-tma-arg">Finding a Term's Arguments -- <code>library(arg)</code></a>
+<li><a href="lib-tma-changearg.html#lib-tma-changearg">Altering Term Arguments -- <code>library(changearg)</code></a>
+<li><a href="lib-tma-occurs.html#lib-tma-occurs">Checking Terms for Subterms -- <code>library(occurs)</code></a>
+<li><a href="lib-tma-aor.html#lib-tma-aor">Note on Argument Order</a>
+<li><a href="lib-tma-samefunctor.html#lib-tma-samefunctor">Checking Functors -- <code>library(samefunctor)</code></a>
+<li><a href="lib-tma-subsumes.html#lib-tma-subsumes">Term Subsumption -- <code>library(subsumes)</code></a>
+<li><a href="lib-tma-unify.html#lib-tma-unify">Unification -- <code>library(unify)</code></a>
+<li><a href="lib-tma-termdepth.html#lib-tma-termdepth"><code>library(termdepth)</code></a>
+</li></ul>
+<li><a href="lib-txp.html#lib-txp">Text Processing</a>
+<ul>
+<li><a href="lib-txp-bas.html#lib-txp-bas">Introduction -- <code>library(strings)</code></a>
+<ul>
+<li><a href="lib-txp-bas-system.html#lib-txp-bas-system">Access to operating system -- <code>system/1</code></a>
+</li></ul>
+<li><a href="lib-txp-typ.html#lib-txp-typ">Type Testing</a>
+<li><a href="lib-txp-c2c.html#lib-txp-c2c">Converting Between Constants and Characters</a>
+<ul>
+<li><a href="lib-txp-c2c-name.html#lib-txp-c2c-name"><code>name(</code><var>?Constant</var><code>, </code><var>?Chars</var><code>)</code></a>
+<li><a href="lib-txp-c2c-atom_chars.html#lib-txp-c2c-atom_chars"><code>atom_chars(</code><var>?Atom</var><code>, </code><var>?Chars</var><code>)</code></a>
+<li><a href="lib-txp-c2c-number_chars.html#lib-txp-c2c-number_chars"><code>number_chars(</code><var>?Number</var><code>, </code><var>?Chars</var><code>)</code></a>
+<li><a href="lib-txp-c2c-char_atom.html#lib-txp-c2c-char_atom"><code>char_atom(</code><var>?Char</var><code>, </code><var>?Atom</var><code>)</code></a>
+</li></ul>
+<li><a href="lib-txp-cto.html#lib-txp-cto">Comparing Text Objects</a>
+<li><a href="lib-txp-con.html#lib-txp-con">Concatenation</a>
+<ul>
+<li><a href="lib-txp-con-cfu.html#lib-txp-con-cfu">Concatenation Functions</a>
+</li></ul>
+<li><a href="lib-txp-lct.html#lib-txp-lct">Finding the Length and Contents of a Text Object</a>
+<li><a href="lib-txp-printlength.html#lib-txp-printlength">Finding the width of a term -- <code>library(printlength)</code></a>
+<li><a href="lib-txp-sub.html#lib-txp-sub">Finding and Extracting Substrings</a>
+<ul>
+<li><a href="lib-txp-sub-midstring.html#lib-txp-sub-midstring"><code>midstring/[3,4,5,6]</code></a>
+<li><a href="lib-txp-sub-substring.html#lib-txp-sub-substring"><code>substring/[4,5]</code></a>
+<li><a href="lib-txp-sub-subchars.html#lib-txp-sub-subchars"><code>subchars/[4,5]</code></a>
+<li><a href="lib-txp-sub-spa.html#lib-txp-sub-spa">The "span" family</a>
+</li></ul>
+<li><a href="lib-txp-ato.html#lib-txp-ato">Generating Atoms</a>
+<li><a href="lib-txp-ctypes.html#lib-txp-ctypes">Case Conversion -- <code>library(ctypes)</code></a>
+<li><a href="lib-txp-nte.html#lib-txp-nte">Note</a>
+</li></ul>
+<li><a href="lib-xml.html#lib-xml">XML Parsing and Generation</a>
+<li><a href="lib-neg.html#lib-neg">Negation</a>
+<ul>
+<li><a href="lib-neg-bas.html#lib-neg-bas">Introduction -- <code>library(not)</code></a>
+<li><a href="lib-neg-nop.html#lib-neg-nop">The "is-not-provable" Operator</a>
+<li><a href="lib-neg-not.html#lib-neg-not">"is-not-provable" vs. "is-not-true" -- <code>not(</code><var>Goal</var><code>)</code></a>
+<li><a href="lib-neg-ine.html#lib-neg-ine">Inequality</a>
+<ul>
+<li><a href="lib-neg-ine-nop.html#lib-neg-ine-nop"><code></code><var>Term1</var><code> \= </code><var>Term2</var><code></code></a>
+<li><a href="lib-neg-ine-snd.html#lib-neg-ine-snd"><code></code><var>Term1</var><code> ~= </code><var>Term2</var><code></code></a>
+</li></ul>
+<li><a href="lib-neg-once.html#lib-neg-once">Forcing Goal Determinacy -- <code>once(</code><var>Goal</var><code>)</code></a>
+<li><a href="lib-neg-sum.html#lib-neg-sum">Summary</a>
+</li></ul>
+<li><a href="lib-ofi.html#lib-ofi">Operations on Files</a>
+<ul>
+<li><a href="lib-ofi-bas.html#lib-ofi-bas">Introduction -- <code>library(files)</code></a>
+<li><a href="lib-ofi-bfi.html#lib-ofi-bfi">Built-in Operations on Files</a>
+<li><a href="lib-ofi-rdf.html#lib-ofi-rdf">Renaming and Deleting Files</a>
+<li><a href="lib-ofi-cfe.html#lib-ofi-cfe">Checking To See If A File Exists</a>
+<li><a href="lib-ofi-oth.html#lib-ofi-oth">Other Related Library Files</a>
+<ul>
+<li><a href="lib-ofi-oth-aropen.html#lib-ofi-oth-aropen"><code>library(aropen)</code></a>
+<li><a href="lib-ofi-oth-ask.html#lib-ofi-oth-ask"><code>library(ask)</code></a>
+<li><a href="lib-ofi-oth-big_text.html#lib-ofi-oth-big_text"><code>library(big_text)</code></a>
+<li><a href="lib-ofi-oth-crypt.html#lib-ofi-oth-crypt"><code>library(crypt)</code></a>
+<li><a href="lib-ofi-oth-directory.html#lib-ofi-oth-directory"><code>library(directory)</code></a>
+<li><a href="lib-ofi-oth-fromonto.html#lib-ofi-oth-fromonto"><code>library(fromonto)</code></a>
+<li><a href="lib-ofi-oth-unix.html#lib-ofi-oth-unix"><code>library(unix)</code></a>
+</li></ul>
+</li></ul>
+<li><a href="lib-lfi.html#lib-lfi">Looking Up Files</a>
+<ul>
+<li><a href="lib-lfi-bas.html#lib-lfi-bas">Introduction -- <code>library(directory)</code></a>
+<li><a href="lib-lfi-fdi.html#lib-lfi-fdi">Finding Files in Directories</a>
+<li><a href="lib-lfi-sub.html#lib-lfi-sub">Finding Subdirectories</a>
+<li><a href="lib-lfi-pfd.html#lib-lfi-pfd">Finding Properties of Files and Directories</a>
+<li><a href="lib-lfi-sum.html#lib-lfi-sum">Summary</a>
+</li></ul>
+<li><a href="lib-uin.html#lib-uin">Obtaining User Input</a>
+<ul>
+<li><a href="lib-uin-bas.html#lib-uin-bas">Introduction</a>
+<li><a href="lib-uin-ctypes.html#lib-uin-ctypes">Classifying Characters -- <code>library(ctypes)</code></a>
+<li><a href="lib-uin-lineio.html#lib-uin-lineio">Reading and Writing Lines -- <code>library(lineio)</code></a>
+<li><a href="lib-uin-continued.html#lib-uin-continued">Reading Continued Lines -- <code>library(continued)</code></a>
+<li><a href="lib-uin-ese.html#lib-uin-ese">Reading English Sentences</a>
+<ul>
+<li><a href="lib-uin-ese-ove.html#lib-uin-ese-ove">Overview</a>
+<li><a href="lib-uin-ese-readin.html#lib-uin-ese-readin"><code>library(readin)</code></a>
+<li><a href="lib-uin-ese-readsent.html#lib-uin-ese-readsent"><code>library(readsent)</code></a>
+</li></ul>
+<li><a href="lib-uin-ask.html#lib-uin-ask">Yes-no Questions, and Others -- <code>library(ask)</code></a>
+<li><a href="lib-uin-prompt.html#lib-uin-prompt">Other Prompted Input -- <code>library(prompt)</code></a>
+<li><a href="lib-uin-readconstant.html#lib-uin-readconstant">Pascal-like Input -- <code>library(readconstant)</code></a>
+</li></ul>
+<li><a href="lib-iml.html#lib-iml">Interface to Math Library</a>
+<ul>
+<li><a href="lib-iml-bas.html#lib-iml-bas">Introduction -- <code>library(math)</code></a>
+</li></ul>
+<li><a href="lib-mis.html#lib-mis">Miscellaneous Packages</a>
+<ul>
+<li><a href="lib-mis-ctr.html#lib-mis-ctr"><code>library(ctr)</code></a>
+<li><a href="lib-mis-date.html#lib-mis-date"><code>library(date)</code></a>
+<li><a href="lib-mis-activeread.html#lib-mis-activeread">Arbitrary Expressions -- <code>library(activeread)</code></a>
+<li><a href="lib-mis-addportray.html#lib-mis-addportray"><code>library(addportray)</code></a>
+</li></ul>
+<li><a href="lib-too.html#lib-too">Tools</a>
+<ul>
+<li><a href="lib-too-too.html#lib-too-too">The <code>tools</code> Directory</a>
+<ul>
+<li><a href="lib-too-too-ove.html#lib-too-too-ove">Overview</a>
+</li></ul>
+<li><a href="lib-too-xref.html#lib-too-xref">The Cross-Referencer -- <code>qpxref</code></a>
+<li><a href="lib-too-det.html#lib-too-det">Determinacy Checker -- <code>qpdet</code></a>
+</li></ul>
+<li><a href="lib-abs.html#lib-abs">Abstracts</a>
+</li></ul>
+<li><a name="toc_str" href="str.html#str">The Structs Package</a>
+<ul>
+<li><a href="str-fty.html#str-fty">Foreign Types</a>
+<ul>
+<li><a href="str-fty-dty.html#str-fty-dty">Declaring Types</a>
+</li></ul>
+<li><a href="str-usq.html#str-usq">Using Structs with QPC</a>
+<li><a href="str-cft.html#str-cft">Checking Foreign Term Types</a>
+<li><a href="str-cdf.html#str-cdf">Creating and Destroying Foreign Terms</a>
+<li><a href="str-afd.html#str-afd">Accessing and Modifying Foreign Term Contents</a>
+<li><a href="str-cas.html#str-cas">Casting</a>
+<li><a href="str-nul.html#str-nul">Null Foreign Terms</a>
+<li><a href="str-ifc.html#str-ifc">Interfacing with Foreign Code</a>
+<li><a href="str-etr.html#str-etr">Examining Type Definitions at Runtime</a>
+<li><a href="str-s2c.html#str-s2c">Structs to C</a>
+<li><a href="str-tip.html#str-tip">Tips</a>
+</li></ul>
+<li><a name="toc_obj" href="obj.html#obj">The Quintus Objects Package</a>
+<ul>
+<li><a href="obj-bas.html#obj-bas">Introduction</a>
+<ul>
+<li><a href="obj-bas-uobj.html#obj-bas-uobj">Using Quintus Objects</a>
+<li><a href="obj-bas-def.html#obj-bas-def">Defining Classes</a>
+<li><a href="obj-bas-ucl.html#obj-bas-ucl">Using Classes</a>
+<li><a href="obj-bas-la.html#obj-bas-la">Looking Ahead</a>
+</li></ul>
+<li><a href="obj-scl.html#obj-scl">Simple Classes</a>
+<ul>
+<li><a href="obj-scl-scp.html#obj-scl-scp">Scope of a Class Definition</a>
+<li><a href="obj-scl-slt.html#obj-scl-slt">Slots</a>
+<ul>
+<li><a href="obj-scl-slt-vis.html#obj-scl-slt-vis">Visibility</a>
+<li><a href="obj-scl-slt-typ.html#obj-scl-slt-typ">Types</a>
+<li><a href="obj-scl-slt-ini.html#obj-scl-slt-ini">Initial Values</a>
+<li><a href="obj-scl-slt-null.html#obj-scl-slt-null">The <code>null</code> object</a>
+</li></ul>
+<li><a href="obj-scl-meth.html#obj-scl-meth">Methods</a>
+<ul>
+<li><a href="obj-scl-meth-getput.html#obj-scl-meth-getput">Get and Put Methods</a>
+<li><a href="obj-scl-meth-dir.html#obj-scl-meth-dir">Direct Slot Access</a>
+<li><a href="obj-scl-meth-send.html#obj-scl-meth-send">Send Methods</a>
+<li><a href="obj-scl-meth-credes.html#obj-scl-meth-credes">Create and Destroy Methods</a>
+<li><a href="obj-scl-meth-ins.html#obj-scl-meth-ins">Instance Methods</a>
+</li></ul>
+</li></ul>
+<li><a href="obj-inh.html#obj-inh">Inheritance</a>
+<ul>
+<li><a href="obj-inh-sih.html#obj-inh-sih">Single Inheritance</a>
+<ul>
+<li><a href="obj-inh-sih-cdef.html#obj-inh-sih-cdef">Class Definitions</a>
+<li><a href="obj-inh-sih-slt.html#obj-inh-sih-slt">Slots</a>
+<li><a href="obj-inh-sih-meth.html#obj-inh-sih-meth">Methods</a>
+<li><a href="obj-inh-sih-ssup.html#obj-inh-sih-ssup">Send Super</a>
+</li></ul>
+<li><a href="obj-inh-mih.html#obj-inh-mih">Multiple Inheritance</a>
+<ul>
+<li><a href="obj-inh-mih-cdef.html#obj-inh-mih-cdef">Class Definitions</a>
+<li><a href="obj-inh-mih-slt.html#obj-inh-mih-slt">Slots</a>
+<li><a href="obj-inh-mih-meth.html#obj-inh-mih-meth">Methods</a>
+<li><a href="obj-inh-mih-abmix.html#obj-inh-mih-abmix">Abstract and Mixin Classes</a>
+</li></ul>
+<li><a href="obj-inh-ask.html#obj-inh-ask">Asking About Classes and Objects</a>
+<ul>
+<li><a href="obj-inh-ask-obj.html#obj-inh-ask-obj">Objects</a>
+<li><a href="obj-inh-ask-cls.html#obj-inh-ask-cls">Classes</a>
+<li><a href="obj-inh-ask-msg.html#obj-inh-ask-msg">Messages</a>
+</li></ul>
+</li></ul>
+<li><a href="obj-tcl.html#obj-tcl">Term Classes</a>
+<ul>
+<li><a href="obj-tcl-stcl.html#obj-tcl-stcl">Simple Term Classes</a>
+<li><a href="obj-tcl-rtrm.html#obj-tcl-rtrm">Restricted Term Classes</a>
+<li><a href="obj-tcl-tce.html#obj-tcl-tce">Specifying a Term Class Essence</a>
+</li></ul>
+<li><a href="obj-tech.html#obj-tech">Technical Details</a>
+<ul>
+<li><a href="obj-tech-syn.html#obj-tech-syn">Syntax of Class Definitions</a>
+<li><a href="obj-tech-lim.html#obj-tech-lim">Limitations</a>
+<ul>
+<li><a href="obj-tech-lim-deb.html#obj-tech-lim-deb">Debugging</a>
+<li><a href="obj-tech-lim-gc.html#obj-tech-lim-gc">Garbage Collection</a>
+<li><a href="obj-tech-lim-mih.html#obj-tech-lim-mih">Multiple Inheritance</a>
+<li><a href="obj-tech-lim-prs.html#obj-tech-lim-prs">Persistence</a>
+</li></ul>
+</li></ul>
+<li><a href="obj-exp.html#obj-exp">Exported Predicates</a>
+<ul>
+<li><a href="obj-exp-send.html#obj-exp-send"><code>&lt;-/2</code></a>
+<li><a href="obj-exp-put.html#obj-exp-put"><code>&lt;&lt;/2</code></a>
+<li><a href="obj-exp-get.html#obj-exp-get"><code>&gt;&gt;/2</code></a>
+<li><a href="obj-exp-class.html#obj-exp-class"><code>class/1</code> directive</a>
+<li><a href="obj-exp-class_ancestor.html#obj-exp-class_ancestor"><code>class_ancestor/2</code></a>
+<li><a href="obj-exp-class_method.html#obj-exp-class_method"><code>class_method/1</code> directive</a>
+<li><a href="obj-exp-class_superclass.html#obj-exp-class_superclass"><code>class_superclass/2</code></a>
+<li><a href="obj-exp-class_of.html#obj-exp-class_of"><code>class_of/2</code></a>
+<li><a href="obj-exp-create.html#obj-exp-create"><code>create/2</code></a>
+<li><a href="obj-exp-current_class.html#obj-exp-current_class"><code>current_class/1</code></a>
+<li><a href="obj-exp-debug_message.html#obj-exp-debug_message"><code>debug_message/0</code> directive</a>
+<li><a href="obj-exp-define_method.html#obj-exp-define_method"><code>define_method/3</code></a>
+<li><a href="obj-exp-descendant_of.html#obj-exp-descendant_of"><code>descendant_of/2</code></a>
+<li><a href="obj-exp-destroy.html#obj-exp-destroy"><code>destroy/1</code></a>
+<li><a href="obj-exp-direct_message.html#obj-exp-direct_message"><code>direct_message/4</code></a>
+<li><a href="obj-exp-end_class.html#obj-exp-end_class"><code>end_class/[0,1]</code> directive</a>
+<li><a href="obj-exp-fetch_slot.html#obj-exp-fetch_slot"><code>fetch_slot/2</code></a>
+<li><a href="obj-exp-inherit.html#obj-exp-inherit"><code>inherit/1</code> directive</a>
+<li><a href="obj-exp-instance_method.html#obj-exp-instance_method"><code>instance_method/1</code> directive</a>
+<li><a href="obj-exp-message.html#obj-exp-message"><code>message/4</code></a>
+<li><a href="obj-exp-nodebug_message.html#obj-exp-nodebug_message"><code>nodebug_message/0</code> directive</a>
+<li><a href="obj-exp-pointer_object.html#obj-exp-pointer_object"><code>pointer_object/2</code></a>
+<li><a href="obj-exp-store_slot.html#obj-exp-store_slot"><code>store_slot/2</code></a>
+<li><a href="obj-exp-undefine_method.html#obj-exp-undefine_method"><code>undefine_method/3</code></a>
+<li><a href="obj-exp-uninherit.html#obj-exp-uninherit"><code>uninherit/1</code> directive</a>
+</li></ul>
+<li><a href="obj-glo.html#obj-glo">Glossary</a>
+</li></ul>
+<li><a name="toc_pbn" href="pbn.html#pbn">The PrologBeans Package</a>
+<ul>
+<li><a href="pbn-bas.html#pbn-bas">Introduction</a>
+<li><a href="pbn-feat.html#pbn-feat">Features</a>
+<li><a href="pbn-exa.html#pbn-exa">A First Example</a>
+<li><a href="pbn-java.html#pbn-java">Java Interface</a>
+<li><a href="pbn-pro.html#pbn-pro">Prolog Interface</a>
+<li><a href="pbn-exs.html#pbn-exs">Examples</a>
+<ul>
+<li><a href="pbn-exs-mbd.html#pbn-exs-mbd">Embedding Prolog in Java Applications</a>
+<li><a href="pbn-exs-srv.html#pbn-exs-srv">Application Servers</a>
+<li><a href="pbn-exs-tomcat.html#pbn-exs-tomcat">Configuring Tomcat for PrologBeans</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_pxl" href="pxl.html#pxl">The ProXL Package</a>
+<ul>
+<li><a href="pxl-bas.html#pxl-bas">Introduction</a>
+<ul>
+<li><a href="pxl-bas-ben.html#pxl-bas-ben">User Benefits</a>
+<li><a href="pxl-bas-feat.html#pxl-bas-feat">ProXL Features</a>
+<li><a href="pxl-bas-win.html#pxl-bas-win">Windows</a>
+<li><a href="pxl-bas-lin.html#pxl-bas-lin">Drawing and filling lines and shapes</a>
+<li><a href="pxl-bas-txt.html#pxl-bas-txt">Drawing text</a>
+<li><a href="pxl-bas-pix.html#pxl-bas-pix">Drawing Pixmaps and drawing into Pixmaps</a>
+<li><a href="pxl-bas-graf.html#pxl-bas-graf">Graphics attributes of drawables</a>
+<ul>
+<li><a href="pxl-bas-graf-font.html#pxl-bas-graf-font">Fonts</a>
+<li><a href="pxl-bas-graf-color.html#pxl-bas-graf-color">Color and colormaps</a>
+<li><a href="pxl-bas-graf-gc.html#pxl-bas-graf-gc">Graphics contexts (GCs)</a>
+</li></ul>
+<li><a href="pxl-bas-crs.html#pxl-bas-crs">Cursors</a>
+<li><a href="pxl-bas-inf.html#pxl-bas-inf">Inferring arguments</a>
+<li><a href="pxl-bas-attr.html#pxl-bas-attr">Attributes:  Specifying properties of ProXL objects</a>
+<li><a href="pxl-bas-tyi.html#pxl-bas-tyi">Handling keyboard and mouse input</a>
+<ul>
+<li><a href="pxl-bas-tyi-cbk.html#pxl-bas-tyi-cbk">Callbacks</a>
+<li><a href="pxl-bas-tyi-rfr.html#pxl-bas-tyi-rfr">Refreshing windows</a>
+<li><a href="pxl-bas-tyi-err.html#pxl-bas-tyi-err">Errors</a>
+</li></ul>
+<li><a href="pxl-bas-dis.html#pxl-bas-dis">Displays and Screens</a>
+</li></ul>
+<li><a href="pxl-tut.html#pxl-tut">Tutorial</a>
+<ul>
+<li><a href="pxl-tut-dwin.html#pxl-tut-dwin">Displaying a Window on the Screen</a>
+<li><a href="pxl-tut-dtxt.html#pxl-tut-dtxt">Displaying Text in the Window</a>
+<li><a href="pxl-tut-siz.html#pxl-tut-siz">Making the Window the Right Size</a>
+<li><a href="pxl-tut-dbg.html#pxl-tut-dbg">Drawing a Textured Background</a>
+<li><a href="pxl-tut-dshd.html#pxl-tut-dshd">Drawing a Drop Shadow</a>
+<li><a href="pxl-tut-tit.html#pxl-tut-tit">Specifying a Title for the Window</a>
+<li><a href="pxl-tut-col.html#pxl-tut-col">Color</a>
+<li><a href="pxl-tut-crs.html#pxl-tut-crs">Specifying a Cursor for the Window</a>
+<li><a href="pxl-tut-cbk.html#pxl-tut-cbk">Specifying a Callback Procedure for a Window Event</a>
+<ul>
+<li><a href="pxl-tut-cbk-redraw.html#pxl-tut-cbk-redraw">Redrawing a window using a callback procedure</a>
+<li><a href="pxl-tut-cbk-term.html#pxl-tut-cbk-term"><code>handle_events</code> and Terminating a Dispatch Loop</a>
+</li></ul>
+<li><a href="pxl-tut-hello.html#pxl-tut-hello">The 'hello.pl' Program</a>
+</li></ul>
+<li><a href="pxl-win.html#pxl-win">Windows</a>
+<ul>
+<li><a href="pxl-win-atts.html#pxl-win-atts">Window Attributes</a>
+<li><a href="pxl-win-wmi.html#pxl-win-wmi">Window Manager Interaction: Properties</a>
+<ul>
+<li><a href="pxl-win-wmi-wnam.html#pxl-win-wmi-wnam">Giving the Window a Name</a>
+<li><a href="pxl-win-wmi-inam.html#pxl-win-wmi-inam">Giving the  Window's Icon a Name</a>
+<li><a href="pxl-win-wmi-wsiz.html#pxl-win-wmi-wsiz">Suggesting a Size and Shape for the Window</a>
+<li><a href="pxl-win-wmi-wini.html#pxl-win-wmi-wini">Suggesting Icon, Initial State, and Other Features</a>
+<li><a href="pxl-win-wmi-trn.html#pxl-win-wmi-trn">Transient windows</a>
+<li><a href="pxl-win-wmi-isz.html#pxl-win-wmi-isz">Icon Sizes</a>
+<li><a href="pxl-win-wmi-oprop.html#pxl-win-wmi-oprop">Other Window Properties</a>
+</li></ul>
+<li><a href="pxl-win-cre.html#pxl-win-cre">Creating and Destroying Windows</a>
+<ul>
+<li><a href="pxl-win-cre-create_window.html#pxl-win-cre-create_window"><code>create_window/[2,3]</code></a>
+<li><a href="pxl-win-cre-destroy_window.html#pxl-win-cre-destroy_window"><code>destroy_window/1</code></a>
+<li><a href="pxl-win-cre-destroy_subwindows.html#pxl-win-cre-destroy_subwindows"><code>destroy_subwindows/1</code></a>
+</li></ul>
+<li><a href="pxl-win-find.html#pxl-win-find">Finding and Changing Window Attributes</a>
+<ul>
+<li><a href="pxl-win-find-get_window_attributes.html#pxl-win-find-get_window_attributes"><code>get_window_attributes/[2,3]</code></a>
+<li><a href="pxl-win-find-put_window_attributes.html#pxl-win-find-put_window_attributes"><code>put_window_attributes/[2,3]</code></a>
+<li><a href="pxl-win-find-rotate_window_properties.html#pxl-win-find-rotate_window_properties"><code>rotate_window_properties/[2,3]</code></a>
+<li><a href="pxl-win-find-delete_window_properties.html#pxl-win-find-delete_window_properties"><code>delete_window_properties/[1,2]</code></a>
+<li><a href="pxl-win-find-map_subwindows.html#pxl-win-find-map_subwindows"><code>map_subwindows/1</code></a>
+<li><a href="pxl-win-find-unmap_subwindows.html#pxl-win-find-unmap_subwindows"><code>unmap_subwindows/1</code></a>
+</li></ul>
+<li><a href="pxl-win-misc.html#pxl-win-misc">Miscellaneous Window Primitives</a>
+<ul>
+<li><a href="pxl-win-misc-restack_window.html#pxl-win-misc-restack_window"><code>restack_window/2</code></a>
+<li><a href="pxl-win-misc-window_children.html#pxl-win-misc-window_children"><code>window_children/[1,2]</code></a>
+<li><a href="pxl-win-misc-current_window.html#pxl-win-misc-current_window"><code>current_window/[1,2]</code></a>
+</li></ul>
+<li><a href="pxl-win-sel.html#pxl-win-sel">Selections</a>
+<ul>
+<li><a href="pxl-win-sel-set_selection_owner.html#pxl-win-sel-set_selection_owner"><code>set_selection_owner/[2,3,4]</code></a>
+<li><a href="pxl-win-sel-get_selection_owner.html#pxl-win-sel-get_selection_owner"><code>get_selection_owner/[2,3]</code></a>
+<li><a href="pxl-win-sel-convert_selection.html#pxl-win-sel-convert_selection"><code>convert_selection/[4,5,6]</code></a>
+</li></ul>
+<li><a href="pxl-win-cwin.html#pxl-win-cwin">Checking Window Validity</a>
+<ul>
+<li><a href="pxl-win-cwin-valid_window.html#pxl-win-cwin-valid_window"><code>valid_window/1</code></a>
+<li><a href="pxl-win-cwin-valid_windowable.html#pxl-win-cwin-valid_windowable"><code>valid_windowable/2</code></a>
+<li><a href="pxl-win-cwin-ensure_valid_window.html#pxl-win-cwin-ensure_valid_window"><code>ensure_valid_window/2</code></a>
+<li><a href="pxl-win-cwin-ensure_valid_windowable.html#pxl-win-cwin-ensure_valid_windowable"><code>ensure_valid_windowable/3</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-ev.html#pxl-ev">Events and Callbacks</a>
+<ul>
+<li><a href="pxl-ev-bas.html#pxl-ev-bas">Introduction</a>
+<li><a href="pxl-ev-spec.html#pxl-ev-spec">Event Specification</a>
+<ul>
+<li><a href="pxl-ev-spec-ev1.html#pxl-ev-spec-ev1">Events uniquely selected by a single mask</a>
+<li><a href="pxl-ev-spec-ev2.html#pxl-ev-spec-ev2">Events that come in <dfn>pairs</dfn> selected by a single mask</a>
+<li><a href="pxl-ev-spec-mev1.html#pxl-ev-spec-mev1">Multiple events selected by a single mask</a>
+<li><a href="pxl-ev-spec-mev2.html#pxl-ev-spec-mev2">Multiple events selected by different masks</a>
+<li><a href="pxl-ev-spec-sev2.html#pxl-ev-spec-sev2">Single events selected by multiple masks</a>
+<li><a href="pxl-ev-spec-asel.html#pxl-ev-spec-asel">Events that are always selected</a>
+</li></ul>
+<li><a href="pxl-ev-fld.html#pxl-ev-fld">Event Fields</a>
+<ul>
+<li><a href="pxl-ev-fld-but.html#pxl-ev-fld-but"><code>button_press</code> and <code>button_release</code> Events</a>
+<li><a href="pxl-ev-fld-cnot.html#pxl-ev-fld-cnot"><code>circulate_notify</code> Event</a>
+<li><a href="pxl-ev-fld-creq.html#pxl-ev-fld-creq"><code>circulate_request</code> Event</a>
+<li><a href="pxl-ev-fld-cm.html#pxl-ev-fld-cm"><code>client_message</code> Event</a>
+<li><a href="pxl-ev-fld-cmnot.html#pxl-ev-fld-cmnot"><code>colormap_notify</code> Event</a>
+<li><a href="pxl-ev-fld-cnfnot.html#pxl-ev-fld-cnfnot"><code>configure_notify</code> Event</a>
+<li><a href="pxl-ev-fld-cnfreq.html#pxl-ev-fld-cnfreq"><code>configure_request</code> Event</a>
+<li><a href="pxl-ev-fld-crenot.html#pxl-ev-fld-crenot"><code>create_notify</code> Event</a>
+<li><a href="pxl-ev-fld-desnot.html#pxl-ev-fld-desnot"><code>destroy_notify</code> Event</a>
+<li><a href="pxl-ev-fld-elnot.html#pxl-ev-fld-elnot"><code>enter_notify</code> and <code>leave_notify</code> Events</a>
+<li><a href="pxl-ev-fld-exp.html#pxl-ev-fld-exp"><code>expose</code> Event</a>
+<li><a href="pxl-ev-fld-foc.html#pxl-ev-fld-foc"><code>focus_in</code> and <code>focus_out</code> Events</a>
+<li><a href="pxl-ev-fld-grexp.html#pxl-ev-fld-grexp"><code>graphics_expose</code> Event</a>
+<li><a href="pxl-ev-fld-noexp.html#pxl-ev-fld-noexp"><code>no_expose</code> Event</a>
+<li><a href="pxl-ev-fld-grav.html#pxl-ev-fld-grav"><code>gravity_notify</code> Event</a>
+<li><a href="pxl-ev-fld-keynot.html#pxl-ev-fld-keynot"><code>keymap_notify</code> Event</a>
+<li><a href="pxl-ev-fld-key.html#pxl-ev-fld-key"><code>key_press</code> and <code>key_release</code> Events</a>
+<li><a href="pxl-ev-fld-mapnot.html#pxl-ev-fld-mapnot"><code>map_notify</code> Event</a>
+<li><a href="pxl-ev-fld-unmapnot.html#pxl-ev-fld-unmapnot"><code>unmap_notify</code> Event</a>
+<li><a href="pxl-ev-fld-mapgnot.html#pxl-ev-fld-mapgnot"><code>mapping_notify</code> Event</a>
+<li><a href="pxl-ev-fld-mapreq.html#pxl-ev-fld-mapreq"><code>map_request</code> Event</a>
+<li><a href="pxl-ev-fld-motnot.html#pxl-ev-fld-motnot"><code>motion_notify</code> Event</a>
+<li><a href="pxl-ev-fld-propnot.html#pxl-ev-fld-propnot"><code>property_notify</code> Event</a>
+<li><a href="pxl-ev-fld-repnot.html#pxl-ev-fld-repnot"><code>reparent_notify</code> Event</a>
+<li><a href="pxl-ev-fld-reszreq.html#pxl-ev-fld-reszreq"><code>resize_request</code> Event</a>
+<li><a href="pxl-ev-fld-selclr.html#pxl-ev-fld-selclr"><code>selection_clear</code> Event</a>
+<li><a href="pxl-ev-fld-selnot.html#pxl-ev-fld-selnot"><code>selection_notify</code> Event</a>
+<li><a href="pxl-ev-fld-selreq.html#pxl-ev-fld-selreq"><code>selection_request</code> Event</a>
+<li><a href="pxl-ev-fld-visnot.html#pxl-ev-fld-visnot"><code>visibility_notify</code> Event</a>
+<li><a href="pxl-ev-fld-def.html#pxl-ev-fld-def"><code>default</code> Event</a>
+</li></ul>
+<li><a href="pxl-ev-act.html#pxl-ev-act">Activating the callback mechanism</a>
+<ul>
+<li><a href="pxl-ev-act-handle_events.html#pxl-ev-act-handle_events"><code>handle_events/[0,1,2,3]</code></a>
+<li><a href="pxl-ev-act-dispatch_event.html#pxl-ev-act-dispatch_event"><code>dispatch_event/[1,2,3]</code></a>
+<li><a href="pxl-ev-act-exit.html#pxl-ev-act-exit">Exit Variables</a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-prim.html#pxl-prim">Drawing Primitives</a>
+<ul>
+<li><a href="pxl-prim-cca.html#pxl-prim-cca">Clearing and Copying Areas</a>
+<ul>
+<li><a href="pxl-prim-cca-clear_area.html#pxl-prim-cca-clear_area"><code>clear_area/[5,6]</code></a>
+<li><a href="pxl-prim-cca-clear_window.html#pxl-prim-cca-clear_window"><code>clear_window/1</code></a>
+<li><a href="pxl-prim-cca-copy_area.html#pxl-prim-cca-copy_area"><code>copy_area/[8,9]</code></a>
+<li><a href="pxl-prim-cca-copy_plane.html#pxl-prim-cca-copy_plane"><code>copy_plane/[9,10]</code></a>
+</li></ul>
+<li><a href="pxl-prim-pnt.html#pxl-prim-pnt">Drawing Points</a>
+<ul>
+<li><a href="pxl-prim-pnt-draw_point.html#pxl-prim-pnt-draw_point"><code>draw_point/[3,4]</code></a>
+<li><a href="pxl-prim-pnt-draw_points.html#pxl-prim-pnt-draw_points"><code>draw_points/[2,3]</code></a>
+<li><a href="pxl-prim-pnt-draw_points_relative.html#pxl-prim-pnt-draw_points_relative"><code>draw_points_relative/[2,3]</code></a>
+</li></ul>
+<li><a href="pxl-prim-lin.html#pxl-prim-lin">Drawing Lines</a>
+<ul>
+<li><a href="pxl-prim-lin-draw_line.html#pxl-prim-lin-draw_line"><code>draw_line/[5,6]</code></a>
+<li><a href="pxl-prim-lin-draw_lines.html#pxl-prim-lin-draw_lines"><code>draw_lines/[2,3]</code></a>
+<li><a href="pxl-prim-lin-draw_lines_relative.html#pxl-prim-lin-draw_lines_relative"><code>draw_lines_relative/[2,3]</code></a>
+<li><a href="pxl-prim-lin-draw_segments.html#pxl-prim-lin-draw_segments"><code>draw_segments/[2,3]</code></a>
+</li></ul>
+<li><a href="pxl-prim-poly.html#pxl-prim-poly">Drawing and Filling Polygons</a>
+<ul>
+<li><a href="pxl-prim-poly-draw_polygon.html#pxl-prim-poly-draw_polygon"><code>draw_polygon/[2,3]</code></a>
+<li><a href="pxl-prim-poly-draw_polygon_relative.html#pxl-prim-poly-draw_polygon_relative"><code>draw_polygon_relative/[2,3]</code></a>
+<li><a href="pxl-prim-poly-fill_polygon.html#pxl-prim-poly-fill_polygon"><code>fill_polygon/[3,4]</code></a>
+<li><a href="pxl-prim-poly-fill_polygon_relative.html#pxl-prim-poly-fill_polygon_relative"><code>fill_polygon_relative/[3,4]</code></a>
+</li></ul>
+<li><a href="pxl-prim-rect.html#pxl-prim-rect">Drawing and Filling Rectangles</a>
+<ul>
+<li><a href="pxl-prim-rect-draw_rectangle.html#pxl-prim-rect-draw_rectangle"><code>draw_rectangle/[5,6]</code></a>
+<li><a href="pxl-prim-rect-draw_rectangles.html#pxl-prim-rect-draw_rectangles"><code>draw_rectangles/[2,3]</code></a>
+<li><a href="pxl-prim-rect-fill_rectangle.html#pxl-prim-rect-fill_rectangle"><code>fill_rectangle/[5,6]</code></a>
+<li><a href="pxl-prim-rect-fill_rectangles.html#pxl-prim-rect-fill_rectangles"><code>fill_rectangles/[2,3]</code></a>
+</li></ul>
+<li><a href="pxl-prim-arcs.html#pxl-prim-arcs">Drawing and Filling Arcs</a>
+<ul>
+<li><a href="pxl-prim-arcs-draw_arc.html#pxl-prim-arcs-draw_arc"><code>draw_arc/[7,8]</code></a>
+<li><a href="pxl-prim-arcs-draw_arcs.html#pxl-prim-arcs-draw_arcs"><code>draw_arcs/[2,3]</code></a>
+<li><a href="pxl-prim-arcs-fill_arc.html#pxl-prim-arcs-fill_arc"><code>fill_arc/[7,8]</code></a>
+<li><a href="pxl-prim-arcs-fill_arcs.html#pxl-prim-arcs-fill_arcs"><code>fill_arcs/[2,3]</code></a>
+</li></ul>
+<li><a href="pxl-prim-ell.html#pxl-prim-ell">Drawing and Filling Ellipses and Circles</a>
+<ul>
+<li><a href="pxl-prim-ell-draw_ellipse.html#pxl-prim-ell-draw_ellipse"><code>draw_ellipse/[5,6]</code></a>
+<li><a href="pxl-prim-ell-draw_ellipses.html#pxl-prim-ell-draw_ellipses"><code>draw_ellipses/[2,3]</code></a>
+<li><a href="pxl-prim-ell-fill_ellipse.html#pxl-prim-ell-fill_ellipse"><code>fill_ellipse/[5,6]</code></a>
+<li><a href="pxl-prim-ell-fill_ellipses.html#pxl-prim-ell-fill_ellipses"><code>fill_ellipses/[2,3]</code></a>
+</li></ul>
+<li><a href="pxl-prim-txt.html#pxl-prim-txt">Drawing Text</a>
+<ul>
+<li><a href="pxl-prim-txt-draw_string.html#pxl-prim-txt-draw_string"><code>draw_string/[4,5]</code></a>
+<li><a href="pxl-prim-txt-draw_image_string.html#pxl-prim-txt-draw_image_string"><code>draw_image_string/[4,5]</code></a>
+<li><a href="pxl-prim-txt-draw_text.html#pxl-prim-txt-draw_text"><code>draw_text/[4,5]</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-graf.html#pxl-graf">Graphics Attributes and Graphics Contexts</a>
+<ul>
+<li><a href="pxl-graf-graf.html#pxl-graf-graf">Graphics Attributes</a>
+<li><a href="pxl-graf-find.html#pxl-graf-find">Finding and Changing Graphics Attributes</a>
+<ul>
+<li><a href="pxl-graf-find-get_graphics_attributes.html#pxl-graf-find-get_graphics_attributes"><code>get_graphics_attributes/2</code></a>
+<li><a href="pxl-graf-find-put_graphics_attributes.html#pxl-graf-find-put_graphics_attributes"><code>put_graphics_attributes/2</code></a>
+<li><a href="pxl-graf-find-exa.html#pxl-graf-find-exa">Example</a>
+</li></ul>
+<li><a href="pxl-graf-cre.html#pxl-graf-cre">Creating and Destroying GCs</a>
+<ul>
+<li><a href="pxl-graf-cre-create_gc.html#pxl-graf-cre-create_gc"><code>create_gc/[2,3]</code></a>
+<li><a href="pxl-graf-cre-release_gc.html#pxl-graf-cre-release_gc"><code>release_gc/1</code></a>
+<li><a href="pxl-graf-cre-use.html#pxl-graf-cre-use">Using Gcs</a>
+<li><a href="pxl-graf-cre-shr.html#pxl-graf-cre-shr">Sharing and Cloning of Gcs</a>
+</li></ul>
+<li><a href="pxl-graf-cgc.html#pxl-graf-cgc">Checking GC validity</a>
+<ul>
+<li><a href="pxl-graf-cgc-valid_gc.html#pxl-graf-cgc-valid_gc"><code>valid_gc/1</code></a>
+<li><a href="pxl-graf-cgc-ensure_valid_gc.html#pxl-graf-cgc-ensure_valid_gc"><code>ensure_valid_gc/2</code></a>
+<li><a href="pxl-graf-cgc-valid_gcable.html#pxl-graf-cgc-valid_gcable"><code>valid_gcable/2</code></a>
+<li><a href="pxl-graf-cgc-ensure_valid_gcable.html#pxl-graf-cgc-ensure_valid_gcable"><code>ensure_valid_gcable/3</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-font.html#pxl-font">Fonts</a>
+<ul>
+<li><a href="pxl-font-font.html#pxl-font-font">Font Attributes</a>
+<li><a href="pxl-font-lod.html#pxl-font-lod">Loading and Unloading Fonts</a>
+<ul>
+<li><a href="pxl-font-lod-load_font.html#pxl-font-lod-load_font"><code>load_font/[2,3]</code></a>
+<li><a href="pxl-font-lod-release_font.html#pxl-font-lod-release_font"><code>release_font/1</code></a>
+</li></ul>
+<li><a href="pxl-font-find.html#pxl-font-find">Finding Font Attributes</a>
+<ul>
+<li><a href="pxl-font-find-get_font_attributes.html#pxl-font-find-get_font_attributes"><code>get_font_attributes/2</code></a>
+</li></ul>
+<li><a href="pxl-font-pat.html#pxl-font-pat">The Font Search Path</a>
+<ul>
+<li><a href="pxl-font-pat-get_font_path.html#pxl-font-pat-get_font_path"><code>get_font_path/[1,2]</code></a>
+<li><a href="pxl-font-pat-set_font_path.html#pxl-font-pat-set_font_path"><code>set_font_path/[1,2]</code></a>
+</li></ul>
+<li><a href="pxl-font-what.html#pxl-font-what">What Fonts Are Available?</a>
+<ul>
+<li><a href="pxl-font-what-current_font.html#pxl-font-what-current_font"><code>current_font/[1,2,3,4]</code></a>
+<li><a href="pxl-font-what-current_font_attributes.html#pxl-font-what-current_font_attributes"><code>current_font_attributes/[2,3,4,5]</code></a>
+</li></ul>
+<li><a href="pxl-font-siz.html#pxl-font-siz">The Size of a String</a>
+<ul>
+<li><a href="pxl-font-siz-text_width.html#pxl-font-siz-text_width"><code>text_width/3</code></a>
+<li><a href="pxl-font-siz-text_extents.html#pxl-font-siz-text_extents"><code>text_extents/[7,8]</code></a>
+<li><a href="pxl-font-siz-query_text_extents.html#pxl-font-siz-query_text_extents"><code>query_text_extents/[7,8]</code></a>
+</li></ul>
+<li><a href="pxl-font-cfnt.html#pxl-font-cfnt">Checking Font Validity</a>
+<ul>
+<li><a href="pxl-font-cfnt-valid_font.html#pxl-font-cfnt-valid_font"><code>valid_font/1</code></a>
+<li><a href="pxl-font-cfnt-ensure_valid_font.html#pxl-font-cfnt-ensure_valid_font"><code>ensure_valid_font/2</code></a>
+<li><a href="pxl-font-cfnt-valid_fontable.html#pxl-font-cfnt-valid_fontable"><code>valid_fontable/2</code></a>
+<li><a href="pxl-font-cfnt-ensure_valid_fontable.html#pxl-font-cfnt-ensure_valid_fontable"><code>ensure_valid_fontable/3</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-col.html#pxl-col">Colors and Colormaps</a>
+<ul>
+<li><a href="pxl-col-cs.html#pxl-col-cs">Color Specifications</a>
+<li><a href="pxl-col-vis.html#pxl-col-vis">Visuals</a>
+<li><a href="pxl-col-use.html#pxl-col-use">Using Colors</a>
+<li><a href="pxl-col-alc.html#pxl-col-alc">Allocating and Freeing Colors</a>
+<ul>
+<li><a href="pxl-col-alc-alloc_color.html#pxl-col-alc-alloc_color"><code>alloc_color/[2,3,4,5]</code></a>
+<li><a href="pxl-col-alc-parse_color.html#pxl-col-alc-parse_color"><code>parse_color/[2,3]</code></a>
+<li><a href="pxl-col-alc-free_colors.html#pxl-col-alc-free_colors"><code>free_colors/[2,3]</code></a>
+</li></ul>
+<li><a href="pxl-col-std.html#pxl-col-std">Standard Colormaps</a>
+<ul>
+<li><a href="pxl-col-std-get_standard_colormap.html#pxl-col-std-get_standard_colormap"><code>get_standard_colormap/[2,3]</code></a>
+</li></ul>
+<li><a href="pxl-col-alccp.html#pxl-col-alccp">Allocating Color Cells and Planes</a>
+<ul>
+<li><a href="pxl-col-alccp-alloc_color_cells.html#pxl-col-alccp-alloc_color_cells"><code>alloc_color_cells/5</code> and <code>alloc_contig_color_cells/5</code></a>
+<li><a href="pxl-col-alccp-alloc_color_planes.html#pxl-col-alccp-alloc_color_planes"><code>alloc_color_planes/[8,9]</code> and <code>alloc_contig_color_planes/[8,9]</code></a>
+<li><a href="pxl-col-alccp-freeing.html#pxl-col-alccp-freeing">Freeing Color Cells and Planes</a>
+</li></ul>
+<li><a href="pxl-col-find.html#pxl-col-find">Finding and Changing Colors</a>
+<ul>
+<li><a href="pxl-col-find-put_color.html#pxl-col-find-put_color"><code>put_color/[2,3]</code></a>
+<li><a href="pxl-col-find-put_colors.html#pxl-col-find-put_colors"><code>put_colors/[1,2]</code></a>
+<li><a href="pxl-col-find-get_color.html#pxl-col-find-get_color"><code>get_color/[2,3]</code></a>
+<li><a href="pxl-col-find-get_colors.html#pxl-col-find-get_colors"><code>get_colors/[1,2]</code></a>
+</li></ul>
+<li><a href="pxl-col-cre.html#pxl-col-cre">Creating and Freeing Colormaps</a>
+<ul>
+<li><a href="pxl-col-cre-create_colormap.html#pxl-col-cre-create_colormap"><code>create_colormap/[1,2,3]</code></a>
+<li><a href="pxl-col-cre-create_colormap_and_alloc.html#pxl-col-cre-create_colormap_and_alloc"><code>create_colormap_and_alloc/[1,2,3]</code></a>
+<li><a href="pxl-col-cre-free_colormap.html#pxl-col-cre-free_colormap"><code>free_colormap/1</code></a>
+<li><a href="pxl-col-cre-copy_colormap_and_free.html#pxl-col-cre-copy_colormap_and_free"><code>copy_colormap_and_free/2</code></a>
+</li></ul>
+<li><a href="pxl-col-ins.html#pxl-col-ins">Colormap Installation</a>
+<ul>
+<li><a href="pxl-col-ins-install_colormap.html#pxl-col-ins-install_colormap"><code>install_colormap/1</code></a>
+<li><a href="pxl-col-ins-uninstall_colormap.html#pxl-col-ins-uninstall_colormap"><code>uninstall_colormap/1</code></a>
+<li><a href="pxl-col-ins-installed_colormap.html#pxl-col-ins-installed_colormap"><code>installed_colormap/[1,2]</code></a>
+</li></ul>
+<li><a href="pxl-col-ccmap.html#pxl-col-ccmap">Checking Colormap Validity</a>
+<ul>
+<li><a href="pxl-col-ccmap-valid_colormap.html#pxl-col-ccmap-valid_colormap"><code>valid_colormap/1</code></a>
+<li><a href="pxl-col-ccmap-valid_colormapable.html#pxl-col-ccmap-valid_colormapable"><code>valid_colormapable/2</code></a>
+<li><a href="pxl-col-ccmap-ensure_valid_colormap.html#pxl-col-ccmap-ensure_valid_colormap"><code>ensure_valid_colormap/2</code></a>
+<li><a href="pxl-col-ccmap-ensure_valid_colormapable.html#pxl-col-ccmap-ensure_valid_colormapable"><code>ensure_valid_colormapable/3</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-bmp.html#pxl-bmp">Pixmaps and Bitmaps</a>
+<ul>
+<li><a href="pxl-bmp-attr.html#pxl-bmp-attr">Pixmap Attributes</a>
+<li><a href="pxl-bmp-find.html#pxl-bmp-find">Finding and Changing Pixmap Attributes</a>
+<ul>
+<li><a href="pxl-bmp-find-get_pixmap_attributes.html#pxl-bmp-find-get_pixmap_attributes"><code>get_pixmap_attributes/[2,3]</code></a>
+<li><a href="pxl-bmp-find-put_pixmap_attributes.html#pxl-bmp-find-put_pixmap_attributes"><code>put_pixmap_attributes/[2,3]</code></a>
+</li></ul>
+<li><a href="pxl-bmp-cre.html#pxl-bmp-cre">Creating and Freeing Pixmaps</a>
+<ul>
+<li><a href="pxl-bmp-cre-create_pixmap.html#pxl-bmp-cre-create_pixmap"><code>create_pixmap/[2,3]</code></a>
+<li><a href="pxl-bmp-cre-free_pixmap.html#pxl-bmp-cre-free_pixmap"><code>free_pixmap/1</code></a>
+</li></ul>
+<li><a href="pxl-bmp-rdwr.html#pxl-bmp-rdwr">Reading and Writing Bitmap Files</a>
+<ul>
+<li><a href="pxl-bmp-rdwr-read_bitmap_file.html#pxl-bmp-rdwr-read_bitmap_file"><code>read_bitmap_file/[2,3,4,5]</code></a>
+<li><a href="pxl-bmp-rdwr-write_bitmap_file.html#pxl-bmp-rdwr-write_bitmap_file"><code>write_bitmap_file/[2,4]</code></a>
+</li></ul>
+<li><a href="pxl-bmp-cpix.html#pxl-bmp-cpix">Checking Pixmap Validity</a>
+<ul>
+<li><a href="pxl-bmp-cpix-valid_pixmap.html#pxl-bmp-cpix-valid_pixmap"><code>valid_pixmap/1</code></a>
+<li><a href="pxl-bmp-cpix-ensure_valid_pixmap.html#pxl-bmp-cpix-ensure_valid_pixmap"><code>ensure_valid_pixmap/2</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-crs.html#pxl-crs">Cursors</a>
+<ul>
+<li><a href="pxl-crs-cre.html#pxl-crs-cre">Creating and Freeing Cursors</a>
+<ul>
+<li><a href="pxl-crs-cre-create_cursor.html#pxl-crs-cre-create_cursor"><code>create_cursor/[2,3,4,5]</code></a>
+<li><a href="pxl-crs-cre-free_cursor.html#pxl-crs-cre-free_cursor"><code>free_cursor/1</code></a>
+</li></ul>
+<li><a href="pxl-crs-util.html#pxl-crs-util">Cursor Utilities</a>
+<ul>
+<li><a href="pxl-crs-util-recolor_cursor.html#pxl-crs-util-recolor_cursor"><code>recolor_cursor/3</code></a>
+<li><a href="pxl-crs-util-query_best_cursor.html#pxl-crs-util-query_best_cursor"><code>query_best_cursor/[4,5]</code></a>
+</li></ul>
+<li><a href="pxl-crs-ccrs.html#pxl-crs-ccrs">Checking Cursor Validity</a>
+<ul>
+<li><a href="pxl-crs-ccrs-valid_cursor.html#pxl-crs-ccrs-valid_cursor"><code>valid_cursor/1</code></a>
+<li><a href="pxl-crs-ccrs-ensure_valid_cursor.html#pxl-crs-ccrs-ensure_valid_cursor"><code>ensure_valid_cursor/2</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-dis.html#pxl-dis">Displays and Screens</a>
+<ul>
+<li><a href="pxl-dis-attr.html#pxl-dis-attr">Display Attributes</a>
+<ul>
+<li><a href="pxl-dis-attr-get_display_attributes.html#pxl-dis-attr-get_display_attributes"><code>get_display_attributes/[1,2]</code></a>
+</li></ul>
+<li><a href="pxl-dis-opn.html#pxl-dis-opn">Opening and Closing Displays</a>
+<ul>
+<li><a href="pxl-dis-opn-open_display.html#pxl-dis-opn-open_display"><code>open_display/2</code></a>
+<li><a href="pxl-dis-opn-close_display.html#pxl-dis-opn-close_display"><code>close_display/1</code></a>
+</li></ul>
+<li><a href="pxl-dis-sync.html#pxl-dis-sync">Flushing and Syncing Displays</a>
+<ul>
+<li><a href="pxl-dis-sync-flush.html#pxl-dis-sync-flush"><code>flush/[0,1]</code></a>
+<li><a href="pxl-dis-sync-sync.html#pxl-dis-sync-sync"><code>sync/[0,1]</code> and <code>sync_discard/[0,1]</code></a>
+</li></ul>
+<li><a href="pxl-dis-find.html#pxl-dis-find">Finding Currently Open Displays</a>
+<ul>
+<li><a href="pxl-dis-find-current_display.html#pxl-dis-find-current_display"><code>current_display/1</code></a>
+<li><a href="pxl-dis-find-default_display.html#pxl-dis-find-default_display"><code>default_display/1</code></a>
+</li></ul>
+<li><a href="pxl-dis-cdsp.html#pxl-dis-cdsp">Checking Display Validity</a>
+<ul>
+<li><a href="pxl-dis-cdsp-valid_display.html#pxl-dis-cdsp-valid_display"><code>valid_display/1</code></a>
+<li><a href="pxl-dis-cdsp-valid_displayable.html#pxl-dis-cdsp-valid_displayable"><code>valid_displayable/2</code></a>
+<li><a href="pxl-dis-cdsp-ensure_valid_display.html#pxl-dis-cdsp-ensure_valid_display"><code>ensure_valid_display/2</code></a>
+<li><a href="pxl-dis-cdsp-ensure_valid_displayable.html#pxl-dis-cdsp-ensure_valid_displayable"><code>ensure_valid_displayable/3</code></a>
+</li></ul>
+<li><a href="pxl-dis-atts.html#pxl-dis-atts">Screen Attributes</a>
+<ul>
+<li><a href="pxl-dis-atts-get_screen_attributes.html#pxl-dis-atts-get_screen_attributes"><code>get_screen_attributes/[1,2]</code></a>
+</li></ul>
+<li><a href="pxl-dis-def.html#pxl-dis-def">The Default Screen</a>
+<ul>
+<li><a href="pxl-dis-def-default_screen.html#pxl-dis-def-default_screen"><code>default_screen/2</code></a>
+</li></ul>
+<li><a href="pxl-dis-cscr.html#pxl-dis-cscr">Checking Screen Validity</a>
+<ul>
+<li><a href="pxl-dis-cscr-valid_screen.html#pxl-dis-cscr-valid_screen"><code>valid_screen/1</code></a>
+<li><a href="pxl-dis-cscr-valid_screenable.html#pxl-dis-cscr-valid_screenable"><code>valid_screenable/2</code></a>
+<li><a href="pxl-dis-cscr-ensure_valid_screen.html#pxl-dis-cscr-ensure_valid_screen"><code>ensure_valid_screen/2</code></a>
+<li><a href="pxl-dis-cscr-ensure_valid_screenable.html#pxl-dis-cscr-ensure_valid_screenable"><code>ensure_valid_screenable/3</code></a>
+</li></ul>
+<li><a href="pxl-dis-ifc.html#pxl-dis-ifc">Interfacing with Foreign Code</a>
+<ul>
+<li><a href="pxl-dis-ifc-proxl_xlib.html#pxl-dis-ifc-proxl_xlib"><code>proxl_xlib/[3,4]</code></a>
+<li><a href="pxl-dis-ifc-display_xdisplay.html#pxl-dis-ifc-display_xdisplay"><code>display_xdisplay/2</code></a>
+<li><a href="pxl-dis-ifc-screen_xscreen.html#pxl-dis-ifc-screen_xscreen"><code>screen_xscreen/2</code></a>
+<li><a href="pxl-dis-ifc-visual_id.html#pxl-dis-ifc-visual_id"><code>visual_id/[2,3]</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-evf.html#pxl-evf">Event Handling Functions</a>
+<ul>
+<li><a href="pxl-evf-active_windows.html#pxl-evf-active_windows"><code>active_windows/[0,1]</code></a>
+<li><a href="pxl-evf-events_queued.html#pxl-evf-events_queued"><code>events_queued/[2,3]</code></a>
+<li><a href="pxl-evf-pending.html#pxl-evf-pending"><code>pending/[1,2]</code></a>
+<li><a href="pxl-evf-new_event.html#pxl-evf-new_event"><code>new_event/[1,2]</code></a>
+<li><a href="pxl-evf-dispose_event.html#pxl-evf-dispose_event"><code>dispose_event/1</code></a>
+<li><a href="pxl-evf-next_event.html#pxl-evf-next_event"><code>next_event/[2,3]</code></a>
+<li><a href="pxl-evf-peek_event.html#pxl-evf-peek_event"><code>peek_event/[2,3]</code></a>
+<li><a href="pxl-evf-window_event.html#pxl-evf-window_event"><code>window_event/4</code></a>
+<li><a href="pxl-evf-check_window_event.html#pxl-evf-check_window_event"><code>check_window_event/4</code></a>
+<li><a href="pxl-evf-mask_event.html#pxl-evf-mask_event"><code>mask_event/[3,4]</code></a>
+<li><a href="pxl-evf-check_mask_event.html#pxl-evf-check_mask_event"><code>check_mask_event/[3,4]</code></a>
+<li><a href="pxl-evf-check_typed_event.html#pxl-evf-check_typed_event"><code>check_typed_event/[2,3]</code></a>
+<li><a href="pxl-evf-check_typed_window_event.html#pxl-evf-check_typed_window_event"><code>check_typed_window_event/3</code></a>
+<li><a href="pxl-evf-put_back_event.html#pxl-evf-put_back_event"><code>put_back_event/[1,2]</code></a>
+<li><a href="pxl-evf-send_event.html#pxl-evf-send_event"><code>send_event/[4,5]</code></a>
+<li><a href="pxl-evf-send.html#pxl-evf-send"><code>send/[4,5]</code></a>
+<li><a href="pxl-evf-get_event_values.html#pxl-evf-get_event_values"><code>get_event_values/2</code></a>
+<li><a href="pxl-evf-put_event_values.html#pxl-evf-put_event_values"><code>put_event_values/2</code></a>
+<li><a href="pxl-evf-get_motion_events.html#pxl-evf-get_motion_events"><code>get_motion_events/4</code></a>
+</li></ul>
+<li><a href="pxl-eh.html#pxl-eh">Handling Errors Under ProXL</a>
+<ul>
+<li><a href="pxl-eh-bas.html#pxl-eh-bas">Introduction</a>
+<li><a href="pxl-eh-rec.html#pxl-eh-rec">Recoverable Errors</a>
+<li><a href="pxl-eh-fat.html#pxl-eh-fat">Fatal Errors</a>
+<li><a href="pxl-eh-eh.html#pxl-eh-eh">The ProXL Error Handler</a>
+<li><a href="pxl-eh-eho.html#pxl-eh-eho">Error Handling Options</a>
+<ul>
+<li><a href="pxl-eh-eho-error_action.html#pxl-eh-eho-error_action"><code>error_action/[2,3]</code></a>
+<li><a href="pxl-eh-eho-synchronize.html#pxl-eh-eho-synchronize"><code>synchronize/[1,2]</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-wmf.html#pxl-wmf">Window Manager Functions</a>
+<ul>
+<li><a href="pxl-wmf-lif.html#pxl-wmf-lif">Controlling the Lifetime of a Window</a>
+<ul>
+<li><a href="pxl-wmf-lif-change_save_set.html#pxl-wmf-lif-change_save_set"><code>change_save_set/[2,3]</code></a>
+</li></ul>
+<li><a href="pxl-wmf-grp.html#pxl-wmf-grp">Grabbing the Pointer</a>
+<ul>
+<li><a href="pxl-wmf-grp-grab_pointer.html#pxl-wmf-grp-grab_pointer"><code>grab_pointer/9</code></a>
+<li><a href="pxl-wmf-grp-grab_button.html#pxl-wmf-grp-grab_button"><code>grab_button/9</code></a>
+<li><a href="pxl-wmf-grp-ungrab_button.html#pxl-wmf-grp-ungrab_button"><code>ungrab_button/3</code></a>
+<li><a href="pxl-wmf-grp-ungrab_pointer.html#pxl-wmf-grp-ungrab_pointer"><code>ungrab_pointer/[0,1,2]</code></a>
+<li><a href="pxl-wmf-grp-change_active_pointer_grab.html#pxl-wmf-grp-change_active_pointer_grab"><code>change_active_pointer_grab/[3,4]</code></a>
+</li></ul>
+<li><a href="pxl-wmf-grk.html#pxl-wmf-grk">Grabbing the Keyboard</a>
+<ul>
+<li><a href="pxl-wmf-grk-grab_keyboard.html#pxl-wmf-grk-grab_keyboard"><code>grab_keyboard/6</code></a>
+<li><a href="pxl-wmf-grk-ungrab_keyboard.html#pxl-wmf-grk-ungrab_keyboard"><code>ungrab_keyboard/[0,1,2]</code></a>
+<li><a href="pxl-wmf-grk-grab_key.html#pxl-wmf-grk-grab_key"><code>grab_key/6</code></a>
+<li><a href="pxl-wmf-grk-ungrab_key.html#pxl-wmf-grk-ungrab_key"><code>ungrab_key/3</code></a>
+<li><a href="pxl-wmf-grk-allow_events.html#pxl-wmf-grk-allow_events"><code>allow_events/[1,2,3]</code></a>
+</li></ul>
+<li><a href="pxl-wmf-grs.html#pxl-wmf-grs">Grabbing the Server</a>
+<ul>
+<li><a href="pxl-wmf-grs-grab_server.html#pxl-wmf-grs-grab_server"><code>grab_server/[0,1]</code></a>
+<li><a href="pxl-wmf-grs-ungrab_server.html#pxl-wmf-grs-ungrab_server"><code>ungrab_server/[0,1]</code></a>
+</li></ul>
+<li><a href="pxl-wmf-misc.html#pxl-wmf-misc">Miscellaneous Control Functions</a>
+<ul>
+<li><a href="pxl-wmf-misc-warp_pointer.html#pxl-wmf-misc-warp_pointer"><code>warp_pointer/8</code></a>
+<li><a href="pxl-wmf-misc-set_input_focus.html#pxl-wmf-misc-set_input_focus"><code>set_input_focus/3</code></a>
+<li><a href="pxl-wmf-misc-get_input_focus.html#pxl-wmf-misc-get_input_focus"><code>get_input_focus/[2,3]</code></a>
+<li><a href="pxl-wmf-misc-set_close_down_mode.html#pxl-wmf-misc-set_close_down_mode"><code>set_close_down_mode/[1,2]</code></a>
+<li><a href="pxl-wmf-misc-kill_client.html#pxl-wmf-misc-kill_client"><code>kill_client/[0,1,2]</code></a>
+</li></ul>
+<li><a href="pxl-wmf-pctl.html#pxl-wmf-pctl">Pointer Control</a>
+<ul>
+<li><a href="pxl-wmf-pctl-get_pointer_attributes.html#pxl-wmf-pctl-get_pointer_attributes"><code>get_pointer_attributes/[1,2]</code></a>
+<li><a href="pxl-wmf-pctl-put_pointer_attributes.html#pxl-wmf-pctl-put_pointer_attributes"><code>put_pointer_attributes/[1,2]</code></a>
+</li></ul>
+<li><a href="pxl-wmf-kbd.html#pxl-wmf-kbd">Keyboard Control</a>
+<ul>
+<li><a href="pxl-wmf-kbd-get_keyboard_attributes.html#pxl-wmf-kbd-get_keyboard_attributes"><code>get_keyboard_attributes/[1,2]</code></a>
+<li><a href="pxl-wmf-kbd-put_keyboard_attributes.html#pxl-wmf-kbd-put_keyboard_attributes"><code>put_keyboard_attributes/[1,2]</code></a>
+<li><a href="pxl-wmf-kbd-bell.html#pxl-wmf-kbd-bell"><code>bell/[1,2]</code></a>
+</li></ul>
+<li><a href="pxl-wmf-ssav.html#pxl-wmf-ssav">Screen Saver Control</a>
+<ul>
+<li><a href="pxl-wmf-ssav-set_screen_saver.html#pxl-wmf-ssav-set_screen_saver"><code>set_screen_saver/[4,5]</code></a>
+<li><a href="pxl-wmf-ssav-force_screen_saver.html#pxl-wmf-ssav-force_screen_saver"><code>force_screen_saver/[1,2]</code></a>
+<li><a href="pxl-wmf-ssav-get_screen_saver.html#pxl-wmf-ssav-get_screen_saver"><code>get_screen_saver/[4,5]</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-util.html#pxl-util">Utility Functions</a>
+<ul>
+<li><a href="pxl-util-bit.html#pxl-util-bit">Bitmask Handling</a>
+<ul>
+<li><a href="pxl-util-bit-state_mask.html#pxl-util-bit-state_mask"><code>state_mask/2</code></a>
+<li><a href="pxl-util-bit-buttons_mask.html#pxl-util-bit-buttons_mask"><code>buttons_mask/2</code></a>
+<li><a href="pxl-util-bit-modifiers_mask.html#pxl-util-bit-modifiers_mask"><code>modifiers_mask/2</code></a>
+<li><a href="pxl-util-bit-event_list_mask.html#pxl-util-bit-event_list_mask"><code>event_list_mask/2</code></a>
+<li><a href="pxl-util-bit-bitset_composition.html#pxl-util-bit-bitset_composition"><code>bitset_composition/3</code></a>
+</li></ul>
+<li><a href="pxl-util-kbd.html#pxl-util-kbd">Key Handling</a>
+<ul>
+<li><a href="pxl-util-kbd-rebind_key.html#pxl-util-kbd-rebind_key"><code>rebind_key/[3,4]</code></a>
+<li><a href="pxl-util-kbd-key_keycode.html#pxl-util-kbd-key_keycode"><code>key_keycode/[3,4]</code></a>
+<li><a href="pxl-util-kbd-keysym.html#pxl-util-kbd-keysym"><code>keysym/[1,2]</code></a>
+<li><a href="pxl-util-kbd-is_key.html#pxl-util-kbd-is_key"><code>is_key/[2,3]</code></a>
+<li><a href="pxl-util-kbd-key_state.html#pxl-util-kbd-key_state"><code>key_state/[3,4]</code></a>
+<li><a href="pxl-util-kbd-key_auto_repeat.html#pxl-util-kbd-key_auto_repeat"><code>key_auto_repeat/[3,4]</code></a>
+</li></ul>
+<li><a href="pxl-util-pre.html#pxl-util-pre">Application Preferences</a>
+<ul>
+<li><a href="pxl-util-pre-get_default.html#pxl-util-pre-get_default"><code>get_default/[3,4]</code></a>
+<li><a href="pxl-util-pre-parse_geometry.html#pxl-util-pre-parse_geometry"><code>parse_geometry/5</code></a>
+<li><a href="pxl-util-pre-geometry.html#pxl-util-pre-geometry"><code>geometry/[12,13]</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxl-xlib.html#pxl-xlib">ProXL for Xlib speakers</a>
+<ul>
+<li><a href="pxl-xlib-nam.html#pxl-xlib-nam">Naming Conventions</a>
+<li><a href="pxl-xlib-arg.html#pxl-xlib-arg">Arguments</a>
+<li><a href="pxl-xlib-str.html#pxl-xlib-str">Data Structures</a>
+<li><a href="pxl-xlib-trm.html#pxl-xlib-trm">Prolog Terms</a>
+<li><a href="pxl-xlib-conv.html#pxl-xlib-conv">Convenience Functions</a>
+<li><a href="pxl-xlib-cch.html#pxl-xlib-cch">Caching</a>
+<li><a href="pxl-xlib-dscr.html#pxl-xlib-dscr">Default Screen and Display</a>
+<li><a href="pxl-xlib-graf.html#pxl-xlib-graf">Graphics Contexts</a>
+<li><a href="pxl-xlib-dgc.html#pxl-xlib-dgc">Default GCs</a>
+<li><a href="pxl-xlib-mgc.html#pxl-xlib-mgc">Modifying GCs</a>
+<li><a href="pxl-xlib-shr.html#pxl-xlib-shr">Sharing and Cloning of GCs</a>
+<li><a href="pxl-xlib-mem.html#pxl-xlib-mem">Memory Management</a>
+<li><a href="pxl-xlib-mix.html#pxl-xlib-mix">Mixed Language Programming</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_pxt" href="pxt.html#pxt">The ProXT Package</a>
+<ul>
+<li><a href="pxt-man.html#pxt-man">Technical Overview and Manual</a>
+<ul>
+<li><a href="pxt-man-bas.html#pxt-man-bas">Introduction</a>
+<li><a href="pxt-man-use.html#pxt-man-use">Using ProXT</a>
+<li><a href="pxt-man-nam.html#pxt-man-nam">Naming Conventions</a>
+<li><a href="pxt-man-args.html#pxt-man-args">Predicate Arguments</a>
+<li><a href="pxt-man-typ.html#pxt-man-typ">Type Matching</a>
+<li><a href="pxt-man-wres.html#pxt-man-wres">Widget Resources</a>
+<li><a href="pxt-man-cbk.html#pxt-man-cbk">Callbacks</a>
+<li><a href="pxt-man-upxl.html#pxt-man-upxl">Using ProXT with ProXL</a>
+<ul>
+<li><a href="pxt-man-upxl-xif_initialize.html#pxt-man-upxl-xif_initialize"><code>xif_initialize/3</code></a>
+<li><a href="pxt-man-upxl-widget_window.html#pxt-man-upxl-widget_window"><code>widget_window/2</code></a>
+<li><a href="pxt-man-upxl-widget_to_screen.html#pxt-man-upxl-widget_to_screen"><code>widget_to_screen/2</code></a>
+<li><a href="pxt-man-upxl-widget_to_display.html#pxt-man-upxl-widget_to_display"><code>widget_to_display/2</code></a>
+<li><a href="pxt-man-upxl-xif_main_loop.html#pxt-man-upxl-xif_main_loop"><code>xif_main_loop/[0,1,2,3]</code></a>
+</li></ul>
+</li></ul>
+<li><a href="pxt-tut.html#pxt-tut">Tutorial</a>
+<ul>
+<li><a href="pxt-tut-bas.html#pxt-tut-bas">Introduction</a>
+<li><a href="pxt-tut-model.html#pxt-tut-model">The ProXT programming model</a>
+<li><a href="pxt-tut-wid.html#pxt-tut-wid">The Motif Widget Set</a>
+<li><a href="pxt-tut-wres.html#pxt-tut-wres">Widget Resources</a>
+<li><a href="pxt-tut-hnd.html#pxt-tut-hnd">Event Handling</a>
+<ul>
+<li><a href="pxt-tut-hnd-cbk.html#pxt-tut-hnd-cbk">Widget Callbacks</a>
+<li><a href="pxt-tut-hnd-trans.html#pxt-tut-hnd-trans">Translations</a>
+<li><a href="pxt-tut-hnd-acc.html#pxt-tut-hnd-acc">Accelerators</a>
+<li><a href="pxt-tut-hnd-evh.html#pxt-tut-hnd-evh">Event Handlers</a>
+<li><a href="pxt-tut-hnd-oevt.html#pxt-tut-hnd-oevt">Other Events Types</a>
+<li><a href="pxt-tut-hnd-evhl.html#pxt-tut-hnd-evhl">Event Handling Loop</a>
+</li></ul>
+<li><a href="pxt-tut-urdb.html#pxt-tut-urdb">Using The Resource Database</a>
+<li><a href="pxt-tut-xlib.html#pxt-tut-xlib">Interaction with Xlib</a>
+</li></ul>
+<li><a href="pxt-typ.html#pxt-typ">ProXT 3.5 Data Types</a>
+<li><a href="pxt-wid.html#pxt-wid">ProXT 3.5 Widget Resource Data Types</a>
+<li><a href="pxt-exp.html#pxt-exp">ProXT 3.5 Exported Predicates</a>
+<ul>
+<li><a href="pxt-exp-motif.html#pxt-exp-motif">Motif Predicates</a>
+<li><a href="pxt-exp-px.html#pxt-exp-px">X Toolkit Predicates</a>
+<li><a href="pxt-exp-pxt.html#pxt-exp-pxt">ProXT Specific Predicates</a>
+</li></ul>
+<li><a href="pxt-chg.html#pxt-chg">Changes from ProXT 3.1</a>
+<ul>
+<li><a href="pxt-chg-hig.html#pxt-chg-hig">Highlights</a>
+<li><a href="pxt-chg-bwd.html#pxt-chg-bwd">Backward Compatibility</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_mpg" href="mpg.html#mpg">Prolog Reference Pages</a>
+<ul>
+<li><a href="mpg-ref.html#mpg-ref">Reading the Reference pages</a>
+<ul>
+<li><a href="mpg-ref-ove.html#mpg-ref-ove">Overview</a>
+<li><a href="mpg-ref-mod.html#mpg-ref-mod">Mode Annotations</a>
+<li><a href="mpg-ref-cat.html#mpg-ref-cat">Predicate Categories</a>
+<li><a href="mpg-ref-aty.html#mpg-ref-aty">Argument Types</a>
+<ul>
+<li><a href="mpg-ref-aty-sim.html#mpg-ref-aty-sim">Simple Types</a>
+<li><a href="mpg-ref-aty-ety.html#mpg-ref-aty-ety">Extended Types</a>
+</li></ul>
+<li><a href="mpg-ref-exc.html#mpg-ref-exc">Exceptions</a>
+</li></ul>
+<li><a href="mpg-top.html#mpg-top">Topical List of Prolog Built-ins</a>
+<ul>
+<li><a href="mpg-top-ari.html#mpg-top-ari">Arithmetic</a>
+<li><a href="mpg-top-cio.html#mpg-top-cio">Character I/O</a>
+<li><a href="mpg-top-con.html#mpg-top-con">Control</a>
+<li><a href="mpg-top-dat.html#mpg-top-dat">Database</a>
+<li><a href="mpg-top-deb.html#mpg-top-deb">Debugging</a>
+<li><a href="mpg-top-eqs.html#mpg-top-eqs">Executables and QOF-Saving</a>
+<li><a href="mpg-top-est.html#mpg-top-est">Execution State</a>
+<li><a href="mpg-top-fnm.html#mpg-top-fnm">Filename Manipulation</a>
+<li><a href="mpg-top-fsh.html#mpg-top-fsh">File and Stream Handling</a>
+<li><a href="mpg-top-fin.html#mpg-top-fin">Foreign Interface</a>
+<li><a href="mpg-top-gru.html#mpg-top-gru">Grammar Rules</a>
+<li><a href="mpg-top-hlp.html#mpg-top-hlp">Help</a>
+<li><a href="mpg-top-hok.html#mpg-top-hok">Hook Predicates</a>
+<li><a href="mpg-top-lis.html#mpg-top-lis">List Processing</a>
+<li><a href="mpg-top-lod.html#mpg-top-lod">Loading Programs</a>
+<li><a href="mpg-top-mem.html#mpg-top-mem">Memory</a>
+<li><a href="mpg-top-msg.html#mpg-top-msg">Messages</a>
+<li><a href="mpg-top-mod.html#mpg-top-mod">Modules</a>
+<li><a href="mpg-top-sta.html#mpg-top-sta">Program State</a>
+<li><a href="mpg-top-tcm.html#mpg-top-tcm">Term Comparison</a>
+<li><a href="mpg-top-tha.html#mpg-top-tha">Term Handling</a>
+<li><a href="mpg-top-tio.html#mpg-top-tio">Term I/O</a>
+<li><a href="mpg-top-typ.html#mpg-top-typ">Type Tests</a>
+</li></ul>
+<li><a href="mpg-bpr.html#mpg-bpr">Built-in Predicates</a>
+<ul>
+<li><a href="mpg-ref-cut.html#mpg-ref-cut"><code>!/0</code></a>
+<li><a href="mpg-ref-or.html#mpg-ref-or"><code>;/2</code> -- disjunction</a>
+<li><a href="mpg-ref-and.html#mpg-ref-and"><code>,/2</code></a>
+<li><a href="mpg-ref-ite.html#mpg-ref-ite"><code>;/2</code> -- if-then-else</a>
+<li><a href="mpg-ref-ith.html#mpg-ref-ith"><code>-&gt;/2</code></a>
+<li><a href="mpg-ref-uni.html#mpg-ref-uni"><code>=/2</code></a>
+<li><a href="mpg-ref-unv.html#mpg-ref-unv"><code>=../2</code></a>
+<li><a href="mpg-ref-acm.html#mpg-ref-acm"><code>&lt;/2</code>, <code>=:=/2</code>, <code>=&lt;/2</code>, <code>=\=/2</code>, <code>&gt;/2</code>, <code>&gt;=/2</code></a>
+<li><a href="mpg-ref-not.html#mpg-ref-not"><code>\+/1</code></a>
+<li><a href="mpg-ref-teq.html#mpg-ref-teq"><code>==/2</code>, <code>\==/2</code></a>
+<li><a href="mpg-ref-tcm.html#mpg-ref-tcm"><code>@&lt;/2</code>, <code>@=&lt;/2</code>, <code>@&gt;/2</code>, <code>@&gt;=/2</code></a>
+<li><a href="mpg-ref-rar.html#mpg-ref-rar">-&gt;/2</a>
+<li><a href="mpg-ref-qua.html#mpg-ref-qua"><code>^/2</code></a>
+<li><a href="mpg-ref-abolish.html#mpg-ref-abolish"><code>abolish/[1,2]</code></a>
+<li><a href="mpg-ref-abort.html#mpg-ref-abort"><code>abort/0</code></a>
+<li><a href="mpg-ref-absolute_file_name.html#mpg-ref-absolute_file_name"><code>absolute_file_name/[2,3]</code></a>
+<li><a href="mpg-ref-add_advice.html#mpg-ref-add_advice"><code>add_advice/3</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-add_spypoint.html#mpg-ref-add_spypoint"><code>add_spypoint/1</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-append.html#mpg-ref-append"><code>append/3</code></a>
+<li><a href="mpg-ref-arg.html#mpg-ref-arg"><code>arg/3</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-assert.html#mpg-ref-assert"><code>assert/[1,2]</code></a>
+<li><a href="mpg-ref-assign.html#mpg-ref-assign"><code>assign/2</code></a>
+<li><a href="mpg-ref-at_end_of_file.html#mpg-ref-at_end_of_file"><code>at_end_of_file/[0,1]</code></a>
+<li><a href="mpg-ref-at_end_of_line.html#mpg-ref-at_end_of_line"><code>at_end_of_line/[0,1]</code></a>
+<li><a href="mpg-ref-atom.html#mpg-ref-atom"><code>atom/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-atom_chars.html#mpg-ref-atom_chars"><code>atom_chars/2</code></a>
+<li><a href="mpg-ref-atomic.html#mpg-ref-atomic"><code>atomic/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-bagof.html#mpg-ref-bagof"><code>bagof/3</code></a>
+<li><a href="mpg-ref-break.html#mpg-ref-break"><code>break/0</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-cla.html#mpg-ref-cla"><code>C/3</code></a>
+<li><a href="mpg-ref-call.html#mpg-ref-call"><code>call/1</code></a>
+<li><a href="mpg-ref-callable.html#mpg-ref-callable"><code>callable/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-character_count.html#mpg-ref-character_count"><code>character_count/2</code></a>
+<li><a href="mpg-ref-check_advice.html#mpg-ref-check_advice"><code>check_advice/[0,1]</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-clause.html#mpg-ref-clause"><code>clause/[2,3]</code></a>
+<li><a href="mpg-ref-close.html#mpg-ref-close"><code>close/1</code></a>
+<li><a href="mpg-ref-compare.html#mpg-ref-compare"><code>compare/3</code></a>
+<li><a href="mpg-ref-compile.html#mpg-ref-compile"><code>compile/1</code></a>
+<li><a href="mpg-ref-compound.html#mpg-ref-compound"><code>compound/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-consult.html#mpg-ref-consult"><code>consult/1</code></a>
+<li><a href="mpg-ref-copy_term.html#mpg-ref-copy_term"><code>copy_term/2</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-current_advice.html#mpg-ref-current_advice"><code>current_advice/3</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-current_atom.html#mpg-ref-current_atom"><code>current_atom/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-current_input.html#mpg-ref-current_input"><code>current_input/1</code></a>
+<li><a href="mpg-ref-current_key.html#mpg-ref-current_key"><code>current_key/2</code></a>
+<li><a href="mpg-ref-current_module.html#mpg-ref-current_module"><code>current_module/[1,2]</code></a>
+<li><a href="mpg-ref-current_output.html#mpg-ref-current_output"><code>current_output/1</code></a>
+<li><a href="mpg-ref-current_op.html#mpg-ref-current_op"><code>current_op/3</code></a>
+<li><a href="mpg-ref-current_predicate.html#mpg-ref-current_predicate"><code>current_predicate/2</code></a>
+<li><a href="mpg-ref-current_spypoint.html#mpg-ref-current_spypoint"><code>current_spypoint/1</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-current_stream.html#mpg-ref-current_stream"><code>current_stream/3</code></a>
+<li><a href="mpg-ref-db_reference.html#mpg-ref-db_reference"><code>db_reference/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-debug.html#mpg-ref-debug"><code>debug/0</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-debugging.html#mpg-ref-debugging"><code>debugging/0</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-discontiguous.html#mpg-ref-discontiguous"><code>discontiguous/1</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-display.html#mpg-ref-display"><code>display/1</code></a>
+<li><a href="mpg-ref-dynamic.html#mpg-ref-dynamic"><code>dynamic/1</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-ensure_loaded.html#mpg-ref-ensure_loaded"><code>ensure_loaded/1</code></a>
+<li><a href="mpg-ref-erase.html#mpg-ref-erase"><code>erase/1</code></a>
+<li><a href="mpg-ref-expand_term.html#mpg-ref-expand_term"><code>expand_term/2</code> <dfn>hookable</dfn></a>
+<li><a href="mpg-ref-extern.html#mpg-ref-extern"><code>extern/1</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-fail.html#mpg-ref-fail"><code>fail/0</code></a>
+<li><a href="mpg-ref-false.html#mpg-ref-false"><code>false/0</code></a>
+<li><a href="mpg-ref-file_search_path.html#mpg-ref-file_search_path"><code>file_search_path/2</code> <dfn>extendable</dfn></a>
+<li><a href="mpg-ref-fileerrors.html#mpg-ref-fileerrors"><code>fileerrors/0</code></a>
+<li><a href="mpg-ref-findall.html#mpg-ref-findall"><code>findall/3</code></a>
+<li><a href="mpg-ref-float.html#mpg-ref-float"><code>float/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-flush_output.html#mpg-ref-flush_output"><code>flush_output/1</code></a>
+<li><a href="mpg-ref-foreign.html#mpg-ref-foreign"><code>foreign/[2,3]</code> <dfn>hook</dfn></a>
+<li><a href="mpg-ref-foreign_file.html#mpg-ref-foreign_file"><code>foreign_file/2</code> <dfn>hook</dfn></a>
+<li><a href="mpg-ref-format.html#mpg-ref-format"><code>format/[2,3]</code></a>
+<li><a href="mpg-ref-functor.html#mpg-ref-functor"><code>functor/3</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-garbage_collect.html#mpg-ref-garbage_collect"><code>garbage_collect/0</code></a>
+<li><a href="mpg-ref-garbage_collect_atoms.html#mpg-ref-garbage_collect_atoms"><code>garbage_collect_atoms/0</code></a>
+<li><a href="mpg-ref-gc.html#mpg-ref-gc"><code>gc/0</code></a>
+<li><a href="mpg-ref-gen.html#mpg-ref-gen">'QU_messages':generate_message/3 <dfn>extendable</dfn></a>
+<li><a href="mpg-ref-generate_message_hook.html#mpg-ref-generate_message_hook">generate_message_hook/3 <dfn>hook</dfn></a>
+<li><a href="mpg-ref-get.html#mpg-ref-get"><code>get/[1,2]</code></a>
+<li><a href="mpg-ref-get0.html#mpg-ref-get0"><code>get0/[1,2]</code></a>
+<li><a href="mpg-ref-get_profile_results.html#mpg-ref-get_profile_results"><code>get_profile_results/4</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-ground.html#mpg-ref-ground"><code>ground/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-halt.html#mpg-ref-halt"><code>halt/[0,1]</code></a>
+<li><a href="mpg-ref-hash_term.html#mpg-ref-hash_term"><code>hash_term/2</code></a>
+<li><a href="mpg-ref-help.html#mpg-ref-help"><code>help/[0,1]</code> <dfn>hookable,development</dfn></a>
+<li><a href="mpg-ref-initialization.html#mpg-ref-initialization"><code>initialization/1</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-instance.html#mpg-ref-instance"><code>instance/2</code></a>
+<li><a href="mpg-ref-integer.html#mpg-ref-integer"><code>integer/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-is.html#mpg-ref-is"><code>is/2</code></a>
+<li><a href="mpg-ref-keysort.html#mpg-ref-keysort"><code>keysort/2</code></a>
+<li><a href="mpg-ref-leash.html#mpg-ref-leash"><code>leash/1</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-length.html#mpg-ref-length"><code>length/2</code></a>
+<li><a href="mpg-ref-library_directory.html#mpg-ref-library_directory">library_directory/1 <dfn>extendable</dfn></a>
+<li><a href="mpg-ref-line_count.html#mpg-ref-line_count"><code>line_count/2</code></a>
+<li><a href="mpg-ref-line_position.html#mpg-ref-line_position"><code>line_position/2</code></a>
+<li><a href="mpg-ref-listing.html#mpg-ref-listing"><code>listing/[0,1]</code></a>
+<li><a href="mpg-ref-load_files.html#mpg-ref-load_files"><code>load_files/[1,2]</code></a>
+<li><a href="mpg-ref-load_foreign_executable.html#mpg-ref-load_foreign_executable"><code>load_foreign_executable/1</code> <dfn>hookable</dfn></a>
+<li><a href="mpg-ref-load_foreign_files.html#mpg-ref-load_foreign_files"><code>load_foreign_files/2</code> <dfn>hookable</dfn></a>
+<li><a href="mpg-ref-manual.html#mpg-ref-manual"><code>manual/[0,1]</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-message_hook.html#mpg-ref-message_hook"><code>message_hook/3</code> <dfn>hook</dfn></a>
+<li><a href="mpg-ref-meta_predicate.html#mpg-ref-meta_predicate"><code>meta_predicate/1</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-mode.html#mpg-ref-mode"><code>mode/1</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-module1.html#mpg-ref-module1"><code>module/1</code></a>
+<li><a href="mpg-ref-module2.html#mpg-ref-module2"><code>module/2</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-multifile.html#mpg-ref-multifile"><code>multifile/1</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-multifile_assertz.html#mpg-ref-multifile_assertz"><code>multifile_assertz/1</code></a>
+<li><a href="mpg-ref-name.html#mpg-ref-name"><code>name/2</code></a>
+<li><a href="mpg-ref-nl.html#mpg-ref-nl"><code>nl/[0,1]</code></a>
+<li><a href="mpg-ref-no_style_check.html#mpg-ref-no_style_check"><code>no_style_check/1</code></a>
+<li><a href="mpg-ref-nocheck_advice.html#mpg-ref-nocheck_advice"><code>nocheck_advice/[0,1]</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-nodebug.html#mpg-ref-nodebug"><code>nodebug/0</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-nofileerrors.html#mpg-ref-nofileerrors"><code>nofileerrors/0</code></a>
+<li><a href="mpg-ref-nogc.html#mpg-ref-nogc"><code>nogc/0</code></a>
+<li><a href="mpg-ref-nonvar.html#mpg-ref-nonvar"><code>nonvar/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-noprofile.html#mpg-ref-noprofile"><code>noprofile/0</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-nospy.html#mpg-ref-nospy"><code>nospy/1</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-nospyall.html#mpg-ref-nospyall"><code>nospyall/0</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-notrace.html#mpg-ref-notrace"><code>notrace/0</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-number.html#mpg-ref-number"><code>number/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-number_chars.html#mpg-ref-number_chars"><code>number_chars/2</code></a>
+<li><a href="mpg-ref-numbervars.html#mpg-ref-numbervars"><code>numbervars/3</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-on_exception.html#mpg-ref-on_exception"><code>on_exception/3</code></a>
+<li><a href="mpg-ref-op.html#mpg-ref-op"><code>op/3</code></a>
+<li><a href="mpg-ref-open.html#mpg-ref-open"><code>open/[3,4]</code></a>
+<li><a href="mpg-ref-open_null_stream.html#mpg-ref-open_null_stream"><code>open_null_stream/1</code></a>
+<li><a href="mpg-ref-otherwise.html#mpg-ref-otherwise"><code>otherwise/0</code></a>
+<li><a href="mpg-ref-peek_char.html#mpg-ref-peek_char"><code>peek_char/[1,2]</code></a>
+<li><a href="mpg-ref-phrase.html#mpg-ref-phrase"><code>phrase/[2,3]</code></a>
+<li><a href="mpg-ref-portray.html#mpg-ref-portray"><code>portray/1</code> <dfn>hook</dfn></a>
+<li><a href="mpg-ref-portray_clause.html#mpg-ref-portray_clause"><code>portray_clause/1</code></a>
+<li><a href="mpg-ref-predicate_property.html#mpg-ref-predicate_property"><code>predicate_property/2</code></a>
+<li><a href="mpg-ref-print.html#mpg-ref-print"><code>print/1</code> <dfn>hookable</dfn></a>
+<li><a href="mpg-ref-print_message.html#mpg-ref-print_message"><code>print_message/2</code> <dfn>hookable</dfn></a>
+<li><a href="mpg-ref-print_message_lines.html#mpg-ref-print_message_lines"><code>print_message_lines/3</code></a>
+<li><a href="mpg-ref-profile.html#mpg-ref-profile"><code>profile/[0,1,2,3]</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-prolog_flag.html#mpg-ref-prolog_flag"><code>prolog_flag/[2,3]</code></a>
+<li><a href="mpg-ref-prolog_load_context.html#mpg-ref-prolog_load_context"><code>prolog_load_context/2</code></a>
+<li><a href="mpg-ref-prompt.html#mpg-ref-prompt"><code>prompt/[2,3]</code></a>
+<li><a href="mpg-ref-public.html#mpg-ref-public"><code>public/1</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-put.html#mpg-ref-put"><code>put/[1,2]</code></a>
+<li><a href="mpg-ref-query_abbreviation.html#mpg-ref-query_abbreviation"><code>query_abbreviation/3</code> <dfn>extendable</dfn></a>
+<li><a href="mpg-ref-query_hook.html#mpg-ref-query_hook"><code>query_hook/6</code> <dfn>hook</dfn></a>
+<li><a href="mpg-ref-raise_exception.html#mpg-ref-raise_exception"><code>raise_exception/1</code></a>
+<li><a href="mpg-ref-read.html#mpg-ref-read"><code>read/[1,2]</code></a>
+<li><a href="mpg-ref-read_term.html#mpg-ref-read_term"><code>read_term/[2,3]</code></a>
+<li><a href="mpg-ref-reconsult.html#mpg-ref-reconsult"><code>reconsult/1</code></a>
+<li><a href="mpg-ref-recorda.html#mpg-ref-recorda"><code>recorda/3</code></a>
+<li><a href="mpg-ref-recorded.html#mpg-ref-recorded"><code>recorded/3</code></a>
+<li><a href="mpg-ref-recordz.html#mpg-ref-recordz"><code>recordz/3</code></a>
+<li><a href="mpg-ref-remove_advice.html#mpg-ref-remove_advice"><code>remove_advice/3</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-remove_spypoint.html#mpg-ref-remove_spypoint"><code>remove_spypoint/1</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-repeat.html#mpg-ref-repeat"><code>repeat/0</code></a>
+<li><a href="mpg-ref-restore.html#mpg-ref-restore"><code>restore/1</code></a>
+<li><a href="mpg-ref-retract.html#mpg-ref-retract"><code>retract/1</code></a>
+<li><a href="mpg-ref-retractall.html#mpg-ref-retractall"><code>retractall/1</code></a>
+<li><a href="mpg-ref-runtime_entry.html#mpg-ref-runtime_entry">runtime_entry/1 <dfn>hook</dfn></a>
+<li><a href="mpg-ref-save_modules.html#mpg-ref-save_modules"><code>save_modules/2</code></a>
+<li><a href="mpg-ref-save_predicates.html#mpg-ref-save_predicates"><code>save_predicates/2</code></a>
+<li><a href="mpg-ref-save_program.html#mpg-ref-save_program"><code>save_program/[1,2]</code></a>
+<li><a href="mpg-ref-see.html#mpg-ref-see"><code>see/1</code></a>
+<li><a href="mpg-ref-seeing.html#mpg-ref-seeing"><code>seeing/1</code></a>
+<li><a href="mpg-ref-seek.html#mpg-ref-seek"><code>seek/4</code></a>
+<li><a href="mpg-ref-seen.html#mpg-ref-seen"><code>seen/0</code></a>
+<li><a href="mpg-ref-set_input.html#mpg-ref-set_input"><code>set_input/1</code></a>
+<li><a href="mpg-ref-set_output.html#mpg-ref-set_output"><code>set_output/1</code></a>
+<li><a href="mpg-ref-setof.html#mpg-ref-setof"><code>setof/3</code></a>
+<li><a href="mpg-ref-show_profile_results.html#mpg-ref-show_profile_results"><code>show_profile_results/[0,1,2]</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-simple.html#mpg-ref-simple"><code>simple/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-skip.html#mpg-ref-skip"><code>skip/[1,2]</code></a>
+<li><a href="mpg-ref-skip_line.html#mpg-ref-skip_line"><code>skip_line/[0,1]</code></a>
+<li><a href="mpg-ref-sort.html#mpg-ref-sort"><code>sort/2</code></a>
+<li><a href="mpg-ref-source_file.html#mpg-ref-source_file"><code>source_file/[1,2,3]</code></a>
+<li><a href="mpg-ref-spy.html#mpg-ref-spy"><code>spy/1</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-statistics.html#mpg-ref-statistics"><code>statistics/[0,2]</code></a>
+<li><a href="mpg-ref-stream_code.html#mpg-ref-stream_code"><code>stream_code/2</code></a>
+<li><a href="mpg-ref-stream_position.html#mpg-ref-stream_position"><code>stream_position/[2,3]</code></a>
+<li><a href="mpg-ref-style_check.html#mpg-ref-style_check"><code>style_check/1</code></a>
+<li><a href="mpg-ref-subsumes_chk.html#mpg-ref-subsumes_chk"><code>subsumes_chk/2</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-tab.html#mpg-ref-tab"><code>tab/[1,2]</code></a>
+<li><a href="mpg-ref-tell.html#mpg-ref-tell"><code>tell/1</code></a>
+<li><a href="mpg-ref-telling.html#mpg-ref-telling"><code>telling/1</code></a>
+<li><a href="mpg-ref-term_expansion.html#mpg-ref-term_expansion"><code>term_expansion/2</code> <dfn>hook</dfn></a>
+<li><a href="mpg-ref-told.html#mpg-ref-told"><code>told/0</code></a>
+<li><a href="mpg-ref-trace.html#mpg-ref-trace"><code>trace/0</code> <dfn>development</dfn></a>
+<li><a href="mpg-ref-trimcore.html#mpg-ref-trimcore"><code>trimcore/0</code></a>
+<li><a href="mpg-ref-true.html#mpg-ref-true"><code>true/0</code></a>
+<li><a href="mpg-ref-tty.html#mpg-ref-tty"><code>ttyflush/0</code>, <code>ttyget/1</code>, <code>ttyget0/1</code>, <code>ttynl/0</code>, <code>ttyput/1</code>, <code>ttyskip/1</code>, <code>ttytab/1</code></a>
+<li><a href="mpg-ref-unix.html#mpg-ref-unix"><code>unix/1</code></a>
+<li><a href="mpg-ref-unknown.html#mpg-ref-unknown"><code>unknown/2</code></a>
+<li><a href="mpg-ref-unknown_predicate_handler.html#mpg-ref-unknown_predicate_handler"><code>unknown_predicate_handler/3</code> <dfn>hook</dfn></a>
+<li><a href="mpg-ref-use_module.html#mpg-ref-use_module"><code>use_module/[1,2,3]</code></a>
+<li><a href="mpg-ref-user_help.html#mpg-ref-user_help"><code>user_help/0</code> <dfn>hook</dfn></a>
+<li><a href="mpg-ref-var.html#mpg-ref-var"><code>var/1</code> <dfn>meta-logical</dfn></a>
+<li><a href="mpg-ref-version.html#mpg-ref-version"><code>version/[0,1]</code></a>
+<li><a href="mpg-ref-vms.html#mpg-ref-vms"><code>vms/[1,2]</code></a>
+<li><a href="mpg-ref-volatile.html#mpg-ref-volatile"><code>volatile/1</code> <dfn>declaration</dfn></a>
+<li><a href="mpg-ref-write.html#mpg-ref-write"><code>write/[1,2]</code></a>
+<li><a href="mpg-ref-write_canonical.html#mpg-ref-write_canonical"><code>write_canonical/[1,2]</code></a>
+<li><a href="mpg-ref-write_term.html#mpg-ref-write_term"><code>write_term/[2,3]</code></a>
+<li><a href="mpg-ref-writeq.html#mpg-ref-writeq"><code>writeq/[1,2]</code></a>
+</li></ul>
+</li></ul>
+<li><a name="toc_cfu" href="cfu.html#cfu">C Reference Pages</a>
+<ul>
+<li><a href="cfu-rve.html#cfu-rve">Return Values and Errors</a>
+<li><a href="cfu-top.html#cfu-top">Topical List of C Functions</a>
+<ul>
+<li><a href="cfu-top-err.html#cfu-top-err">C Errors</a>
+<li><a href="cfu-top-cio.html#cfu-top-cio">Character I/O</a>
+<li><a href="cfu-top-exc.html#cfu-top-exc">Exceptions</a>
+<li><a href="cfu-top-fst.html#cfu-top-fst">Files and Streams</a>
+<li><a href="cfu-top-fin.html#cfu-top-fin">Foreign Interface</a>
+<li><a href="cfu-top-ise.html#cfu-top-ise">Input Services</a>
+<li><a href="cfu-top-main.html#cfu-top-main">main()</a>
+<li><a href="cfu-top-mem.html#cfu-top-mem">Memory Management</a>
+<li><a href="cfu-top-sig.html#cfu-top-sig">Signal Handling</a>
+<li><a href="cfu-top-tic.html#cfu-top-tic">Terms in C</a>
+<li><a href="cfu-top-tio.html#cfu-top-tio">Term I/O</a>
+<li><a href="cfu-top-typ.html#cfu-top-typ">Type Tests</a>
+</li></ul>
+<li><a href="cfu-ref.html#cfu-ref">C Functions</a>
+<ul>
+<li><a href="cfu-ref-action.html#cfu-ref-action"><code>QP_action()</code></a>
+<li><a href="cfu-ref-add.html#cfu-ref-add"><code>QP_add_*()</code></a>
+<li><a href="cfu-ref-add_tty.html#cfu-ref-add_tty"><code>QP_add_tty()</code></a>
+<li><a href="cfu-ref-atom_from_string.html#cfu-ref-atom_from_string"><code>QP_atom_from_string()</code>, <code>QP_atom_from_padded_string()</code></a>
+<li><a href="cfu-ref-char_count.html#cfu-ref-char_count"><code>QP_char_count()</code></a>
+<li><a href="cfu-ref-clearerr.html#cfu-ref-clearerr"><code>QP_clearerr()</code></a>
+<li><a href="cfu-ref-close_query.html#cfu-ref-close_query"><code>QP_close_query()</code></a>
+<li><a href="cfu-ref-compare.html#cfu-ref-compare"><code>QP_compare()</code></a>
+<li><a href="cfu-ref-cons.html#cfu-ref-cons"><code>QP_cons_*(</code>)</a>
+<li><a href="cfu-ref-cut_query.html#cfu-ref-cut_query"><code>QP_cut_query()</code></a>
+<li><a href="cfu-ref-eof.html#cfu-ref-eof"><code>QP_eof()</code></a>
+<li><a href="cfu-ref-eoln.html#cfu-ref-eoln"><code>QP_eoln()</code></a>
+<li><a href="cfu-ref-error_message.html#cfu-ref-error_message"><code>QP_error_message()</code></a>
+<li><a href="cfu-ref-exception_term.html#cfu-ref-exception_term"><code>QP_exception_term()</code></a>
+<li><a href="cfu-ref-fclose.html#cfu-ref-fclose"><code>QP_fclose()</code></a>
+<li><a href="cfu-ref-fdopen.html#cfu-ref-fdopen"><code>QP_fdopen()</code></a>
+<li><a href="cfu-ref-ferror.html#cfu-ref-ferror"><code>QP_ferror()</code></a>
+<li><a href="cfu-ref-fgetc.html#cfu-ref-fgetc"><code>QP_fgetc()</code></a>
+<li><a href="cfu-ref-fgets.html#cfu-ref-fgets"><code>QP_fgets()</code></a>
+<li><a href="cfu-ref-flush.html#cfu-ref-flush"><code>QP_flush()</code></a>
+<li><a href="cfu-ref-fnewln.html#cfu-ref-fnewln"><code>QP_fnewln()</code></a>
+<li><a href="cfu-ref-fopen.html#cfu-ref-fopen"><code>QP_fopen()</code></a>
+<li><a href="cfu-ref-fpeekc.html#cfu-ref-fpeekc"><code>QP_fpeekc()</code></a>
+<li><a href="cfu-ref-fprintf.html#cfu-ref-fprintf"><code>QP_fprintf()</code></a>
+<li><a href="cfu-ref-fputc.html#cfu-ref-fputc"><code>QP_fputc()</code></a>
+<li><a href="cfu-ref-fputs.html#cfu-ref-fputs"><code>QP_fputs()</code></a>
+<li><a href="cfu-ref-fread.html#cfu-ref-fread"><code>QP_fread()</code></a>
+<li><a href="cfu-ref-fskipln.html#cfu-ref-fskipln"><code>QP_fskipln()</code></a>
+<li><a href="cfu-ref-fwrite.html#cfu-ref-fwrite"><code>QP_fwrite()</code></a>
+<li><a href="cfu-ref-get.html#cfu-ref-get"><code>QP_get_*(</code>)</a>
+<li><a href="cfu-ref-getc.html#cfu-ref-getc"><code>QP_getc()</code></a>
+<li><a href="cfu-ref-getchar.html#cfu-ref-getchar"><code>QP_getchar()</code></a>
+<li><a href="cfu-ref-getpos.html#cfu-ref-getpos"><code>QP_getpos()</code></a>
+<li><a href="cfu-ref-initialize.html#cfu-ref-initialize"><code>QP_initialize()</code></a>
+<li><a href="cfu-ref-is.html#cfu-ref-is"><code>QP_is_*()</code></a>
+<li><a href="cfu-ref-line_count.html#cfu-ref-line_count"><code>QP_line_count()</code></a>
+<li><a href="cfu-ref-line_position.html#cfu-ref-line_position"><code>QP_line_position()</code></a>
+<li><a href="cfu-ref-malloc.html#cfu-ref-malloc"><code>QP_malloc(</code>), <code>QP_free(</code>)</a>
+<li><a href="cfu-ref-new_term_ref.html#cfu-ref-new_term_ref"><code>QP_new_term_ref()</code></a>
+<li><a href="cfu-ref-newline.html#cfu-ref-newline"><code>QP_newline()</code></a>
+<li><a href="cfu-ref-newln.html#cfu-ref-newln"><code>QP_newln()</code></a>
+<li><a href="cfu-ref-next_solution.html#cfu-ref-next_solution"><code>QP_next_solution()</code></a>
+<li><a href="cfu-ref-open_query.html#cfu-ref-open_query"><code>QP_open_query()</code></a>
+<li><a href="cfu-ref-peekc.html#cfu-ref-peekc"><code>QP_peekc()</code></a>
+<li><a href="cfu-ref-peekchar.html#cfu-ref-peekchar"><code>QP_peekchar()</code></a>
+<li><a href="cfu-ref-perror.html#cfu-ref-perror"><code>QP_perror()</code></a>
+<li><a href="cfu-ref-pred.html#cfu-ref-pred"><code>QP_pred()</code></a>
+<li><a href="cfu-ref-predicate.html#cfu-ref-predicate"><code>QP_predicate()</code></a>
+<li><a href="cfu-ref-prepare_stream.html#cfu-ref-prepare_stream"><code>QP_prepare_stream()</code></a>
+<li><a href="cfu-ref-printf.html#cfu-ref-printf"><code>QP_printf()</code></a>
+<li><a href="cfu-ref-put.html#cfu-ref-put"><code>QP_put_*(</code>)</a>
+<li><a href="cfu-ref-putc.html#cfu-ref-putc"><code>QP_putc()</code></a>
+<li><a href="cfu-ref-putchar.html#cfu-ref-putchar"><code>QP_putchar()</code></a>
+<li><a href="cfu-ref-puts.html#cfu-ref-puts"><code>QP_puts()</code></a>
+<li><a href="cfu-ref-query.html#cfu-ref-query"><code>QP_query()</code></a>
+<li><a href="cfu-ref-register_atom.html#cfu-ref-register_atom"><code>QP_register_atom()</code>, <code>QP_unregister_atom()</code></a>
+<li><a href="cfu-ref-register_stream.html#cfu-ref-register_stream"><code>QP_register_stream()</code></a>
+<li><a href="cfu-ref-remove.html#cfu-ref-remove"><code>QP_remove_*()</code></a>
+<li><a href="cfu-ref-rewind.html#cfu-ref-rewind"><code>QP_rewind()</code></a>
+<li><a href="cfu-ref-seek.html#cfu-ref-seek"><code>QP_seek()</code></a>
+<li><a href="cfu-ref-select.html#cfu-ref-select"><code>QP_select()</code></a>
+<li><a href="cfu-ref-setinput.html#cfu-ref-setinput"><code>QP_setinput()</code></a>
+<li><a href="cfu-ref-setoutput.html#cfu-ref-setoutput"><code>QP_setoutput()</code></a>
+<li><a href="cfu-ref-setpos.html#cfu-ref-setpos"><code>QP_setpos()</code></a>
+<li><a href="cfu-ref-skipline.html#cfu-ref-skipline"><code>QP_skipline()</code></a>
+<li><a href="cfu-ref-skipln.html#cfu-ref-skipln"><code>QP_skipln()</code></a>
+<li><a href="cfu-ref-string_from_atom.html#cfu-ref-string_from_atom"><code>QP_string_from_atom(</code>), <code>QP_padded_string_from_atom()</code></a>
+<li><a href="cfu-ref-tab.html#cfu-ref-tab"><code>QP_tab()</code></a>
+<li><a href="cfu-ref-tabto.html#cfu-ref-tabto"><code>QP_tabto()</code></a>
+<li><a href="cfu-ref-term_type.html#cfu-ref-term_type"><code>QP_term_type()</code></a>
+<li><a href="cfu-ref-toplevel.html#cfu-ref-toplevel"><code>QP_toplevel()</code></a>
+<li><a href="cfu-ref-trimcore.html#cfu-ref-trimcore"><code>QP_trimcore(</code>)</a>
+<li><a href="cfu-ref-ungetc.html#cfu-ref-ungetc"><code>QP_ungetc()</code></a>
+<li><a href="cfu-ref-unify.html#cfu-ref-unify"><code>QP_unify()</code></a>
+<li><a href="cfu-ref-vfprintf.html#cfu-ref-vfprintf"><code>QP_vfprintf()</code></a>
+<li><a href="cfu-ref-wait_input.html#cfu-ref-wait_input"><code>QP_wait_input()</code></a>
+<li><a href="cfu-ref-QU_alloc_mem.html#cfu-ref-QU_alloc_mem"><code>QU_alloc_mem()</code>, <code>QU_alloc_init_mem()</code>, <code>QU_free_mem()</code></a>
+<li><a href="cfu-ref-QU_fdopen.html#cfu-ref-QU_fdopen"><code>QU_fdopen()</code> user-redefinable</a>
+<li><a href="cfu-ref-QU_free_mem.html#cfu-ref-QU_free_mem"><code>QU_free_mem()</code> user-redefinable</a>
+<li><a href="cfu-ref-QU_initio.html#cfu-ref-QU_initio"><code>QU_initio()</code> user-redefinable</a>
+<li><a href="cfu-ref-QU_open.html#cfu-ref-QU_open"><code>QU_open()</code> user-redefinable</a>
+<li><a href="cfu-ref-QU_stream_param.html#cfu-ref-QU_stream_param"><code>QU_stream_param()</code> user-redefinable</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_too" href="too.html#too">Command Reference Pages</a>
+<ul>
+<li><a href="too-too.html#too-too">Command Line Utilities</a>
+<ul>
+<li><a href="too-too-prolog.html#too-too-prolog"><code>prolog</code> -- Quintus Prolog Development System</a>
+<li><a href="too-too-qcon.html#too-too-qcon"><code>qcon</code> -- QOF consolidator</a>
+<li><a href="too-too-qgetpath.html#too-too-qgetpath"><code>qgetpath</code> -- Get parameters of Quintus utilities and runtime applications</a>
+<li><a href="too-too-qld.html#too-too-qld"><code>qld</code> -- QOF link editor</a>
+<li><a href="too-too-qnm.html#too-too-qnm"><code>qnm</code> -- print QOF file information</a>
+<li><a href="too-too-qpc.html#too-too-qpc"><code>qpc</code> -- Quintus Prolog compiler</a>
+<li><a href="too-too-qplm.html#too-too-qplm"><code>qplm</code> -- Quintus Prolog license manager</a>
+<li><a href="too-too-qsetpath.html#too-too-qsetpath"><code>qsetpath</code> -- Set parameters of Quintus utilities and runtime applications</a>
+<li><a href="mpg-ref-qui.html#mpg-ref-qui"><code>qui</code> -- Quintus User Interface</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_pindex" href="pindex.html#pindex">Predicate Index</a>
+<li><a name="toc_kindex" href="kindex.html#kindex">Keystroke Index</a>
+<li><a name="toc_bindex" href="bindex.html#bindex">Book Index</a>
+</li></ul>
+</div>
+
+
+
+<a name="Top"></a>
+<h2 class="unnumbered">Quintus Prolog</h2>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="int.html#int">int</a>:                                  Introduction
+<li><a accesskey="2" href="bas.html#bas">bas</a>:                                  User's Guide
+<li><a accesskey="3" href="qui.html#qui">qui</a>:                                  The Quintus User Interface
+<li><a accesskey="4" href="ema.html#ema">ema</a>:                                  The Emacs Interface
+<li><a accesskey="5" href="vb.html#vb">vb</a>:                                   The Visual Basic Interface
+<li><a accesskey="6" href="dbg.html#dbg">dbg</a>:                                  The Debugger
+<li><a accesskey="7" href="glo.html#glo">glo</a>:                                  Glossary
+<li><a accesskey="8" href="ref.html#ref">ref</a>:                                  The Prolog Language
+<li><a accesskey="9" href="sap.html#sap">sap</a>:                                  Creating Executables
+<li><a href="fli.html#fli">fli</a>:                                  Foreign Language Interface
+<li><a href="ipc.html#ipc">ipc</a>:                                  Inter-Process Communication
+<li><a href="lib.html#lib">lib</a>:                                  Library
+<li><a href="str.html#str">str</a>:                                  The Structs Package
+<li><a href="obj.html#obj">obj</a>:                                  The Objects Package
+<li><a href="pbn.html#pbn">pbn</a>:                                  The PrologBeans Package
+<li><a href="pxl.html#pxl">pxl</a>:                                  The ProXL Package
+<li><a href="pxt.html#pxt">pxt</a>:                                  The ProXT Package
+<li><a href="mpg.html#mpg">mpg</a>:                                  Prolog Reference pages
+<li><a href="cfu.html#cfu">cfu</a>:                                  C Reference Pages
+<li><a href="too.html#too">too</a>:                                  Command Reference Pages
+<li><a href="pindex.html#pindex">pindex</a>:                               Predicate Index
+<li><a href="kindex.html#kindex">kindex</a>:                               Keystroke Index
+<li><a href="bindex.html#bindex">bindex</a>:                               Book Index
+</ul>
+
+   <p>This manual documents Quintus Prolog Release December 2003.
+
+   <p>Prolog is a simple but powerful programming language developed at the
+University of Marseille, as a practical tool for programming in logic. 
+From a user's point of view the major attraction of the language is ease of
+programming.  Clear, readable, concise programs can be written quickly with
+few errors.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="int.html#int">Next</a>
+<li><a rel="previous" accesskey="p" href="../index.html#dir">Previous</a>
+<li><a rel="up" accesskey="u" href="../index.html#dir">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

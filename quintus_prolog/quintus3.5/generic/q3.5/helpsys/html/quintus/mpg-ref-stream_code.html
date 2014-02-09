@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>stream_code/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>stream_code(</code><var>-Stream, +CStream</var><code>)</code>
+
+   <p><code>stream_code(</code><var>+Stream, -CStream</var><code>)</code>
+
+   <p>Converts between Prolog representation, <var>Stream</var>, and
+C representation, <var>CStream</var>, of a stream.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>a variable or a valid Prolog stream
+
+     <br><dt><var>CStream</var> <dfn>integer</dfn>
+     <dd>a variable or a valid C stream
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>stream_code/2</code> is used when there are input/output related operations
+performed on the same stream in both Prolog code and foreign code.
+
+   <p><var>Stream</var> argument is a valid type if it is <dfn>user</dfn>, <dfn>user_input</dfn>,
+<dfn>user_output</dfn>, <dfn>user_error</dfn>, a variable, or a value obtained through
+<code>open/[3,4]</code> or previous <code>stream_code/2</code> call. 
+Such a valid <var>Stream</var> value can be used as the stream argument to
+any of the Prolog built-in I/O predicates taking a stream argument.
+
+   <p><var>CStream</var> argument is a valid type if it is a variable, a value obtained
+through previous <code>stream_code/2</code> call, a value obtained through
+<code>QP_fopen()</code>, <code>QP_fdopen()</code>, or a value of pointer to
+<code>QP_stream</code> structure obtained through foreign function call. 
+Such a valid <var>CStream</var> value can be used as the stream argument to
+any of the QP foreign function taking stream as an argument.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+    <var>Stream</var> argument or <var>CStream</var> argument is not ground.
+
+     <br><dt><code>type_error</code>
+     <dd>
+   <var>Stream</var> or <var>CStream</var> is not a stream type or
+   <var>CStream</var> is not an integer type.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+   <var>Stream</var> is syntactically valid but does not name an open
+stream or <var>CStream</var> is of integer type but does not name a pointer
+to a stream.
+
+   </dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>The most frequent use of <code>stream_code/2</code> is
+to get a stream value to be used in Prolog code for a stream created
+in foreign code.  This is necessary when a desired stream can not be
+obtained through <code>open/[3,4]</code>; e.g. a stream referring to a socket
+or an encrypted file.
+
+<h4 class="subheading">See Also:</h4>
+
+   <p><code>open/[3,4]</code>, <code>QP_fopen()</code>, <code>QP_fdopen()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-stream_position.html#mpg-ref-stream_position">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-statistics.html#mpg-ref-statistics">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

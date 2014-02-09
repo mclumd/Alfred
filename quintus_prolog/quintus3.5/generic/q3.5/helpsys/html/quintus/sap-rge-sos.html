@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Shared vs. Static Object Files</h4>
+
+   <p>A runtime system is a single executable program that should be easily
+transferable to a different machine. By default, the executable built
+by <code>qld</code> will use dynamic libraries where it can, such as the dynamic C
+library (<code>-lc</code> under UNIX, <code>/MD</code> under Windows). 
+This requires that a corresponding library exist on
+the target machine on which the executable will be run.
+
+   <p>Under UNIX,
+you may encounter problems if libraries included in your executable are
+not installed in "standard places" -- e.g. in <code>/usr/lib</code> -- on the target
+machine.  For example, if you specify <code>-lX11</code>, but the corresponding file
+<code>libX11.so.4.2</code> resides in <code>/usr/local/lib/X11</code>. 
+Typically, a user has to set the <code>LD_LIBRARY_PATH</code> environment variable to
+find libraries in non-standard places, although another option at
+installation time might be to add a call to <code>ldconfig(8)</code> in <code>/etc/rc.local</code>
+to include the directory containing a shared library into the system-wide
+list of "standard places" to find shared libraries. The <code>ldd(1)</code> command
+lists the dynamic dependencies of an executable and whether or not
+these can be found.
+
+   <p>The problem exists under Windows but the details are different. In
+particular Windows shared libraries are looked for in the folders
+specified by the <code>PATH</code> environment variable and in some further
+"standard places". Consult the Windows documentation for details.
+
+   <p>In addition to shared libraries, your executable may contain shared
+object files, specified in calls to <code>load_foreign_executable/1</code>. 
+<code>qld</code> passes the absolute file paths for these files to the linker,
+which results
+in the dependencies for these shared object files being stored in the
+runtime system executable as absolute filenames.  Note that this problem
+can arise even if you have no foreign code of your own, if you are using
+the Quintus Prolog library or X interfaces.
+
+   <p>A solution to the shared object files problem is to use the <code>-S</code>
+option with <code>qld</code>, which tries to substitute archive files
+for shared object files where they exist.  If
+the shared object files have dependencies on other shared libraries
+then those libraries need to be explicitly listed in the <code>qld</code>
+command, as <code>qld</code> does not track these dependencies.  This makes
+your executable file larger, as the library code is stored within the
+executable rather than linked in at start-up time.  Each shared object
+file provided in the Quintus libraries has an equivalent archive
+file that can be substituted by the <code>qld -S</code> command.
+
+   <p>For example, under UNIX,
+building a runtime system from the file in (A) with the command (B)
+produces an <code>a.out</code> file, which prints the date and time, as in (C).
+
+<pre class="example">
+                                    <div align="right"><em>test.pl</em>
+     </div>
+     
+     :- use_module(library(date)). (A)
+     
+     runtime_entry(start) :-
+             datime(X),
+             portray_date(X),
+             nl.
+     </pre>
+
+<pre class="example">     % <kbd>qpc test.pl</kbd> (B)
+     </pre>
+
+<pre class="example">     % <kbd>./a.out</kbd> (C)
+     2:10:09 PM 1-Feb-91
+     </pre>
+
+   <p>This <code>a.out</code> file has a dependency on the Prolog library as well as on
+the C library, as shown by the <code>ldd(1)</code> command:
+<pre class="example">     % <kbd>ldd a.out</kbd>
+         /usr/local/quintus/generic/qplib3.5/library/sun4-5/libpl.so
+         libc.so.1 =&gt; /usr/lib/libc.so.1.8
+     </pre>
+
+   <p>Under Windows, the example would be almost the same, with the difference
+that the default name of the executable produced by <code>qpc</code> is
+<code>a.exe</code> rather than <code>a.out</code>. To view dependencies you can type
+<kbd>dumbin /DEPENDENTS a.exe</kbd>.
+
+   <p>Hence this runtime system will not work on a machine where Quintus Prolog
+is not installed.  To build a runtime system that does not have this
+dependency, it is necessary to call <kbd>qld -S</kbd> explicitly, rather than just
+calling <kbd>qpc test.pl</kbd> as shown above. Under UNIX, the necessary command sequence is:
+<pre class="example">     % <kbd>qpc -c test.pl</kbd>
+     % <kbd>qld -Sd test.qof</kbd>
+     </pre>
+
+   <p>That is, <code>qpc</code> is called with the <code>-c</code> option so that it stops after producing
+a <code>.qof</code> file, rather than calling <code>qld</code>.  Then
+<code>qld</code> is called with the <code>-S</code> option so that it substitutes <code>libpl.a</code> for
+<code>libpl.so</code>.  The result is an executable that depends only on the C shared
+library:
+<pre class="example">     % <kbd>ldd a.out</kbd>
+         ilbc.so.1 =&gt; /usr/lib/libc.so.1.8
+     </pre>
+
+   <p>This executable should run without problem on a different machine.
+
+   <p>Under Windows, the linker does not automatically add all needed OS
+libraries. These need to be added explicitly as follows:
+
+<pre class="example">     C:\&gt; <kbd>qpc -c test.pl</kbd>
+     C:\&gt; <kbd>qld -Sd test.qof -LD qpconsoles.lib user32.lib gdi32.lib comdlg32.lib</kbd>
+     </pre>
+
+   <blockquote>
+
+        <p><strong>Windows notes:</strong>
+
+          <ol type=1 start=1>
+
+          <li>The <code>-S</code> and <code>-W</code> flags can be combined. 
+<li>If the <code>-S</code> option is used, the <code>-LD</code>
+option must also be used, together with the library references
+<code>qpconsoles.lib</code>, <code>user32.lib</code>, <code>gdi32.lib</code>, and
+<code>comdlg32.lib</code>. 
+<li>If the Prolog code has a foreign executable dependency on <code>myforeignex</code>,
+a static library <code>myforeignexs.lib</code> needs to be created.  The trailing <code>s</code>
+is significant (see below); <code>qld</code> assumes this naming convention. 
+Here is an example of the necessary sequence of commands to create
+a static executable <code>myforeignex.exe</code>:
+
+          <pre class="example">               C:\&gt; <kbd>cl /c /MD myforeignex.c</kbd>
+               C:\&gt; <kbd>link /lib /OUT:myforeignexs.lib myforeignex.obj</kbd>
+               C:\&gt; <kbd>qpc -c myprog.pl</kbd>
+               C:\&gt; <kbd>qld -Sdvo myprog.exe myprog.qof -LD \
+                    user32.lib comdlg32.lib qpconsoles.lib gdi32.lib</kbd>
+               </pre>
+
+          <p>The above command produces an executable that uses the static version of
+the Runtime Kernel and has no DLL dependencies. Statically linked applications
+can still dynamically load foreign code DLLs, provided these DLLs do not
+call any of the Quintus Prolog C API functions.
+
+          <p>In order to distinguish static libraries from DLL import libraries in
+foreign dependencies, the following naming convention has been chosen. 
+If the <code>-S</code> option is used, when processing a library dependency
+<code>qld</code> will first search for the library with an <code>s</code> appended to its name,
+for example <code>libqp</code><b>s</b><code>.lib</code> for the Embedding Layer, and if not found
+it tries the original name.
+             </ol>
+
+   </blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-rge-dll.html#sap-rge-dll">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-rge-iha.html#sap-rge-iha">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-rge.html#sap-rge">Up</a>
+</ul>
+</div>
+   </body></html>
+

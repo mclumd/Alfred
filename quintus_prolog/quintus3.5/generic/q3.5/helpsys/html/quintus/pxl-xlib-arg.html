@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Arguments</h4>
+
+   <p>Arguments and argument order to ProXL primitives are not always directly
+predictable from their Xlib counterparts, but some rules of thumb can
+be helpful:
+
+     <ol type=1 start=1>
+
+     <li>Almost all Xlib functions take a display as first argument.  ProXL doesn't
+need this argument at all if any X resource (i.e., a server-side
+resource, like a window or GC or font) appears in the call.  So few ProXL
+primitives take a display argument. 
+<li>All the ProXL primitives that DO require a display have a version that
+allows the display to be defaulted.  Also, several ProXL primitives
+require a screen as argument, and these, too, allow that argument to be
+defaulted.  See the section on the default screen below for details. 
+<li>Several Xlib functions take a window as argument (or some other X
+resource) when all they really want to know is a screen.  In these
+cases, the analogous ProXL primitive takes a screen as argument.  Note
+that rule 2 above applies in these cases.
+        </ol>
+
+   <p>ProXL doesn't always use the same argument order as Xlib.  There are a
+few reasons for different argument order.  Firstly, ProXL has defaults
+for some arguments, so sometimes argument orders are changed to
+facilitate defaults.  ProXL also rearranges arguments to make parallels
+among families of procedures more obvious.  In most cases, however, the
+argument order for ProXL procedures is the same as their Xlib
+counterparts.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-xlib-str.html#pxl-xlib-str">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-xlib-nam.html#pxl-xlib-nam">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-xlib.html#pxl-xlib">Up</a>
+</ul>
+</div>
+   </body></html>
+

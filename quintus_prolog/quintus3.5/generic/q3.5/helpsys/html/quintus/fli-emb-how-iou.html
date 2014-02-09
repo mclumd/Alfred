@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Embedding Functions For Input/Output</h5>
+
+   <p>Prolog streams are designed by default to be channels for I/O
+operations to a file or a terminal.  User defined streams enable
+these operations to be performed on other types of object:
+notably, windows or a network channel.
+
+   <p>The embedding input/output functions create the default Prolog streams
+and provide the user with the default parameters for creating a
+user-defined stream.  It is possible to change these defaults. 
+However, in general it is not necessary or even advantageous to do this.
+
+   <p>Such replacement is only required when the application in which the
+Prolog code is embedded demands full control of the I/O system and does
+not want Prolog to make direct calls to the operating systen to perform I/O. 
+One instance of such usage is to embed a Prolog program within an
+application that uses a graphical window-oriented user interface.
+
+   <p>The embedding layer for input/output contains four functions:
+     <dl>
+
+     <br><dt><code>QU_stream_param()</code>
+     <dd>sets up default field values in a
+<code>QP_stream</code> structure.
+
+     <br><dt><code>QU_initio()</code>
+     <dd>creates three Prolog initial streams:
+<dfn>user_input</dfn> stream, <dfn>user_output</dfn> stream and <dfn>user_error</dfn>
+stream.
+
+     <br><dt><code>QU_open()</code>
+     <dd>creates streams opened
+by <code>open/[3,4]</code> and <code>QP_fopen()</code>.
+
+     <br><dt><code>QU_fdopen()</code>
+     <dd>creates streams that were already opened
+by the system function <code>open(2)</code>.
+
+   </dl>
+
+   <p>Details of each function can be found in the individual reference pages. 
+Any of these functions can be supplied in linking a Prolog system
+through <code>qld</code>.  If any function is not supplied, the default
+version of that function is linked in.
+
+   <p>A number of C macros and functions are provided in
+<code>&lt;quintus/quintus.h&gt;</code> and e.g. <code>libqp.a</code> to access and manipulate
+Prolog streams where it is more convenient to access them from C
+rather than calling a Prolog builtin.  For example, <code>QP_getc()</code>
+will get a character from a Prolog stream in the same way as
+<code>get0/2</code>. These macros and functions are listed in
+<a href="fli-ios-bio.html#fli-ios-bio">fli-ios-bio</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-emb-how-mem.html#fli-emb-how-mem">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-emb-how.html#fli-emb-how">Up</a>
+</ul>
+</div>
+   </body></html>
+

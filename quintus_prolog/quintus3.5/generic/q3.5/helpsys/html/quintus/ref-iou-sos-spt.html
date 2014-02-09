@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Stream Position Information for Terminal I/O</h5>
+
+   <p>Input from Prolog streams that have opened
+the user's terminal for reading is echoed back as output to the same
+terminal. 
+This is interleaved with output from other
+Prolog streams that have opened the user's terminal for writing. 
+Therefore, all streams  connected to the user's terminal share
+the same set of position
+counts and thus return the same values for each of the
+predicates <code>character_count/2</code>, <code>line_count/2</code>, and
+<code>line_position/2</code>. 
+The following example assumes that <code>user_input</code>, <code>user_output</code>, and
+<code>user_error</code> are all connected to the user's terminal (which may not
+always be true if I/O is being redirected),
+<pre class="example">     | ?- <kbd>line_count(user, X1),
+          line_count(user_input, X2),
+          line_count(user_output, X3),
+          line_count(user_error, X4).</kbd>
+     
+     X1 = X2 = X3 = X4 = 36 <kbd>;</kbd>
+     
+     no
+     | ?- <kbd>line_position(user, X1),
+          line_position(user_input, X2),
+          line_position(user_output, X3),
+          line_position(user_error, X4).</kbd>
+     
+     X1 = X2 = X3 = X4 = 0 <kbd>;</kbd>
+     
+     no
+     | ?- <kbd>character_count(user, X1),
+          character_count(user_input, X2),
+          character_count(user_output, X3),
+          character_count(user_error, X4).</kbd>
+     
+     X1 = X2 = X3 = X4 = 1304 <kbd>;</kbd>
+     
+     no
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="ref-iou-sos.html#ref-iou-sos">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Initialization Declaration</h5>
+
+   <p>The <code>initialization/1</code> predicate is an important complement to the
+embedded directive construct <code>:- </code><var>Goal</var><code></code> appearing in
+a file being consulted or compiled, and can in many cases not only
+replace the directive, but also make the code work better when used in
+stand-alone programs and runtime systems.
+
+   <p>The main reason for this is that <code>:- </code><var>Goal</var><code></code> directive is executed
+at compile-time, not when the file in which the construct occurs is
+actually loaded into a running system. This causes no problems within
+development systems, but if we want to save states and
+compile programs into qof-files, link them together, and later start
+them up again,  problems arise because:
+
+     <ul>
+
+     <li>The <code>:- </code><var>Goal</var><code></code> construct calls <var>Goal</var> only
+once, when the file is compiled, not when a saved state containing the
+file is restored. 
+<li><var>Goal</var> is called at compile-time, which means
+that if you use <code>qpc</code> to compile source code into a qof-file, your
+directives will be run during this compilation, not when you load the
+qof-file or start up a stand-alone system to which the qof-file has
+been linked. 
+</ul>
+
+   <p>The <code>initialization/1</code> predicate,
+on the other hand, provides a way of letting initialization
+routines be called when a file is actually loaded or a system
+containing the file is started up.  This allows for correct initialization
+in stand-alone programs and runtime systems; therefore a recommended
+programming style is to use <code>initialization/1</code> instead of a bare
+<code>:- </code><var>Goal</var><code></code> construct whenever appropriate.
+
+   <p>In the following figure, <var>Goal_1</var> might typically be
+an operator declaration and <var>Goal_2</var>, an initialization predicate that
+modifies the database.
+
+<br><p>
+   <img src="images/ref-init-goals.png" alt="images/ref-init-goals.png">
+
+<div align="center">Embedded directives (<var>goal_1</var>) vs. initialized goals (<var>goal_2</var>)</div>
+
+   <p>The initialization goal, <var>Goal_2</var>, is defined to be run when:
+     <ul>
+
+     <li>        a source file with a <code>:- initialization </code><var>Goal</var><code></code> directive
+is loaded into a running system (using compile, consult etc.) 
+<li>        a stand-alone program or runtime system is started up,
+and some file linked to
+the system had a <code>:- initialization </code><var>Goal</var><code></code> directive. If several
+files had such directives, the order in which the goals are run is not
+defined. 
+<li>        a saved state is restored, and some file loaded to the saved system
+had a <code>:- initialization </code><var>Goal</var><code></code> directive, or
+<code>initialization(</code><var>Goal</var><code>)</code> was called before the state was saved. 
+ If several
+initialization goals were defined in the system, the order in which they
+are run upon a restore is not defined. 
+<li>        a QOF file is loaded into a running system,
+and the source file that was compiled into the qof file had a
+<code>(:- initialization </code><var>Goal</var><code>)</code> directive. 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sls-igs-vol.html#ref-sls-igs-vol">Next</a>
+<li><a rel="up" accesskey="u" href="ref-sls-igs.html#ref-sls-igs">Up</a>
+</ul>
+</div>
+   </body></html>
+

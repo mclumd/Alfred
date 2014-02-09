@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Messages</h5>
+
+   <p>The <code>message/4</code> predicate is used to ask whether a message is
+defined for a class or to find what messages are defined for a class,
+etc. It does not distinguish between messages whose methods are
+defined in the class itself and those that are inherited from a
+superclass.
+
+   <p>The <code>direct_message/4</code> predicate is used to ask whether a message is
+not only defined for a class, but whether the method for that message
+is defined in the class itself. It can also be used to determine
+which methods are defined in a class. This ability to look inside a
+class definition makes <code>direct_message/4</code> an egregious violator of
+the principle of information hiding.  Thus it, like
+<code>class_ancestor/2</code>, should mainly be confined to use in programmer
+support applications.
+
+   <p>Both <code>message/4</code> and <code>direct_message/4</code> take the message operator
+as an argument, along with the class, message name and arity. Hence it
+is possible to use these predicates to ask about get, put or send
+messages.
+
+   <p>It is not possible to ask about a class's slots, nor should it
+be. However, it is possible (and quite reasonable) to ask about the
+get and put messages that are defined for a class. For example, the
+following goal finds all the 1-argument messages that are defined for
+both the get and put message operators in the class <var>Class</var>.
+
+<pre class="example">     | ?- <kbd>setof(Message,
+     	   (message(</kbd><var>Class</var><kbd>, &lt;&lt;, Msg, 1),
+     	    message(</kbd><var>Class</var><kbd>, &gt;&gt;, Msg, 1)),
+     	   L).</kbd>
+     </pre>
+
+   <p>There may or may not be slots corresponding to these messages; that
+detail is hidden in the definition of <var>Class</var>. However, it should be
+possible to use <var>Class</var> as if the slots were there.
+
+   <p>As an example, recall the polar coordinate interface to the point
+class, which defined get and put methods for <code>r</code> and <code>theta</code>, even
+though data was represented inside an object by rectangular
+coordinates <code>x</code> and <code>y</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="obj-inh-ask-cls.html#obj-inh-ask-cls">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-inh-ask.html#obj-inh-ask">Up</a>
+</ul>
+</div>
+   </body></html>
+

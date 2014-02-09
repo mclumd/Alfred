@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Format of Debugging Messages</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="dbg-sdb-dme-hpm.html#dbg-sdb-dme-hpm">dbg-sdb-dme-hpm</a>:                      Format of Head Port Messages
+<li><a accesskey="2" href="dbg-sdb-dme-epm.html#dbg-sdb-dme-epm">dbg-sdb-dme-epm</a>:                      Format of Exception Port Messages
+</ul>
+
+   <p>After you turn on the debugger and type the goal you want
+to debug, the system begins to show the steps of the procedure's
+execution.  As the system passes through each port of a procedure, it
+displays a debugging message on your terminal.
+
+   <p>A sample debugging message and an explanation of its symbols are
+shown below.
+
+<pre class="example">     ** (23) 0 Call (dynamic): mymodule:foo(hello,there,_123) ?
+     </pre>
+
+     <dl>
+
+     <br><dt><code>**</code>
+     <dd>The first two characters indicate whether this is a spypoint and
+whether this port is being entered after a <code>skip</code>.  The possible
+combinations are:
+          <dl>
+
+          <br><dt><code>**</code>
+          <dd>This is a spypoint.  (<code>foo/3</code> has been spied.) 
+<br><dt><code>*&gt;</code>
+          <dd>This is a spypoint; you are returning from a <code>skip</code>. 
+<br><dt><code> &gt;</code>
+          <dd>This is not a spypoint; you are returning from a <code>skip</code>. 
+<br><dt><code>  </code>
+          <dd>This is not a spypoint.  (For this condition, two blank
+spaces are displayed at the left of the message.) 
+</dl>
+
+     <br><dt><code>(23)</code>
+     <dd>The number in parentheses is the unique invocation identifier.  This
+identifies a particular call to the procedure.  This number can be used to
+correlate the trace messages for the various ports, since it is unique for
+every invocation.  It will also give an indication of the number of
+procedure calls made since the start of the execution.  The invocation
+counter is reset to 1 whenever a new goal is typed at the top level, and is
+also reset when retries (see <a href="dbg-bas-tra-ccf.html#dbg-bas-tra-ccf">dbg-bas-tra-ccf</a>) are performed.
+
+     <br><dt><code>0</code>
+     <dd>The next number is the current depth -- that is, the number
+of direct ancestors this goal has.  The ancestors can be printed using
+the <kbd>g</kbd> debugging option.  The depth increases as procedures are
+called and decreases as procedures return.  There may be many goals at
+the same depth, which is why the unique invocation identifier is also
+provided.  If the depth is shown as 0, this spypoint is on a compiled
+procedure and no depth or ancestor information is available.  The depth
+is reset to 0 when a compiled procedure is executed, and begins growing
+again from there afterward.
+
+     <br><dt><code>Call</code>
+     <dd>The next word shows the particular port:  Head, Call, Exit,
+Done, Redo, Fail, or Exception.
+
+     <br><dt><code>(dynamic)</code>
+     <dd>The next parenthesized item, if present, indicates
+when there is something unusual about the predicate.  The possibilities
+are:
+          <dl>
+
+          <br><dt><code>built_in</code>
+          <dd>for built-in predicates; or
+
+          <br><dt><code>locked</code>
+          <dd>for locked predicates; or
+
+          <br><dt><code>undefined</code>
+          <dd>for undefined predicates; or
+
+          <br><dt><code>foreign</code>
+          <dd>for foreign predicates (defined in another programming language); or
+
+          <br><dt><code>dynamic</code>
+          <dd>for dynamic predicates; or
+
+          <br><dt><code>multifile</code>
+          <dd>for multifile predicates. 
+</dl>
+
+     <br><dt><code>mymodule</code>
+     <dd>If the procedure currently being debugged was loaded into a
+module other than <code>user</code>, the module name will be displayed here, followed
+by a colon.
+
+     <br><dt><code>foo(hello,there,_123)</code>
+     <dd>The goal is then printed so that its current
+instantiation state can be seen.  (At Redo ports, the instantiation state
+shown is the same as at the previous Exit.) 
+This is done using <code>print/1</code> so that all
+goals displayed by the debugger can be "pretty printed", if the user wishes,
+using <code>portray/1</code> clauses. The debugger also maintains a print depth limit
+and will only show terms nested down to this depth.  The system initially
+uses a limit of 10, but this can be changed using the <kbd>&lt;</kbd> debugging
+option.
+
+     <br><dt><code>?</code>
+     <dd>The final <code>?</code> is the prompt indicating that you should type in one of
+the option codes (see next section).  If this particular port is unleashed,
+there will be no prompt and the debugger will continue to the next port. 
+</dl>
+
+   <p><strong>Please note:</strong>  Since the system does not allow the placing of spypoints on built-in
+predicates, the only way to show the execution of built-in predicates typed
+at the main Prolog prompt is to select trace mode.  For example, if
+you typed <kbd>write(foo).</kbd> at the main Prolog prompt with the debugger
+in debug mode, the system would simply display the word <code>foo</code> without
+tracing the execution of the predicate <code>write/1</code>. 
+However, if a built-in predicate
+such as <code>write/1</code> were called from within a program, the execution of the
+predicate would be shown in any case that the execution of the procedure
+containing it would be shown.  There are a few basic built-in predicates for
+which information is not displayed because it is more convenient not to
+trace them.  These are:  <code>true/0</code>, <code>otherwise/0</code>, <code>false/0</code>, <code>fail/0</code>,
+<code>=/2</code>, <code>!/0</code> (cut), <code>;/2</code> (or), <code>,/2</code> (and), and
+<code>-&gt;/2</code> (local cut).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-sdb-opt.html#dbg-sdb-opt">Next</a>
+<li><a rel="up" accesskey="u" href="dbg-sdb.html#dbg-sdb">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

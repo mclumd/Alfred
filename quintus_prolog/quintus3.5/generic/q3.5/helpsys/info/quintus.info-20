@@ -1,0 +1,1224 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: fli-ffp-dat-flo,  Next: fli-ffp-dat-cat,  Prev: fli-ffp-dat-int,  Up: fli-ffp-dat
+
+Passing Floats
+..............
+
+     Prolog:  +float
+     C:       double x;
+
+   The C double-precision float is converted to a Prolog float,
+which is passed to the Prolog call.  If the C double contains garbage,
+ Prolog will receive that garbage as a double-precision floating-point
+  number.  Many C compilers will allow the parameter declaration to
+be `float' instead of `double' because they always convert
+single-precision floating-point arguments to double-precision.
+However, C compilers conforming to the new ANSI standard will not    do
+this, so it is recommended that `double' be used.
+
+     Prolog:  +single
+     ANSI C:  float x;
+
+   The C single-precision float is converted to a Prolog float,
+which is passed to the Prolog call.  If the C float contains garbage,
+Prolog will receive that garbage as a single-precision floating-point
+ number.
+
+   Normally, this type of argument is not used; however, C    compilers
+conforming to the new ANSI standard can pass single    precision floats
+to Prolog    without first converting them to double.  It is not
+recommended    that floats be passed as `single' until you have
+verified that    your C compiler behaves as desired.
+
+     Prolog:  +double
+     C:       double x;
+
+   The C double-precision float is converted to a Prolog float,
+which is passed to the Prolog call.  If the C float contains garbage,
+Prolog will receive that garbage as a double-precision floating-point
+ number.
+
+     Prolog:  -float
+     C:       float *x;
+
+   A pointer to a C float is passed to the foreign interface.     When
+Prolog returns a solution, a Prolog floating-point number is
+expected in the    corresponding argument of the call.  The foreign
+interface converts    that number into a C float and writes it at the
+location supplied.     The previous contents of the location are
+destroyed.  If the    Prolog call does not return a floating-point
+number in the appropriate    position, a type error is raised and the
+contents of the location    is unchanged.
+
+     Prolog:  -single
+     C:       float *x;
+
+   A pointer to a C float is passed to the foreign interface.     When
+Prolog returns a solution, a Prolog floating-point number is
+expected in the    corresponding argument of the call.  The foreign
+interface converts    that number into a C float and writes it at the
+location supplied.     The previous contents of the location are
+destroyed.  If the    Prolog call does not return a floating-point
+number in the appropriate    position, a type error is raised and the
+contents of the location    is unchanged.
+
+   When the foreign language calling Prolog is C, this type of
+argument is not normally used; however, C compilers conforming    to
+the new ANSI standard can return single precision floats from    Prolog
+without first converting them to double.  It is not    recommended that
+floats be passed as `single' until you have    verified that your C
+compiler behaves as desired.
+
+     Prolog:  -double
+     C:       double *x;
+
+   A pointer to a C double is passed to the foreign interface.     When
+Prolog returns a solution, a Prolog floating-point number is
+expected in the corresponding argument of the call.  The foreign
+interface converts that number into a C double and writes it at    the
+location supplied.  The previous contents of the location will    be
+destroyed.  If the Prolog call does not return a floating-point
+number in the appropriate position, a type error is signaled and the
+contents of the location is unchanged.
+
+   It is assumed that the interface will overwrite this float with
+Prolog's result.  When Prolog returns, its floating-point number    is
+converted to double-precision and written onto the space    for the
+foreign double.  The previous contents of the C double    will be lost.
+If the Prolog call does not return a floating-point    number, a type
+error is raised and the result is unchanged.
+
+
+File: quintus.info,  Node: fli-ffp-dat-cat,  Prev: fli-ffp-dat-flo,  Up: fli-ffp-dat
+
+Passing Atoms in Canonical Form
+...............................
+
+   The foreign function interface allows Prolog atoms to be passed from
+C functions to Prolog either in a canonical form as unsigned integers,
+or as pointers to character strings.
+
+   This section describes passing atoms in canonical form.  For each
+Prolog atom there is a single canonical representation.  Programs can
+rely on the property that identical atoms have identical canonical
+representations.  Note, however, that the canonical form of an atom is
+not necessarily identical across different invocations of the program.
+This means that canonical atom representations should not be used in
+files or interprogram communication.  For these purposes strings should
+be used (see *Note fli-ffp-a2s-str::).  Foreign functions can store
+canonical atoms in data structures, pass them around, access their
+strings using `QP_string_from_atom()' and pass them back to Prolog, but
+they should not attempt any other operations on them.
+
+     Prolog:  +atom
+     C:       QP_atom x;
+
+   The `QP_atom' must be a valid Prolog    atom, otherwise the function
+attempting to pass the atom parameter   (`QP_query()' or
+`QP_open_query()') will return `QP_ERROR'.     The C `QP_atom' is
+passed to Prolog, where it will    appear as a normal Prolog atom.
+Atoms can be converted to strings    using the functions
+`QP_string_from_atom()' or    `QP_atom_from_padded_string()' (see *Note
+fli-p2f-atm-a2s::).
+
+     Prolog:  -atom
+     C:       QP_atom *x
+
+   A pointer to a C `QP_atom' is passed to the foreign interface.
+When Prolog returns a solution, a Prolog atom is expected in the
+corresponding argument of the call.  This atom might be one obtained
+from Prolog, or one generated through the function
+`QP_atom_from_string()' or `QP_atom_from_padded_string()' (see    *Note
+fli-p2f-atm-a2s::).  The foreign interface simply writes    that atom
+at the location supplied.  The previous contents    of the location are
+destroyed.  If the Prolog call does not    return an atom in the
+appropriate position, a type error is raised    and the contents of the
+location is unchanged.
+
+   Also see *Note fli-ffp-a2s:: for discussion of conversion between
+atoms and strings.
+
+
+File: quintus.info,  Node: fli-ffp-a2s,  Next: fli-ffp-ccp,  Prev: fli-ffp-dat,  Up: fli-ffp
+
+Converting Between Atoms and Strings
+------------------------------------
+
+* Menu:
+
+* fli-ffp-a2s-str::                     Passing Atoms as Strings
+* fli-ffp-a2s-trm::                     Passing Terms
+* fli-ffp-a2s-adr::                     Passing Addresses
+
+
+File: quintus.info,  Node: fli-ffp-a2s-str,  Next: fli-ffp-a2s-trm,  Up: fli-ffp-a2s
+
+Passing Atoms as Strings
+........................
+
+   The foreign function interface allows Prolog atoms to be passed from
+C functions to Prolog either in a canonical form as unsigned integers,
+or as pointers to character strings.
+
+   This section describes passing atoms as pointers to null-terminated
+character strings.  Strings are always identical across different
+invocations of a program, so are the correct atom representation to use
+when writing to files or using interprogram communication.  For other
+uses, atoms in the canonical form may be appropriate (see *Note
+fli-ffp-dat-cat::).
+
+   If, in a later release of Quintus Prolog, it is possible to call
+Prolog directly from FORTRAN or Pascal, it will additionally be possible
+to pass atoms as fixed-length, blank-padded strings (as when Prolog
+calls FORTRAN or Pascal).
+
+     Prolog:  +string
+     C:       char *x
+
+   The argument passed from the C function is a null-terminated
+character string.  The foreign interface automatically converts the
+string to a Prolog atom, and passes it to the Prolog predicate.
+
+     Prolog:  -string
+     C:       char **x;
+
+   A pointer to a C string pointer is passed to the foreign interface.
+  When Prolog returns a solution, a Prolog atom is expected in the
+corresponding argument of the call.  This atom might be one obtained
+from Prolog, or one generated through the function
+`QP_atom_from_string()' or `QP_atom_from_padded_string()' (see    *Note
+fli-p2f-atm-a2s::).  The foreign interface writes a pointer    to the
+string for that atom at the location supplied.  The previous
+contents of the location are destroyed.  This string must not be
+overwritten by the C function.  If the Prolog call does not return
+an atom in the appropriate position, a type error is raised and the
+contents of the location is unchanged.
+
+   See also *Note fli-ffp-a2s:: for discussion of conversion between
+atoms and strings.
+
+
+File: quintus.info,  Node: fli-ffp-a2s-trm,  Next: fli-ffp-a2s-adr,  Prev: fli-ffp-a2s-str,  Up: fli-ffp-a2s
+
+Passing Terms
+.............
+
+   The foreign function interface allows Prolog terms to be passed from
+C functions.  Like most of the simple data types that may be passed to
+and from Prolog, terms to be passed can originate either in Prolog or
+in C (see *Note fli-p2f-trm::).  Like terms in Prolog, terms that are
+passed to C are automatically made safe from damage by operations that
+might change their absolute position in Prolog memory, like stack
+shifting and garbage collection.
+
+     Prolog:  +term
+     C:       QP_term_ref
+
+   The argument passed from the C function is a `QP_term_ref'
+initialized to a Prolog term.  If something other than a term reference
+  is passed to Prolog, the results are undefined.
+
+     Prolog:  -term
+     C:       QP_term_ref
+
+   A `QP_term_ref' is passed to the foreign interface.  When Prolog
+returns a solution, the foreign interface writes a reference to the
+Prolog term in the corresponding argument of the call into the
+`QP_term_ref'.  The previous contents of the `QP_term_ref' are
+destroyed.  Unlike the other passing types, there are no associated
+type errors when passing terms.
+
+   Note that the output term, as well as the input term is represented
+in the C code by a `QP_term_ref'.  This contrasts with other output
+types, which are usually represented in C as pointers to the
+corresponding input type.
+
+
+File: quintus.info,  Node: fli-ffp-a2s-adr,  Prev: fli-ffp-a2s-trm,  Up: fli-ffp-a2s
+
+Passing Addresses
+.................
+
+   Previous releases of Quintus Prolog had the restriction that integers
+of greater than 29 bits could not be represented as Prolog integers.
+Certain platforms, however, have pointers that use some of the four
+most significant bits; for these machines, pointers could not be
+represented as Prolog integers.  This problem motivated the `address',
+which could be treated specially, as a distinct data type that can be
+passed through the foreign interface.
+
+   With release 3 the restriction of integers to 29 bits has been
+lifted; however, the internal representation of integers of more than
+29 bits is more bulky and somewhat slower to manipulate than that of
+smaller integers.  While this is not a problem in normal programs, it
+could penalize programs that manipulate pointers in Prolog on certain
+platforms whose pointers require more than 29 bits.  We have chosen to
+retain the address data type in release 3 so that such penalties can be
+avoided where possible, as well as for backward compatibility.
+Addresses can be passed both to and from Prolog from foreign functions,
+and to and from foreign functions from Prolog.  (See *Note
+fli-p2f-poi::.)
+
+   As when calling foreign code from Prolog, pointers should be passed
+through the interface using the type specification
+
+     address(TYPENAME)
+
+   as described in more detail below.  TYPENAME should be the name used
+in the foreign language to identify the type of object named by the
+pointer.
+
+     Prolog:  +address(TYPENAME)
+     C:       TYPENAME *x;
+
+   The C pointer is converted to a 32-bit Prolog integer, which is
+passed    to the Prolog call.  If the C pointer contains garbage when
+it is    passed, Prolog will receive that garbage as an integer.
+
+     Prolog:  -address(TYPENAME)
+     C:       TYPENAME **x;
+
+   A pointer to a C pointer is passed to the foreign interface.
+When Prolog returns a solution, a Prolog integer is expected in the
+corresponding argument of the call.  If the argument is 0, the
+foreign function writes the NULL pointer at the location supplied.
+Otherwise, the foreign interface converts the integer into a C pointer
+ and writes it at the location.     The previous contents of the
+location will be destroyed.  If the    Prolog call does not return an
+integer in the appropriate position,    a type error is signaled and
+the contents of the location is undefined.
+
+     Prolog:  +address
+     C:       char *x
+
+   This is equivalent to `+address(char)'.
+
+     Prolog:  -address
+     C:       char **x
+
+   This is equivalent to `-address(char)'.
+
+   Using `+address' in place of `+address(TYPENAME)', or `-address' in
+place of `-address(TYPENAME)', has no effect on the execution of the
+program; however, doing so can reduce the readability of the program and
+compromise program checking tools.
+
+
+File: quintus.info,  Node: fli-ffp-ccp,  Next: fli-ffp-exa,  Prev: fli-ffp-a2s,  Up: fli-ffp
+
+Invoking a Callable Predicate from C
+------------------------------------
+
+* Menu:
+
+* fli-ffp-ccp-lcp::                     Looking Up a Callable Prolog Predicate
+* fli-ffp-ccp-dpq::                     Making a Determinate Prolog Query
+* fli-ffp-ccp-inq::                     Initiating a Nondeterminate Prolog Query
+* fli-ffp-ccp-snq::                     Requesting a Solution to a Nondeterminate Prolog Query
+* fli-ffp-ccp-tnq::                     Terminating a Nondeterminate Prolog Query
+
+   A Prolog predicate that has been made callable from foreign code can
+be invoked in two ways: determinately or nondeterminately.  A
+determinate query asks for the first solution and the first solution
+only.  A nondeterminate query allows Prolog to backtrack, possibly
+returning multiple solutions to the calling foreign function.
+
+   Note that the terms "determinate" and "nondeterminate" do not refer
+to the Prolog predicate being called, but rather to the query.  It is
+perfectly reasonable to ask for only the first solution of a Prolog
+predicate that is nondeterminate, or to attempt to return all solutions
+to a predicate that in fact has just one.  Multiple solutions, if any,
+are returned in the Prolog solution order.  When only a single solution
+is desired a determinate call is preferred, as it is more efficient and
+concise.
+
+
+File: quintus.info,  Node: fli-ffp-ccp-lcp,  Next: fli-ffp-ccp-dpq,  Up: fli-ffp-ccp
+
+Looking Up a Callable Prolog Predicate
+......................................
+
+   Before a Prolog predicate can be called from a foreign language it
+must be looked up.  The C functions `QP_predicate()' and `QP_pred()'
+perform this function.  The lookup step could have been folded into the
+functions that make the query, but if a predicate was to be called many
+times the redundant, if hidden, predicate lookup would be a source of
+unnecessary overhead.  Instead, `QP_predicate()' or `QP_pred()' can be
+called just once per predicate.  The result can then be stored in a
+variable and used as necessary.
+
+   Both `QP_predicate()' and `QP_pred' return a `QP_pred_ref', which
+represents a Prolog predicate.  The type definition for `QP_pred_ref'
+is found in `<quintus/quintus.h>'.
+
+            QP_pred_ref QP_predicate(name_string, arity, module_string)
+            char *name_string;
+            long int arity;
+            char *module_string;
+
+   `QP_predicate()' is the most convenient way of looking up a callable
+Prolog predicate.  It is simply passed the name and module of the
+predicate to be called as strings, the arity as an integer, and returns
+a `QP_pred_ref', which is used to make the actual call to Prolog.
+
+   `QP_predicate()' can only be used to look up predicates that have
+been declared callable from foreign code.  If some other predicate is
+looked up, `QP_ERROR' is returned.  Checking the return value protects
+you from attempting to call a predicate that isn't yet ready to be
+called.
+
+            QP_pred_ref QP_pred(name_atom, arity, module_atom)
+            QP_atom name_atom;
+            long int arity;
+            QP_atom module_atom;
+
+   `QP_pred()' is a less convenient, but faster, means of looking up a
+callable Prolog predicate.  Unlike `QP_predicate()', it has its name
+and module arguments passed as Prolog atoms.  These may have been
+returned to C from Prolog, or may have been built in the foreign
+language using `QP_atom_from_string()'.  One additional difference is
+that the name passed is _not_ the name of the Prolog predicate to be
+called, but rather the name of the interface predicate constructed when
+the Prolog predicate was made callable from foreign code *Note
+fli-ffp-ppc::.  Much of the cost of `QP_predicate()' is from having to
+look up Prolog atoms for its name and module arguments.  By avoiding
+doing this unnecessarily, what `QP_pred()' gives up in convenience is
+returned in performance.  Like `QP_predicate()', `QP_pred()' returns a
+`QP_pred_ref', which is used to make the actual call to Prolog.  If a
+predicate that is not an interface predicate is looked up, `QP_pred()'
+returns `QP_ERROR'.
+
+   `QP_pred()' can only be used to look up predicates that have been
+declared callable from foreign code.  If some other predicate, or a
+predicate that does not exist, is looked up, `QP_ERROR' is returned.
+This protects you from attempting to call a predicate that isn't yet
+ready to be called.
+
+
+File: quintus.info,  Node: fli-ffp-ccp-dpq,  Next: fli-ffp-ccp-inq,  Prev: fli-ffp-ccp-lcp,  Up: fli-ffp-ccp
+
+Making a Determinate Prolog Query
+.................................
+
+   A determinate query can be made in a single C function call using
+`QP_query'.  The first argument passed to `QP_query()' is a
+`QP_pred_ref' for the predicate to be called.  Any arguments after the
+first represent parameters to be passed to and from the Prolog
+predicate.
+
+   The foreign language interface will interpret arguments passed to
+the Prolog predicate according to the call specification given when the
+predicate was made callable.  Hence, it is important that the arguments
+to be passed to and from the Prolog predicate should correspond to that
+call specification.  For certain parameter types (passing Prolog atoms
+in canonical form) it is possible to detect inconsistencies between
+data supplied to `QP_query()' and the call specification, but for the
+most part this is impossible.  Calls that are inconsistent with their
+call specifications will produce undefined results.
+
+   `QP_query()' returns one of three values: `QP_SUCCESS', indicating
+that the query was made and a solution to the query was computed;
+`QP_FAILURE', meaning that the query was made but no solution could be
+found; and `QP_ERROR', which says that either the query could not be
+made, or that an exception was signaled from Prolog but not caught.  In
+this case, see the reference page for `QP_exception_term()'.   Only
+when the return value is `QP_SUCCESS' should the values in variables
+passed as outputs from Prolog be considered valid.  Otherwise, their
+contents are undefined.
+
+   It is important that a valid `QP_pred_ref' is passed to
+`QP_query()'; in particular, it is advisable to check for an error
+return from `QP_predicate()' or `QP_pred()' before calling `QP_query()'.
+
+
+File: quintus.info,  Node: fli-ffp-ccp-inq,  Next: fli-ffp-ccp-snq,  Prev: fli-ffp-ccp-dpq,  Up: fli-ffp-ccp
+
+Initiating a Nondeterminate Prolog Query
+........................................
+
+   For a nondeterminate query, multiple solutions to the query may be
+successively returned to the calling foreign function.  Nondeterminate
+queries are made in three steps: the query is first initiated, or
+"opened", using `QP_open_query()'.  Solutions are then requested using
+`QP_next_solution()'.  When all desired solutions have been returned,
+or there are no more solutions, the query must be terminated by calling
+`QP_cut_query()' or `QP_close_query()'.
+
+   The C function `QP_open_query()' is used to initiate a
+nondeterminate Prolog query.  The arguments passed to `QP_open_query()'
+are identical to those that would be passed to `QP_query()'; however,
+`QP_open_query()' does not compute a solution to the query.  Its effect
+is to prepare Prolog for the computation of solutions to the query,
+which are requested by calls to the function `QP_next_solution()'.  For
+consistency checking, `QP_open_query()' returns a `QP_qid', which
+represents the Prolog query.  The type definition for `QP_qid' is found
+in `<quintus/quintus.h>'.  The `QP_qid' returned by a call to
+`QP_open_query()' must be passed to each call to `QP_next_solution()'
+for that query, as well as to `QP_cut_query()' or `QP_close_query()'
+when terminating the query.  If an invalid `QP_qid' is passed to one of
+these functions, the function has no effect except to return `QP_ERROR'.
+
+   When requesting solutions from an open nondeterminate query, input
+and output parameters are _not_ passed.  The effect of
+`QP_open_query()' is to pass inputs to Prolog, which subsequently
+maintains them.  It also tells Prolog where storage for outputs has
+been reserved.  This storage will be written later, when solutions are
+returned.
+
+   If an error occurs when attempting to open a query, `QP_ERROR' is
+returned and the query is automatically terminated.
+
+   It is important that a valid `QP_pred_ref' is passed to
+`QP_open_query()'; in particular, it is advisable to check for an error
+return from `QP_predicate()' or `QP_pred()' before calling
+`QP_open_query()'.
+
+
+File: quintus.info,  Node: fli-ffp-ccp-snq,  Next: fli-ffp-ccp-tnq,  Prev: fli-ffp-ccp-inq,  Up: fli-ffp-ccp
+
+Requesting a Solution to a Nondeterminate Prolog Query
+......................................................
+
+   The function `QP_next_solution()' is used to return a solution from
+an open nondeterminate Prolog query.  Solutions are computed on demand,
+and multiple solutions are returned in the normal Prolog order.
+`QP_next_solution()' is passed the `QP_qid' returned by
+`QP_open_query()' when the nondeterminate query was opened.  No
+additional input or output parameters are passed: after a call to
+`QP_open_query()', Prolog manages inputs itself, and has been told
+where storage for outputs has been reserved.  Each time
+`QP_next_solution()' computes a new solution it writes it on the output
+storage for the foreign function to use as it likes.  Each new solution
+overwrites the old memory, destroying the previous solution, so it is
+important that the foreign function copies solutions elsewhere if it
+wants to accumulate them.
+
+   Important restriction: only the innermost, i.e. the most recent, open
+query can be asked to compute a solution.  A new query can be made at
+any point whether or not other nondeterminate queries are open;
+however, while the new query remains open only it will be able to
+return solutions.
+
+
+File: quintus.info,  Node: fli-ffp-ccp-tnq,  Prev: fli-ffp-ccp-snq,  Up: fli-ffp-ccp
+
+Terminating a Nondeterminate Prolog Query
+.........................................
+
+   `QP_close_query()' and `QP_cut_query()' are functions that are used
+to terminate an open nondeterminate Prolog query.  They differ only in
+their effect on the Prolog heap, which can be reflected in the solutions
+Prolog has returned to C.
+
+   The difference between `QP_close_query()' and `QP_cut_query()' can
+best be understood with reference to Prolog's control flow.
+`QP_close_query()' is equivalent to the Prolog call `!, fail'.  The cut
+renders the current computation determinate, removing the possibility
+of future backtracking.  The following call to `fail/0' then initiates
+backtracking to the next previous parent goal with outstanding
+alternatives.  In doing so it pops the Prolog heap to its state when
+the parent goal succeeded, in effect throwing away any terms created
+since that parent goal.
+
+   In contrast, just calling `!' in Prolog renders the computation
+determinate without initiating backtracking.  Any terms created since
+the parent goal are retained.
+
+   In the context of calling Prolog from foreign languages, terminating
+a query using `QP_close_query()' generally means throwing away the most
+recent solution that was calculated, unless that solution has been
+copied into a more permanent place.  (Of course, any previous solutions
+must also be assumed to have been overwritten by subsequent solutions
+unless copied elsewhere!)  The converse of this behavior is that
+closing a query using `QP_close_query()' automatically frees up the
+Prolog memory that holds the last solution.
+
+   Terminating a query using `QP_cut_query()' renders the computation
+determinate, but as it is not failed over the Prolog heap is not
+popped.  Thus when terminating a query using `QP_cut_query()' more
+space is retained, but so is the most recent solution.
+
+
+File: quintus.info,  Node: fli-ffp-exa,  Next: fli-ffp-ppl,  Prev: fli-ffp-ccp,  Up: fli-ffp
+
+Examples
+--------
+
+* Menu:
+
+* fli-ffp-exa-cpl::                     Calling Arbitrary Prolog Goals from C
+* fli-ffp-exa-fib::                     Generating Fibonacci Numbers
+* fli-ffp-exa-ndp::                     Calling a Nondeterminate Predicate
+* fli-ffp-exa-nes::                     Nested Prolog Queries
+
+
+File: quintus.info,  Node: fli-ffp-exa-cpl,  Next: fli-ffp-exa-fib,  Up: fli-ffp-exa
+
+Calling Arbitrary Prolog Goals from C
+.....................................
+
+   Any Prolog predicate can be made callable from foreign code,
+including system built-ins.  An especially useful case of this
+generally useful ability is making the built-in `call/1' callable.
+`call/1' is declared callable like any other predicate, and is passed
+the Prolog term to be called.  The term may have originated in Prolog,
+or may have been constructed in C using the supplied term manipulation
+functions (see *Note fli-p2f-trm::).
+
+   In this particular example, we pass a term from Prolog to C, then C
+calls `call/1' with that term.  This lets us concentrate on the calling
+rather than on the construction of the term to be called.
+
+   On the Prolog side of the interface, the following declaration is
+loaded:
+     :- extern(call(+term)).
+
+   On the C side, the following function is defined, compiled and either
+loaded into Prolog using the dynamic foreign interface or statically
+linked with Prolog:
+     #include <quintus/quintus.h>
+     
+     call_prolog(t)
+     QP_term_ref t;
+     {
+             QP_pred_ref call = QP_predicate("call", 1, "user");
+             QP_query(call, t);
+     }
+
+   This done, any goal that can be called from Prolog can also be called
+from C by passing it to `call_prolog/1'.
+
+
+File: quintus.info,  Node: fli-ffp-exa-fib,  Next: fli-ffp-exa-ndp,  Prev: fli-ffp-exa-cpl,  Up: fli-ffp-exa
+
+Generating Fibonacci Numbers
+............................
+
+   Prolog and foreign languages are generally intercallable in Quintus
+Prolog; in particular, arbitrarily nested calling is permitted.  The
+following example uses recursive calling between Prolog and C to
+generate Fibonacci numbers:
+
+                                                               _fib.pl_
+     
+     fib :-
+         int(I),
+         fib(I, F),
+         write(fib(I,F)), nl,
+         fail.
+     
+     int(I) :- int(0, I).
+     
+     int(I, I).
+     int(I, K) :-
+         J is I+1,
+         int(J, K).
+     
+     fib(N, F) :-
+         (   N =< 1 ->
+             F = 1.0
+         ;   N1 is N-1,
+             N2 is N-2,
+             c_fib(N1, F1),
+             c_fib(N2, F2),
+             F is F1+F2
+         ).
+     
+     :- extern(fib(+integer, -float)).
+     
+     foreign(c_fib, c_fib(+integer, [-float])).
+     foreign_file(fib, [c_fib]).
+     
+     :- load_foreign_files(fib, []).
+
+                                                                _fib.c_
+     
+     #include <quintus/quintus.h>
+     
+     double c_fib(i)
+         long int i;
+         {
+             float f1, f2;
+             QP_pred_ref fib = QP_predicate("fib", 2, "user");
+     
+             if (i <= 1) {
+                 return 1.0;
+             } else {
+                 QP_query(fib, i-1, &f1);
+                 QP_query(fib, i-2, &f2);
+                 return f1+f2;
+             }
+         }
+
+
+File: quintus.info,  Node: fli-ffp-exa-ndp,  Next: fli-ffp-exa-nes,  Prev: fli-ffp-exa-fib,  Up: fli-ffp-exa
+
+Calling a Nondeterminate Predicate
+..................................
+
+   This example shows how a nondeterminate query can be made from C. It
+also shows how you can get at the exception terms raised from a Prolog
+query from C.
+
+                                                          _brothers.pl_
+     
+     foreign(brothers, c, brothers).
+     foreign_file(brothers, [brothers]).
+     :- load_foreign_files(brothers, []),
+             abolish([foreign/3, foreign_file/2]).
+     
+     :- extern(write(+term)).        % Make write/1     callable from C
+     :- extern(karamazov(-atom)).    % Make karamazov/1 callable from C
+     
+     karamazov('Fyodor').
+     karamazov('Dmitri').
+     karamazov('Ivan').
+     karamazov('Alyosha').
+
+                                                           _brothers.c_
+     
+     #include <quintus/quintus.h>
+     
+     /* lookup_predicate() is just a wrapper around QP_predicate()
+        that prints an error message if QP_predicate() fails.
+        It returns 1 if QP_predicate() succeeds and 0 if
+        QP_predicate() fails
+     */
+     int lookup_predicate(name, arity, module, predref)
+         char * name;
+         int    arity;
+         char * module;
+         QP_pred_ref * predref;
+         {
+             *predref = QP_predicate(name, arity, module);
+     
+             if (*predref == QP_BAD_PREDREF) {
+                 printf("%s:%s/%-d is not callable from C\n",
+                        module, name, arity);
+                 return 0;
+             } else {
+                 return 1;
+             }
+         }
+
+                                                           _brothers.c_
+     
+     void brothers() /* brothers() is called from Prolog */
+         {
+             QP_pred_ref     karam, write;
+             QP_qid          query;
+             QP_atom         bro;
+             int             status;
+     
+             if (!lookup_predicate("karamazov", 1, "user", &karam)) {
+                 return;
+             }
+     
+             if ((query = QP_open_query(karam, &bro)) == QP_BAD_QID) {
+                 printf("Cannot open query\n");
+                 return;
+             }
+     
+             /* Get solutions one at a time */
+             while ((status = QP_next_solution(query)) == QP_SUCCESS) {
+                 printf("%10s is a Karamazov\n",
+                        QP_string_from_atom(bro));
+             }
+     
+             QP_close_query(query);
+     
+             if (status == QP_ERROR) {
+                 /* Query raised an exception */
+                 QP_term_ref error = QP_new_term_ref();
+     
+                 printf("Query signalled an exception\n");
+                 if (QP_exception_term(error) == QP_ERROR) {
+                     printf("Could not get at exception term\n");
+                     return;
+                 }
+     
+                 if (lookup_predicate("write", 1, "user", &write)) {
+                     /* Call Prolog builtin write/1 to print the
+                        exception term */
+                     if (QP_query(write, error) != QP_SUCCESS) {
+                         printf("Couldnt write exception term\n");
+                     } else {
+                         return;
+                     }
+                 }
+             }
+         }
+
+   To test the `QP_exception_term()' part of this example add a clause
+for `karamazov/1' like:
+
+     karamazov(_) :- raise_exception(karamazov(error)).
+
+
+File: quintus.info,  Node: fli-ffp-exa-nes,  Prev: fli-ffp-exa-ndp,  Up: fli-ffp-exa
+
+Nested Prolog Queries
+.....................
+
+   This example demonstrates how you can have nested queries to Prolog
+from C. For brevity sake, we don't check the statuses returned by all
+the calls to `QP_next_solution()' for error values. This is not advised
+in real applications. This example also shows the use of
+`QP_cut_query()'.
+
+                                                             _books.pl_
+     
+     foreign(print_books, c, print_books).
+     foreign_file(books, [print_books]).
+     :- load_foreign_files(books, []),
+             abolish([foreign/3, foreign_file/2]).
+     
+     :- extern(author(-atom)).
+     :- extern(book(+atom,-atom)).
+     
+     author(hesse).
+     author(kafka).
+     author(dostoyevski).
+     
+     book(dostoyevski, idiot).
+     book(dostoyevski, gambler).
+     book(hesse,  steppenwolf).
+     book(hesse,  sidhdhartha).
+     book(hesse,  demian).
+     book(kafka,  america).
+     book(kafka,  trial).
+     book(kafka,  castle).
+     book(kafka,  metamorphosis).
+
+                                                              _books.c_
+     
+     #include <quintus/quintus.h>
+     
+     #define MAX_BOOKS 3
+     
+     void print_books()
+         {
+             QP_pred_ref author, book;
+             QP_qid      q1, q2;
+             QP_atom     a, b;
+             int         count;
+     
+             if (!(lookup_predicate("author", 1, "user", &author)))
+               return;
+     
+             if (!(lookup_predicate("book", 2, "user", &book)))
+               return;
+     
+             if ((q1 = QP_open_query(author, &a)) == QP_BAD_QID) {
+                 printf("Cant open outer query\n");
+                 return;
+             }
+     
+             while (QP_next_solution(q1) ==  QP_SUCCESS) {
+                 /* For each solution returned by author(X) do */
+                 if ((q2 = QP_open_query(book, a, &b)) == QP_BAD_QID) {
+                     printf("Cant open inner query\n");
+                     break;
+                 }
+                 printf("Books by %s:\n", QP_string_from_atom(a));
+     
+                 count = 0;
+                 while ((count < MAX_BOOKS) &&
+                        (QP_next_solution(q2) == QP_SUCCESS)) {
+                     /* Find atmost MAX_BOOKS solns for books(X,Y) */
+                     printf("\t\t%s\n",QP_string_from_atom(b));
+                     count++;
+                 }
+                 QP_close_query(q2);
+             }
+             QP_close_query(q1);
+         }
+
+
+File: quintus.info,  Node: fli-ffp-ppl,  Next: fli-ffp-sum,  Prev: fli-ffp-exa,  Up: fli-ffp
+
+Calling Prolog from Pascal and FORTRAN
+--------------------------------------
+
+   It is possible to call Prolog predicates from Pascal and FORTRAN
+using C as an intermediary language.  Your Pascal or FORTRAN manual will
+tell you how to make your code call C.  Then call Prolog from C using
+the procedures described in this section.
+
+
+File: quintus.info,  Node: fli-ffp-sum,  Next: fli-ffp-lib,  Prev: fli-ffp-ppl,  Up: fli-ffp
+
+Summary of Predicates and Functions
+-----------------------------------
+
+   Reference pages for the following provide further detail on the
+material in this section.
+
+   * `extern/1'
+
+   * `QP_close_query()'
+
+   * `QP_cut_query()'
+
+   * `QP_next_solution()'
+
+   * `QP_open_query()'
+
+   * `QP_pred()'
+
+   * `QP_predicate()'
+
+   * `QP_query()'
+
+
+File: quintus.info,  Node: fli-ffp-lib,  Prev: fli-ffp-sum,  Up: fli-ffp
+
+Library Support
+---------------
+
+   *   * `library(vectors)'
+
+   * `library(terms)'
+
+
+File: quintus.info,  Node: fli-ios,  Next: fli-ove,  Prev: fli-emb,  Up: fli
+
+Quintus Prolog Input / Output System
+====================================
+
+* Menu:
+
+* fli-ios-ove::                         Overview
+* fli-ios-iom::                         Input/Output Model
+* fli-ios-sst::                         Stream Structure
+* fli-ios-tty::                         TTY Stream
+* fli-ios-cps::                         Defining A Customized Prolog Stream
+* fli-ios-bot::                         The Bottom Layer Functions
+* fli-ios-uds::                         Examples Of User-Defined Streams
+* fli-ios-bio::                         Built-in C Functions And Macros For I/O
+* fli-ios-bci::                         Backward Compatibility I/O Issues
+
+   This section describes how Prolog streams are represented as C data
+structures, how streams can be configured to handle various file formats
+and how to create a customized Prolog stream in C.
+
+
+File: quintus.info,  Node: fli-ios-ove,  Next: fli-ios-iom,  Up: fli-ios
+
+Overview
+--------
+
+   The Quintus Prolog input/output system is designed to handle various
+file formats, device-dependent I/O, and in particular, it enables you
+to create customized Prolog streams in C.  File-related input/output
+operations of a Prolog program can be coded to be portable among
+different operating systems and the underlying formats of files.
+
+   A "Prolog stream" is an object storing the information about how to
+complete input/output operations to a file, device or other form of I/O
+channel.  All Prolog input/output operations are performed through
+Prolog streams.
+
+   The embedding ("bottom") layer of the Quintus Prolog system provides
+a set of default functions for handling normal Prolog streams. However,
+_user defined streams_ can be defined at runtime in such a way that
+Prolog built-in I/O operations work on other types of Prolog stream.
+Examples of user-defined streams include:
+
+   * a stream to inter-process communication
+
+   * a stream to a window in a graphic environment
+
+   There are three streams opened by the embedding layer I/O
+initialization functions when a Prolog process starts:
+
+   * user input stream: normal input channel
+
+   * user output stream: normal output channel
+
+   * user error stream: normal error message channel
+
+   Prolog also keeps track of two current streams,
+   * current input stream
+
+   * current output stream
+
+   A Prolog input/output built-in predicate or function that takes no
+stream argument is performed on the current input or current output
+stream.
+
+   In this section, we outline the Quintus Prolog input/output model
+and describe the Prolog stream structure, defining the different
+formats and options that can be associated with a stream. Then we
+discuss the method of creating a user-defined stream.
+
+   We also list a number of functions that enable Prolog streams to be
+manipulated in foreign code. Finally we discuss some compatability
+issues with the I/O system in previous versions of Quintus Prolog.
+
+     *Please note:* The terms "record" and "line" have the same meaning
+     in this section.  A line terminated with <LFD> is just a type of
+     record.  However, a record (line) is not always terminated by
+     <LFD>.
+
+
+File: quintus.info,  Node: fli-ios-iom,  Next: fli-ios-sst,  Prev: fli-ios-ove,  Up: fli-ios
+
+Input/Output Model
+------------------
+
+   There are three layers of input/output operations visible in the
+Prolog system as illustrated in the figure "Input/Output Model".
+
+   The "top layer" is character based.  It supports reading a
+character, writing a character and testing the state of a Prolog
+stream.  `get0/[1,2]' and `put/[1,2]' are examples of the first layer
+operation.
+
+   The "middle layer" is record based.  Its primary function is to keep
+the integrity of a record, through such operations as trimming a record,
+padding a record and handling output overflow.  This layer is not
+visible to the user and cannot be changed by the user.
+
+   The "bottom layer" is buffer based.  It performs the actual input
+from or output to the underlying device of a Prolog stream. The bottom
+layer is a collection of five functions associated with a stream: read,
+write, flush, seek and close functions.  Typically the read function
+reads data from the underlying device into a buffer that it maintains
+and then passes this data up to the middle layer a record at a time.
+The write function provides buffer space for a record to be received
+from the middle layer and writes out the buffer to the underlying
+device.
+
+   The embedding open function `QU_open()' assigns the appropriate
+bottom layer functions for a stream created by `open/[3,4]'.  A
+user-defined Prolog stream must supply its own bottom layer functions
+for the stream.  Bottom layer functions are described in *Note
+fli-ios-bot::.
+
+
+[See printed or HTML manual.]
+
+                          Input/Output Model
+
+   Writing to a `QP_DELIM_LF' record file stream demonstrates how the
+three layers work together.  Each `put/2' call on the stream simply
+stores a character in the record buffer of the stream.  When the top
+layer predicate, `nl/1', is called on the stream, the middle layer
+output function is called.  The middle layer function stores a <LFD> in
+the record buffer and updates some counters for the stream.  It then
+calls the bottom layer function of the stream.  The bottom layer writes
+out the record to the output file.
+
+     *Please note:* In addition, the top layer contains predicates and
+     C functions to perform seek, flush output and close operations on
+     a stream.  There are no middle layer functions for these
+     operations.
+
+
+File: quintus.info,  Node: fli-ios-sst,  Next: fli-ios-tty,  Prev: fli-ios-iom,  Up: fli-ios
+
+Stream Structure
+----------------
+
+* Menu:
+
+* fli-ios-sst-fst::                     Filename of A Stream
+* fli-ios-sst-mod::                     Mode of A Stream
+* fli-ios-sst-fmt::                     Format of A Stream
+* fli-ios-sst-mrl::                     Maximum Record Length
+* fli-ios-sst-lbc::                     Line Border Code
+* fli-ios-sst-fbc::                     File Border Code
+* fli-ios-sst-pef::                     Reading Past End Of File
+* fli-ios-sst-pro::                     Prompt String
+* fli-ios-sst-trm::                     Record Trimming
+* fli-ios-sst-see::                     Seek Type
+* fli-ios-sst-flu::                     Flushing An Output Stream
+* fli-ios-sst-obo::                     Output Stream Buffer Overflow
+* fli-ios-sst-sec::                     Storing Error Condition Of A Stream
+* fli-ios-sst-sda::                     System-Dependent Address In A File Stream
+* fli-ios-sst-bot::                     Bottom Layer Functions
+
+   The Prolog representation of a Prolog stream provides a way of
+retrieving information from its corresponding C stream structure.  It
+is currently represented as a Prolog term in the form of `'$stream'(N)'
+where N is an integer to identify the stream.  However, a user
+application should not explicitly create such a Prolog term as a Prolog
+stream, it should only be obtained through `open/[3,4]',
+`open_null_stream/1', or `stream_code/2'.  In C code, a Prolog stream is
+represented as a pointer to structure of type `QP_stream'.  The
+formatting information along with bottom layer functions of a stream is
+stored in its `QP_stream' structure.  A stream behavior depends on the
+values of fields in its `QP_stream' structure.  The options specified
+in `open/4' are converted and stored in the `QP_stream' structure
+created for the stream.
+
+   Selected fields in `QP_stream' that can be accessed and modified by
+an application are described in the remainder of the section.  Most of
+these fields are option fields, which can be specified in `open/4'.
+
+
+File: quintus.info,  Node: fli-ios-sst-fst,  Next: fli-ios-sst-mod,  Up: fli-ios-sst
+
+Filename of A Stream
+....................
+
+     open/[3,4]:    1st argument
+     QP_stream:     char *filename
+
+   The filename of a stream is recorded in the stream structure.  If a
+stream does not have a filename, (e.g. a data communication channel),
+the filename field should be an empty string.  After a stream is
+created, the Prolog system accesses this field only to get the
+corresponding filename of a stream.
+
+
+File: quintus.info,  Node: fli-ios-sst-mod,  Next: fli-ios-sst-fmt,  Prev: fli-ios-sst-fst,  Up: fli-ios-sst
+
+Mode of A Stream
+................
+
+     open/[3,4]:    2nd argument
+     QP_stream:     unsigned char mode
+
+   This field indicates whether the stream is created for input or
+output mode.  The `mode' field is `QP_READ' for an input (read only)
+stream, `QP_WRITE' or `QP_APPEND' for an output stream.  This field
+should not be changed for the lifetime of a stream.
+
+
+File: quintus.info,  Node: fli-ios-sst-fmt,  Next: fli-ios-sst-mrl,  Prev: fli-ios-sst-mod,  Up: fli-ios-sst
+
+Format of A Stream
+..................
+
+     open/4 option:  format(Format)
+     QP_stream:      unsigned char format
+
+   This field indicates the format of a stream.  The `format' tells the
+middle layer functions how to wrap (unwrap) a record.  Possible formats
+are:
+`QP_VAR_LEN'
+     specified as `format(variable)' in `open/4'.  Each record in the
+     file has its own length.  The middle layer input function trims
+     the trailing blank characters in each record if trimming is turned
+     on for the stream.
+
+     The input/output system does not alter any character in each record
+     for a `QP_VAR_LEN' format stream with no trimming and no line
+     border code.
+
+`QP_DELIM_LF'
+     specified as `format(delimited(lf))' in `open/4'.  From an
+     application program's point of view, each record in the file is
+     terminated with a single <LFD>.  Under Windows, however, what's
+     actually stored in the file is the sequence <RET><LFD>.
+
+`QP_DELIM_TTY'
+     specified as `format(delimited(tty))' in `open/4'.  The file
+     stream is a terminal device or a terminal emulator.  What
+     characters delimit each record depends on the host operating
+     system.  The Prolog input/output system treats this format like
+     `QP_DELIM_LF' as far as record termination is concerned.
+
+     The Prolog input/output system also automatically provides special
+     services for streams with `QP_DELIM_TTY' format (see *Note
+     fli-ios-tty::).
+
+   For a delimited record format stream, the middle layer input
+function removes the delimiting character at the end of each record and
+the line border code for the stream is returned to a top layer input
+predicate (function) when the end of a record is reached.  The middle
+output layer output function adds the delimited character at the end of
+each record before the record is passed to the bottom layer write
+function.
+
+   The `format' field may be set to `QP_FMT_UNKNOWN' when a stream
+structure is created if the format to be used is not known yet, for
+example, because the underlying device is not yet opened.  This format
+field must be set to a proper format before any I/O takes place on the
+stream.
+
+   An example of this is when opening a Prolog stream through
+`open/[3,4]' or `QP_fopen()' without specifying the format.  The
+embedding open function, `QU_open()' is given the stream format
+`QP_FMT_UNKNOWN' and thus chooses an appropriate format for the stream
+based on the filename and options of the stream.
+
+   Depending on the host operating system, some formats may be used
+more frequently than others.  `QP_DELIM_LF' and `QP_DELIM_TTY' are the
+most frequently used formats for a Prolog system running under UNIX or
+Windows.  `QP_VAR_LEN' is more frequently used under VMS.
+
+
+File: quintus.info,  Node: fli-ios-sst-mrl,  Next: fli-ios-sst-lbc,  Prev: fli-ios-sst-fmt,  Up: fli-ios-sst
+
+Maximum Record Length
+.....................
+
+     open/4 option:  record(MaxRecLen)
+     QP_stream:      int max_reclen
+
+   This field indicates the maximum record length of the stream.  It is
+usually also the buffer length of the stream.  The value in this field
+is not changed once the stream is created.  The maximum record length
+can be bigger than the value store in the `max_reclen' field for some
+operating systems allowing reading or writing partial records, such as
+the UNIX operating system.
+
+   To create an unbuffered output stream, the value in `max_reclen' must
+be set to 0. The bottom layer write function is then called for each
+character placed in the output stream.  To create an unbuffered input
+stream, the value in `max_reclen' can be either 0 or 1.
+
+
+File: quintus.info,  Node: fli-ios-sst-lbc,  Next: fli-ios-sst-fbc,  Prev: fli-ios-sst-mrl,  Up: fli-ios-sst
+
+Line Border Code
+................
+
+     open/4 option:  end_of_line(LineBorder)
+     QP_stream:      int line_border
+
+   The `line_border' field can be any integer greater than or equal to
+`QP_NOLB' (-1).  If the value is `QP_NOLB', there is no line border
+code for the stream.
+
+   For an input stream, the line border code is the value to be returned
+in getting a character when a stream is positioned at the end of a
+record.  (Notice that if the stream is a delimited record format
+stream, the delimited character has already been removed.)  If there is
+no line border code, the first character in the next record is returned
+at the end of a record.  Writing the line border code (i.e. with
+`put/[1,2]') to an output stream signals the end of the current record.
+Instead of writing out the line border code, the record is
+appropriately wrapped up based on the format of the stream, and the
+wrapped record is handed to the bottom layer write function of the
+stream.  This is just like a new line operation on the stream (e.g.
+`nl/[0,1]' or `QP_newln()').
+
+
+File: quintus.info,  Node: fli-ios-sst-fbc,  Next: fli-ios-sst-pef,  Prev: fli-ios-sst-lbc,  Up: fli-ios-sst
+
+File Border Code
+................
+
+     open/4 option:  end_of_file(FileBorder)
+     QP_stream:      int file_border
+
+   This is the code to be returned on reading at the end of file for an
+input stream.  This field is not used for an output stream.  The value
+in `file_border' field can be any integer greater than or equal to
+`QP_NOFB' (-2).  If the value is `QP_NOFB', there is no file border
+code for the stream.  If the `file_border' field is `QP_NOFB', reading
+at the end of file is the same as reading past the end of file.
+

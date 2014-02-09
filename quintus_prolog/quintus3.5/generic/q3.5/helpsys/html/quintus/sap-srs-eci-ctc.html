@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Restriction on Compile-Time Code</h5>
+
+   <p>Since <code>qpc</code> is itself a runtime system, any code to be run
+at compile-time must obey the same restrictions as for any other
+runtime system.  In particular, foreign code cannot be loaded into
+<code>qpc</code> with <code>load_foreign_executable/1</code> or
+<code>load_foreign_files/2</code>.  However, you can load QOF files into <code>qpc</code>,
+and if the QOF file has object file dependencies, they will be loaded
+also.  For example, you might compile <code>file.pl</code> with <code>qpc</code> to get
+<code>file.qof</code>:
+<pre class="example">
+                                    <div align="right"><em>file.pl</em>
+     </div>
+     
+     :- load_foreign_file([prog1], [])
+     :- load_foreign_executable(prog2)
+                                   <div align="right"><em>file.qof</em>
+     </div>
+     
+        ... &lt;dependency on object file prog1&gt; ...
+        ... &lt;dependency on shared object file prog2&gt; ...
+     </pre>
+
+   <p>In this case, <code>file.pl</code> and <code>file.qof</code> both depend on the same
+object files.  However, while a runtime system can load <code>file.qof</code>, it
+cannot load <code>file.pl</code>, because <code>load_foreign_executable/1</code> and
+<code>load_foreign_files/2</code> are not available in the runtime kernel.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-eci-spe.html#sap-srs-eci-spe">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs-eci.html#sap-srs-eci">Up</a>
+</ul>
+</div>
+   </body></html>
+

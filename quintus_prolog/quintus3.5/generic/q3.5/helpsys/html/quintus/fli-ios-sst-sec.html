@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Storing Error Condition Of A Stream</h5>
+
+<pre class="example">     QP_stream:      int errno;
+     </pre>
+
+   <p>An error code is stored in the <code>errno</code> field of a stream structure
+when an error is detected in any of the three layers of
+input/output functions. 
+The top layer QP functions set the error code to <code>QP_errno</code>
+when an error occurs in the call to the functions.  The error code
+stored in this field may not last more than two QP input/output
+functions calls since middle layer functions and some QP functions
+clear out this field before they call the bottom layer function. 
+If an error is detected in the bottom layer function, the <code>errno</code> field
+should be given an appropriate error code before the function returns. 
+The error code stored in <code>errno</code> field can be any of the host operating
+system error numbers, QP error numbers or user-defined error numbers.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-sst-sda.html#fli-ios-sst-sda">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-sst-obo.html#fli-ios-sst-obo">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-sst.html#fli-ios-sst">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Prolog Command Line Argument Handling</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ref-pro-arg-inf.html#ref-pro-arg-inf">ref-pro-arg-inf</a>:                      The Initialization File
+</ul>
+
+   <p>There are three ways a Prolog system can be invoked:
+
+<pre class="example">     % <kbd></kbd><var>program</var><kbd> </kbd><var>Prolog's arguments</var><kbd></kbd>
+     
+     % <kbd></kbd><var>program</var><kbd> </kbd><var>Prolog's arguments</var><kbd> + </kbd><var>emacs' arguments</var><kbd></kbd>
+     
+     % <kbd></kbd><var>program</var><kbd> </kbd><var>Prolog's arguments</var><kbd> +z </kbd><var>user's arguments</var><kbd></kbd>
+     </pre>
+
+   <p>where <var>program</var>, generally <code>prolog</code>, but can be an executable
+QOF file (see <a href="ref-sls-sst.html#ref-sls-sst">ref-sls-sst</a>) or a stand-alone program (see
+<a href="sap-srs.html#sap-srs">sap-srs</a>).
+
+     <dl>
+
+     <br><dt><var>Prolog's arguments</var> consists of:
+     <dd>
+          <dl>
+
+          <br><dt><var>user's arguments</var>
+          <dd>these arguments can be retrieved in a program by
+calling <code>unix(argv(ArgList))</code>.
+
+          <br><dt><var>system arguments</var>
+          <dd>The current valid system arguments are:
+
+          <br><dt>
+          <dd>
+               <dl>
+
+               <br><dt><code>+</code>
+               <dd>invoke Emacs; subsequent arguments passed to Emacs;
+
+               <br><dt><code>+f</code>
+               <dd>fast startup; do not load user's <code>prolog.ini</code> file;
+
+               <br><dt><code>+l </code><var>file</var><code></code>
+               <dd>load the specified file on startup; <var>file</var> may be a
+Prolog file or a QOF file, and it may be specified either as a string
+(e.g.  <code>file</code>, <code>~/prolog/file.pl</code>) or as a file search path specification
+(e.g. <code>library(file)</code>, <code>home(language(file))</code>); note, however, that the
+latter needs to be quoted to escape
+the shell interpretation of the parentheses; giving the extension is not
+necessary; if both source (<code>.pl</code>) and QOF (<code>.qof</code>) files exist, the
+more recent of the two will be loaded;
+
+               <br><dt><code>+L </code><var>file</var><code></code>
+               <dd>like <code>+l</code>, but search for <var>file</var> in the
+directories given by the shell environment variable <code>PATH</code>; and
+
+               <br><dt><code>+p [</code><var>path-name</var><code>]</code>
+               <dd>prints the Prolog file search path definitions
+that begin with the string <var>path-name</var> (e.g. <code>library</code> if
+<code>+p lib</code> is specified); <var>path-name</var> is optional, and if not given,
+causes prolog to print all file search path definitions; prolog exits
+after producing the required output to <code>stdout</code>;
+
+               <br><dt><code>+P [</code><var>path-name</var><code>]</code>
+               <dd>same as <code>+p</code>, but the absolutized versions of the
+file search path definitions are printed;
+
+               <br><dt><code>+tty</code>
+               <dd>force the three standard streams associated with a Prolog
+process to act as tty streams; a tty stream is usually line buffered
+and handles the prompt automatically;
+
+               <br><dt><code>+z</code>
+               <dd>all subsequent arguments are user's arguments. 
+</dl>
+
+          <p>Only one of <code>+</code> or <code>+z</code> is possible on one command line. 
+</dl>
+
+     <br><dt><var>emacs' arguments</var>
+     <dd>arguments to the Emacs interface. 
+This may include file names to edit and may
+also include GNU Emacs arguments (see <a href="ema-emi.html#ema-emi">ema-emi</a>).
+
+   </dl>
+
+   <p>All command line arguments beginning with a <code>+</code> are reserved for
+system arguments.  If user arguments need to begin with a <code>+</code>, they
+should be given as <code>++</code> instead.  The <code>++</code> is converted into a
+single <code>+</code> by the argument handling routines, and thus, to the
+user's code, only the single <code>+</code> argument is visible.  An exception
+to this is when an argument is given following a <code>+z</code> option in
+which case no conversion is done.
+
+   <p>Runtime systems do not interpret system arguments; they treat all
+arguments as user's arguments.
+
+   <p>There can be any number of <code>+l</code> and <code>+L</code> arguments.  In Release 3,
+invoking a saved-state, an executable QOF-file, as a
+command causes the
+corresponding Prolog executable, the one from which the saved-state was
+created, to be invoked with the arguments <code>+L </code><var>saved-state</var><code></code>.
+
+   <p>The user's arguments are accessible in Prolog via <code>unix(argv(ArgList))</code>, which
+returns a list of all the user's arguments.  For example, if Prolog is
+invoked by the command (A), then the Prolog goal (B) returns (C):
+<pre class="example">     % <kbd>prolog ++file1 -file2</kbd>      (A)
+     </pre>
+
+<pre class="example">     | ?- <kbd>unix(argv(ArgList)).</kbd>    (B)
+     </pre>
+
+<pre class="example">     ArgList = ['+file1','-file2']   (C)
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-pro-exi.html#ref-pro-exi">Next</a>
+<li><a rel="up" accesskey="u" href="ref-pro.html#ref-pro">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

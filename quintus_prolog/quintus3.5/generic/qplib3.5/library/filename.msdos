@@ -1,0 +1,268 @@
+%   Subfile: filename.msdos
+%   Author : Richard A. O'Keefe
+%   Updated: 29 Aug 1989
+%   Purpose: MS-DOS file name parsing and unparsing.
+
+%   Copyright (C) 1989, Quintus Computer Systems, Inc.  All rights reserved.
+
+
+%-----------------------------------------------------------------------+
+%	Parsing MS-DOS 3.x file names					|
+%-----------------------------------------------------------------------+
+
+/*  There is a wee problem here concerning device names:
+    'PRT:' is a valid device name only if not followed by anything else.
+    However, chars_to_file_word//2 always accepts it.  This means that
+    while
+	filename('PRT:FOOBAZ.DAT', FileName)
+    will not be accepted,
+	filename([name(foobaz),type(dat),device(prt)], FileName)
+    *will* be accepted.  There really is very little that one can do
+    about this, except to regret the MS-DOS syntax.
+*/
+
+%hars_to_file_word(host, _) --> {fail}.			% No 'host's.
+chars_to_file_word(device, Device) -->
+	[Ch], { cms_char(Ch, T, Char), T =\= 2 },	% non-digit
+	cms_rest_name(2, 4, Chars),
+	( ":" -> "" | "" ),				% optional colon
+	{ atom_chars(Device, [Char|Chars]) }.
+chars_to_file_word(name, Name) -->
+	cms_rest_name(8, 5, [Char|Chars]),		% a file name may
+	{ atom_chars(Name, [Char|Chars]) }.		% NOT be empty
+chars_to_file_word('type', Type) -->
+	( "." -> "" | "" ),				% optional dot
+	cms_rest_name(3, 5, Chars),			% a file type MAY
+	{ atom_chars(Type, Chars) }.			% be empty
+
+
+/*  chars_to_file_site//1 does not accept multi-character device names
+    as those devices are not "file-structured".  Only drive letters are
+    accepted.  The only difference between parsing a file name and
+    parsing a file site is that a file site acts as if a "\" were appended.
+*/
+chars_to_file_site(file_name(-1,Device,AbsRel,Directories,-1,-1,'')) -->
+	(   [C,0':] -> { cms_char(C,0,D), atom_chars(Device, [D]) }
+	;   /* there is no drive: prefix */ { Device = -1 }
+	),
+	(   "\" -> { N = -2 }
+	;   "/" -> { N = -2 }
+	;	   { N =  0 }
+	),
+	msdos_directories(N, AbsRel, [], Dirs),
+	{ msdos_unpack(Dirs, [], Directories) }.
+
+
+/*  The first clause here catches device names like
+    PRT:, AUX:, CONS:, TRM:, BUF:, WND:, LST:, &:
+    Which of them are valid depends on the run-time system.
+    The second clause catches disc file names; they may have
+    a directory name, but it have only be one plain letter.
+    Note that we accept e.g. "A:" as meaning "the current
+    directory on drive A".  We even accept "" as meaning
+    "the current directory on the current drive".  Unixish!
+*/
+chars_to_file_name(file_name(-1,Device,-1,[],-1,-1,'')) -->
+	[Ch], { cms_char(Ch, T, Char), T =\= 2 },	% non-digit
+	cms_rest_name(2, 4, Chars),
+	":",
+	{ atom(Chars) -> T =\= 0 ; true },		% "&"
+	!,
+	{ atom_chars(Device, [Char|Chars]) }.
+chars_to_file_name(file_name(-1,Device,AbsRel,Directories,
+			     Name,Extension,'')) -->
+	(   [C,0':] -> { cms_char(C,0,D), atom_chars(Device, [D]) }
+	;   /* there is no drive: prefix */ { Device = -1 }
+	),
+	(   "\" -> { N = -2 }
+	;   "/" -> { N = -2 }
+	;	   { N =  0 }
+	),
+	msdos_directories(N, AbsRel, [], Dirs),
+	{ msdos_unpack(Dirs, Directories, Name, Extension) }.
+
+%   msdos_directories
+%   is called when the preceding slash has been consumed.
+%   The cases are
+%	<something>/		name and extension unspecified
+%	[<prefix>/]..		as for [<prefix>/]../
+%	[<prefix>/]xxx		extension unspecified
+%	[<prefix>/].xxx		name unspecified
+%	[<prefix>/]name.	extension empty
+
+msdos_directories(Depth0, Depth, Dirs0, Dirs) -->
+	(   ".." ->
+	    { Dirs0 = [_|Dirs1] -> Depth1 = Depth0
+	    ; Depth0 >= 0 -> Depth1 is Depth0+1, Dirs1 = Dirs0
+	    },
+	    (	"\" -> msdos_directories(Depth1, Depth, Dirs1, Dirs)
+	    ;	"/" -> msdos_directories(Depth1, Depth, Dirs1, Dirs)
+	    ;	{ Depth = Depth1, Dirs = [""+(-1)|Dirs1] }
+	    )
+	;   msdos_name(Name, Extension),
+	    { Dirs1 = [Name+Extension|Dirs0] },
+	    (   "\" -> msdos_directories(Depth0, Depth, Dirs1, Dirs)
+	    ;   "/" -> msdos_directories(Depth0, Depth, Dirs1, Dirs)
+	    ;   { Depth = Depth0, Dirs = Dirs1 }
+	    )
+	).
+
+msdos_unpack([], [], -1, -1).		% "\" or "/"
+msdos_unpack([""+""|Dirs], Directories, -1, -1) :- !, % \.
+	msdos_unpack(Dirs, [], Directories).
+msdos_unpack([""+(-1)|Dirs], Directories, -1, -1) :- !, % \.
+	msdos_unpack(Dirs, [], Directories).
+msdos_unpack([""+Ext|Dirs], Directories, -1, Extension) :- !,
+	atom_chars(Extension, Ext),
+	msdos_unpack(Dirs, [], Directories).
+msdos_unpack([Nom+(-1)|Dirs], Directories, Name, -1) :- !,
+	atom_chars(Name, Nom),
+	msdos_unpack(Dirs, [], Directories).
+msdos_unpack([Nom+Ext|Dirs], Directories, Name, Extension) :-
+	atom_chars(Name, Nom),
+	atom_chars(Extension, Ext),
+	msdos_unpack(Dirs, [], Directories).
+
+msdos_unpack([], Directories, Directories).
+msdos_unpack([""+X|Dirs], Directories0, Directories) :- !,
+	(   atom(X) -> X = ""		% directory name is "."
+	;   integer(X) -> X = -1	% directory name is ""
+	),
+	msdos_unpack(Dirs, Directories0, Directories).
+msdos_unpack([Nom+Ext|Dirs], Directories0, Directories) :-
+	(   integer(Ext) -> Chars = Nom
+	;   lit(Nom, Chars, [0'.|Ext]) -> true
+	),
+	atom_chars(Directory, Chars),
+	msdos_unpack(Dirs, [Directory|Directories0], Directories).
+
+msdos_name(Name, Extension) -->
+	cms_rest_name(8, 5, Name),
+	(   "." -> cms_rest_name(3, 5, Extension)
+	;   { Extension = -1 }
+	).
+
+msdos_subdir(Dir) -->
+	cms_rest_name(8, 5, Name),
+	(   "." ->
+	    cms_rest_name(3, 5, Extension),
+	    { lit(Name, Chars, [0'.|Extension]) },
+	    { atom_chars(Dir, Chars) }
+	|   "",
+	    { atom_chars(Dir, Name) }
+	).
+
+
+normalise_subdirs([], []).
+normalise_subdirs([Dir|Dirs], [Norm|Norms]) :-
+	atom_chars(Dir, Chars),
+	msdos_subdir(Norm, Chars, ""),
+	normalise_subdirs(Dirs, Norms).
+
+file_name_to_chars(file_name(_,Device,AbsRel,Directories,
+			     Name,Extension,_)) -->
+	(   { atom(Device) } -> explode(Device), ":"
+	;   { integer(Device) } -> ""
+	),
+	(   { AbsRel =:= -2 } -> "\"
+	;   { AbsRel  >   0 } -> dotdots(AbsRel, "..\", "")
+	;			 ""
+	),
+	subdirs(Directories, 0'\, 0'\),
+	(   { atom(Name) } -> explode(Name)
+	;   { integer(Name) } -> ""
+	),
+	(   { atom(Extension) } -> ".", explode(Extension)
+	;   { integer(Extension) } -> ""
+	).
+
+subdirs([], _, _) --> "".
+subdirs([Dir|Dirs], Sep, End) -->
+	explode(Dir), subdirs_1(Dirs, Sep, End).
+
+subdirs_1([], _, End) --> [End].
+subdirs_1([Dir|Dirs], Sep, End) -->
+	[Sep],
+	explode(Dir),
+	subdirs_1(Dirs, Sep, End).
+
+
+%   cms_char(Character, Class, UpperCase)
+%   The Classes are
+%   0	Letter.    Can be used as a minidisc name (file mode letter)
+%   1	National.  Is a letter, but can't be used as a minidisc.
+%   2	Digit.	   Can appear in user names, subdirectories, &c.
+%   3	Extra.	   Can appear in file name and type, not elsewhere.
+
+cms_char(0'A, 0, 0'A).
+cms_char(0'B, 0, 0'B).
+cms_char(0'C, 0, 0'C).
+cms_char(0'D, 0, 0'D).
+cms_char(0'E, 0, 0'E).
+cms_char(0'F, 0, 0'F).
+cms_char(0'G, 0, 0'G).
+cms_char(0'H, 0, 0'H).
+cms_char(0'I, 0, 0'I).
+cms_char(0'J, 0, 0'J).
+cms_char(0'K, 0, 0'K).
+cms_char(0'L, 0, 0'L).
+cms_char(0'M, 0, 0'M).
+cms_char(0'N, 0, 0'N).
+cms_char(0'O, 0, 0'O).
+cms_char(0'P, 0, 0'P).
+cms_char(0'Q, 0, 0'Q).
+cms_char(0'R, 0, 0'R).
+cms_char(0'S, 0, 0'S).
+cms_char(0'T, 0, 0'T).
+cms_char(0'U, 0, 0'U).
+cms_char(0'V, 0, 0'V).
+cms_char(0'W, 0, 0'W).
+cms_char(0'X, 0, 0'X).
+cms_char(0'Y, 0, 0'Y).
+cms_char(0'Z, 0, 0'Z).
+cms_char(0'a, 0, 0'A).
+cms_char(0'b, 0, 0'B).
+cms_char(0'c, 0, 0'C).
+cms_char(0'd, 0, 0'D).
+cms_char(0'e, 0, 0'E).
+cms_char(0'f, 0, 0'F).
+cms_char(0'g, 0, 0'G).
+cms_char(0'h, 0, 0'H).
+cms_char(0'i, 0, 0'I).
+cms_char(0'j, 0, 0'J).
+cms_char(0'k, 0, 0'K).
+cms_char(0'l, 0, 0'L).
+cms_char(0'm, 0, 0'M).
+cms_char(0'n, 0, 0'N).
+cms_char(0'o, 0, 0'O).
+cms_char(0'p, 0, 0'P).
+cms_char(0'q, 0, 0'Q).
+cms_char(0'r, 0, 0'R).
+cms_char(0's, 0, 0'S).
+cms_char(0't, 0, 0'T).
+cms_char(0'u, 0, 0'U).
+cms_char(0'v, 0, 0'V).
+cms_char(0'w, 0, 0'W).
+cms_char(0'x, 0, 0'X).
+cms_char(0'y, 0, 0'Y).
+cms_char(0'z, 0, 0'Z).
+cms_char(0'$, 1, 0'$).
+cms_char(0'#, 1, 0'#).
+cms_char(0'@, 1, 0'@).
+cms_char(0'+, 1, 0'+).
+cms_char(0'-, 1, 0'-).
+cms_char(0'_, 1, 0'_).
+cms_char(0'&, 1, 0'&).
+cms_char(0'!, 1, 0'!).
+cms_char(0'%, 1, 0'%).
+cms_char(0'0, 2, 0'0).
+cms_char(0'1, 2, 0'1).
+cms_char(0'2, 2, 0'2).
+cms_char(0'3, 2, 0'3).
+cms_char(0'4, 2, 0'4).
+cms_char(0'5, 2, 0'5).
+cms_char(0'6, 2, 0'6).
+cms_char(0'7, 2, 0'7).
+cms_char(0'8, 2, 0'8).
+cms_char(0'9, 2, 0'9).
+

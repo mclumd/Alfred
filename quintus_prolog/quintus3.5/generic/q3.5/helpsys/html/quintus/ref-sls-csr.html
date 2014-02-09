@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Compatibility with save/restore in previous releases</h4>
+
+   <p>Unfortunately, it has not been possible to retain the semantics of
+<code>save/[1,2]</code> available in previous releases of Quintus Prolog.  This is
+regrettable because it means that programs that incorporate code for
+building saved-states will need to be changed.  This section explains why it
+was necessary to remove these predicates.  Note, however, that
+<code>save_program/1</code> <em>is</em> available and has the same semantics as previous
+releases (except for foreign code), although it is based on a new
+implementation using QOF files. A new predicate <code>save_program/2</code>,
+described in <a href="ref-sls-sst.html#ref-sls-sst">ref-sls-sst</a>, has been provided, which supports the
+most common usage of <code>save/[1,2]</code>, which was to specify an initial
+goal for a saved-state to call when run.
+
+   <p>The difference between <code>save_program/1</code> and <code>save/[1,2]</code> in
+previous releases of Quintus Prolog was that <code>save_program/1</code> saved
+only the Prolog database, whereas <code>save/[1,2]</code> saved both the
+Prolog database and the Prolog execution stacks.  It has not been
+possible to retain the saving of the Prolog execution stacks in a way
+consistent with the release 3 support of embeddability
+and the general portability of QOF files.  This is why <code>save/[1,2]</code>
+have been removed.  The reasoning goes as follows:
+
+     <ol type=1 start=1>
+
+     <li>QOF files are a completely portable machine-independent representation
+of Prolog data. 
+<li>It is difficult, if not impossible, to make the Prolog execution state
+portable in the same way as facts and rules in QOF files (see further
+points). 
+<li>QOF files can also be combined and loaded in flexible ways, and it is
+unclear what this would mean for execution states. 
+<li>The QOF file saved-states do <em>not</em> save any C (or other foreign language)
+state. This is a change from the previous Quintus Prolog saved-states,
+and is further discussed below. 
+<li>In the general case, Prolog execution can now be arbitrarily interleaved
+with C (or other) function calls since Prolog and C are completely
+intercallable and can call each other recursively. 
+<li>Since the C state is not saved, it is not possible to meaningfully save
+the Prolog execution state in the general case where it depends on
+interleaved C execution state. 
+<li>In addition, Prolog code embedded in a C (or other) application is
+highly likely to be manipulating C data, such as pointers and other
+process-specific information. This data would be meaningless if restored
+into another process, and indeed would be likely to cause faults.
+        </ol>
+
+   <p>The model that an arbitrary Prolog execution state can be saved thus
+only works well within a Prolog-only situation.  In the complex
+embedded environments supported by Quintus Prolog release 3
+this model cannot work properly.  Hence the removal of the facility.
+
+   <p>As mentioned in points 4-7 above, an additional important aspect here
+is that Prolog no longer makes any attempt to save the state of C (or
+other foreign language) code.  This was a feature of saved-states in
+previous releases where both the C code and its data structures were
+saved (as a memory image) into saved-states.  This was a feature that
+caused many problems.  A primary problem was that the saved C state
+was initialized (variables retained their values when restored) and
+yet the initialized C state could contain many items that were no
+longer valid in the new process, such as addresses and file
+descriptors.  Such code would often fail when restored.  In addition,
+Prolog was unable to guarantee that it had saved all the necessary
+foreign code state.  With the advent of shared libraries and other
+complex memory management facilities in the operating system, it
+became impossible for Prolog to control and manage the states of other
+tools in the address space.
+
+   <p>When one takes a step back and looks at Prolog in the light of the
+goals of release 3 (see <a href="int-hig.html#int-hig">int-hig</a>) -- where Prolog code is
+a component that can be embedded in complex applications written in
+many languages -- it is clearly unreasonable for Prolog to try and
+control, let alone save, arbitrary non-Prolog state.  The Prolog
+operations for saving and loading QOF files now operate solely on the
+Prolog database and these operations do not involve making any
+assumptions about non-Prolog state. This is a much cleaner and more
+robust approach, and is the most appropriate when Prolog applications
+become embedded software components.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sls-for.html#ref-sls-for">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-sls-ove.html#ref-sls-ove">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sls.html#ref-sls">Up</a>
+</ul>
+</div>
+   </body></html>
+

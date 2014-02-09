@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Basic Traveling Commands</h5>
+
+     <dl>
+
+     <br><dt>creep
+     <dd>Causes the debugger to single-step to the very next
+port.
+
+     <br><dt>skip
+     <dd>Causes the debugger to skip, or ignore, the
+internal details of a procedure's execution.  The debugger starts showing
+goals again when execution returns to the invocation's Done, Exit, Fail,
+or Exception port.  If the debugger is already at the invocation's Done,
+Exit, Fail, or Exception port, then skipping is meaningless, and the
+debugger will just creep.  Note that skipping is very fast, running
+at nearly full compiled speed.
+
+     <p>One important point about skipping:  if the goal you skip over is not
+determinate, and you later redo (backtrack) into the goal, you will not
+be able to see the redos into goals that were skipped over.  This is
+because the debugger does not keep any information about the goals that
+have been skipped over, in order to achieve much greater speed.  You will,
+however, be able to see any new calls that are executed in the process of
+trying to redo the goal.
+
+     <br><dt>nonstop
+     <dd>Turns off the debugger for the rest of the execution of the
+top-level goal.  When the execution of this goal is completed, the
+debugger returns to its current mode.  This option does <em>not</em> turn
+the debugger off; to turn the debugger off, you must type "nodebug." 
+at the main Prolog prompt.  Like skip, nonstop causes the debugger to
+run at nearly full compiled speed.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-bas-tra-spy.html#dbg-bas-tra-spy">Next</a>
+<li><a rel="up" accesskey="u" href="dbg-bas-tra.html#dbg-bas-tra">Up</a>
+</ul>
+</div>
+   </body></html>
+

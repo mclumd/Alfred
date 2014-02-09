@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Use of the Profiler</h4>
+
+   <p>The execution of a goal can be profiled using <code>profile/1</code>, which takes
+the goal as its argument. This will turn on the profiler, recording for
+each invoked predicate the number of calls, choice points created, redos
+tried and the predicate's callers. Counts accumulated from any previous
+executions of the profiler will be reset. 
+The goal is then executed with timing information additionally monitored.
+
+   <p>Once the goal has completed execution, the results of the execution profile
+can be seen by calling the <code>show_profile_results/2</code> builtin predicate. The
+first argument to <code>show_profile_results/2</code> is the <em>display mode</em> and is
+one of the atoms: <code>by_time</code>, <code>by_calls</code>, <code>by_choice_points</code> or
+<code>by_redos</code>. This determines how the output is sorted and what the percent
+figure that is printed relates to. For example, if the argument is <code>by_time</code>
+then the results are sorted according to the time spent in the predicates (in
+descending order) and the percentage figure is the proporation of
+total execution time spent executing that predicate.
+
+   <p>The second argument gives the number of procedures to show information about,
+thus a value of 10 means that the top ten predicates are printed. 
+The predicate <code>show_profile_results/1</code> is equivalent to
+<code>show_profile_results/2</code> with second argument given a value of 10 and
+similarly <code>show_profile_results/0</code> is equivalent to
+<code>show_profile_results/1</code> with the argument <code>by_time</code>.
+
+   <p>The following example illustrates the output of <code>show_profile_results/2</code>:
+
+<pre class="example">     | ?- <kbd>[chat].</kbd>
+     % loading file /opt/quintus/generic/q3.5/demo/chat/chat.qof
+     % chat.qof loaded in module user, 0.620 sec 1,520 bytes
+     
+     yes
+     | ?- <kbd>profile(hi(questions)).</kbd>
+     % The profiler is switched on
+     
+     ...
+     
+     yes
+     [profile]
+     | ?- <kbd>show_profile_results(by_time, 3).</kbd>
+     Proc             Calls ChPts Redos Time  % Caller(proc,cl#,cll#,%)
+     user:setof/3     227   0     0     2.04  34.0
+                                        user:satisfy/1,6,1 152 61.0
+                                        user:seto/3,1,1 48 20.0
+                                        user:satisfy/1,7,1 27 17.0
+     user:satisfy/1   35738 36782 14112 0.32  5.3
+                                        user:satisfy/1,1,2 13857 43.0
+                                        user:satisfy/1,2,1 12137 31.0
+                                        user:satisfy/1,1,1 7315 18.0
+                                        user:satisfy/1,3,1 1155 6.0
+     user:inv_map_l/5 4732  4732  3115  0.20  3.3
+                                        user:inv_map_l/5,2,1 3115 60.0
+                                        user:inv_map/4,5,1 1617 40.0
+     
+     yes
+     [profile]
+     | ?- <kbd>show_profile_results(by_calls, 3).</kbd>
+     Proc             Calls ChPts Redos Time  % Caller(proc,cl#,cll#,%)
+     user:satisfy/1   35738 36782 14112 0.32  15.3
+                                        user:satisfy/1,1,2 13857 43.0
+                                        user:satisfy/1,2,1 12137 31.0
+                                        user:satisfy/1,1,1 7315 18.0
+                                        user:satisfy/1,3,1 1155 6.0
+                                        user:satisfy/1,4,1 1044 0.0
+                                        user:holds/2,1,1 3 0.0
+     user:database/1      13616 0     0     0.06  5.8
+                                        user:satisfy/1,14,1 13616 100.0
+     </pre>
+
+   <p>The output lists the predicate name, the number of calls to that predicate,
+number of times a choice point was created, the number of the times the
+predicate was retried on backtracking and the time (in seconds) spent
+executing that predicate.  The percentage figure depends on the display mode. 
+In the example above 15.3% of the goal calls were to <code>satisfy/1</code>, but
+only 5.3% of the execution time was spent in <code>satisfy/1</code>.
+
+   <p>Then follows the list of callers, showing for each caller the predicate
+name and arity, the clause number and the call number within that
+clause of the call (see <a href="mpg-ref-add_spypoint.html#mpg-ref-add_spypoint">mpg-ref-add_spypoint</a>), followed by the number of
+calls made by this caller and the percentage of execution time attributed to
+this caller.
+
+   <p>Notice in the example that more callers are shown for <code>satisfy/1</code> when
+the profile results are listed <code>by_calls</code> than <code>by_time</code>. Callers that do
+not register any time are not listed in the output when displayed <code>by_time</code>. 
+Callers are omitted in a similar way for other display modes when the relevant
+count is zero.
+
+   <p>The profiler can be turned off with the <code>noprofile/0</code> predicate.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-pro-cou.html#dbg-pro-cou">Next</a>
+<li><a rel="up" accesskey="u" href="dbg-pro.html#dbg-pro">Up</a>
+</ul>
+</div>
+   </body></html>
+

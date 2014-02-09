@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Altering Term Arguments -- <code>library(changearg)</code></h4>
+
+   <p>The predicates in <code>library(changearg)</code> allow you to construct a new term
+that is identical to an old term except that one of its elements
+has been replaced or two of its elements have been swapped. 
+Using these operations, you could use terms as one-dimensional
+arrays; however, though the elements of such arrays can be accessed
+in <var>O(1)</var> time using <code>arg/3</code>, changing an element takes <var>O(N)</var>
+time, where <var>N</var> is the arity of the term. 
+See <code>library(logarr)</code> for a more efficient way of implementing arrays in Prolog.
+
+   <p>Why then are these operations provided?  To aid in the construction of
+term-rewriting systems.  For example, suppose you have a set of
+rewrite rules expressed as a table
+<pre class="example">     rewrite_rule(X*0, 0).
+     rewrite_rule(X*1, X).
+     rewrite_rule(K*X, X*K) :- integer(K).
+     rewrite_rule(X*(Y*Z), (X*Y)*Z).
+        .
+        .
+        .
+     </pre>
+
+   <p>which you want exhaustively applied to a term.  You could write
+<pre class="example">     waterfall(Expr, Final) :-
+             path_arg(Path, Expr, Lhs),
+             rewrite_rule(Lhs, Rhs),
+             change_path_arg(Path, Expr, Modified, Rhs),
+             !,
+             waterfall(Modified, Final).
+     waterfall(Expr, Expr).
+     </pre>
+
+   <p>Then
+<pre class="example">     | ?- <kbd>waterfall((a*b)*(c*0)*d, X).</kbd>
+     
+     X = 0
+     
+     | ?- <kbd>waterfall((1*a)*(2*b), X).</kbd>
+     
+     X = a*2*b
+     </pre>
+
+   <p>The predicates supplied by <code>library(changearg)</code> are as follows:
+     <dl>
+
+     <br><dt><code>change_arg(</code><var>+Index</var><code>, </code><var>?OldTerm</var><code>, </code><var>?OldArg</var><code>, </code><var>?NewTerm</var><code>, </code><var>?NewArg</var><code>)</code>
+     <dd>
+is true when <var>OldTerm</var> and <var>NewTerm</var> are identical except that
+the <var>Index</var>th argument of <var>OldTerm</var> is <var>OldArg</var> and
+the <var>Index</var>th argument of <var>NewTerm</var> is <var>NewArg</var>. 
+Either <var>OldTerm</var> or <var>NewTerm</var> should be supplied; the other
+term can then be found.  <code>change_arg/5</code> is actually quite symmetric:
+     <pre class="example">          change_arg(K, O, X, N, Y)
+          </pre>
+
+     <p>and
+     <pre class="example">          change_arg(K, N, Y, O, X)
+          </pre>
+
+     <p>have exactly the same effect.  For example:
+     <pre class="example">          | ?- <kbd>change_arg(1, c(o,l,t), X, N, u).</kbd>
+          
+          X = o,
+          N = c(u,l,t)
+          
+          | ?- <kbd>change_arg(1, N, u, c(o,l,t), X).</kbd>
+          
+          N = c(u,l,t),
+          X = o
+          </pre>
+
+     <pre class="example">          | ?- <kbd>change_arg(3, SALE, E, s(a,l,t), T).</kbd>
+          
+          SALE = s(a,l,E),
+          E = _755,
+          T = t
+          
+          | ?- <kbd>change_arg(3, a+b, b, X, c).</kbd>
+          
+          no
+          </pre>
+
+     <br><dt><code>change_arg(</code><var>+Index</var><code>, </code><var>?OldTerm</var><code>, </code><var>?NewTerm</var><code>, </code><var>?NewArg</var><code>)</code>
+     <dd>
+is identical to <code>change_arg/5</code> except that the <var>OldArg</var>
+argument is omitted.  <strong>Please note:</strong>  this argument order may be
+surprising if you think about this predicate on its own; however, it
+makes sense in the context of the entire group.
+
+     <br><dt><code>change_arg0/[4,5]</code>
+     <dd>like <code>change_arg/[4,5]</code>
+except that <var>Index</var>=0 is allowed, in
+which case the principal function symbol is changed.  Do not use
+this in new programs; use <code>change_arg/5</code> or <code>change_functor/5</code> directly. 
+The order in which values for <var>Index</var> are enumerated is <em>not defined</em>.
+
+     <br><dt><code>change_functor(</code><var>?OldTerm</var><code>, </code><var>?OldSymbol</var><code>, </code><var>?NewTerm</var><code>, </code><var>?NewSymbol</var><code>, </code><var>?Arity</var><code>)</code>
+     <dd>is
+true when <var>OldTerm</var> and <var>NewTerm</var> are identical terms, except that the
+functor of <var>OldTerm</var> is <var>OldSymbol</var>/<var>Arity</var>, and the functor of <var>NewTerm</var> is
+<var>NewSymbol</var>/<var>Arity</var>.  This is similar to <code>same_functor/3</code> in some respects
+(<a href="lib-tma-samefunctor.html#lib-tma-samefunctor">lib-tma-samefunctor</a>), such as
+the fact that any of the arguments can be solved for.  If <var>OldTerm</var> and
+<var>NewSymbol</var> are instantiated, or <var>NewTerm</var> and <var>OldSymbol</var> are instantiated,
+or <var>NewSymbol</var>, <var>OldSymbol</var>, and <var>Arity</var> are instantiated, that is enough
+information to proceed.  Note that <var>OldSymbol</var> or <var>NewSymbol</var> may be a
+number, in which case <var>Arity</var> must be 0.
+
+     <br><dt><code>swap_args(</code><var>+Index1</var><code>, </code><var>+Index2</var><code>, </code><var>?OldTerm</var><code>, </code><var>?Arg1</var><code>, </code><var>?NewTerm</var><code>, </code><var>?Arg2</var><code>)</code>
+     <dd>
+is true when <var>OldTerm</var> and <var>NewTerm</var>
+are identical except that
+
+     <pre class="example">                           at Index1       at Index2
+          in OldTerm          Arg1            Arg2
+          in NewTerm          Arg2            Arg1
+          </pre>
+
+     <p>that is, the arguments at <var>Index1</var> and <var>Index2</var> have been swapped. 
+As with <code>change_arg/5</code>, <code>swap_args/6</code> is symmetric; the following terms
+have exactly the same effect.
+     <pre class="example">          swap_args(I, J, O, X, N, Y)
+          
+          swap_args(I, J, N, Y, O, X)
+          </pre>
+
+     <p>For example:
+     <pre class="example">          | ?- <kbd>swap_args(1, 4, f(X,e,a,Y,e,r), r, T, d).</kbd>
+          
+          X = r,
+          Y = d,
+          T = f(d,e,a,r,e,r)
+          </pre>
+
+     <br><dt><code>swap_args(</code><var>+Index1</var><code>, </code><var>+Index2</var><code>, </code><var>?OldTerm</var><code>, </code><var>?NewTerm</var><code>)</code>
+     <dd>
+is identical to <code>swap_args/6</code> except that the <var>Arg1</var>
+and <var>Arg2</var> arguments are omitted.
+     <pre class="example">          | ?- <kbd>swap_args(1, 4, f(r,e,a,d), X).</kbd>
+          
+          X = f(d,e,a,r)
+          </pre>
+
+     <br><dt><code>change_path_arg(</code><var>+Path</var><code>, </code><var>?OldTerm</var><code>, </code><var>?OldSub</var><code>, </code><var>?NewTerm</var><code>, </code><var>?NewSub</var><code>)</code>
+     <dd>
+is true when <var>OldTerm</var> and <var>NewTerm</var> are identical terms except that
+     <pre class="example">          path_arg(<var>Path</var>, <var>OldTerm</var>, <var>OldSub</var>),
+          path_arg(<var>Path</var>, <var>NewTerm</var>, <var>NewSub</var>)
+          </pre>
+
+     <p>That is, the subterm of <var>OldTerm</var> at <var>Path</var> was <var>OldSub</var>
+and is replaced by <var>NewSub</var> in <var>NewTerm</var>, and there are no
+other differences between <var>OldTerm</var> and <var>NewTerm</var>. 
+This is to <code>change_arg/5</code> as <code>path_arg/3</code> is to <code>arg/3</code>.
+
+     <br><dt><code>change_path_arg(</code><var>+Path</var><code>, </code><var>?OldTerm</var><code>, </code><var>?NewTerm</var><code>, </code><var>?NewSub</var><code>)</code>
+     <dd>
+is identical to <code>change_path_arg/5</code> except that the <var>OldSub</var>
+argument is omitted.
+     <pre class="example">          | ?- <kbd>OldTerm = this*is+an*example,</kbd>
+          |    <kbd>path_arg(Path, OldTerm, this),</kbd>
+          |    <kbd>change_path_arg(Path, OldTerm, NewTerm, it).</kbd>
+          
+          OldTerm = this*is+an*example,
+          Path = [1,1],
+          NewTerm = it*is+an*example
+          </pre>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-tma-occurs.html#lib-tma-occurs">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-tma-arg.html#lib-tma-arg">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-tma.html#lib-tma">Up</a>
+</ul>
+</div>
+   </body></html>
+

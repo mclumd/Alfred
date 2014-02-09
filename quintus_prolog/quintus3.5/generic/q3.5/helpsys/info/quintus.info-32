@@ -1,0 +1,1854 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: obj-inh-mih-meth,  Next: obj-inh-mih-abmix,  Prev: obj-inh-mih-slt,  Up: obj-inh-mih
+
+Methods
+.......
+
+   By default, all methods are inherited from all superclasses. Any of
+the superclasses' methods can be uninherited, as described earlier, by
+using the `uninherit/1' directive.
+
+   If the same message is defined for more than one superclass, however,
+you must choose at most one method to inherit for the message. You may
+choose none. You may do this by defining a new method for the message
+(shadowing the superclasses' methods), or by using the `uninherit/1'
+directive, or by using the `inherit/1' directive.
+
+   The following is considered a classic example of multiple
+inheritance.
+
+     :- class toy.             % no slots in this class
+     
+     Self >> size(small).
+     
+     Self >> rolls(false).
+     
+     :- end_class toy.
+     
+     :- class truck.         % no slots in this class
+     
+     Self >> size(large).
+     
+     Self >> rolls(true).
+     
+     :- end_class truck.
+
+   The idea expressed in these definitions is that most toys are small
+and do not roll.  On the other hand, most trucks are large, but they do
+roll. A toy truck shares one feature with each class, but we can hardly
+expect a compiler to choose the correct one.
+
+   The definition of a new class, toy_truck, might begin with
+
+     :- class toy_truck = toy + truck.
+
+   Rather than redefine the get methods for `size' and `rolls', we can
+specify which to inherit in two ways. One way is positive, stating
+which to inherit, and the other way is negative, stating which not to
+inherit.
+
+   The positive version would be
+
+     :- inherit
+             toy >> (size/1),
+             truck >> (rolls/1).
+
+   This is more convenient when a message is defined in several
+superclasses, because all but the chosen method are uninherited. And,
+it is probably easier to understand.
+
+   The negative version would be
+
+     :- uninherit
+             toy >> (rolls/1),
+             truck >> (size/1).
+
+   The `toy_truck' class would exhibit the same behavior with either
+definition.
+
+   It is possible to define methods that access the shadowed or
+uninherited methods of the superclasses, by sending the message to the
+superclasses. In the case of multiple inheritance, however, it may be
+necessary to specify which superclass to send the message to.
+
+   The `toy_truck' class, for example, might define these methods:
+
+     Self >> uninherited_size(S) :-
+             super(truck) >> size(S).
+     
+     Self >> uninherited_rolls(R) :-
+             super(toy) >> rolls(R).
+
+   They provide access to the unchosen methods from `toy_truck''s
+superclasses.
+
+   While these examples with the toy_truck class are clearly "toy"
+examples, the same techniques can be used in more realistic cases.
+
+
+File: quintus.info,  Node: obj-inh-mih-abmix,  Prev: obj-inh-mih-meth,  Up: obj-inh-mih
+
+Abstract and Mixin Classes
+..........................
+
+   While Quintus Objects only supports a limited form of multiple
+inheritance, its facilities are sufficient for working with so-called
+"mixin classes".
+
+   The idea is to construct similar classes by first defining a class
+that contains the things the desired classes have in common. Typically,
+this will be an "abstract class", which will have no instances itself.
+Then, provide the features that differentiate the desired classes with
+a set of mixin classes
+
+   Mixin classes that have nothing in common can safely be mixed
+together, to build the desired classes. The mixin classes will usually
+be abstract classes, also, because they are too specialized for their
+instances to be useful on their own.
+
+   The date_stamp class defined earlier would make a good mixin class. A
+similar `time_stamp' class might be (partially) defined as follows:
+
+     :- class time_stamp =
+             [hour:integer,
+              minute:integer,
+              second:integer].
+     
+     Self <- create :-
+             time(time(Hour, Minute, Second)),
+             store_slot(hour, Hour),
+             store_slot(minute, Minute),
+             store_slot(second, Second).
+
+   Another mixin class might be used to "register" objects in the Prolog
+database.
+
+     :- class registry = [name:atom].
+     
+     Self <- create(Name) :-
+             Self << name(Name),
+             assert(registered(Name, Self)).
+     
+     Self <- destroy :-
+             Self >> name(Name),
+             retract(registered(Name, Self)).
+
+   The `registry' mixin class could have been used with the `point'
+class to define the `named_point' class, which was an example from an
+earlier section.
+
+   The ability to send a message to an object's superclass is useful
+when working with mixin classes. Suppose the definition of a new class
+begins with
+
+     :- NEWCLASS = OLDCLASS + date + time + registry.
+
+   where OLDCLASS is some previously defined class that lacks the
+features provided by the `date', `time' and `registry' classes. (In
+fact, they should not have any slot names in common.)  Then its create
+method can be defined by
+
+     Self <- create(Name) :-
+             super(OldClass) <- create,
+             super(date) <- create,
+             super(time) <- create,
+             super(registry) <- create(Name).
+
+   This avoids the need to duplicate the code in the create methods of
+OldClass and all three mixin classes.
+
+
+File: quintus.info,  Node: obj-inh-ask,  Prev: obj-inh-mih,  Up: obj-inh
+
+Asking About Classes and Objects
+--------------------------------
+
+* Menu:
+
+* obj-inh-ask-obj::                     Objects
+* obj-inh-ask-cls::                     Classes
+* obj-inh-ask-msg::                     Messages
+
+   It is possible to determine, at run time, what classes are defined,
+how they are related by inheritance, what class an object belongs to,
+etc. This section describes the predicates used for those purposes.
+Most of the predicates involve the class hierarchy, so they are
+properly described in the section on inheritance. But, several can be
+useful even in programs that use only simple classes.
+
+   Most of these predicates come in pairs, where one predicate involves
+one class or its direct superclasses, and the other predicate involves
+all ancestors. For example, the `class_superclass/2' and
+`class_ancestor/2' predicates connect a currently defined class to its
+superclass(es) and to all its ancestors, respectively.
+
+   In all of these predicates, the ancestors of a class include not only
+superclasses and their ancestors, but also the class itself. A class
+cannot be a superclass of itself, by the rules of defining classes.
+However, it is convenient to consider every class an ancestor of
+itself, because then we may say that every property of a class is
+defined in one of its ancestors, without having to say "the class
+itself or a superclass or a superclass of a superclass, etc."
+
+
+File: quintus.info,  Node: obj-inh-ask-obj,  Next: obj-inh-ask-cls,  Up: obj-inh-ask
+
+Objects
+.......
+
+   The `class_of/2' predicate is used to test whether an object is of a
+particular type or to determine the type of an object. Similarly, the
+`descendant_of/2' predicate relates an object to all ancestors of its
+class. (Remember that the object's class is, itself, an ancestor class
+of the object.)
+
+   Both require the first argument (the object) to be instantiated. That
+is, the predicates cannot be used to find objects of a given class. If
+you need to search among all the objects of a class, you must provide a
+way to do it. One way to do this is to assert a fact connecting the
+class name to every object, when it is created. The named_point example
+of the previous section took that idea a step further by allowing each
+object to have a different name.
+
+   The `pointer_object/2' predicate relates an object's address (a
+pointer) to the object. Remember that an instance of CLASS is
+represented by a term of the form
+
+     CLASS(ADDRESS)
+
+   The `pointer_object/2' predicate requires that one of its arguments
+be instantiated, but it may be either one. Hence, just by knowing the
+address of an object (which possibly was returned by a foreign
+function) it is possible to determine the object's type.
+
+   Most Prolog programmers can safely ignore the `pointer_object/2'
+predicate, unless they are using Quintus Objects with foreign functions
+or with the Structs package.
+
+
+File: quintus.info,  Node: obj-inh-ask-cls,  Next: obj-inh-ask-msg,  Prev: obj-inh-ask-obj,  Up: obj-inh-ask
+
+Classes
+.......
+
+   The `current_class/1' predicate is used to ask whether a class is
+currently defined or to get the names of all currently defined classes.
+
+   The `class_superclass/2' predicate is used to test whether one class
+is a superclass of another, or to find a class's superclasses, or to
+find a class's subclasses, or to find all subclass-superclass pairs.
+The `class_ancestor/2' predicate is used in the same ways for the
+ancestor relation between currently defined classes.
+
+   As an example, the following goal finds all the ancestors of each
+currently defined class.
+
+     | ?- setof(C-As,
+     	   (current_class(C),
+     	    setof(A, class_ancestor(C,A), As)),
+     	   L).
+
+   It binds `L' to a list of terms of the form CLASS-ANCESTORLIST, with
+one term for each currently defined class.
+
+   Arguably, this predicate violates the principle of information
+hiding, by letting you ask about how a class is defined.  Therefore, you
+should generally avoid it.  It may be useful, however, in debugging and
+in building programmer support tools.
+
+
+File: quintus.info,  Node: obj-inh-ask-msg,  Prev: obj-inh-ask-cls,  Up: obj-inh-ask
+
+Messages
+........
+
+   The `message/4' predicate is used to ask whether a message is
+defined for a class or to find what messages are defined for a class,
+etc. It does not distinguish between messages whose methods are defined
+in the class itself and those that are inherited from a superclass.
+
+   The `direct_message/4' predicate is used to ask whether a message is
+not only defined for a class, but whether the method for that message
+is defined in the class itself. It can also be used to determine which
+methods are defined in a class. This ability to look inside a class
+definition makes `direct_message/4' an egregious violator of the
+principle of information hiding.  Thus it, like `class_ancestor/2',
+should mainly be confined to use in programmer support applications.
+
+   Both `message/4' and `direct_message/4' take the message operator as
+an argument, along with the class, message name and arity. Hence it is
+possible to use these predicates to ask about get, put or send messages.
+
+   It is not possible to ask about a class's slots, nor should it be.
+However, it is possible (and quite reasonable) to ask about the get and
+put messages that are defined for a class. For example, the following
+goal finds all the 1-argument messages that are defined for both the
+get and put message operators in the class CLASS.
+
+     | ?- setof(Message,
+     	   (message(CLASS, <<, Msg, 1),
+     	    message(CLASS, >>, Msg, 1)),
+     	   L).
+
+   There may or may not be slots corresponding to these messages; that
+detail is hidden in the definition of CLASS. However, it should be
+possible to use CLASS as if the slots were there.
+
+   As an example, recall the polar coordinate interface to the point
+class, which defined get and put methods for `r' and `theta', even
+though data was represented inside an object by rectangular coordinates
+`x' and `y'.
+
+
+File: quintus.info,  Node: obj-tcl,  Next: obj-tech,  Prev: obj-inh,  Up: obj
+
+Term Classes
+============
+
+* Menu:
+
+* obj-tcl-stcl::                        Simple Term Classes
+* obj-tcl-rtrm::                        Restricted Term Classes
+* obj-tcl-tce::                         Specifying a Term Class Essence
+
+   Sometimes it is convenient to be able to send messages to ordinary
+Prolog terms as if they were objects.  Prolog terms are easier to
+create than objects, and unlike objects, they are automatically garbage
+collected (see *Note obj-tech-lim-gc::).  Of course, unlike objects,
+Prolog terms cannot be modified.  However, when a particular class of
+objects never needs to be dynamically modified, and doesn't need to be
+subclassed, it may be appropriate to define it as a "term class".
+
+   A term class is defined much like an ordinary class:  it begins with
+a `:- class' directive defining the class and its slots, follows with
+clauses defining the methods for this class, and ends with an `:-
+end_class' directive, the end of the file, or another `:- class'
+directive.  The only difference is in the form of the `:- class'
+directive introducing a term class definition.
+
+
+File: quintus.info,  Node: obj-tcl-stcl,  Next: obj-tcl-rtrm,  Up: obj-tcl
+
+Simple Term Classes
+-------------------
+
+   The simplest sort of term class declaration has the following form:
+     :- class CLASSNAME = term(TERM).
+
+   This declares that any term that unifies with TERM is an instance of
+class CLASSNAME.  For example, you might declare:
+     :- class rgb_color = term(color(_Red,_Green,_Blue)).
+     
+     color(R,_G,_B) >> red(R).
+     color(_R,G,_B) >> green(G).
+     color(_R,_G,B) >> blue(B).
+     
+     :- end_class rgb_color.
+
+   This would declare any term whose principal functor is `color' and
+arity is three to be an object of class `rgb_color'.  Given this
+declaration, entering the goal
+     color(0.5, 0.1, 0.6) >> blue(B)
+
+   would bind `B' to 0.6.
+
+   Note that you cannot use `create/2' to create a term class instance.
+Since they are just ordinary terms, you can create them the same way
+you'd create any ordinary Prolog term.  Similarly, you cannot modify an
+existing term class instance.
+
+   You may specify a term class as the type of a slot of an ordinary
+class.  This is effectively the same as specifing the type to be
+`term'.  In particular, fetching and storing term class slots is not
+very efficient.  Also, the default value for slots of term class type
+is `'''; this is because not enough is known about a simple term class
+to determine a better default.  For an explanation of how to avoid
+these pitfalls, see *Note obj-tcl-tce::.
+
+
+File: quintus.info,  Node: obj-tcl-rtrm,  Next: obj-tcl-tce,  Prev: obj-tcl-stcl,  Up: obj-tcl
+
+Restricted Term Classes
+-----------------------
+
+   The intention of the `rgb_color' class presented above is to
+represent a color as a triple of floating point numbers between 0.0 and
+1.0.  But the above definition does not restrict the arguments of the
+`color' term in any way:  _any_ `color/3' term is considered to be an
+instance of the `rgb_color' class.
+
+   The second form of term class declaration allows you to specify
+constraints on instances of a term class.  The form of such a
+declaration is as follows:
+     :- class CLASSNAME = term(TERM, CONSTRAINT).
+
+   This declares that any term that unifies with TERM and satisfies
+CONSTRAINT is an instance of class CLASSNAME.  The CONSTRAINT term is
+an ordinary Prolog goal, which will usually share variables with TERM.
+
+   To extend our `rgb_color' class example so that only `color/3' terms
+whose arguments are all floats between 0.0 and 1.0 are instances of
+`rgb_color', we would instead begin the definition as follows:
+     :- class rgb_color =
+              term(color(Red,Green,Blue),
+                   (float(Red),   Red >= 0.0,   Red =< 1.0,
+                    float(Green), Green >= 0.0, Green =< 1.0,
+                    float(Blue),  Blue >= 0.0,  Blue =< 1.0)).
+
+   Note the parentheses around the constraint in this example.  Whenever
+the constraint contains multiple goals separated by commas, you will
+need to surround the goal with parentheses.
+
+   With this definition of the `rgb_color' class, only `color/3' terms
+whose arguments are all floating point numbers between 0 and 1
+inclusive will be considered to be instances of `rgb_color'.
+
+
+File: quintus.info,  Node: obj-tcl-tce,  Prev: obj-tcl-rtrm,  Up: obj-tcl
+
+Specifying a Term Class Essence
+-------------------------------
+
+   As mentioned above, it is possible to specify a term class as the
+type of a slot of some other object.  For example, we might declare
+
+     :- class colored_rectangle = [
+             public origin:point,
+             public size:size,
+             public color:rgb_color].
+
+   This will store an `rgb_color' object (i.e., a `color/3' term) in
+the `color' slot of each `colored_rectangle' object.  Unfortunately,
+though, Quintus Objects cannot tell what is the best way to store a
+term object, and therefore it stores it the same way it stores a slot
+declared to be of `term' type: using the Prolog database.  This has all
+the efficiency disadvantages of `term' slots.  In this case, however,
+we know that all that really needs to be saved in order to save an
+`rgb_color' object is the three arguments.  We also know that each of
+these arguments is a floating point number, and because precision isn't
+terribly critical in representating colors, each of these numbers can
+be stored as a `float', rather than a `double'.  In effect, we know
+that the _essence_ of a `rgb_color' object is these three numbers; if
+we have them, we can easily construct the `color/3' term.  If we
+provide this information in the declaration of the `rgb_color' class,
+then Quintus Objects can store instances of the `rgb_color' class as 3
+separate floats, rather than as a term, significantly improving the
+performance of creating or destroying a `colored_rectangle' object, as
+well as accessing or modifying its `color' slot.
+
+   The essence of a term class is specified with the following form of
+`class' declaration:
+     :- class CLASSNAME = term(TERM, CONSTRAINT, ESSENCE).
+
+   where ESSENCE is of the form
+     [NAME1:TYPE1=i[Variable1], NAME2:TYPE2=i[Variable2], ...]
+
+   and each NAME is a distinct atom naming a slot, each TYPE is a slot
+type as specified in *Note obj-scl-slt-typ::, and each VARIABLE is an
+unbound variable appering in TERM.  Providing a term essence not only
+makes storage of terms in ordinary object slots more efficient, it also
+gives a name to each "essential" slot of the term class.  This allows
+you to use `fetch_slot' to fetch the slots of this class.
+
+   To extend our `rgb_color' example, we might introduce the `rgb_color'
+class with this declaration:
+     :- class rgb_color =
+              term(color(Red,Green,Blue),
+                   (float(Red),   Red >= 0.0,   Red =< 1.0,
+                    float(Green), Green >= 0.0, Green =< 1.0,
+                    float(Blue),  Blue >= 0.0,  Blue =< 1.0),
+                   [red:float=Red, green:float=Green, blue:float=Blue]).
+
+   This declaration defines the `rgb_color' class exactly as the
+example declaration of the previous section: every `color/3' term whose
+arguments are all floating point numbers between 0.0 and 1.0 inclusive
+are instances of `rgb_color'.  The difference is that with this
+declaration, ordinary classes that have slots of type `rgb_color', such
+as the `colored_rectangle' example above, will be stored more
+efficiently, and their `rgb_color' slots will be accessed and modified
+much more efficiently.  Also, it will be possible to use
+`fetch_slot(red, Red)' in the methods of the `rgb_color' class to fetch
+to red component of the message recipient, and similarly for `green'
+and `blue'.
+
+
+File: quintus.info,  Node: obj-tech,  Prev: obj-tcl,  Up: obj
+
+Technical Details
+=================
+
+* Menu:
+
+* obj-tech-syn::                        Syntax of Class Definitions
+* obj-tech-lim::                        Limitations
+
+   This section will be expanded in future versions of Quintus Objects.
+For now, it provides a BNF grammar for the syntax of class definitions
+and a short list of some limitations of Quintus Objects.
+
+
+File: quintus.info,  Node: obj-tech-syn,  Next: obj-tech-lim,  Up: obj-tech
+
+Syntax of Class Definitions
+---------------------------
+
+   The following BNF grammar gives a concise description of the syntax
+of class definitions. It assumes an understanding of Prolog syntax for
+the following items: "variable", "atom", "compound_term", and
+"constant". Slot types, particularly the `address', `class' and
+`pointer' types, were discussed in an earlier section.
+
+
+CLASS_DEF          ::= CLASS_BEGIN { CLAUSE | METHOD } CLASS_END
+
+CLASS_BEGIN        ::= `:- class' CLASS_NAME OPT_CLASS_SPEC `.'
+
+OPT_CLASS_SPEC     ::= EMPTY | `=' CLASS_SPEC
+
+CLASS_SPEC         ::= MULTI_PARENT_OR_SLOTS | TERM_CLASS_SPEC
+
+CLAUSE             ::= HEAD OPT_BODY `.'
+
+HEAD               ::= ATOM | COMPOUND_TERM `.'
+
+METHOD             ::= MESSAGE_HEAD OPT_BODY `.'
+
+MESSAGE_HEAD       ::= MESSAGE_GOAL
+
+CLASS_END          ::= `:- end_class' OPT_CLASS_NAME `.'
+                   | EMPTY /* if followed by CLASS_BEGIN or EOF */
+
+MESSAGE            ::= ATOM | COMPOUND_TERM
+
+MULTI_PARENT_OR_SLOTS::= PARENT_OR_SLOTS { `+' PARENT_OR_SLOTS }
+
+PARENT_OR_SLOTS    ::= CLASS_NAME | `[]' | `[' SLOT_DEF {`,' SLOT_DEF }
+                   `]'
+
+SLOT_DEF           ::= OPT_VISIBILITY SLOT_NAME `:' SLOT_TYPE
+                   OPT_INIT_VALUE
+
+OPT_VISIBILITY     ::= EMPTY | `private' | `protected' | `public'
+
+OPT_INIT_VALUE     ::= EMPTY | `=' CONSTANT
+
+TERM_CLASS_SPEC    ::= `term('TERM OPT_GOAL_ESSENCE`)'
+
+OPT_GOAL_ESSENCE   ::= EMPTY | `,' GOAL OPT_ESSENCE
+
+OPT_ESSENCE        ::= EMPTY | `,' ESSENCE
+
+ESSENCE            ::= `['  VARIABLE `:' SLOT_TYPE { `,' VARIABLE `:'
+                   SLOT_TYPE } `]'
+
+OPT_BODY           ::= EMPTY | `:-' BODY
+
+BODY               ::= MESSAGE_OR_GOAL { `,' MESSAGE_OR_GOAL }
+
+MESSAGE_OR_GOAL    ::= MESSAGE_GOAL | GOAL
+
+MESSAGE_GOAL       ::= VARIABLE MESSAGE_OPERATOR MESSAGE
+
+MESSAGE_OPERATOR   ::= `<<' | `>>' | `<-'
+
+OPT_CLASS_NAME     ::= EMPTY | CLASS_NAME
+
+CLASS_NAME         ::= ATOM
+
+SLOT_NAME          ::= ATOM
+
+SLOT_TYPE          ::= `integer'
+                   | `short'
+                   | `char'
+                   | `unsigned_short'
+                   | `unsigned_char'
+                   | `float'
+                   | `double'
+                   | `atom'
+                   | `address'
+                   | `term'
+                   | CLASS_NAME
+                   | `pointer(ATOM)'
+
+
+
+File: quintus.info,  Node: obj-tech-lim,  Prev: obj-tech-syn,  Up: obj-tech
+
+Limitations
+-----------
+
+* Menu:
+
+* obj-tech-lim-deb::                    Debugging
+* obj-tech-lim-gc::                     Garbage Collection
+* obj-tech-lim-mih::                    Multiple Inheritance
+* obj-tech-lim-prs::                    Persistence
+
+   This section summarizes the current limitations of Quintus Objects.
+
+
+File: quintus.info,  Node: obj-tech-lim-deb,  Next: obj-tech-lim-gc,  Up: obj-tech-lim
+
+Debugging
+.........
+
+   When you debug Quintus Objects programs that were compiled using the
+`obj_decl' module, you are tracing the translated version of your code.
+This includes all method clauses and (some) message sending commands.
+
+   QUI's source-level debugger cannot connect compiled Quintus Objects
+code with the source code. This is similar to the problem of tracing
+Prolog's DCG grammar rules.
+
+
+File: quintus.info,  Node: obj-tech-lim-gc,  Next: obj-tech-lim-mih,  Prev: obj-tech-lim-deb,  Up: obj-tech-lim
+
+Garbage Collection
+..................
+
+   There is no garbage collection of objects. It is the responsibility
+of the programmer to keep track of unused objects. In particular, avoid
+doing the following:
+
+     | ?- create(CLASS, OBJECT).
+
+   Unless the create message for CLASS made some provision for finding
+the new object again, it is now lost. It cannot be used, and it cannot
+be destroyed.
+
+
+File: quintus.info,  Node: obj-tech-lim-mih,  Next: obj-tech-lim-prs,  Prev: obj-tech-lim-gc,  Up: obj-tech-lim
+
+Multiple Inheritance
+....................
+
+   The provisions for multiple inheritance in this version of Quintus
+Objects are limited. In particular, there is no control over the
+inheritance of slots, which makes repeated inheritance impossible.
+However, it does support the mixin style of multiple inheritance.
+
+
+File: quintus.info,  Node: obj-tech-lim-prs,  Prev: obj-tech-lim-mih,  Up: obj-tech-lim
+
+Persistence
+...........
+
+   While objects are more persistent than Prolog variables, there is no
+automatic way to save objects from one execution of your program to the
+next. Hence they are less persistent than the clauses in the Prolog
+database.
+
+   If you need to save a set of objects from one Prolog session to
+another, copy the objects to the Prolog database as terms, and save
+them to a QOF file. Then, after you reload the QOF file, rebuild the
+objects. Keep in mind that addresses are not valid from one session to
+another.
+
+   In short, there is no way to avoid initializing objects at run time.
+
+
+File: quintus.info,  Node: obj-exp,  Next: obj-glo,  Up: obj
+
+Exported Predicates
+===================
+
+* Menu:
+
+* obj-exp-send::                        <-/2
+* obj-exp-put::                         <</2
+* obj-exp-get::                         >>/2
+* obj-exp-class::                       class/1
+* obj-exp-class_ancestor::              class_ancestor/2
+* obj-exp-class_method::                class_method/1
+* obj-exp-class_superclass::            class_superclass/2
+* obj-exp-class_of::                    class_of/2
+* obj-exp-create::                      create/2
+* obj-exp-current_class::               current_class/1
+* obj-exp-debug_message::               debug_message/0
+* obj-exp-define_method::               define_method/3
+* obj-exp-descendant_of::               descendant_of/2
+* obj-exp-destroy::                     destroy/1
+* obj-exp-direct_message::              direct_message/4
+* obj-exp-end_class::                   end_class/[0,1]
+* obj-exp-fetch_slot::                  fetch_slot/2
+* obj-exp-inherit::                     inherit/1
+* obj-exp-instance_method::             instance_method/1
+* obj-exp-message::                     message/4
+* obj-exp-nodebug_message::             nodebug_message/0
+* obj-exp-pointer_object::              pointer_object/2
+* obj-exp-store_slot::                  store_slot/2
+* obj-exp-undefine_method::             undefine_method/3
+* obj-exp-uninherit::                   uninherit/1
+
+   The following reference pages, alphabetically arranged, describe the
+exported Quintus Objects predicates.  They can be imported by an
+embedded command:
+
+     :- use_module(library(objects)).
+
+
+File: quintus.info,  Node: obj-exp-send,  Next: obj-exp-put,  Up: obj-exp
+
+`<-/2'
+------
+
+Synopsis
+--------
+
+   +OBJ `<-' +*MESG
+
+Arguments
+---------
+
+OBJ
+     "object"
+
+MESG
+     "term"
+
+Description
+-----------
+
+   Sends MESG to OBJ. A send message. The class of OBJ must have a
+method defined for this message.
+
+   A clause with `<-/2' as the principal functor of its head is a
+method definition clause. Such clauses only occur within the scope of a
+class definition. They are expanded at compile time.
+
+Exceptions
+----------
+
+`instantiation_error'
+     either argument is unbound.
+
+`domain_error'
+     MESG is not "callable" or OBJ is not a valid object.
+
+`existence_error'
+     MESG is not a defined message for OBJ.
+
+Caveat
+------
+
+   For reasons of efficiency, an `existence_error' exception will only
+be raised if the code that sends the message is compiled with debugging
+enabled (see `debug_message'), or if the message is not determined at
+compile-time.  In other circumstances, the message will simply fail.
+
+   Calls to the `<-/2' predicate will be compiled into more efficient
+code if the `obj_decl' module is loaded at compile time.
+
+See Also
+--------
+
+   `<</2', `>>/2', `direct_message/4', `message/4'
+
+
+File: quintus.info,  Node: obj-exp-put,  Next: obj-exp-get,  Prev: obj-exp-send,  Up: obj-exp
+
+`<</2'
+------
+
+Synopsis
+--------
+
+   +OBJ `<<' +ATT
+
+Arguments
+---------
+
+OBJ
+     "object"
+
+ATT
+     "term"
+
+Description
+-----------
+
+   Send a message to `Obj' to store the value of `Att' in the object. A
+put message. `Att' must be an attribute that can be stored in objects
+of `Obj''s class.
+
+   A clause with `<</2' as the principal functor of its head is a
+method definition clause. Such clauses only occur within the scope of a
+class definition. They are expanded at compile time.
+
+   Put methods are automatically generated for public slots.
+
+Exceptions
+----------
+
+`instantiation_error'
+     either argument is unbound.
+
+`domain_error'
+     MESG is not "callable" or OBJ is not a valid object.
+
+`existence_error'
+     MESG is not a defined message for OBJ.
+
+Caveat
+------
+
+   For reasons of efficiency, an `existence_error' exception will only
+be raised if the code that sends the message is compiled with debugging
+enabled (see `debug_message'), or if the message is not determined at
+compile-time.  In other circumstances, the message will simply fail.
+
+   Calls to the `<</2' predicate will be compiled into more efficient
+code if the `obj_decl' module is loaded at compile time.
+
+See Also
+--------
+
+   `<-/2', `>>/2', `direct_message/4', `message/4', `store_slot/2'
+
+
+File: quintus.info,  Node: obj-exp-get,  Next: obj-exp-class,  Prev: obj-exp-put,  Up: obj-exp
+
+`>>/2'
+------
+
+Synopsis
+--------
+
+   +OBJ `>>' +-ATT
+
+Arguments
+---------
+
+OBJ
+     "object"
+
+ATT
+     "term"
+
+Description
+-----------
+
+   Send a message to OBJ that fetches the value of ATT from the object.
+A get message. ATT must be an attribute to fetch from OBJ's class.
+
+   A clause with `>>/2' as the principal functor of its head is a
+method definition clause. Such clauses only occur within the scope of a
+class definition. They are expanded at compile time.
+
+   Get methods are automatically generated for public slots.
+
+Exceptions
+----------
+
+`instantiation_error'
+     either argument is unbound.
+
+`domain_error'
+     MESG is not "callable" or OBJ is not a valid object.
+
+`existence_error'
+     MESG is not a defined message for OBJ.
+
+Caveat
+------
+
+   For reasons of efficiency, an `existence_error' exception will only
+be raised if the code that sends the message is compiled with debugging
+enabled (see `debug_message'), or if the message is not determined at
+compile-time.  In other circumstances, the message will simply fail.
+
+   Calls to the `>>/2' predicate will be compiled into more efficient
+code if the `obj_decl' module is loaded at compile time.
+
+See Also
+--------
+
+   `<-/2', `<</2', `direct_message/4', `message/4', `fetch_slot/2'
+
+
+File: quintus.info,  Node: obj-exp-class,  Next: obj-exp-class_ancestor,  Prev: obj-exp-get,  Up: obj-exp
+
+`class/1' directive
+-------------------
+
+Synopsis
+--------
+
+   `:- class CLASSNAME.'
+
+   `:- class CLASSNAME = [SLOTDEF, ...].'
+
+   `:- class CLASSNAME = SUPER.'
+
+   `:- class CLASSNAME = [SLOTDEF, ...] + SUPER + ....'
+
+   `:- class CLASSNAME = term(TERM).'
+
+   `:- class CLASSNAME = term(TERM, GOAL).'
+
+   `:- class CLASSNAME = term(TERM, GOAL, ESSENCE).'
+
+Arguments
+---------
+
+CLASSNAME
+     "atom"
+
+SLOTDEF
+     "term"
+
+SUPER
+     "atom"
+
+Description
+-----------
+
+   The definition of class CLASSNAME begins with this `class/1'
+directive and ends with the next `class/1' directive, the next
+`end_class/[0,1]' directive, or the end of the file, whichever comes
+first.  All clauses that look like method definitions within the scope
+of the class definition (that is, which have one of `<-/2', `<</2' or
+`>>/2' as the principal functors of their heads) are considered method
+definitions of the class.
+
+   You may provide as many slot definitions (SLOTDEF) and superclasses
+(SUPER) as you like. All superclasses must be previously defined
+classes.
+
+   A slot definition (SlotDef) has the form
+
+     VISIBILITY SLOTNAME:TYPE = INITIALVALUE
+
+   where VISIBILITY and `= INITIALVALUE' are optional.
+
+   VISIBILITY is either `public', `protected', or `private'. If it is
+omitted, the slot is private.
+
+   SLOTNAME must be an atom.
+
+   SLOTTYPE must be one of the following:
+
+`integer'
+     32-bit signed integer
+
+`short'
+     16-bit signed integer
+
+`char'
+     8-bit signed integer
+
+`unsigned_short'
+     16-bit unsigned integer
+
+`unsigned_char'
+     8-bit unsigned integer
+
+`float'
+     32-bit floating point number
+
+`double'
+     64-bit floating point number
+
+`atom'
+     Prolog atom (32-bit pointer)
+
+`address'
+     32-bit address
+
+`term'
+     Prolog term
+
+CLASS
+     32-bit pointer to an instance of CLASS, which must be a previously
+     defined class
+
+`pointer(TYPE)'
+     like `address', except that access to this slot yields, and update
+     of this slot expects, a unary term whose functor is TYPE
+
+   INITIALVALUE may be any constant appropriate for the slot's type.
+
+   TERM, if specified, is any compound Prolog term.  Class declarations
+of any of the last three forms introduce a "term class", which defines
+any term that unifies with TERM as an instance of the class being
+defined.
+
+   GOAL, if specified, is any Prolog goal.  This goal may be used to
+restrict which terms that unify with TERM will be considered to be
+instance of the class being defined.  The default GOAL is `true'.
+Other than when it is `true', GOAL will usually share variables with
+TERM.
+
+   ESSENCE, if specified, is a list of terms of the form
+     VARIABLE:TYPE
+
+   where VARIABLE is a variable apprearing somewhere in TERM and TYPE
+is one of the possible SLOTTYPE types listed above.  There should be a
+VARIABLE`:'TYPE pair for every variable in TERM.  By specifying an
+essence, you permit much more space- and time-efficient storage of and
+access to term slots.
+
+Caveat
+------
+
+   Note that every class for which you want to be able to create
+instances must define at least one create method.
+
+Examples
+--------
+
+   The following class definition is for a class named `point', with
+two public slots, named `x' and `y'. Both slots are of type `integer'
+and have initial values of 1 and 2, respectively.
+
+     :- class point =
+             [public x:integer=1,
+              public y:integer=2].
+     
+     Self <- create.
+     :- end_class point.
+
+   Because the slots are public, they have get and put methods
+generated automatically. Because the class has a create method defined,
+it is possible to create an instance with the command
+
+     | ?- create(point, PointObj).
+
+   which creates a `point' object and binds the variable `PointObj' to
+it.
+
+   Using the `point' class, we could create a class, `named_point',
+which has an extra public slot, `name'.
+
+     :- class named_point =
+             [public name:atom] + point.
+     
+     Self <- create(Name, X, Y) :-
+             Self << name(Name),
+             Self << x(X),
+             Self << y(Y).
+     
+     :- end_class named_point.
+
+   The only way to create a `named_point' object requires specifying
+values for all three slots.
+
+See Also
+--------
+
+   `end_class/[0,1]'
+
+   *Note obj-scl::, *Note obj-tcl::.
+
+
+File: quintus.info,  Node: obj-exp-class_ancestor,  Next: obj-exp-class_method,  Prev: obj-exp-class,  Up: obj-exp
+
+`class_ancestor/2'
+------------------
+
+Synopsis
+--------
+
+   `class_ancestor(*CLASS, *ANC)'
+
+Arguments
+---------
+
+CLASS
+     "atom"
+
+ANC
+     "atom"
+
+Description
+-----------
+
+   ANC is CLASS or an ancestor class of CLASS.
+
+See Also
+--------
+
+   `class_superclass/2'
+
+
+File: quintus.info,  Node: obj-exp-class_method,  Next: obj-exp-class_superclass,  Prev: obj-exp-class_ancestor,  Up: obj-exp
+
+`class_method/1' directive
+--------------------------
+
+Synopsis
+--------
+
+   `:- class_method +NAME/+ARITY, ... .'
+
+Arguments
+---------
+
+NAME
+     "atom"
+
+ARITY
+     "integer"
+
+Description
+-----------
+
+   Declares that a class's method for send message NAME/ARITY is an
+ordinary method, not an instance method.
+
+   Used when the class being defined inherits an instance method from a
+superclass, to allow the class to define a non-instance method for the
+message. A descendent class may still declare this to be an instance
+method, so the same message may be an instance method for some classes
+and an ordinary class method for others.
+
+   Must occur within the scope of the class definition. Only applies to
+send messages.
+
+See Also
+--------
+
+   `instance_method/1'
+
+
+File: quintus.info,  Node: obj-exp-class_superclass,  Next: obj-exp-class_of,  Prev: obj-exp-class_method,  Up: obj-exp
+
+`class_superclass/2'
+--------------------
+
+Synopsis
+--------
+
+   `class_superclass(*CLASS, *SUPER)'
+
+Arguments
+---------
+
+CLASS
+     "atom"
+
+SUPER
+     "atom"
+
+Description
+-----------
+
+   CLASS is an immediate subclass of SUPER.
+
+See Also
+--------
+
+   `class_ancestor/2'
+
+
+File: quintus.info,  Node: obj-exp-class_of,  Next: obj-exp-create,  Prev: obj-exp-class_superclass,  Up: obj-exp
+
+`class_of/2'
+------------
+
+Synopsis
+--------
+
+   `class_of(+OBJ, -CLASS)'
+
+Arguments
+---------
+
+OBJ
+     "object"
+
+CLASS
+     "atom"
+
+Description
+-----------
+
+   CLASS is the class of OBJ.
+
+Exceptions
+----------
+
+`instantiation_error'
+     OBJ is unbound.
+
+`type_error'
+     OBJ is not a valid object.
+
+See Also
+--------
+
+   `pointer_object/2'
+
+
+File: quintus.info,  Node: obj-exp-create,  Next: obj-exp-current_class,  Prev: obj-exp-class_of,  Up: obj-exp
+
+`create/2'
+----------
+
+Synopsis
+--------
+
+   `create(+DESCRIPTOR,-OBJ)'
+
+Arguments
+---------
+
+DESCRIPTOR
+     "term"
+
+OBJ
+     "object"
+
+Description
+-----------
+
+   OBJ is a newly created and initialized object. Descriptor is a term
+describing the object to create. After memory is allocated and any slot
+initializations are performed, a create message is sent to the object.
+
+   The functor of DESCRIPTOR indicates the class to create. The
+arguments of the create message are the arguments of DESCRIPTOR.
+
+Exceptions
+----------
+
+`instantiation_error'
+     DESCRIPTOR is unbound.
+
+`domain_error'
+     DESCRIPTOR is not a valid `create' descriptor.
+
+`resource_error'
+     unable to allocate enough memory for object.
+
+Caveat
+------
+
+   You must have a `create/N' method for every arity N you want to be
+able to use in creating instances of a class.  This includes arity 0.
+If no such method exists, a domain error will be raised.
+
+Examples
+--------
+
+   Given the class definition
+
+     :- class point =
+                     [public x:integer=1,
+                      public y:integer=2].
+     
+     Self <- create.
+     Self <- create(X, Y) :-
+                     Self << x(X),
+                     Self << y(Y).
+     :- end_class point.
+
+   the command
+
+     | ?- create(point, Point1).
+
+   creates a `point' object, with the default slot values for `x' and
+`y', and binds variable `Point1' to the new object. The command
+
+     | ?- create(point(10,15), Point2).
+
+   creates a `point' object with values 10 and 15 for slots `x' and `y',
+respectively, and binds variable `Point2' to the new object.
+
+See Also
+--------
+
+   `destroy/1'
+
+
+File: quintus.info,  Node: obj-exp-current_class,  Next: obj-exp-debug_message,  Prev: obj-exp-create,  Up: obj-exp
+
+`current_class/1'
+-----------------
+
+Synopsis
+--------
+
+   `current_class(*CLASS)'
+
+Arguments
+---------
+
+CLASS
+     "atom"
+
+Description
+-----------
+
+   `Class' is the name of a currently defined class.
+
+
+File: quintus.info,  Node: obj-exp-debug_message,  Next: obj-exp-define_method,  Prev: obj-exp-current_class,  Up: obj-exp
+
+`debug_message/0' directive
+---------------------------
+
+Synopsis
+--------
+
+   `:- debug_message.'
+
+Description
+-----------
+
+   Prolog clauses following this directive will be compiled to send
+messages "carefully."
+
+   That is, a message sent to an object that does not understand the
+message will raise an exception, which describes both the message and
+the object receiving it. This also catches attempts to send an unbound
+message, to send a message to an unbound object, and similar errors.
+
+See Also
+--------
+
+   `nodebug_message/0'
+
+
+File: quintus.info,  Node: obj-exp-define_method,  Next: obj-exp-descendant_of,  Prev: obj-exp-debug_message,  Up: obj-exp
+
+`define_method/3'
+-----------------
+
+Synopsis
+--------
+
+   `define_method(+OBJ, +MESSAGE, +BODY)'
+
+Arguments
+---------
+
+OBJ
+     "object"
+
+MESSAGE
+     "term"
+
+BODY
+     "callable"
+
+Description
+-----------
+
+   Install BODY as the method for MESSAGE in the instance OBJ.
+Following the execution of this goal, sending MESSAGE to OBJ will
+execute BODY, rather than the default method or a method previously
+defined with `define_method/3'.
+
+   MESSAGE must have been declared to be an instance method for the
+class of OBJ.
+
+Exceptions
+----------
+
+`instantiation_error'
+     any argument is unbound.
+
+`type_error'
+     OBJ is not a compound term, or MESSAGE or BODY is not "callable".
+
+`domain_error'
+     MESSAGE does not specify an instance method for the class of OBJ,
+     or BODY include a goal to fetch or store a non-existent slot.
+
+See Also
+--------
+
+   `instance_method/1', `undefine_method/3'
+
+
+File: quintus.info,  Node: obj-exp-descendant_of,  Next: obj-exp-destroy,  Prev: obj-exp-define_method,  Up: obj-exp
+
+`descendant_of/2'
+-----------------
+
+Synopsis
+--------
+
+   `descendant_of(+OBJ, *CLASS)'
+
+Arguments
+---------
+
+OBJ
+     "object"
+
+CLASS
+     "atom"
+
+Description
+-----------
+
+   OBJ is an instance of CLASS or of a descendant of CLASS.
+
+Exceptions
+----------
+
+`instantiation_error'
+     OBJ is unbound.
+
+`type_error'
+     OBJECT is not a valid object.
+
+See Also
+--------
+
+   `class_ancestor/2', `class_of/2', `class_superclass/2'
+
+
+File: quintus.info,  Node: obj-exp-destroy,  Next: obj-exp-direct_message,  Prev: obj-exp-descendant_of,  Up: obj-exp
+
+`destroy/1'
+-----------
+
+Synopsis
+--------
+
+   `destroy(+OBJ)'
+
+Arguments
+---------
+
+OBJ
+     "object"
+
+Description
+-----------
+
+   Dispose of OBJ.
+
+   First send a `destroy' message to OBJ, if such a message is defined
+for its class. A `destroy' message takes no argument.  Unlike
+`create/2', it is possible to destroy instances of a class even if it
+defines no `destroy' methods.
+
+Exceptions
+----------
+
+`instantiation_error'
+     OBJ is unbound.
+
+`type_error'
+     OBJECT is not a valid object.
+
+See Also
+--------
+
+   `create/2'
+
+
+File: quintus.info,  Node: obj-exp-direct_message,  Next: obj-exp-end_class,  Prev: obj-exp-destroy,  Up: obj-exp
+
+`direct_message/4'
+------------------
+
+Synopsis
+--------
+
+   `direct_message(*CLASS, *OP, *NAME, *ARITY)'
+
+Arguments
+---------
+
+CLASS
+     "atom"
+
+OP
+     "message_operator"
+
+NAME
+     "atom"
+
+ARITY
+     "integer"
+
+Description
+-----------
+
+   NAME/ARITY is an OP message directly understood (defined rather than
+inherited) by instances of CLASS.  This predicate is used to test
+whether a message is defined for a class.
+
+   OP is one of `<-', `>>', or `<<', specifying the kind of message.
+
+   This predicate violates the principle of information hiding by
+telling whether the method for a message is defined within a class or
+inherited. Hence its use in ordinary programs is discouraged.  It may
+be useful, however, during debugging or in developing programming
+support tools.
+
+See Also
+--------
+
+   `<-/2', `<</2', `>>/2', `message/4'
+
+
+File: quintus.info,  Node: obj-exp-end_class,  Next: obj-exp-fetch_slot,  Prev: obj-exp-direct_message,  Up: obj-exp
+
+`end_class/[0,1]' directive
+---------------------------
+
+Synopsis
+--------
+
+   `:- end_class.'
+
+   `:- end_class +CLASSNAME.'
+
+Arguments
+---------
+
+CLASSNAME
+     "atom"
+
+Description
+-----------
+
+   A class definition continues until the next `end_class/[0,1]'
+directive, the next `class/1' directive, or the end of the file,
+whichever comes first.
+
+   It is not possible to nest one class definition within another.
+
+   All clauses that look like method definitions (that is, which have
+one of `<-/2', `<</2' or `>>/2' as the principal functors of their
+heads) are considered to be method definitions for the class.
+
+Caveat
+------
+
+   The argument to `end_class/1', if specified, must match the class
+name of the preceding `class/1' directive.
+
+See Also
+--------
+
+   `class/1'
+
+
+File: quintus.info,  Node: obj-exp-fetch_slot,  Next: obj-exp-inherit,  Prev: obj-exp-end_class,  Up: obj-exp
+
+`fetch_slot/2'
+--------------
+
+Synopsis
+--------
+
+   `fetch_slot(+SLOTNAME, -VALUE)'
+
+Arguments
+---------
+
+SLOTNAME
+     "atom"
+
+VALUE
+     "term"
+
+Description
+-----------
+
+   Fetch VALUE from the slot specified by SLOTNAME.
+
+   This predicate may only appear in the body of a method clause, and it
+always operates on the object to which that message is sent. It cannot
+be used to directly access the slots of another object.
+
+Exceptions
+----------
+
+`instantiation_error'
+     SLOT is unbound.
+
+`domain_error'
+     SLOT is not the name of a slot of the current class.
+
+`permission_error'
+     SLOT is a private slot of a superclass.
+
+See Also
+--------
+
+   `>>/2', `store_slot/2'
+
+
+File: quintus.info,  Node: obj-exp-inherit,  Next: obj-exp-instance_method,  Prev: obj-exp-fetch_slot,  Up: obj-exp
+
+`inherit/1' directive
+---------------------
+
+Synopsis
+--------
+
+   `:- inherit +CLASSNAME +OP +NAME/+ARITY, ....'
+
+Arguments
+---------
+
+CLASSNAME
+     "atom"
+
+OP
+     "message_operator"
+
+NAME
+     "atom"
+
+ARITY
+     "integer"
+
+Description
+-----------
+
+   CLASSNAME names the class from which the message should be
+inherited, OP indicates which kind of message it is, and NAME and ARITY
+indicate the name and arity of the message to be inherited. You may
+include several inheritance specifications in one directive.
+
+Caveat
+------
+
+   Be careful of the precedences of the message operator and the `/'
+operator. You may need to use parentheses.
+
+Examples
+--------
+
+   Suppose classes `toy' and `truck' are defined as follows:
+
+     :-class toy.
+     Self <- create.
+     Self >> size(small).
+     Self >> rolls(false).
+     :- end_class toy.
+     
+     :- class truck.
+     Self <- create.
+     Self >> size(small).
+     Self >> rolls(true).
+     :- end_class truck.
+
+   Then `toy_truck' inherits its size from `toy' and the fact that it
+rolls from `truck':
+
+     :- class toy_truck = toy + truck.
+     :- inherit
+             toy <- (create/O),
+             toy <- (size/1),
+             truck <- (rolls/1).
+     :- end_class toy_truck.
+
+   Note that this is just a toy example.
+
+See Also
+--------
+
+   `uninherit/1'
+
+
+File: quintus.info,  Node: obj-exp-instance_method,  Next: obj-exp-message,  Prev: obj-exp-inherit,  Up: obj-exp
+
+`instance_method/1' directive
+-----------------------------
+
+Synopsis
+--------
+
+   `:- instance_method +NAME/+ARITY.'
+
+Arguments
+---------
+
+NAME
+     "atom"
+
+ARITY
+     "integer"
+
+Description
+-----------
+
+   The message NAME/ARITY is declared to support instance methods in a
+class. This means that instances of this class, and its descendants,
+may each define their own methods for this message.
+
+   A method defined for this message by the class is considered the
+default method for the message. An instance that does not define its
+own method uses the default. Defining a new method overrides this
+default method; there is no need to explicitly remove it.
+
+   An instance method is installed in an instance of the class with the
+`define_method/3' predicate. An instance method is removed from an
+instance of the class, reverting to the default method, with the
+`undefine_method/3' predicate.
+
+   Must occur within the scope of the class definition. Only applies to
+send messages.
+
+See Also
+--------
+
+   `class_method/1', `define_method/3', `undefine_method/3'
+
+
+File: quintus.info,  Node: obj-exp-message,  Next: obj-exp-nodebug_message,  Prev: obj-exp-instance_method,  Up: obj-exp
+
+`message/4'
+-----------
+
+Synopsis
+--------
+
+   `message(*CLASS, *OP, *NAME, *ARITY)'
+
+Arguments
+---------
+
+CLASS
+     "atom"
+
+OP
+     "message_operator"
+
+NAME
+     "atom"
+
+ARITY
+     "integer"
+
+Description
+-----------
+
+   NAME/ARITY is an OP message understood by instances of CLASS.  This
+predicate is used to test whether a message is either defined for or
+inherited by a class.
+
+   OP is one of `<-', `>>', or `<<', specifying the kind of message.
+
+See Also
+--------
+
+   `<-/2', `<</2', `>>/2', `direct_message/4'
+
+
+File: quintus.info,  Node: obj-exp-nodebug_message,  Next: obj-exp-pointer_object,  Prev: obj-exp-message,  Up: obj-exp
+
+`nodebug_message/0' directive
+-----------------------------
+
+Synopsis
+--------
+
+   `:- nodebug_message.'
+
+Description
+-----------
+
+   Prolog clauses following this directive are no longer compiled to
+send messages "carefully."
+
+See Also
+--------
+
+   `debug_message/0'
+
+
+File: quintus.info,  Node: obj-exp-pointer_object,  Next: obj-exp-store_slot,  Prev: obj-exp-nodebug_message,  Up: obj-exp
+
+`pointer_object/2'
+------------------
+
+Synopsis
+--------
+
+   `pointer_object(+ADDR,-OBJ)'
+
+   `pointer_object(-ADDR,+OBJ)'
+
+Arguments
+---------
+
+ADDR
+     "integer"
+
+OBJ
+     "object"
+
+Description
+-----------
+
+   ADDR is the address of object OBJ. This can be used to get the
+address of an object or to get an object given its address.
+
+Exceptions
+----------
+
+`instantiation_error'
+     both OBJ and ADDR are unbound.
+
+`type_error'
+     ADDR is not an integer.
+
+
+File: quintus.info,  Node: obj-exp-store_slot,  Next: obj-exp-undefine_method,  Prev: obj-exp-pointer_object,  Up: obj-exp
+
+`store_slot/2'
+--------------
+
+Synopsis
+--------
+
+   `store_slot(+SLOTNAME, +NEWVALUE)'
+
+Arguments
+---------
+
+SLOTNAME
+     "atom"
+
+NEWVALUE
+     "term"
+
+Description
+-----------
+
+   Store NEWVALUE in the slot specified by SLOTNAME.
+
+   This predicate may only appear in the body of a method clause, and it
+always operates on the object to which that message is sent. It cannot
+be used to directly modify the slots of another object.
+
+Exceptions
+----------
+
+`instantiation_error'
+     either argument is unbound.
+
+`type_error'
+     NEWVALUE is not of the appropriate type for SLOTNAME.
+
+`domain_error'
+     SLOTNAME is not the name of a slot of the current class.
+
+`permission_error'
+     SLOTNAME is a private slot of a superclass.
+
+See Also
+--------
+
+   `<</2', `fetch_slot/2'
+

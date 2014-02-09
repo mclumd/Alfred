@@ -1,0 +1,830 @@
+%   File   : quintus.dec
+%   Author : Richard A. O'Keefe
+%   Updated: 29 Aug 1989
+%   Purpose: Quintus Prolog compatibility for Quintus DOS Prolog (alias
+	     LPA Prolog Professional)
+
+%   Copyright (C) 1989, Quintus Computer Systems, Inc.  All rights reserved.
+
+/* 
+    This file is intended for use with Quintus DOS Prolog when running
+    programs that are required to be portable between Quintus Prolog,
+    Quintus MacProlog and Quintus DOS Prolog.  See also lpa.pl and
+    quintus.mac.
+
+    These routines have not yet been well tested: please let us know if
+    you find problems.  Also let us know if you have portability problems
+    between these three systems which are not addressed by these libraries.
+*/
+
+
+/*  In the load-time initialisation we have to `prime' the RECALL
+    and GET PROP tables because LPA Prolog Professional thinks
+    that a predicate which happens to have no clauses is undefined.
+    And it can't be switched back to DEC-10 default no-clauses-means-false 
+    behaviour to compensate, because it hasn't got unknown/2 either.
+*/
+'?LOAD?' :-
+	op(1150, fx, [(dynamic),(multifile),(meta_predicate)]),
+	op(950, yfx, [with_output_to_stream,with_input_from_stream]),
+	op(700, xfx, ['s', 'r']),
+	assert('RECALL'("*", impossible)),
+	assert('GET PROP'("*", "*", impossible)).
+
+
+
+/*  For compatibility with LPA MacProlog  */
+
+'s'(X, Y) :- X =< Y.
+'r'(X, Y) :- X >= Y.
+
+
+/*  It has become conventional to speak of "red" cuts which change
+    the logic of a program and "green" cuts which don't.  Many of
+    the cuts in this file could be described as "cyanosed" cuts;
+    they are only there because LPA Prolog doesn't understand that
+    the atom is only one half of the name of a predicate.
+*/
+
+p_call(Pred) :- !,
+	apply(Pred, []).
+
+p_call(Pred, X1) :- !,
+	apply(Pred, [X1]).
+
+p_call(Pred, X1, X2) :- !,
+	apply(Pred, [X1,X2]).
+
+p_call(Pred, X1, X2, X3) :- !,
+	apply(Pred, [X1,X2,X3]).
+
+p_call(Pred, X1, X2, X3, X4) :- !,
+	apply(Pred, [X1,X2,X3,X4]).
+
+p_call(Pred, X1, X2, X3, X4, X5) :- !,
+	apply(Pred, [X1,X2,X3,X4,X5]).
+
+p_call(Pred, X1, X2, X3, X4, X5, X6) :- !,
+	appply(Pred, [X1,X2,X3,X4,X5,X6]).
+
+apply(Pred, Args) :-
+	(   lst(Pred) -> concat(Pred, Args, Goal), call(Goal)
+	;   compound(Pred) -> Pred =.. L, concat(L, Args, Goal), call(Goal)
+	;   call([Pred|Args])
+	).
+
+%   Hack around a bug in LPA Prolog Professional 2.6:
+%   X = [_|_] => functor(X, ., 2), as it should, BUT
+%  functor(X, ., 2) => X = .(_,_) which doesn't unify with [_|_]!
+
+p_functor(T, F, N) :-
+	( number(F) -> T = F, N = 0
+	; var(T), F = ., N = 2 -> T = [_|_]
+	; functor(T, F, N)	% no other problems found _yet_
+	).
+
+%   The trig functions in LPA Prolog Professional use degrees,
+%   not radians.  In order to be compatible, use the relations.
+
+p_sin(R, S) :- S is sin(57.2949695130823108767981500*R).
+p_cos(R, C) :- C is cos(57.2949695130823108767981500*R).
+p_tan(R, T) :- T is tan(57.2949695130823108767981500*R).
+
+p_asin(S, R) :- R is asin(S)*0.017453292519943295769237.
+p_acos(C, R) :- R is acos(C)*0.017453292519943295769237.
+p_atan(T, R) :- R is atan(T)*0.017453292519943295769237.
+
+p_abs( X, A) :- A is abs(X).
+p_sign(X, S) :- S is sign(X).
+p_sqrt(X, R) :- R is sqrt(X).
+
+p_log(Y, Log) :- !, Log is ln(Y).
+p_log(X, Y, Log) :- Log is ln(Y)/ln(X).
+
+p_exp(Y, Exp) :- !, Exp is aln(Y).
+p_exp(X, Y, Exp) :- Exp is X^Y.
+
+sdef(X) :-
+	(   lst(X) -> X = [Atom|_]
+	;   compound(X) -> functor(X,Atom,_)
+	;   Atom = X
+	),
+	(   atom(Atom) -> def(Atom), sys(Atom)
+	;   var(Atom) -> '?ERROR?'(3, sdef(X))
+	).
+
+atom_chars(Atom, Chars) :-
+    (   atom(Atom) -> name(Atom, Chars)
+    ;   var(Atom) ->
+        char_atoms(Chars, Atoms),
+	stringof(Atoms, Atom)
+    ).
+
+char_atoms([], []).
+char_atoms([Char|Chars], [Atom|Atoms]) :-
+	charof(Atom, Char),
+	char_atoms(Chars, Atoms).
+
+number_chars(Number, Chars) :-
+    (	number(Number) -> name(Number, Chars)
+    ;   var(Number) ->
+	'number 1'(Chars, X), X = "",
+        name(Number, Chars)
+    ).
+
+'number 1' --> "-", !, 'digits 1', 'number 2'.
+'number 1' -->         'digits 1', 'number 2'.
+
+'number 2' --> ".", !, 'digits 1', 'number 3'.
+'number 2' --> "".
+
+'number 3' --> "e", !, 'number 4'.
+'number 3' --> "E", !, 'number 4'.
+'number 3' --> "".
+
+'number 4' --> "-", !, 'digits 1'.
+'number 4' --> "+", !, 'digits 1'.
+'number 4' --> 'digits 1'.
+
+'digits 1' --> [C], {C =< "9", C >= "0"}, 'digits 0'.
+
+'digits 0' --> [C], {C =< "9", C >= "0"}, !, 'digits 0'.
+'digits 0' --> "".
+
+copy_term(Term, Copy) :-
+	findall(Term, true, [Copy]).
+
+/*  These next commands are modelled on LPA MacProlog.
+    They make a new window, write the prompt into it, and read a
+    response.  Unlike the MacProlog and Quintus Prolog versions,
+    there is no way for them to fail, as you cannot use ESC when
+    providing input to read/1.  The prompt is followed by '? '.
+*/
+
+prompt_read(Prompt, Term) :-
+	'prompt action'(Prompt, Term, X, read(X)).
+
+prompt_gread(Prompt, Term) :- !,
+	'prompt action'(Prompt, Term, X, gread(X)).
+
+prompt_gread(Prompt, Term, Names) :-
+	'prompt action'(Prompt, Term/Names, X/Y, gread(X,Y)).
+
+prompt_yesno(Prompt) :-
+    repeat,
+	'prompt action'(Prompt, Char, Char, 'any key'(Char)),
+	( Char =:= "y", !, true
+	; Char =:= "n", !, fail
+	; beep(440, 500), fail
+	).
+
+prompt_message(Message) :-
+	concat(Message, ['~M~JPress any key to proceed'], Prompt),
+	'prompt action'(Prompt, C, C, 'any key'(C)).
+
+prompt_warning(Message) :-
+    repeat,
+	concat(Message, ['~M~J(C)ontinue, (F)ail, or (S)top'], Prompt),
+	'prompt action'(Prompt, Char, Char, 'any key'(Char)),
+	( Char =:= "c", !, true
+	; Char =:= "f", !, fail
+	; Char =:= "s", !, abort
+	; beep(440, 500), fail
+	).
+
+prompt_error(Message) :-
+	concat(Message, ['~M~JPress any key to proceed'], Prompt),
+	'prompt action'(Prompt, C, C, 'any key'(C)),
+	abort.
+
+%   If you use get0 to read "any key" it won't work, because some
+%   characters are returned in TRM: as a NUL byte followed by a second
+%   byte.  If someone takes you at your word and types a left arrow,
+%   you are likely to get the second byte left over.  This checks for
+%   the NUL byte and skips it.  For PERQ fans, INS is mapped to 0'y
+%   and DEL is mapped to 0'n; other upper case characters are mapped
+%   to lower case to simplify the caller.
+
+'any key'(C) :-
+	get0('TRM:', C1),
+	(   C1 =:= 0 ->
+	    get0('TRM:', C2),
+	    (   C2 =:= 82 -> C is "y"
+	    ;   C2 =:= 83 -> C is "n"
+	    ;   C is 0
+	    )
+	;   C1 =< "Z", C1 >= "A" -> C is C1+32
+	;   C is C1
+	).
+
+%   'prompt action'(Prompt, Output, Var, Action)
+%   makes a new 15 row 60 window, writes Prompt in it, executes
+%   action, takes the window down, and then unifies Output with Var.
+
+'prompt action'(Prompt, Output, Var, Action) :-
+	seeing(Stream),
+	cuwind(Window),
+	crwind('>COMPAT<', 3, 10, 15, 60, 1, 0, 1),
+	(   lst(Prompt) -> writeseq('>COMPAT<', Prompt)
+	;		   write('>COMPAT<', Prompt)
+	),
+	write('>COMPAT<', '? '),
+	see('BUF:'),
+	call(Action),
+	!,
+	cuwind(Window),
+	see(Stream),
+	close('>COMPAT<'),
+	Output = Var.
+
+
+%   open_file(+FileName, +Mode, -Stream)
+%   mimicks the Quintus Prolog command open/3 (actually, I like this
+%   name better).  On the PC, the FileName is just an atom.  On the
+%   Mac, it can be an atom 'File' or a pair (File on Volume), and
+%   the Volume can be an integer VolId or an atom VolName.
+
+
+current_directory(Dir) :-
+	chdir(D),
+	Dir = D.
+
+set_directory(on(Dir,Drive)) :-
+	atom(Dir),
+	atom(Drive),
+	!,
+	drive(Drive),
+	chdir(Dir).
+set_directory(Dir) :-
+	atom(Dir),
+	!,
+	chdir(Dir).
+set_directory(Dir) :-
+	must_be(atom, Dir, 1, set_directory(Dir)).
+
+file_exists(File) :-
+	fldata(File, _, _, _, _, _, _).
+
+delete_file(File) :-
+	del(File).
+
+rename_file(OldFile, NewFile) :-
+	ren(OldFile, NewFile).
+
+open_file(File, Mode, File) :-
+	'open file'(Mode, File).
+
+'open file'(read, File) :-		% this permits output as well,
+	open(File).			% UGH.
+'open file'(write, File) :-
+	create(File).
+'open file'(append, File) :-
+	fldata(File, _, _, _, _, Size, _),
+	!,				% file exists
+	open(File),			% open for OUTPUT and input
+	seek(File, Size).		% go to end
+'open file'(append, File) :-		% file does not exist
+	create(File).			% so make it.
+
+/*  I wanted to provide these definitions in order to mimic the
+--  Quintus Prolog predicates of the same name.  Unfortunately,
+--  although the LPA Prolog Professional system does nothing
+--  with these atoms itself (atom(X, T) returns T=0 for each of
+--  these four atoms X), it won't let us define these predicates.
+*/
+% set_input(user)         :- !, see('BUF:').
+% set_input(user_input)   :- !, see('BUF:').
+% set_input(Stream)       :-    see(Stream).
+
+% set_output(user)        :- !, tell('WND:').
+% set_output(user_output) :- !, tell('WND:').
+% set_output(user_error)  :- !, tell('WND:').
+
+% current_input(Stream)   :- seeing(Stream).
+
+% current_output(Stream)  :- telling(Stream).
+
+/*  All you can do with stream_position/[2,3] is remember where
+    you are now and come back there later.  Byte numbers are NOT
+    portable between MS-DOS and the Mac, so we use different
+    functors to make sure that numbers from one system are not
+    used on the other.
+*/
+stream_position(Stream, dos(Pos)) :- !,
+	seek(Stream, ByteNo),
+	Pos = ByteNo.
+
+stream_position(Stream, dos(Old), dos(New)) :-
+	seek(Stream, ByteNo),
+	Old = ByteNo,
+	seek(Stream, New).
+
+%   Not *one* of the cuts in the `environment' predicate and its
+%   ancillae is needed in Quintus Prolog.
+
+environment(atom(X))    :- !, 'env atom'(X).
+environment(string(X))  :- !, fail.
+environment(integer(X)) :- !, 'env int'(X).
+environment(float(X))   :- !, 'env flt'(X).
+environment(arity(X))   :- !, 'env arity'(X).
+environment(stream(X))  :- !, 'env strm'(X).
+environment(dialect(lpa(pc))) :- !.
+environment(version([2,6]))   :- !.
+environment(os(msdos))  :- !.
+
+'env atom'(min(0))    :- !.
+'env atom'(max(255))  :- !.
+'env atom'(size(122)) :- !.
+
+'env int'(small(X)) :- !, X is -16384*2.
+'env int'(large(X)) :- !, X is 32767.
+'env int'(size(16)) :- !.
+'env int'(too_big(float)) :- !.
+'env int'(overflow(float)) :- !.
+
+'env flt'(size(64)) :- !.
+'env flt'(machine(ieee(double))) :- !.
+'env flt'(confounded).
+
+'env arity'(foreign(32)) :- !.
+'env arity'(call(32)) :- !.
+'env arity'(functor(1000)) :- !.
+
+'env strm'(input('BUF:'))   :- !.
+'env strm'(output('WND:'))  :- !.
+'env strm'(error('&:'))     :- !.
+'env strm'(debug('DEBUG:')) :- !.	% For tracing OUTPUT, not input!
+
+is_newline(13).
+
+flush_output(_).
+
+%   Output command(s) missing from LPA Prolog Professional
+
+writev(Term, VarNames) :- !,
+	telling(Stream),
+	writeq(Stream, Term, VarNames).
+
+writev(Stream, Term, VarNames) :-
+	writeq(Stream, Term, VarNames).
+
+writeseq(Terms) :- !,
+	'write seq'(Terms, write).
+
+writeseq(Stream, Terms) :-
+	'write seq'(Stream, Terms, write).
+
+writeqseq(Terms) :- !,
+	'write seq'(Terms, writeq).
+
+writeqseq(Stream, Terms) :- !,
+	'write seq'(Stream, Terms, writeq).
+
+writeqseq(Stream, Terms, VarNames) :-
+	'write seq'(Stream, Terms, writev(VarNames)).
+
+'write seq'(Stream, Terms, Action) :- !,
+	telling(Old),
+	tell(Stream),
+	'write seq'(Terms, Action),
+	tell(Old).
+
+'write seq'([], _).
+'write seq'([Term|Terms], Action) :-
+	'write one'(Action, Term),
+	'write rest'(Terms, Action).
+
+'write one'(write, Term) :-
+	write(Term).
+'write one'(writeq, Term) :-
+	writeq(Term).
+'write one'(writev(VarNames), Term) :-
+	writev(Term, VarNames).
+
+'write rest'([], _).
+'write rest'([Term|Terms], Action) :-
+	put(32),
+	'write one'(Action, Term),
+	'write rest'(Terms, Action).
+
+writenl(Term) :- !,
+	write(Term), nl.
+
+writenl(Stream, Term) :-
+	write(Stream, Term), nl(Stream).
+
+writeqnl(Term) :- !,
+	writeq(Term), nl.
+
+writeqnl(Stream, Term) :- !,
+	writeq(Stream, Term), nl(Stream).
+
+writeqnl(Stream, Term, VarNames) :-
+	writeq(Stream, Term, VarNames), nl(Stream).
+
+writeseqnl(Terms) :- !,
+	writeseq(Terms), nl.
+
+writeseqnl(Stream, Terms) :-
+	writeseq(Stream, Terms), nl(Stream).
+
+writeqseqnl(Terms) :- !,
+	writeqseqnl(Terms), nl.
+
+writeqseqnl(Stream, Terms) :- !,
+	writeqseqnl(Stream, Terms), nl(Stream).
+
+writeqseqnl(Stream, Terms, VarNames) :-
+	writeqseq(Stream, Terms, VarNames), nl(Stream).
+
+write_canonical(Term) :- !,
+	display(Term).
+
+write_canonical(Stream, Term) :-
+	display(Stream, Term).
+
+dec10_display(Term) :-
+	telling(Old),
+	environment(stream(output(User))),
+	tell(User),
+	'DEC10 display'(Term),
+	tell(Old),
+	fail ; true.		% just in case...
+
+'DEC10 display'(Term) :-
+	nonvar(Term),
+	functor(Term, F, N),
+	N > 0,
+	!,
+	write(F), put("("),
+	'DEC10 display args'(1, N, Term).
+'DEC10 display'(Term) :-
+	write(Term).
+
+'DEC10 display args'(N, N, Term) :- !,
+	arg(N, Term, Arg),
+	'DEC10 display'(Arg), put(")").
+'DEC10 display args'(I, N, Term) :-
+	arg(I, Term, Arg),
+	'DEC10 display'(Arg), put(","),
+	J is I+1,
+	'DEC10 display args'(J, N, Term).
+
+with_output_to_stream(Goal, Stream) :-
+	telling(Old),
+	tell(Stream),
+	(   Goal -> Flag = true ; Flag = fail   ),
+	tell(Old),
+	Flag = true.
+
+with_input_from_stream(Goal, Stream) :-
+	seeing(Old),
+	see(Stream),
+	(   Goal -> Flag = true ; Flag = fail   ),
+	see(Old),
+	Flag  \= true.
+
+
+dynamic((A,B)) :- !,		% Universal style
+	dynamic(A),
+	dynamic(B).
+dynamic(F/N) :- !,
+	dec10_abolish(F, N),
+	functor(Term, F, N),
+	(   'DYNAMIC'(Term) -> true
+	;   assert('DYNAMIC'(Term))
+	).
+dynamic([A|B]) :- !,		% LPA MacProlog style
+	dynamic(A),
+	dynamic(B).
+dynamic([]) :- !.		% LPA MacProlog style
+dynamic(Atom) :-
+	atom(Atom),		% LPA MacProlog style
+	kill(Atom),
+	(   'MAC DYNAMIC'(Atom) -> true
+	;   assert('MAC DYNAMIC'(Atom))
+	).
+
+
+unknown(Old, New) :-
+	(   idef('UNKNOWN') ->
+	    'UNKNOWN'(Old),
+	    ( Old == New -> true ; retract('UNKNOWN'(Old)) -> true )
+	;   Old = trace		% make it self-priming
+	),
+	(   Old == New -> true
+	;   atom(New),
+	    'unknown flag'(New),
+	    asserta('UNKNOWN'(New))
+	).
+
+'unknown flag'(trace).		% standard value
+'unknown flag'(fail).		% standard value
+'unknown flag'(true).		% LPA MacProlog, rather silly really.
+
+/*  In order to emulate dynamic declarations and the `unknown' flag,
+    it is necessary for us to take over error handling.  But we do
+    want to allow LPA programmers to handle errors themselves.  What
+    to do?  The obvious answer was to let the user define <ERROR>,
+    *BUT* in 2.6, <ERROR> is already defined, and calls ?ERROR?.
+    Sigh.  So we call ?USERROR? instead.
+*/
+
+'?ERROR?'(2, mode(_)) :- !.	% mode(Modes) should have no effect.
+'?ERROR?'(2, public(_)) :- !.	% public(Preds) should have no effect.
+'?ERROR?'(2, Goal) :-
+	idef('DYNAMIC'),	% is DYNAMIC defined and dynamic?
+	nonvar(Goal),
+	'DYNAMIC'(Goal),	% standard style
+	!,
+	fail.
+'?ERROR?'(2, Goal) :-
+	idef('MAC DYNAMIC'),	% is MAC DYNAMIC defined and dynamic?
+	nonvar(Goal),
+	functor(Goal, Name, _),
+	'MAC DYNAMIC'(Name),	% appalling LPA Mac style
+	!,
+	fail.
+'?ERROR?'(2, Goal) :-
+	idef('UNKNOWN'),	% is UNKNOWN defined and dynamic?
+	'UNKNOWN'(State),
+	State \== trace,
+	!,
+	State = true.
+'?ERROR?'(Number, Goal) :-
+	def('?USERROR?'),
+	!,
+	'?USERROR?'(Number, Goal).
+'?ERROR?'(Number, Goal) :-
+	/* This has to be an indirect call, because a direct call */
+	/* errh(Number, Goal) */
+	/* is itself reported as undefined! */
+	G = errh(Number,Goal),
+	call(G).
+
+meta_predicate(_).
+
+multifile(Preds) :-
+	writeseqnl('WND:', [!,(multifile),is,not,supported]),
+	'error goal'(multifile(Preds)).
+
+dec10_abolish(Name, Arity) :-
+    (	atom(Name), integer(Arity) ->
+	atom(Name, Class),
+	(   Class =:= 8 -> kill(Name)
+	;   Class =:= 7 -> abolish(Name, Arity)
+	;   Class =:= 0 -> true
+	;   '?ERROR?'(4, dec10_abolish(Name,Arity))
+	)
+    ;	Goal = dec10_abolish(Name,Arity),
+	must_be(atom, Name, 1, Goal),
+	must_be(integer, Arity, 2, Goal)
+    ).
+
+%   LPA MacProlog Property Management.
+
+get_prop(Object, Property, Value) :-
+    (	atomic(Object), atomic(Property) ->
+	'GET PROP'(Object, Property, Value),
+	!
+    ;	'GET PROP'(Object, Property, Value)
+    ).
+
+set_prop(Object, Property, Value) :-
+    (	atomic(Object), atomic(Property) ->
+	retractall('GET PROP'(Object,Property,_)),
+	assert('GET PROP'(Object,Property,Value))
+    ;	Goal = set_prop(Object,Property,Value),
+	must_be(atomic, Object, 1, Goal),
+	must_be(atomic, Property, 2, Goal)
+    ).
+
+del_prop(Object, Property) :-
+    (	atomic(Object), atomic(Property) ->
+	retractall('GET PROP'(Object,Property,_))
+    ;	Goal = del_prop(Object,Property),
+	must_be(atomic, Object, 1, Goal),
+	must_be(atomic, Property, 2, Goal)
+    ).
+
+del_props(Object) :-
+    (	atomic(Object) ->
+	retractall('GET PROP'(Object,_,_))
+    ;	must_be(atomic, Object, 1, del_props(Object))
+    ).
+
+del_cons(Property) :-
+    (	atomic(Property) ->
+	retractall('GET PROP'(_,Property,_))
+    ;	must_be(atomic, Property, 1, del_cons(Property))
+    ).
+
+get_cons(Property, Objects) :-
+    (	atomic(Property) ->
+	(   setof(Object, Value^'GET PROP'(Object,Property,Value), Os) ->
+	    Objects = Os
+	;   Objects = []
+	)
+    ;	must_be(atomic, Property, 1, get_cons(Property,Objects))
+    ).
+
+get_props(Object, Properties) :-
+    (	atomic(Object) ->
+	(   setof(Property, Value^'GET PROP'(Object,Property,Value), Ps) ->
+	    Properties = Ps
+	;   Properties = []
+	)
+    ;	must_be(atomic, Object, 1, get_props(Object,Properties))
+    ).
+
+recall(Object, Value) :-
+    (	atomic(Object) ->
+	'RECALL'(Object, Value),
+	!
+    ;	'RECALL'(Object, Value)
+    ).
+
+remember(Object, Value) :-
+    (	atomic(Object) ->
+	retractall('RECALL'(Object,_)),
+	assert('RECALL'(Object,Value))
+    ;	must_be(atomic, Object, 1, remember(Object,Value))
+    ).
+
+forget(Object) :-
+    (	atomic(Object) ->
+	retractall('RECALL'(Object,_))
+    ;	must_be(atomic, Object, 1, forget(Object))
+    ).
+
+default(Object, Value, Default) :-
+    (	atomic(Object) ->
+	(   'RECALL'(Object, Val) -> Value = Val
+	;   Value = Default
+	)
+    ;	must_be(atomic, Object, 1, default(Object,Value,Default))
+    ).
+
+'must be'(atom,    X) :- atom(X).
+'must be'(atomic,  X) :- atomic(X).
+'must be'(integer, X) :- integer(X).
+
+must_be(Type, X, N, G) :-
+    (	'must be'(Type, X) -> true
+    ;   var(X) ->
+	functor(G, F, A),
+	writeseqnl('WND:', [!,instantiation,fault,in,argument,N,of,F/A]),
+	'error goal'(Goal),
+	fail
+    ;   functor(G, F, A),
+        writeseqnl('WND:', [!,type,error,in,argument,N,of,F/A]),
+	writeseqnl('WND:', [!,Type,expected,but,X,found]),
+	'error goal'(Goal),
+	fail
+    ).
+
+'error goal'(Goal) :-
+	write('WND:', '! Goal: '),
+	writeq('WND:', Goal),
+	nl('WND:').
+
+
+%   Saving and loading the clause store.
+
+save_program(File) :-
+	csave(File).
+
+load_program(File) :-
+	cload(File).
+
+'Repeat'(1) :- !.
+'Repeat'(_).
+'Repeat'(N) :- M is N-1, 'Repeat'(M).
+
+run_time(N, Goal, Duration) :-
+	integer(N), N >= 0,
+	run_time(('Repeat'(N), (Goal->fail) ; true), D1),
+	run_time(('Repeat'(N), (true->fail) ; true), D2),
+	Duration is D1-D2.
+
+run_time(Goal, Duration) :-
+	time(T1),			% in (1s/18.2) units
+	( call(Goal) -> true ; true ),
+	time(T2),			% in (1s/18.2) units
+	Duration is (T2-T1)/18.2.
+
+p_date(Year, Month, Day) :-
+	date(D, M, Y),
+	Year = Y, Month = M, Day = D.
+
+p_time(Hours, Minutes, Seconds) :-
+	time(H, M, S),
+	Hours = H, Minutes = M, Seconds = S.
+
+p_datime(Year, Month, Day, Hours, Minutes, Seconds) :-
+	date(D1, M1, Y1),
+	time(H1, I1, S1),
+	date(D2, M2, Y2),
+	(   D1 =:= D2 ->
+	    Year = Y1, Month = M1, Day = D1,
+	    Hours = H1, Minutes = I1, Seconds = S1
+	;%  Midnight struck!
+	    time(H2, I2, S2),
+	    Year = Y2, Month = M2, Day = D2,
+	    Hours = H2, Minutes = I2, Seconds = S2
+	).
+
+/*  The list mapping predicates are adapted from the DEC-10 ones.
+    The Quintus versions are in library(maplist).
+    Note that we have two families here:
+	maplist(Pred, Xs, Ys, Zs, ...)
+	scanlist(Pred, Xs, Ys, Zs, ..., V0, V)
+    The list can be extended indefinitely.  The nil cases would be
+	maplist(Pred) :- true.
+	scanlist(Pred, V, V) :- true.
+    I would normally use call/[2,3,4,5,6] in these predicates, but
+    as the implementation of p_call/N here uses apply/2, I chose to
+    write the apply/2 calls directly.
+    Note the wretched horrible cyanosed cuts.
+*/
+maplist(Pred, Xs) :- !,
+	'maplist 1'(Xs, Pred).
+
+maplist(Pred, Xs, Ys) :- !,
+	'maplist 2'(Xs, Ys, Pred).
+
+maplist(Pred, Xs, Ys, Zs) :- !,
+	'maplist 3'(Xs, Ys, Zs, Pred).
+
+'maplist 1'([], _).
+'maplist 1'([X|Xs], Pred) :-
+	apply(Pred, [X]),
+	'maplist 1'(Xs, Pred).
+
+'maplist 2'([], [], _).
+'maplist 2'([X|Xs], [Y|Ys], Pred) :-
+	apply(Pred, [X,Y]),
+	'maplist 2'(Xs, Ys, Pred).
+
+'maplist 3'([], [], [], _).
+'maplist 3'([X|Xs], [Y|Ys], [Z|Zs], Pred) :-
+	apply(Pred, [X,Y,Z]),
+	'maplist 3'(Xs, Ys, Zs, Pred).
+
+scanlist(Pred, Xs, V0, V) :- !,
+	'scanlist 1'(Xs, Pred, V0, V).
+
+scanlist(Pred, Xs, Ys, V0, V) :- !,
+	'scanlist 2'(Xs, Ys, Pred, V0, V).
+
+scanlist(Pred, Xs, Ys, Zs, V0, V) :- !,
+	'scanlist 3'(Xs, Ys, Zs, Pred, V0, V).
+
+'scanlist 1'([], _, V, V).
+'scanlist 1'([X|Xs], Pred, V0, V) :-
+	apply(Pred, [X,V0,V1]),
+	'scanlist 1'(Xs, Pred, V1, V).
+
+'scanlist 2'([], [], _, V, V).
+'scanlist 2'([X|Xs], [Y|Ys], Pred, V0, V) :-
+	apply(Pred, [X,Y,V0,V1]),
+	'scanlist 2'(Xs, Ys, Pred, V1, V).
+
+'scanlist 3'([], [], [], _, V, V).
+'scanlist 3'([X|Xs], [Y|Ys], [Z|Zs], Pred, V0, V) :-
+	apply(Pred, [X,Y,Z,V0,V1]),
+	'scanlist 3'(Xs, Ys, Zs, Pred, V1, V).
+
+member(X, [X|_]).		% from library(basics)
+member(X, [_|L]) :-		% use instead of on/2
+	member(X, L).
+
+select(X, [X|L], L).		% from library(sets)
+select(X, [H|T], [H|L]) :-	% use instead of remove/3
+	select(X, T, L).
+
+p_length(List, Length) :-
+	(   integer(Length) -> 'p length'(Length, List)
+	;   var(Length), lst(List) -> length(List, Length)
+	;   '?ERROR?'(3, p_length(List,Length))
+	).
+
+'p length'(N, [_,_,_,_|L]) :- N >= 4, !, M is N-4, 'p length'(M, L).
+'p length'(3, [_,_,_]).
+'p length'(2, [_,_]).
+'p length'(1, [_]).
+'p length'(0, []).
+
+%   subtract(Set1, Set2, Difference)
+%   is true when Difference represents Set1 \ Set2.
+%   It is provided only because LPA MacProlog switched the first
+%   two arguments and called it remove_all.
+
+subtract([], _, []).
+subtract([X|Xs], Ys, Zs) :-
+	member(X, Ys),
+	!,
+	subtract(Xs, Ys, Zs).
+subtract([X|Xs], Ys, [X|Zs]) :-
+	subtract(Xs, Ys, Zs).
+

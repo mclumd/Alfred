@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>current_module/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>current_module(</code><var>+ModuleName</var><code>)</code>
+
+   <p><code>current_module(</code><var>*ModuleName</var><code>)</code>
+
+   <p>Queries whether a module is "current" or backtracks through all
+of the current modules.
+
+   <p><code>current_module(</code><var>+ModuleName, -AbsFile</var><code>)</code>
+
+   <p><code>current_module(</code><var>-ModuleName, +AbsFile</var><code>)</code>
+
+   <p><code>current_module(</code><var>*ModuleName, *AbsFile</var><code>)</code>
+
+   <p>Associates modules with their module-files.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>ModuleName</var> <dfn>atom</dfn>
+     <dd>
+
+     <br><dt><var>AbsFile</var> <dfn>atom</dfn>
+     <dd>absolute filename
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>A loaded module becomes "current" as soon as some predicate is defined
+in it, and a module can never lose the property of being current.
+
+   <p>It is possible for a current module to have no associated
+file, in which case <code>current_module/1</code> will succeed on it but
+<code>current_module/2</code> will fail.  This arises for the special module
+<code>user</code> and for dynamically-created modules (see
+<a href="ref-mod-dmo.html#ref-mod-dmo">ref-mod-dmo</a>).
+
+   <p>If its arguments are not correct, or if <var>Module</var> has no associated file,
+<code>current_module/2</code> simply fails.
+
+<h4 class="subheading">Backtracking</h4>
+
+   <p><code>current_module/1</code> backtracks through
+all of the current modules.  The following command will print out all
+current modules:
+<pre class="example">     | ?- <kbd>current_module(Module), writeq(Module), nl, fail.</kbd>
+     </pre>
+
+   <p><code>current_module/2</code> backtracks through all of the current modules
+and their associated files.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>type_error</code>
+     <dd>
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>module/1</code>, <code>module/2</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-current_op.html#mpg-ref-current_op">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-current_key.html#mpg-ref-current_key">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

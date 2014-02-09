@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Format of Head Port Messages</h5>
+
+   <p>The message shown at a Head port is slightly different than the
+messages at other ports.  Rather than optionally showing something
+unusual about the predicate (<code>dynamic</code> in the above example), the
+Head port shows you which clause of the predicate is being, and which,
+if any, will be tried next.  For example, a Head port might be printed
+as follows:
+
+<pre class="example">        (23) 0 Head [2-&gt;4]: mymodule:foo(hello,there,_123) ?
+     </pre>
+
+   <p>Here the <code>[2-&gt;4]</code> means that clause 2 for predicate <code>mymodule:foo/3</code> is
+about to be tried.  If this clause's head should fail to unify, or if a
+goal in the body of the clause fails, clause 4 will be tried next. 
+Clause 3 will be skipped, due to indexing (see <a href="bas-eff-ind.html#bas-eff-ind">bas-eff-ind</a>).  If
+clause 2 were the last clause to be tried, it would be shown as <code>[2]</code>. 
+And in the case where clause 2 is being tried, and all the following
+clauses are indexable, but none can match the goal, the debugger will
+show <code>[2-&gt;fail]</code>, suggesting that a choice point is being left, even
+though no more solutions will be possible (see <a href="bas-eff-ind.html#bas-eff-ind">bas-eff-ind</a> for an
+explanation of indexable clauses, and how indexing works).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-sdb-dme-epm.html#dbg-sdb-dme-epm">Next</a>
+<li><a rel="up" accesskey="u" href="dbg-sdb-dme.html#dbg-sdb-dme">Up</a>
+</ul>
+</div>
+   </body></html>
+

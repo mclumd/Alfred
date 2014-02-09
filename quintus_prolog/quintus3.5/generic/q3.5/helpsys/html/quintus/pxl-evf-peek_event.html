@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>peek_event/[2,3]</code></h4>
+
+<pre class="example">     peek_event(-<var>Type</var>, ?<var>XEvent</var>)
+     peek_event(+<var>Displayable</var>, -<var>Type</var>, ?<var>XEvent</var>)
+     </pre>
+
+   <p>Peek at the next event from the given <var>Displayable</var> event queue.  If
+<var>Displayable</var> is omitted, the next event on any ProXL display is
+examined.  <var>Type</var> is unified to the type of event.  The event is not
+removed from the head of the queue.
+
+   <p>If there are no events in the queue, <code>peek_event/[2,3]</code> flushes
+the output queue(s) and blocks until an event is received.  If
+<var>Displayable</var> is specified, and events for which callbacks are
+registered arrive on other displays, they will be handled, and
+<code>peek_event/3</code> will continue to wait for an event on the
+specified <var>Displayable</var>.
+
+   <p>The user can pass an existing <var>XEvent</var> X11 structure, which is
+then destructively filled with the received event's contents, or an
+unbound variable. In the latter case, <code>peek_event/[2,3]</code> will unify
+<var>XEvent</var> with a prvate, local structure, which the user can not
+hang on to, but is guaranteed not to change its value until the next
+call to <code>peek_event/[2,3]</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-evf-window_event.html#pxl-evf-window_event">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-evf-next_event.html#pxl-evf-next_event">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-evf.html#pxl-evf">Up</a>
+</ul>
+</div>
+   </body></html>
+

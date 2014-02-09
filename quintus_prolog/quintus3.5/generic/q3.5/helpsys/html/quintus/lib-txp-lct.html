@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Finding the Length and Contents of a Text Object</h4>
+
+   <p>There are two predicates for determining the length of a text object:
+     <dl>
+
+     <br><dt><code>string_size(</code><var>+Text</var><code>, </code><var>-Length</var><code>)</code>
+     <dd>
+
+     <br><dt><code>string_length(</code><var>+Text</var><code>, </code><var>-Length</var><code>)</code>
+     <dd>
+<var>Length</var> is unified with the number of characters in the
+name of <var>Text</var>, which must be an
+atom. 
+</dl>
+
+   <p>These two predicates are identical except that <code>string_length/2</code>
+will report an error if its first argument is not a text object.
+
+   <p>There are versions of Quintus Prolog on stock hardware that support
+Kanji.  Those versions currently represent Kanji by <em>pairs</em> of
+characters.  Beware of this difference.  This is likely to change.
+
+   <p>There are two predicates for extracting a character from a text object:
+
+     <dl>
+
+     <br><dt><code>string_char(</code><var>?Index</var><code>, </code><var>+Text</var><code>, </code><var>?Char</var><code>)</code>
+     <dd>unifies
+<var>Char</var> with the character code of the character at position
+<var>Index</var> (counting from 1) in <var>Text</var>.  Being a selector predicate,
+its arguments follow the convention of being in the same order as those of
+<code>arg/3</code>; see the description of <code>library(args)</code>, <a href="lib-tma-arg.html#lib-tma-arg">lib-tma-arg</a>. 
+<var>Text</var> must be instantiated to a text object.  <var>Index</var>,
+if instantiated, must be an integer.  If <var>Index</var> is less than
+one or greater than the length of <var>Text</var>, <code>string_char/3</code>
+fails quietly.  If <var>Index</var> is a variable, <code>string_char/3</code> will
+enumerate suitable values for <var>Index</var> and <var>Char</var>.
+
+     <br><dt><code>nth_char(</code><var>?Offset</var><code>, </code><var>+Text</var><code>, </code><var>?Char</var><code>)</code>
+     <dd>is the
+same as <code>string_char/3</code> except that <var>Offset</var> counts from 0 rather than
+from 1.  This predicate was added in this release to simplify
+conversion from another dialect, which is why it is inconsistent
+with Prolog conventions.  We recommend that you use <code>string_char/3</code>
+in new programs instead. 
+</dl>
+
+<pre class="example">     | ?- <kbd>string_size(fred, X).</kbd>
+     
+     X = 4
+     
+     | ?- <kbd>string_size(47, X).</kbd>
+     
+     no
+     
+     | ?- <kbd>string_length(fred, X).</kbd>
+     
+     X = 4
+     </pre>
+
+<pre class="example">     | ?- <kbd>string_length(47, X).</kbd>
+     ! Type error in argument 1 of string_length/2
+     ! symbol expected, but 47 found
+     ! goal:  string_length(47,_43)
+     
+     | ?- <kbd>X is " ".</kbd>
+     
+     X = 32
+     
+     | ?- <kbd>string_char(3, 'an example', X).</kbd>
+     
+     X = 32
+     </pre>
+
+<pre class="example">     | ?- <kbd>nth_char(2, 'an example', X).</kbd>
+     
+     X = 32
+     
+     | ?- <kbd>string_char(I, 'an example', 0'a).</kbd>
+     
+     I = 1 <kbd>;</kbd>
+     I = 6 <kbd>;</kbd>
+     no
+     
+     | ?- <kbd>nth_char(I, 'an example', 0'a).</kbd>
+     
+     I = 0 <kbd>;</kbd>
+     I = 5 <kbd>;</kbd>
+     no
+     </pre>
+
+   <p>We shall see in the next section that <code>nth_char/3</code> could
+have been defined by
+<pre class="example">     nth_char(Offset, Text, Char) :-
+             subchars(Text, [Char], Offset, 1, _).
+     </pre>
+
+   <p>If you wanted a predicate like <code>nth_char/3</code> but that counted from
+the right-hand end of the text instead of the left-hand end, you
+could define
+<pre class="example">     nth_char_from_right(Offset, Text, Char) :-
+             /* this is not in library(strings) */
+             subchars(Text, [Char], _, 1, Offset).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-printlength.html#lib-txp-printlength">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-con.html#lib-txp-con">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp.html#lib-txp">Up</a>
+</ul>
+</div>
+   </body></html>
+

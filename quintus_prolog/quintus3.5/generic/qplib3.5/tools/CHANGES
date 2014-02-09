@@ -1,0 +1,115 @@
+%   File: tools/CHANGES
+%   SCCS: @(#)98/07/31 CHANGES	76.1
+
+Changes in tools/ part of the Quintus Prolog Library, July 1998
+--------------------------------------------------------------------
+
+Enhancements to the xref program, by Tom Howland:
+
+	1. The new '-c' generates standard compiler style error messages.
+	2. Bug fixes.
+
+
+Changes in tools/ part of the Quintus Prolog Library, August 1994
+--------------------------------------------------------------------
+
+There is a completely new version of xref, written by Tom Howland
+of Knowledgeware. The advantages of the new xref program are:
+
+	1. 40 times faster
+	2. does not follow unreachable code. Consequently you get a
+	   listing of *all* unreachable predicates
+	3. tells you which *files* are unreachable (when none of the
+	   predicates in a file are reachable)
+	4. understands initializations and externs
+	5. can be compiled into a stand alone program
+	6. is not confused by relative pathnames in load commands
+	7. does not complain if term expansion returns an empty list
+	8. uses term expansion
+
+There is one disadvantage: it will not cross reference built-in
+predicates.
+
+
+Changes in tools/ part of the Quintus Prolog Library, September 1990
+--------------------------------------------------------------------
+
+The tools can now be installed for multiple platforms.  There is a
+"make install" option for installing all the tools into a standard
+"bin" area on your system (default: /usr/local/bin).  See the
+makefile for more information.
+
+The executable/saved-state files are now mostly named with a "qp"
+prefix so that they will be grouped alphabetically with the other
+Quintus Prolog tools (qpc, qld etc) when installed in a bin area.
+
+Some bugs have been fixed in qpchecker and qpxref.
+
+qplint has not yet been fully upgraded to know about all the QP*
+functions that are defined in release 3.0.  It has been upgraded to
+use C-calling-Prolog instead of running separate C and Prolog processes.
+On SunOS 4.1, it is recommended to use the "-u" lint option, as in
+
+	% qplint -u <Prolog and C files>
+
+to avoid getting a lot of irrelevant "used but not defined" messages which
+don't show up on earlier SunOS versions.
+
+Some of the tools are being built as saved-states, and some as 
+stand-alone programs.  Saved-states are smaller and get loaded
+on startup.  All the tools can be built either way, depending
+on preference: see the makefile.
+
+The tools are now considered to be supported.  Please notify
+qpsupport@sics.se if you find any problems.
+
+Changes in tools/ part of the Quintus Prolog Library, August 1989
+-----------------------------------------------------------------
+
+New tools:
+
+	det		assists in finding places where cuts should
+			be added (for correctness and efficiency)
+
+	arity2quintus	assists in translating programs written for
+			Arity Prolog to run under Quintus Prolog
+
+	optool		a tool for finding which files rely on op 
+			declarations - this is useful when modifying a 
+			program to run under the Runtime Generator
+
+
+
+Changes in tools/ part of the Quintus Prolog Library, November 1988
+-------------------------------------------------------------------
+
+Most files have had minor edits to improve the file headers and make the
+version numbering consistent so that the Unix command 'what' will always
+find an SCCS identification string in each file.  All files have also been
+tested on both Unix 4.2bsd and Unix System V.  All occurances of comments
+after "#else" and "#endif" in C source files have been enclosed in comment
+delimiters to avoid warnings from some System V C compilers. Appropriate
+C casts have also been added where necessary to avoid unnecessary warnings
+on different Unix systems. The comments below do not mention any of these
+simple changes - only changes of some semantic significance are noted.
+
+
+Changed Tools Files:
+
+	plint.c			Has been fixed so that it works properly
+				with Quintus' current implementation of saved
+				states and also so that it works on System V.
+
+	xref.doc		New functionality added for handling clauses
+	xrfdef.pl		that get expandded by term_expansion/2 into
+				something different - as happens in Quintus'
+				database interface.
+
+	xrf.pl			General cleaning up and some significant
+				rewriting. P->Q conditionals now handled
+				properly.
+
+	xrfmod.pl		General cleaning up.
+
+	xrfout.pl		General cleaning up and commenting out of
+				obsolete code.

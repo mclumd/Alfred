@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>abolish/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>abolish(</code><var>+PredSpecTree</var><code>)</code>
+
+   <p><code>abolish(</code><var>+Name</var><code>, </code><var>+Arity</var><code>)</code>
+
+   <p>Removes procedures from the Prolog database.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>PredSpecTree</var> <dfn>pred_spec_tree</dfn> [MOD]
+     <dd>A procedure specification
+in the form <var>Name</var>/<var>Arity</var>, or a list of such procedure
+specifications.
+
+     <br><dt><var>Name</var> <dfn>atom</dfn> [MOD]
+     <dd>A string representing the name of a
+predicate.
+
+     <br><dt><var>Arity</var> <dfn>arity</dfn>
+     <dd>An integer giving the arity of the predicate.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Removes all procedures specified. 
+After this command is executed the current program functions as if
+the named procedures had never existed.  That is, in addition to removing all
+the clauses for each specified procedure, <code>abolish</code> removes any properties
+that the procedure might have had, such as being dynamic or multifile.
+
+   <p>You may abolish any of your own procedures, regardless of whether they
+are dynamic, static, compiled, interpreted, or foreign.  You cannot
+abolish built-in procedures.
+
+   <p>It is important to note that <code>retract/1</code>, <code>retractall/1</code>, and
+<code>erase/1</code> can only remove dynamic predicates. They cannot remove
+the predicates properties (such as being dynamic or multifile) from
+the system.  <code>abolish[1,2]</code>, on the other hand, can remove both static
+and dynamic predicates.  It removes the clauses of the
+predicates and its properties.
+
+   <p>The procedures that are abolished do not become invisible to a currently
+running procedure.  See <a href="ref-mdb-exa.html#ref-mdb-exa">ref-mdb-exa</a> for an example illustrating this
+point.
+
+   <p>Space occupied by abolished procedures is reclaimed.  The space occupied
+by the procedures is reclaimed.
+
+   <p>Procedures must be defined in the source module before they can be
+abolished.  An attempt to abolish a procedure that is imported into
+the source module will cause a permission error.  Using a module
+prefix, M:, clauses in any module may be abolished.
+
+   <p>Abolishing a foreign procedure destroys only the link between that
+Prolog procedure and the associated
+foreign code.  The foreign code that was
+loaded remains in memory.  This is necessary because Prolog cannot
+tell which subsequently-loaded foreign files may have links to the
+foreign code.  The Prolog part of the foreign procedure is
+destroyed and reclaimed.
+
+   <p>Specifying an undefined procedure is not an error.
+
+   <p><code>abolish/2</code> is an obsolete special case of <code>abolish/1</code>
+maintained to provide compatibility with DEC-10 Prolog, C Prolog, and earlier
+versions of Quintus Prolog.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+if one of the arguments is not ground.
+
+     <br><dt><code>type_error</code>
+     <dd>
+if a <var>Name</var> is not an atom or an <var>Arity</var> not an integer.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+if a <var>PredSpec</var> is not a valid procedure specification, or
+if an <var>Arity</var> is specified as an integer outside the range 0-255.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+if a specified procedure is built-in or imported into the source module.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>dynamic/1</code>,
+<code>erase/1</code>,
+<code>retract/1</code>,
+<code>retractall/1</code>.
+
+   <a href="ref-mdb-dre.html#ref-mdb-dre">ref-mdb-dre</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-abort.html#mpg-ref-abort">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-exc.html#mpg-ref-exc">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

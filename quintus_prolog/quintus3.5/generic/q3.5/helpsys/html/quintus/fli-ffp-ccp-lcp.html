@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Looking Up a Callable Prolog Predicate</h5>
+
+   <p>Before a Prolog predicate can be called from a foreign language it
+must be looked up.  The C functions <code>QP_predicate()</code> and
+<code>QP_pred()</code> perform this function.  The lookup step could have been
+folded into the functions that make the query, but if a predicate was
+to be called many times the redundant, if hidden, predicate lookup
+would be a source of unnecessary overhead.  Instead,
+<code>QP_predicate()</code> or <code>QP_pred()</code> can be called just once per
+predicate.  The result can then be stored in a variable and used as
+necessary.
+
+   <p>Both <code>QP_predicate()</code> and <code>QP_pred</code> return a <code>QP_pred_ref</code>, which
+represents a Prolog predicate.  The type definition for <code>QP_pred_ref</code>
+is found in <code>&lt;quintus/quintus.h&gt;</code>.
+
+<pre class="example">            QP_pred_ref QP_predicate(name_string, arity, module_string)
+            char *name_string;
+            long int arity;
+            char *module_string;
+     </pre>
+
+   <p><code>QP_predicate()</code> is the most convenient way of looking up a
+callable Prolog predicate.  It is simply passed the name and module
+of the predicate to be called as strings, the arity as an integer, and
+returns a <code>QP_pred_ref</code>, which is used to make the actual call to Prolog.
+
+   <p><code>QP_predicate()</code> can only be used to look up predicates that have
+been declared callable from foreign code.  If some other predicate is
+looked up, <code>QP_ERROR</code> is returned.  Checking the return value protects
+you from attempting to call a predicate that isn't yet ready to be
+called.
+
+<pre class="example">            QP_pred_ref QP_pred(name_atom, arity, module_atom)
+            QP_atom name_atom;
+            long int arity;
+            QP_atom module_atom;
+     </pre>
+
+   <p><code>QP_pred()</code> is a less convenient, but faster, means of looking up a
+callable Prolog predicate.  Unlike <code>QP_predicate()</code>, it has its name
+and module arguments passed as Prolog atoms.  These may have been
+returned to C from Prolog, or may have been built in the foreign
+language using <code>QP_atom_from_string()</code>.  One additional difference
+is that the name passed is <em>not</em> the name of the Prolog predicate to be
+called, but rather the name of the interface predicate constructed
+when the Prolog predicate was made callable from foreign code
+<a href="fli-ffp-ppc.html#fli-ffp-ppc">fli-ffp-ppc</a>.  Much of the cost of <code>QP_predicate()</code> is from having
+to look up Prolog atoms for its name and module arguments.  By
+avoiding doing this unnecessarily, what <code>QP_pred()</code> gives up in
+convenience is returned in performance.  Like <code>QP_predicate()</code>,
+<code>QP_pred()</code> returns a <code>QP_pred_ref</code>, which is used to make the
+actual call to Prolog.  If a predicate that is not an interface
+predicate is looked up, <code>QP_pred()</code> returns <code>QP_ERROR</code>.
+
+   <p><code>QP_pred()</code> can only be used to look up predicates that
+have been declared callable from foreign code.  If some other predicate,
+or a predicate that does not exist, is looked up, <code>QP_ERROR</code> is returned. 
+This protects you from attempting to call a predicate that
+isn't yet ready to be called.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-ccp-dpq.html#fli-ffp-ccp-dpq">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-ccp.html#fli-ffp-ccp">Up</a>
+</ul>
+</div>
+   </body></html>
+

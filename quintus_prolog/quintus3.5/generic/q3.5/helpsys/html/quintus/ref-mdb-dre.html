@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Database References</h4>
+
+   <p>A <dfn>database reference</dfn> is a term that uniquely identifies a
+clause or recorded term (see <a href="ref-mdb-idb.html#ref-mdb-idb">ref-mdb-idb</a>) in the
+database.  Database references are provided only to increase
+efficiency in programs that access the database in complex ways.  Use
+of a database reference to a clause can save repeated searches using
+<code>clause/2</code>.  However, it does <em>not</em> normally pay to access a
+clause via a database reference when access via first argument
+indexing is possible.
+
+   <p>Consistency checking is done whenever a reference is used; any
+attempt to use a reference to a clause that has been retracted will
+cause an existence error to be raised.
+
+   <p>There is no restriction on the use of references.  References may be
+included in asserted clauses.  Database references to clauses and in
+clauses are preserved across saving and restoring via QOF files (see
+also <a href="sap-srs-bas-cld.html#sap-srs-bas-cld">sap-srs-bas-cld</a>).
+
+   <p>In release 3, a database reference reads and writes like a Prolog term
+of the form <code>'$ref'(</code><var>integer</var><code>,</code><var>integer</var><code>)</code>; however, it is actually
+represented as a distinguished atomic data type by the Prolog system. 
+As a result, Prolog operations like <code>functor/3</code> and <code>arg/3</code>
+treat database references as they would numbers or atoms:
+
+<pre class="example">     | ?- <kbd>assert(foo,M).</kbd>
+     
+     M = '$ref'(1296804,1)
+     
+     | ?- <kbd>functor('$ref'(1296804,1), N, A).</kbd>
+     
+     N = '$ref'(1296804,1),
+     A = 0
+     
+     | ?- <kbd>arg(1, '$ref'(1296804,1), A).</kbd>
+     
+     no
+     | ?-
+     </pre>
+
+   <p>Database references can be identified using the type test
+<code>db_reference/1</code>.
+
+   <p>In previous releases of Quintus Prolog, operations such as the above were
+occasionally used on database references so that their components
+could be indexed on in asserted clauses.  Such operations have always
+been discouraged.  In release 3, full indexing is automatically
+available on the entire database reference, so it is unnecessary to
+have access to its components.
+
+   <p>As in the past, the representation of database
+references may change in future releases, so programs should not rely
+on it.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mdb-acd.html#ref-mdb-acd">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mdb-dsp.html#ref-mdb-dsp">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mdb.html#ref-mdb">Up</a>
+</ul>
+</div>
+   </body></html>
+

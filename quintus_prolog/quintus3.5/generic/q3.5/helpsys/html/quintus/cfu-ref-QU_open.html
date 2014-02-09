@@ -1,0 +1,407 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QU_open()</code> user-redefinable</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     QP_stream *QU_open(stream_option, system_option, error_number)
+     QP_stream *stream_option;
+     char      *system_option;
+     int       *error_number;
+     </pre>
+
+   <p>The embedding function for creating a
+stream opened through <code>open/[3,4]</code> or <code>QP_fopen()</code>.
+
+   <p>Creates a stream and returns the <code>QP_stream</code> pointer for that
+stream.
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>stream_option</var> specifies the options for the
+stream to be created.
+
+   <p><var>system_option</var> specifies the system-dependent stream option
+specified in the option of <code>system(</code><var>option</var><code>)</code> in <code>open/4</code>.  If there
+is no system-dependent option, the <code>system_option</code> field is the
+empty string, <code>""</code>.
+
+   <p>The functionality of <code>QU_open()</code> is illustrated in these steps
+<code>open/4</code> uses to create a Prolog stream:
+     <ol type=1 start=1>
+
+     <li>Set up the
+default stream options through <code>QU_stream_param()</code>. 
+<li>Changes the stream options obtained in the previous step based on the
+options specified in <code>open/4</code>. 
+<li>Calls <code>QU_open()</code> with the stream options resulted in the previous two
+steps to create the stream. 
+<li>Register the stream created by <code>QU_open()</code> through <code>QP_register_stream()</code>. 
+<li>Converts the stream pointer returned by <code>QU_open()</code> to the Prolog
+representation of the stream through <code>stream_code/2</code>.
+        </ol>
+
+   <p>The process required to implement <code>QU_open()</code> is similar to implementing
+a customized Prolog stream.  (see <a href="fli-ios-cps.html#fli-ios-cps">fli-ios-cps</a>).  There
+are only a few differences.
+     <ol type=1 start=1>
+
+     <li>The stream options are specified as a parameter in a call to
+<code>QU_open()</code>, so <code>QU_open()</code> does not need to call
+<code>QU_stream_param()</code>. 
+<li><code>QU_open()</code> may need to parse <var>system_option</var>
+string to recognize the option specified in that string.   Notice that
+the core Prolog system itself does not make use of any information
+specified in <var>system_option</var>.  It simply takes the string specified
+in <code>open/4</code> and passes it to <code>QU_open()</code> without any alteration. 
+<li><code>QU_open()</code> does not need to register the stream it creates.  The
+caller of <code>QU_open()</code> will register it.
+        </ol>
+
+   <p>Implementation of <code>QU_fdopen()</code> is similar to <code>QU_open()</code> except that the
+file stream is already opened and the opened file descriptor is
+passed through the parameter <var>file_des</var>.
+
+<h4 class="subheading">Return Value</h4>
+
+   <p>If any error occurs during the creation of
+the stream, <code>QP_NULL_STREAM</code> is returned and the error code
+for the error condition is set in the third parameter,
+<var>error_number</var>.  The error code could be any of the host operating
+system error numbers, QP error numbers or a user-defined error number. 
+<code>QU_fdopen()</code> requires an addition parameter, <var>file_des</var>,
+which is the opened file descriptor for the stream to be created.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>The following is the source code for an implementation
+of <code>QU_open()</code> function and <code>QU_fdopen()</code> function in C.
+
+<pre class="example">     #include &lt;fcntl.h&gt;
+     #include &lt;errno.h&gt;
+     #include &lt;sys/file.h&gt;
+     #include &lt;sys/types.h&gt;
+     #include &lt;sys/stat.h&gt;
+     
+     #ifndef L_SET
+     #define L_SET   0
+     #endif
+     #ifndef L_INCR
+     #define L_INCR  1
+     #endif
+     #ifndef L_XTND
+     #define L_XTND  2
+     #endif
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     extern  char *ttyname();
+     </pre>
+
+<pre class="example">     QP_stream *
+     QU_fdopen(option, sys_option, error_num, file_des)
+         QP_stream   *option;
+         char        *sys_option;
+         int         *error_num, file_des;
+         {
+             QP_stream       *stream;
+             extern long     lseek();
+             extern QP_stream *QU_tty_open(), *QU_text_open(),
+                              *QU_raw_open();
+     
+             if (sys_option &amp;&amp; *sys_option != '\0') {
+                 *error_num = QP_E_SYS_OPTION;
+                 return QP_NULL_STREAM;
+             }
+             *error_num = 0;
+             if (option-&gt;format == QP_FMT_UNKNOWN) {
+                 if (option-&gt;line_border==QP_NOLB &amp;&amp;
+                     option-&gt;trim==0)
+                     option-&gt;format = QP_VAR_LEN;
+                                      /* binary file */
+                 else
+                     option-&gt;format = QP_DELIM_LF;
+             }
+     </pre>
+
+<pre class="example">             switch (option-&gt;mode) {
+             case QP_READ:
+             case QP_WRITE:
+                 option-&gt;magic.byteno = 0;
+                 if (option-&gt;seek_type != QP_SEEK_ERROR) {
+                     struct stat     statbuf;
+     
+                     if (fstat(file_des, &amp;statbuf) == 0 &amp;&amp;
+                        (statbuf.st_mode &amp; S_IFMT) == S_IFREG)
+                         if ((option-&gt;magic.byteno =
+                              lseek(file_des,0L,L_INCR))==-1) {
+                             *error_num = errno;
+                             return QP_NULL_STREAM;
+                         }
+                 }
+                 break;
+             case QP_APPEND:
+                 if ((option-&gt;magic.byteno =
+                              lseek(file_des,0L,L_XTND)) == -1)
+                 {
+                      *error_num = errno;
+                     return QP_NULL_STREAM;
+                 }
+                 break;
+             default:
+                 *error_num = QP_E_BAD_MODE;
+                 return QP_NULL_STREAM;
+             }
+     </pre>
+
+<pre class="example">             switch (option-&gt;format) {
+             case QP_DELIM_TTY:
+                 stream = QU_tty_open(option, error_num,
+                                      file_des);
+                 break;
+             case QP_DELIM_LF:
+                 stream = QU_text_open(option, error_num,
+                                       file_des);
+                 break;
+             case QP_VAR_LEN:
+                 stream = QU_raw_open(option, error_num,
+                                      file_des);
+                 break;
+             default:
+                 *error_num = QP_E_BAD_FORMAT;
+                 return QP_NULL_STREAM;
+             }
+             return stream;
+         }
+     </pre>
+
+<pre class="example">     QP_stream *
+     QU_open(option, sys_option, error_num)
+         QP_stream   *option;
+         char        *sys_option;  /* not useful in this
+                                      version */
+         int         *error_num;
+         {
+             QP_stream       *stream;
+             int             fd;
+             char            *filename;
+             struct stat     statbuf;
+     
+             *error_num = 0;
+             if (! (filename = option-&gt;filename)) {
+                 *error_num = QP_E_FILENAME;
+                 return QP_NULL_STREAM;
+             }
+             switch (option-&gt;mode) {
+             case QP_READ:
+                 fd = open(filename, O_RDONLY, 0000);
+                 break;
+             case QP_WRITE:
+                 fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC,
+                           0666);
+                 break;
+             case QP_APPEND:
+                 fd = open(filename, O_WRONLY|O_CREAT, 0666);
+                 break;
+             default:
+                 *error_num = QP_E_BAD_MODE;
+                 return QP_NULL_STREAM;
+             }
+     </pre>
+
+<pre class="example">             if (fstat(fd, &amp;statbuf) == 0) {
+                 if ((statbuf.st_mode &amp; S_IFMT) == S_IFDIR) {
+                     (void) close(fd);
+                     *error_num = QP_E_DIRECTORY;
+                     return QP_NULL_STREAM;
+                 }
+             }
+             if (fd &lt; 0) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+             if (option-&gt;format == QP_DELIM_TTY &amp;&amp;
+                                   !(isatty(fd)) ) {
+                 *error_num = QP_E_BAD_FORMAT;
+                 (void) close(fd);
+                 return QP_NULL_STREAM;
+             }
+             if ((stream=QU_fdopen(option, sys_option,
+                                   error_num, fd))
+                             == QP_NULL_STREAM) {
+                 (void) close(fd);
+                 return QP_NULL_STREAM;
+             }
+             if (stream-&gt;format == QP_DELIM_TTY) {
+                 char        *tty_id;
+                 if (! (tty_id = ttyname(fd)) )
+                     tty_id = "/PROLOG DEFAULT TTYS";
+                 (void) QP_add_tty(stream, tty_id);
+             }
+             return stream;
+         }
+     </pre>
+
+   <p>The following is the source code for the implementation of
+<code>QU_tty_open()</code> in C.  <code>QU_tty_open()</code> is called in the
+<code>QU_fdopen()</code> source code listed above.  (<code>QU_text_open()</code> and
+<code>QU_raw_open()</code> are also called in <code>QU_fdopen()</code>.  The source code for
+these two functions is not listed here, but they are shipped with
+Quintus Prolog.)
+<pre class="example">     #include &lt;fcntl.h&gt;
+     #include &lt;errno.h&gt;
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     extern  char *QP_malloc();
+     
+     #define Min_Buffer_Size         4
+     
+     struct TtyStream
+         {
+             QP_stream qpinfo;
+             int fd;
+             unsigned char buffer[Min_Buffer_Size];
+         };
+     
+     #define CoerceTtyStream(x) ((struct TtyStream *)(x))
+     
+     static int
+     tty_read(stream, bufptr, sizeptr)
+         QP_stream           *stream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             int n;
+             extern int errno;
+             register struct TtyStream
+                      *u = CoerceTtyStream(stream);
+     
+             n = read(u-&gt;fd, (char*)u-&gt;buffer,
+                             (int)u-&gt;qpinfo.max_reclen);
+             if (n &gt; 0) {
+                 *bufptr  = u-&gt;buffer;
+                 *sizeptr = n;
+                 if (u-&gt;buffer[n-1] == '\n')
+                     return QP_FULL;
+                 else
+                     return QP_PART;
+             } else if (n == 0) {
+                 *sizeptr = 0;
+                 return QP_EOF;
+             } else {
+                 u-&gt;qpinfo.errno = errno;
+                 return QP_ERROR;
+             }
+         }
+     </pre>
+
+<pre class="example">     static int
+     tty_write(stream, bufptr, sizeptr)
+         QP_stream           *stream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             struct TtyStream  *u = CoerceTtyStream(stream);
+             int                n, len=(int) *sizeptr;
+             char              *buf = (char *) *bufptr;
+     
+             if (len==0) {   /* be sure to set *sizeptr
+                                and *bufptr */
+                 *sizeptr = u-&gt;qpinfo.max_reclen;
+                 *bufptr = u-&gt;buffer;
+                 return QP_SUCCESS;
+             }
+             while ((n = write(u-&gt;fd, buf, len)) &gt; 0 &amp;&amp; n
+                     &lt; len) {
+                 buf += n;
+                 len -= n;
+             }
+             if (n &gt;= 0) {
+                 *sizeptr = u-&gt;qpinfo.max_reclen;
+                 *bufptr = u-&gt;buffer;
+                 return QP_SUCCESS;
+             } else {
+                 u-&gt;qpinfo.errno = errno;
+                 return QP_ERROR;
+             }
+         }
+     </pre>
+
+<pre class="example">     static int
+     tty_close(stream)
+         QP_stream   *stream;
+         {
+             struct TtyStream *u = CoerceTtyStream(stream);
+             int fd = u-&gt;fd;
+     
+             QP_free(stream);
+             if (close(fd) &lt; 0)
+                 return QP_ERROR;
+             return QP_SUCCESS;
+         }
+     </pre>
+
+<pre class="example">     QP_stream *
+     QU_tty_open(option, error_num, fd)
+         register        QP_stream       *option;
+         int         *error_num, fd;
+         {
+             struct  TtyStream       *stream;
+     
+             if (option-&gt;seek_type != QP_SEEK_ERROR) {
+                 *error_num = QP_E_SEEK_TYPE;
+                 return QP_NULL_STREAM;
+             }
+             stream = (struct  TtyStream *)
+                       QP_malloc(sizeof(*stream) +
+                 ((option-&gt;max_reclen &lt;= Min_Buffer_Size) ? 0
+                     : option-&gt;max_reclen - Min_Buffer_Size) );
+             stream-&gt;qpinfo = *option;
+             QP_prepare_stream(&amp;stream-&gt;qpinfo, stream-&gt;buffer);
+             stream-&gt;fd = fd;
+             stream-&gt;qpinfo.close = tty_close;
+             if (option-&gt;mode != QP_READ)  {
+                 stream-&gt;qpinfo.write =
+                 stream-&gt;qpinfo.flush = tty_write;
+             } else
+                 stream-&gt;qpinfo.read  = tty_read;
+             return (QP_stream *) stream;
+         }
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>open/4</code>, <code>QU_fdopen()</code>
+
+   <a href="fli-ios.html#fli-ios">fli-ios</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-QU_stream_param.html#cfu-ref-QU_stream_param">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-QU_initio.html#cfu-ref-QU_initio">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

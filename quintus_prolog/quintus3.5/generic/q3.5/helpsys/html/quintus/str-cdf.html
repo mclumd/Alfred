@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Creating and Destroying Foreign Terms</h3>
+
+   <p>Prolog can create or destroy foreign terms using
+<pre class="example">         new(<var>+Type</var>, <var>-Datum</var>),
+         new(<var>+Type</var>, <var>+Size</var>, <var>-Datum</var>) and
+         dispose(<var>+Datum</var>)
+     </pre>
+
+   <p>where <var>Type</var> is an atom specifying what type of foreign term is to be
+allocated, and <var>Datum</var> is the foreign term.  The <var>Datum</var> returned by
+<code>new/[2,3]</code> is not initialized in any way.  <code>dispose/1</code> is a dangerous
+operation, since once the memory is disposed, it may be used for
+something else later.  If <var>Datum</var> is later accessed, the results will
+be unpredictable.  <code>new/3</code> is only used to allocate arrays whose
+size is not known beforehand, as defined by <code>array(</code><var>Type</var><code>)</code>, rather
+than <code>array(</code><var>Type</var><code>,</code><var>Size</var><code>)</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="str-afd.html#str-afd">Next</a>
+<li><a rel="previous" accesskey="p" href="str-cft.html#str-cft">Previous</a>
+<li><a rel="up" accesskey="u" href="str.html#str">Up</a>
+</ul>
+</div>
+   </body></html>
+

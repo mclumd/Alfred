@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Slots</h5>
+
+   <p>A class's slots are a combination of those explicitly defined in its
+slot description list and the slots it inherits from its
+superclass. In Quintus Objects, a class inherits all the slots of its
+superclass. It follows that a class inherits all the slots of all its
+ancestors.
+
+   <p>The programmer's control over inheritance of slots is limited. It is
+not possible to rename an inherited slot, nor is it possible to change
+its type, unless it is a class slot. It is possible to change a slot's
+initial value. And, it is possible to effectively change a slot's
+visibility.
+
+   <p>To change the initial value or the type (when allowed) of a slot,
+include a new <var>SlotDef</var> in the list of slot descriptions for the class,
+with the same slot name and a new type or initial value. The type of a
+class slot
+can only be changed to a subclass of the type of the superclass's
+slot. The new initial value must still be a constant of the
+appropriate type.
+
+   <p>The <code>named_point</code> class, defined earlier, could have better been defined
+from the point class, which began as follows:
+
+<pre class="example">     :- class point =
+             [public x:float=0,
+              public y:float=0].
+     </pre>
+
+   <p>The definition of the <code>named_point</code> class would then begin with
+
+<pre class="example">     :- class named_point =
+             [public name:atom,
+              public x:float=1.0] + point.
+     </pre>
+
+   <p>This <code>named_point</code> class has public slots named <code>name</code>, <code>x</code> and
+<code>y</code>, with the same types and initial values as the earlier
+<code>named_point</code> definition, which did not use inheritance.  This
+<code>named_point</code> class also inherits all the methods of the <code>point</code>
+class, which saves us from having to write them again (and maintain them).
+
+   <p>A slot that was private or protected in a superclass may be defined as
+public. This will cause get and put methods to be generated in the
+subclass. A slot that was public in a superclass may be defined as
+protected or private, but this does not prevent it from inheriting the get and
+put methods of the superclass. For that, the <code>uninherit/1</code>
+directive, defined below, is
+needed.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-inh-sih-meth.html#obj-inh-sih-meth">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-inh-sih-cdef.html#obj-inh-sih-cdef">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-inh-sih.html#obj-inh-sih">Up</a>
+</ul>
+</div>
+   </body></html>
+

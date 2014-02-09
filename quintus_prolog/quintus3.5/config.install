@@ -1,0 +1,40 @@
+
+# [PM] 3.5 This file is var-substituted twice, first &VAR& variables
+# are substituted during build and then @VAR@ variables are
+# substituted by the install script to create config.install which is
+# sourced by postinstall scripts.
+
+# See the above configuration files for details (especially config.mk)
+BASELDFLAGS="-m32"
+: ${CC=cc}
+SO="so"
+SOLD=${CC}
+SOLDFLAGS="-shared"
+LDFLAGS="${BASELDFLAGS}"
+
+
+# used by proxl: ALL_SOLDFLAGS, XSOLDRFLAG, XLIBDIR
+# used by proxt: ALL_SOLDFLAGS, XSOLDRFLAG, XLIBDIR, MOTIFVERSION, MOTIFLIBDIR
+ALL_SOLDFLAGS="${SOLDFLAGS} ${LDFLAGS}"
+
+# X11, consider using autoconf&configure for this
+XLIBDIR="/usr/X11R6/lib"
+LIBX11SONAME="libX11.so.6"
+
+XSOLDRFLAG="-Wl,-rpath,${XLIBDIR}"
+
+MOTIFVERSION="2.2"
+MOTIFLIBDIR="/usr/X11R6/lib"
+
+qpinstall_xdirs="/lib:/usr/lib:/usr/X11R6/lib"
+
+LIBXMSONAME="libXm.so.3"
+LIBXMDIRS="/usr/X11R6/lib"
+
+LIBXTSONAME="libXt.so.6"
+LIBXTDIRS="/usr/X11R6/lib"
+
+LIBX11SONAME="libX11.so.6"
+LIBX11DIRS="/usr/X11R6/lib"
+
+

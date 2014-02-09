@@ -1,0 +1,1892 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: mpg-ref-multifile,  Next: mpg-ref-multifile_assertz,  Prev: mpg-ref-module1,  Up: mpg-ref
+
+`multifile/1' "declaration"
+---------------------------
+
+Synopsis
+--------
+
+   `:- multifile +PREDSPECS'
+
+   Allows the clauses for the specified predicates to be in more than
+one file.
+
+Arguments
+---------
+
+PREDSPECS "pred_spec_forest" [MOD]
+     A single predicate specification of the form NAME/ARITY, or a
+     sequence of predicate specifications separated by commas.  NAME
+     must be an atom and ARITY an integer in the range 0..255.
+
+Description
+-----------
+
+   A built-in prefix operator, so that declarations can be written as
+e.g.
+      :- multifile a/1, b/3.
+
+   By default, all clauses for a predicate are expected to come from
+just one file.  This assists with reloading and debugging of code.
+Declaring a predicate `multifile' means that its clauses can be spread
+across several different files.  This is independent of whether or not
+the predicate is declared `dynamic'.
+
+   Should precede all the clauses for the specified predicates in the
+file.
+
+   There should be a `multifile' declaration for a predicate P in every
+file that contains clauses for P.  This restriction is not currently
+enforced in the Development System: for compatibility with earlier
+releases it suffices to have a `multifile' declaration in the first
+file loaded that contains clauses for P.  However, a warning is noted
+if the `multifile' declaration is omitted in subsequent files.  The
+`multifile' declarations _must_ be included in every file when `qpc' is
+being used to compile files separately.
+
+   If a `multifile' predicate is dynamic, there should be a `dynamic'
+declaration in every file containing clauses for the predicate.  Again,
+this is not enforced in the Development System, for backwards
+compatibility, but warnings are printed if the `dynamic' declarations
+are omitted.  The `dynamic' declarations may not be omitted when `qpc'
+is being used to compile files separately.
+
+   When a file containing clauses for a `multifile' predicate (P) is
+reloaded, the clauses for P that previously came from that file are
+removed.  Then the new clauses for P (which may be the same as the old
+ones) are added to the end of the definition of the `multifile'
+predicate.  An exception to this is when the file concerned is the
+pseudo-file `user', meaning that clauses are being entered from the
+terminal; in this case the clauses are always added to the end of the
+predicate without removing any previously defined clauses.
+
+   If a `multifile' declaration is found for a predicate that has
+already been defined in another file (without a `multifile'
+declaration), then this is considered to be a redefinition of that
+predicate.  Normally this will result in a multiple-definition
+style-check warning (see `style_check/1').
+
+   The predicate `source_file/2' can be used to find all the files
+containing clauses for a `multifile' predicate.
+
+   `multifile' predicates can be extended at run-time using
+`multifile_assertz/1'.
+
+   `multifile/1' cannot be called as a built-in predicate.  It can only
+be used as a declaration to the compiler in a Prolog source file.
+
+Exceptions
+----------
+
+`instantiation_error'
+     PREDSPECS not ground.
+
+`type_error'
+     Either name or arity in PredSpec has the wrong type
+
+`domain_error'
+     ARITY not in the range 0..255.
+
+`context_error'
+     If the declaration contradicts previous declaration or clauses for
+     the same predicate in the file.
+
+See Also
+--------
+
+   `multifile_assertz/1', `source_file/[1,2]', `compile/1',
+`load_files/[1,2]', `dynamic/1'.
+
+
+File: quintus.info,  Node: mpg-ref-multifile_assertz,  Next: mpg-ref-name,  Prev: mpg-ref-multifile,  Up: mpg-ref
+
+`multifile_assertz/1'
+---------------------
+
+Synopsis
+--------
+
+   `multifile_assertz(+CLAUSE)'
+
+   Adds a compiled clause to the database. The clause will be added at
+the end of all existing clauses in the database.
+
+Arguments
+---------
+
+CLAUSE [MOD]
+     "callable" A valid Prolog clause.
+
+Description
+-----------
+
+   If a predicate is multifile (compiled, interpreted-static or dynamic)
+`multifile_assertz/1' can be used to add a clause, CLAUSE, to the end
+of the predicate.  In a runtime system (see *Note sap-srs::), it is an
+error to `multifile_assertz' a compiled clause because the compiler is
+not available.
+
+   If predicate is undefined at the time of the `multifile_assertz', it
+is set to be compiled (in the Development System) or dynamic (in a
+Runtime System).  In either case the predicate is also set to be
+multifile.
+
+   [Note that in runtime systems `compile(FILE)' actually loads the
+file as `all_dynamic'.]
+
+   Except for the case of a multifile dynamic predicate, the effect of
+`multifile_assertz' if used on a predicate that is currently running
+will not be well-defined.  The new clause may or may not be seen on
+backtracking.  If you want the proper semantics, use `assertz' instead.
+
+Exceptions
+----------
+
+     Same as `assert/1'.
+
+See Also
+--------
+
+   `abolish/[1,2]', `assertz/1', `dynamic/1', `multifile/1', *Note
+sap-srs::
+
+   *Note sap-rge::
+
+
+File: quintus.info,  Node: mpg-ref-name,  Next: mpg-ref-nl,  Prev: mpg-ref-multifile_assertz,  Up: mpg-ref
+
+`name/2'
+--------
+
+Synopsis
+--------
+
+   `name(+CONSTANT, -CHARS)'
+
+   `name(-CONSTANT, +CHARS)'
+
+   CHARS is the list consisting of the ASCII character codes comprising
+the printed representation of CONSTANT.
+
+Arguments
+---------
+
+CONSTANT "atomic"
+
+CHARS "chars"
+Description
+-----------
+
+   Initially, either CONSTANT must be instantiated to a number or an
+atom, or CHARS must be instantiated to a proper list of character codes
+(containing no variables).
+
+   If CONSTANT is initially instantiated to an atom or number, CHARS
+will be unified with the list of character codes that make up its
+printed representation.
+
+   If CONSTANT is uninstantiated and CHARS is initially instantiated to
+a list of characters that corresponds to the correct syntax of a number
+(either integer or float), CONSTANT will be bound to that number;
+otherwise CONSTANT will be instantiated to an atom containing exactly
+those characters.
+
+Examples
+--------
+
+     | ?- name(foo, L).
+     
+     L = [102,111,111]
+
+     | ?- name('Foo', L).
+     
+     L = [70,111,111]
+
+     | ?- name(431, L).
+     
+     L = [52,51,49]
+
+     | ?- name(X, [102,111,111]).
+     
+     X = foo
+
+     | ?- name(X, [52,51,49]).
+     
+     X = 431
+
+     | ?- name(X, "15.0e+12").
+     
+     X = 1.5e+13
+
+   There are atoms that can be read and written by Prolog, and that can
+be converted to chars by `name/2', but that it can _not_ construct.
+One example of this is the atom `0':
+     | ?- X = '0', atom(X), name(X, L).
+     
+     X = '0',
+     L = [48]
+
+     | ?- name(X, [48]), atom(X).
+     
+     no
+
+     | ?- name(X, [48]), integer(X).
+     
+     X = 0
+
+   This anomaly is present in DEC-10 Prolog and C-Prolog.  `name/2' is
+retained for compatibility with them.  New programs should mainly use
+`atom_chars/2' (see *Note ref-lte-c2t::) or `number_chars/2' (see *Note
+ref-lte-c2t::) as appropriate.
+
+Exceptions
+----------
+
+`instantiation_error'
+     If Constant and Chars are both uninstantiated
+
+`type_error'
+     If Constant is not a constant
+
+`domain_error'
+     Chars is not a list of ASCII codes
+
+See Also
+--------
+
+   *Note ref-lte-c2t::
+
+
+File: quintus.info,  Node: mpg-ref-nl,  Next: mpg-ref-no_style_check,  Prev: mpg-ref-name,  Up: mpg-ref
+
+`nl/[0,1]'
+----------
+
+Synopsis
+--------
+
+   `nl'
+
+   `nl(+STREAM)'
+
+   Terminates the current output record on the current output stream or
+on STREAM.  See *Note fli-ios-sst-fmt::.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog stream
+
+Description
+-----------
+
+   Wraps the current output record (line) and writes out the record.
+How the record is wrapped up depends on the format of the output stream.
+
+   * For a default text stream `nl/[0,1]' will output a <LFD> (ASCII
+     code 10).  Windows translates this to the sequence <RET><LFD>
+     (ASCII codes 13, 10).
+
+   * For a binary stream, the record is simply written out.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`existence_error'
+     Some operating system dependent error occurred in writing.
+
+`permission_error'
+     There is an error in the bottom layer of write function
+         of the stream.
+
+Comments
+--------
+
+   How the wrapped record is written depends upon the bottom layer write
+function associated with the output stream.  The default tty stream
+displays the wrapped output record to the terminal immediately for each
+`nl/[0,1]' operation, while the default text stream under UNIX and
+Windows does not send the wrapped record (line) to the disk unless the
+buffer for the output stream is full.
+
+See Also
+--------
+
+   `put/[1,2]' `flush_output/1'.
+
+
+File: quintus.info,  Node: mpg-ref-no_style_check,  Next: mpg-ref-nocheck_advice,  Prev: mpg-ref-nl,  Up: mpg-ref
+
+`no_style_check/1'
+------------------
+
+Synopsis
+--------
+
+   `no_style_check(+TYPE)'
+
+   Turns off the specified TYPE of compile-time style checking.
+
+Arguments
+---------
+
+TYPE
+     is one of the following atoms:
+    `all'
+          Turn off all style checking.
+
+    `single_var'
+          Turn off checking for clauses containing a single
+                instance of a named variable, where variables that
+                        start with a `_' are not considered named.
+
+    `discontiguous'
+          Turn off checking for procedures whose clauses
+              are not all adjacent to one another in the file.
+
+    `multiple'
+          Turn off checking for multiple definitions of the same
+          procedure in different files.
+
+Description
+-----------
+
+   The normal use of this predicate is as an embedded command in a file
+that has not been written to follow the recommended style conventions
+(see *Note bas-lod-sty::).  For example, you could put
+     :- no_style_check(discontiguous).
+
+   at the beginning of a file and
+     :- style_check(discontiguous).
+
+   at the end of the file.
+
+Exceptions
+----------
+
+`instantiation_error'
+     TYPE is not bound.
+
+`type_error'
+     TYPE is not an atom.
+
+`domain_error'
+     TYPE is not a valid type of style checking.
+
+See Also
+--------
+
+   `style_check/1'.
+
+
+File: quintus.info,  Node: mpg-ref-nocheck_advice,  Next: mpg-ref-nodebug,  Prev: mpg-ref-no_style_check,  Up: mpg-ref
+
+`nocheck_advice/[0,1]' "development"
+------------------------------------
+
+Synopsis
+--------
+
+   `nocheck_advice'
+
+   `nocheck_advice(+PREDSPECS)'
+
+   Disable advice checking on all predicates given by PREDSPECS.
+
+Arguments
+---------
+
+PREDSPECS "gen_pred_spec_tree" [MOD]
+     A list of predicate specifications.
+
+Description
+-----------
+
+   `nocheck_advice/1' is used to disable advice checking on all
+predicates specified in PREDSPECS.  `nocheck_advice/0' disables advice
+checking on all predicates for which advice checking is currently
+enabled.  When advice checking is disabled for a predicate, and
+execution of that predicate reaches an advised port, execution will
+proceed as though the port wasn't advised.
+
+   This predicate is not supported in runtime systems.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if the argument is not ground.
+
+`type_error'
+     if a NAME is not an atom or an ARITY not an integer.
+
+`domain_error'
+     if a PREDSPEC is not a valid procedure specification, or if an
+     ARITY is specified as an integer outside the range 0-255.
+
+`permission_error'
+     if a specified procedure is built-in.
+
+Tips
+----
+
+   `nocheck_advice/0' behaves as though implemented by
+
+     nocheck_advice :-
+             current_advice(Goal, Port, Action),
+             functor(Goal, Name, Arity),
+             nocheck_advice(Name/Arity),
+             fail.
+     nocheck_advice.
+
+See Also
+--------
+
+   `add_advice/3', `remove_advice/3', `current_advice/3',
+`check_advice/[0,1]'
+
+
+File: quintus.info,  Node: mpg-ref-nodebug,  Next: mpg-ref-nofileerrors,  Prev: mpg-ref-nocheck_advice,  Up: mpg-ref
+
+`nodebug/0' "development"
+-------------------------
+
+Synopsis
+--------
+
+   `nodebug'
+
+   Turns the debugger off. Equivalent to `notrace/0'.
+
+Description
+-----------
+
+   Does _not_ remove any spypoints.  Spypoints will remain where they
+were set, although they will have no effect while the debugger is off.
+When the debugger is turned on again, the spypoints will again take
+effect.
+
+   To remove all spypoints, use `nospyall/0'
+
+   This predicate is not supported in runtime systems.
+
+
+File: quintus.info,  Node: mpg-ref-nofileerrors,  Next: mpg-ref-nogc,  Prev: mpg-ref-nodebug,  Up: mpg-ref
+
+`nofileerrors/0'
+----------------
+
+Synopsis
+--------
+
+   `nofileerrors'
+
+   Disables the `fileerrors' flag
+
+Description
+-----------
+
+   The built-in predicates that open files simply fail, instead of
+raising an exception if the specified file cannot be opened.
+
+   The `fileerrors' flag is only enabled by an explicit call to
+`fileerrors/0', or via `prolog_flag/[2,3]', which can also be used to
+obtain the current value of the `fileerrors' flag.  See *Note
+ref-lps-ove::, for more information on the `fileerrors' flag.
+
+Tips
+----
+
+   `nofileerrors' is a drastic predicate, since it affects the use of
+all predicates that open files. You might be unintentionally changing
+the behaviour of calls to `open/3' from other parts of the system
+(written by other people or from libraries).  A better way to detect
+and ignore file errors is to wrap specific calls to `open/3' with
+`on_exception/3' and ignore the types of errors you want to ignore.
+
+See Also
+--------
+
+   `fileerrors/0', `prolog_flag/[2,3]'
+
+
+File: quintus.info,  Node: mpg-ref-nogc,  Next: mpg-ref-nonvar,  Prev: mpg-ref-nofileerrors,  Up: mpg-ref
+
+`nogc/0'
+--------
+
+Synopsis
+--------
+
+   `nogc'
+
+   Disables the garbage collector.
+
+Description
+-----------
+
+   As if defined by:
+     nogc :- prolog_flag(gc, _, off).
+
+See Also
+--------
+
+   `prolog_flag/[2,3]'
+
+   *Note ref-mgc-egc::
+
+
+File: quintus.info,  Node: mpg-ref-nonvar,  Next: mpg-ref-noprofile,  Prev: mpg-ref-nogc,  Up: mpg-ref
+
+`nonvar/1' "meta-logical"
+-------------------------
+
+Synopsis
+--------
+
+   `nonvar(+TERM)'
+
+   TERM is currently instantiated. This is the opposite of `var/1'.
+
+Arguments
+---------
+
+TERM "term"
+Example
+-------
+
+     | ?- nonvar([X,Y]).
+     
+     X = _288
+     Y = _303
+     | ?- nonvar(X).
+     
+     no
+
+See Also
+--------
+
+   `atom/1', `atomic/1', `number/1', `var/1', `compound/1',
+`callable/1', `simple/1'
+
+
+File: quintus.info,  Node: mpg-ref-noprofile,  Next: mpg-ref-nospy,  Prev: mpg-ref-nonvar,  Up: mpg-ref
+
+`noprofile/0' "development"
+---------------------------
+
+Synopsis
+--------
+
+   `noprofile'
+
+   Turns off the profiler.
+
+Description
+-----------
+
+   Turns off the profiler and removes data structures containing
+profiling information associated with any predicates that have been
+profiled.
+
+   This predicate is not supported in runtime systems.
+
+See Also
+--------
+
+   `profile/[0,1,2,3]'
+
+
+File: quintus.info,  Node: mpg-ref-nospy,  Next: mpg-ref-nospyall,  Prev: mpg-ref-noprofile,  Up: mpg-ref
+
+`nospy/1' "development"
+-----------------------
+
+Synopsis
+--------
+
+   `nospy(+PREDSPECS)'
+
+   Removes spypoints on all the predicates represented by PREDSPECS.
+
+Arguments
+---------
+
+PREDSPECS "gen_pred_spec_tree"
+     Single predicate specification of form NAME or NAME/ARITY, or a
+     list of such.
+
+Description
+-----------
+
+   To remove all spypoints, use `nospyall/0'
+
+   If `nospy/1' is given any invalid argument it prints a warning.
+
+   Note that since `nospy' is a built-in operator, the parentheses,
+which usually surround the arguments to a predicate are not necessary
+(although they can be used if desired).
+     | ?- nospy test/1.
+     % spypoint removed from test/1
+     
+     yes
+     | ?-
+
+   This predicate is not supported in runtime systems.
+
+See Also
+--------
+
+   `spy/1', `nospyall/0', `debug/0', `add_spypoint/1',
+`remove_spypoint/1'
+
+
+File: quintus.info,  Node: mpg-ref-nospyall,  Next: mpg-ref-not,  Prev: mpg-ref-nospy,  Up: mpg-ref
+
+`nospyall/0' "development"
+--------------------------
+
+Synopsis
+--------
+
+   `nospyall'
+
+   Removes all spypoints.
+
+Description
+-----------
+
+   The only way to remove all spypoints at once, since turning off
+debugging with `nodebug/0' does _not_ remove spypoints; they remain in
+place and are reactivated if the debugger is turned back on using
+`trace/0' or `debug/0'.
+
+   This predicate is not supported in runtime systems.
+
+See Also
+--------
+
+   `nospy/1'
+
+
+File: quintus.info,  Node: mpg-ref-notrace,  Next: mpg-ref-number,  Prev: mpg-ref-not,  Up: mpg-ref
+
+`notrace/0' "development"
+-------------------------
+
+Synopsis
+--------
+
+   `notrace'
+
+   Turns the debugger off. Equivalent to `nodebug/0'
+
+Description
+-----------
+
+   This predicate is not supported in runtime systems.
+
+
+File: quintus.info,  Node: mpg-ref-number,  Next: mpg-ref-number_chars,  Prev: mpg-ref-notrace,  Up: mpg-ref
+
+`number/1' "meta-logical"
+-------------------------
+
+Synopsis
+--------
+
+   `number(+TERM)'
+
+   TERM is currently instantiated to either an integer or a float.
+
+Arguments
+---------
+
+TERM "term"
+Examples
+--------
+
+     | ?- number(5.2).
+     
+     yes
+     | ?- number(5).
+     
+     yes
+
+See Also
+--------
+
+   `atom/1', `atomic/1', `var/1', `compound/1', `callable/1',
+`nonvar/1', `simple/1'
+
+
+File: quintus.info,  Node: mpg-ref-number_chars,  Next: mpg-ref-numbervars,  Prev: mpg-ref-number,  Up: mpg-ref
+
+`number_chars/2'
+----------------
+
+Synopsis
+--------
+
+   `number_chars(+NUMBER, -CHARS)'
+
+   `number_chars(-NUMBER, +CHARS)'
+
+   CHARS is the list consisting of the ASCII character codes comprising
+the printed representation of NUMBER.
+
+Arguments
+---------
+
+NUMBER "number"
+
+CHARS "chars"
+Description
+-----------
+
+   CHARS is the list of ASCII character codes comprising the printed
+representation of NUMBER.
+
+   Initially, either NUMBER must be instantiated to a number, or CHARS
+must be instantiated to a proper list of character codes (containing no
+variables).
+
+   If NUMBER is initially instantiated to a number, CHARS will be
+unified with the list of character codes that make up its printed
+representation.
+
+   If NUMBER is uninstantiated and CHARS is initially instantiated to a
+list of characters that corresponds to the correct syntax of a number
+(either integer or float), NUMBER will be bound to that number;
+otherwise `number_chars/2' will simply fail.
+
+Exceptions
+----------
+
+`instantiation_error'
+     NUMBER and CHARS are both uninstantiated
+
+`domain_error'
+     CHARS is not a list of ASCII codes
+
+`type_error'
+     NUMBER is not a number or CHARS is not a list
+
+`representation_error'
+     CHARS is a list corresponding to a number that can't be represented
+
+Examples
+--------
+
+     | ?- number_chars(foo, L).
+     
+     no
+
+     | ?- number_chars(431, L).
+     
+     L = [52,51,49]
+
+     | ?- number_chars(X, [102,111,111]).
+     
+     no
+
+     | ?- number_chars(X, [52,51,49]).
+     
+     X = 431
+
+     | ?- number_chars(X, "15.0e+12").
+     
+     X = 1.5e+13
+
+See Also
+--------
+
+   `atom_chars/2'
+
+
+File: quintus.info,  Node: mpg-ref-numbervars,  Next: mpg-ref-on_exception,  Prev: mpg-ref-number_chars,  Up: mpg-ref
+
+`numbervars/3' "meta-logical"
+-----------------------------
+
+Synopsis
+--------
+
+   `numbervars(+-TERM, +FIRSTVAR, -LASTVAR)'
+
+   instantiates  each of the variables in TERM to a term of the form
+`'$VAR'(N)'.
+
+Arguments
+---------
+
+TERM "term"
+
+FIRSTVAR "integer"
+
+LASTVAR "integer"
+Description
+-----------
+
+   FIRSTVAR is used as the value of N for the first variable in TERM
+(starting from the left).  The second distinct variable in TERM is
+given a value of N satisfying "N is FIRSTVAR+1"; the third distinct
+variable gets the value FIRSTVAR+2, and so on.  The last variable in
+TERM has the value LASTVAR-1.
+
+   Notice that in the example below, `display/1' is used rather than
+`write/1'.  This is because `write/1' treats terms of the form
+`'$VAR'(N)' specially; it writes `A' if N=0, `B' if N=1, ...`Z' if N=25,
+`A1' if N=26, etc.  That is why, if you type the goal in the example
+below, the variable bindings will also be printed out as follows:
+     Term = foo(W,W,X),
+     A = W,
+     B = X
+
+Exceptions
+----------
+
+`instantiation_error'
+     NUMBER and CHARS are both instantiated
+
+`type_error'
+     NUMBER is not a number or CHAR is not a list
+
+Example
+-------
+
+     | ?- Term = foo(A, A, B), numbervars(Term, 22, _),
+          display(Term).
+     foo($VAR(22),$VAR(22),$VAR(23))
+
+See Also
+--------
+
+   `write_term/1', `write_canonical/1'
+
+
+File: quintus.info,  Node: mpg-ref-on_exception,  Next: mpg-ref-op,  Prev: mpg-ref-numbervars,  Up: mpg-ref
+
+`on_exception/3'
+----------------
+
+Synopsis
+--------
+
+   `on_exception(-EXCEPTION, +*PROTECTEDGOAL, +*HANDLER)'
+
+   Specify an exception handler for PROTECTEDGOAL, and call
+PROTECTEDGOAL.
+
+Arguments
+---------
+
+EXCEPTION "term"
+     Any term.
+
+PROTECTEDGOAL "callable" [MOD]
+     A goal.
+
+HANDLER "callable" [MOD]
+     A goal.
+
+Description
+-----------
+
+   PROTECTEDGOAL is executed.  This will behave just as if
+PROTECTEDGOAL had been written without the `on_exception/3' wrapper.
+If PROTECTEDGOAL is determinate, then `on_exception/3' will also be
+determinate.  PROTECTEDGOAL can also be nondeterminate.  As a general
+rule, code is easier to read when PROTECTEDGOAL is a simple goal,
+however a conjunction of goals (GOAL1,...GOALN) or any other form that
+`call/1' accepts is allowed.
+
+   If an exception is raised while PROTECTEDGOAL is running, Prolog will
+_abandon_ PROTECTEDGOAL entirely.  Any bindings made by PROTECTEDGOAL
+will be undone, just as if it had failed.  Side effects, such as
+data-base changes and input/output, are not undone, just as they are
+not undone when a goal fails.  After undoing the bindings, Prolog then
+tries to unify an object called an "exception term" with the EXCEPTION
+argument.  If this unification succeeds, HANDLER will be executed as if
+you had written
+         EXCEPTION=the actual "exception term",
+         HANDLER
+
+   If this unification fails, Prolog will keep looking for a handler.
+It will always find a handler at the top level, which prints out a
+message corresponding to the exception.
+
+   In applications lacking a top level (C calling Prolog, where
+`QP_toplevel()' has not been called) exceptions are indicated by the
+return status `QP_ERROR'.  For more details refer to *Note fli-ffp::.
+
+Exceptions
+----------
+
+   Same as `call/1'.
+
+Tip
+---
+
+   More efficient code is generated when PROTECTEDGOAL is a simple
+goal.  In other cases, such as where PROTECTEDGOAL is a conjunction of
+goals (GOAL1,...GOALN), the compiler treats this as if it were
+`call((GOAL1,..., GOALN))'.  This potential inefficiency does not apply
+to HANDLER.
+
+Examples
+--------
+
+   Fail on exception:
+     :-meta_predicate fail_on_exception/1.
+     fail_on_exception(C):-
+         on_exception(E,C,print_exception_then_fail(C,E)).
+     
+     print_exception_then_fail(C,E):-
+         format('Exception occured while calling ~q:~n',
+                                                   [C]),
+         print_message(warning,E),
+         fail.
+
+See Also
+--------
+
+   `raise_exception/1', `print_message/2'.
+
+   *Note ref-ere-hex::.
+
+
+File: quintus.info,  Node: mpg-ref-op,  Next: mpg-ref-open,  Prev: mpg-ref-on_exception,  Up: mpg-ref
+
+`op/3'
+------
+
+Synopsis
+--------
+
+   `op(+PRECEDENCE, +TYPE, +NAME)'
+
+   declares NAME to be an operator of the stated TYPE and PRECEDENCE.
+
+Arguments
+---------
+
+PRECEDENCE "integer"
+     integer in the range 1-1200
+
+TYPE "one of `[xfx,xfy,yfx,fx,fy,xf,yf]'"
+
+NAME "atom"
+     atom or a list of atoms.
+
+Description
+-----------
+
+   Operators are a notational convenience to read and write Prolog
+terms. You can define new operators using `op/3'.
+
+   The PRECEDENCE of an operator is used to disambiguate the way terms
+are parsed. The general rule is that the operator with the highest
+precedence is the principal functor.
+
+   The TYPE of an operator decides the position of an operator and its
+associativity. In the atom that represents the type the character `f'
+represents the position of the operator.  For example, a type `fx' says
+that the operator is a prefix operator.  The character `y' indicates
+that the operator is associative in that direction. For example, an
+operator of type `xfy' is a right-associative, infix operator.
+
+   To cancel the operator properties of NAME (if any) set PRECEDENCE to
+0.
+
+   For more details, see *Note ref-syn-ops::
+
+Exceptions
+----------
+
+`instantiation_error'
+     PRECEDENCE, TYPE or NAME is a variable
+
+`type_error'
+     PRECEDENCE is not an integer or TYPE is not an integer         or
+     NAME is not an atom
+
+`domain_error'
+     PRECEDENCE is not in the range 1-1200
+
+See Also
+--------
+
+   `current_op/3'
+
+   *Note ref-syn-ops::
+
+
+File: quintus.info,  Node: mpg-ref-open,  Next: mpg-ref-open_null_stream,  Prev: mpg-ref-op,  Up: mpg-ref
+
+`open/[3,4]'
+------------
+
+Synopsis
+--------
+
+   `open(+FILESPEC, +MODE, -STREAM)'
+
+   `open(+FILESPEC, +MODE, +OPTIONS, -STREAM)'
+
+   Creates a Prolog stream by opening the file FILESPEC in mode MODE
+with options OPTIONS.
+
+Arguments
+---------
+
+FILESPEC "file_spec"
+     a file specification (see *Note ref-fdi::).
+
+MODE "one of `[read,write,append]'"
+     an atom specifying the open mode of the target file.  One of:
+
+    `read'
+          open FILESPEC for input.
+
+    `write'
+          open FILESPEC for output.  A new file is created if FILESPEC
+          does not exist. If the file already exists, then it is set to
+          empty and its previous contents are lost.
+
+    `append'
+          opens FILESPEC for output.  If FILESPEC already exists, adds
+          output to the end of it.  If not, a new file is created.
+
+OPTIONS "list"
+     a list of zero or more of the following.
+
+    `text'
+          Specifies that the file stream is a text stream.  This sets
+          the line border code to <LFD>, the file border code to -1,
+          and turns on trimming. This is the default.
+
+    `binary'
+          Specifies that the file stream is a binary stream.  This sets
+          the line border code to none, the file border code to -1, the
+          format to `variable', and turns off trimming.
+
+    `record(SIZE)'
+          SIZE is an integer value to specify the maximum record (line)
+          size in the file.  This also sets the internal buffer size to
+          be used for input/output options on the stream to SIZE.  If
+          SIZE is 0, the opened stream operates in non-buffered mode.
+          The value of SIZE should be greater than or equal to 0.
+
+
+          Under UNIX, the default is 256 for tty streams and 8192 for
+          other stream.
+
+    `end_of_line(EOLCODE)'
+          EOLCODE is an integer value to specify the line (record)
+          border code for the stream.  EOLCODE is
+
+         -1
+               Indicates there is no line border code.
+
+         CHARCODE
+               ASCII code for EOL character.  Default = <LFD> (ASCII
+               code for <LFD>).
+
+
+          If an output predicate writes out the character whose code is
+          the line border code of the stream, the Prolog system
+          terminates the output record according to the format of the
+          stream.
+
+    `end_of_file(EOFCODE)'
+          EOFCODE is an integer value to specify the file border code
+          for an input stream.
+
+         -2
+               Indicates there is no file border code for the stream.
+               Reading at the end of file is same as reading past end
+               of file.
+
+
+          The file border code is the value to be returned to an input
+          predicate when an input stream reaches the end of file. The
+          default file border code is -1.
+
+    `eof_action(ACTION)'
+          Specifies what to do for reading past end of file.  This
+          option has no effect on an output stream.  ACTION is one of
+          the following.
+
+         `error'
+               It's an error to read past end of file.  This is the
+               default for text binary streams.
+
+         `eof_code'
+               Return file border code as set in `end_of_file' option
+               for reading past end of file.
+
+         `reset'
+               Reset the stream and make an attempt to read for input
+               past end of file.  This is the default for tty stream.
+
+    `overflow(OVACTION)'
+          Specifies what to do when output overflows the current record
+          size.  This option has no effect on an input stream.
+          OVACTION is one of the following.
+
+         `error'
+               It's an error.
+
+         `truncate'
+               Discard the overflow characters.
+
+         `flush'
+               Write out the overflow partial record (line).  No
+               characters are discarded.  This is the default under
+               UNIX and Windows.
+
+    `seek(`SeekOption')'
+          Request seeking method that will be performed on the file.
+          SEEKOPTION is defined as follows:
+
+         `error'
+               It's an error to issue a seeking command on the stream.
+               This is the default for a tty stream.
+
+         `previous'
+               The seeking request will be made only to a previous
+               input/output position.  `stream_position/3' is the only
+               predicate that can be used to seek on the stream.  This
+               is the default for both text and binary streams.
+
+         `byte'
+               Seeking to an arbitrary byte position on the stream.
+               This option also permits `seek(previous)'.  Both
+               `stream_position/3' and `seek/4' work on the stream.
+
+         `record'
+               Seeking to the beginning of an arbitrary record in the
+               file stream.  This option is not available under UNIX or
+               Windows.
+
+    `flush(FLUSHTYPE)'
+          Request flushing method for an output stream.  This option
+          has no effect on an input stream.  It can be one of the
+          following.
+
+         `error'
+               It's an error to try to flush an output stream.
+
+         `flush'
+               Write out all the characters buffered.  This is the
+               default under UNIX and Windows.
+
+    `trim'
+          Turns on the trimming on the file stream.  Trimming means
+          that trailing blanks are deleted in input records. The
+          default is no trimming. See `format' below.
+
+    `system(SYSATTRS)'
+          This option is provided to allow extensions.
+
+         SYSATTRS
+               must be an atom and is passed to the `QU_open()'
+               function, which can be redefined by the user. The
+               default version of `QU_open()' will report an error,
+               causing a `permission_error' to be raised, if
+               system(SYSATTRS) is specified.
+
+    `format(FORMAT)'
+          Specifies the file format (see *Note fli-ios-sst-fmt::).  For
+          Prolog running under UNIX and Windows, the default format is
+          `format(delimited(lf))' for text stream, `format(variable)'
+          for binary stream, and `format(delimited(tty))' for tty file.
+          Users will not normally need to use the `format(FORMAT)'
+          options directly.  FORMAT is one of:
+
+         `variable'
+               Each record in the file has its own length.  There are
+               no delimiter characters between records.  The Prolog
+               system removes the trailing blank characters for each
+               input record it reads if the `trim' option is set.
+
+         `delimited(lf)'
+               For an application program's point of view, a single
+               <LFD> (ASCII code 10) terminates each record in the
+               file. Under Windows, however, what's actually stored in
+               the file is the sequence <RET><LFD>.
+
+         `delimited(tty)'
+               FILESPEC is a terminal device, a pseudo-terminal device,
+               or a terminal emulator.  The Prolog input/output system
+               treats this format like `QP_DELIM_LF' as far as record
+               termination is concerned.
+
+
+          If one of these delimiters is specified, the Prolog system
+          removes         the delimiter characters at the end of record
+          for input. The line         border code (specified by
+          `end_of_line' option) is returned         instead as the
+          character code at the end of the record.  Prolog system
+           also puts delimiter characters at the end of record when a
+          record is         written out.
+
+
+     When no format has been specified, the format is decided as
+     follows: if there is no line border code and trimming is off, then
+     `format(variable)' is used; otherwise `format(delimited(lf))' is
+     used.
+
+STREAM
+     "stream_object" the resulting opened Prolog stream.
+
+Description
+-----------
+
+   `open/3' is equivalent to `open/4' with OPTIONS=`[]'.
+
+   `open/4' is designed to work on various file systems under different
+operating systems.
+
+   STREAM is used as an argument to Prolog input and output predicates.
+
+   STREAM can also be converted to the corresponding foreign
+representation through `stream_code/2' and used in foreign code to
+perform input/output operations.
+
+Exceptions
+----------
+
+`domain_error'
+     MODE is not one of `read', `write' or `append'.     OPTIONS has an
+     undefined option or an element in OPTIONS is out of the domain of
+     the option.
+
+`instantiation_error'
+     FILESPEC or MODE is not instantiated.     OPTIONS argument is not
+     ground.
+
+     `type_error'
+
+
+     FILESPEC or MODE is not an atom type.     OPTIONS is not a list
+     type or an element in OPTIONS    is not a correct type for open
+     options.
+
+`existence_error'
+     The specified FILESPEC does not exist.
+
+`permission_error'
+     Can not open FILESPEC with specified MODE and OPTIONS.
+
+`resource_error'
+     There are too many files opened.
+
+Comments
+--------
+
+   If an option is specified more than once the rightmost option takes
+precedence.
+
+   Prolog streams are in general classified as tty streams, text
+streams, or binary streams.  A Prolog stream is a tty stream if the
+format of the stream is set to `format(delimited(tty))', or if no
+format is specified and FILESPEC refers to a terminal (decided by the
+function `isatty(3)').  Prolog provides a special service to print
+prompts for a tty input stream.  A text stream corresponds to a text
+file.  The Prolog system removes the control characters of the text
+stream.  A binary stream is a stream of bytes; the _Prolog system_
+returns the actual characters stored in the file.  Specifying `binary'
+or `text' along with `trim' and `end_of_line' options will result in a
+hybrid of binary and text streams.
+
+   Defaults are provided for OPTIONS in `QU_stream_param()' function.
+This description is based on those input/output defaults.
+
+   FORMAT is seldom set by the user.  It is only useful in case the
+user has redefined `QU_open()'.
+
+Examples
+--------
+
+  1. Opening a stream that behaves like a C standard I/O stream without
+     maintaining correct line count and line position.
+          open(FileSpec, Mode, [binary, seek(byte),
+                  eof_action(eof_code)], Stream).
+
+  2. Opening a non-buffered stream
+               open(FileSpec, Mode, [record(0)], Stream).
+
+  3. On UNIX systems, if FILESPEC is `/dev/tty', it means that the file
+     is the default tty for the Prolog system.  Terminal is used
+     interactively.
+
+See Also
+--------
+
+   `open_null_stream/1', `close/1', `QP_prepare_stream/[3,4]'
+`QP_fopen()', `QP_fdopen()', `QU_open()'
+
+   *Note fli-emb-how-iou::
+
+
+File: quintus.info,  Node: mpg-ref-open_null_stream,  Next: mpg-ref-or,  Prev: mpg-ref-open,  Up: mpg-ref
+
+`open_null_stream/1'
+--------------------
+
+Synopsis
+--------
+
+   `open_null_stream(-STREAM)'
+
+   opens an output stream that is not connected to any file and unifies
+its stream object with STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+Description
+-----------
+
+   Characters or terms that are sent to this stream are thrown away.
+This predicate is useful because various pieces of local state are kept
+for null streams: the predicates `character_count/2', `line_count/2',
+and `line_position/2' can be used on these streams (see *Note
+ref-iou-sos::).
+
+   If STREAM is fully instantiated at the time of the call to
+`open_null_stream/1', the call simply fails.
+
+See Also
+--------
+
+   `character_count/2', `line_count/2', `line_position/2'
+
+
+File: quintus.info,  Node: mpg-ref-otherwise,  Next: mpg-ref-peek_char,  Prev: mpg-ref-or,  Up: mpg-ref
+
+`otherwise/0'
+-------------
+
+Synopsis
+--------
+
+   `otherwise'
+
+   Always succeeds (same as `true/0').
+
+Description
+-----------
+
+   `otherwise/0' is useful for laying out conditionals (see *Note
+ref-sem-con::) in a readable way.
+
+Examples
+--------
+
+     ( test1 ->
+          goal1
+     | test2 ->
+          goal2
+     | otherwise ->
+          goal3
+     )
+
+
+File: quintus.info,  Node: mpg-ref-peek_char,  Next: mpg-ref-phrase,  Prev: mpg-ref-otherwise,  Up: mpg-ref
+
+`peek_char/[1,2]'
+-----------------
+
+Synopsis
+--------
+
+   `peek_char(-CHAR)'
+
+   `peek_char(+STREAM, -CHAR)'
+
+   looks ahead for next input character on the current input stream or
+on the input stream STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog stream.
+
+CHAR "char"
+     the resulting next input character available on the stream.
+
+Description
+-----------
+
+   `peek_char/[1,2]' looks ahead of the next input character of the
+specified input stream and unifies the character with CHAR.  The peeked
+character is still available for subsequent input on the stream.
+
+Example
+-------
+
+   <<NEEDS EXAMPLE>>
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`existence_error'
+     This is an attempt to read past end of file, or some operating
+     system dependent error occurred in reading.
+
+Comments
+--------
+
+   It is safe to call `peek_char/[1,2]' several times without actually
+inputting any character.  For example:
+     | ?- peek_char(X), peek_char(X), get0(X).
+     |: a
+     
+     X = 97
+
+See Also
+--------
+
+   `get0/[1,2]', `get/[1,2]', `open/[3,4]'
+
+   *Note ref-iou::
+
+
+File: quintus.info,  Node: mpg-ref-phrase,  Next: mpg-ref-portray,  Prev: mpg-ref-peek_char,  Up: mpg-ref
+
+`phrase/[2,3]'
+--------------
+
+Synopsis
+--------
+
+   `phrase(+*PHRASETYPE, +*LIST)'
+
+   `phrase(+*PHRASETYPE, +*LIST, *REST)'
+
+   Used in conjunction with a grammar to parse or generate strings.
+
+Arguments
+---------
+
+PHRASETYPE "callable"
+     non-variable, name of a phrase type.  [MOD]
+
+LIST "list"
+     a list of symbols -- tokens or character codes.
+
+REST "list"
+     a tail of LIST; what remains of LIST after PHRASETYPE has been
+     found.
+
+Description
+-----------
+
+   Runs through the grammar rules checking whether there is a path by
+which PHRASETYPE can be rewritten as LIST.
+
+   If LIST is bound, this goal corresponds to using the grammar for
+parsing.  If LIST is unbound, this goal corresponds to using the
+grammar for generation.
+
+   `phrase/2' succeeds when the list LIST is a phrase of type
+PHRASETYPE (according to the current grammar rules), where PHRASETYPE
+is either a non-terminal or, more generally, a grammar rule body.  This
+predicate is a convenient way to start execution of grammar rules.
+
+   `phrase/3' succeeds when the portion of LIST between the start of
+LIST and the start of REST is a phrase of type PHRASETYPE (according to
+the current grammar rules), where PHRASETYPE is either a non-terminal
+or, more generally, a grammar rule body.
+
+   `phrase/3' allows variables to occur as non-terminals in grammar
+rule bodies, just as `call/1' allows variables to occur as goals in
+clause bodies.
+
+Exceptions
+----------
+
+`instantiation_error'
+     PHRASETYPE is not bound.
+
+`type_error'
+     PHRASETYPE is not callable.
+
+Examples
+--------
+
+   See example in *Note ref-gru-exa::.
+
+See also
+--------
+
+   `-->/2', `'C'/3', `expand_term/2', `term_expansion/2' *Note ref-gru::
+
+
+File: quintus.info,  Node: mpg-ref-portray,  Next: mpg-ref-portray_clause,  Prev: mpg-ref-phrase,  Up: mpg-ref
+
+`portray/1' "hook"
+------------------
+
+Synopsis
+--------
+
+   `:- multifile portray/1.'
+
+   `portray(+TERM)'
+
+   A way for the user to over-ride the default behavior of `print/1'.
+
+Arguments
+---------
+
+TERM "term"
+Description
+-----------
+
+   Note that `print/1' always calls `portray' in module `user'.
+Therefore, to be visible to `print/1', `portray' must either be defined
+in or imported into module `user'. See the reference page for `print/1'
+for information on what happens if `portray/1' fails.
+
+   If you would like lists of character codes printed by `print/1'
+using double-quote notation, you should include `library(printchars)'
+(see *Note lib-abs::) as part of your version of `portray/1'.
+
+   If `portray/1' is defined, it is called from:
+  1. `print/1' (default is `write/1')
+
+  2. to print the variable bindings after a question has succeeded
+     (default is `writeq/1'. see `QU_messages' for full details)
+
+  3. to print a goal during debugging (default is `writeq/1'. See
+     `QU_messages' for full details)
+
+Tips
+----
+
+See Also
+--------
+
+   `print/1' *Note ref-iou-tou-por::
+
+
+File: quintus.info,  Node: mpg-ref-portray_clause,  Next: mpg-ref-predicate_property,  Prev: mpg-ref-portray,  Up: mpg-ref
+
+`portray_clause/1'
+------------------
+
+Synopsis
+--------
+
+   `portray_clause(+CLAUSE)'
+
+   Writes CLAUSE to the current output stream. Used by `listing/[0,1]'.
+
+Arguments
+---------
+
+CLAUSE "term"
+Description
+-----------
+
+   The operation used by `listing/0' and `listing/1'.  CLAUSE is
+written to the current output stream in exactly the format in which
+`listing/1' would have written it, including a terminating full-stop.
+
+   If you want to print a clause, this is almost certainly the command
+you want.  By design, none of the other term output commands puts a
+full-stop after the written term.  If you are writing a file of facts
+to be loaded by the Load Predicates, use `portray_clause/1', which
+attempts to ensure that the clauses it writes out can be read in again
+as clauses.
+
+   The output format used by `portray_clause/1' and `listing/1' has
+been carefully designed to be clear.  We recommend that you use a
+similar style.  In particular, never put a semicolon (disjunction
+symbol) at the end of a line in Prolog.
+
+Exceptions
+----------
+
+   Always succeeds without error.
+
+Example
+-------
+
+     | ?- portray_clause((X:- a -> b ; c)).
+     A :-
+             (   a ->
+                 b
+             ;   c
+             ).
+     
+     X = _3185
+
+     | ?- portray_clause((X:- a -> (b -> c ; d ; e); f)).
+     A :-
+             (   a ->
+                 (   b ->
+                     c
+                 ;   d
+                 ;   e
+                 )
+             ;   f
+             ).
+     
+     X = _3295
+
+     | ?- portray_clause((a:-b)).
+     a :-
+             b.
+     
+     yes
+
+     | ?- portray_clause((a:-b,c)).
+     a :-
+             b,
+             c.
+     
+     yes
+
+     | ?- portray_clause((a:-(b,!,c))).
+     a :-
+             b,
+             !,
+             c.
+     
+     yes
+
+See Also
+--------
+
+   `listing/[0,1]', `read/[1,2]'
+
+   *Note ref-iou-tou-pcl::
+
+
+File: quintus.info,  Node: mpg-ref-predicate_property,  Next: mpg-ref-print,  Prev: mpg-ref-portray_clause,  Up: mpg-ref
+
+`predicate_property/2'
+----------------------
+
+Synopsis
+--------
+
+   `predicate_property(*CALLABLE, *PREDPROPERTY)'
+
+   Unifies PREDPROPERTY with a predicate property of an existing
+predicate, and CALLABLE with the most general term that corresponds to
+that predicate.
+
+Arguments
+---------
+
+CALLABLE "callable" [MOD]
+     the skeletal specification (see *Note ref-syn-spc::) of a loaded
+     predicate
+
+PREDPROPERTY "term"
+     the various properties associated with CALLABLE.    Each loaded
+     predicate will have one or more of the properties:
+
+    Property
+          Comments
+
+    `compiled'
+          can have the `multifile' property
+
+    `interpreted'
+
+          can have either the `dynamic' or `multifile' property or both
+
+    `built_in'
+
+    `multifile'
+
+    `dynamic'
+
+    `exported'
+          on the public predicate list of its source module
+
+    `imported_from(MODULE)'
+          imported into the source module from MODULE )
+
+    `foreign'
+
+    `meta_predicate(TERM)'
+          TERM was specified in a meta_predicate declaration.  Thus
+          TERM consists of the principal functor name followed by mode
+          declarations for its arguments.  For example:
+               mysort(:, +, -)
+           See *Note ref-mod-met:: for further information.
+
+    `volatile'
+          not to be saved in QOF files
+
+    `locked'
+          not visible in the debugger due to use of `-h' option to `qpc'
+
+    `has_advice'
+          advice has been added for the predicate
+
+    `checking_advice'
+          advice checking is enabled for the predicate
+
+Description
+-----------
+
+   * If CALLABLE is instantiated then `predicate_property/2'
+     successively unifies PREDPROPERTY with the various properties
+     associated with CALLABLE.
+
+   * If PREDPROPERTY is bound to a valid predicate property, then
+     `predicate_property/2' successively unifies CALLABLE with the
+     skeletal specifications of all loaded predicates having
+     PREDPROPERTY.
+
+   * If CALLABLE is not a loaded predicate or PREDPROPERTY is not a
+     valid predicate property, the call fails.
+
+   * If both arguments are unbound, then `predicate_property/2' can be
+     used to backtrack through all currently defined predicates and
+     their corresponding properties.
+
+Examples
+--------
+
+   * Predicates acquire properties when they are defined:
+          | ?- [user].
+          | :- dynamic p/1.
+          | p(a).
+          | end_of_file.
+          % user compiled 0.117 sec 296 bytes
+          
+          yes
+          | ?- predicate_property(p(_), Property).
+          
+          Property = (dynamic) ;
+          
+          Property = interpreted ;
+          
+          no
+
+   * To backtrack through all the predicates `P' imported into module
+     `m' from any module:
+          | ?- predicate_property(m:P, imported_from(_)).
+
+   * To backtrack through all the predicates `P' imported into module
+     `m1' from module `m2':
+          | ?- predicate_property(m1:P, imported_from(m2)).
+
+   * To backtrack through all the predicates `P' exported by module `m':
+          | ?- predicate_property(m:P, exported).
+
+   * A variable can also be used in place of a module atom to find the
+     names of modules having a predicate and property association:
+
+          | ?- predicate_property(M:f, imported_from(m1)).
+
+     will return all modules `M' that import `f/0' from `m1'.
+
+     *Please note:* All dynamic predicates are currently interpreted.
+
+See Also
+--------
+
+   `fileerrors/0', `nofileerrors/0', `gc/0', `compile/1',
+`module/[1,2]', `foreign/[2,3]', `meta_predicate/1', `volatile/1',
+`add_advice/3', `check_advice/[0,1]', `current_predicate/2'
+
+   *Note ref-mod-ilm-vis::
+
+
+File: quintus.info,  Node: mpg-ref-print,  Next: mpg-ref-print_message,  Prev: mpg-ref-predicate_property,  Up: mpg-ref
+
+`print/1' "hookable"
+--------------------
+
+Synopsis
+--------
+
+   `print(+TERM)'
+
+   `print(+STREAM, +TERM)'
+
+   Writes TERM to the current output stream, or STREAM.  Can be
+redefined with the hook `portray/1'.
+
+Arguments
+---------
+
+STREAM "stream_object"
+
+TERM "term"
+Description
+-----------
+
+   By default, the effect of this predicate is the same as that of
+`write/1', but you can change its effect by providing clauses for the
+predicate `portray/1'.
+
+   If TERM is a variable, then it is printed using `write(TERM)'.
+
+   Otherwise the user-definable procedure `portray(TERM)' is called.
+If this succeeds, then it is assumed that TERM has been printed and
+`print/1' exits (succeeds).  Note that `print/1' always calls
+`portray/1' in module `user'.  Therefore, to be visible to `print/1',
+`portray/1' must either be defined in or imported into module `user'.
+
+   If the call to `portray/1' fails, and if TERM is a compound term,
+then `write/1' is used to write the principal functor of TERM and
+`print/1' is called recursively on its arguments.  If TERM is atomic,
+it is written using `write/1'.
+
+   When `print/1' has to print a list, say [TERM1,TERM2,...,TERMN], it
+passes the whole list to `portray/1'.  As usual, if `portray/1'
+succeeds, it is assumed to have printed the entire list, and `print/1'
+does nothing further with this term.  Otherwise `print/1' writes the
+list using bracket notation, calling `print/1' on each element of the
+list in turn.
+
+   Since [TERM1,TERM2,...,TERMN] is simply a different way of writing
+.(TERM1,[TERM2,...,TERMN]), one might expect `print/1' to be called
+recursively on the two arguments TERM1 and [TERM2,...,TERMN], giving
+`portray/1' a second chance at [TERM2,...,TERMN].  This does _not_
+happen; lists are a special case in which `print/1' is called
+separately for each of TERM1,TERM2,...TERMN.
+
+   If you would like lists of character codes printed         by
+`print/1' using double-quote notation, you should         include
+`library(printchars)' (see *Note lib-abs::)         as part of your
+version of `portray/1'.
+
+Exceptions
+----------
+
+   Succeeds without error, except for any errors that may occur in the
+execution of `portray/1'.
+
+See Also
+--------
+
+   `portray/1', `library(printchars)'
+

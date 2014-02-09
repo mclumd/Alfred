@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">C Interface</h5>
+
+   <p>If the C file <code>c.c</code> is compiled as shown below, then loading the
+Prolog file as shown will produce the indicated results.
+
+<pre class="example">
+                                        <div align="right"><em>c.c</em>
+     </div>
+     
+     /* c1(+integer, [-integer]) */
+     long int c1(a)
+     long int a;
+     {
+        return(a+9);
+     }
+     
+     /* c2(-integer) */
+     void c2(a)
+     long int *a;
+     {
+        *a = 99;
+     }
+     
+     /* c11(+atom, [-atom]) */
+     QP_atom c11(a)
+     QP_atom a;
+     {
+        return(a);
+     }
+     
+     /* c21(+atom, -atom) */
+     void c21(a,b)
+     QP_atom a;
+     QP_atom *b;
+     {
+        *b = a;
+     }
+     
+     /* c3(+float, [-float]) */
+     double c3(a)
+     double a;
+     {
+        return(a+9.0);
+     }
+     /* c4(-float) */
+     void c4(a)
+     float *a;
+     {
+        *a = 9.9;
+     }
+     /* c5(string, [-string]) */
+     char * c5(a)
+     char * a;
+     {
+        return(a);
+     }
+     /* c6(-string) */
+     void c6(a)
+     char * *a;
+     {
+        *a = "99";
+     }
+     </pre>
+
+   <p>At the command level:
+
+<pre class="example">     % <kbd>cc -c c.c</kbd>
+     </pre>
+
+   <p>Produces the object file.
+
+<pre class="example">
+                                       <div align="right"><em>c.pl</em>
+     </div>
+     
+     foreign_file(c, [c1, c2, c11, c21, c3, c4, c5, c6]).
+     
+     foreign(c1,  c, c1(+integer, [-integer])).
+     foreign(c2,  c, c2(-integer)).
+     foreign(c11, c, c11(+atom, [-atom])).
+     foreign(c21, c, c21(+atom, -atom)).
+     foreign(c3,  c, c3(+float, [-float])).
+     foreign(c4,  c, c4(-float)).
+     foreign(c5,  c, c5(+string,[-string])).
+     foreign(c6,  c, c6(-string)).
+     
+     :- load_foreign_files([c], []),
+        abolish(foreign_file,2),
+        abolish(foreign,3).
+     </pre>
+
+   <p>Loading the Prolog file (see the reference pages for <code>foreign/3</code>,
+<code>foreign_file/2</code> and <code>load_foreign_files/2</code>) into Prolog and invoking
+the following query gives the following results:
+<pre class="example">     | ?- <kbd>c1(1,X1), c2(X2), c11(foo,X11), c21(foo,X21), c3(1.5,X3), c4(X4),
+          c5(foo,X5), c6(X6).</kbd>
+     
+     X1 = 10,
+     X2 = 99,
+     X11 = X21 = X5 = foo,
+     X3 = 10.5,
+     X4 = 9.89999,
+     X6 = '99' <kbd>;</kbd>
+     
+     
+     no
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-fex-pas.html#fli-p2f-fex-pas">Next</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-fex.html#fli-p2f-fex">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Dependencies of QOF files</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="sap-srs-dep-qfd.html#sap-srs-dep-qfd">sap-srs-dep-qfd</a>:                      Generating QOF Files and Dependencies
+<li><a accesskey="2" href="sap-srs-dep-exa.html#sap-srs-dep-exa">sap-srs-dep-exa</a>:                      Example
+<li><a accesskey="3" href="sap-srs-dep-mak.html#sap-srs-dep-mak">sap-srs-dep-mak</a>:                      Using the make(1) utility
+</ul>
+
+   <p>Each QOF file contains a record of all the files, including library
+files, upon which it depends, that is, for which its source file
+contains any of the following load commands:
+<pre class="example">     :- compile(<var>Files</var>).
+     :- ensure_loaded(<var>Files</var>).
+     :- use_module(<var>Files</var>).
+     :- use_module(<var>File</var>, <var>ImportList</var>).
+     :- use_module(<var>Module</var>, <var>File</var>, <var>ImportList</var>).
+     :- [<var>Files</var>].
+     :- reconsult(<var>Files</var>).
+     :- load_foreign_executable(<var>File</var>).
+     :- load_foreign_files(<var>Files</var>, <var>Libraries</var>).
+     :- load_files (<var>Files</var>).
+     :- load_files (<var>Files, Options</var>).
+     </pre>
+
+   <p>Each record is in the form that was used to specify the file in the
+load command: it may be a relative or absolute filename, or else it
+may be a file search path specification, such as:
+     <ul>
+
+     <li><code>library(</code><var>Name</var><code>)</code>
+<li><code>system(</code><var>Name</var><code>)</code>
+<li><code>quintus(</code><var>Name</var><code>)</code>
+<li><code>language(</code><var>Name</var><code>)</code>
+<li><code>mypath(</code><var>Name</var><code>)</code>
+</ul>
+
+   <p>When the QOF file is passed to <code>qld</code>
+and the <code>-d</code> option is specified, this information
+will be used to find all the QOF and object files on which
+this QOF file depends.
+
+   <p>Under Windows, a specification of the form:
+
+     <ul>
+
+     <li><code>syslib(</code><var>Name</var><code>)</code>
+</ul>
+
+   <p>has a special meaning: <code>qld</code> looks up the import library
+<code></code><var>Name</var><code>.lib</code> in a directory in the <code>LIB</code> environment variable.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-fsp.html#sap-srs-fsp">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-qld.html#sap-srs-qld">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs.html#sap-srs">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

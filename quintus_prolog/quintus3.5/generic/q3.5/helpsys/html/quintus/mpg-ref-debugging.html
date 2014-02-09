@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>debugging/0</code> <dfn>development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>debugging</code>
+
+   <p>Prints out current debugging state
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>debugging/0</code> displays information on the
+terminal about the current debugging state.  It shows
+     <ul>
+
+     <li>The top-level state of the debugger, which is one of
+          <dl>
+
+          <br><dt><code>debug</code>
+          <dd>The debugger is on but will not show anything or stop for user
+interaction until a spypoint is reached.
+
+          <br><dt><code>trace</code>
+          <dd>The debugger is on and will show everything.  As soon as you type
+a goal, you will start seeing a debugging trace.  After printing each trace
+message, the debugger may or may not stop for user interaction:  this
+depends on the type of leashing in force (see below).
+
+          <br><dt><code>zip</code>
+          <dd>The debugger is on but will not show anything or stop for user
+interaction until a spypoint is reached. The debugger does not even keep any
+information of the execution of the goal till the spypoint is reached and
+hence you will not be able to see the ancestors of the goal when you
+reach the spypoint.
+
+          <br><dt><code>off</code>
+          <dd>The debugger is off. 
+</dl>
+
+     <p>The top-level state can be controlled by the predicates <code>debug/0</code>,
+<code>nodebug/0</code>, <code>trace/0</code>, <code>notrace/0</code> and <code>prolog_flag/3</code>. 
+</p><li>The type of leashing in force.  When the debugger prints a message
+saying that it is passing through a particular port (one of Call,
+Exit, Head, Done, Redo, or Fail) of a particular procedure, it stops for user
+interaction only if that port is leashed.  The predicate <code>leash/1</code>
+can be used to select which of the seven ports you want to be leashed. 
+<li>All the current spypoints.  Spypoints are controlled by the predicates
+<code>spy/1</code>, <code>nospy/1</code>, <code>add_spypoint/1</code>, <code>remove_spypoint/1</code>
+and <code>nospyall/0</code>. 
+</ul>
+
+   <p>This predicate is not supported in runtime systems.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-discontiguous.html#mpg-ref-discontiguous">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-debug.html#mpg-ref-debug">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

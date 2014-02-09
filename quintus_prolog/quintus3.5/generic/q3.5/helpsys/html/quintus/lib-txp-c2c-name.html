@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>name(</code><var>?Constant</var><code>, </code><var>?Chars</var><code>)</code></h5>
+
+   <p>If <var>Constant</var> is supplied, it should be an atom or
+number. 
+<var>Chars</var> is unified with a list of character
+codes representing the "name" of the constant.  These are
+precisely the characters that <code>write/1</code> would write if
+asked to write <var>Constant</var>.
+
+   <p>If <var>Constant</var> is a variable, <var>Chars</var> should be
+a proper list of character codes.  If <var>Chars</var> looks like
+the name of a number, <var>Constant</var> will be unified with
+that number.  The syntax for numbers that is accepted by <code>name/2</code> is
+exactly the one that <code>read/1</code> accepts.  If <var>Chars</var> does not
+look like the name of a number, <var>Constant</var> will be
+unified with an atom.
+
+   <p>This attempt to guess what sort of constant you want means
+that there are atoms that can be constructed by <code>read/1</code> and by
+<code>atom_chars/2</code>, but not by <code>name/2</code>. 
+<code>name/2</code> is retained for backwards compatibility with
+DEC-10 Prolog, C-Prolog, and earlier versions of Quintus
+Prolog.  New programs should use
+<code>atom_chars/2</code> or <code>number_chars/2</code>, whichever is appropriate.
+
+   <p><code>name/2</code> is a built-in predicate. 
+<code>library(strings)</code> contains a predicate <code>name1/2</code>, which is
+identical to <code>name/2</code> except that it reports errors in the same way as
+other library predicates.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-c2c-atom_chars.html#lib-txp-c2c-atom_chars">Next</a>
+<li><a rel="up" accesskey="u" href="lib-txp-c2c.html#lib-txp-c2c">Up</a>
+</ul>
+</div>
+   </body></html>
+

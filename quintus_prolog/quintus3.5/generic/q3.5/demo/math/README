@@ -1,0 +1,40 @@
+
+/* @(#)README	28.2 02/11/91 */
+
+	+--------------------------------------------------------+
+	| 							 |
+        |      Math Package README (a C-interface example)       |
+        |							 |
+        |							 |
+	|  Copyright (C) 1985,  Quintus Computer Systems, Inc.   |
+	|  All rights reserved.					 |
+	|							 |
+	+--------------------------------------------------------+
+
+
+The math library is an interface to the standard math C library of
+floating point (mostly transcendental) functions.
+
+
+This directory contains 2 files necessary for running the C math library
+demo:
+
+math.c		C math library interface
+math.pl		Prolog math library interface
+
+
+To use the math library, first compile the C source file, math.c, to
+produce the object file math.o:
+
+	% cc -c math.c
+
+or do 'make' in this directory
+
+Now load the Prolog interface file
+
+        | ?- [demo(math)].		% or compile(demo(math)).
+
+This will load the math binary ('math.o') as well as defining the interface
+from Prolog to the C functions in the library.
+
+For help on running the demo, call help/0.

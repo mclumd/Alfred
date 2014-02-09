@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Summary of Steps</h5>
+
+   <p>The following steps are required to create a user-defined stream
+in foreign code, such as C.  The stream is represented
+in C as a pointer to a <code>QP_stream</code> structure. 
+It can then be converted back to Prolog stream representation through
+<code>stream_code/2</code>.  The predicate <code>stream_code/2</code> converts,
+in either direction,
+between Prolog and C representations of a stream.
+
+     <ol type=1 start=1>
+
+     <li>Define the user-defined stream structure, containing fields required to
+operate the stream. 
+(see <a href="fli-ios-cps-sst.html#fli-ios-cps-sst">fli-ios-cps-sst</a>)
+<li>Prepare creation of the user-defined stream. This usually
+requires a function to perform the following steps:
+          <ol type=a start=1>
+
+          <li>Open the I/O channel, e.g. open a file or set up inter-process communication. 
+(see <a href="fli-ios-cps-opn.html#fli-ios-cps-opn">fli-ios-cps-opn</a>)
+<li>Allocate memory for the user-defined stream
+and set values in the fields of the allocated user-defined stream. 
+(see <a href="fli-ios-cps-all.html#fli-ios-cps-all">fli-ios-cps-all</a>)
+<li>Set up the default values for the <code>QP_stream</code> part of the user-defined stream
+through <code>QU_stream_param()</code> and modify these values as necessary. 
+(see <a href="fli-ios-cps-sqs.html#fli-ios-cps-sqs">fli-ios-cps-sqs</a>)
+<li>Initialize the remaining fields of <code>QP_stream</code> structure used internally by the
+Prolog system through <code>QP_prepare_stream()</code> and
+register the created stream through <code>QP_register_stream()</code>. 
+(see <a href="fli-ios-cps-ire.html#fli-ios-cps-ire">fli-ios-cps-ire</a>)
+<li>If the stream is a tty stream,
+register the stream to its tty group through <code>QP_add_tty()</code>. 
+(see <a href="fli-ios-cps-tty.html#fli-ios-cps-tty">fli-ios-cps-tty</a>)
+          </ol>
+
+     <li>Implement the bottom layer functions to be used for the stream. 
+These may include read, write, flush, seek and close functions. 
+(see <a href="fli-ios-bot.html#fli-ios-bot">fli-ios-bot</a>)
+        </ol>
+
+   <p>These steps are described in more detail in the remainder of this section. 
+An example of creating a stream for a binary file in one of read, write or
+append modes is discussed. 
+The example is written in C although
+it can also be written in other languages, such as Pascal or Fortran.
+
+   <p>The example opens a file as a binary stream.  The characters input from
+or output to the stream are exactly the same as stored in file.  Seeking to a
+random byte position and flushing output are permitted in the stream. 
+The first example lists complete source code (see <a href="fli-ios-uds.html#fli-ios-uds">fli-ios-uds</a>). 
+Note that binary streams are in fact supported in the system.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-cps-sst.html#fli-ios-cps-sst">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ios-cps.html#fli-ios-cps">Up</a>
+</ul>
+</div>
+   </body></html>
+

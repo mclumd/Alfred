@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The "span" family</h5>
+
+   <p>The midstring, substring, and subchars families give you a way of
+taking strings apart when you know the lengths of the substrings you want,
+or when you know a particular substring.
+
+   <p>The "span" family gives you another way of taking strings apart. 
+The family contains three
+sub-families:  <code>span_left/[3,4,5]</code>, which scan from the left,
+<code>span_right/[3,4,5]</code>, which scan from the right, and
+<code>span_trim/[3,4,5]</code>, which scans from both ends towards the middle.
+
+     <dl>
+
+     <br><dt><code>span_left(</code><var>+Text</var><code>, </code><var>+Set</var><code>, </code><var>?LenA</var><code>, </code><var>?LenB</var><code>, </code><var>?LenC</var><code>)</code>
+     <dd>
+
+     <br><dt><code>span_left(</code><var>+Text</var><code>, </code><var>+Set</var><code>, </code><var>?LenA</var><code>, </code><var>?LenB</var><code>)</code>
+     <dd>
+
+     <br><dt><code>span_left(</code><var>+Text</var><code>, </code><var>+Set</var><code>, </code><var>?LenA</var><code>)</code>
+     <dd>are true when
+          <ul>
+
+          <li><var>Text</var> is a text object,
+<li><var>Set</var> specifies a set of characters (see below), and
+<li><var>Text</var> can be broken into three pieces <var>A</var>, <var>B</var>, <var>C</var>, such that
+               <ul>
+
+               <li><var>LenA</var> is the length of <var>A</var>,
+<li><var>LenB</var> is the length of <var>B</var>,
+<li><var>LenC</var> is the length of <var>C</var>,
+<li>no character in <var>A</var> belongs to the <var>Set</var>,
+<li>every character in <var>B</var> belongs to the <var>Set</var>,
+<li><var>B</var> is not empty (so some character of <var>Text</var> must belong to the <var>Set</var>),
+<li><var>C</var> contains the rest of <var>Text</var> (it may contain characters from <var>Set</var>), and
+<li><var>A</var> and <var>B</var> are as long as possible. 
+</ul>
+
+     </ul>
+
+     <p>The <var>Set</var> is
+          <ul>
+
+          <li>an atom <var>A</var>.  A character belongs to such a <var>Set</var>
+if and only if it occurs in the name of A. 
+The atom <code>''</code> represents an empty <var>Set</var>. 
+<li>a non-empty list of character codes [<var>C1</var>,<small class="dots">...</small>,<var>Cn</var>]. 
+A character belongs to set a <var>Set</var> if and only
+if it occurs among the character codes <var>C1</var>,<small class="dots">...</small>,<var>Cn</var>. 
+<li><code>not(</code><var>X</var><code>)</code>, where <var>X</var> is an atom or non-empty list of characters. 
+A character belongs to such a <var>Set</var> if and only if
+it does <em>not</em> belong to the set <var>X</var>. 
+</ul>
+
+   </dl>
+
+   <p>The first two arguments must be instantiated.  Given them, the
+remaining three arguments are uniquely determined.  The last three
+arguments give you a picture of how the text is divided:
+<pre class="example">                 |   LenA    |    LenB     |  LenC   |
+         Text=    a a a a a a B B B B B B B c c c c c
+                              \____Set____/
+     </pre>
+
+   <p>where <var>Set</var> embraces the characters in the <var>B</var> substring. 
+By design, the <var>Set</var> argument occupies the same position
+in the argument list of this predicate that <var>B</var> does in the
+argument list of <code>substring/[4,5]</code> or <code>midstring/[3,4,5,6]</code>.  The fact that
+the last three arguments of <code>span_left/5</code> follow this convention
+means that you can use <code>midstring/[3,4,5,6]</code>, <code>substring/[4,5]</code>, or <code>subchars/[4,5]</code>
+to extract whichever substring interests you.
+
+   <p>For example, to skip leading spaces in <var>String</var>, yielding <var>Trimmed</var>, you
+would write
+<pre class="example">     | ?- <kbd>span_left(String, not(" "), Before),</kbd>
+     |    <kbd>substring(String, Trimmed, Before, _, 0).</kbd>
+     </pre>
+
+   <p>Note that this fails if there are no non-blank characters in <var>String</var>. 
+To extract the first blank-delimited <var>Token</var> from <var>String</var>, yielding a <var>Token</var>
+and the <var>Rest</var> of the string, you would write
+<pre class="example">     | ?- <kbd>span_left(String, not(" "), Before, Length, After),</kbd>
+     |    <kbd>substring(String, Token, Before, Length, After),</kbd>
+     |    <kbd>substring(String, Rest, _, After, 0).</kbd>
+     </pre>
+
+     <dl>
+
+     <br><dt><code>span_right(</code><var>+Text</var><code>, </code><var>+Set</var><code>, </code><var>?LenA</var><code>, </code><var>?LenB</var><code>, </code><var>?LenC</var><code>)</code>
+     <dd>
+
+     <br><dt><code>span_right(</code><var>+Text</var><code>, </code><var>+Set</var><code>, </code><var>?LenB</var><code>, </code><var>?LenC</var><code>)</code>
+     <dd>
+
+     <br><dt><code>span_right(</code><var>+Text</var><code>, </code><var>+Set</var><code>, </code><var>?LenC</var><code>)</code>
+     <dd>are true when
+          <ul>
+
+          <li><var>Text</var> is a text object,
+<li><var>Set</var> specifies a set of characters, and
+<li><var>Text</var> can be broken into three pieces <var>A</var>, <var>B</var>, <var>C</var>, such that
+               <ul>
+
+               <li><var>LenA</var> is the length of <var>A</var>,
+<li><var>LenB</var> is the length of <var>B</var>,
+<li><var>LenC</var> is the length of <var>C</var>,
+<li>no character in <var>C</var> belongs to the <var>Set</var>,
+<li>every character in <var>B</var> belongs to the <var>Set</var>,
+<li><var>B</var> is not empty (so some character of <var>Text</var> must belong
+to the <var>Set</var>), and
+<li><var>C</var> and <var>B</var> are as long as possible. 
+</ul>
+
+     </ul>
+
+   </dl>
+
+   <p>These three predicates are exactly like <code>span_left/[3,4,5]</code> except that
+they work from right to left instead of from left to right.  In
+particular, the picture
+<pre class="example">                 |   LenA    |    LenB     |  LenC   |
+         Text=    a a a a a a B B B B B B B c c c c c
+                              \____Set____/
+     </pre>
+
+   <p>applies.
+
+   <p>Finally, there are predicates that scan from both ends:
+
+     <dl>
+
+     <br><dt><code>span_trim(</code><var>+Text</var><code>, </code><var>+Set</var><code>, </code><var>?LenA</var><code>, </code><var>?LenB</var><code>, ?</code><var>LenC</var><code>)</code>
+     <dd>
+is true when
+          <ul>
+
+          <li><var>Text</var> is a text object,
+<li><var>Set</var> specifies a set of characters, and
+<li><var>Text</var> can be broken into three pieces <var>A</var>, <var>B</var>, <var>C</var>, such that
+               <ul>
+
+               <li><var>LenA</var> is the length of <var>A</var>,
+<li><var>LenB</var> is the length of <var>B</var>,
+<li><var>LenC</var> is the length of <var>C</var>,
+<li>every character in <var>A</var> belongs to the <var>Set</var>,
+<li>every character in <var>C</var> belongs to the <var>Set</var>,
+<li><var>A</var> and <var>C</var> are as long as possible, and
+<li><var>B</var> is not empty. 
+</ul>
+
+     </ul>
+
+   </dl>
+
+   <p>The <var>Set</var> argument of <code>span_trim/5</code> has the same form as
+the <var>Set</var> argument of <code>span_left/[3,4,5]</code> or <code>span_right/[3,4,5]</code>,
+but there is an important difference in how it is used:
+in <code>span_trim/5</code> the <var>Set</var> specifies the characters
+that are to be trimmed away.  The picture is
+<pre class="example">                 |   LenA    |    LenB     |  LenC   |
+         Text=    a a a a a a B B B B B B B c c c c c
+                  \___Set___/               \__Set__/
+     </pre>
+
+   <p>There is a special case of <code>span_trim/5</code> that enables you to strip
+particular characters from both ends of a string.  These unwanted
+characters are designated in <var>Set</var> in <code>span_trim/3</code>:
+<pre class="example">     span_trim(String, Set, Trimmed) :-
+             span_trim(String, Set, Before, Length, After),
+             substring(String, Trimmed, Before, Length, After).
+     </pre>
+
+   <p>A further specialization, <code>span_trim/2</code>, is intended for trimming blanks
+from fixed-length records:
+<pre class="example">     span_trim(String, Trimmed) :-
+              span_trim(String, " ", Before, Length, After),
+              substring(String, Trimmed, Before, Length, After).
+     </pre>
+
+   <p>For example,
+<pre class="example">     | ?- <kbd>span_trim('  abc    ', " ", B, L, A).</kbd>
+     B = 2
+     L = 3
+     A = 4
+     
+     | ?- <kbd>substring('  abc    ', Trimmed, 2, 3, 4).</kbd>
+     Trimmed = abc
+     
+     | ?- <kbd>span_trim(' an   example ', Trimmed).</kbd>
+     Trimmed = 'an   example'
+     </pre>
+
+   <p>Note that the last example leaves the group of three internal
+blanks intact.  There are no predicates in <code>library(strings)</code>
+for compressing such blanks.
+
+   <p>In manipulating text objects,
+do not neglect the possibility of combining the "span" family with
+<code>subchars/[4,5]</code> or <code>midstring/[3,4,5,6]</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-sub-subchars.html#lib-txp-sub-subchars">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp-sub.html#lib-txp-sub">Up</a>
+</ul>
+</div>
+   </body></html>
+

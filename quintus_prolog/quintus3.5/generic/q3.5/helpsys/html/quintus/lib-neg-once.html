@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Forcing Goal Determinacy -- <code>once(</code><var>Goal</var><code>)</code></h4>
+
+   <p>We have seen that
+<pre class="example">     \+ Goal
+     </pre>
+
+   <p>and
+<pre class="example">     ( Goal -&gt; false ; true )
+     </pre>
+
+   <p>have the same effect.  The form
+<pre class="example">     ( Goal -&gt; true ; false )
+     </pre>
+
+   <p>is also useful:  it commits to the first solution of Goal.
+
+   <p>This operation has a name:
+<pre class="example">     once <var>Goal</var>
+     </pre>
+
+   <p><code>once/1</code> is useful when you have a nondeterminate definition for <var>Goal</var>, but in
+this case you want to solve it determinately.  For example, to find out if
+there are any married couples, you could use
+<pre class="example">     once married(_, _)
+     </pre>
+
+   <p>If the predicate is really determinate in concept, it is better to make it
+determinate in definition as well, rather than to use <code>once/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-neg-sum.html#lib-neg-sum">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-neg-ine.html#lib-neg-ine">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-neg.html#lib-neg">Up</a>
+</ul>
+</div>
+   </body></html>
+

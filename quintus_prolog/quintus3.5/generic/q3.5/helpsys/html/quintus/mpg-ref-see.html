@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>see/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>see(</code><var>+FileOrStream</var><code>)</code>
+
+   <p>Makes file <var>FileOrStream</var> the current input stream.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>FileOrStream</var> <dfn>file_spec</dfn> or <dfn>stream_object</dfn>
+     <dd>File specification or stream object.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>If there is an open input stream associated with <var>FileOrStream</var>, and that
+stream was opened by <code>see/1</code>, then it is made the current input stream;
+
+   <p>Otherwise, the specified file is opened for input and made the current
+input stream.  If it is not possible to open the file, <code>see/1</code>
+raises an exception.
+
+   <p>Different file names (that is, names that do not unify) represent
+different streams (even if they correspond to the same file). 
+Therefore, assuming <code>food</code> and <code>./food</code> represent the same file, the
+following sequence will open two streams, both connected to the same
+file.
+<pre class="example">     see(food)
+     ...
+     see('./food')
+     </pre>
+
+   <p>It is important to remember to close streams when you have finished with
+them.  Use <code>seen/0</code> or <code>close/1</code>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>FileOrStream</var> is not instantiated enough.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+                <var>FileOrStream</var> not currently open for input, and
+                <code>fileerrors</code> flag is <code>on</code>.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>FileOrStream</var> is neither a filename nor a stream.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>seen/0</code>,
+<code>close/1</code>,
+<code>abort/0</code>,
+<code>seeing/1</code>
+
+   <a href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">ref-iou-sfh-opn</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-seeing.html#mpg-ref-seeing">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-save_program.html#mpg-ref-save_program">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

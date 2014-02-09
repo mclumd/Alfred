@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Output Stream Buffer Overflow</h5>
+
+<pre class="example">     open/4 option:  overflow(OverFlowAction)
+     QP_stream:      unsigned char overflow
+     </pre>
+
+   <p>Written characters are stored in the buffer of an output stream by the
+middle layer output function until the
+current record is terminated, through a newline operation (such as
+<code>nl/[0,1]</code> or <code>QP_newln()</code>) or
+by writing the line border code of the stream. 
+If a character is written when the buffer of an output stream is full,
+it overflows the output buffer. 
+The <code>overflow</code> field specifies
+the action that the middle layer function should take if this happens. 
+The possible values for <code>overflow</code> are:
+
+     <dl>
+
+     <br><dt><code>QP_OV_ERROR</code>
+     <dd>specified as <code>overflow(error)</code> in <code>open/4</code>. 
+It is an error when output stream buffer overflows.
+
+     <br><dt><code>QP_OV_TRUNCATE</code>
+     <dd>specified as <code>overflow(truncate)</code> in <code>open/4</code>. 
+Keeps the characters in the buffer and throws away the
+current character that overflows the output buffer.
+
+     <br><dt><code>QP_OV_FLUSH</code>
+     <dd>specified as <code>overflow(flush)</code> in <code>open/4</code>. 
+Pass the current buffer storing a partial record of the output stream
+to the bottom layer flush function to write out the buffer. 
+The host operating system must support
+writing of partial records for the device associated with the stream. 
+</dl>
+
+   <p>Note that if an output stream is unbuffered (i.e. <code>max_reclen</code> is 0)
+then the middle layer function ignores the <code>overflow</code> field and
+calls the <code>write</code> function for each character written to the stream.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-sst-sec.html#fli-ios-sst-sec">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-sst-flu.html#fli-ios-sst-flu">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-sst.html#fli-ios-sst">Up</a>
+</ul>
+</div>
+   </body></html>
+

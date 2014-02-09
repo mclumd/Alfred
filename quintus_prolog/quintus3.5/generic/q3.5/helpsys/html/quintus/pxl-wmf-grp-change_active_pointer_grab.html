@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>change_active_pointer_grab/[3,4]</code></h5>
+
+<pre class="example">     change_active_pointer_grab(+<var>Displayable</var>, +<var>EventsMask</var>, +<var>Cursor</var>, +<var>Time</var>)
+     change_active_pointer_grab(+<var>EventsMask</var>, +<var>Cursor</var>, +<var>Time</var>)
+     </pre>
+
+   <p>Modify the specified dynamic parameters of a grab,
+if the pointer is actively grabbed by the client and the specified
+<var>Time</var> is no earlier than the last-pointer-grab and no later than the
+current X server time.
+
+   <p><var>Displayable</var> is the ProXL Displayable. If omitted, the default Display is
+used.
+
+   <p><var>EventsMask</var> is an integer bitmask specifying the events that are selected
+and should be reported to the client. The valid event mask names are:
+     <ul>
+
+     <li><code>button_press</code>
+<li><code>button_release</code>
+<li><code>enter_window</code>
+<li><code>leave_window</code>
+<li><code>pointer_motion</code>
+<li><code>pointer_motion_hint</code>
+<li><code>button1_motion</code>
+<li><code>button2_motion</code>
+<li><code>button3_motion</code>
+<li><code>button4_motion</code>
+<li><code>button5_motion</code>
+<li><code>button_motion</code>
+<li><code>keymap_state</code>
+</ul>
+
+   <p>The predicate <code>event_list_mask/2</code> is useful to translate between
+event mask names and integer bitmasks.
+
+   <p><var>Cursor</var> is the ProXL cursor to be displayed during the grab, or the
+atom <code>none</code>.
+
+   <p><var>Time</var> is a timestamp in milliseconds (from an event), or the atom
+<code>current_time</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxl-wmf-grp-ungrab_pointer.html#pxl-wmf-grp-ungrab_pointer">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-wmf-grp.html#pxl-wmf-grp">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,1494 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: ref-ari-aex-aca,  Next: ref-ari-aex-pee,  Up: ref-ari-aex
+
+Arithmetic calculations
+.......................
+
+`X + Y'
+     Evaluates to the sum of X and Y.  If both operands are integers,
+     the result is an integer; otherwise, the result is a float. If
+     integer addition results in an overflow, a representation error is
+     raised.
+
+`X - Y'
+     Evaluates to the difference of X and Y.  If both operands are
+     integers, the result is an integer; otherwise, the result is a
+     float.  If integer subtraction results in an underflow, a
+     representation error is raised.
+
+`X * Y'
+     Evaluates to the product of X and Y.  If both operands are
+     integers, the result is an integer; otherwise, the result is a
+     float.  If integer multiplication results in an overflow, a
+     representation error is raised.
+
+`- X'
+     Evaluates to the negative of X.  The type of the result, integer
+     or float, is the same as the type of the operand.
+
+`abs(X)'
+     Evaluates to X if X is a positive number, -X if it is a negative
+     number.
+
+`X / Y'
+     Evaluates to the quotient of X and Y.  The result is always a
+     float, regardless of the types of the operands X and Y. Attempt to
+     divide by zero results in a domain error being raised.
+
+`X // Y'
+     Evaluates to the integer quotient of X and Y.  X and Y must both
+     be integers.  The result is truncated to the nearest integer that
+     is between it and 0. Attempt to divide by zero results in a domain
+     error being raised.
+
+`X div  Y'
+     Equivalent to `//'.
+
+`X mod Y'
+     Evaluates to the remainder after the integer division of X by Y.
+     X and Y must both be integers.  The result, if non-zero, has the
+     same sign as X. If Y evaluates to 0, a domain error is raised.
+
+`integer(X)'
+     Evaluates to X if X is an integer.  Otherwise (if X is a float)
+     the result is the nearest integer that is between it and 0.
+
+`float(X)'
+     Evaluates to X if X is a float.  Otherwise (if X is an integer)
+     the result is the floating-point equivalent of X.
+
+`min(X,Y)'
+     Evaluates to the minimum of X and Y.
+
+`max(X,Y)'
+     Evaluates to the maximum of X and Y.
+
+
+File: quintus.info,  Node: ref-ari-aex-pee,  Next: ref-ari-aex-bit,  Prev: ref-ari-aex-aca,  Up: ref-ari-aex
+
+Peeking into Memory
+...................
+
+   The following operations can be used to peek into memory. They can be
+used in conjunction with the foreign interface to peek into data
+structures within foreign code from Prolog. These operations take an
+integer argument and access the data stored at the address represented
+by the argument.  Note that these operations can result in segmentation
+faults and bus errors if the argument you are trying to access is a bad
+address or if the address is not aligned properly for the data you are
+going to access from it.  The only sure way of getting an integer in
+Prolog that represents an address that makes sense is by returning an
+address from a foreign function through the foreign language interface
+(see *Note fli-p2f-poi::).  For built-ins that poke ("store") values
+into memory, see the reference page for `assign/2' in the reference
+section. For more structured ways of doing this, see the Structs and
+Objects packages.
+
+`integer_8_at(X)'
+     Evaluates to the signed byte stored at address X.
+
+`unsigned_8_at(X)'
+     Evaluates to the unsigned byte stored at address X.
+
+`integer_16_at(X)'
+     Evaluates to the signed short stored at address X.
+
+`unsigned_16_at(X)'
+     Evaluates to the unsigned short stored at address X.
+
+`integer_at(X)'
+     Evaluates to the signed integer stored at address X.
+
+`address_at(X)'
+     Evaluates to the address stored at address X.
+
+`single_at(X)'
+     Evaluates to the single precision floating point number stored at
+     address X.
+
+`double_at(X)'
+     Evaluates to the double precision floating point number stored at
+     address X.
+
+
+File: quintus.info,  Node: ref-ari-aex-bit,  Next: ref-ari-aex-cco,  Prev: ref-ari-aex-pee,  Up: ref-ari-aex
+
+Bit-vector Operations
+.....................
+
+   The following bit-vector operations apply to integer arguments only.
+Supplying non-integer arguments results in an exception being raised.
+Note that the slant lines used in these operator names are produced with
+the forward and backward slash keys.
+
+`X /\ Y'
+     Evaluates to the bitwise conjunction of X and Y.
+
+`X \/ Y'
+     Evaluates to the bitwise disjunction of X and Y.
+
+`\(X,Y)'
+     Evaluates to the bitwise xor of X and Y.  Note that this is not an
+     operator.
+
+`\ (X)'
+     Evaluates to the complement of the bits in X.
+
+`X << Y'
+     X is shifted left Y places.  Equivalent to `X << (Y /\ 2'11111)'.
+
+`X >> Y'
+     X is shifted right Y places with sign extension.
+
+
+File: quintus.info,  Node: ref-ari-aex-cco,  Prev: ref-ari-aex-bit,  Up: ref-ari-aex
+
+Character Codes
+...............
+
+   The following operation is included in order to allow integer
+arithmetic on character codes.
+
+`[X]'
+     Evaluates to X for numeric X.  This is relevant because character
+     strings in Prolog are lists of character codes, that is, integers.
+     Thus, for those integers that correspond to character codes, the
+     user can write a string of one character in place of that integer
+     in an arithmetic expression.  For example, the expression (A) is
+     equivalent to (B), which in turn becomes (C) in which case X is
+     unified with 2:
+
+          X is "c" - "a" (A)
+
+          X is [99] - [97] (B)
+
+          X is 99 - 97 (C)
+
+     A cleaner way to do the same thing is
+          X is 0'c - 0'a
+
+
+File: quintus.info,  Node: ref-ari-sum,  Next: ref-ari-lib,  Prev: ref-ari-aex,  Up: ref-ari
+
+Predicate Summary
+-----------------
+
+   * `is/2'
+
+   * `=:=/2'
+
+   * `=\=/2'
+
+   * `</2'
+
+   * `>//2'
+
+   * `=</2'
+
+   * `>=/2'
+
+
+File: quintus.info,  Node: ref-ari-lib,  Prev: ref-ari-sum,  Up: ref-ari
+
+Library Support
+---------------
+
+   Additional arithmetic predicates can be found in `library(math)'.
+
+
+File: quintus.info,  Node: ref-lte,  Next: ref-mgc,  Prev: ref-lps,  Up: ref
+
+Looking at Terms
+================
+
+* Menu:
+
+* ref-lte-met::                         Meta-logical Predicates
+* ref-lte-act::                         Analyzing and Constructing Terms
+* ref-lte-acl::                         Analyzing and Constructing Lists
+* ref-lte-c2t::                         Converting between Constants and Text
+* ref-lte-anv::                         Assigning Names to Variables
+* ref-lte-cpt::                         Copying Terms
+* ref-lte-cte::                         Comparing Terms
+* ref-lte-lib::                         Library Support
+* ref-lte-sum::                         Summary of Predicates
+
+
+File: quintus.info,  Node: ref-lte-met,  Next: ref-lte-act,  Up: ref-lte
+
+Meta-logical Predicates
+-----------------------
+
+* Menu:
+
+* ref-lte-met-typ::                     Type Checking
+* ref-lte-met-usu::                     Unification and Subsumption
+
+   "Meta-logical" predicates are those predicates that allow you to
+examine the current instantiation state of a simple or compound term,
+or the components of a compound term.  This section describes the
+meta-logical predicates as well as others that deal with terms as such.
+
+
+File: quintus.info,  Node: ref-lte-met-typ,  Next: ref-lte-met-usu,  Up: ref-lte-met
+
+Type Checking
+.............
+
+   The following predicates take a term as their argument. They are
+provided to check the type of that term.
+
+Predicate
+     Succeeds if term is:
+
+`var/1'
+     a variable; the term is currently uninstantiated.
+
+`nonvar/1'
+     a non-variable; the term is currently instantiated.
+
+`integer/1'
+     an integer
+
+`atom/1'
+     an atom
+
+`float/1'
+     a float
+
+`number/1'
+     an integer or float.
+
+`atomic/1'
+     an atom, number or database reference.
+
+`simple/1'
+     an atom, number, variable or database reference.
+
+`compound/1'
+     a compound term (arity > 0).
+
+`callable/1'
+     a term that `call/1' would take as an argument;  atom or compound
+     term.
+
+`ground/1'
+     ground; the term contains no uninstantiated variables.
+
+`db_reference/1'
+     a Prolog database reference
+
+          *Please note:* Although database references are read and
+          written as compound terms, and formerly were, they now are a
+          distinct atomic term type (see *Note ref-mdb-dre::).
+
+   The reference pages for these predicates include examples of their
+use.
+
+
+File: quintus.info,  Node: ref-lte-met-usu,  Prev: ref-lte-met-typ,  Up: ref-lte-met
+
+Unification and Subsumption
+...........................
+
+   To unify two items simply use `=/2', which is defined as if by the
+clause
+     =(X, X).
+
+     *Please note:* Do not confuse this predicate with `=:=/2'
+     (arithmetic comparison) or `==/2' (term identity).
+
+   "Term subsumption" is a sort of one-way unification.  Term S and T
+unify if they have a common instance, and unification in Prolog
+instantiates both terms to that common instance.  S "subsumes" T if T
+is already an instance of S.  For our purposes, T is an "instance" of S
+if there is a substitution that leaves T unchanged and makes S
+identical to T.
+
+   Subsumption is checked by `subsumes_chk/2'.  It is especially useful
+in applications such as theorem provers.  The built-in predicate
+behaves identically to the original library version but is much more
+efficient.
+
+   Related predicates are defined in `library(subsumes)' and
+`library(occurs)'.  (For information on these packages see *Note lib::).
+
+
+File: quintus.info,  Node: ref-lte-act,  Next: ref-lte-acl,  Prev: ref-lte-met,  Up: ref-lte
+
+Analyzing and Constructing Terms
+--------------------------------
+
+   The built-in predicate `functor/3' performs these functions
+   * Decomposes a given term into its name and arity or
+
+   * given a name and arity, it constructs the corresponding compound
+     term creating new uninstantiated variables for its arguments.
+
+   The built-in predicate `arg/3' performs these functions:
+
+   * Unifies a term with a specified argument of another term.
+
+   The built-in predicate TERM `=..' LIST performs these functions:
+
+   * The built-in predicate `=../2' (otherwise known as "univ") unifies
+     LIST with a list whose head is the atom corresponding to the
+     principal functor of TERM and whose tail is a list of the
+     arguments of TERM.
+
+
+File: quintus.info,  Node: ref-lte-acl,  Next: ref-lte-c2t,  Prev: ref-lte-act,  Up: ref-lte
+
+Analyzing and Constructing Lists
+--------------------------------
+
+   To combine two lists to form a third list, use `append(+HEAD, +TAIL,
+-LIST)'.
+
+   To analyze a list into its component lists in various ways, use
+`append/3' with LIST instantiated to a proper list.  The reference page
+for `append/3' includes examples of its usage, including backtracking.
+
+   To check the length of a list call `length(+LIST, -INTEGER)'.
+
+   To produce a list of a certain length, use `length/2' with INTEGER
+instantiated and LIST uninstantiated or instantiated to a list whose
+tail is a variable.
+
+
+File: quintus.info,  Node: ref-lte-c2t,  Next: ref-lte-anv,  Prev: ref-lte-acl,  Up: ref-lte
+
+Converting between Constants and Text
+-------------------------------------
+
+   Three predicates convert between constants and lists of ASCII
+character codes:  `atom_chars/2', `number_chars/2', and `name/2'.
+
+   There is a general convention that a predicate that converts objects
+of type FOO to objects of type BAZ should have one of these forms:
+
+     FOO_to_BAZ(+FOO, -BAZ) (1)
+     
+     FOO_BAZ(?FOO, ?BAZ) (2)
+
+   Use (1) if the conversion works only one way, or (2) if for any FOO
+there is exactly one related BAZ and for any BAZ at most one FOO.
+
+   The type name used for lists of ASCII character codes is "chars"
+thus, the predicate that relates an atom to its name is
+`atom_chars(?ATOM, ?CHARS)', and the predicate that relates a number to
+its textual representation is `number_chars(?NUMBER, ?CHARS)'.
+
+   `atom_chars'(ATOM, CHARS) is a relation between an atom ATOM and a
+list CHARS consisting of the ASCII character codes comprising the
+printed representation of ATOM.  Initially, either ATOM must be
+instantiated to an atom, or CHARS must be instantiated to a proper list
+of character codes.
+
+   `number_chars'(NUMBER, CHARS) is a relation between a number NUMBER
+and a list CHARS consisting of the ASCII character codes comprising the
+printed representation of NUMBER.  Initially, either NUMBER must be
+instantiated to a number, or CHARS must be instantiated to a proper
+list of character codes.
+
+   `name/2' converts from any sort of constant to a chars
+representation.  Given a chars value, `name/2' will convert it to a
+number if it can, otherwise to an atom.  This means that there are
+atoms that can be constructed by `atom_chars/2' but not by `name/2'.
+`name/2' is retained for backwards compatibility with DEC-10 Prolog and
+C-Prolog.  New programs should use `atom_chars/2' or `number_chars/2' as
+appropriate.
+
+
+File: quintus.info,  Node: ref-lte-anv,  Next: ref-lte-cpt,  Prev: ref-lte-c2t,  Up: ref-lte
+
+Assigning Names to Variables
+----------------------------
+
+   Each variable in a term is instantiated to a term of the form
+`'$VAR'(N)', where N is an integer, by the predicate `numbervars/2'.
+The "write" predicates (`write/1', `writeq/1', and `write_term/2' with
+the numbervars option set to `true') transform these terms into upper
+case letters.
+
+
+File: quintus.info,  Node: ref-lte-cpt,  Next: ref-lte-cte,  Prev: ref-lte-anv,  Up: ref-lte
+
+Copying Terms
+-------------
+
+   The meta-logical predicate `copy_term/2' makes a copy of a term in
+which all variables have been replaced by new variables that occur
+nowhere else.  This is precisely the effect that would have been
+obtained from the definition
+     copy_term(Term, Copy) :-
+        recorda(copy, copy(Term), DBref),
+        instance(DBref, copy(Temp)),
+        erase(DBref),
+        Copy = Temp.
+
+   although the built-in predicate `copy_term/2' is more efficient.
+
+   When you call `clause/[2,3]' or `instance/2', you get a new copy of
+the term stored in the database, in precisely the same sense that
+`copy_term/2' gives you a new copy.  One of the uses of `copy_term/2'
+is in writing interpreters for logic-based languages; with
+`copy_term/2' available you can keep "clauses" in a Prolog data
+structure and pass this structure as an argument without having to
+store the "clauses" in the Prolog database.  This is useful if the set
+of "clauses" in your interpreted language is changing with time, or if
+you want to use clever indexing methods.
+
+   A naive way to attempt to find out whether one term is a copy of
+another is shown in this example:
+     identical_but_for_variables(X, Y) :-
+        \+ \+ (
+           numbervars(X, 0, N),
+           numbervars(Y, 0, N),
+           X = Y
+        ).
+
+   This solution is sometimes sufficient, but will not work if the two
+terms have any variables in common.  If you want the test to succeed
+even when the two terms do have some variables in common, you need to
+copy one of them; for example,
+     identical_but_for_variables(X, Y) :-
+        \+ \+ (
+           copy_term(X, Z),
+           numbervars(Z, 0, N),
+           numbervars(Y, 0, N),
+           Z = Y
+        ).
+
+   `copy_term/2' is efficient enough to use without hesitation if there
+is no solution that does not require the use of meta-logical
+predicates.  However, for the sake of both clarity and efficiency, such
+a solution should be sought before using `copy_term/2'.
+
+
+File: quintus.info,  Node: ref-lte-cte,  Next: ref-lte-lib,  Prev: ref-lte-cpt,  Up: ref-lte
+
+Comparing Terms
+---------------
+
+* Menu:
+
+* ref-lte-cte-bas::                     Introduction
+* ref-lte-cte-sot::                     Standard Order of Terms
+* ref-lte-cte-sor::                     Sorting Terms
+
+
+File: quintus.info,  Node: ref-lte-cte-bas,  Next: ref-lte-cte-sot,  Up: ref-lte-cte
+
+Introduction
+............
+
+   The predicates are described in this section used to compare and
+order terms, rather than to evaluate or process them.  For example,
+these predicates can be used to compare variables; however, they never
+instantiate those variables.  These predicates should not be confused
+with the arithmetic comparison predicates (see *Note ref-ari-acm::) or
+with unification.
+
+
+File: quintus.info,  Node: ref-lte-cte-sot,  Next: ref-lte-cte-sor,  Prev: ref-lte-cte-bas,  Up: ref-lte-cte
+
+Standard Order of Terms
+.......................
+
+   These predicates use a standard total order when comparing terms.
+The standard total order is:
+
+     variables `@<' database references `@<' numbers `@<' atoms `@<' compound terms
+
+   (Interpret `@<' as "comes before".)
+
+   Within these categories, ordering is as follows.
+   * Variables are put in a standard order.  (Roughly, the oldest
+     variable is put first; the order is not related to the names of
+     variables.  Users should not rely on the order of variables. They
+     should be considered implementation dependent. The ordering of
+     variables within a sorted list, as produced by `setof/3' or
+     `sort/2', shall remain constant.)
+
+   * Database references are put in a standard order (the order is
+     based roughly on the time of creation of the reference).
+
+   * Numbers are put in numeric order.  Where a number may be
+     represented by an integer or a floating-point number, as in 2 and
+     2.0, the integer is considered to be infinitesimally smaller than
+     its floating-point counterpart.
+
+   * Atoms are put in alphabetical order according to the character set
+     in use.
+
+   * Compound terms are ordered first by arity, then by the name of the
+     principal functor, then by the arguments (in left-to-right order).
+
+   * Lists are compared as ordinary compound terms with functor `./2'
+
+
+   For example, here is a list of terms in the standard order:
+     [ X, '$ref'(123456,12), -9, 1, 1.0, fie, foe, fum, [1],
+          X = Y, fie(0,2), fie(1,1) ]
+
+   The predicates for comparison of terms are described below.
+
+T1 `==' T2
+     T1 and T2 are literally identical  (in  particular,  variables in
+     equivalent positions in the two terms must be identical).
+
+T1 `\==' T2
+     T1 and T2 are _not_ literally identical.
+
+T1 `@<' T2
+     T1 is before term T2 in the standard order.
+
+T1 `@>' T2
+     T1 is after term T2
+
+T1 `@=<' T2
+     T1 is not after term T2
+
+T1 `@>=' T2
+     T1 is not before term T2
+
+`compare(OP, T1, T2)'
+     the result of comparing terms T1 and T2 is OP, where the possible
+     values for OP are:
+    `='
+          if T1 is identical to T2,
+
+    `<'
+          if T1 is before T2 in the standard order,
+
+    `>'
+          if T1 is after T2 in the standard order.
+
+
+File: quintus.info,  Node: ref-lte-cte-sor,  Prev: ref-lte-cte-sot,  Up: ref-lte-cte
+
+Sorting Terms
+.............
+
+   Two predicates, `sort/2' and `keysort/2' sort lists into the standard
+order.  `keysort/2' takes a list consisting of key-value pairs and sorts
+according to the key.
+
+   Further sorting routines are available in `library(samsort)'.
+
+
+File: quintus.info,  Node: ref-lte-lib,  Next: ref-lte-sum,  Prev: ref-lte-cte,  Up: ref-lte
+
+Library Support
+---------------
+
+   * `library(occurs)'
+
+   * `library(subsumes)'
+
+   * `library(samsort)'
+
+   Regarding list-processing: *Note lib-lis::
+
+
+File: quintus.info,  Node: ref-lte-sum,  Prev: ref-lte-lib,  Up: ref-lte
+
+Summary of Predicates
+---------------------
+
+   * `'='/2'
+
+   * `'=..'/2'
+
+   * `=='/2
+
+   * `\=='/2
+
+   * `@</2'
+
+   * `@=</2'
+
+   * `@>=/2'
+
+   * `@>/2'
+
+   * `append/3'
+
+   * `arg/3'
+
+   * `atom/1'
+
+   * `atom_chars/2'
+
+   * `atomic/1'
+
+   * `compare/3'
+
+   * `copy_term/2'
+
+   * `float/1'
+
+   * `functor/3'
+
+   * `integer/1'
+
+   * `keysort/2'
+
+   * `length/2'
+
+   * `name/2'
+
+   * `nonvar/1'
+
+   * `number/1'
+
+   * `number_chars/2'
+
+   * `numbervars/3'
+
+   * `sort/2'
+
+   * `subsumes_chk/2'
+
+   * `var/1'
+
+
+File: quintus.info,  Node: ref-lps,  Next: ref-lte,  Prev: ref-iex,  Up: ref
+
+Looking at the Program State
+============================
+
+* Menu:
+
+* ref-lps-ove::                         Overview
+* ref-lps-app::                         Associating Predicates with their Properties
+* ref-lps-apf::                         Associating Predicates with Files
+* ref-lps-flg::                         Prolog Flags
+* ref-lps-lco::                         Load Context
+
+
+File: quintus.info,  Node: ref-lps-ove,  Next: ref-lps-app,  Up: ref-lps
+
+Overview
+--------
+
+   Various aspects of the program state can be inspected: The clauses of
+all or selected dynamic procedures, currently available atoms, user
+defined predicates, source files of predicates and clauses, predicate
+properties and the current load context can all be accessed by calling
+the predicates listed in *Note ref-lps-ove::.  Furthermore, the values
+of prolog flags can be inspected and, where it makes sense, changed.
+The following predicates accomplish these tasks:
+
+`listing'
+     list all dynamic procedures in the type-in module
+
+`listing(P)'
+     list the dynamic procedure(s) specified by P
+
+`current_atom(A)'
+     A is a currently available atom (nondeterminate)
+
+`current_predicate(A,P)'
+     A is the name of a predicate with most general goal P
+     (nondeterminate)
+
+`predicate_property(P,PROP)'
+     PROP is a property of the loaded predicate P (nondeterminate)
+
+`prolog_flag(F,V)'
+     V is the current value of Prolog flag F (nondeterminate)
+
+`prolog_flag(F,O,N)'
+     O is the old value of Prolog flag F; N is the new value
+
+`prolog_load_context(K,V)'
+     find out the context of the current load
+
+`source_file(F)'
+     F is a source file that has been loaded into the database
+
+`source_file(P,F)'
+     P is a predicate defined in the loaded file F
+
+`source_file(P,F,N)'
+     Clause number N of predicate P came from file F
+
+
+File: quintus.info,  Node: ref-lps-app,  Next: ref-lps-apf,  Prev: ref-lps-ove,  Up: ref-lps
+
+Associating Predicates with their Properties
+--------------------------------------------
+
+   The following properties are associated with predicates either
+implicitly or by declaration:
+
+   * `built_in'
+
+   * `checking_advice'
+
+   * `compiled'
+
+   * `dynamic'
+
+   * `exported'
+
+   * `extern_link'
+
+   * `foreign'
+
+   * `has_advice'
+
+   * `imported_from'
+
+   * `interpreted'
+
+   * `locked'
+
+   * `meta_predicate'
+
+   * `multifile'
+
+   * `spied'
+
+   * `volatile'
+
+   These are described elsewhere in the manual (see Index).  To query
+these associations, use `predicate_property/2'.  The reference page
+contains several examples.
+
+
+File: quintus.info,  Node: ref-lps-apf,  Next: ref-lps-flg,  Prev: ref-lps-app,  Up: ref-lps
+
+Associating Predicates with Files
+---------------------------------
+
+   Information about loaded files and the predicates and clauses in them
+is returned by `source_file/[1,2,3]'.  `source_file/1' can be used to
+identify an absolute filename as loaded, or to backtrack through all
+loaded files.  To find out the correlation between loaded files and
+predicates, call `source_file/2'.  `source_file/3' allows for querying
+about which clause for a predicate is in which loaded file.
+`source_file/3' is useful for handling multifile predicates (see *Note
+mpg-ref-multifile::), but it works for predicates defined completely in
+one file, as well.
+
+   Any combination of bound and unbound arguments is possible, and
+`source_file/3' will generate the others.
+
+
+File: quintus.info,  Node: ref-lps-flg,  Next: ref-lps-lco,  Prev: ref-lps-apf,  Up: ref-lps
+
+Prolog Flags
+------------
+
+* Menu:
+
+* ref-lps-flg-cha::                      Changing or Querying System Parameters
+* ref-lps-flg-rop::                     Parameters that can be Queried Only
+
+
+File: quintus.info,  Node: ref-lps-flg-cha,  Next: ref-lps-flg-rop,  Up: ref-lps-flg
+
+Changing or Querying System Parameters
+......................................
+
+   Prolog flags enable you to modify certain aspects of Prolog's
+behavior, as outlined below.  This is accomplished by using
+`prolog_flag/3'.  If you simply want to query the value of a flag, use
+`prolog_flag/2'.
+
+   By using the prolog flags listed below, it is possible to:
+Flag
+     Purpose
+
+`character_escapes'
+     Enable or disable escaping of special characters in I/O
+     operations.  (See *Note ref-syn-ces::)
+
+`debugging'
+     Turn on/off trace and debug mode by using `prolog_flag/3' or by
+     using the predicates `trace/0', `debug/0', `notrace/0', and
+     `nodebug/0'.
+
+`fileerrors'
+     Set or reset the `fileerrors' flag by using `prolog_flag/3' or by
+     using the pair of predicates `fileerrors/0' and `nofileerrors/0'.
+
+`gc'
+     Turn on/off garbage collection by using `prolog_flag/3' or by
+     using the predicates `gc/0' and `nogc/0'.
+
+`gc_margin'
+     Set the number of bytes that must be reclaimed by a garbage
+     collection in order to avoid heap expansion (not available on some
+     systems; see *Note ref-mgc::)
+
+`gc_trace'
+     Enable or disable diagnostic tracing of garbage collections.
+
+`multiple'
+     on or off.
+
+`single_var'
+     on or off.
+
+`syntax_error'
+     Control Prolog's response to syntax errors.  See *Note
+     ref-ere-err-syn::.
+
+`unknown'
+     Set the action to be taken on unknown procedures by using
+     `prolog_flag/3' or `unknown/2' (see *Note dbg-bas-con-unk::).
+     `unknown/2' writes a message to `user_output' saying what the new
+     state is.  It is intended for use at the top level.
+     `prolog_flag/3' does not write a message.  It is intended for use
+     in code.
+
+   For further details, see the reference page.  Also see *Note
+ref-mgc:: for more detailed descriptions of the garbage collection
+flags.
+
+   To inspect the value of a flag without changing it, one can say
+     | ?- prolog_flag(FlagName, Value).
+
+   You can use `prolog_flag/2' to enumerate all the FLAGNAMEs that the
+system currently understands, together with their current values.
+
+
+File: quintus.info,  Node: ref-lps-flg-rop,  Prev: ref-lps-flg-cha,  Up: ref-lps-flg
+
+Parameters that can be Queried Only
+...................................
+
+   Prolog flags can be used to effect the changes listed above, or to
+ask about the current values of those parameters.  In addition, you can
+use `prolog_flag/2' (not `prolog_flag/3') to make the following queries
+using the flag names listed below:
+
+Flag
+     Purpose
+
+`add_ons'
+     What add-on products are statically linked into to Prolog system?
+
+`host_type'
+     What is the host-type?
+
+`quintus_directory'
+     What is the absolute name of the Quintus directory, where is the
+     root of the entire Quintus Installation hierarchy?
+
+`runtime_directory'
+     What is the absolute name of the directory where all Prolog
+     executables reside?  In the Runtime System, it is expected that
+     this value will be overwritten, using `qsetpath' when the runtime
+     system is installed (see *Note too-too-qgetpath:: and *Note
+     too-too-qsetpath::).  This flag is used to define
+     `file_search_path(RUNTIME,RUNTIMEDIR)'.
+
+`version'
+     What version of Prolog is being run?
+
+`system_type'
+     `development'
+
+   Use `prolog_flag/2' to make queries, `prolog_flag/3' to make changes.
+
+
+File: quintus.info,  Node: ref-lps-lco,  Prev: ref-lps-flg,  Up: ref-lps
+
+Load Context
+------------
+
+* Menu:
+
+* ref-lps-lco-sum::                     Predicate Summary
+
+
+[See printed or HTML manual.]
+
+                             Load Context
+
+   By calling `prolog_load_context/[2,3]' you can determine:
+
+   * whether the current context is in a loading/compilation or a
+     start-up of an application (see the above figure).
+
+   * the current Prolog load/compilation context: module, file,
+     directory or stream.
+
+
+File: quintus.info,  Node: ref-lps-lco-sum,  Up: ref-lps-lco
+
+Predicate Summary
+.................
+
+   * `current_atom/1'
+
+   * `current_predicate/2'
+
+   * `listing/[0,1]'
+
+   * `predicate_property/2'
+
+   * `prolog_flag/[2,3]'
+
+   * `prolog_load_conitemize/2'
+
+   * `source_file/[1,2,3]'
+
+
+File: quintus.info,  Node: ref-iex,  Next: ref-lps,  Prev: ref-lod,  Up: ref
+
+Interrupting Execution
+======================
+
+* Menu:
+
+* ref-iex-int::                         Control-c Interrupts
+* ref-iex-iha::                         Interrupt Handling
+* ref-iex-sum::                         Predicate/Function Summary
+* ref-iex-lib::                         Library Support
+
+
+File: quintus.info,  Node: ref-iex-int,  Next: ref-iex-iha,  Up: ref-iex
+
+Control-c Interrupts
+--------------------
+
+   At any time, Prolog's execution can be interrupted by typing `^c'.
+Under Windows, interruption may be delayed if Prolog is in certain OS
+routines, especially when waiting for input; the interrupt will then
+happen when returning to the OS routine.  The following prompt is then
+displayed:
+     Prolog interruption (h for help)?
+
+   If you then type `h', followed by <RET>,  you will get a list of the
+possible responses to this prompt:
+
+     Prolog interrupt options:
+       h  help         - this list
+       c  continue     - do nothing
+       d  debug        - debugger will start leaping
+       t  trace        - debugger will start creeping
+       a  abort        - abort to the current break level
+       q  really abort - abort to the top level
+       e  exit         - exit from Prolog
+
+   The `d' option will cause you to enter the debugger the next time
+control passes to a spypoint.  You can then use the `g' (ancestors)
+option of the debugger to find out at what level of execution you
+interrupted the program.
+
+   The `t' option will also cause you to enter the debugger at the next
+call.
+
+   The `a' option causes an abort to the current break level.  In
+previous releases of Quintus Prolog, the `a' option ignored break
+levels, always aborting to the top level (break level 0).
+
+   The `q' option causes an abort to the top level (break level 0).
+This behavior is identical to the `a' option in previous Quintus Prolog
+systems.
+
+   In runtime systems, the default behavior on a `^c' interrupt is to
+abort immediately, rather than display the above menu.
+
+   For more information on `^c' interrupts and signal handlers, see
+*Note ref-iex-iha::.
+
+   The predicates that control this are:
+
+`halt/0'
+     exit from Prolog
+
+`break/0'
+     start a new break-level to interpret commands from the user
+
+`abort/0'
+     abort execution of the program; return to current break level
+
+
+File: quintus.info,  Node: ref-iex-iha,  Next: ref-iex-sum,  Prev: ref-iex-int,  Up: ref-iex
+
+Interrupt Handling
+------------------
+
+* Menu:
+
+* ref-iex-iha-cfc::                     Changing Prolog's Control Flow from C
+* ref-iex-iha-ush::                     User-specified signal handlers
+* ref-iex-iha-cre::                     Critical Regions
+
+
+File: quintus.info,  Node: ref-iex-iha-cfc,  Next: ref-iex-iha-ush,  Up: ref-iex-iha
+
+Changing Prolog's Control Flow from C
+.....................................
+
+   If the application has a toplevel, the function `QP_action()' can be
+called from C to alter Prolog's flow of control.  This function allows
+the user to make Prolog abort, exit, suspend execution, turn on
+debugging, or prompt for the desired action.  To use it, use `#include
+<quintus/quintus.h>' in your C source code.  This file should be
+installed in a central place; if not, there should be a copy of it in
+the `embed' directory (refer to *Note int-dir:: for location).
+`quintus.h' defines the following constants:
+
+`QP_ABORT'
+     *Abort to the current break level
+
+`QP_REALLY_ABORT'
+     *Abort to top level
+
+`QP_STOP'
+     Stop (suspend) process
+
+`QP_IGNORE'
+     Do nothing
+
+`QP_EXIT'
+     Exit Prolog immediately
+
+`QP_MENU'
+     Present action menu
+
+`QP_TRACE'
+     Turn on trace mode
+
+`QP_DEBUG'
+     Turn on debugging
+
+   To change Prolog's control flow in a given instance, call
+`QP_action()' with one of these constants; for example,
+     #include <quintus/quintus.h>
+     void abort_execution(){
+         QP_action(QP_ABORT);
+     }
+
+   Some calls to `QP_action()' do not normally return, for example when
+the `QP_ABORT' constant is specified. However, calls to `QP_action()'
+from an interrupt handler must be viewed as "requests".  They are
+requests that will definitely be honored, but not always at the time of
+the call to `QP_action()'. Therefore calls to `QP_action()' should be
+prepared for the function to return.
+
+   It is currently not possible to call Prolog from an interrupt
+handler.
+
+   For systems that do not have a toplevel, the actions marked with an
+asterisk will have no effect other than to make `QP_action()' return
+`QP_ERROR'.
+
+   What does it mean to have a toplevel? If the application is calling
+the function `QP_toplevel()', then the application has a toplevel.  The
+development system and runtime systems both call `QP_toplevel()'.  An
+exit from either of these environments is effectively a return from
+`QP_toplevel()'.  An embedded application may or may not call
+`QP_toplevel()'.  One of the things `QP_toplevel()' does is establish
+signal handlers.  Another thing it does is establish a place for
+`QP_action()' to _jump to_, the actions marked with an asterik are
+essentially a _jump_ to the toplevel, and will not work in systems
+without a toplevel.  For more about `QP_toplevel()', see *Note
+cfu-ref-toplevel::.
+
+
+File: quintus.info,  Node: ref-iex-iha-ush,  Next: ref-iex-iha-cre,  Prev: ref-iex-iha-cfc,  Up: ref-iex-iha
+
+User-specified signal handlers
+..............................
+
+   This section only applies to UNIX as signals are not used under
+Windows.
+
+   Prolog sets up signal handlers when either `QP_initialize()' or
+`QP_toplevel()' is called. These handlers provide the default interrupt
+handling  for `^c' described in the previous sections.
+`QP_initialize()' and `QP_toplevel()' sets handlers for all signals
+that have the default handler and the default behavior is not what
+Prolog wants.  If users have set their own signal handlers (which are
+different from the default signal handlers) then Prolog will not change
+these handlers. Once Prolog has started up and is running the toplevel
+read-prove loop, Prolog will not change any signal handlers unless the
+user calls `QP_toplevel()'.
+
+   Users can set and remove signal handlers using the system function
+`signal(2)'.
+
+   To set up a signal handler, call the routine
+
+     signal(SIGNAL_NAME, FUNCTION_NAME)
+
+   from within a C foreign function, where SIGNAL_NAME is a constant
+identifying the signal being trapped and FUNCTION_NAME is the name of
+the function to be called in the event of the signal.  The constants
+identifying the various signals are defined in the file
+`/usr/include/signal.h'.
+
+   The example below shows how one would define an interrupt handler
+using `signal' and `QP_action()'.  For most users `^C' is the interrupt
+character.  The files `interrupt.c' and `interrupt.pl' make up this
+example; the interrupt handler is set up by calling
+`establish_handler/0' after compiling `interrupt.pl'.
+                                                         _interrupt.pl_
+     
+     /*
+         This is the foreign interface file for a sample interrupt handler.
+     */
+     
+     foreign_file('interrupt',[establish_handler]).
+     
+     foreign(establish_handler, establish_handler).
+     
+     :- load_foreign_files(['interrupt'], []).
+
+                                                          _interrupt.c_
+     
+     /*
+         The function my_handler is called when the user types the interrupt
+         character (normally ^c).  This function prompts for a response
+         and executes the user's choice.
+     */
+     
+     #include <signal.h>
+     #include <quintus/quintus.h>
+     
+     int my_handler()
+     {
+         char c;
+     
+         for(;;) {
+             printf("\nWell? ");
+             c = getchar();
+             if (c != '\n')
+                 while (getchar() != '\n') {};
+             switch(c) {
+             case 'a': QP_action(QP_ABORT);
+             case 'e': QP_action(QP_EXIT);
+             case 'c': return;
+             default: printf("a, c or e, please");
+             }
+         }
+     }
+     
+     void establish_handler()
+     {
+         signal(SIGINT,  my_handler);
+     }
+
+   The following trace illustrates the use of these files:
+
+     % cc -c interrupt.c
+     % prolog
+     Quintus Prolog Release 3.5 (Sun 4, SunOS 5.5)
+     
+     | ?- compile(interrupt).
+     % compiling file /goedel/tim/interrupt.pl
+     %  foreign file /goedel/tim/interrupt.o loaded
+     % interrupt.pl compiled in module user, 0.150 sec 1,508 bytes
+     
+     yes
+     | ?- establish_handler.
+     
+     yes
+     | ?- write(hi).
+     hi
+     yes
+     | ?- ^C
+     Well? g
+     a, c or e, please
+     Well? a
+     
+     ! Execution aborted
+     
+     | ?- ^C
+     Well? e
+     %
+
+
+File: quintus.info,  Node: ref-iex-iha-cre,  Prev: ref-iex-iha-ush,  Up: ref-iex-iha
+
+Critical Regions
+................
+
+   A critical region is a section of code during whose execution
+interrupts are to be ignored.  To create a critical region, one must
+block signals for the duration of the critical region and unblock the
+signals when leaving the critical region.  Examples of how to do this
+in both Prolog and C are in the library files `critical.pl' and
+`critical.c', which is discussed further in *Note ref-ere-ecr::.
+
+
+File: quintus.info,  Node: ref-iex-sum,  Next: ref-iex-lib,  Prev: ref-iex-iha,  Up: ref-iex
+
+Predicate/Function Summary
+--------------------------
+
+   * `abort/0'
+
+   * `break/0'
+
+   * `halt/0'
+
+   * `QP_action()'
+
+
+File: quintus.info,  Node: ref-iex-lib,  Prev: ref-iex-sum,  Up: ref-iex
+
+Library Support
+---------------
+
+   `library(critical)'
+
+
+File: quintus.info,  Node: ref-mgc,  Next: ref-msg,  Prev: ref-lte,  Up: ref
+
+Memory Use and Garbage Collection
+=================================
+
+* Menu:
+
+* ref-mgc-ove::                         Overview
+* ref-mgc-gcp::                         Garbage Collection and Programming Style
+* ref-mgc-egc::                         Enabling and Disabling the Garbage Collector
+* ref-mgc-mgc::                         Monitoring Garbage Collections
+* ref-mgc-gch::                         Interaction of Garbage Collection and Heap Expansion
+* ref-mgc-gcd::                         Invoking the Garbage Collector Directly
+* ref-mgc-osi::                         Operating System Interaction
+* ref-mgc-ago::                         Atom Garbage Collection
+* ref-mgc-sum::                         Summary of Predicates
+
+
+File: quintus.info,  Node: ref-mgc-ove,  Next: ref-mgc-gcp,  Up: ref-mgc
+
+Overview
+--------
+
+* Menu:
+
+* ref-mgc-ove-rsp::                     Reclaiming Space
+* ref-mgc-ove-sta::                     Displaying Statistics
+
+   Quintus Prolog uses three data areas:  program space, local stack
+space, and global stack space.  Each of these areas is automatically
+expanded if it overflows; if necessary, the other areas are shifted to
+allow this.
+
+   The local stack contains all the control information and variable
+bindings needed in a Prolog execution.  Space on the local stack is
+reclaimed on determinate success of predicates and by tail recursion
+optimization, as well as on backtracking.
+
+   The global stack space contains the heap (also known as the global
+stack) and the trail.  The heap contains all the data structures
+constructed in an execution of the program, and the trail contains
+references to all the variables that need to be reset when backtracking
+occurs.  Both of these areas grow with forward execution and shrink on
+backtracking.  These fluctuations can be monitored by
+`statistics/[0,2]'.
+
+   The program space contains compiled and interpreted code, recorded
+terms, and atoms.  The space occupied by compiled code, interpreted
+code, and recorded terms is recovered when it is no longer needed; the
+space occupied by atoms that are no longer in use can be recovered by
+atom garbage collection described in *Note ref-mgc-ago::.
+
+   Quintus Prolog uses the heap to construct compound terms, including
+lists.  Heap space is used as Prolog execution moves forward.  When
+Prolog backtracks, it automatically reclaims space on the heap.
+However, if a program uses a large amount of space before failure and
+backtracking occur, this type of reclamation may be inadequate.
+
+   Without garbage collection, the Prolog system must attempt to expand
+the heap whenever a heap overflow occurs.  To do this, it first
+requests additional space from the operating system.  If no more space
+is available, the Prolog system attempts to allocate unused space from
+the other Prolog data areas.  If additional space cannot be found, a
+resource error is raised.
+
+   Heap expansion and abnormal termination of execution due to lack of
+heap space can occur even if there are structures in the heap that are
+no longer accessible to the computation (these structures are what is
+meant by "garbage").  The proportion of garbage to non-garbage terms
+varies during execution and with the Prolog code being executed.  The
+heap may contain no garbage at all, or may be nearly all garbage.
+
+   The  garbage collector periodically reclaims inaccessible heap
+space, reducing the need for heap expansion and lessening the
+likelihood of running out of heap.  When the garbage collector is
+enabled (as it is by default), the system makes fewer requests to the
+operating system for additional space.  The fact that less space is
+required from the operating system can produce a substantial savings in
+the time taken to run a program, because paging overhead can be much
+less.
+
+   For example, without garbage collection, compiling a file containing
+the sequence
+     p(_) :- p([a]).
+     :- p(_).
+
+   causes the heap to expand until the Prolog process eventually runs
+out of space.  With garbage collection enabled, the above sequence
+continues indefinitely.  The list built on the heap by each recursive
+call is inaccessible to future calls (since `p/1' ignores its argument)
+and can be reclaimed by the garbage collector.
+
+   Garbage collection does not guarantee freedom from out-of-space
+errors, however.  Compiling a file containing the sequence
+     p(X) :- p([X]).
+     :- p(a).
+
+   expands the heap until the Prolog process eventually runs out of
+space.  This happens in spite of the garbage collector, because all the
+terms built on the heap are accessible to future computation and cannot
+be reclaimed.
+
+
+File: quintus.info,  Node: ref-mgc-ove-rsp,  Next: ref-mgc-ove-sta,  Up: ref-mgc-ove
+
+Reclaiming Space
+................
+
+   `trimcore/0' reclaims space in all of Prolog's data areas.  At any
+given time, each data area contains some free space.  For example, the
+local stack space contains the local stack and some free space for that
+stack to grow into.  The data area is automatically expanded when it
+runs out of free space, and it remains expanded until `trimcore/0' is
+called, even though the stack may have shrunk considerably in the
+meantime.  The effect of `trimcore/0' is to reduce the free space in
+all the data areas as much as possible, and to give the space no longer
+needed back to the operating system.  `trimcore/0' is called each time
+Prolog returns to the top level or the top of a break level.
+
+
+File: quintus.info,  Node: ref-mgc-ove-sta,  Prev: ref-mgc-ove-rsp,  Up: ref-mgc-ove
+
+Displaying Statistics
+.....................
+
+   Statistics relating to memory usage, run time, and garbage
+collection, including information about which areas of memory have
+overflowed and how much time has been spent expanding them, can be
+displayed by calling `statistics/0'.
+
+   The output from `statistics/0' looks like this:
+
+     memory (total)         377000 bytes:     350636 in use,      26364 free
+        program space       219572 bytes
+           atom space        (2804 atoms)      61024 in use,  43104 free
+     
+        global space         65532 bytes:       9088 in use,      56444 free
+           global stack                         6984 bytes
+           trail                                  16 bytes
+           system                               2088 bytes
+        local stack          65532 bytes:        356 in use,      65176 free
+           local stack                           332 bytes
+           system                                 24 bytes
+     
+      0.000 sec. for 0 global and 0 local space shifts
+      0.000 sec. for 0 garbage collections which collected 0 bytes
+      0.000 sec. for 0 atom garbage collections which collected 0 bytes
+      0.233 sec. runtime
+
+   Note the use of indentation to indicate sub-areas.  That is, memory
+contains the program space, global space, and local stack, and the
+global space contains the global stack and trail.
+
+   The memory (total) figure shown as "in use" is the sum of the spaces
+for the program, global and local areas. The "free" figures for the
+global and local areas are for free space within those areas.  However,
+this free space is considered used as far as the memory (total) area is
+concerned, because it has been allocated to the global and local areas.
+The program space is not considered to have its own free space.  It
+always allocates new space from the general memory (total) free area.
+
+   Individual statistics can be obtained by `statistics/2', which
+accepts a keyword and returns a list of statistics related to that
+keyword.
+
+   The keys and values for `statistics(KEYWORD, LIST)' are summarized
+below.  The keywords `core' and `heap' are included to retain
+compatibility with DEC-10 Prolog.  Times are given in milliseconds and
+sizes are given in bytes.
+
+     KEYWORD                    LIST
+
+runtime
+     [cpu time used by Prolog, cpu time since last call to
+     `statistics/[0,2]']
+
+system_time
+     [cpu time used by the operating system, cpu time used by the
+     system since the last call to `statistics/[0,2]']
+
+real_time
+     [wall clock time since 00:00 GMT 1/1/1970, wall clock time since
+     the last call to `statistics/[0,2]']
+
+memory
+     [total virtual memory in use, total virtual memory free]
+
+stacks
+     [total global stack memory, total local stack memory]
+
+program
+     [program space, 0]
+
+global_stack
+     [global stack in use, global stack free]
+
+local_stack
+     [local stack in use, local stack free]
+
+trail
+     [size of trail, 0]
+
+garbage_collection
+     [number of GCs, freed bytes, time spent]
+
+stack_shifts
+     [number of global stack area shifts, number of local stack area
+     shifts, time spent shifting]
+
+atoms
+     [number of atoms, atom space in use, atom space free]
+
+atom_garbage_collection
+     [number of AGCs, freed bytes, time spent]
+
+core
+     (same as memory)
+
+heap
+     (same as program)
+
+   For the keywords `program' and `trail', the second element of the
+returned list is always 0.  This is for backward compatibility only, 0
+being the most appropriate value in the Quintus Prolog system for the
+quantities that would be returned here in DEC-10 Prolog and previous
+releases of Quintus Prolog .
+
+   To see an example of the use of each of these keywords, type
+     | ?- statistics(K, L).
+
+   and then repeatedly type `;' to backtrack through all the possible
+keywords.  As an additional example, to report information on the
+runtime of a predicate p/0, add the following to your program:
+
+     :- statistics(runtime, [T0| _]),
+        p,
+        statistics(runtime, [T1|_]),
+        T is T1 - T0,
+        format('p/0 took ~3d sec.~n', [T]).
+

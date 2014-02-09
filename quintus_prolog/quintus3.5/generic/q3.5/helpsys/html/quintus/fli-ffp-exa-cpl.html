@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Calling Arbitrary Prolog Goals from C</h5>
+
+   <p>Any Prolog predicate can be made callable from foreign code, including
+system built-ins.  An especially useful case of this generally useful
+ability is making the built-in
+<code>call/1</code> callable.  <code>call/1</code> is declared callable like any other
+predicate, and is passed the Prolog term to be called.  The term may
+have originated in Prolog, or may have been constructed in C using
+the supplied term manipulation functions (see <a href="fli-p2f-trm.html#fli-p2f-trm">fli-p2f-trm</a>).
+
+   <p>In this particular example, we pass a term from Prolog to C, then C
+calls <code>call/1</code> with that term.  This lets us concentrate on the calling
+rather than on the construction of the term to be called.
+
+   <p>On the Prolog side of the interface, the following declaration is loaded:
+<pre class="example">     :- extern(call(+term)).
+     </pre>
+
+   <p>On the C side, the following function is defined, compiled and either
+loaded into Prolog using the dynamic foreign interface or statically
+linked with Prolog:
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     call_prolog(t)
+     QP_term_ref t;
+     {
+             QP_pred_ref call = QP_predicate("call", 1, "user");
+             QP_query(call, t);
+     }
+     </pre>
+
+   <p>This done, any goal that can be called from Prolog can also be called
+from C by passing it to <code>call_prolog/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-exa-fib.html#fli-ffp-exa-fib">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-exa.html#fli-ffp-exa">Up</a>
+</ul>
+</div>
+   </body></html>
+

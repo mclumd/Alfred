@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Converting Non-module-files into Module-files</h4>
+
+   <p>The Prolog cross-referencer located in <code>qplib(tools)</code> can
+automatically generate <code>module/2</code> declarations from its
+cross-reference information.  This is useful if you want to take a set
+of files making up a program and make each of those files into a
+module-file.  See the file <code>library('xref.doc')</code> for more information.
+
+   <p>Alternatively, if you have a complete Prolog program consisting of a set of
+source files <code>{file1, file2, ...}</code>, and you wish to encapsulate it in a
+single module <var>mod</var>, then this can be done by creating a "driver"
+file of the following form:
+<pre class="example">     
+     
+     :- module(<var>mod</var>, [ ... ]).
+     
+     :- ensure_loaded(file1).
+     :- ensure_loaded(file2).
+        .
+        .
+        .
+     </pre>
+
+   <p>When a module is created in this way, none of the files in the program
+<code>{file1, file2, ...}</code> have to
+be changed.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-lod.html#ref-mod-lod">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-def.html#ref-mod-def">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

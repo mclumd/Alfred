@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Finding the width of a term -- <code>library(printlength)</code></h4>
+
+   <p><code>library(printlength)</code> provides four predicates to determine how wide a
+term would be if written:
+
+     <dl>
+
+     <br><dt><code>print_length(</code><var>+Command</var><code>, </code><var>-Length</var><code>)</code>
+     <dd>
+This succeeds when <var>Command</var> would write <var>Length</var> characters to the
+current output stream, none of them being newline characters. 
+<code>print_length/2</code> allows you to determine how many columns an atom
+(or other term) would take if printed according to <var>Command</var>. 
+The length of the output of any command at all can be determined this
+way, provided that it writes to the current stream, and not to a stream
+argument.  <code>print_length/2</code> fails if <var>Command</var> fails.
+
+     <br><dt><code>print_length(</code><var>+Command</var><code>, </code><var>?StartColumn</var><code>, </code><var>?EndColumn</var><code>)</code>
+     <dd>
+This succeeds when executing <var>Command</var> would write
+<var>EndColumn</var>-<var>StartColumn</var> characters.  Either
+<var>StartColumn</var> or <var>EndColumn</var> should be instantiated to an
+integer.  Then one can solve for the other argument.  Quintus Prolog
+numbers columns starting from 0 (think of <code>line_position</code> as "the number
+of characters that have already been read from/written on this line"),
+so <code>print_length/3</code> will fail if <var>StartColumn</var> is negative. 
+<code>print_length/3</code> fails if <var>Command</var> fails.
+
+     <br><dt><code>print_lines</code><var>(+Command, -Lines)</var><code></code>
+     <dd>is true when Command would write
+<var>Lines</var> new-line characters to the current output stream.  One
+use of this is to tell whether there would be any point in calling
+<code>print_length/2</code>.
+
+     <br><dt><code>tab_to(</code><var>+Column</var><code>)</code>
+     <dd>
+Ensure that <code>line_position(</code><var>Current_output</var><code>, </code><var>Column</var><code>)</code> is true
+by writing 0 or 1 newlines and at most <var>Column</var> spaces to the
+<var>Current_output</var> stream. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-sub.html#lib-txp-sub">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-lct.html#lib-txp-lct">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp.html#lib-txp">Up</a>
+</ul>
+</div>
+   </body></html>
+

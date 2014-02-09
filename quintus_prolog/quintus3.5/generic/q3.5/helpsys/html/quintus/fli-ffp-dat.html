@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Passing Data to and from Prolog</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-ffp-dat-int.html#fli-ffp-dat-int">fli-ffp-dat-int</a>:                      Passing Integers
+<li><a accesskey="2" href="fli-ffp-dat-flo.html#fli-ffp-dat-flo">fli-ffp-dat-flo</a>:                      Passing Floats
+<li><a accesskey="3" href="fli-ffp-dat-cat.html#fli-ffp-dat-cat">fli-ffp-dat-cat</a>:                      Passing Atoms in Canonical Form
+</ul>
+
+   <p>The foreign function interface automatically converts between C's
+representation of data and the representation of atomic data types
+expected by Prolog.  Thus the calling function does not need to know
+how Prolog represents atoms, integers, floats or addresses in order to
+communicate with Prolog.  This feature simplifies the integration of
+Prolog with foreign code; in particular, it makes it easier to
+interface directly with already-written functions in libraries and
+other programs.  It also allows for compatibility with later versions
+of Quintus Prolog and with versions of Quintus Prolog running on other
+hardware.
+
+   <blockquote>
+
+        <p><strong>Asymmetry note:</strong> When C calls Prolog, in contrast to Prolog calling
+foreign code, there is no Prolog datum passed as the function return
+value.  Instead, the return value supplies the calling function with
+information as to whether the Prolog call succeeded or failed, or
+whether there was an exception raised. 
+</blockquote>
+
+   <p>Arguments are passed from C functions to Prolog predicates in
+the same order as they appear in the Prolog call.  Prolog assumes that
+C functions will call Prolog predicates with the number and type of
+arguments as declared by the <code>extern/1</code> declarations; if it does
+not, the results are unpredictable.  Certain types of inputs (for
+example, atoms) can be checked for validity when the query to Prolog
+is made, and an error value is returned if the type is
+incorrect.  Outputs are passed to Prolog as pointers to storage for
+results.  Prolog will internally create unbound variables with which
+to calculate the results.  The outputs will then be automatically
+converted and written into the C storage according to
+the calling specification.  If the result Prolog computes is inconsistent
+with the specified output type, an exception is signaled.
+
+   <blockquote>
+ <strong>Asymmetry note:</strong> When Prolog calls foreign code, outputs
+are unified with items supplied by the calling function; with C
+calling Prolog, assignment is used instead. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-a2s.html#fli-ffp-a2s">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-ppc.html#fli-ffp-ppc">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp.html#fli-ffp">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

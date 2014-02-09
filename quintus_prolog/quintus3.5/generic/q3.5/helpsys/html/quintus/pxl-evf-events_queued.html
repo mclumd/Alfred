@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>events_queued/[2,3]</code></h4>
+
+<pre class="example">     events_queued(+<var>Mode</var>, -<var>Number</var>)
+     events_queued(+<var>Displayable</var>, +<var>Mode</var>, -<var>Number</var>)
+     </pre>
+
+   <p>Unify <var>Number</var> with an integer giving the number of events queued
+for the given <var>Displayable</var>, which if omitted, is the default
+Display.
+
+   <p>If there are currently any events in Xlib's queue, the predicate
+returns immediately, unifying <var>Number</var>, regardless of the value of
+<var>Mode</var>.  Otherwise, it behaves according to the value of
+<var>Mode</var>:
+     <dl>
+
+     <br><dt><code>already</code>
+     <dd>Binds <var>Number</var> to 0 and
+succeeds.
+
+     <br><dt><code>after_reading</code>
+     <dd>Attempts to read more events from the Display
+connection to the X server, without flushing the output buffer, and
+unifies <var>Number</var> to the number of events read.
+
+     <br><dt><code>after_flushing</code>
+     <dd>Like <code>after_reading</code>, but also flushes the
+output buffer. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-evf-pending.html#pxl-evf-pending">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-evf-active_windows.html#pxl-evf-active_windows">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-evf.html#pxl-evf">Up</a>
+</ul>
+</div>
+   </body></html>
+

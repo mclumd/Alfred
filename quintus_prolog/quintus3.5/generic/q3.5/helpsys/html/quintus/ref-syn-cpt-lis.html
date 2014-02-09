@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Lists</h5>
+
+   <p><dfn>Lists</dfn> form an important class of data structures in Prolog. 
+They are essentially the same as the lists of Lisp: a list is either
+the atom <code>[]</code>, representing the empty list, or else a compound
+term with functor <code>.</code>  and two arguments, which are the head
+and tail of the list respectively, where the tail of a list is another
+list.  Thus a list of the first three natural numbers is the structure
+<pre class="example">                  .
+                 / \
+                1    .
+                    / \
+                   2    .
+                       / \
+                      3   []
+     </pre>
+
+   <p>which could be written using the standard syntax, as (A) but which is normally written in a special list notation, as (B).  Two examples of this list notation, as used when the tail of  a  list  is a
+variable, are (C), which represent the structure in (D).
+
+<pre class="example">     .(1,.(2,.(3,[]))) (A)
+     </pre>
+
+<pre class="example">     [1,2,3] (B)
+     </pre>
+
+<pre class="example">     [X|L]     [a,b|L] (C)
+     </pre>
+
+<pre class="example">                  .               .
+                 / \             / \
+               X     L         a     .
+                                    / \
+                                  b     L (D)
+     </pre>
+
+   <p>Note that the notation [X|L] does not add any new power to the
+language; it simply improves readability.  These examples could be
+written equally well as (E).
+
+<pre class="example">      .(X,L) .(a,.(b,L)) (E)
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-syn-cpt-sli.html#ref-syn-cpt-sli">Next</a>
+<li><a rel="up" accesskey="u" href="ref-syn-cpt.html#ref-syn-cpt">Up</a>
+</ul>
+</div>
+   </body></html>
+

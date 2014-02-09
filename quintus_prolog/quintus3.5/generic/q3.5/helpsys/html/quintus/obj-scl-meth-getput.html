@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Get and Put Methods</h5>
+
+   <p>Get and put methods are generated automatically for each of a class's
+public slots. These are 1-argument messages, named after the slots.
+
+   <p>In the point class whose definition begins with
+
+<pre class="example">     :- class point =
+             [public x:float=0,
+              public y:float=0].
+     </pre>
+
+   <p>the get and put methods are automatically generated for the <code>x</code> and
+<code>y</code> slots. If the class defines a <code>create/0</code> method, then the command
+
+<pre class="example">     | ?- <kbd>create(point, PointObj),
+          PointObj &gt;&gt;  x(OldX),
+          PointObj &gt;&gt;  y(OldY),
+          PointObj &lt;&lt;  x(3.14159),
+          PointObj &lt;&lt;  y(2.71828).</kbd>
+     </pre>
+
+   <p>creates a point object and binds both <code>OldX</code> and <code>OldY</code> to
+0.0E+00, its initial slot values. Then, it changes the values of the
+<code>x</code> and <code>y</code> slots to 3.14159 and 2.71828, respectively. The
+variable <code>PointObj</code> is bound to the point object.
+
+   <p>It is possible, and sometimes quite useful, to create get and put
+methods for slots that do not exist. For example, it is possible to
+add a polar coordinate interface to the point class by defining
+get and put methods for <code>r</code> and <code>theta</code>, even though there are no
+<code>r</code> and <code>theta</code> slots. The get methods might be defined as
+follows:
+
+<pre class="example">     Self &gt;&gt; r(R) :-
+             Self &gt;&gt; x(X),
+             Self &gt;&gt; y(Y),
+             R2 is X*X + Y*Y,
+             sqrt(R2, R).
+     
+     Self &gt;&gt; theta(T) :-
+             Self &gt;&gt; x(X),
+             Self &gt;&gt; y(Y),
+             A is Y/X,
+             atan(A, T).
+     </pre>
+
+   <p>This assumes that <code>library(math)</code>, which defines the <code>sqrt/2</code> and
+<code>atan/2</code> predicates, has been loaded. The put methods are left as an
+exercise.
+
+   <p>In the rational number class whose definition begins with
+
+<pre class="example">     :- class rational =
+             [public num:integer,
+              public denom:integer].
+     </pre>
+
+   <p>get and put methods are automatically generated for the <code>num</code> and <code>denom</code>
+slots. It might be reasonable to add a get method for <code>float</code>, which
+would provide a floating point approximation to the rational in
+response to that get message. This is left as an exercise.
+
+   <p>It is also possible to define get and put methods that take more than
+one argument. For example, it would be useful to have a put method for
+the point class that sets both slots of a point object. Such a method
+could be defined by
+
+<pre class="example">     Self &lt;&lt; point(X,Y) :-
+             Self &lt;&lt; x(X),
+             Self &lt;&lt; y(Y).
+     </pre>
+
+   <p>Similarly, a 2-argument get method for the rational number class might
+be defined as
+
+<pre class="example">     Self &gt;&gt; (N/D) :-
+             Self &gt;&gt; num(N),
+             Self &gt;&gt; denom(D).
+     </pre>
+
+   <p>Note that the name of the put message is <code>(/)/2</code>, and that the
+parentheses are needed because of the relative
+precedences of the <code>&gt;&gt;</code> and <code>/</code>
+operators.
+
+   <p>Put messages are used to store values in slots. Get messages, however,
+may be used either to fetch a value from a slot or to test whether a
+particular value is in a slot. For instance, the following command
+tests whether the <code>do_something/2</code> predicate sets the point
+object's <code>x</code> and <code>y</code> slots to 3.14159 and 2.71828, respectively.
+
+<pre class="example">     | ?- <kbd>create(point, PointObj),
+          do_something(PointObj),
+          PointObj &gt;&gt; x(3.14159),
+          PointObj &gt;&gt; y(2.71828).</kbd>
+     </pre>
+
+   <p>The <code>fetch_slot/2</code> predicate can similarly be used to test the value
+of a slot.
+
+   <p>The effects of a put message (indeed, of any message) are not undone
+upon backtracking. For example, the following command fails:
+
+<pre class="example">     | ?- <kbd>create(point, PointObj),
+          PointObj &lt;&lt; x(3.14159),
+          PointObj &lt;&lt; y(2.71828),
+          fail.</kbd>
+     </pre>
+
+   <p>But, it leaves behind a point object with <code>x</code> and <code>y</code> slots
+containing the values 3.14159 and 2.71828, respectively. In this,
+storing a value in an object's slot resembles storing a term in the
+Prolog database with <code>assert/1</code>.
+
+   <p>Some care is required when storing Prolog terms containing unbound
+variables in term slots.  For example, given the class definition that
+begins with
+
+<pre class="example">     :- class prolog_term = [public p_term:term].
+     
+     Self &lt;- create.
+     </pre>
+
+   <p>the following command would succeed:
+
+<pre class="example">     | ?- <kbd>create(prolog_term, TermObj),
+          TermObj &lt;&lt; p_term(foo(X,Y)),
+          X = a,
+          Y = b,
+          TermObj &gt;&gt; p_term(foo(c,d)).</kbd>
+     </pre>
+
+   <p>The reason is that the free variables in <code>foo(X,Y)</code> are renamed when the
+term is stored in the <code>prolog_term</code> object's <code>p_term</code> slot. This is
+similar to what happens when such a term is asserted to the Prolog
+database:
+
+<pre class="example">     | ?- <kbd>retractall(foo(_,_)),
+          assert(foo(X,Y)),
+          X = a,
+          Y = b,
+          foo(c,d).</kbd>
+     </pre>
+
+   <p>However, this goal would fail, because <code>c</code> and <code>d</code> cannot be unified:
+
+<pre class="example">     | ?- <kbd>create(prolog_term, TermObj),
+          TermObj &lt;&lt; p_term(foo(X,X)),
+          TermObj &gt;&gt; p_term(foo(c,d)).</kbd>
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-scl-meth-dir.html#obj-scl-meth-dir">Next</a>
+<li><a rel="up" accesskey="u" href="obj-scl-meth.html#obj-scl-meth">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Case Conversion -- <code>library(ctypes)</code></h4>
+
+   <p>There are no case conversion operations in the supported
+<code>library(strings)</code> package. 
+In the ASCII and EBCDIC character sets, case
+conversion is well defined, because each letter
+is either an uppercase letter (which has a unique lowercase
+equivalent) or a lowercase letter (which has a unique
+uppercase equivalent).  Not all of the character sets have this property.
+
+   <p>There are case conversion operations in <code>library(ctypes)</code>.  They are
+     <dl>
+
+     <br><dt><code>to_lower(</code><var>?Upper</var><code>, </code><var>?Lower</var><code>)</code>
+     <dd>which is true when
+<var>Upper</var> and <var>Lower</var> are valid character codes,
+and either <var>Upper</var> is the code of an uppercase letter
+that has a unique lowercase equivalent, and <var>Lower</var>
+is the code of that unique lowercase equivalent, or <var>Upper</var>
+is the code of some other character, and <var>Lower</var> is the
+same as <var>Upper</var>.  Note that this means that if <var>Lower</var>
+is the code of a lowercase letter that is the unique
+equivalent of some uppercase letter, there are two solutions
+for <var>Upper</var>.
+
+     <br><dt><code>to_upper(</code><var>?Lower</var><code>, </code><var>?Upper</var><code>)</code>
+     <dd>which is true when
+<var>Lower</var> and <var>Upper</var> are valid character codes,
+and either <var>Lower</var> is the code of a lowercase letter
+that has a unique uppercase equivalent; and <var>Upper</var>
+is the code of that unique uppercase equivalent, or <var>Lower</var>
+is the code of some other character, and <var>Upper</var> is the
+same as <var>Lower</var>.  Note that this means that if <var>Upper</var>
+is the code of an uppercase letter that is the unique
+equivalent of some lowercase letter, there are two solutions
+for <var>Lower</var>. 
+</dl>
+
+   <p>In the ASCII and EBCDIC character sets,
+these definitions behave as one would expect. 
+But consider the case of Greek.
+
+   <p>Capital sigma is undeniably an uppercase letter; yet it has
+two lowercase equivalents:  one for use at the end of words and
+one for use elsewhere.  This means that <code>to_upper/2</code> would map
+both medial and final lowercase sigma to uppercase sigma,
+but that <code>to_lower/2</code> would leave uppercase sigma unchanged. 
+A similar problem exists in German, where <code>&szlig;</code> is a lowercase
+letter whose uppercase equivalent is the <em>pair</em> of letters
+<code>SS</code>.
+
+   <p>Because of such problems, <code>library(caseconv)</code> is only adequate for
+ASCII or EBCDIC. 
+This package defines two groups of predicates.  The predicates in
+the first group
+test the case of a name.  Those in the second group convert the case of
+a name or a non-empty list of character codes.
+
+     <dl>
+
+     <br><dt><code>lower(</code><var>+Text</var><code>)</code>
+     <dd>is true if <var>Text</var> contains no uppercase letters.
+
+     <br><dt><code>upper(</code><var>+Text</var><code>)</code>
+     <dd>is true if <var>Text</var> contains no lowercase letters.
+
+     <br><dt><code>mixed(</code><var>+Text</var><code>)</code>
+     <dd>is true if <var>Text</var> contains at least one
+lowercase letter and and least one uppercase letter. 
+</dl>
+
+   <p>In each case, <var>Text</var> may contain other things than letters. 
+If <code>mixed(</code><var>Text</var><code>)</code> is true, then <code>lower(</code><var>Text</var><code>)</code> and
+<code>upper(</code><var>Text</var><code>)</code> must both be false.  However, <code>lower(</code><var>Text</var><code>)</code>
+and <code>upper(</code><var>Text</var><code>)</code> can both be true if <var>X</var> contains no
+letters at all.  Examples:
+<pre class="example">     | ?- <kbd>lower(a).</kbd>
+     
+     yes
+     
+     | ?- <kbd>lower(quixotic).</kbd>
+     
+     yes
+     
+     | ?- <kbd>lower('Quixotic').</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>lower(**).</kbd>
+     
+     yes
+     
+     | ?- <kbd>upper(a).</kbd>
+     
+     no
+     
+     | ?- <kbd>upper('QUIXOTIC').</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>upper('Quixotic').</kbd>
+     
+     no
+     
+     | ?- <kbd>upper(**).</kbd>
+     
+     yes
+     
+     | ?- <kbd>mixed(quixotic).</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>mixed('QUIXOTIC').</kbd>
+     
+     no
+     
+     | ?- <kbd>mixed('!$Quixotic&lt;&lt;&lt;').</kbd>
+     
+     yes
+     
+     | ?- <kbd>mixed(**).</kbd>
+     
+     no
+     </pre>
+
+     <dl>
+
+     <br><dt><code>lower(</code><var>+Given</var><code>, </code><var>?Lower</var><code>)</code>
+     <dd>unifies <var>Lower</var> with
+a lowercase version of <var>Given</var>.  Uppercase letters are converted
+to lowercase, and no other changes are made.  <code>lower(</code><var>Lower</var><code>)</code>
+is true.
+
+     <br><dt><code>upper(</code><var>+Given</var><code>, </code><var>?Upper</var><code>)</code>
+     <dd>unifies <var>Upper</var> with
+an uppercase version of <var>Given</var>.  Lowercase letters are converted
+to uppercase, and no other changes are made.  <code>upper(</code><var>Upper</var><code>)</code>
+is true.
+
+     <br><dt><code>mixed(</code><var>+Given</var><code>, </code><var>?Mixed</var><code>)</code>
+     <dd>unifies <var>Mixed</var> with
+a mixed-case version of <var>Given</var>.  In each block of consecutive
+letters, the first letter is converted to uppercase and the following
+letters are converted to lowercase.  No other changes are made. 
+<code>mixed(</code><var>Mixed</var><code>)</code> is true if and only if <var>Given</var>
+contained at least two adjacent letters; otherwise <code>upper(</code><var>Mixed</var><code>)</code>
+is true. 
+</dl>
+
+   <p>In each of these predicates, <var>Given</var> may be an atom or
+a non-empty list of character codes.  If <var>Given</var>
+is a number, these predicates will quietly fail.  The action
+of these predicates on other terms is not defined. 
+The second argument is unified with a term of the same type
+as <var>Given</var>, containing the same number of characters.
+
+   <p>Examples (assuming that <code>library(printchars)</code> has been loaded):
+<pre class="example">     | ?- <kbd>lower("Are other character sets a REAL problem?", X).</kbd>
+     
+     X = "are other character sets a real problem?"
+     
+     | ?- <kbd>upper('Yes, they are!', X).</kbd>
+     
+     X = 'YES, THEY ARE!'
+     
+     | ?- <kbd>mixed('what a nuisance', X).</kbd>
+     
+     X = 'What A Nuisance'
+     </pre>
+
+<pre class="example">     | ?- <kbd>upper(1.2e3, X).</kbd>
+     
+     no
+     
+     | ?- <kbd>lower('1.2E3', X).</kbd>
+     
+     X = '1.2e3'
+     </pre>
+
+   <p>Note that numbers cannot be converted by these predicates.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-nte.html#lib-txp-nte">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-ato.html#lib-txp-ato">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp.html#lib-txp">Up</a>
+</ul>
+</div>
+   </body></html>
+

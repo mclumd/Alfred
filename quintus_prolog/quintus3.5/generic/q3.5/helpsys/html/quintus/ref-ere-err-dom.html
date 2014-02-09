@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Domain Errors</h5>
+
+   <p>A domain error occurs when an input argument is of the right type but
+there is something wrong with its value.  For example, the second argument to
+<code>open/3</code> is supposed to be an atom that represents a valid mode for opening
+a file, such as <code>read</code> or <code>write</code>.  If a number or a compound term is given
+instead, that is a type error.  If an atom is given that is not a valid mode,
+that is a domain error.
+
+   <p>The main reason that we distinguish between type errors and domain errors is
+that they usually represent different sorts of mistake in your program.  A type
+error usually indicates that you have passed the wrong argument to a command,
+whereas a domain error usually indicates that you passed the argument you meant
+to check, but you hadn't checked it enough.
+
+   <p>The exception code associated with a domain error is
+<pre class="example">     domain_error(<var>Goal, ArgNo, DomainName, Culprit, Message</var>)
+     </pre>
+
+   <p>The arguments correspond to those of the exception code for a type error,
+except that <var>DomainName</var> is not in general the name of a unary
+predicate: it needn't even be an atom.  For example, if some command
+requires an argument to be an integer in the range 1..99, it might use
+<code>between(1,99)</code> as the <var>DomainName</var>.  With respect to the <code>date_plus</code>
+example under <b>Type Errors</b>, if the month had been given as 13 it
+would have passed the type test but would raise a domain error.
+
+   <p>For example, the goal
+<pre class="example">     open(somefile,rread,S)
+     </pre>
+
+   <p>raises the exception
+<pre class="example">     domain_error(open(somefile,rread,_2490),2,'i/o mode',rread,'')
+     </pre>
+
+   <p>The Message argument is used to provide extra information about the
+problem.
+
+   <p>Some <var>DomainName</var>s recognized by the system include:
+     <ul>
+
+     <li><code>0</code> -- no domain name specified
+<li><code>atom</code>
+<li><code>'atom or list'</code>
+<li><code>atomic</code>
+<li><code>between(</code><var>L,H</var><code>)</code> -- 'something between <var>L</var> and <var>H</var>
+<li><code>built_in</code>
+<li><code>callable</code>
+<li><code>char</code>
+<li><code>character</code>
+<li><code>compiled</code>
+<li><code>directory</code>
+<li><code>declaration</code>
+<li><code>db_reference</code>
+<li><code>foreign</code>
+<li><code>file</code>
+<li><code>flag</code>
+<li><code>imported_predicate</code>
+<li><code>integer</code>
+<li><code>interpreted</code>
+<li><code>list</code>
+<li><code>module</code>
+<li><code>number</code>
+<li><code>one_of(</code><var>List</var><code>)</code> -- a member of the set <var>List</var>
+<li><code>pair</code>
+<li><code>predicate_specification</code>
+<li><code>procedure</code>
+<li><code>stream</code>
+<li><code>term</code>
+<li><code>value(</code><var>X</var><code>)</code> -- the value <var>X</var>
+<li><code>clause</code>
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-err-ran.html#ref-ere-err-ran">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-err-typ.html#ref-ere-err-typ">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere-err.html#ref-ere-err">Up</a>
+</ul>
+</div>
+   </body></html>
+

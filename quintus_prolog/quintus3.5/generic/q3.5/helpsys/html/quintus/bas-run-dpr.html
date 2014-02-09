@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Dynamic Predicates</h4>
+
+   <p>All predicates in Prolog fall into one of two categories:  <dfn>static</dfn>
+or <dfn>dynamic</dfn>.  Dynamic predicates can be modified when a program is
+running; in contrast, static predicates can be modified only by
+reloading or by <code>abolish/[1,2]</code>.
+
+   <p>If a predicate is first defined by being loaded from a file, it is
+static by default.  Sometimes, however, it is necessary to add (assert),
+remove (retract), or inspect (using <code>clause/[2,3]</code>) clauses
+for a predicate while a program is running.  In order to do
+that, you must declare the predicate to be dynamic.  A predicate can be
+made dynamic by specifically declaring it to be so, as described
+below,  or by using one of the assertion predicates.  For a list of the
+assertion predicates, and for more information on using them,
+refer to <a href="ref-mdb-dsp.html#ref-mdb-dsp">ref-mdb-dsp</a>.
+
+   <p>To make a predicate dynamic, you insert in the file
+containing the predicate a line, which declares the predicate to be dynamic. 
+The format of the line is
+<pre class="example">     :- dynamic <var>name</var>/<var>arity</var>.
+     </pre>
+
+   <p>So, for example, the following declarations make
+the named predicates dynamic.
+<pre class="example">     :- dynamic exchange_rate/3, spouse_of/2, gravitational_constant/1.
+     </pre>
+
+   <p><strong>Notes:</strong>
+     <ol type=1 start=1>
+
+     <li>The <code>:- </code> symbol must appear at the beginning of any
+line with a dynamic declaration, as shown above. 
+<li>Dynamic declarations can only appear in files; <code>dynamic/1</code>
+cannot be called as a predicate. 
+<li>The line that declares a predicate to be dynamic must occur before
+any definition of the predicate itself in the file.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-run-pro.html#bas-run-pro">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-run-euc.html#bas-run-euc">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-run.html#bas-run">Up</a>
+</ul>
+</div>
+   </body></html>
+

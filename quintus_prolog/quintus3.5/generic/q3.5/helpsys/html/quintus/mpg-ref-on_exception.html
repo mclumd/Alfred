@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>on_exception/3</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>on_exception(</code><var>-Exception, +*ProtectedGoal, +*Handler</var><code>)</code>
+
+   <p>Specify an exception handler for <var>ProtectedGoal</var>, and call <var>ProtectedGoal</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Exception</var> <dfn>term</dfn>
+     <dd>Any term.
+
+     <br><dt><var>ProtectedGoal</var> <dfn>callable</dfn> [MOD]
+     <dd>A goal.
+
+     <br><dt><var>Handler</var> <dfn>callable</dfn> [MOD]
+     <dd>A goal.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>ProtectedGoal</var> is executed.  This will
+behave just as if <var>ProtectedGoal</var> had been written without the
+<code>on_exception/3</code> wrapper.  If <var>ProtectedGoal</var> is determinate,
+then <code>on_exception/3</code> will also be determinate. 
+<var>ProtectedGoal</var> can also be nondeterminate.  As a general rule,
+code is easier to read when <var>ProtectedGoal</var> is a simple goal,
+however a conjunction of goals (<var>Goal1</var>,<small class="dots">...</small><var>GoalN</var>) or any other form that
+<code>call/1</code> accepts is allowed.
+
+   <p>If an exception is raised while <var>ProtectedGoal</var> is running, Prolog will
+<em>abandon</em> <var>ProtectedGoal</var> entirely.  Any bindings made by
+<var>ProtectedGoal</var> will be undone, just as if it had failed.  Side
+effects, such as data-base changes and input/output, are not undone, just as
+they are not undone when a goal fails.  After undoing the bindings, Prolog
+then tries to unify an object called an <dfn>exception term</dfn> with the
+<var>Exception</var> argument.  If this unification succeeds, <var>Handler</var>
+will be executed as if you had written
+<pre class="example">         <var>Exception</var>=the actual <dfn>exception term</dfn>,
+         <var>Handler</var>
+     </pre>
+
+   <p>If this unification fails, Prolog will keep looking for a handler.  It
+will always find a handler at the top level, which prints out a
+message corresponding to the exception.
+
+   <p>In applications lacking a top level (C calling Prolog, where
+<code>QP_toplevel()</code> has not been called) exceptions are indicated by
+the return status <code>QP_ERROR</code>.  For more details refer to
+<a href="fli-ffp.html#fli-ffp">fli-ffp</a>.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Same as <code>call/1</code>.
+
+<h4 class="subheading">Tip</h4>
+
+   <p>More efficient code is generated when <var>ProtectedGoal</var>
+is a simple goal.  In other cases, such as where <var>ProtectedGoal</var> is a
+conjunction of goals (<var>Goal1</var>,<small class="dots">...</small><var>GoalN</var>), the compiler treats this as if
+it were <code>call((</code><var>Goal1</var><code>,..., </code><var>GoalN</var><code>))</code>.  This potential inefficiency does
+not apply to <var>Handler</var>.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>Fail on exception:
+<pre class="example">     :-meta_predicate fail_on_exception/1.
+     fail_on_exception(C):-
+         on_exception(E,C,print_exception_then_fail(C,E)).
+     
+     print_exception_then_fail(C,E):-
+         format('Exception occured while calling ~q:~n',
+                                                   [C]),
+         print_message(warning,E),
+         fail.
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>raise_exception/1</code>, <code>print_message/2</code>.
+
+   <a href="ref-ere-hex.html#ref-ere-hex">ref-ere-hex</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-op.html#mpg-ref-op">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-numbervars.html#mpg-ref-numbervars">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

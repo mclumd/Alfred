@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Style Warnings</h4>
+
+   <p>In addition to checking for syntax errors, Quintus Prolog also
+has a style checker, which displays warning messages whenever
+certain stylistic conventions are violated in a program.  Whereas
+syntax error messages indicate clauses that cannot be read into Prolog,
+style warnings simply indicate possible typing
+mistakes, or program construction that doesn't follow Quintus Prolog
+style conventions. 
+The style conventions for Quintus Prolog are listed below.  If you adhere
+to these conventions, you can use the style warnings to catch
+simple errors very easily.
+
+     <ol type=1 start=1>
+
+     <li>Define all clauses for a given procedure in one file.  This is
+essential; the load predicates do not allow the definition of a
+procedure to be spread across more than one file unless the procedure
+is declared multifile -- see <code>multifile/1</code> for more
+information on this.  If a non-multifile procedure is defined in more
+than one file, and all the files in which the procedure is defined are
+compiled, each definition of the procedure in a new file will wipe out
+any clauses for the procedure that were defined in previous files. 
+<li>Make all clauses for a given procedure contiguous in the source file.  This
+doesn't mean that you should avoid leaving blank space or putting comments
+between clauses, but simply that clauses for one procedure should
+not be interspersed with clauses for another procedure. 
+<li>If a variable appears only once in a clause, either write that
+variable as the single character <code>_</code> (the void variable), or begin the
+variable name with the character <code>_</code>.
+        </ol>
+
+   <p>If any of these conditions are not met, you will be warned
+when the file containing the offending clauses is compiled.
+
+   <p>If style convention 1 is violated, Prolog displays a message like
+the one shown below before it compiles each procedure that has
+been defined in another file that has already been loaded:
+<pre class="example">     * Procedure foo/2 is being redefined in a different file -
+     *    Previous file: /ufs/george/file1
+     *    New file:      /ufs/george/file2
+     * Do you really want to redefine it? (y,n,p,s, or ?)
+     </pre>
+
+   <p>If you type <kbd>y</kbd>, the definition in the file currently being loaded
+replaces the existing procedure definition.  If you type <kbd>n</kbd>, the
+existing definition remains intact, and the definition in the file currently
+being loaded is ignored.  If you type <kbd>p</kbd> (for <b>p</b>roceed), the
+definition in the file currently being loaded replaces the
+existing definition; furthermore, the remaining procedure definitions
+in the file
+<code>/ufs/george/file2</code>
+will automatically replace any existing definitions made by the file
+<code>/ufs/george/file1</code>
+without displaying any warning messages. 
+If you type <kbd>s</kbd> (for <b>s</b>uppress), the
+existing definition remains intact and the definition in the file
+currently being loaded is ignored; furthermore, the remaining procedure
+definitions in the file
+<code>/ufs/george/file2</code>
+which attempt to replace definitions made by the file
+<code>/ufs/george/file1</code>
+will be ignored without displaying any warning messages. 
+(These options are particularly useful if
+you have changed the name or location of a file, since it
+suppresses the warnings you
+would otherwise get for every procedure in the file.)  If you type <kbd>?</kbd>,
+Prolog displays a message that briefly describes each of the options above,
+and then asks you again if you want to redefine the procedure.
+
+   <p>If style convention 2 is violated, you will get a message of the form:
+<pre class="example">     * Clauses for foo/2 are not together in the source file
+     </pre>
+
+   <p>This indicates that between some pair of clauses defining
+procedure <code>foo/2</code>, there is a clause for some other procedure.  If
+you followed the style conventions in writing your code, this
+message would indicate that some clause in your source file had
+either a mistyped name or the wrong arity, or that the predicate <code>foo/2</code>
+was defined more than once in the file.  One other possible cause for this
+message might be that a period was typed in place of a comma, as in
+<pre class="example">     foo(X, Y) :-
+        goal1(X, Z),
+        goal2(Z).
+        goal3(X, Y).
+     foo([], []).
+     </pre>
+
+   <p>Here the Prolog system will think that you are defining a clause for <code>goal3/2</code>
+between the clauses for <code>foo/2</code>, and will issue a style warning.
+
+   <p>If style convention 3 is violated, as in
+<pre class="example">     check_state(TheState):-
+        old_state(TheStaye, X),
+        write(TheState),
+        write(X).
+     </pre>
+
+   <p>you will get a message of the form:
+<pre class="example">     * Singleton variables, clause 1 of check_state/1: TheStaye
+     </pre>
+
+   <p>indicating that in the first clause of procedure <code>check_state/1</code>, there is
+only one occurrence of the variable TheStaye.  If that variable is a
+misspelling, you should correct the source text and recompile. 
+If it was really meant to be a single variable occurrence, replace it with
+the anonymous variable <code>_</code> or preface it with <code>_</code> as in <code>_TheStaye</code>, and
+you will no longer get the style warning message.
+
+   <p>It is good programming practice to respond immediately to these
+warnings by correcting the source text.  By doing so, you will
+get the full benefit of the style warning facility in finding
+many errors painlessly.
+
+   <p>By default, all the style warning facilities are turned on.  You can turn
+off any or all of the style warning facilities by typing
+<kbd>no_style_check(</kbd><var>X</var><kbd>).</kbd> at the main Prolog prompt, where <var>X</var>
+represents one of the arguments listed below.  To turn on style warning
+facilities, type <kbd>style_check(</kbd><var>X</var><kbd>).</kbd> at the main Prolog prompt,
+where <var>X</var> represents one of the arguments listed below.
+
+     <dl>
+
+     <br><dt><b>Argument</b>
+     <dd><b>Function</b>
+
+     <br><dt><code>all</code>
+     <dd>turns on (or off) all style checking
+
+     <br><dt><code>single_var</code>
+     <dd>turns on (or off) checking for single variable occurrences
+
+     <br><dt><code>discontiguous</code>
+     <dd>turns on (or off) checking for discontiguous
+clauses for procedures
+
+     <br><dt><code>multiple</code>
+     <dd>turns on (or off) style checking for multiple
+definitions of same procedures (in different files)
+
+   </dl>
+
+   <p>For example, to turn off all the style warning facilities, you would type
+<pre class="example">     | ?- <kbd>no_style_check(all).</kbd>
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-lod-srs.html#bas-lod-srs">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-lod-syn.html#bas-lod-syn">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-lod.html#bas-lod">Up</a>
+</ul>
+</div>
+   </body></html>
+

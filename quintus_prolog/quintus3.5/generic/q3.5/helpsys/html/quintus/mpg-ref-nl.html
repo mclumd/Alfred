@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>nl/[0,1]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>nl</code>
+
+   <p><code>nl(</code><var>+Stream</var><code>)</code>
+
+   <p>Terminates the current output record on the current output stream
+or on <var>Stream</var>.  See <a href="fli-ios-sst-fmt.html#fli-ios-sst-fmt">fli-ios-sst-fmt</a>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>a valid Prolog stream
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Wraps the current output record (line) and writes out
+the record.  How the record is wrapped up depends on the format of
+the output stream.
+
+     <ul>
+
+     <li>For a default text stream <code>nl/[0,1]</code> will output a &lt;LFD&gt;
+(ASCII code 10).  Windows translates this to the sequence
+&lt;RET&gt;&lt;LFD&gt; (ASCII codes 13, 10). 
+<li>For a binary stream, the record is simply written out. 
+</ul>
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>), plus:
+     <dl>
+
+     <br><dt><code>existence_error</code>
+     <dd>
+Some operating system dependent error occurred in writing.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+                There is an error in the bottom layer of write function
+                of the stream.
+
+   </dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>How the wrapped record is written depends upon the bottom layer write
+function associated with the output stream. 
+The default tty stream displays the wrapped output record to the
+terminal immediately for each <code>nl/[0,1]</code> operation, while the
+default text stream under UNIX and Windows does not send the wrapped record
+(line) to the disk unless the buffer for the output stream is full.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>put/[1,2]</code> <code>flush_output/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-no_style_check.html#mpg-ref-no_style_check">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-name.html#mpg-ref-name">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>source_file/[1,2,3]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>source_file(</code><var>+AbsFile</var><code>)</code>
+
+   <p><code>source_file(</code><var>*AbsFile</var><code>)</code>
+
+   <p><code>source_file(</code><var>*Pred</var><code>, </code><var>*AbsFile</var><code>)</code>
+
+   <p><code>source_file(</code><var>*Pred</var><code>, </code><var>*ClauseNumber</var><code>, </code><var>*AbsFile</var><code>)</code>
+
+   <p><var>AbsFile</var> is the absolute name of a loaded file, and
+<var>ClauseNumber</var> is the number of a clause for <var>Pred</var> in
+that file.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Pred</var> <dfn>callable</dfn>  [MOD]
+     <dd>selected predicate specification.
+
+     <br><dt><var>ClauseNumber</var> <dfn>integer</dfn>
+     <dd>integer representing clause number
+
+     <br><dt><var>AbsFile</var> <dfn>atom</dfn>
+     <dd>absolute filename
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Loaded files include compiled, QOF loaded and pre-linked files.
+
+   <p>If <var>AbsFile</var> is not the name of a loaded file, then
+<code>source_file(</code><var>AbsFile</var><code>)</code> simply fails.  If <var>AbsFile</var> is
+bound to an illegal filename, <code>source_file/1</code> fails.
+
+   <p>If <var>Pred</var> is not a loaded predicate, then <code>source_file/2</code>
+simply fails.  If bound to an illegal predicate specification, it
+fails. <var>Pred</var> is assumed to refer to the source module. Thus,
+to find <em>any</em> predicates defined in a given file, use the form:
+<pre class="example">     source_file(M:P, File)
+     </pre>
+
+   <p><code>source_file/3</code> is true if clause number <var>ClauseNumber</var> of
+predicate <var>Pred</var> comes from file <var>AbsFile</var>. 
+<code>source_file/3</code> is useful for handling multifile predicates, but it
+works for predicates defined completely in one file, as well.
+
+   <p>Any combination of bound and unbound arguments is possible, and
+<code>source_file/3</code> will generate the others.
+
+<h4 class="subheading">Backtracking</h4>
+
+   <p>If <var>AbsFile</var> is unbound, it is
+successively unified with the absolute names of all currently loaded
+files.  Files loaded through the foreign function interface are not
+reported by <code>source_file/1</code>.
+
+   <p>If <var>Pred</var> is instantiated to the skeletal specification
+of a loaded predicate,
+then <var>AbsFile</var> will be successively unified
+with the absolute names of the files
+in which the <var>Pred</var> was defined.
+
+   <p>If <var>AbsFile</var> is instantiated to the absolute name of a loaded file,
+then <var>Pred</var> will be successively unified
+with the skeletal specifications of
+all predicates defined in <var>AbsFile</var>.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>absolute_file_name/[2,3]</code>, <code>multifile/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-spy.html#mpg-ref-spy">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-sort.html#mpg-ref-sort">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

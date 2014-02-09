@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Accessing and Modifying Foreign Term Contents</h3>
+
+   <p>Prolog can get or modify the contents of a foreign term with the
+procedures
+<pre class="example">         get_contents(<var>+Datum</var>, <var>+Part</var>, <var>-Value</var>)
+         get_contents(<var>+Datum</var>, <var>*Part</var>, <var>*Value</var>)
+         put_contents(<var>+Datum</var>, <var>+Part</var>, <var>+Value</var>).
+     </pre>
+
+   <p>It can also get a pointer to a field or element of a foreign term
+with the procedure
+<pre class="example">         get_address(<var>+Datum</var>, <var>+Part</var>, <var>-Value</var>).
+         get_address(<var>+Datum</var>, <var>*Part</var>, <var>*Value</var>).
+     </pre>
+
+   <p>For all three of these, <var>Datum</var> must be a foreign term, and
+<var>Part</var> specifies what part of <var>Datum</var> <var>Value</var> is.  If
+<var>Datum</var> is an array, <var>Part</var> should be an integer index into
+the array, where 0 is the first element.  For a pointer, <var>Part</var>
+should be the atom <code>contents</code> and <var>Value</var> will be what the pointer
+points to.  For a struct, <var>Part</var> should be a field name, and
+<var>Value</var> will be the contents of that field.  In the case of
+<code>get_contents/3</code> and <code>get_address/3</code>, if <var>Part</var> is unbound, then
+<code>get_contents/3</code> will backtrack through all the valid parts of
+<var>Datum</var>, binding both <var>Part</var> and <var>Value</var>.  A C programmer
+might think of the following pairs as corresponding to each other:
+<pre class="example">     get_contents(Foo, Bar, Baz)
+     Baz = Foo-&gt;Bar
+     
+     put_contents(Foo, Bar, Baz)
+     Foo-&gt;Bar = Baz
+     
+     get_address(Foo, Bar, Baz)
+     Baz = &amp;Foo-&gt;Bar.
+     </pre>
+
+   <p>The hitch is that only atomic and pointer types can be got and put
+by <code>get_contents/3</code> and <code>put_contents/3</code>.  This is because Prolog can
+only hold pointers to C structures, not the structures themselves. 
+This isn't quite as bad as it might seem, though, since usually
+structures contain pointers to other structures, anyway.  When a
+structure directly contains another structure, Prolog can get a
+pointer to it with <code>get_address/3</code>.
+
+   <p>Access to most fields is accomplished by peeking into memory (see
+<a href="ref-ari-aex-pee.html#ref-ari-aex-pee">ref-ari-aex-pee</a>), so it is very efficient.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="str-cas.html#str-cas">Next</a>
+<li><a rel="previous" accesskey="p" href="str-cdf.html#str-cdf">Previous</a>
+<li><a rel="up" accesskey="u" href="str.html#str">Up</a>
+</ul>
+</div>
+   </body></html>
+

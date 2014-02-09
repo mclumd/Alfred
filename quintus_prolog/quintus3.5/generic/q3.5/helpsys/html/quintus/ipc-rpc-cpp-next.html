@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>QP_ipc_next()</code></h5>
+
+<pre class="example">     int QP_ipc_next(<var>command, arg1, <small class="dots">...</small>, argm</var>)
+         int <var>command</var>;
+         <var>va_dcl</var>
+     </pre>
+
+   <p>The C routine <code>QP_ipc_next()</code> retrieves an answer for a goal (command)
+that was
+initiated by a previous call to <code>QP_ipc_prepare()</code>.  The command is
+identified by <var>command</var>.  It must be the same as the command given to
+<code>QP_ipc_prepare()</code>.  The remaining arguments are variables that will be
+set by <code>QP_ipc_next()</code> to the values returned as the next answer to the goal. 
+There is one argument for each field in the interface specification that was
+annotated with <code>-</code>.  They must be in left-to-right order.  The types of
+the arguments must correspond to the types declared in the <code>external/3</code>
+specification as follows:
+
+<pre class="example">             -integer:       int *
+             -float:         float *
+             -atom:          QP_atom *
+             -string:        char **
+     </pre>
+
+   <p>For a returned value of type string, space must be provided by the
+calling routine to hold the value returned.  The characters of the returned
+string will
+be copied over the string passed in.
+
+   <p>If an(other) answer to the query has been obtained and the argument
+parameters have been set accordingly, <code>QP_ipc_next()</code> returns 0.  If there are
+no more answers, it returns -1.  If there is an error, it returns -2.
+
+   <p>See the example below in <a href="ipc-rpc-cpp-exa.html#ipc-rpc-cpp-exa">ipc-rpc-cpp-exa</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-cpp-close.html#ipc-rpc-cpp-close">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc-cpp-prepare.html#ipc-rpc-cpp-prepare">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc-cpp.html#ipc-rpc-cpp">Up</a>
+</ul>
+</div>
+   </body></html>
+

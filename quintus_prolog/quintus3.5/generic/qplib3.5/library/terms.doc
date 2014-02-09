@@ -1,0 +1,360 @@
+File    : terms.doc
+Author  : Richard A. O'Keefe
+SCCS    : "@(#)88/11/17 terms.doc	27.1"
+
+Copyright (C) 1988, Quintus Computer Systems, Inc.  All rights reserved.
+
+                  PASSING TERMS THROUGH THE FOREIGN INTERFACE
+
+
+1. Introduction
+
+        The Quintus Prolog foreign function interface (see the System Dependent
+Features part of the manual)  provides  a  clean  and  straightforward  way  of
+calling  subroutines written in programming languages like C. The basic idea is
+to let you call typical C routines, such as you  might  have  written  for  the
+benefit  of  other  C  programs.   The kind of thing we had in mind was special
+floating-point functions (such as sine),  operating-system  routines  (such  as
+access(2)  or  unlink(2)  or rename(2)), graphics libraries such as SunCore, or
+statistics packages such as TSPACK.
+
+        The result of taking this approach is that the built in interface,  and
+the  package  library(vectors)  --  which  lets  you  convert  between lists of
+constants on the Prolog side and one-dimensional arrays on the C or Pascal side
+--  ensure  that  Prolog  sees  Prolog  data  structures,  and  C  sees  C data
+structures, and never the twain shall meet.
+
+        The fact that Prolog data structures don't get passed to C  is  not  an
+oversight.    It  was a deliberate, and very carefully thought out, choice.  It
+means, amongst other things, that we are free to change the encoding of  Prolog
+data  structures  from release to release without forcing you to rewrite your C
+code.  (We do not in fact use the same encoding  in  all  releases.)    As  for
+hacking terms, we believe that the best programming language for hacking Prolog
+terms is Prolog itself.
+
+        Despite this, one or two customers have asked us for a way  of  passing
+Prolog  terms  between  Prolog  and C. In the 2.0 release of the Quintus Prolog
+system we introduced a package library(terms) which lets you  do  this.    This
+note explains it.
+
+        The  Xerox  Quintus  Prolog system lets you pass arbitrary ground terms
+between Prolog and Lisp, and doesn't support C. This note and the library files
+it  refers  to  are  not  relevant to Xerox Quintus Prolog.  They are, however,
+relevant to all implementations of  Quintus  Prolog  on  32-bit  byte-addressed
+machines supporting C.
+
+
+2. Data Structure
+
+        The  first  question  which  had  to  be settled was how to represent a
+Prolog term  in  C.  One  of  the  most  important  reasons  for  us  supplying
+library(terms)  as  source  code is that that's a question only you can answer.
+For example, if you were sending terms down a  communication  line,  you  would
+want  a very compact representation, and would probably want to keep a cache of
+a hundred or so functors and constants so  that  you  could  transmit  commonly
+occurring things in a single byte.  You should regard library(terms) more as an
+example of how to use the basic interface to synthesise something more complex,
+not as our idea of the One True Way of representing Prolog terms in C.
+
+        The design criteria I adopted were
+
+   - simplicity is the most important thing
+
+   - the  format  should  not contain any pointers (pointers to atom names
+     might be allowed) so that you can easily copy entire subterms.
+
+        One question I had difficulty with was whether  the  representation  of
+atoms in terms should be the "canonical" form returned by QP_atom_from_string()
+and obtained by specifying +atom in a foreign/3 fact, or whether it  should  be
+the  character  pointer  returned  by  QP_string_from_atom()  and  obtained  by
+specifying +string in a foreign/3 fact.  I finally decided that it  was  better
+to avoid pointers altogether, and of course +atom is faster than +string.
+
+        The point of supplying the library in source code is that you can adapt
+it to your own needs.  If you decide that it would be better for you  if  atoms
+were  represented  by  character pointers, you can edit the source code to make
+that happen.  If you decide that it would be  better  for  you  if  terms  were
+passed  as  trees  linked together by pointers, you'll have rather more work to
+do.
+
+        The design criteria lead directly to the selection of forward Polish as
+the  representation  for terms.  We have to represent variables, floating point
+numbers, integers, atoms, and compound terms (both lists and structures).   The
+simplest  way to do this is to use some sort of tag to discriminate between the
+kinds of term.  The representation I have selected is
+
+        +--------+
+        | -(N+2) |      Variable (0 <= N)
+        +--------+
+
+        +--------+
+        |   -2   |      Floating-point number
+        +--------+
+        | float  |      32-bit C "float" value
+        +--------+
+
+        +--------+
+        |   -1   |      Integer
+        +--------+
+        |  int   |      32-bit C "int" value
+        +--------+
+
+        +--------+
+        |    0   |      Atom (callable term of arity 0)
+        +--------+
+        | QPatom |      32-bit C "unsigned long int" value
+        +--------+
+
+        +--------+
+        |  Arity |      Compound term (Arity > 0)
+        +--------+
+        | QPatom |      code for function symbol
+        +--------+
+        |argument|      The arguments are represented in Polish
+           ...          for, one after the other with no terminators
+        |argument|      or links
+        +--------+
+
+For example, the term
+
+        bag(a,1,bag(b,2,bag))
+
+would be represented as
+
+        3; <bag>; 0; <a>; -1; 1; 3; <bag>; 0; <b>; -1; 2; 0; <bag>
+
+        This representation is rather bulkier  than  the  representations  that
+Quintus  Prolog  actually uses/has used in past releases.  On the average it is
+about twice as bulky.  This is the price we pay for simplicity,  and  the  fact
+that atoms, floats, and integers are coded directly as C values.
+
+
+3. Inspecting and Accessing Terms in C
+
+        The library file terms.h defines the following type-test macros:
+
+        IsVar(X)
+        IsNonVar(X)
+        IsFloat(X)
+        IsInteger(X)
+        IsNumber(X)
+        IsAtom(X)
+        IsSymbol(X)
+        IsAtomic(X)
+        IsConstant(X)
+        IsCompound(X)
+        IsSimple(X)
+        IsCallable(X)
+
+They mimic the similarly named Prolog type tests.  The argument is a pointer to
+a term or subterm stored in the forward Polish representation described  above.
+Such pointers are declared to be of type TermP.
+
+        The following macros access components of terms:
+VarNo(X)       use  this  when  IsVar(X)  is  known to be true.  It returns the
+               variable number of X. Two variables are identical if and only if
+               they have the same number.
+
+IntegerVal(X)  use  this when IsInteger(X) is known to be true.  It returns the
+               value of the integer represented by X.
+
+FloatVal(X)    use this when IsFloat(X) is known to be true.   It  returns  the
+               value of the floating-point number represented by X.
+
+NumberVal(X)   use  this  when IsNumber(X) is known to be true.  It returns the
+               value of the  number  represented  by  X,  as  a  floating-point
+               number.
+
+Arity(X)       BEWARE!    By  analogy  with the Prolog predicate functor/3, you
+               would expect numbers to have arity 0.  Not so:  you  should  use
+               this  only when IsCallable(X) is known to be true.  The arity is
+               the number of arguments this  term  has.    If  IsAtom(X),  then
+               Arity(X) is 0.
+
+Name(X)        use this when IsCallable(X) is known to be true, that is, when X
+               is known to represent an atom or compound term.  It returns  the
+               magic  "QPatom"  code  which  represents  the principal function
+               symbol of the term.  That is, it is the equivalent of the second
+               argument of functor/3.
+
+String(X)      is  like  Name(X), but returns the name of the atom as a pointer
+               to a NUL-terminated sequence of characters.
+        There is no macro to access the Nth argument of a term, because in this
+representation  that  can  only  be done by traversing the first N-1 arguments.
+Instead, there are two functions
+skipterm(X)    takes a pointer to a term, traverses the  term,  and  returns  a
+               pointer  to  just  after the term.  If, for example, X points to
+               the second argument of a term, skipterm(X) points to  the  third
+               argument.
+
+skipterms(X,n) skips n terms, just as if skipterm() were called n times.
+        A  better  model  for your own term traversing code can be found in the
+function printerm(X), which writes a term to the current output stream  in  the
+style of display/1.
+
+        As  an  example  of the use of these functions and macros, suppose that
+you want to determine the number of times that a particular atom  occurs  in  a
+given term, counting only occurrences as an atom.
+
+int atom_count(X, a)
+    register TermP X;
+    QPatom a;
+    {
+        register int n;         /* number of subterms to process */
+        register int t;         /* result */
+
+        for (t = 0, n = 1; --n >= 0; _) {
+            if (IsVar(X)) {     /* variable */
+                X++;            /* occupies one cell */
+            } else {
+                if (IsCompound(X)) {
+                    n += Arity(X);
+                } else
+                if (IsAtom(X) && Name(X) == a) {
+                    t++;        /* found what we were looking for */
+                }
+                X += 2;         /* non-variables require two */
+            }                   /* cells for the tag/arity and value */
+        }
+        return t;
+    }
+
+        The  fact  that  such  things can be written non-recursively is not the
+least of the reasons why the Polish representation was chosen:  C  is  not  the
+language of choice for deep recursions.
+
+
+4. On Prolog's Side of the Fence
+
+        library(terms) exports three predicates.
+prolog_to_c(+Term, -Address)
+               takes a Prolog term Term, copies it into the C world in  forward
+               Polish  form,  and  returns  the Address of this copy coded as a
+               Prolog integer (see the -address foreign parameter type  in  the
+               System-Dependent Features manual).  The copy is always new space
+               created by malloc().
+
+c_to_prolog(+Address, ?Term)
+               unifies  Term with a new copy of the term represented in forward
+               Polish form at the address encoded as the integer Address.    It
+               is the converse of prolog_to_c/2.
+
+erase_c_term(+Address)
+               deallocates (frees) a term created by prolog_to_c/2
+        C can return a term to Prolog by constructing a suitable forward Polish
+representation  and  returning it as a -address parameter, with the Prolog code
+then calling c_to_prolog/2 to obtain a Prolog representation of the term.
+
+        If the built-in predicate copy_term/2 didn't exist, it could be defined
+thus:
+
+copy_term(Term, Copy) :-
+        prolog_to_c(Term, Address),
+        c_to_prolog(Address, Temp),
+        erase_c_term(Address),
+        Copy = Temp.
+
+        Suppose  you have a C function which wants to return a list of up to 10
+integers.  You could code it thus:
+
+static QPatom dot_atom, nil_atom = 0;
+
+#define WordsPerCons 4
+#define WordsPerAtom 2
+
+static long int buffer[10 * WordsPerCons + 1 * WordsPerAtom];
+
+TermP mklist(data, n)
+    int *data;
+    int n;
+    {
+        TermP X;
+
+        if (n < 0 || n > 10) abort();
+        if (nil_atom == 0) {
+            dot_atom = QP_atom_from_string(".");
+            nil_atom = QP_atom_from_string("[]");
+        }
+        for (X = buffer; --n >= 0; ) {
+            *X++ = 2;  *X++ = dot_atom; /* '.'/2 */
+            *X++ = -1; *X++ = *data++;  /* integer element */
+        }
+        *X++ = 0; *X++ = nil_atom;      /* []/0 */
+        return buffer;
+    }
+
+        ...
+
+To turn such a result into Prolog, you would call c_to_prolog/2, but you  would
+not call erase_c_term/1.
+
+        There  aren't  any  macros to help you with storing a term, but you can
+find out what to do by looking at the code for  the  QTpsh*()  functions.    We
+could have provided
+
+#define PushVar(X, N)      (*(X)++ = (N))
+#define PushFloat(X, F)    (*(X)++ = -2, *(float*)(X) = (F), (X)++)
+#define PushInteger(X, N)  (*(X)++ = -1, *(X)++ = (N))
+#define PushAtom(X, A)     (*(X)++ =  0, *(X)++ = (A))
+#define PushFunctor(X,F,N) (*(X)++ = (N),*(X)++ = (F))
+
+but  macros which evaluate an argument (here "X") more than once are frowned on
+in the best C circles, so we didn't.
+
+
+5. A Note on Efficiency
+
+        This library file doesn't do anything you couldn't do yourself.  If you
+want  to  pass  terms  with a known specific structure to C, you are better off
+writing specific code.  For example,  suppose  you  want  to  pass  a  list  of
+date(Year,Month,Day)  records  to  C,  where  the C code wants to represent the
+collection as a linked list of
+
+        struct date_cell
+            {
+                struct date_cell *next;
+                int y, m, d;
+            };
+
+records.  It would not be a good idea to pass the list  through  library(terms)
+and do the conversion in C. Instead, you would do something like
+
+foreign(mk_date_cell,
+        mk_date_cell(+address('struct date_cell'),
+                     +integer,+integer,+integer,
+                     [-address('struct date_cell')])).
+
+mk_date_list([], 0).
+mk_date_list([date(Y,M,D)|Dates], Addr) :-
+        integer(Y), integer(M), integer(D),
+        mk_date_list(Dates, Next),
+        mk_date_cell(Next, Y, M, D, Addr).
+
+struct date_cell *mk_date_cell(next, y, m, d)
+    struct date_cell *next;
+    int y, m, d;
+    {
+        struct date_cell *p = (struct date_cell *)malloc(sizeof *p);
+
+        p->next = next, p->y = y, p->m = m, p->d = d;
+        return p;
+    }
+
+        This  is  more  efficient than using library(terms) because it involves
+one trip across  the  C  interface  for  each  element  of  the  list,  whereas
+library(terms) would make five trips across the interface for each element.
+
+        library(terms)  is  intended as an interim facility for passing (copies
+of) terms between  Prolog  and  C.  Quintus  are  interested  in  hearing  from
+customers  who  use  it:  what do you use it for? is it the bottle-neck in your
+program? would some other representation be more useful (before suggesting that
+direct  access  to  Prolog data structures would be the best thing, recall that
+memory allocation in C can trigger a Prolog garbage collection, which can  move
+any  Prolog term, and may even cause terms to disappear, and the Prolog garbage
+collector has no idea where your C code put things).
+                               Table of Contents
+1. Introduction                                                               0
+2. Data Structure                                                             0
+3. Inspecting and Accessing Terms in C                                        0
+4. On Prolog's Side of the Fence                                              1
+5. A Note on Efficiency                                                       1

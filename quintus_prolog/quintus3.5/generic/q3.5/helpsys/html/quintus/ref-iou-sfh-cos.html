@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Finding the current output stream</h5>
+
+     <ul>
+
+     <li><code>current_output(</code><var>Stream</var><code>)</code> unifies <var>Stream</var> with the current output
+
+     <p>stream. 
+</p><li><code>telling(</code><var>S</var><code>)</code> unifies
+<var>S</var> with the current output stream.  This is exactly the
+same as <code>current_output</code>(<var>S</var>), except
+that <var>S</var> will be unified
+with a filename if the current output stream was opened by <code>tell/1</code>.
+
+     <p>A common usage of <code>telling/1</code> is
+     <pre class="example">          tell('Some File Name')
+          ...
+          telling('Some File Name')
+          </pre>
+
+     <p><code>telling/1</code> should succeed if the current input stream was not changed (or
+if changed, restored). 
+It succeeds for any filename (including <code>user</code>) and any stream object opened
+by <code>open/3</code> (see <a href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">ref-iou-sfh-opn</a>), but fails for <code>user_output</code> and any stream
+object opened by <code>tell/1</code> (see <a href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">ref-iou-sfh-opn</a>).  Passing
+file names to <code>tell/1</code> is the only DEC-10 Prolog
+usage of <code>telling/1</code>, so Quintus Prolog is compatible with this usage.
+
+     <blockquote>
+
+          <p><em>WARNING</em>:  The sequence
+          <pre class="example">               telling(File),
+               ...
+               set_output(File),
+               </pre>
+
+          <p>will signal an error if the current output stream was opened by <code>tell/1</code>. 
+The only sequences that are guaranteed to succeed are
+          <pre class="example">               telling(FileOrStream),
+               ...
+               tell(FileOrStream)
+               </pre>
+
+          <p>and
+          <pre class="example">               current_output(Stream),
+               ...
+               set_output(Stream)
+               </pre>
+
+     </blockquote>
+
+   </ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iou-sfh-bos.html#ref-iou-sfh-bos">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-iou-sfh-cis.html#ref-iou-sfh-cis">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-iou-sfh.html#ref-iou-sfh">Up</a>
+</ul>
+</div>
+   </body></html>
+

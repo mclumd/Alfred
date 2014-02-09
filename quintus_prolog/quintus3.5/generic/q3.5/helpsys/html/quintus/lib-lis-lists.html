@@ -1,0 +1,541 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Lists as Sequences -- <code>library(lists)</code></h4>
+
+   <p><code>library(lists)</code> provides a large number of list processing operations. 
+See also <a href="lib-lis-basics.html#lib-lis-basics">lib-lis-basics</a>, which describes the more basic list processing
+operations that are provided by <code>library(basics)</code>.
+
+   <p>The predicates defined by this library file are:
+     <dl>
+
+     <br><dt><code>is_list(</code><var>+List</var><code>)</code>
+     <dd> is true when <var>List</var> is instantiated to a proper
+list:  that is, to either <code>[]</code> or <code>[_|</code><var>Tail</var><code>]</code> where <var>Tail</var> is a proper
+list.  A variable, or a list that ends with a variable,
+will fail this test.
+
+     <br><dt><code>append(</code><var>+ListOfLists</var><code>, </code><var>?List</var><code>)</code>
+     <dd>is true when <var>ListOfLists</var> is a list
+<code>[</code><var>L1</var><code>,...,</code><var>Ln</var><code>]</code> of lists, <var>List</var> is a list, and appending <var>L1</var>, <small class="dots">...</small>, <var>Ln</var>
+together yields <var>List</var>.  If <var>ListOfLists</var> is not a proper list,
+<code>append/2</code> will fail.  Additionally, either List should be a proper
+list, or each of <var>L1</var>, <small class="dots">...</small>, <var>Ln</var> should be a proper list.  The behavior
+on non-lists is undefined.  <var>ListOfLists</var> must be proper because for any
+given solution, infinitely many more can be obtained by inserting nils
+(<code>[]</code>) into <var>ListOfList</var>.
+
+     <br><dt><code>append(</code><var>?Prefix</var><code>, </code><var>?Tail1</var><code>, </code><var>?List1</var><code>, </code><var>?Tail2</var><code>, </code><var>?List2</var><code>)</code>
+     <dd>
+is logically equivalent to:
+     <pre class="example">          append(<var>Prefix</var>, <var>Tail1</var>, <var>List1</var>),
+          append(<var>Prefix</var>, <var>Tail2</var>, <var>List2</var>).
+          </pre>
+
+     <p>but is much more efficient.  <code>append/5</code> is guaranteed
+to halt in finite time if any one of <var>Prefix</var>, <var>List1</var>, or <var>List2</var>
+is a proper list.
+
+     <p>You can use <code>append/5</code> to add a common <var>Prefix</var> to the front of
+<var>Tail1</var> and <var>Tail2</var>, to remove a common <var>Prefix</var> from <var>List1</var> and
+<var>List2</var>, or in several other ways.
+
+     <p>Here is an example of the use of <code>append/5</code>. 
+The task is to check whether <var>Word1</var> and <var>Word2</var> are the same
+except for exactly one insertion, deletion, or transposition error.
+     <pre class="example">          spell(i, Word1, Word2) :-
+             append(_, Suffix, Word1, [_|Suffix], Word2).
+          spell(d, Word1, Word2) :-
+             append(_, [_|Suffix], Word1, Suffix, Word2).
+          spell(t, Word1, Word2) :-
+             append(_, [X,Y|Suffix], Word1, [Y,X|Suffix], Word2).
+          
+          | ?- <kbd>spell(E, Word1, "fog"),</kbd>
+               <kbd>print(E-Word1), nl, fail.</kbd>
+          i-"og"
+          i-"fg"
+          i-"fo"
+          d-[_682,102,111,103]
+          d-[102,_682,111,103]
+          d-[102,111,_682,103]
+          d-[102,111,103,_682]
+          t-"ofg"
+          t-"fgo"
+          no
+          </pre>
+
+     <br><dt><code>correspond(</code><var>?X</var><code>, </code><var>?Xlist</var><code>, </code><var>?Ylist</var><code>, </code><var>?Y</var><code>)</code>
+     <dd>
+is true when <var>Xlist</var> and <var>Ylist</var> are lists, <var>X</var> is an element
+of <var>Xlist</var>, <var>Y</var> is
+an element of <var>Ylist</var>, and <var>X</var> and <var>Y</var> are in corresponding
+places in their lists. 
+Nothing is said about the other elements of the two lists, nor even
+whether they are the same length.  Only one solution is ever found,
+as the procedure for <code>correspond/4</code> contains a cut.  For a logical predicate
+having similar effects (that is, one that finds all solutions),
+see <code>select/4</code>.  Either <var>Xlist</var> or <var>Ylist</var> should be a proper list.
+
+     <br><dt><code>delete(</code><var>+List</var><code>, </code><var>+Elem</var><code>, </code><var>?Residue</var><code>)</code>
+     <dd>
+is true when <var>List</var> is a list, in which <var>Elem</var> may or may not
+occur, and
+<var>Residue</var> is a copy of <var>List</var> with all elements equal to <var>Elem</var>
+deleted.  To extract a single copy of <var>Elem</var>, use
+<code>select(</code><var>Elem</var><code>, </code><var>List</var><code>, </code><var>Residue</var><code>)</code>. 
+For a given <var>Elem</var> and <var>Residue</var>, there are infinitely many
+<var>List</var>s containing <var>Elem</var> or not. 
+Therefore, this predicate only works one way around:  <var>List</var> must be a proper
+list and <var>Elem</var> should be instantiated.  Only one solution is ever
+found.
+
+     <br><dt><code>delete(</code><var>+List</var><code>, </code><var>+Elem</var><code>, </code><var>+Count</var><code>, </code><var>?Residue</var><code>)</code>
+     <dd>is true
+when <var>List</var> is a list, in which <var>Elem</var> may or may not occur, and
+<var>Count</var> is a non-negative integer.  <var>Residue</var> is a copy of
+<var>List</var> with the first <var>Count</var> elements equal to <var>Elem</var> deleted. 
+If <var>List</var> has fewer than <var>Count</var> elements equal to <var>Count</var>, all of them are
+deleted.  If <var>List</var> is not proper, <code>delete/4</code> may fail.  <var>Elem</var> and the
+elements of <var>List</var> should be sufficiently instantiated for <code>\=</code> to be
+sound.
+
+     <br><dt><code>keys_and_values(</code><var>?KeyValList</var><code>, </code><var>?KeyList</var><code>, </code><var>?ValList</var><code>)</code>
+     <dd>is true
+when all three arguments are lists of the same length
+(at least one of them should be a proper list), and are of the form
+     <pre class="example">          <var>KeyValList</var> = [<var>K1</var>-<var>V1</var>,<var>K2</var>-<var>V2</var>,...,<var>Kn</var>-<var>Vn</var>]
+          <var>KeyList</var>    = [<var>K1</var>,   <var>K2</var>   ,...,<var>Kn</var>   ]
+          <var>ValList</var>    = [   <var>V1</var>,   <var>V2</var>,...,   <var>Vn</var>]
+          </pre>
+
+     <p>That is, the <var>i</var>th element of <var>KeyValList</var> is a pair <code></code><var>Ki</var><code>-</code><var>Vi</var><code></code>,
+where <var>Ki</var> is the <var>i</var>th element of <var>KeyList</var> and <var>Vi</var> is the
+<var>i</var>th element of <var>ValList</var>.  The main point of this, of course,
+is that <var>KeyValList</var> is the kind of list that the
+built-in predicate <code>keysort/2</code> sorts,
+where the <var>Ki</var> are the keys that are sorted on and the
+<var>Vi</var> go along for the ride.  You can, for example, sort a list
+without discarding duplicate elements, using
+     <pre class="example">          msort(Raw, Sorted) :-
+                  keys_and_values(RawKV, Raw, _),
+                  keysort(RawKV, SortedKV),
+                  keys_and_values(SortedKV, Sorted, _).
+          </pre>
+
+     <p><code>keys_and_values/3</code> can also be used for constructing the input (list)
+argument of <code>list_to_map/2</code>
+and for decomposing the result of <code>map_to_list/2</code> -- see <code>library(maps)</code>
+(<a href="lib-abs.html#lib-abs">lib-abs</a>).
+     <pre class="example">          | ?- <kbd>keys_and_values([light-dark,
+                                    near-far,
+                                    wet-dry],
+                                    Keys, Vals).</kbd>
+          
+          Keys = [light,near,wet],
+          Vals = [dark,far,dry]
+          
+          | ?- <kbd>keys_and_values(Pairs, [light,near,wet],</kbd>
+          |                           <kbd>[dark,far,dry]).</kbd>
+          
+          Pairs = [light-dark,near-far,wet-dry]
+          </pre>
+
+     <br><dt><code>last(</code><var>?Last</var><code>, </code><var>+List</var><code>)</code>
+     <dd>is true
+when <var>List</var> is a list and <var>Last</var> is its last element.  This could
+be defined as
+     <pre class="example">          last(X, L) :-
+             append(_, [X], L).
+          </pre>
+
+     <br><dt><code>nextto(</code><var>?X</var><code>, </code><var>?Y</var><code>, </code><var>+List</var><code>)</code>
+     <dd>is
+true when <var>X</var> and <var>Y</var> appear side-by-side in <var>List</var>.  It could
+be defined as
+     <pre class="example">          nextto(X, Y, List) :- append(_, [X,Y|_], List).
+          </pre>
+
+     <p><code>nextto/3</code> may be used to enumerate successive pairs from <var>List</var>.  <var>List</var>
+should be a proper list.
+
+     <br><dt><code>nth0(</code><var>?N</var><code>, </code><var>?List</var><code>, </code><var>?Elem</var><code>)</code>
+     <dd>is
+true when <var>Elem</var> is the <var>N</var>th member of <var>List</var>,
+counting the first as element 0 (that is, throw away the first
+<var>N</var> elements and unify <var>Elem</var> with the next one).  Note that the
+argument pattern resembles that of <code>arg/3</code>. 
+Unlike <code>arg/3</code> (but like <code>genarg/3</code>; see <a href="lib-tma-arg.html#lib-tma-arg">lib-tma-arg</a>), <code>nth0/3</code> can be
+used to solve for either <var>N</var> or <var>Elem</var>. 
+If used to solve for <var>N</var>, <var>List</var> should be a proper list.
+
+     <br><dt><code>nth0(</code><var>?N</var><code>, </code><var>?List</var><code>, </code><var>?Elem</var><code>, </code><var>?Rest</var><code>)</code>
+     <dd>unifies
+<var>Elem</var> with the <var>N</var>th element of <var>List</var>,
+counting from 0, and <var>Rest</var> with the remaining elements.  <code>nth0/4</code> can be used
+to select the <var>N</var>th element of <var>List</var> (yielding <var>Elem</var> and
+<var>Rest</var>),
+or to insert <var>Elem</var> before the <var>N</var>th (counting from 0) element
+of <var>Rest</var>,
+(yielding <var>List</var>).  Either <var>N</var> should be instantiated, or <var>List</var> should
+be a proper list, or <var>Rest</var> should be a proper list; any one is enough.
+     <pre class="example">          | ?- <kbd>nth0(2, List, c, [a,b,d,e]).</kbd>
+          
+          List = [a,b,c,d,e]
+          
+          | ?- <kbd>nth0(2, [a,b,c,d,e], Elem, Rest).</kbd>
+          
+          Elem = c,
+          Rest = [a,b,d,e]
+          </pre>
+
+     <pre class="example">          | ?- <kbd>nth0(N, [a,b,c,d,e], c, Rest).</kbd>
+          
+          N = 2,
+          Rest = [a,b,d,e]
+          
+          | ?- <kbd>nth0(1, List, Elem, Rest).</kbd>
+          
+          List = [_973,Elem|_976],
+          Elem = _755,
+          Rest = [_973|_976]
+          </pre>
+
+     <br><dt><code>nth1(</code><var>?N</var><code>, </code><var>?List</var><code>, </code><var>?Elem</var><code>)</code>
+     <dd>is
+the same as <code>nth0/3</code>, except that it counts from 1
+so that, for example,
+     <pre class="example">          nth1(1, [H|T], H)
+          </pre>
+
+     <p>is true. 
+<var>List</var> should be a proper list.
+
+     <br><dt><code>nth1(</code><var>?N</var><code>, </code><var>?List</var><code>, </code><var>?Elem</var><code>, </code><var>?Rest</var><code>)</code>
+     <dd>is
+the same as <code>nth0/4</code> except that it counts from 1. 
+It can be used to select the <var>N</var>th element of <var>List</var> (yielding <var>Elem</var>
+and <var>Rest</var>), or to insert <var>Elem</var> before the <var>N</var>+1st element of <var>Rest</var>,
+when it yields <var>List</var>.  Either <var>N</var> should be instantiated, or <var>List</var>
+should be a proper list, or <var>Rest</var> should be a proper list; any one is
+enough.
+     <pre class="example">          | ?- <kbd>nth1(3, List, c, [a,b,d,e]).</kbd>
+          
+          List = [a,b,c,d,e]
+          
+          | ?- <kbd>nth1(3, [a,b,c,d,e], Elem, Rest).</kbd>
+          
+          Elem = c
+          Rest = [a,b,d,e]
+          </pre>
+
+     <pre class="example">          | ?- <kbd>nth1(N, [a,b,c,d,e], c, Rest).</kbd>
+          
+          N = 3
+          Rest = [a,b,d,e]
+          
+          | ?- <kbd>nth1(1, List, Elem, Rest).</kbd>
+          
+          List = [Elem|Rest],
+          Elem = _755,
+          Rest = _770
+          </pre>
+
+     <br><dt><code>perm(</code><var>+List</var><code>, </code><var>?Perm</var><code>)</code>
+     <dd>is true when <var>List</var> and <var>Perm</var> are permutations of each other. 
+If you simply want to test this, the best way is to sort the two
+lists and see if the results are the same; use <code>samsort/2</code> from <code>library(samsort)</code> (<a href="lib-abs.html#lib-abs">lib-abs</a>) in preference to
+<code>sort/2</code>.
+
+     <p>The point of <code>perm/2</code> is to generate permutations; it only
+works if <var>List</var> is a proper list. 
+<code>perm/2</code> should not be used in new programs; use <code>permutation/2</code> instead.
+
+     <br><dt><code>permutation(</code><var>?List</var><code>, </code><var>?Perm</var><code>)</code>
+     <dd>is
+true when <var>List</var> and <var>Perm</var> are permutations of each other.  Unlike
+<code>perm/2</code>, it will work even when <var>List</var> is not a proper list.  <code>permutation/2</code>
+will return reasonable results when <var>Perm</var> is also not proper, but will
+still backtrack forever unless one of the arguments is proper. 
+Be careful:  <code>permutation/2</code> is is quite efficient, but
+the number of permutations of an <var>N</var>-element list is <var>N!</var> (<var>N</var>-factorial). 
+Even for a 7-element list that is 5040.
+
+     <br><dt><code>perm2(</code><var>?A</var><code>, </code><var>?B</var><code>, </code><var>?C</var><code>, </code><var>?D</var><code>)</code>
+     <dd>is
+true when <code>[</code><var>A</var><code>, </code><var>B</var><code>]</code> is a permutation of
+<code>[</code><var>C</var><code>, </code><var>D</var><code>]</code>.  <code>perm2/4</code> is very useful for writing pattern
+matchers over commutative operators.  It is used more often than <code>perm/2</code>. 
+<code>perm2/4</code> is not really an operation on lists.  <code>perm2/4</code>
+is in <code>library(lists)</code> only because  <code>permutation/2</code> is there.
+
+     <br><dt><code>remove_dups(</code><var>+List</var><code>, </code><var>?Pruned</var><code>)</code>
+     <dd>removes duplicated elements from <var>List</var>, which should be a
+proper list.  If <var>List</var> contains non-ground elements, <var>Pruned</var>
+may contain elements that unify.  Two elements will be considered duplicates
+if and only if all possible substitutions cause them to be identical.
+     <pre class="example">          | ?- <kbd>remove_dups([X,X], L).</kbd>
+          
+          X = _123
+          L = [X]
+          
+          | ?- <kbd>remove_dups([X,Y], L).</kbd>
+          
+          X = _123
+          Y = _126
+          L = [X,Y]
+          
+          | ?- <kbd>remove_dups([3,1,4,1], L).</kbd>
+          
+          L = [1,3,4]
+          </pre>
+
+     <p><code>remove_dups/2</code> does not preserve the original order of the
+elements of <var>List</var>.
+
+     <br><dt><code>rev(</code><var>+List</var><code>, </code><var>?Reversed</var><code>)</code>
+     <dd>is
+true when <var>List</var> and <var>Reversed</var> are lists with the same elements
+but in opposite orders.  <var>List</var> must be supplied as a proper list; if
+ <var>List</var> is partial, <code>rev/2</code> may find a solution, but if backtracked into
+will backtrack forever,  trying ever longer lists. 
+Use <code>rev/2</code> only when you know that <var>List</var> is proper; it is then twice
+as fast as calling <code>reverse/2</code>.
+
+     <br><dt><code>reverse(</code><var>?List</var><code>, </code><var>?Reversed</var><code>)</code>
+     <dd>is
+true when <var>List</var> and <var>Reversed</var> are lists with the same elements
+but in opposite orders.  Either <var>List</var> or <var>Reversed</var> should be a
+proper list:  given either argument the other can be found.  If
+both are partial, <code>reverse/2</code> will keep trying longer instances of both. 
+If you want an invertible relation, use this.  If you only want
+the reversal to work one way around, <code>rev/2</code> is adequate.
+
+     <br><dt><code>same_length(</code><var>?List1</var><code>, </code><var>?List2</var><code>)</code>
+     <dd>is
+true when <var>List1</var> and <var>List2</var> are both lists and have the same
+number of elements.  No relation between the elements of <var>List1</var>
+and <var>List2</var> is implied.  This predicate may be used to generate
+either list given the other, or
+indeed to generate two lists of the same length, in which case the
+arguments will be bound to lists of length 0, 1, 2, and so on. 
+<code>same_length/2</code> is supplied to make it easier to write
+invertible predicates, transferring the proper list status of
+either argument to the other.  same_length(<var>List1, List2</var>) has the same
+effect as the following call to <code>same_length/3</code>:
+     <pre class="example">          same_length(<var>List1, List2</var>, _ /* any length */)
+          </pre>
+
+     <br><dt><code>same_length(</code><var>?List1</var><code>, </code><var>?List2</var><code>, </code><var>?Length</var><code>)</code>
+     <dd>is
+true when <var>List1</var> and <var>List2</var> are both lists and have the same
+number of elements, and <var>Length</var> is an integer that is the common
+length of the two lists.  No relation between the elements of <var>List1</var>
+and <var>List2</var> is implied.  This predicate may be used to generate any of
+its arguments.  If <var>Length</var> is given, or if either <var>List1</var>
+or <var>List2</var> is a proper list at the time of call, <code>same_length/3</code> is
+determinate and terminates. 
+Otherwise it will backtrack forever, binding its arguments to lists
+of length 0, 1, 2, and so on.  <code>same_length/3</code> is logically equivalent to
+     <pre class="example">          length(<var>List1</var>, Length),
+          length(<var>List2</var>, Length)
+          </pre>
+
+     <p>except that if <var>List2</var> is known and the other arguments are not, this
+code will not terminate if backtracked into, while <code>same_length/3</code> will
+terminate determinately.
+
+     <br><dt><code>select(</code><var>?X</var><code>, </code><var>?Xlist</var><code>, </code><var>?Y</var><code>, </code><var>?Ylist</var><code>)</code>
+     <dd>is
+true when <var>X</var> is the <var>K</var>th element of <var>Xlist</var> and <var>Y</var> the <var>K</var>th
+element of <var>Ylist</var> for some <var>K</var>, and apart from that element <var>Xlist</var>
+and <var>Ylist</var> are the same.  You can use <code>select/4</code> to replace <var>X</var> by
+<var>Y</var> or vice versa.  Either <var>Xlist</var> or <var>Ylist</var> should be
+a proper list.
+
+     <br><dt><code>selectchk(</code><var>?X</var><code>, </code><var>?Xlist</var><code>, </code><var>?Y</var><code>, </code><var>?Ylist</var><code>)</code>
+     <dd>is to <code>select/4</code> what
+<code>memberchk/2</code> is to <code>member/2</code> in <code>library(basics)</code>.
+
+     <br><dt><code>shorter_list(</code><var>?Short</var><code>, </code><var>?Long</var><code>)</code>
+     <dd>is
+true when <var>Short</var> is a list strictly shorter than <var>Long</var>.  No
+relation between the elements of <var>Short</var> and <var>Long</var> is implied. 
+<var>Long</var> does not have to be a proper list provided it has one more element
+than <var>Short</var>. 
+This can be used to generate lists shorter than <var>Long</var>;
+lengths 0, 1, 2, and so on will be tried, but backtracking will
+terminate with a list that is one element shorter than <var>Long</var>. 
+<code>shorter_list/2</code> cannot be used to generate lists longer than <var>Short</var>,
+because it does not look at all the elements of the longer list.
+
+     <br><dt><code>subseq(</code><var>?Sequence</var><code>, </code><var>?SubSequence</var><code>, </code><var>?Complement</var><code>)</code>
+     <dd>
+is true when <var>SubSequence</var> and <var>Complement</var> are both subsequences of the
+list <var>Sequence</var> (the order of corresponding elements being preserved)
+and every element of <var>Sequence</var> that is not in <var>SubSequence</var> is
+in <var>Complement</var> and vice versa.  Among other things, this means that
+     <pre class="example">          length(Sequence) = length(SubSequence) +
+                             length(Complement)
+          </pre>
+
+     <p>and
+     <pre class="example">          subseq([1,2,3,4], [1,3,4], [2]).
+          </pre>
+
+     <p><code>subseq/3</code> was written to generate subsets
+and their complements together from <var>Sequence</var>, but can also be used to
+interleave two lists <var>Subsequence</var> and <var>Complement</var> in all possible
+ways.  Either <var>Sequence</var> should be a proper list,
+or both <var>SubSequence</var> and <var>Complement</var> should both be proper lists. 
+Note that if <var>S1</var> is a subset of <var>S2</var>, it will
+be generated <em>before</em> <var>S2</var> as a <var>SubSequence</var> and <em>after</em> it as
+a <var>Complement</var>. 
+To be specific, take <code></code><var>S1</var><code> = [a]</code>, <code></code><var>S2</var><code> = [a,c]</code>, <code></code><var>Sequence</var><code> = [a,b,c]</code>:
+     <pre class="example">          | ?- <kbd>subseq([a,b,c], Sub, Com).</kbd>
+          
+          Sub = [],
+          Com = [a,b,c] <kbd>;</kbd>
+          
+          Sub = [c],
+          Com = [a,b] <kbd>;</kbd>
+          
+          Sub = [b],
+          Com = [a,c] <kbd>;</kbd>       % S2 generated as <var>Complement</var>
+          
+          Sub = [b,c],
+          Com = [a] <kbd>;</kbd>         % S1 generated as <var>Complement</var>
+                               % (AFTER S2)
+          Sub = [a],           % S1 generated as <var>SubSequence</var>
+          Com = [b,c] <kbd>;</kbd>       % (BEFORE S2)
+          
+          Sub = [a,c],         % S2 generated as <var>SubSequence</var>
+          Com = [b] <kbd>;</kbd>
+          
+          Sub = [a,b],
+          Com = [c] <kbd>;</kbd>
+          
+          Sub = [a,b,c],
+          Com = [] <kbd>;</kbd>
+          
+          no               % these 8 are all the solutions.
+          </pre>
+
+     <p>Further examples of the use of <code>subseq/3</code> are:
+     <pre class="example">          | ?- <kbd>subseq([1,2,3,4], X, [2]).</kbd>
+          
+          X = [1,3,4]
+          
+          | ?- <kbd>subseq([a,b], Subs, Comp).</kbd>
+          
+          Subs = [],
+          Comp = [a,b] <kbd>;</kbd>
+          
+          Subs = [b],
+          Comp = [a] <kbd>;</kbd>
+          
+          Subs = [a],
+          Comp = [b] <kbd>;</kbd>
+          
+          Subs = [a,b],
+          Comp = [] <kbd>;</kbd>
+          
+          no
+          </pre>
+
+     <pre class="example">          | ?- <kbd>subseq(Seq, [@], [#]).</kbd>
+          
+          Seq = [#,@] <kbd>;</kbd>
+          
+          Seq = [@,#] <kbd>;</kbd>
+          
+          no
+          </pre>
+
+     <br><dt><code>subseq0(</code><var>+Sequence</var><code>, </code><var>?SubSequence</var><code>)</code>
+     <dd>is
+true when <var>SubSequence</var> is a subsequence of <var>Sequence</var>, but may
+be <var>Sequence</var> itself.  Thus:
+     <pre class="example">          | ?- <kbd>subseq0([a,b], [a,b]).</kbd>
+          
+          yes
+          | ?- <kbd>subseq0([a,b], [a]).</kbd>
+          
+          yes
+          </pre>
+
+     <p>Also,
+     <pre class="example">          | ?- <kbd>setof(X, subseq0([a,b,c],X), Xs).</kbd>
+          
+          Xs = [[],[a],[a,b],[a,b,c],[a,c],[b],[b,c],[c]]
+          
+          | ?- <kbd>bagof(X, subseq0([a,b,c,d],X), Xs).</kbd>
+          
+          Xs = [[a,b,c,d],[b,c,d],[c,d],[d],[],[c],[b,d],
+          [b],[b,c],[a,c,d],[a,d],[a],[a,c],[a,b,d],[a,b],
+          [a,b,c]]
+          </pre>
+
+     <p><var>Sequence</var> must be a proper list.
+
+     <br><dt><code>subseq1(</code><var>+Sequence</var><code>, </code><var>?SubSequence</var><code>)</code>
+     <dd>is
+true when <var>SubSequence</var> is a proper subsequence of <var>Sequence</var>;
+that is, <var>SubSequence</var> contains at least one element less than
+<var>Sequence</var>.  <var>Sequence</var> must be a proper list.
+     <pre class="example">          | ?- <kbd>% note that [a,b,c] does NOT appear in Xs:</kbd>
+          |    <kbd>setof(X, subseq1([a,b,c],X), Xs).</kbd>
+          
+          Xs = [[],[a],[a,b],[a,c],[b],[b,c],[c]]
+          
+          | ?- <kbd>% note that [a,b,c,d] does NOT appear in Xs:</kbd>
+          |    <kbd>bagof(X, subseq1([a,b,c,d],X), Xs).</kbd>
+          
+          Xs = [[b,c,d],[c,d],[d],[],[c],[b,d],[b],[b,c],
+          [a,c,d],[a,d],[a],[a,c],[a,b,d],[a,b],[a,b,c]]
+          </pre>
+
+     <br><dt><code>sumlist(</code><var>+Numbers</var><code>, </code><var>?Total</var><code>)</code>
+     <dd>is
+true when <var>Numbers</var> is a proper list of numbers, and <var>Total</var> is
+their sum.  Note that a list of arithmetic
+expressions will <em>not</em> work.  If any of the <var>Numbers</var> is a
+floating-point number, <var>Total</var> will be a floating-point number; otherwise
+it will be an integer.
+
+     <br><dt><code>transpose(</code><var>?X</var><code>, </code><var>?Y</var><code>)</code>
+     <dd>is true when <var>X</var> is a list of the form
+[[<var>X11</var>,<small class="dots">...</small>,<var>X1m</var>],<small class="dots">...</small>,[<var>Xn1</var>,<small class="dots">...</small>,<var>Xnm</var>]] and <var>Y</var> is its transpose, that is,
+<var>Y</var> = [[<var>X11</var>,<small class="dots">...</small>,<var>Xn1</var>],<small class="dots">...</small>,[<var>X1m</var>,<small class="dots">...</small>,<var>Xnm</var>]].
+
+     <p>To make the <code>transpose/2</code> invertible, all the sublists of the list being
+transposed must be of the same length.  If they are not, it will fail.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-lis-set.html#lib-lis-set">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-lis-basics.html#lib-lis-basics">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-lis.html#lib-lis">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Use of Advice Predicates</h4>
+
+   <p>Whether a predicate has advice associated with it is independent of
+whether advice on that predicate is being "checked".  Advice may be
+thought of as a generalized spypoint, where the user specifies the
+action to be performed at each debugger port.  Distinct built-in
+predicates are provided for modifying advice and influencing whether
+advice is being checked.  Advice is associated with a predicate using
+<code>add_advice/3</code> and deleted using <code>remove_advice/3</code>.  You can
+determine what advice is outstanding by using <code>current_advice/3</code>. 
+Advice on a predicate is retained if that predicate is abolished, as
+is likely to happen during program development.  It also survives that
+predicate being saved to a QOF file, and is reinstated when that QOF
+file is loaded.
+
+   <p>Advice checking can be enabled one predicate at a time using
+<code>check_advice/1</code> and disabled one predicate at a time with
+<code>nocheck_advice/1</code>.  These are analogous to <code>spy/1</code> and <code>nospy/1</code>,
+and are similarly defined as prefix operators of precedence 900. 
+As a convenience, <code>check_advice/0</code> is provided to enable checking for
+all predicates that currently have advice associated with them. 
+<code>nocheck_advice/0</code> can also be used to turn off all advice checking
+easily.  It is possible to use <code>check_advice/1</code> to turn advice
+checking on for a predicate that does not currently have any advice,
+although doing so will have no effect until advice is added to the
+predicate.  As <code>check_advice/0</code> only affects predicates that currently
+have advice, it cannot be used for this purpose.  Like the advice
+itself, advice checking survives a checked predicate being abolished
+and redefined.
+
+   <p>Note that whether a particular call to an advised predicate is checked
+is determined once the call is made.  If advice checking is enabled
+after a predicate has been entered but before it reaches a subsequent
+advised port of the predicate, advice checking will not be done.
+
+   <p>Advice on any given port is checked before any debugger interaction for
+that port.  Taking advice checking as well as debugger interaction into
+account in the procedure box model of Prolog execution (see
+<a href="dbg-bas-pbx.html#dbg-bas-pbx">dbg-bas-pbx</a>), we have
+
+<pre class="example">                              +-----------+
+     Call -&gt; Advice -&gt; Spy -&gt; |           | Advice -&gt; Spy -&gt; Exit -&gt;
+                              | procedure |
+                              |    box    |
+     Fail &lt;- Spy &lt;- Advice &lt;- |           | &lt;- Spy &lt;- Advice &lt;- Redo
+                              +-----------+
+     </pre>
+
+   <p>This is necessary so that advice actions can control the
+debugger.
+
+   <p>It is possible (and often advisable) to write an application where advice
+is always present on appropriate predicates, but that advice is not
+checked by default.  When required, advice checking can be turned on
+and the application monitored or debugged using the advice.  This makes
+it unnecessary to add advice each time you want it only having to remove
+it when you don't want it any longer.  Instead, the application's advice
+can persist, with modifications as
+desired, through development.  It can also be retained once development
+is completed, providing diagnostics that can be turned on in case of
+problems.
+
+   <p>Predicate properties (see <code>predicate_property/2</code>) have been added
+to allow you to determine what predicates have outstanding advice, or
+have advice checking enabled.  When a predicate currently has advice
+associated with it, it has the property <code>has_advice</code>.  If advice is
+being checked for that predicate, it has the property <code>checking_advice</code>. 
+These properties are independent of each other, and are independent of
+whether the advised predicate is currently defined or not. 
+For example:
+
+<pre class="example">     | ?- <kbd>check_advice(foo/0).</kbd>
+     * You have no clauses for user:foo/0
+     % Advice checking enabled on user:foo/0
+     
+     yes
+     | ?- <kbd>predicate_property(foo, P).</kbd>
+     
+     P = checking_advice <kbd>;</kbd>
+     
+     no
+     | ?- <kbd>add_advice(foo, call, (write(hi),nl)).</kbd>
+     % Advice placed on user:foo/0
+     
+     yes
+     | ?- <kbd>predicate_property(foo, P).</kbd>
+     
+     P = has_advice <kbd>;</kbd>
+     
+     P = checking_advice <kbd>;</kbd>
+     
+     no
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-adv-prf.html#dbg-adv-prf">Next</a>
+<li><a rel="up" accesskey="u" href="dbg-adv.html#dbg-adv">Up</a>
+</ul>
+</div>
+   </body></html>
+

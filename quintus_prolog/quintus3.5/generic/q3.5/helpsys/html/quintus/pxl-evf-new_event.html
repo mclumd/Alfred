@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>new_event/[1,2]</code></h4>
+
+   <p>Under ProXL, the event structures used by
+X11 are not Prolog terms, but ProXL-specific data structures whose
+implementation details are not visible to the user, and they have to
+be explicitly allocated and de-allocated<a rel="footnote" href="#fn-1"><sup>1</sup></a>.
+
+   <p>ProXL provides routines to examine and set the contents of these
+structures. The user should not hang on to any of these structures,
+and in particular, should not assert them into the data base.
+
+   <p>All of the event handling predicates documented in this section have
+an <var>XEvent</var> argument, which is an X11 event structure.
+
+<pre class="example">     new_event(-<var>XEvent</var>)
+     new_event(-<var>XEvent</var>, +<var>EventValues</var>)
+     </pre>
+
+   <p>Will create a new private, X11 event structure and unify <var>XEvent</var>
+with it.
+
+   <p><code>new_event/1</code> creates a new, uninitialized event structure.
+
+   <p><code>new_event/2</code> creates a new event structure, and destructively
+set its fields from the values given in <var>EventValues</var>, which must
+be a list of event fields in the style of the callback mechanism, and
+unify <var>XEvent</var> with the initialized result. The list of event
+values must specify at least a <code>type</code>. If <code>display</code> is not
+specified, the default Display is used.
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>In the current
+implementation, they are not garbage-collected automatically</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-evf-dispose_event.html#pxl-evf-dispose_event">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-evf-pending.html#pxl-evf-pending">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-evf.html#pxl-evf">Up</a>
+</ul>
+</div>
+   </body></html>
+

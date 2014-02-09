@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Inequality</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="lib-neg-ine-nop.html#lib-neg-ine-nop">lib-neg-ine-nop</a>:                      Term1 \= Term2
+<li><a accesskey="2" href="lib-neg-ine-snd.html#lib-neg-ine-snd">lib-neg-ine-snd</a>:                      Term1 ~= Term2
+</ul>
+
+   <p>DEC-10 Prolog, C-Prolog, and Quintus Prolog provide two inequality
+operations:
+     <dl>
+
+     <br><dt><code></code><var>Term1</var><code> \== </code><var>Term2</var><code></code>
+     <dd><var>Term1</var> is not currently identical to <var>Term2</var>
+
+     <br><dt><code></code><var>Expr1</var><code> =\= </code><var>Expr2</var><code></code>
+     <dd><var>Expr1</var> and <var>Expr2</var> are arithmetic expressions with different
+values
+</dl>
+
+   <p><code>=\=/2</code> is reasonably straightforward.  Either it is true, and will
+remain true, or it is false, and will remain false, or the Prolog
+system will report an error if it cannot determine which.  Thus
+<code>1 =\= 2</code> is true, <code>1 =\= 1.0</code> is false, and
+<code>_ =\= 3</code> will result in an error exception.
+
+   <p><code>\==/2</code> is not really a logical relation, but a meta-logical relation
+like <code>var/1</code>.  It tests whether two terms are exactly
+identical, down to having the same variables in the same places. 
+It either succeeds or fails; and if it fails it will continue to
+do so, but if it succeeds it may fail later on.  For example,
+<pre class="example">     | ?- <kbd>X \== Y,</kbd>  % succeeds
+     |    <kbd>X  =  Y,</kbd>  % succeeds, unifying X and Y
+     |    <kbd>X \== Y.</kbd>  % FAILS, now that X and Y are unified
+     
+     no
+     </pre>
+
+   <p>It is safe to use <code>==/2</code> and <code>\==/2</code> to test the equality of terms
+when you know in advance that the terms will be ground by the time
+the test is made.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-neg-once.html#lib-neg-once">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-neg-not.html#lib-neg-not">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-neg.html#lib-neg">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

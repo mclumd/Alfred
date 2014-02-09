@@ -1,0 +1,1863 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: mpg-ref-get,  Next: mpg-ref-get0,  Prev: mpg-ref-generate_message_hook,  Up: mpg-ref
+
+`get/[1,2]'
+-----------
+
+Synopsis
+--------
+
+   `get(-CHAR)'
+
+   `get(+STREAM, -CHAR)'
+
+   unifies CHAR with the ASCII code of the next non-layout character
+from Stream or the current input stream.
+
+Arguments
+---------
+
+CHAR "char"
+     integer; legal ASCII code
+
+STREAM "stream_object"
+     valid Prolog input stream
+
+Description
+-----------
+
+   Layout characters are all outside the inclusive range 33..126; this
+includes space, tab, linefeed, delete, and all control characters.
+
+   If there are no more non-layout characters in the stream, CHAR is
+unified with -1.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`existence_error'
+     Trying to read beyond end of STREAM
+
+Comment
+-------
+
+   If the stream is tty, trying to read beyond the end of the stream
+results in resetting the input stream and trying to read the next
+character.  By using the `eof_action' option of `open/[3,4]', it is
+possible to specify that it should not be an error to run off the end
+of a stream.
+
+See Also
+--------
+
+   `get0/[1,2]', `ttyget/1', `prompt/[2,3]', `open/[3,4]'
+
+
+File: quintus.info,  Node: mpg-ref-get0,  Next: mpg-ref-get_profile_results,  Prev: mpg-ref-get,  Up: mpg-ref
+
+`get0/[1,2]'
+------------
+
+Synopsis
+--------
+
+   `get0(-CHAR)'
+
+   `get0(+STREAM, -CHAR)'
+
+   Same as `get/[1,2]' except that CHAR includes layout characters.
+
+Arguments
+---------
+
+CHAR "char"
+
+STREAM "stream_object"
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`existence_error'
+     Trying to read beyond end of STREAM
+
+See Also
+--------
+
+   `get/[1,2]', `ttyget0/1', `prompt/[2,3]'
+
+
+File: quintus.info,  Node: mpg-ref-get_profile_results,  Next: mpg-ref-rar,  Prev: mpg-ref-get0,  Up: mpg-ref
+
+`get_profile_results/4' "development"
+-------------------------------------
+
+Synopsis
+--------
+
+   `get_profile_results(+BY,
++NUM,-RESULTS,-TOTAL)'
+
+   Returns the results of the last profiled execution.
+
+Arguments
+---------
+
+BY "atom"
+     must be one of the atoms:
+       1. `by_time'
+
+       2. `by_choice_points'
+
+       3. `by_calls'
+
+       4. `by_redos'
+
+NUM "integer"
+     specifies the maximum length of the RESULTS list
+
+RESULTS "list of term"
+     the results list
+
+TOTAL "integer"
+Description
+-----------
+
+   Returns profiling information accumulated from the last call to
+`profile/1'.  The BY argument specifies the "display mode", which
+determines how the list is sorted and what the TOTAL argument returns.
+The NUM argument determines the maximum length of the RESULTS list.
+This list is always sorted in descending order so that the top NUM
+predicates are included in the list.
+
+   RESULTS is a list of terms of the form
+`proc(NAME,NCALLS,NCHPTS,NREDOS,TIME,CALLERS)' where
+NAME,NCALLS,NCHPTS,NREDOS,TIME give call, choice point, redo counts and
+the execution time spent in milliseconds, and CALLERS is a list of
+`calledby(TIME,CALLS,NAME,CLAUSENO,CALLNO)' terms, where TIME in this
+case is the percentage of time attributed to this caller, CALLS is the
+number of calls made from this caller and NAME, CLAUSENO, CALLNO locate
+precisely the actual caller.
+
+   If the display mode is `by_time' then TOTAL is the total execution
+time in milliseconds. If the display mode is `by_calls',
+`by_choice_points' or `by_redos' then TOTAL returns the total number of
+calls, choice points or redos respectively.
+
+   This predicate is not supported in runtime systems.
+
+Example
+-------
+
+     | ?- get_profile_results(by_time,3,List,Total).
+     
+     List = [proc(user:setof/3,227,0,0,1980,
+                  [calledby(61,152,user:satisfy/1,6,1),
+                   calledby(20,27,user:satisfy/1,7,1),
+                   calledby(18,48,user:seto/3,1,1)]),
+             proc(user:satisfy/1,35738,36782,14112,260,
+                  [calledby(69,13857,user:satisfy/1,1,2),
+                   calledby(15,12137,user:satisfy/1,2,1)]),
+             proc(user:write/1,2814,0,0,240,
+                  [calledby(33,481,user:reply/1,3,1),
+                   calledby(25,608,user:replies/1,3,1),
+                   calledby(16,562,user:out/1,2,1),
+                   calledby(8,203,user:reply/1,2,5),
+                   calledby(8,34,user:replies/1,2,3)])],
+     Total = 6040
+     
+     [profile]
+
+See Also
+--------
+
+   `profile/[0,1,2,3]', `show_profile_results/[0,1,2]'
+
+
+File: quintus.info,  Node: mpg-ref-ground,  Next: mpg-ref-halt,  Prev: mpg-ref-rar,  Up: mpg-ref
+
+`ground/1' "meta-logical"
+-------------------------
+
+Synopsis
+--------
+
+   `ground(+TERM)'
+
+   TERM is currently instantiated to a term that is completely bound
+(has no uninstantiated variables in it).
+
+Arguments
+---------
+
+TERM "term"
+Examples
+--------
+
+     | ?- ground(9).
+     
+     yes
+     | ?- ground(major(tom)).
+     
+     yes
+     | ?- ground(a(1,Term,3)).
+     
+     no
+     | ?- ground("a").
+     
+     yes
+     | ?- ground([1,foo(Term)]).
+     
+     no
+
+See Also
+--------
+
+   `atom/1', `atomic/1', `number/1', `var/1', `compound/1',
+`callable/1', `nonvar/1', `simple/1'
+
+
+File: quintus.info,  Node: mpg-ref-halt,  Next: mpg-ref-hash_term,  Prev: mpg-ref-ground,  Up: mpg-ref
+
+`halt/[0,1]'
+------------
+
+Synopsis
+--------
+
+   `halt'
+
+   `halt(+EXITCODE)'
+
+   Causes an exit from Prolog.
+
+Arguments
+---------
+
+EXITCODE "integer"
+     an exit status code
+
+Description
+-----------
+
+   causes an exit from Prolog
+
+   `halt/0' exits with a "success" exit status (0).
+
+   `halt/1' exits with the exit status given by its EXITCODE argument.
+
+Exceptions
+----------
+
+`instantiation_error'
+`type_error'
+     N is not an integer.
+
+See Also
+--------
+
+   `abort/0', `break/0'
+
+   *Note ref-iex-int::
+
+
+File: quintus.info,  Node: mpg-ref-hash_term,  Next: mpg-ref-help,  Prev: mpg-ref-halt,  Up: mpg-ref
+
+`hash_term/2'
+-------------
+
+Synopsis
+--------
+
+   `hash_term(+TERM, -HASHVALUE)'
+
+   Provides an efficient way to calculate an "integer" hash value for
+the ground term TERM.
+
+Arguments
+---------
+
+TERM "term"
+
+HASHVALUE "term"
+     is an integer or variable
+
+Description
+-----------
+
+   If the first argument passed to `hash_term/2' is ground, an integer
+hash value corresponding to that term is calculated and returned in the
+second argument.  If the first argument is not ground, a new variable
+is returned in the second argument.
+
+   For example:
+
+      | ?- hash_term(foo(name,2,module), H).
+     
+     H = 1391
+     
+     | ?- hash_term(foo(X), H).
+     
+     X = _4734,
+     H = _4755
+     
+     | ?-
+
+Tips
+----
+
+   `hash_term/2' is provided primarily as a tool for the construction
+of sophisticated Prolog clause access schemes.  Its intended use is to
+generate hash values for ground terms that will be used with first
+argument clause indexing, yielding compact and efficient multi-argument
+or deep argument indexing.
+
+   `hash_term/2' is most easily used when a known pattern of access to
+a predicate is desired and both arguments of the call and arguments of
+the predicate are known to be ground.  In the following simple but
+typical example, `hash_term/2' calls are used together with Prolog's
+database manipulation predicates (`assert/1' and `clause/2') to
+calculate and add an additional argument to the clauses actually stored
+in the Prolog database:
+
+     add_pred_info(Name, Arity, Module, Info) :-
+             hash_term([Name,Arity,Module], Hash),
+             assert(info(Hash,Name,Arity,Module,Info)).
+     
+     get_pred_info(Name, Arity, Module, Info) :-
+             hash_term([Name,Arity,Module], Hash),
+             clause(info(Hash,Name,Arity,Module,Info), _).
+
+   This example assumes that the name, arity and module to be stored in
+the Prolog database are ground when `add_pred_info/4' is called, and
+that they are also ground when `get_pred_info/4' is called.  The
+predicate that is actually asserted, `info/5', has an additional
+argument calculated by `hash_term/2'; `info/5' would not normally be
+called directly.  A predicate using `hash_term/2' to delete the stored
+information would also be straightforward.
+
+   If the first argument passed to `hash_term/2' is not ground,
+`hash_term/2' returns a variable.  Thus, if `add_pred_info/4' is called
+with the name, arity or module not ground, the `info/5' information
+will be asserted with a variable as its first argument, so it will not
+be indexed.  If `get_pred_info/4' is called with the name, arity or
+module not ground, `info/5' will simply be searched sequentially.
+Prolog's normal semantics will be retained, although access will be
+considerably less efficient.
+
+   It is possible to use `hash_term/2' in more complex indexing schemes
+as well by checking instantiation when adding, accessing, and deleting
+clauses; however, it is up to the user to ensure appropriate
+instantiation patterns in calls.  The tradeoff between run-time
+argument checking and reduced indexing effectiveness depends on the
+degree of discrimination otherwise afforded by normal first argument
+indexing.  The efficiency gained by fast multi-argument indexing can
+often more than make up for such additional run-time costs.
+
+   It is also possible to use such indexing techniques on compiled
+predicates using term expansion.  Note that calculated hash values are
+not dependent on transitory information like atom numbers or internal
+pointers.  Hash values are consistent across saving and restoring or
+multiple invocations of an application.
+
+   Calculation of hash values is very fast, and indices constructed
+using the techniques sketched above are also very compact, as the only
+additional cost is for storing the additional (hash value) argument.
+When a solution to a complex indexing problem can be constructed using
+`hash_term/2' it will probably be preferable to solutions using other
+techniques.
+
+
+File: quintus.info,  Node: mpg-ref-help,  Next: mpg-ref-ith,  Prev: mpg-ref-hash_term,  Up: mpg-ref
+
+`help/[0,1]' "hookable,development"
+-----------------------------------
+
+Synopsis
+--------
+
+   `help'
+
+   Gives basic information, such as how to start using the help system
+and how to exit from Prolog.
+
+   `help(+TOPIC)'
+
+   Displays help available on TOPIC.
+
+Arguments
+---------
+
+TOPIC "atom"
+Description
+-----------
+
+   `help(TOPIC)' is the basic help command.  It attempts to accept any
+argument you give it as a topic for which help may exist in the manual.
+The argument is converted into a character string, and all the index
+entries that start with that string are combined into a menu, which
+gives you a choice of entry points into the manual hierarchy.
+
+   It is not necessary to type the whole of the word that is the topic
+you want information about.  However, the fewer characters you type,
+the larger the menu is likely to be, because more index entries will
+contain with that character sequence.
+
+   A hook is provided so that users can add to or replace this
+information: `help/0' first calls `user_help/0', and if that succeeds
+`help/0' does nothing else.  Only if the call to `user_help/0' fails is
+the standard information displayed.
+
+   With the emacs interface see *Note ema-emi::
+
+   With QUI see *Note qui-mai::
+
+   This predicate is not supported in runtime systems.
+
+See Also
+--------
+
+   `user_help/0', `manual/[0,1]'
+
+
+File: quintus.info,  Node: mpg-ref-initialization,  Next: mpg-ref-instance,  Prev: mpg-ref-ite,  Up: mpg-ref
+
+`initialization/1' "declaration"
+--------------------------------
+
+Synopsis
+--------
+
+   `:- initialization GOAL'
+
+   Declares that GOAL is to be run when the file in which the
+declaration appears is loaded into a running system, or when a
+stand-alone program or runtime system that contains the file is started
+up.
+
+Arguments
+---------
+
+GOAL "callable" [MOD]
+     A valid goal.
+
+Description
+-----------
+
+   Defined as built-in prefix operator, so a simplified syntax can be
+used when using `initialization/1' as a directive. See examples.
+
+   Callable at any point during compilation of a file. That is, it can
+be used as a directive, or as part of a goal called at compile-time.
+The initialization goal will be run as soon as the loading of the file
+is completed. That is at the end of the load, and notably after all
+other directives appearing in the file have been run.
+
+   `qpc' and `save_program/[1,2]' save initialization goals in the QOF
+file, so that they will run when the qof file is loaded.
+
+   GOAL is associated with the file loaded, and with a module, if
+applicable.  When a file, or module, is going to be reloaded, all goals
+earlier installed by that file or in that module, are removed.  This is
+done before the actual load, thus allowing a new initialization GOAL to
+be specified, without creating duplicates.
+
+Exceptions
+----------
+
+`instantiation_error'
+     The argument GOAL is not instantiated
+
+Examples
+--------
+
+   To understand the examples fully, read the reference page on
+`volatile/1' first.
+
+   A common case is when the Prolog process at start up should connect
+itself to an external database. It should also make the connection when
+the file with the code for the connection is loaded for the first time.
+     :- volatile db_connection/1.
+     :- initialization my_init.
+     
+     my_init :-
+       ( clause(db_connection(_), _) ->
+         true
+       ; set_up_connection(Connection),
+         assert(db_connection(Connection))
+       ).
+
+   In the above example, `set_up_connection/1' is user defined.  We do
+not declare `db_connection/1' as dynamic in the file, since such a
+declaration would implicitly delete all clauses of the predicate when
+the file is reloaded.
+
+   It might not always be desirable to have the connection set up the
+first time the file is loaded, but only when a system is started up (for
+instance during the debugging of a database application.) This can be
+achieved with the following code (note that we use the property that a
+dynamic declaration reinitiliazes/resets the declared predicate):
+     :- dynamic connect/0.
+     :- volatile db_connection/1.
+     :- initialization my_init.
+     
+     my_init :-
+       ( connect ->
+         set_up_connection(Connection),
+         assert(db_connection(Connection))
+       ; assert(connect)
+       ).
+
+See Also
+--------
+
+   `volatile/1',  `load_files/1', `compile/1'
+
+   See *Note ref-sls::
+
+
+File: quintus.info,  Node: mpg-ref-instance,  Next: mpg-ref-integer,  Prev: mpg-ref-initialization,  Up: mpg-ref
+
+`instance/2'
+------------
+
+Synopsis
+--------
+
+   `instance(+REF, -TERM)'
+
+   Unifies TERM with the most general instance of the dynamic clause or
+recorded term indicated by the database reference REF.
+
+Arguments
+---------
+
+REF "db_reference"
+
+TERM "term"
+Description
+-----------
+
+   REF must be instantiated to a database reference to an existing
+clause or recorded term.  `instance/2' is not sensitive to the source
+module and can be used to access any clause, regardless of its module.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if REF is not instantiated
+
+`type_error'
+     if REF is not a syntactically valid database reference
+
+`existence_error'
+     if REF is a syntactically valid database reference
+     but does not refer to an existing clause or recorded term.
+
+Comments
+--------
+
+   `instance/2' ignores the module of a clause.  Because of this,
+accessing a clause with via `instance/2' is different from accessing it
+via `clause/3' with a given REF.
+
+   If the reference is to a unit-clause C, then TERM is unified with `C
+:- `true''.
+
+Examples
+--------
+
+     | ?- assert(foo:bar,R).
+     
+     R = '$ref'(771292,1)
+     
+     | ?- instance('$ref'(771292,1),T).
+     
+     T = (bar:-true)
+     
+     | ?- clause(H,B,'$ref'(771292,1)).
+     
+     no
+     | ?- clause(foo:H,B,'$ref'(771292,1)).
+     
+     H = bar,
+     B = true
+     
+     | ?-
+
+See Also
+--------
+
+   `clause/3', `asserta/2', `assertz/2'
+
+   *Note ref-mdb-bas::
+
+
+File: quintus.info,  Node: mpg-ref-integer,  Next: mpg-ref-is,  Prev: mpg-ref-instance,  Up: mpg-ref
+
+`integer/1' "meta-logical"
+--------------------------
+
+Synopsis
+--------
+
+   `integer(+TERM)'
+
+   TERM is an integer.
+
+Arguments
+---------
+
+TERM "term"
+Examples
+--------
+
+     | ?- integer(5).
+     
+     yes
+     | ?- integer(5.0).
+     
+     no
+
+See Also
+--------
+
+   `atom/1', `atomic/1', `number/1', `var/1', `compound/1',
+`callable/1', `nonvar/1', `simple/1'
+
+
+File: quintus.info,  Node: mpg-ref-is,  Next: mpg-ref-keysort,  Prev: mpg-ref-integer,  Up: mpg-ref
+
+`is/2'
+------
+
+Synopsis
+--------
+
+   -TERM `is' +EXPRESSION
+
+   Evaluates EXPRESSION as an arithmetic expression (see *Note
+ref-ari-aex::), and unifies the resulting number with TERM.
+
+Arguments
+---------
+
+EXPRESSION "expr"
+     an expression made up of:
+    functors representing arithmetic operations
+
+    numbers
+
+    variables bound to numbers or arithmetic expressions
+
+TERM "number"
+     a number
+
+Description
+-----------
+
+   The possible values for EXPRESSION are spelled out in detail in
+*Note ref-ari-aex::.
+
+   Character codes like `"a"' are arithmetic expressions.
+
+Exceptions
+----------
+
+`instantiation_error'
+
+`type_error'
+     EXPRESSION is not an arithmetic expression
+
+`domain_error'
+     Attempting to divide by zero.
+
+`representation_error'
+     overflow during arithmetic evaluation
+
+Examples
+--------
+
+     | ?- X is 2 * 3 + 4.
+     
+     X = 10
+     
+     | ?- Y = 32.1, X is Y * Y.
+     
+     Y = 3.21E+01,
+     X = 1.03041E+03
+     
+     | ?- Arity is 3 * 8, X is 4 + Arity + (3 * Arity * Arity).
+     
+     Arity = 24,
+     X = 1756
+
+     | ?- X is 6/0.
+     ! Domain error in argument 2 of is/2
+     ! non-zero number expected, but 6/0 found
+     ! goal:  _3211 is 6/0
+
+     | ?- X is 16' 7fffffff + 3.
+     ! Syntax error
+     ! between lines 64 and 65
+     ! X is 0
+     ! <<here>>
+     ! 7 fffffff+3
+     
+     | ?- X is "a".
+     
+     X = 97
+     
+     | ?- X is 4 * 5, Y is X * 4.
+     
+     X = 20,
+     Y = 80
+
+   See example under `assign/2' to see use of `is/2' to peek at random
+memory addresses.
+
+Comments
+--------
+
+   If a variable in an arithmetic expression is bound to another
+arithmetic expression (as opposed to a number) at runtime then the cost
+of evaluating that expression is much greater.  It is approximately
+equal to the cost of `call/1' of an arithmetic goal.
+
+See Also
+--------
+
+   `assign/2', `</2', `=:=/2', `=</2', `=\=/2', `>/2', `>=/2' *Note
+ref-ari::
+
+
+File: quintus.info,  Node: mpg-ref-keysort,  Next: mpg-ref-leash,  Prev: mpg-ref-is,  Up: mpg-ref
+
+`keysort/2'
+-----------
+
+Synopsis
+--------
+
+   `keysort(+LIST1, -LIST2)'
+
+   Sorts the elements of the list LIST1 into ascending standard order
+(see *Note ref-lte-cte-sot:: with respect to the key of the pair
+structure.
+
+Arguments
+---------
+
+LIST1 "list of pair"
+
+LIST2 "list of pair"
+Description
+-----------
+
+   The list LIST1 must consist of terms of the form KEY-VALUE.
+Multiple occurrences of any term are not removed.
+
+   (The time taken to do this is at worst order (N log N) where N is
+the length of the list.)
+
+   Note that the elements of LIST1 are sorted _only_ according to the
+value of KEY, _not_ according to the value of VALUE.
+
+   `keysort' is stable in the sense that the relative position of
+elements with the same key maintained.
+
+Examples
+--------
+
+     | ?- keysort([3-a,1-b,2-c,1-a,1-b], X).
+     
+     X = [1-b,1-a,1-b,2-c,3-a]
+
+     |?- keysort([2-1, 1-2], [1-2, 2-1]).
+     
+     yes
+
+Exceptions
+----------
+
+`instantiation_error'
+     If LIST1 is not properly instantiated
+
+`type_error'
+     If LIST1 is not a list of key-value pair.
+
+See Also
+--------
+
+   `library(samsort)'
+
+
+File: quintus.info,  Node: mpg-ref-leash,  Next: mpg-ref-length,  Prev: mpg-ref-keysort,  Up: mpg-ref
+
+`leash/1' "development"
+-----------------------
+
+Synopsis
+--------
+
+   `leash(+MODE)'
+
+   Starts leashing on the ports given by MODE.
+
+Arguments
+---------
+
+MODE "one of `[all]'" or "one of `[call,exit,redo,fail,done,head,exception]'"
+     either the atom `all', or a list of the ports to be leashed.
+
+Description
+-----------
+
+   * The leashing mode only applies to procedures that do not have
+     spypoints on them, and it determines which ports of such
+     procedures are leashed.  By default, all seven ports are leashed.
+     On arrival at a leashed port, the debugger will stop to allow you
+     to look at the execution state and decide what to do next.  At
+     unleashed ports, the goal is displayed but program execution does
+     not stop to allow user interaction.
+
+   * If you are using QUI, a more convenient way to set leashing is by
+     using the "Leashing..." item in the "Options" menu. This brings up
+     a dialog, which allows you to choose which ports to leash.
+
+   * In DEC-10 Prolog, a different form of argument was used for
+     `leash/1'.  This form, in which the argument is an integer from 0
+     to 127, is also supported by Quintus Prolog, but is not
+     recommended, since the new form is clearer.
+
+   * This predicate is not supported in runtime systems.
+
+Examples
+--------
+
+     | ?- leash([]).
+
+   turns off all leashing; now when you creep you will get an exhaustive
+trace but no opportunity to interact with the debugger.  You can get
+back to the debugger to interact with it by pressing `^c t'.  The
+command
+     | ?- leash([call,redo]).
+
+   leashes on the Call and Redo ports.  When creeping, the debugger will
+now stop at every Call and Redo port to allow you to interact.
+
+Exceptions
+----------
+
+`instantiation_error'
+     MODE is not ground
+
+`domain_error'
+     MODE is not a valid leash specification
+
+See Also
+--------
+
+   *Note dbg-bas-bas::
+
+
+File: quintus.info,  Node: mpg-ref-length,  Next: mpg-ref-library_directory,  Prev: mpg-ref-leash,  Up: mpg-ref
+
+`length/2'
+----------
+
+Synopsis
+--------
+
+   `length(-LIST, +INTEGER)'
+
+   `length(*LIST, *INTEGER)'
+
+   INTEGER is the length of LIST. If LIST is instantiated to a proper
+"list", the predicate is determinate, also when INTEGER is "var".
+
+Arguments
+---------
+
+LIST "list"
+     a list
+
+INTEGER "integer"
+     non-negative integer
+
+Description
+-----------
+
+   If LIST is a list of indefinite length (that is, either a variable
+or of the form `[...|X]') and if INTEGER is bound to an integer, then
+LIST is made to be a list of length INTEGER with unique variables used
+to "pad" the list. If LIST cannot be made into a list of length
+INTEGER, the call fails.
+     | ?-  List = [a,b|X], length(List, 4).
+     
+     List = [a,b,_3473,_3475],
+     X = [_3473,_3475] ;
+     
+     | ?-
+
+   If INTEGER is unbound, then it is unified with all possible lengths
+for the list LIST.
+
+   If LIST is bound, and is not a list, `length/2' simply fails.
+
+Backtracking
+------------
+
+   If both LIST and INTEGER are variables, the system will backtrack,
+generating lists of increasing length whose elements are anonymous
+variables.
+
+Exceptions
+----------
+
+`type_error'
+     INTEGER integer
+
+Examples
+--------
+
+
+     | ?- length([1,2], 2).
+     
+     yes
+     | ?- length([1,2], 0).
+     
+     no
+     | ?- length([1,2], X).
+     
+     X = 2 ;
+     
+     no
+
+
+File: quintus.info,  Node: mpg-ref-library_directory,  Next: mpg-ref-line_count,  Prev: mpg-ref-length,  Up: mpg-ref
+
+library_directory/1 "extendable"
+--------------------------------
+
+Synopsis
+--------
+
+   `:- multifile library_directory/1.' `library_directory(*DIRSPEC)'
+
+   Defines a library directory. Used by predicates taking "file_spec"
+as input argument.
+
+Arguments
+---------
+
+DIRSPEC "file_spec"
+     Either an atom giving the path to a file, or PATHALIAS(DIRSPEC),
+     where PathAlias is defined by a `file_search_path' rule (see the
+     reference page for `file_search_path/2').
+
+Description
+-----------
+
+   The dynamic, multifile `library_directory/1' facts reside in module
+user.  They define directories to search when a file specification
+`library(FILE)' is expanded to the full path.
+
+   There are a set of predefined `library_directory/1' facts, but users
+may also define their own libraries simply by asserting the appropriate
+`library_directory/1' facts into module user.  To locate a library
+file, the `library_directory/1' facts are tried one by one in the same
+sequence they appear in the Prolog database.
+
+   The `file_search_path' mechanism is an extension of the
+`library_directory' scheme.  See `file_search_path/2' and *Note
+ref-fdi::.
+
+Examples
+--------
+
+     | ?- assert(library_directory('/usr/joe_bob/prolog/libs')).
+     
+     yes
+     | ?- ensure_loaded(library(flying)).
+     % loading file /usr/joe_bob/prolog/libs/flying.qof
+     ...
+
+See Also
+--------
+
+   `absolute_file_name/[2,3]', `assert/[1,2]', `dynamic/1',
+`file_search_path/2', `listing/1', `load_files/[1,2]'
+
+   *Note ref-fdi::.
+
+
+File: quintus.info,  Node: mpg-ref-line_count,  Next: mpg-ref-line_position,  Prev: mpg-ref-library_directory,  Up: mpg-ref
+
+`line_count/2'
+--------------
+
+Synopsis
+--------
+
+   `line_count(+STREAM, -N)'
+
+   Unifies N with the total number of lines either read or written on
+the open stream STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+
+N "integer"
+Description
+-----------
+
+   A freshly opened stream has a line count of 1.  See *Note
+ref-iou-sos-spt::, for details on the use of this predicate on a stream
+that is directed to the user's terminal.
+
+Exception
+---------
+
+   Stream errors (see *Note ref-iou-sfh-est::)
+
+See Also
+--------
+
+   `character_count/2', `line_position/2', `stream_position/3' *Note
+ref-iou::
+
+
+File: quintus.info,  Node: mpg-ref-line_position,  Next: mpg-ref-listing,  Prev: mpg-ref-line_count,  Up: mpg-ref
+
+`line_position/2'
+-----------------
+
+Synopsis
+--------
+
+   `line_position(+STREAM, -N)'
+
+   Unifies N with the total number of characters either read or written
+on the current line of STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     specifies an open stream
+
+N "integer"
+     current line position
+
+Description
+-----------
+
+   A fresh line has a line position of 0.  See *Note ref-iou-sos-spt::,
+for details on the use of this predicate on a stream that is directed
+to the user's terminal.
+
+Exception
+---------
+
+   Stream errors (see *Note ref-iou-sfh-est::)
+
+See Also
+--------
+
+   `character_count/2', `line_count/2', `stream_position/3' *Note
+ref-iou::
+
+
+File: quintus.info,  Node: mpg-ref-listing,  Next: mpg-ref-load_files,  Prev: mpg-ref-line_position,  Up: mpg-ref
+
+`listing/[0,1]'
+---------------
+
+Synopsis
+--------
+
+   `listing'
+
+   `listing(+PREDSPECS)'
+
+   Prints the clauses of all the dynamic procedures currently in the
+Prolog database, or of PREDSPECS, to the current output stream, using
+`portray_clause/1'.
+
+Arguments
+---------
+
+PREDSPECS "gen_pred_spec_tree_var" [MOD]
+     a predicate specification, or a list of predicate specifications
+     or atoms
+
+Description
+-----------
+
+   If PREDICATE is an atom, then `listing/1' lists the dynamic
+procedures for all predicates of that name, as for `listing/0'
+
+   If PREDSPECS is a predicate specification of the form NAME/ARITY,
+only the clauses for the specified predicate are listed.
+
+   PREDSPECS can be a list of predicate specifications and/or atoms;
+for example,
+     | ?- listing([concatenate/3, reverse, go/0]).
+
+Examples
+--------
+
+   You could list the entire program to a file using the command
+     | ?- tell(file), listing, told.
+
+   Note that `listing/[0,1]' does not work on compiled procedures.
+
+   `listing/1' is dependent on the source module.  As a special case,
+     | ?- listing(mod:_).
+
+   will list all the dynamic predicates in module mod.  However,
+`listing/0' is not dependent on the source module; it refers instead to
+the type-in module.
+
+   Variables may be included in predicate specifications given to
+`listing/1'.  For example, you can list clauses for `f' in any current
+module with:
+     | ?- listing(_:f).
+
+Comments
+--------
+
+   Under the Emacs interface, there is a facility for finding the
+source code definition for a specified compiled or dynamic procedure
+and reading it into an edit buffer.  This is likely to be more helpful
+than `listing/1' in most cases.  See *Note ema-emi-key:: for more
+information.
+
+
+File: quintus.info,  Node: mpg-ref-load_files,  Next: mpg-ref-load_foreign_executable,  Prev: mpg-ref-listing,  Up: mpg-ref
+
+`load_files/[1,2]'
+------------------
+
+Synopsis
+--------
+
+   `load_files(+FILES)'
+
+   `load_files(+FILES, +OPTIONS)'
+
+   `[+FILE|+FILES]'
+
+   `[]'
+
+   Load the specified Prolog source and/or QOF files into memory.
+Subsumes all other load predicates.
+
+Arguments
+---------
+
+FILES "file_spec" or "list of file_spec" [MOD]
+     a file specification or a list of file specifications; a `.pl' or
+     `.qof' extension may be omitted in a file specification.
+
+OPTIONS "list"
+     a list of zero or more options of the form:
+
+    `if(X)'
+
+         `X=true'
+               (default) always load
+
+         `X=changed'
+               load file if it is not already loaded or
+                       if it has been changed since it was last loaded
+
+    `when(X)'
+
+         `X=run_time'
+               (default) The file does not define                 any
+               predicates that will be called during compilation of
+                          other files.
+
+         `X=compile_time'
+               the file _only_ defines predicates                 that
+               wil be called during compilation of other files; it
+                         does not define any predicates that will be
+               called when                 the application is running.
+
+         `X=both'
+               the file defines some predicates that will
+                be needed during compilation and some that will be
+               needed                 during execution.
+
+    `load_type(X)'
+
+         `X=compile'
+               compile Prolog source code
+
+         `X=qof'
+               load QOF code
+
+         `X=latest'
+               (default) load QOF or compile source,
+                    whichever is newer. The latest option is effective
+                                       only if Files are sepcified
+               without extensions.
+
+    `must_be_module(X)'
+
+         `X=true'
+               the files are required to be module-files
+
+         `X=false'
+               (default) the files need not be module-files
+
+    `imports(X)'
+
+         `X=all'
+               (default) if the file is a module-file, all
+                           exported predicates are imported
+
+         `X=LIST'
+               list of predicates to be imported
+
+
+               Note that if the option `imports' is present, the option
+                              `must_be_module(true)' is enforced.
+
+    `all_dynamic(X)'
+
+         `X=true'
+               load all predicates as dynamic
+
+         `X=false'
+               (default) load predicates as static unless
+                    they are declared dynamic
+
+
+               Note that the `all_dynamic option' has no effect when a
+                             QOF file is loaded.  Thus it is not
+               normally useful to use
+               `all_dynamic(true)' in conjunction with
+               `load_type(latest)',                 since the file will
+               be loaded in dynamic mode only if the
+               source file is more recent than the QOF file.
+
+    `silent(X)'
+
+         `X=true'
+               loading information is printed as silent
+                      messages (see *Note ref-msg:: for details).
+
+         `X=false'
+               (default) loading information is printed
+                      as informational message.
+
+Description
+-----------
+
+   `load_files/2' is the most general predicate for loading Prolog
+files.  Special cases of it are provided by the following predicates:
+     load_files(Files) :-
+             load_files(Files, []).
+     [].
+     [File|Files] :-
+             load_files([File|Files]).
+     compile(Files) :-
+             load_files(Files, [load_type(compile)]).
+     consult(Files) :-     /*consult equivalent to
+                             compile now*/
+             compile(Files).
+     ensure_loaded(Files) :-
+             load_files(Files, [if(changed)]).
+     use_module(Files) :-
+             load_files(Files, [if(changed),
+                          must_be_module(true)]).
+     use_module(File, Imports) :-
+             load_files(File,  [if(changed),
+                          must_be_module(true),
+                          imports(Imports)]).
+
+   `load_files/[1,2]' reads Prolog clauses, in source or in compiled
+(QOF) form, and adds them to the Prolog database, after first deleting
+any previous versions of the predicates they define.  Clauses for a
+single predicate must all be in the same file unless that predicate is
+declared to be `multifile'.
+
+   If the file contains directives, that is, terms with principal
+functor `:-/1' or `?-/1', then these are executed as they are
+encountered.
+
+   Clauses and directives can be transformed as they are read from
+source files (not from QOF), by providing a definition for
+`term_expansion/2'. This is true in both the development system and
+QPC, but in order for this to work properly in QPC, your definition of
+`term_expansion/2' (and everything it calls) must be loaded into QPC.
+This is accomplished with the `when' option to `load_files/2', or the
+`-i' option to QPC.
+
+   A non-module source file can be loaded into any module by
+`load_files/[2,3]', but the module of the predicates in a QOF-file is
+fixed at the time it is created (by QPC, `save_predicates/2' or
+`save_program/[1,2]'). It is thus not possible to qof save a predicate
+from say module `foo', and reloaded it into module `bar', or QPC the
+non-module-file `f1.pl' into `f1.qof', and then load `f1.qof' into
+module `mod' (QPC assumes module `user' when non-module files are
+compiled separately). To avoid mistakes, `load_files/[1,2]' loads the
+corresponding source file, if such exists, whenever a non-module-file
+is loaded into module other than `user'. If no corresponding source file
+exists, the QOF file is loaded; care should be taken in this case.
+
+   Initialization goals specified with `initialization/1' are executed
+after the load.
+
+   When `load_files/[1,2]' is called from an embedded command in a file
+being compiled by QPC, the `load_type' and `if' options are ignored.
+The specfied files are compiled from source to QOF, if the source is
+newer than the corresponding QOF file. If the option
+`when(compile_time)' is given, the file is instead compiled into QPC
+memory, and no QOF is generated (see above).
+
+   When `load_files/[1,2]' is called in a runtime system, the
+`all_dynamic' option will be automatically set to true because the
+compiler is not available in runtime systems.  This means that the
+loaded code will run slower.
+
+Exceptions
+----------
+
+`instantiation_error'
+     M, FILES, or OPTIONS is not ground.
+
+`type_error'
+     In M, in FILES, or in OPTIONS.
+
+`domain_error'
+     Illegal option in OPTIONS.
+
+`existence_error'
+     A specified file does not exist.  If the `fileerrors' flag is
+     `off', the predicate fails instead of raising this exception.
+
+`permission_error'
+     A specified file is protected.  If the `fileerrors' flag is `off',
+     the predicate fails instead of raising this exception.
+
+See Also
+--------
+
+   `compile/1', `consult/1', `dynamic/1', `ensure_loaded/1',
+`fileerrors/0', `multifile/1', `no_style_check/1', `nofileerrors/0',
+`prolog_load_context/2', `source_file/[1,2]', `style_check/1',
+`term_expansion/2', `use_module/[1,2,3]', `initialization/1',
+`volatile/1'.
+
+   *Note ref-lod::
+
+
+File: quintus.info,  Node: mpg-ref-load_foreign_executable,  Next: mpg-ref-load_foreign_files,  Prev: mpg-ref-load_files,  Up: mpg-ref
+
+`load_foreign_executable/1' "hookable"
+--------------------------------------
+
+Synopsis
+--------
+
+   `load_foreign_executable(+EXECUTABLE)'
+
+   Load the foreign executable (shared object file) EXECUTABLE into
+Prolog.  Relies on the hook predicates `foreign_file/2' and
+`foreign/[2,3]'.
+
+Arguments
+---------
+
+EXECUTABLE "file_spec" [MOD]
+     The shared object file to be loaded.
+
+Description
+-----------
+
+   `load_foreign_executable/1' takes a shared object file and loads it
+into Prolog. If the file contains dependencies on other shared
+objects/libraries, then these are loaded automatically.  For details on
+how these are loaded see *Note fli-p2f-lfe::.
+
+   The extension can be omitted from the filename given in the
+EXECUTABLE argument.
+
+   Uses the `foreign/3' and `foreign_file/2' facts defined by the user
+to make the connection between a Prolog procedure and the foreign
+function. When loading the shared object file, it looks for a
+`foreign_file/2' fact for that file and for each symbol in the
+`foreign_file/2' fact it looks for a `foreign/3' fact that gives the
+name of the Prolog procedure associated with the foreign symbol and the
+argument specification.
+
+   Looks for `foreign/3' and `foreign_file/2' facts defined in its
+source module only.
+
+   Before calling this predicate, generate the shared object file from
+object files (and libraries); see *Note fli-p2f-uso::.
+
+Exceptions
+----------
+
+   Errors in the specification of `foreign/3' will all be reported when
+`load_foreign_executable/1' is called.
+
+Examples
+--------
+
+   See example under `foreign/[2,3]'
+
+See Also
+--------
+
+   `foreign_file/2', `foreign/[2,3]', `load_foreign_files/2'
+
+   *Note fli-p2f::
+
+
+File: quintus.info,  Node: mpg-ref-load_foreign_files,  Next: mpg-ref-manual,  Prev: mpg-ref-load_foreign_executable,  Up: mpg-ref
+
+`load_foreign_files/2' "hookable"
+---------------------------------
+
+Synopsis
+--------
+
+   `load_foreign_files(+OBJECTFILES, +LIBRARIES)'
+
+   Loads foreign object files into Prolog. Relies on the hook
+predicates `foreign_file/2' and `foreign/[2,3]'.
+
+Arguments
+---------
+
+OBJECTFILES "list of file_spec" [MOD]
+     A list of foreign object files to be loaded.
+
+LIBRARIES "list of atom"
+     A list of shared libraries that need to be searched while loading
+     OBJECTFILES.
+
+Description
+-----------
+
+   `load_foreign_files/2' takes a list of object files and a list of
+shared libraries, links them and then loads the result into Prolog. The
+linking is done using the system linker.  For details on the call to
+the linker, see *Note fli-p2f-lff::.
+
+   The extension can be omitted from the filenames given in the
+OBJECTFILES argument.
+
+   Uses the `foreign/3' and `foreign_file/2' facts defined by the user
+to make the connection between a Prolog procedure and the foreign
+function. When loading each object file, it looks for a
+`foreign_file/2' fact for the object file and for each symbol in the
+`foreign_file/2' fact it looks for a `foreign/3' fact that gives the
+name of the Prolog procedure associated with the foreign symbol and the
+argument specification.
+
+   Looks for `foreign/3' and `foreign_file/2' facts defined in its
+source module only.
+
+   Looks at the environment variable `TMPDIR' for the directory to store
+all the temporary files created during the linking and loading process.
+The default directory is `/tmp'.
+
+   Before calling this predicate, generate the object files for the
+foreign functions using the foreign language compiler.  The object files
+should contain position independent code; see *Note fli-p2f-uso::.
+
+Exceptions
+----------
+
+   Errors in the specification of `foreign/3' will all be reported when
+`load_foreign_files/2' is called.
+
+Examples
+--------
+
+   See example under `foreign/[2,3]'
+
+See Also
+--------
+
+   `foreign_file/2', `foreign/[2,3]', `load_foreign_executable/1'
+
+   *Note fli-p2f::
+
+
+File: quintus.info,  Node: mpg-ref-manual,  Next: mpg-ref-message_hook,  Prev: mpg-ref-load_foreign_files,  Up: mpg-ref
+
+`manual/[0,1]' "development"
+----------------------------
+
+Synopsis
+--------
+
+   `manual'
+
+   Displays a menu of the top layer of the manual hierarchy.
+
+   `manual(+TERM)'
+
+   Goes directly to the point in the manual represented by TERM.
+
+Arguments
+---------
+
+TERM "term"
+     Either a reference of form WORD-...-WORD (e.g. `int-dir'), or a
+     topic.
+
+Description
+-----------
+
+   The menu brought up by `manual/0' gives you a choice among the major
+parts of the manual (see values of "part" above).  Whichever you
+select, you will then be shown a menu of chapter titles.  When you
+select a chapter you will see a menu of the section titles of that
+chapter, and so on.
+
+   `manual/1' can also be used as a synonym for `help/1'.  If the
+argument to `manual/1' is not a reference (above), then `help/1' is
+called with that argument, so that the following behave alike:
+     | ?- manual(TOPIC).
+     | ?- help(TOPIC).
+
+   This predicate is not supported in runtime systems.
+
+Examples
+--------
+
+   To view the text in *Note int-dir:: type:
+     | ?- manual(int-dir).
+
+   To look up character escaping, type:
+     | ?- manual('character escaping').
+
+   This brings up a menu, which contains reference terms enclosed in
+curly braces.  Simply copy the one you want at the prompt.
+
+See Also
+--------
+
+   `help/1'
+
+   *Note ref-olh::
+
+
+File: quintus.info,  Node: mpg-ref-message_hook,  Next: mpg-ref-meta_predicate,  Prev: mpg-ref-manual,  Up: mpg-ref
+
+`message_hook/3' "hook"
+-----------------------
+
+Synopsis
+--------
+
+   `:- multifile message_hook/3.'
+
+   `message_hook(+MESSAGETERM, +SEVERITY, +LINES)'
+
+   Overrides the call to `print_message_lines/3' in `print_message/2'.
+A way for the user to intercept the MESSAGE of type SEVERITY, whose
+translations is LINES, before it is actually printed.
+
+Arguments
+---------
+
+MESSAGETERM "term"
+     any term
+
+SEVERITY "one of `[informational,warning,error,help,silent]'"
+
+LINES "list of pair"
+     is of the form `[LINE1, LINE2, ...]', where each LINEI is of the
+     form `[CONTROL_1-ARGS_1,CONTROL_2-ARGS_2, ...]'.
+
+Description
+-----------
+
+   After a message is parsed, but before the message is written,
+`print_message/2' calls
+
+     user:message_hook(+MsgTerm,+Severity,+Lines)
+
+   If the call to `user:message_hook/3' succeeds, `print_message'
+succeeds without further processing.  Otherwise the built-in message
+display is used.  It is often useful to have a message hook that
+performs some action and then fails, allowing other message hooks to
+run, and eventually allowing the message to be printed as usual.  See
+*Note ref-msg-umf-ipm:: for an example.
+
+Exceptions
+----------
+
+   An exception raised by this predicate causes an error message to be
+printed and then the original message is printed using the default
+message text and formatting.  Since the user defines `message_hook/3',
+they can write code that might raise exceptions.
+
+Examples
+--------
+
+   The following is the default, built-in message portrayal predicate:
+
+     message_hook(MessageTerm,Severity,Lines):-
+       ( Severity == silent ->
+         true
+         /* Don't translate or print silent messages */
+       ; severity_prefix(Severity,Prefix,Stream) ->
+         print_message_lines(Stream,Prefix,Lines)
+       ; raise_exception(domain_error(
+             print_message(Severity,MessageTerm),1,
+             one_of([help,error,warning,
+                     informational,silent]),
+             Severity)).
+     
+     severity_prefix(silent,         '', user_error).
+     severity_prefix(help,           '', user_error).
+     severity_prefix(error,       '! ',  user_error).
+     severity_prefix(warning,     '* ',  user_error).
+     severity_prefix(informational,'% ', user_error).
+
+   The reasoning behind the assignment of streams is that all
+unsolicited output should go to `user_error'.
+
+Tips
+----
+
+See Also
+--------
+
+   `print_message/2', `generate_message/3', `print_message_lines/3'
+
+   *Note ref-msg::
+
+
+File: quintus.info,  Node: mpg-ref-meta_predicate,  Next: mpg-ref-mode,  Prev: mpg-ref-message_hook,  Up: mpg-ref
+
+`meta_predicate/1' "declaration"
+--------------------------------
+
+Synopsis
+--------
+
+   `:- meta_predicate +METASPEC'
+
+   Provides for module name expansion of arguments in calls to the
+predicate given by METASPEC. All `meta_predicate/1' declarations must
+be at the beginning of a module.
+
+Arguments
+---------
+
+METASPEC "callable"
+     Goal template or list of goal templates, of the form:
+          functor(ARG1, ARG2,...)
+
+     Each ARGN is one of:
+
+    `:'
+          requires module name expansion
+
+    integer >=0
+          same as `:'
+
+    `+', `-', `?', `*'
+          ignored
+
+Description
+-----------
+
+   All `meta_predicate' declarations must be at the beginning of a
+module, immediately after the module declaration, because the
+`meta_predicate' declarations need to be known at the time other
+modules are loaded if those modules use the meta-predicates.
+
+   The reason for allowing a non-negative integer as an alternative to
+`:' is that this may be used in the future to supply additional
+information to the cross-referencer (`library(xref)') and to the Prolog
+compiler.  An integer N is intended to mean that that that argument is
+a term, which will be supplied N additional arguments.
+
+   Represents DEC-10 Prolog-style "mode" declaration.  Provides for
+module name expansion of arguments in METASPEC.
+
+Exceptions
+----------
+
+`context_error'
+     Declaration appears in query.
+
+Caveat
+------
+
+   When a `meta_predicate' declaration is added, removed or changed,
+the file containing it, as well as all the modules that import the
+predicate given by METASPEC, must be reloaded.
+
+Examples
+--------
+
+   Consider a sort routine, `mysort/3', to which the name of the
+comparison predicate is passed as an argument:
+     mysort(+COMPAREPROC, +INPUTLIST, -OUTPUTLIST)
+
+   If COMPAREPROC is module sensitive, an appropriate `meta_predicate'
+declaration for `mysort/3' is:
+     :- meta_predicate mysort(:, +, -).
+
+   This means that whenever a goal `mysort(A, B, C)' appears in a
+clause, it will be transformed at load time into `mysort(M:A, B, C)',
+where M is the source module.  The transformation will happen unless
+  1.  A is of the form METASPEC.
+
+  2. A is a variable and the same variable appears in the head of the
+     clause in a module-name-expansion position.
+
+   Many examples in library, e.g. `library(samsort)'.
+
+See Also
+--------
+
+   `module/2'
+
+   *Note ref-mod-met::
+
+
+File: quintus.info,  Node: mpg-ref-mode,  Next: mpg-ref-module2,  Prev: mpg-ref-meta_predicate,  Up: mpg-ref
+
+`mode/1' "declaration"
+----------------------
+
+Synopsis
+--------
+
+   `:- mode (+MODE)'
+
+   Currently a dummy declaration.
+
+Arguments
+---------
+
+MODE "term"  [MOD]
+Description
+-----------
+
+   So that DEC-10 Prolog programs can be read in
+
+
+File: quintus.info,  Node: mpg-ref-module1,  Next: mpg-ref-multifile,  Prev: mpg-ref-module2,  Up: mpg-ref
+
+`module/1'
+----------
+
+Synopsis
+--------
+
+   `module(+MODULENAME)'
+
+   Changes the type-in module (see *Note ref-mod-tyi::) to MODULENAME.
+Thus subsequent top-level goals use MODULENAME as their source module.
+
+Arguments
+---------
+
+MODULENAME "atom"
+     the name of a module
+
+Description
+-----------
+
+   If MODULENAME is not a current module, a warning message is printed,
+but the type-in module is changed nonetheless.
+
+   MODULENAME does not become a current module until predicates are
+loaded into it.
+
+   Calling `module/1' from a command embedded in a file that is being
+loaded does not affect the loading of clauses from that file.  It only
+affects subsequent goals that are typed at top level.
+
+Exceptions
+----------
+
+`instantiation_error'
+See also
+--------
+
+   `module/2', `current_module/[1,2]'
+
+
+File: quintus.info,  Node: mpg-ref-module2,  Next: mpg-ref-module1,  Prev: mpg-ref-mode,  Up: mpg-ref
+
+`module/2' "declaration"
+------------------------
+
+Synopsis
+--------
+
+   `:- module(+MODULENAME, +PUBLICPRED)'.
+
+   Declares the file in which the declaration appears to be a
+module-file named MODULENAME, with public predicates PUBLICPRED. Must
+appear as the first term in the file.
+
+Arguments
+---------
+
+MODULENAME "atom"
+     an atom
+
+PUBLICPRED "list of simple_pred_spec"
+     List of predicate specifications of the form NAME/ARITY.
+
+Description
+-----------
+
+   The definition of a module is not limited to a single file, because a
+module-file may contain commands to load other files.  If `myfile', a
+module-file for MODULENAME, contains an embedded command to load
+`yourfile' and if `yourfile' is not itself a module-file, then all the
+predicates in `yourfile' are loaded into module MODULENAME.
+
+   If the export list is not properly specified, there will be a warning
+or error message at compile time.
+
+Exceptions
+----------
+
+   At compile time:
+`context_error'
+     Declaration appears other than as the first term in a file being
+     loaded.
+
+`instantiation_error'
+     MODULENAME not instantiated.
+
+`type_error'
+     PREDSPECLIST is not a list of simple_pred_spec
+
+See Also
+--------
+
+   `module/1' *Note ref-mod::
+

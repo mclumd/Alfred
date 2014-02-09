@@ -1,0 +1,1248 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: lib-abs,  Prev: lib-too,  Up: lib
+
+Abstracts
+=========
+
+   The following abstracts are meant to describe the functionality of
+each package, not to serve as documentation.  Whatever documentation
+exists is included in comments within each package.  Refer to *Note
+lib-bas-dlp-acc:: to find out how to locate the source files if you
+wish to read the code comments.  All the files abstracted in the
+following pages are found in the library directory.
+
+`library(aggregate)'
+     defines `aggregate/3', an operation similar to `bagof/3', which
+     lets you calculate sums.  For example, given a table `pupil(Name,
+     Class, Age)', to calculate the average age of the pupils in each
+     class, one would write
+          | ?- aggregate( sum(Age)/sum(1),
+                          Name^pupil(Class, Name, Age),
+                          Expr),
+               call(Average_Age is Expr).
+
+`library(antiunify)'
+     Anti-unification is the mathematical dual of unification:  given
+     two     terms T1 and T2 it returns the most specific term that
+     generalizes     them, T.  T is the most specific term that unifies
+     with both T1 and     T2.  A common use for this is in learning;
+     the idea of using it that     way comes from Gordon Plotkin.
+
+     The code here is based on a routine called `generalise/5' written
+     by     Fernando Pereira.  The name was changed because there are
+     other ways     of generalizing things, but there is only one dual
+     of unification.
+
+    `anti_unify(+TERM1, +TERM2, -TERM)'
+          binds TERM to a most specific generalization of TERM1 and
+          TERM2.  When you call it, TERM should be a variable.
+
+    `anti_unify(+TERM1, +TERM2, -SUBST1, -SUBST2, -TERM)'
+          binds TERM to a most specific generalization of TERM1 and
+          TERM2, and SUBST1 and SUBST2 to substitutions such that
+                      Subst1(Term) = Term1
+                      Subst2(Term) = Term2
+
+          Substitutions are represented as lists of VAR=TERM pairs,
+          where    VAR is a Prolog variable, and TERM is the term to
+          substitute for VAR.     When you call `anti_unify/5', SUBST1,
+          SUBST2, and TERM should be variables.
+
+`library(arity)'
+     Provides support for Arity code translated by `arity2quintus'.
+
+`library(aritystring)'
+     provides support for Arity's string operations.
+
+`library(aropen)'
+     lets you open a member of a UNIX archive file (see UNIX `ar(1)')
+     without having to extract the member.  You cannot compile or
+     consult such a file, but you can read from it.  This may be useful
+     as an example of defining Prolog streams from C.  Not available
+     under Windows.
+
+`library(arrays)'
+     provides constant-time access and update to arrays.  It involves a
+     fairly unpleasant hack.  You would be better off using
+     `library(logarr)' or `library(trees)'.
+
+`library(assoc)'
+     A binary tree implementation of "association lists".
+
+`library(avl)'
+     AVL trees in Prolog.
+
+`library(bags)'
+     provides support for the data type "bag".
+
+`library(benchmark)'
+     Users can easily obtain information about the performance of
+     goals:  time and memory requirements.
+
+`library(between)'
+     provides routines for generating integers on backtracking.
+
+`library(big_text)'
+     Defines a "big_text" data type and several operations on it.  The
+     point of this module is that when writing an interactive program
+     you often want to display to (or acquire from) the user large
+     amounts of text.  It would be inadvisable (though possible) to
+     store the text in Prolog's database.  With this package you can
+     store text in a file, copy text to a stream, acquire new text from
+     a stream, and/or have Emacs edit a big text file.  See the file
+     `big_text.txt' in the library area for more details.
+
+`library(bitsets)'
+     Operations on sets of integers ("bitsets").  Contains analogs for
+     most operations in `library(ordsets)'.
+
+`library(break)'
+     Prints an error message and enters a break level (if possible),
+     avoiding the problem of `break/0' in QPC.
+
+`library(call)'
+     provides a number of predicates that are useful in programs that
+     pass goals as arguments.
+
+`library(caseconv)'
+     is mainly intended as an example of the use         of
+     `library(ctypes)'.  Here you'll find         predicates to test
+     whether text is in all lowercase, all         uppercase, or
+     mixed-case, and to convert from one case to         another.
+
+`library(charsio)'
+     lets you open a list of character codes for input as a Prolog
+     stream and, having written to a Prolog stream, collect the output
+     as a list of character codes.  There are three things you can do
+     with `library(charsio)':
+       1. You can open an input stream reading from a (ground) list of
+          characters.  This is the predicate `chars_to_stream'.
+
+       2. You can run a particular goal with input coming from a
+          (ground) list of characters.  The predicates
+          `with_input_from_chars/[2,3]' do this.
+
+       3. You can run a particular goal with output going to a list of
+          characters (the unification is done after the goal has
+          finished).  The `with_output_to_chars/[2,3]' predicates do
+          this.
+
+`library(clump)'
+     Group adjacent related elements of lists.
+
+`library(count)'
+     The purpose is to count predicate calls.  Instead of loading a
+     program by calling `compile/1', use `count/1'.  The program will do
+     what it always used to, except that it may run twice as slowly.
+     The output of `library(count)' is a file that contains a record of
+     predicate calls, and is suitable for processing by `awk(1)' or
+     similar utilities.
+
+`library(critical)'
+     provides a critical-region facility.
+
+`library(crypt)'
+     defines two operations similar to `open/3':
+
+     `crypt_open(+FILENAME[, +PASSWORD', +MODE, -STREAM)]
+
+     If you do not supply a PASSWORD, `crypt_open/3' will prompt
+     you for it.  Note that the password _will_ be echoed.  If
+     there is demand, this can be changed.  The STREAM will         be
+     clear text as far as Prolog is concerned, yet         encrypted as
+     far as the file system is concerned.
+
+     `encrypt.c' is a stand-alone program (which is designed to
+     have its object code linked to _three_ names:  `encrypt',
+     `decrypt', and `recrypt'), and can be used to read and write
+      files using this encryption method.
+
+     This encryption method was designed, and the code was
+     published, in Edinburgh, so it is available outside the USA.
+
+`library(decons)'
+     provides a set of routines for recognizing         and building
+     Prolog control structures.  The         only predicate that is
+     likely to be useful         is `prolog_clause(CLAUSE, HEAD, BODY)'.
+
+`library(demo)'
+     Defines the `demo' `file_search_path'.
+
+`library(det)'
+     Aids in determinacy checking by locating places where cuts are
+     really necessary.
+
+`library(environ)'
+     provides access to the operating system's "environment variables".
+     `environ(?VARNAME, ?VALUE)' is a genuine relation.  Note that if
+     you include this file in a saved state, the values of environment
+     variables are those current when the saved state was run, not when
+     it was saved.  There is also an `argv/1' in this file, which is
+     superseded by `unix(argv(_))'.
+
+`library(environment)'
+     Portability aid for UNIX (BSD, System V), Windows, VMS, VM/SP
+     (CMS), MVS, MS-DOS, Macintosh.
+
+`library(expansion)'
+     This library "takes over" `term_expansion/2' and provides more
+     powerful hooks that enable multiple, "simultaneously active" and
+     recursive program transformations to be achieved in an effcient
+     manner.
+
+`library(fft)'
+     Performs a fast fourier transform in Prolog. This file was written
+     to demonstrate that a FFT could be written in Prolog with the same
+     O(N*LOG(N)) _asymptotic_ cost as in Fortran.  There are several
+     easy things that could be done to make it faster, but you would be
+     better off for numerical calculations like this using
+     `library(vectors)' to call a Fortran subroutine.
+
+`library(filename)'
+     Portable filename manipulation.  Documentation on `filename.txt'.
+
+`library(flatten)'
+     provides predicates for flattening binary trees into lists.
+
+`library(foreach)'
+     defines two iteration forms.
+
+          forall(GENERATOR, TEST)
+          foreach(GENERATOR, TEST)
+
+     `forall/2' is the standard double-negation "there is no proof of
+              GENERATOR for which TEST is not provable", coded as
+           `\+ (GENERATOR, \+ TEST)'.
+
+     `foreach/2' works in three phases:  first each provable instance of
+                GENERATOR is found, then each corresponding instance
+              of TEST is collected in a conjunction, and finally
+          the conjunction is executed.
+
+     If, by the time a TEST is called, it is always ground         --
+     apart from explicitly existentially quantified variables --
+     the two forms of iteration are equivalent, and `forall/2' is
+       cheaper.  But if you want TEST to bind some variables,
+     you must use `foreach/2'.
+
+`library(freevars)'
+     This is an internal support package.  Users will probably have no
+     direct use for it.
+
+`library(fromonto)'
+     defines some "pretty" operators for input/output redirection.
+     Examples:
+          | ?- (repeat, read(X), process(X))
+               from_file 'fred.dat'.
+          
+          | ?- read(X) from_chars "example. ".
+          
+          X = example
+          
+          | ?- write(273.4000) onto_chars X.
+          
+          X = "273.4"
+
+`library(gauss)'
+     Gaussian elimination.
+
+`library(getfile)'
+     defines `get_file(+FILENAME, -LISTOFLINES)', which reads an entire
+     file into memory in one go.
+
+`library(graphs)'
+     a collection of utilities for manipulating mathematical graphs.
+     The collection is incomplete.  Please let us know which operations
+     in this collection are most useful to you, and which operations
+     that you would find useful have not been included.
+
+     The P-representation of a graph is a list of (from-to) vertex
+     pairs, where the pairs can be in an arbitrary order.  This form is
+     convenient for input and output.
+
+     The S-representation of a graph is a list of (vertex-neighbors)
+     pairs, where the pairs are in standard order (as produced by
+     `keysort/2') and the neighbors of each vertex are also in standard
+     order (as produced by `sort/2').  This form is convenient for many
+     calculations.
+
+     See also `library(mst)' (*Note lib-abs::), which is soon to be
+     merged into `library(graphs)'.
+
+`library(heaps)'
+     provides support for the data type "heap" (heaps are also known as
+     priority queues).
+
+`library(knuth_b_1)'
+     is a table of constants taken from Appendix B1 of D.E. Knuth's
+     `The Art of Computer Programming', Volume 1.  The point is not to
+     provide the constants -- you could have calculated them yourselves
+     easily enough -- but to illustrate the recommended way of building
+     such constants into your programs.
+
+`library(listparts)'
+     exists to establish a common vocabulary for names of parts of
+     lists among Prolog programmers.
+
+`library(lpa)'
+     Compatibility library for LPA Prologs.  See also `quintus.mac',
+     `quintus.dec'.
+
+`library(logarr)'
+     is an implementation of "arrays" as 4-way trees.  See also
+     `library(trees)'.
+
+`library(long)'
+     This is a rational arithmetic package.
+
+     `rational(N)' recognizes arbitrary-precision rational numbers:
+        this includes integers, `infinity', `neginfinity', &
+     `undefined'.          `whole(N)' recognizes arbitrary precision
+     integers.          `eval(EXPR, RESULT)' evaluates an expression
+     using arbitrary         precision rational arithmetic; it does
+     _not_ accept floats at all.          `{eq,ge,gt,le,lt,ne}/2' are
+     infix predicates like `</2' that compare         rationals (or
+     integers, _not_ expressions).          `succ/2', `plus/3', and
+     `times/3' are relational forms of arithmetic,         which work
+     on rational numbers (_not_ floats).          To have rational
+     numbers printed nicely, put the command
+          :- assert((portray(X) :- portray_number(X)))
+
+     in your code.  See `long.doc' and the comments in `long.pl'.
+
+`library(mapand)'
+     provides mapping routines over &-trees.  See also `maplist.pl'.
+
+`library(maplist)'
+     is built on top of `library(call)', and provides a collection of
+     meta-predicates for applying predicates to elements of lists.
+
+`library(maps)'
+     implements functions over finite domains, which functions are
+     represented by an explicit data structure.
+
+`library(menu)'
+     illustrates how to drive the Emacs interface from Prolog.  The
+     sample application involves choosing items from a menu.  See also
+     the `menu_example.pl' program in the demo directory.  Not
+     available under Windows.
+
+`library(mst)'
+     is a preliminary version of a minimal spanning tree package, that
+     will eventually be merged into `library(graphs)'.
+
+     `library(mst)' currently provides two predicates:
+    `first_mst(+NODES, +COST, -ROOT, -MST)'
+
+    `mst(+NODES, +COST, -ROOT, -MST)'
+             * NODES is a list of nodes.
+
+             * COST is a predicate that takes three extra arguments.  A
+               predicate from `library(call)', `call(COST, X, Y, DIST)'
+               calculates the distance DIST between nodes X and Y.
+
+             * ROOT is the root of a minimal spanning tree and MST is a
+               list of the arcs in that minimal spanning tree.
+
+          *Please note:*  `mst/4' has been carefully written so that it
+          will find all the minimal spanning trees of a graph.  `mst/4'
+          finds many trees, especially as it is blind to redundant
+          representations of isomorphic trees.  If you will be satisfied
+          with any MST at all, use `first_mst/4' instead.
+          `first_mst/4' will try to keep the arcs in the same order as
+          the nodes if at all possible.
+
+`library(multil)'
+     provides multiple-list routines.
+
+`library(newqueues)'
+     provides support for the "queue" data type.  The
+     `library(newqueues)' package replaces `library(queues)', and
+     should be used in new programs.
+
+`library(nlist)'
+     Interface to the UNIX library function `nlist(3)'.  Not available
+     under Windows.
+
+`library(note)'
+     The built-in predicates and commands pertaining to the "recorded"
+     (or "internal") database have an argument called the "key".  All
+     that matters about this key is its principal functor.  That is,
+     `fred(a, b)' and `fred(97, 46)' are regarded as the same key.
+
+     `library(note)' defines a complete set of storing, fetching, and
+     deleting commands where the "key" is a ground term _all_ of which
+     is significant, using the existing recorded database.  Note that
+     this package is no better indexed than the existing recorded
+     database.
+
+`library(order)'
+     The usual convention for Prolog operations is INPUTS before
+     OUTPUTS.  The built-in predicate `compare/3' violates this.  This
+     package provides an additional interface to provide comparison
+     predicates with the usual order.  The package contains predicates
+     to compare numbers, terms, sets and ordered lists.
+
+`library(ordered)'
+     is a collection of predicates for doing things with a list and an
+     ordering predicate.  See also `library(ordsets)' (*Note
+     lib-lis-ordsets::), `library(ordprefix)' below, and
+     `library(samsort)' (*Note lib-abs::).
+
+`library(ordprefix)'
+     is for extracting initial runs from lists, perhaps with a
+     user-supplied ordering predicate.  See also `library(ordered)'
+     above.
+
+`quintus.mac'
+     version of `lpa.pl' to be used on Mac.
+
+`quintus.dec'
+     version of `lpa.pl' to be used on DEC.
+
+`library(pipe)'
+     Quintus streams may be connected to pipes using `library(pipe)',
+     which provides a single predicate:
+
+    `popen(+COMMAND, +MODE, -STREAM)'
+          MODE may be either:
+         `read'
+               STREAM will be bound to a new input stream, connected to
+               the standard output of the COMMAND.  The standard input
+               stream of the COMMAND is left the same as the standard
+               input stream of Prolog.  So we have
+                    user_input -> COMMAND -> STREAM
+
+         `write'
+               STREAM will be bound to a new output stream, connected
+               to the standard input of the COMMAND.  The standard
+               output stream of the COMMAND is left the same as the
+               standard output stream of Prolog.  So we have
+                    STREAM -> COMMAND -> user_output
+
+     The behavior of `popen/3' is defined by the system function
+     `popen(3S)'.  There is no special `pclose/1' command: the existing
+     `close/1' will call `pclose(3S)'.  Commands are executed by
+     `sh(1)' under UNIX and by the default command interpreter under
+     Windows, e.g. `cmd.exe' under Windows XP.  Under Windows, the
+     underlying `popen()' C library function, and therefore also
+     `popen/3', only works in console applications, e.g. in `prolog'
+     but not in `qpwin'.
+
+`library(plot)'
+     This package generates UNIX `plot(5)' files.
+
+`library(pptree)'
+     This file defines pretty-printers for (parse) trees represented in
+     the form
+          <tree> --> <node label>/[<son>,...<son>]
+                  |  <leaf label>         -- anything else
+
+     Two forms of output are provided:  a human-readable form and
+      a Prolog term form for reading back into Prolog.
+    `pp_tree(+TREE)'
+          prints the version intended for human consumption, and
+
+    `pp_term(+TREE)'
+          prints the Prolog-readable version.
+
+     There is a new command `ps_tree/1', which prints trees represented
+     in the form
+          <tree> --> <node label>(<son>,...,<son>)
+                  |  <leaf>               -- constants
+
+     The output of `ps_tree/1' is readable by Prolog and people both.
+     You may find it useful for things other than parse trees.
+
+`library(printchars)'
+     extends `portray/1' (using `library(addportray)') so that lists of
+     character codes are written by `print/1', by the top level, and by
+     the debugger, between double quotes.
+
+          | ?- X = "fred".
+          
+          X = [102,114,101,100]
+          
+          | ?- use_module(library(printchars)),
+               X = "fred".
+          
+          X = "fred"
+
+`library(printlength)'
+     provides predicates for determining how wide a term would be if
+     written.
+
+`library(putfile)'
+     Uses C stream functions to copy the contents of a file to the the
+     current output stream.  This is the fastest known method for
+     copying the contents of a file to the current output stream.
+
+`library(qerrno)'
+     Defines error codes specific to Quintus Prolog, which do not have
+     any standard errno assignment.
+
+`library(qsort)'
+     provides a stable version of quicksort.          Note that
+     quicksort is _not_ a good sorting method for         a language
+     like Prolog.  If you want a good sorting method,         see
+     `library(samsort)' below.
+
+`library(queues)'
+     provides support for the "queue" data type.  This library has been
+     made obsolete in release 3 by the introduction of
+     `library(newqueues)'.  It is retained for backward compatibility,
+     but should not be used in new programs.
+
+`library(random)'
+     provides a random number generator and several handy interface
+     routines.  The random number generators supplied by various
+     operating systems are all different.  It is useful to have a
+     random number generator that will give the same results in all
+     versions of Quintus Prolog, and this is the one.
+
+`library(ranstk)'
+     This is a Prolog implementation of the algorithms in Eugene W.
+     Myers' AN APPLICATIVE RANDOM-ACCESS STACK.
+
+`library(read)'
+     This code was originally written at the University of Edinburgh.
+     David H. D. Warren wrote the first version of the parser.  Richard
+     A.  O'Keefe extracted it from the Dec-10 Prolog system and made it
+     use only user-visible operations.  He also added the feature
+     whereby `P(X,Y,Z)' is read as `call(P,X,Y,Z)'.  Alan Mycroft
+     reorganized the code to regularize the functor modes.  This is
+     easier to understand (there are no more `?'s), and it also fixes
+     bugs concerning the curious interaction of cut with the state of
+     parameter instantiation.  O'Keefe then took it over again and made
+     a number of other changes.
+
+     There are three intentional differences between this library and
+     the Dec-10 Prolog parser:
+
+        *         "Predicate variables" serve as syntactic saccharine
+          for `call/N'.
+
+        *         When there is a syntax error, DEC-10 Prolog will
+          backtrack         internally and read the next term.  This
+          fails.  If you         call `portable_read/1' with an
+          uninstantiated argument,         failure means a syntax
+          error.  You can rely on it.
+
+        *         `, ..' is not accepted in place of `|'.  This was
+          always a         parser feature, not a tokeniser feature:
+          any amount of         layout and commentary was allowed
+          between the `,' and the         `..'.  It wouldn't be hard to
+          allow this again.
+
+`library(retract)'
+     This file adds more predicates for accessing dynamic clauses and
+     the recorded database.  The built-in predicate `retract/1' will
+     backtrack through a predicate, expunging each matching clause
+     until the caller is satisfied.  _This is not a bug._  That is the
+     way `retract/1' is _supposed_ to work.  But it is also useful to
+     have a version that does not backtrack.
+
+     `library(retract)' defines, among many other commands,
+     `retract_first/1', which is identical to `retract/1' except that it
+     expunges only the first matching clause, and fails if asked for
+     another solution.
+
+`library(samsort)'
+     provides a stable sorting routine, which exploits existing order,
+     both ascending and descending.  (It is a generalization of the
+     natural merge.)  `samsort(RAW, SORTED)' is like `sort(RAW,
+     SORTED)' except that it does not discard duplicate elements.
+     `samsort(ORDER, RAW, SORTED)' lets you specify your own comparison
+     predicate, which the built-in sorting predicates `sort/2' and
+     `keysort/2' do not.  This file also exports two predicates for
+     merging already-sorted lists:  `merge/3' and `merge/4'.  See also
+     `library(ordered)' and `library(qsort)'.
+
+`library(setof)'
+     provides additional predicates related to the built-in predicate
+     `setof/3'.  Note that the built-in predicates `bagof/3' and
+     `setof/3' are much more efficient than the predicates in this
+     file.  See also `library(findall)'.
+
+`library(show)'
+     The built-in command `listing/1' displays dynamic predicates.  But
+     there is no built-in command for displaying the terms recorded
+     under a given key.  `library(show)' defines two predicates:
+     `show(KEY)' displays all the terms recorded under the given KEY,
+     and `show/0' displays all the KEYS and terms in the recorded
+     database.
+
+`library(showmodule)'
+     provides a command for displaying information about a loaded
+     module.  `show_module(MODULE)' prints a description of the MODULE,
+     what it exports, and what it imports.  The command
+          | ?- show_module(_), fail ; true.
+
+     will print a description of every loaded module.  To backtrack
+     through all current modules and print information about the
+     predicates they define, import, and export, use
+          | ?- ensure_loaded(library(showmodule)),
+               show_module(Module).
+
+     To print information about a particular module M, use
+          | ?- show_module(M).
+
+`library(statistics)'
+     The `full_statistics/[0,2]' predicates are exactly like the
+     built-in `statistics/[0,2]' predicates except that
+        * Integers are written out with commas every three digits.
+
+        * The number of page faults is reported (if known).
+
+`library(stchk)'
+     This package allows local style-check modifications in a file.
+     This module provides an alternative interface to the     style
+     check flags.  The idea is that a file that uses it     will look
+     like
+
+              <usual heading>
+          
+              :- push_style.
+              :- set_style(StyleFlag, Value).
+              ...
+          
+              <clauses>
+          
+              :- pop_style.
+
+     Some combination of this with the existing style check
+     interface will be safe:  no matter what style check     changes
+     are made, the original values will be restored.
+
+     The initial state (assumed) is that all checks are ON.
+
+`library(terms)'
+     The foreign code interface provides means of passing constants
+     between Prolog and C, FORTRAN, Pascal, etc.
+
+     `library(terms)' lets you pass copies of terms from Prolog to C,
+     and receive copies of terms from C.  For example, the new built-in
+     predicate `copy_term/2' could have been defined this way:
+          'copy term'(Term, Copy) :-
+                  prolog_to_c(Term, Pointer_to_C_version),
+                  c_to_prolog(Pointer_to_C_version, Temp),
+                  erase_c_term(Pointer_to_C_version),
+                  Copy = Temp.
+
+     The C code in `terms.c' is just as much a part of this package as
+     the Prolog code.  In particular, the comments in that file
+     describe the representation used on the C side of the interface
+     and there are routines and macros (see `terms.h') for accessing
+     terms-in-C.
+
+`library(termdepth)'
+     Many resolution-based theorem provers impose a depth bound on the
+     terms they create -- not least to prevent infinite loops.
+     `library(termdepth)' provides predicates that find the depth,
+     length and size of a term, which can even be used on cyclic terms.
+
+`library(tokens)'
+     This package is a public-domain tokeniser in reasonably standard
+     Prolog.  It is meant to complement the library READ routine.
+     It recognizes Dec-10 Prolog with the following exceptions:
+        *         `%(' is not accepted as an alternative to `{'
+
+        *         `%)' is not accepted as an alternative to `}'
+
+        *         `,..' is not accepted as an alternative to `|'
+
+        *         large integers are not read in as
+          `xwd(TOP18BITS,BOTTOM18BITS)'
+
+        * After a comma, `(' is read as ` (' rather than `('.  This
+          does the parser no harm at all, and the Dec-10 tokeniser
+          guarantees never to return `(' except immediately after an
+          atom, yielding ` (' everywhere else.
+
+     _BEWARE_: this file does not recognize floating-point numbers.
+
+`library(trees)'
+     is an implementation of arrays as binary trees.
+
+`library(types)'
+     This file is support for the rest of the library, and is not
+     really meant for general use.  The type tests it defines are
+     almost certain to remain in the library or to migrate to the
+     system.  The error checking and reporting code is certain to
+     change.  The library predicates `must_be_compound/3',
+     `must_be_proper_list/3', `must_be_var/3', and `proper_list/1' are
+     new in this release.
+
+`library(update)'
+     provides utilities for updating "database" relations.
+
+`library(vectors)'
+     The Quintus Prolog foreign code interface provides means of
+     passing scalars between Prolog and C, FORTRAN, Pascal, etc.
+
+     `library(vectors)' provides routines         you can use to pass
+     one-dimensional numeric arrays between         Prolog and C,
+     Pascal, or FORTRAN.          See the comments in the code.
+     Briefly,
+    `list_to_vector(+LISTOFNUMBERS, +TYPE, -VECTOR)'
+          creates a vector, which you can pass to C.  C will
+          declare the argument as TYPE*, and Prolog will     declare
+          the argument as `+address(TYPE)'.      FORTRAN will declare
+          the argument as an array of TYPE.
+
+    `make_vector(+SIZE, +TYPE, -VECTOR)'
+          creates a vector, which the foreign routine is to fill
+          in.  C will declare the argument as TYPE*, and Prolog will
+          declare the argument as `+address(TYPE)'.      FORTRAN will
+          declare the argument as an array of TYPE.
+
+    `vector_to_list(+VECTOR, ?LIST)'
+          extracts the elements of the VECTOR as a list of     numbers;
+          if the VECTOR contains chars or ints, the     LIST will
+          contain integers, otherwise it will contain
+          floating-point numbers.
+
+    `kill_vector(+VECTOR)'
+          frees a vector.  Don't forget to do this!  You can still
+          call `vector_to_list/2' on a dead vector, until the next time
+             memory is allocated.  All that you can really rely on is
+            that it is safe to create some vectors, call a C routine,
+            kill all the vectors, and then extract the contents of
+          the interesting ones before doing anything else.
+
+`library(writetokens)'
+     This package converts a term to a list of tokens.  This is
+     essentially the same as the public-domain `write.pl', except that
+     instead of writing characters to the current output stream, it
+     returns a list of tokens.  There are three kinds of tokens:
+     punctuation marks, constants, and atoms.  There is nothing to
+     indicate spacing; the point of this package is to let the caller
+     do such formatting.
+
+`library(xml)'
+     is a package for parsing XML with Prolog, which provides Prolog
+     applications with a simple "Document Value Model" interface to XML
+     documents.
+
+
+File: quintus.info,  Node: str,  Next: obj,  Prev: lib,  Up: Top
+
+The Structs Package
+*******************
+
+* Menu:
+
+* str-fty::                             Foreign Types
+* str-usq::                             Using Structs with QPC
+* str-cft::                             Checking Foreign Term Types
+* str-cdf::                             Creating and Destroying Foreign Terms
+* str-afd::                             Accessing and Modifying Foreign Term Contents
+* str-cas::                             Casting
+* str-nul::                             Null Foreign Terms
+* str-ifc::                             Interfacing with Foreign Code
+* str-etr::                             Examining Type Definitions at Runtime
+* str-s2c::                             Structs to C
+* str-tip::                             Tips
+
+   The `structs' package allows Prolog to hold pointers to C data
+structures, and to access and store into fields in those data
+structures.  Currently, the only representation for a pointer supported
+by Quintus Prolog is an integer, so it isn't possible to guarantee that
+Prolog can't confuse a pointer with an ordinary Prolog term.  What this
+package does is to represent such a pointer as a term with the type of
+the structure or array as its functor and the integer that is the
+address of the actual data as its only argument.  We will refer such
+terms as "foreign terms".
+
+     *Important caveats:*
+
+     You should not count on future versions of the struct package to
+     continue to represent foreign terms as compound Prolog terms.  In
+     particular, you should never explicitly take apart a foreign term
+     using unification or `functor/3' and `arg/3'.  You may use the
+     predicate `foreign_type/2' to find the type of a foreign term, and
+     `cast/3' (casting a foreign term to address) to get the address
+     part of a foreign term.  You may also use `cast/3' to cast an
+     address back to a foreign term.  You should use
+     `null_foreign_term/2' to check if a foreign term is null, or to
+     create a null foreign term of some type.
+
+     It should never be necessary to explicitly take apart foreign
+     terms.
+
+
+File: quintus.info,  Node: str-fty,  Next: str-usq,  Up: str
+
+Foreign Types
+=============
+
+* Menu:
+
+* str-fty-dty::                         Declaring Types
+
+   There are two sorts of objects that Prolog may want to handle:
+"atomic" and "compound".  "Atomic" objects include numbers and atoms,
+and "compound" objects include data structures and arrays.  To be more
+precise about it, an atomic type is defined by one of the following.  A
+long integer is 64 bits on DEC Alpha platforms and 32 bits on other
+Quintus Prolog platforms.  Long integers are however truncated to 32
+bits (sign-extended) by the Prolog system:
+
+`long'
+     long signed integer (but see above)
+
+`integer'
+     32 bit signed integer
+
+`short'
+     16 bit signed integer
+
+`char'
+     8 bit signed integer
+
+`unsigned_long'
+     long unsigned integer (but see above)
+
+`unsigned_integer'
+     32 bit unsigned integer (but Prolog can only handle 31 bits
+     unsigned)
+
+`unsigned_short'
+     16 bit unsigned integer
+
+`unsigned_char'
+     8 bit unsigned integer
+
+`float'
+     32 bit floating-point number
+
+`double'
+     64 bit floating-point number
+
+`atom'
+     32 bit Prolog atom number.  Unique for different atoms, but not
+     consistent across Prolog sessions.
+
+`string'
+     long pointer to 0-terminated character array.  Represented as an
+     atom in Prolog.
+
+`address'
+     an untyped address.  Like `pointer(_)', but `structs' does no type
+     checking for you. Represented as a Prolog integer.
+
+`opaque'
+     Unknown type.  Cannot be represented in Prolog.  A pointer to an
+     opaque object may be manipulated.
+
+   And compound types are defined by one of:
+`pointer(TYPE)'
+     a long pointer to a thing of type TYPE.
+
+`array(NUM,TYPE)'
+     A chunk of memory holding NUM (an integer) things of type TYPE.
+
+`array(TYPE)'
+     A chunk of memory holding some number of things of type TYPE.
+     This type does not allow bounds checking, so it should be used
+     with great care.  It is also not possible to use this sort of
+     array as an element in an array, or in a struct or union.
+
+`struct(FIELDS)'
+     A compound structure.  FIELDS is a list of FIELD_name:TYPE pairs.
+     Each FIELD_name is an atom, and each TYPE is any valid type.
+
+`union(MEMBERS)'
+     A union as in C.  MEMBERS is a list of MEMBER_name:TYPE pairs.
+     Each MEMBER_name is an atom, and each TYPE is any valid type.  The
+     space allocated for one of these is the maximum of the spaces
+     needed for each member.  It is not permitted to store into a union
+     (you must get a member of the union to store into, as in C).
+
+   C programmers will recognize that the kinds of data supported by
+this package were designed for the C language.  They should also work
+for other languages, but programmers must determine the proper type
+declarations in those languages.  The table above makes clear the
+storage requirements and interpretation of each type.
+
+   Note that there is one important difference between the `structs'
+package and C:  the `structs' package permits declarations of pointers
+to arrays.  A pointer to an array is distinguished from a pointer to a
+single element.  For example
+             pointer(array(char))
+
+   is probably a more appropriate declaration of a C string type than
+             pointer(char)
+
+   which is the orthodox way to declare a string in C.  Note that the
+`structs_to_c' tool described below does generate proper (identical) C
+declarations for both of these `structs' declarations.
+
+
+File: quintus.info,  Node: str-fty-dty,  Up: str-fty
+
+Declaring Types
+---------------
+
+   Programmers may declare new named data structures with the following
+procedure:
+             :- foreign_type
+                 Type_name = Type,
+                 ...,
+                 Type_name = Type.
+
+   Where TYPE_NAME is an atom, and TYPE defines either an atomic or
+compound type, or is a previously-defined type name.
+
+   In Prolog, atomic types are represented by the natural atomic term
+(integer, float, or atom).  Compound structures are represented by
+terms whose functor is the name of the type, and whose only argument is
+the address of the data.  So a term `foo(123456)' represents the thing
+of type `foo' that exists at machine address 123456.  And a term
+`integer(123456)' represents the integer that lives in memeory at
+address 123456, _not_ the number 123456.
+
+   For types that are not named, a type name is generated using the
+names of associated types and the dollar sign character (`$'), and
+possibly a number.  Therefore, users should not use `$' in their type
+names.
+
+
+File: quintus.info,  Node: str-usq,  Next: str-cft,  Prev: str-fty,  Up: str
+
+Using Structs with QPC
+======================
+
+   The `structs' package is divided into two parts:
+   * the part necessary to process foreign declarations
+
+   * the part that defines all the `structs' predicates (other than the
+     `foreign_type/2' declaration predicate).
+
+   The former file is not (usually) needed while your application is
+running, while the latter part certainly is.  By separating `structs'
+into two files, you may avoid including the `structs' declaration code
+in your application.
+
+   In order to declare a foreign type or use foreign types in a foreign
+function declaration, you must first load the file
+`library(structs_decl)'.  Ordinarily, you would probably do this by
+including an `ensure_loaded/1' or `use_module/[1,2,3]' call in your
+file.  Unfortunately, this will not allow `qpc' to compile your file.
+In order both to use your file in the development system, and to
+compile it with `qpc', put the following line in your files that define
+foreign types or use foreign types in foreign function declarations:
+         :- load_files(library(structs_decl),
+                       [when(compile_time),if(changed)]).
+
+   The `when(compile_time)' tells `qpc' to load `library(structs_decl)'
+into `qpc', and not to record a dependency on it.  This means that
+`library(structs_decl)' will not be part of your statically linked
+application.
+
+   If you accidentally use
+          :- ensure_loaded(library(structs_decl)).
+
+   it will compile in the development system, but when you `qpc' the
+file you will get a warning.
+
+   Files that just _use_ `structs' are much simpler.  Just add this to
+those files:
+         :- ensure_loaded(library(structs)).
+
+   There is another important complication.  If you have type
+declarations in one file (call it A) that use types declared in another
+file (B), you must declare (at least) a compile_time dependency.  So in
+file A, you'd need to have the line:
+         :- load_files('B', [when(compile_time),if(changed)]).
+
+   This does not allow predicates in A to call predicates in B.  If you
+need this, too, you should instead include in file A the line:
+         :- load_files('B', [when(both),if(changed)]).
+
+   You will also need to ensure that B is compiled to a QOF file before
+trying to `qpc' A.  This requires that if A is a module-file, so must B
+be.  If A is not a module-file, then B need not be a module-file (but
+it may be).  If you use the `make' utility to maintain object files, you
+might then want to add the following line to your `Makefile':
+         A.qof:      B.qof
+
+
+File: quintus.info,  Node: str-cft,  Next: str-cdf,  Prev: str-usq,  Up: str
+
+Checking Foreign Term Types
+===========================
+
+   The type of a foreign term may determined by the goal
+         foreign_type(+Foreign_term, -Type_name)
+
+   Note that `foreign_type/2' will fail if FOREIGN_TERM is not a
+foreign term.
+
+
+File: quintus.info,  Node: str-cdf,  Next: str-afd,  Prev: str-cft,  Up: str
+
+Creating and Destroying Foreign Terms
+=====================================
+
+   Prolog can create or destroy foreign terms using
+         new(+TYPE, -DATUM),
+         new(+TYPE, +SIZE, -DATUM) and
+         dispose(+DATUM)
+
+   where TYPE is an atom specifying what type of foreign term is to be
+allocated, and DATUM is the foreign term.  The DATUM returned by
+`new/[2,3]' is not initialized in any way.  `dispose/1' is a dangerous
+operation, since once the memory is disposed, it may be used for
+something else later.  If DATUM is later accessed, the results will be
+unpredictable.  `new/3' is only used to allocate arrays whose size is
+not known beforehand, as defined by `array(TYPE)', rather than
+`array(TYPE,SIZE)'.
+
+
+File: quintus.info,  Node: str-afd,  Next: str-cas,  Prev: str-cdf,  Up: str
+
+Accessing and Modifying Foreign Term Contents
+=============================================
+
+   Prolog can get or modify the contents of a foreign term with the
+procedures
+         get_contents(+DATUM, +PART, -VALUE)
+         get_contents(+DATUM, *PART, *VALUE)
+         put_contents(+DATUM, +PART, +VALUE).
+
+   It can also get a pointer to a field or element of a foreign term
+with the procedure
+         get_address(+DATUM, +PART, -VALUE).
+         get_address(+DATUM, *PART, *VALUE).
+
+   For all three of these, DATUM must be a foreign term, and PART
+specifies what part of DATUM VALUE is.  If DATUM is an array, PART
+should be an integer index into the array, where 0 is the first
+element.  For a pointer, PART should be the atom `contents' and VALUE
+will be what the pointer points to.  For a struct, PART should be a
+field name, and VALUE will be the contents of that field.  In the case
+of `get_contents/3' and `get_address/3', if PART is unbound, then
+`get_contents/3' will backtrack through all the valid parts of DATUM,
+binding both PART and VALUE.  A C programmer might think of the
+following pairs as corresponding to each other:
+     get_contents(Foo, Bar, Baz)
+     Baz = Foo->Bar
+     
+     put_contents(Foo, Bar, Baz)
+     Foo->Bar = Baz
+     
+     get_address(Foo, Bar, Baz)
+     Baz = &Foo->Bar.
+
+   The hitch is that only atomic and pointer types can be got and put
+by `get_contents/3' and `put_contents/3'.  This is because Prolog can
+only hold pointers to C structures, not the structures themselves.
+This isn't quite as bad as it might seem, though, since usually
+structures contain pointers to other structures, anyway.  When a
+structure directly contains another structure, Prolog can get a pointer
+to it with `get_address/3'.
+
+   Access to most fields is accomplished by peeking into memory (see
+*Note ref-ari-aex-pee::), so it is very efficient.
+
+
+File: quintus.info,  Node: str-cas,  Next: str-nul,  Prev: str-afd,  Up: str
+
+Casting
+=======
+
+   Prolog can "cast" one type of foreign term to another.  This means
+that the foreign term is treated just as if it where the other type.
+This is done with the following procedure:
+         cast(+FOREIGN0, +NEW_TYPE, -FOREIGN)
+
+   FOREIGN is the foreign term that is the same data as FOREIGN0, only
+is of foreign type NEW_TYPE.  FOREIGN0 is not affected.  This is much
+like casting in C.
+
+   Casting a foreign term to `address' will get you the raw address of a
+foreign term.  This is not often necessary, but it is occasionally
+useful in order to obtain an indexable value to use in the first
+argument of a dynamic predicate you are maintaining.  An `address' may
+also be casted to a proper foreign type.
+
+   This predicate should be used with great care, as it is quite easy to
+get into trouble with this.
+
+
+File: quintus.info,  Node: str-nul,  Next: str-ifc,  Prev: str-cas,  Up: str
+
+Null Foreign Terms
+==================
+
+   "NULL" foreign terms may be handled.  The predicate
+         null_foreign_term(+TERM, -TYPE)
+         null_foreign_term(-TERM, +TYPE)
+
+   holds when TERM is a foreign term of TYPE, but is NULL (the address
+is 0).  At least one of TERM and TYPE must be bound.  This can be used
+to generate NULL foreign terms, or to check a foreign term to determine
+whether or not it is NULL.
+
+
+File: quintus.info,  Node: str-ifc,  Next: str-etr,  Prev: str-nul,  Up: str
+
+Interfacing with Foreign Code
+=============================
+
+   Foreign terms may be passed between Prolog and other languages
+through the foreign interface.
+
+   To use this, all foreign types to be passed between Prolog and
+another language must be declared with `foreign_type/2' before the
+`foreign/[2,3]' clauses specifying the foreign functions.
+
+   The `structs' package extends the foreign type specifications
+recognized by the foreign interface.  In addition to the types already
+recognized by the foreign interface, any atomic type recognized by the
+`structs' package is understood, as well as a pointer to any named
+`structs' type.
+
+   For example, if you have a function
+
+             char nth_char(string, n)
+                 char *string;
+                 int n;
+                 {
+                     return string[n];
+                 }
+
+   You might use it from Prolog as follows:
+     :- foreign_type cstring = array(char).
+     
+     foreign(nth_char, c, nth_char(+pointer(cstring), +integer,
+             [-char])).
+
+   This allows the predicate `nth_char/3' to be called from Prolog to
+determine the nth character of a C string.
+
+   Note that all existing foreign interface type specifications are
+uneffected, in particular `address/[0,1]' continue to pass addresses to
+and from Prolog as plain integers.
+
+
+File: quintus.info,  Node: str-etr,  Next: str-s2c,  Prev: str-ifc,  Up: str
+
+Examining Type Definitions at Runtime
+=====================================
+
+   The above described procedures should be sufficient for most needs.
+This module does, however, provide a few procedures to allow
+programmers to access type definitions.  These may be a convenience for
+debugging, or in writing tools to manipulate type definitions.
+
+   The following procedures allow programmers to find the definition of
+a given type:
+         type_definition(+TYPE, -DEFINITION)
+         type_definition(*TYPE, *DEFINITION)
+         type_definition(+TYPE, -DEFINITION, -SIZE)
+         type_definition(*TYPE, *DEFINITION, *SIZE)
+
+   TYPE is an atom naming a type, DEFINITION is the definition of that
+type, and SIZE is the number of bytes occupied by a foreign term of
+this type.  SIZE will be the atom `unknown' if the size of an object of
+that type is not known.  Such types may not be used as fields in
+structs or unions, or in arrays.  However, pointers to them may be
+created.  If TYPE is not bound at call time, these procedures will
+backtrack through all current type definitions.
+
+   A definition looks much like the definition given when the type was
+defined with `type/1', except that it has been simplified.  Firstly,
+intermediate type names have been elided.  For example, if `foo' is
+defined as `foo=integer', and `bar' as `bar=foo', then
+`type_definition(bar, integer)' would hold.  Also, in the definition of
+a compound type, types of parts are always defined by type names,
+rather than complex specifications.  So if the type of a field in a
+struct was defined as `pointer(fred)', it will show up in the
+definition as `'$fred''.  Of course, `type_definition('$fred',
+pointer(fred))' would hold, also.
+
+   The following predicates allow the programmer to determine whether
+or not a given type is atomic:
+         atomic_type(+TYPE)
+         atomic_type(*TYPE)
+     
+         atomic_type(+TYPE, -PRIMITIVE_TYPE)
+         atomic_type(*TYPE, *PRIMITIVE_TYPE)
+     
+         atomic_type(+TYPE, -PRIMITIVE_TYPE, -SIZE)
+         atomic_type(*TYPE, *PRIMITIVE_TYPE, *SIZE)
+
+   TYPE is an atomic type.  See *Note str-fty:: for the definition of
+an atomic type.  PRIMITIVE_TYPE is the primitive type that TYPE is
+defined in terms of.  SIZE is the number of bytes occupied by an object
+of type TYPE, or the atom `unknown', as above.  If TYPE is unbound at
+call time, these predicates will backtrack through all the currently
+defined atomic types.
+
+
+File: quintus.info,  Node: str-s2c,  Next: str-tip,  Prev: str-etr,  Up: str
+
+Structs to C
+============
+
+   Included with `structs' is the program `structs_to_c'.  This program
+reads in a Prolog file containing `structs' declarations, and generates
+a `.h' file containing equivalent declarations to be #included in your C
+programs.  Each type you declare in your `.pl' file will have a
+corresponding `typedef' in the `.h' file.
+
+   If you wish to use this tool, you will have to build an executable
+yourself, as the default installation procedure doesn't build
+`structs_to_c', in order to save space.  To build `structs_to_c', visit
+the `structs' library directory, and type
+             % make structs_to_c
+
+   This will make a host and operating system specific executable file
+`structs_to_c', which you should move to an appropriate directory, for
+example `/usr/local/bin'.
+
+
+File: quintus.info,  Node: str-tip,  Prev: str-s2c,  Up: str
+
+Tips
+====
+
+  1. Most important tip: don't subvert the `structs' type system by
+     looking inside foreign terms to get the address, or use
+     `functor/3' to get the type.  This has two negative effects:
+     firstly, if the `structs' package should change its representation
+     of foreign terms, your code will not work.  But more importantly,
+     you are more likely to get type mismatches, and likely to get
+     unwrapped terms or even doubly wrapped terms where you expect
+     wrapped ones.
+
+  2. Remember that a foreign term `fred(123456)' is not of type `fred',
+     but a pointer to `fred'.  Looked at another way, what resides in
+     memory at address 123456 is of type `fred'.
+
+  3. The wrapper put on a foreign term signifies the type of that
+     foreign term.  If you declare a type to be `pointer(opaque)'
+     because you want to view that pointer to be opaque, then when you
+     get something of this type, it will be printed as
+     `opaque(456123)'.  This is not very informative.  It is better to
+     declare
+                  fred = opaque,
+                  thing = struct([...,
+                              part:pointer(fred),
+                              ...
+                          ]).
+
+     so that when you get the contents of the `part' member of a
+     `thing', it is wrapped as `fred(456123)'.
+

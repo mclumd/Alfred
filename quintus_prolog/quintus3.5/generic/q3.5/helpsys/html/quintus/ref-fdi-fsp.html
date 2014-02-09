@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The File Search Path Mechanism</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ref-fdi-fsp-def.html#ref-fdi-fsp-def">ref-fdi-fsp-def</a>:                      Defining File Search Paths
+<li><a accesskey="2" href="ref-fdi-fsp-ffs.html#ref-fdi-fsp-ffs">ref-fdi-fsp-ffs</a>:                      Frequently Used File Specifications
+<li><a accesskey="3" href="ref-fdi-fsp-fde.html#ref-fdi-fsp-fde">ref-fdi-fsp-fde</a>:                      Filename Defaults
+<li><a accesskey="4" href="ref-fdi-fsp-pre.html#ref-fdi-fsp-pre">ref-fdi-fsp-pre</a>:                      Predefined file_search_path Facts
+<li><a accesskey="5" href="ref-fdi-fsp-sys.html#ref-fdi-fsp-sys">ref-fdi-fsp-sys</a>:                      The system file_search_path
+<li><a accesskey="6" href="ref-fdi-fsp-lip.html#ref-fdi-fsp-lip">ref-fdi-fsp-lip</a>:                      The Library Paths
+<li><a accesskey="7" href="ref-fdi-fsp-lse.html#ref-fdi-fsp-lse">ref-fdi-fsp-lse</a>:                      Editor Command for Library Search
+</ul>
+
+   <p>As a convenience for the developer and as a means for extended portability
+of the final application, Quintus Prolog provides a flexible mechanism
+to localize the definitions of the system dependent parts of the file
+and directory structure a program relies on, in such a way that the
+application can be moved to a different directory hierarchy or to a completely
+new file system, with a minimum of effort.
+
+   <p>This mechanism, which can be seen as a generalization of the
+<code>library_directory/1</code> scheme available in previous releases, presents
+two main features:
+     <ol type=1 start=1>
+
+     <li>An easy way to create aliases for frequently used directories, thus
+localizing the external, file system and directory structure dependent
+directory name, to one single place in the program. 
+<li>A possibility to associate more than one directory specification with each
+alias, thus giving the developer full freedom in sub-dividing libraries,
+and other collections of programs, as it best suits the structure of
+the external file system, without making the process of accessing files
+in the libraries any more complicated. In this case,
+the alias can be said to represent a file search path, not only a
+single directory.
+        </ol>
+
+   <p>The directory aliasing mechanism, together with the additional file search
+capabilities of <code>absolute_file_name/3</code>, can effectively serve
+as an intermediate layer between the external world and a portable program. 
+For instance, the developer can hide
+the directory representation by defining directory aliases, and he can
+automatically get a proper file extension added, dependent on the type
+of file he wants to access, by using the appropriate options to
+<code>absolute_file_name/3</code>.
+
+   <p>A number of directory aliases and file search paths, are predefined in
+the Quintus Prolog system (though they can be redefined by the user). 
+The most important of those is the <code>library</code> file search path,
+giving the user instant access to the Quintus library, consisting of
+several sub-directories and extensive supported programs and tools.
+
+   <p>Specifying a library file, using the alias, is possible simply by replacing the
+explicit file (and directory) specification with the following term:
+
+<pre class="example">     library(<var>file</var>)
+     </pre>
+
+   <p>The name of the file search path, in this case <code>library</code>, is
+the main functor
+of the term, and indicates that <var>file</var> is to be found in one of the
+library directories.
+
+   <p>The association between the alias <code>library</code> (the name of the search path)
+and the library directories (the definitions of the search path),
+is defined by Prolog facts,
+<code>library_directory/1</code>, which are searched in sequence to locate the
+file. Each of these facts specifies a
+directory where to search for <var>file</var>, whenever a file specification
+of the form <code>library(</code><var>file</var><code>)</code> is encountered.
+
+   <p>The library mechanism discussed above, which can be extended with
+new directories associated with the alias <code>library</code>, has become
+subsumed by the more general aliasing mechanism,
+in which arbitrary names can be used as aliases for directories. The
+general mechanism also gives the possibility of defining
+path aliases in terms of already defined aliases.
+
+   <p>In addition to <code>library</code>, the following aliases are predefined in
+Quintus Prolog: <code>quintus</code>,  <code>runtime</code>, <code>system</code>, <code>helpsys</code>
+<code>language</code> and <code>tutorial</code>. The interpretation of the predefined
+aliases are explained below.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-fdi-pre.html#ref-fdi-pre">Next</a>
+<li><a rel="up" accesskey="u" href="ref-fdi.html#ref-fdi">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

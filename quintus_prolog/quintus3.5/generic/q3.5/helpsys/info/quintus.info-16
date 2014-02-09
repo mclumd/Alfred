@@ -1,0 +1,1255 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: ref-msg-ove,  Next: ref-msg-tbm,  Up: ref-msg
+
+Overview
+--------
+
+   Prolog responds to many situations by displaying messages.  These
+messages fall into five categories: error, warning, informational, help
+and silent.  Here are examples of a messages of each category printed
+without customization:
+
+   Error message: (1)
+     | ?- X is apples + oranges.
+     ! Type error in argument 2 of is/2
+     ! number expected, but apples found
+     ! goal:  _2277 is apples+oranges
+
+   Informational message: (2)
+     | ?- debug.
+     % The debugger will first leap -- showing spypoints (debug)
+
+   Warning message: (3)
+     | ?- spy g.
+     * There are no predicates with the name g in module user
+
+   Help messages (response to a user's request for information): (4)
+     | ?- version.
+     Quintus Prolog Release 3.5 (Sun 4, SunOS 5.5)
+
+   Silent messages (nothing is printed for these message, but the users
+can define a message hook to catch these messages): (5)
+
+     There is a ``silent'' message every time a top level goal is executed.
+
+   Note that each type of message has a characteristic prefix:
+`!'
+     `error'
+
+`%'
+     `informational'
+
+`*'
+     `warning'
+
+(none)
+     `help'
+
+(none)
+     `silent'
+
+   The display of messages such as these can be customized in various
+ways, including translation into other languages to facilitate
+internationalization of applications, adding new types of messages,
+most notably exception messages, changing the text or appearance of the
+messages as displayed.
+
+   Furthermore it is possible to extend the programming environment by
+specifying goals to be called when specified events occur.  These goals
+would override the straightforward display of message text.  A major
+type of application here is graphical user interfaces.
+
+   Finally, you can control how the system asks for and interprets
+responses from users.
+
+
+File: quintus.info,  Node: ref-msg-tbm,  Next: ref-msg-umf,  Prev: ref-msg-ove,  Up: ref-msg
+
+Implementation: Term-Based Messages
+-----------------------------------
+
+   The message facility design is based on transforming "message terms"
+to lists of "format commands" according to "definite clause grammars".
+The format commands are processed by `print_message_lines/3' to become
+the message text.  For information about `format/2', see *Note
+ref-iou-cou-fou:: in the input/output section of this manual.  Definite
+clause grammars are described in *Note ref-gru::.
+
+   This design has the advantage of being able to utilize a relatively
+small list of message terms, each of which generates a set of related
+messages, and it gives the translator or other user explicit control
+over the order in which variables are referred to in the
+translated/customized message.
+
+   In release 3, all output from Prolog is represented internally as
+terms, called message terms.  These terms consist of a "functor" that
+names the message, and "arguments" that give information about the
+particulars.  For example, these _message terms_ underlie the
+_messages_ given in the overview:
+
+     type_error(is(_, number, apples + oranges), 2, number, apples) (1)
+     
+     debug_message(leap) (2)
+     
+     advice(no_preds, '', predicate_family(user:f)) (3)
+     
+     version(3.5, 'Sun-4, SunOS 5.5') (4)
+
+   The "message generator" is defined in the file:
+     messages(language('QU_messages.pl'))
+ It associates such message terms with the corresponding messages.
+This is accomplished by a series of default clauses for
+`generate_message/3' within the module.  This section will explain and
+exemplify various ways available to customize these messages.
+
+   In addition to the message generator, the message facility consists
+of a set of built-in predicates & hooks.  Once an event is correlated
+with a call to `print_message/2', either by Quintus Prolog or by user
+code, these procedures can be used as shown in the following figure to
+customize system messages, or use the underlying message terms as
+triggers for other events.
+
+
+[See printed or HTML manual.]
+
+                     Message Facility Control Flow
+
+   The heavy arrows in the diagram trace the default path of a message
+term through the message generator.
+
+   To print a message, call `print_message/2'.  This may be done
+explicitly in your code.  Often, however, it is called by the system.
+For example, an unhandled exception message E will always be captured
+at the Prolog top level, where it calls `print_message(error, E)'.
+
+   Prolog first tries calling user:`generate_message_hook/3' to
+transform a message term into textual form.  If that fails, it then
+tries `'QU_messages':generate_message/3' instead.  (If that also fails
+the message term will simply be written out as if by `write/1'.)  There
+is one exception to this rule. Messages that fall into the `silent'
+category do not go through `generate_message_hook/3'.
+
+   Once the text of the message, represented as a list of format
+commands, is decided, Prolog calls user:`message_hook/3'.  If this
+succeeds, nothing else is done; otherwise, `print_message_lines/3' is
+called to print the message. `silent' messages just go through
+`message_hook/3' but even if it does not succeed, it is not passed to
+`print_message_lines/3'.
+
+
+File: quintus.info,  Node: ref-msg-umf,  Next: ref-msg-ime,  Prev: ref-msg-tbm,  Up: ref-msg
+
+Examples of Using the Message Facility
+--------------------------------------
+
+* Menu:
+
+* ref-msg-umf-adm::                     Adding messages
+* ref-msg-umf-cmt::                     Changing message text
+* ref-msg-umf-ipm::                     Intercepting the printing of a message
+* ref-msg-umf-int::                     Interaction
+
+   In the Overview we discussed several likely ways this facility might
+be used.  The ways to accomplish such goals are discussed in the
+following sections.  To sum up, here are some motivations for
+customizing messages, with an indication of which procedures should be
+used:
+
+  1. Add a few new types of messages to the ones supplied; for example,
+     a new exception type.  (Define user:`generate_message_hook/3')
+
+  2. Change the text of a few existing messages.  (Define
+     user:`generate_message_hook/3')
+
+  3. Customize default ways of printing existing message text, e.g.
+     changing the default prefixes; (use `message_hook/3' to override
+     the defaults given by `print_message_lines/3').
+
+  4.  "you_name_it" as in Figure *Note ref-sem-typ-rpr::.
+
+     You can specify an action to replace or augment the default action
+     by defining clauses for user:`message_hook/3'.  Examples:
+
+        * For `warning' messages, blink a light.
+
+        * In a graphical user interface, let `warning' messages cause a
+          window of a certain design to pop up and display the message.
+
+        * Turn off all `informational' messages.
+
+        * Send all error messages to a certain file.
+
+  5. Control how the system asks for and interprets responses from
+     users.  (`query_hook/6')
+
+  6. Translate all the existing messages, with or without
+     customizations, to another language.  This includes queries and
+     user responses.  (redefine `generate_message/3'; see *Note
+     ref-msg-ime::)
+
+
+File: quintus.info,  Node: ref-msg-umf-adm,  Next: ref-msg-umf-cmt,  Up: ref-msg-umf
+
+Adding messages
+...............
+
+   To add new messages, define clauses for `generate_message_hook/3'.
+For instance, to create a new message term indicating that the world is
+round, one could choose the message term `round_world' and provide the
+definition:
+
+     generate_message_hook(round_world) --> ['The world is round.'-[],nl]
+
+      *Please note:* The atom `nl' is used for breaking the message into
+     lines.  Using the format specification `~n' (new-line) is strongly
+     discouraged, since applications typically require explicit control
+     over new-lines.
+
+   Though this was not obvious from the `round_world' example, message
+terms parse to a list of CONTROL-ARGS pairs, where CONTROL is a format
+specification string, and ARGS is the list of arguments for the given
+Control string.  To illustrate, if we wanted to say that the world was
+flat and wet, we could write
+
+
+     user:generate_message_hook(world(X,Y))-->
+                            ['The world is ~w and ~w.'-[X,Y],nl].
+     
+     ?- print_message(help,world(flat,wet)).
+
+   Here is an example of how one might implement a new exception,
+`bad_font', when the File associated with that font doesn't exist.
+
+     check_font(Font,File):-
+         (   file_exists(File)->true
+         ;   raise_exception(bad_font(Font, File))
+         ).
+     
+     generate_message_hook(bad_font(Font,File)) -->
+         ['Can''t find the file ~w corresponding to font ~w'-
+             [File, Font],nl]).
+
+   Instead of using the message facility, you could use an existing
+error message in this way:
+     check_font1(Font,File):-
+         (   file_exists(File)->true
+         ;   raise_exception(existence_error(check_font1(Font,File),2,
+                                                         file, File,0))
+         ).
+
+
+File: quintus.info,  Node: ref-msg-umf-cmt,  Next: ref-msg-umf-ipm,  Prev: ref-msg-umf-adm,  Up: ref-msg-umf
+
+Changing message text
+.....................
+
+   Similarly, the text of an existing message may be changed by defining
+`generate_message_hook/3'.  For example, the following definition will
+change the text of a default message (see
+`messages(language('QU_messages.pl'))' for original text).
+
+     user:generate_message_hook(no_source(Name, Arity))-->
+                   ['~q/~d has no source file' - [Name, Arity], nl].
+
+
+File: quintus.info,  Node: ref-msg-umf-ipm,  Next: ref-msg-umf-int,  Prev: ref-msg-umf-cmt,  Up: ref-msg-umf
+
+Intercepting the printing of a message
+......................................
+
+   After a message is parsed, but before the message is printed out,
+`print_message/2' calls
+
+     user:message_hook(+Message,+Severity,+Lines)
+
+   where Lines is of the form [LINE1, LINE2, ...], where each LINEI is
+of the form [CONTROL_1-ARGS_1,CONTROL_2-ARGS_2, ...].
+
+   In our example,
+
+     message_hook(world(flat,wet),error,
+         [['The world is ~w and ~w.'-[flat,wet]]])
+
+   would be called.
+
+   If the call to user:`message_hook/3' succeeds, `print_message/2'
+succeeds without further processing.  Otherwise, the built-in message
+display is used.
+
+   An example of using a hook to redirect output can be seen in the
+reference page for `print_message_lines/3'.
+
+   It is often useful for a message hook to execute some code for its
+effects, and then fail.  This allows other message hooks a chance to
+run, and allows the printing of the message to proceed normally.
+
+   For example, we might want to ring a bell when printing an error
+message, and print a count of error messages seen so far.  This could
+be done as follows:
+
+     :- dynamic error_count/1.
+     
+     user:message_hook(_, error, _) :-
+             put(7),                         % ASCII 7 RINGS BELL
+             (   error_count(N) -> true
+             ;   N = 1
+             ),
+             format('! Error ~w:~n', [N]),
+             N1 is N+1,
+             retractall(error_count(_)),
+             assert(error_count(N1)),
+             fail.
+
+
+File: quintus.info,  Node: ref-msg-umf-int,  Prev: ref-msg-umf-ipm,  Up: ref-msg-umf
+
+Interaction
+...........
+
+   Prolog's default ways of eliciting keyboard input are enumerated in
+the clauses for `query_abbreviation/3' in
+`messages(language('QU_messages.pl'))'.  These clauses specify valid
+abbreviations for a given key word.  For example,
+
+     query_abbreviation(yes_or_no,'(y/n)',[yes-"yY",no-"nN"]).
+
+   A French translator might decide that the letters `O' and `o' are
+reasonable abbreviations for `oui' (yes), and therefore write
+`yes-"oO"'.  See the reference page for more information on
+`query_abbreviation/3'.
+
+   The query hook provides a means of overriding the default
+interaction.  Whenever Prolog attempts to solicit input from the user,
+it first looks to see if the application wants to take control of the
+query by calling user:`query_hook/6'  (see the above figure).  The
+various queries are listed in the manual page for `query_hook/6'.  For
+example, if Prolog is looking for a yes-no response, as in the
+toplevel, this request for input can be captured as follows, where
+`my_yes_no/2' binds Answer to `yes' or `no':
+
+     query_hook(toplevel,_,_,_,_,Answer):-
+         my_yes_no('Done?',Answer).
+
+
+File: quintus.info,  Node: ref-msg-ime,  Next: ref-msg-sum,  Prev: ref-msg-umf,  Up: ref-msg
+
+Internationalization of Quintus Prolog messages
+-----------------------------------------------
+
+* Menu:
+
+* ref-msg-ime-tra::                     Translating the Messages
+* ref-msg-ime-tit::                     Testing and Installing the Translated Messages
+* ref-msg-ime-btm::                     Building a Version of Prolog using the Translated Messages
+* ref-msg-ime-kan::                     Using Kanji characters
+
+   By default, `generate_message/3' sends the message term through the
+English message generator, `messages('english/QU_messages')'.  The
+definite clause grammar (DCG) rules in this file transform Prolog
+message terms into English messages.  In addition, the message
+generator is designed to allow internationalization of the messages
+printed by the Quintus Prolog development system.  You can translate
+the output of the rules in the message generator into any natural
+language.  To do this, you would translate part of the right hand side
+of each rule into the target language, e.g. French, to produce
+`messages('french/QU_messages')', which generates French messages from
+the same message terms.  This section explains how to go about
+providing a translation.
+
+   The default `QU_messages.pl' is installed as:
+     QUINTUS-DIRECTORY/generic/qplib3.5/embed/english/QU_messages.pl
+
+   To have all messages printed in another language, the basic steps are
+as follows
+  1. Take a copy of `QU_messages.pl' and translate all the messages.
+
+  2. Test the translated `QU_messages.pl' and then install it in the
+     Quintus Prolog directory hierarchy.
+
+  3. Install or re-install Quintus Prolog to get a version that uses the
+     translated messages.
+
+
+File: quintus.info,  Node: ref-msg-ime-tra,  Next: ref-msg-ime-tit,  Up: ref-msg-ime
+
+Translating the Messages
+........................
+
+   Each grammar rule in `QU_messages.pl' defines the generation of a
+message term from an internal form.  For example, in (A) the text that
+needs to be translated is the quoted text inside the list `[]' brackets:
+`Type error'.  The rest of the rule does not need to be changed.
+
+     generate_message(type_error(Goal,ArgNo,TypeName,Culprit)) --> (A)
+         ['Type error'-[]],
+         head(Goal,ArgNo),
+         type(TypeName,Culprit),
+         goal(Goal).
+
+   The general form of text components in a list is (B), where
+CONTROL-STRING and ARG-LIST are valid for a call such as (C) to the
+built-in predicate `format/2' as exemplified in (D).
+
+     CONTROL-STRING-ARG LIST (B)
+
+     | ?- format(CONTROL-STRING, ARG-LIST). (C)
+
+     | ?- format('Type error', []). (D)
+     Type error
+     yes
+
+   In example (E), when the message is printed, the List will be
+inserted in place of the ~q.  The ~q means that the List will be
+printed as if by the built-in predicate `writeq/1'.  See the
+documentation of `format/[2,3]' for full details of what a
+control-string can do.
+     typename(one_of(List)) --> ['a member of the set ~q'-[List]]. (E)
+
+   In addition to text components of the form (F), it is also possible
+to have text components of the form (G), which cause a newline to be
+output.
+     CONTROL-STRING-ARG LIST  (F)
+     
+     nl   (G)
+
+   The format option `~n' should not be used in control strings: any
+required newlines should be specified with the `nl' text components.
+For example, the list in (H) contains two text components; in general,
+a number of text components can be collected into a single list like
+this, or they can appear in separate lists, as in (I):
+
+     advice(invalid_argument,Type,X) -->    (H)
+             ['Invalid argument to ~w, ~q was ignored.'-[Type,X],nl].
+     
+     advice(invalid_argument,Type,X) -->   (I)
+         ['Invalid argument to ~w, ~q was ignored.'-[Type,X]], [nl].
+
+   All (complete) messages must end with an `nl'.
+
+   In addition to translating messages, it is also possible to change
+the characters that Prolog will accept when it requires input from the
+user.  This is done by modifying the definition of
+`query_abbreviation/2' at the end of `QU_messages.pl'.  For example, (J)
+means that when the Prolog system wants a yes-or-no answer it expects
+the first character typed to be a `y' or a `n' and the case does not
+matter.  Since "yes" in French is "oui" a French translator might
+change this to (K).
+
+      query_abbreviation(yes_or_no,[yes-"yY",no-"nN"]).  (J)
+     
+     query_abbreviation(yes_or_no,[yes-"oO",no-"nN"]).   (K)
+
+
+File: quintus.info,  Node: ref-msg-ime-tit,  Next: ref-msg-ime-btm,  Prev: ref-msg-ime-tra,  Up: ref-msg-ime
+
+Testing and Installing the Translated Messages
+..............................................
+
+   A translated version of `QU_messages.pl' can be tested by compiling
+it into an ordinary Prolog and seeing how the messages printed by the
+system look.  That is:
+     % prolog
+     | ?- compile('QU_messages').
+
+   Once the new `QU_messages.pl' has been tested, it can be installed in
+     QUINTUS-DIRECTORY/generic/qplib3.5/embed/LANGUAGE/QU_messages.pl
+
+   The file should be compiled to QOF in that directory:
+     % cd QUINTUS-DIRECTORY/generic/qplib3.5/embed/LANGUAGE
+     % qpc -c QU_messages.pl
+
+
+File: quintus.info,  Node: ref-msg-ime-btm,  Next: ref-msg-ime-kan,  Prev: ref-msg-ime-tit,  Up: ref-msg-ime
+
+Building a Version of Prolog using the Translated Messages
+..........................................................
+
+   First set the `QUINTUS_LANGUAGE' environment variable to LANGUAGE.
+Then re-install Prolog, following the normal installation instructions.
+
+   When using `qld' to build stand-alone programs users will also need
+to have the `QUINTUS_LANGUAGE' environment variable set.  Therefore, all
+users who wish to use the translated messages should arrange to set
+this variable in their `.login' or `.cshrc' files.
+
+   `qpc' is itself a Prolog runtime system.  Therefore, if it has been
+installed with English messages it will need to be re-built with
+messages in the preferred language.  To do this, the `qpc' in the
+directory (B) should be deleted before re-installation.
+
+     QUINTUS-DIRECTORY/binVERSION/PLATFORM (B)
+
+   In multilingual environments it may not always be convenient to have
+different versions of executable files for the language spoken by each
+user.  An alternative is for users to put (C) in their `prolog.ini'
+files.  Provided that they have set the `QUINTUS_LANGUAGE' environment
+variable, this will ensure that the messages in their chosen language
+are loaded whenever they start up an executable that was created with
+messages in some other language.
+
+     :- use_module(messages(language('QU_messages'))). (C)
+
+
+File: quintus.info,  Node: ref-msg-ime-kan,  Prev: ref-msg-ime-btm,  Up: ref-msg-ime
+
+Using Kanji characters
+......................
+
+   To permit the use of Kanji characters in atoms, variable names,
+predicate names, messages and comments you need to set the environment
+variable `QUINTUS_KANJI_FLAG' to `true' before starting Prolog.
+
+   When the Kanji flag is set, an 8-bit character codes (that is, a
+character code between 128 and 255) is assumed to be part of a
+multi-byte sequence representing a Kanji character.  Such characters
+are treated, for the purposes of Prolog's syntax, as if they were
+lower-case alphabetic characters.  The Kanji flag does not affect
+character I/O, or the conversion between atoms and lists of character
+codes using `name/2' or `atom_chars/2'.  In the case of I/O, two (or
+more) character codes will need to be read or written for every Kanji
+character.  Similarly, an atom made up of Kanji characters will be
+transformed by `name/2' or `atom_chars/2' into a list of twice (or more
+than twice) as many 8-bit character codes.
+
+JIS
+     (Japanese Industry Standard) is the Japanese analogue to ASCII.
+          This includes two standards: JIS-X0201, which defines
+     half-size         Katakana characters, represented in one byte and
+     JIS-X0208         (called "JIS" code) that defines 6349 Kanji and
+     453 non-Kanji         characters stored in two bytes, using the
+     lower seven bits of         each byte.
+
+SHIFT-JIS
+     Is JIS code shifted so that the high bit is used (so it doesn't
+         interfere with some MSDOS control codes and special
+     characters).
+
+JLE 1.0 EUC
+     Is Sun's Japanese Language Environment. For each codeset this
+       defines exactly one possible character set:
+          codeset                  byte(s) representation
+          0:      ASCII           0xxxxxxx
+          1:      JIS-X0208       1xxxxxxx 1xxxxxxx
+          2:      JIS-X0201       10001110 1xxxxxxx
+          3:      Gaiji           10001111 1xxxxxxx 1xxxxxxx
+
+     Codeset 1 is JIS code with the hit bits set; Gaiji is a
+     user-defined         character set.
+
+DEC
+     This is a standard used by Digital. All I know about this is that
+           character codes 0-127 indicate a one byte ASCII character,
+     and the         codes 128-255 indicates a two byte Kanji character.
+
+
+File: quintus.info,  Node: ref-msg-sum,  Prev: ref-msg-ime,  Up: ref-msg
+
+Summary of Predicates
+---------------------
+
+   * `generate_message/3'
+
+   * `query_hook/6'
+
+   * `user:query_abbreviation/3'
+
+   * `print_message/2'
+
+   * `user:message_hook/3'
+
+   * `print_message_lines/3'
+
+   * `user:generate_message_hook/3'
+
+
+File: quintus.info,  Node: sap,  Next: fli,  Prev: ref,  Up: Top
+
+Creating Executables
+********************
+
+* Menu:
+
+* sap-rge::                             The Runtime Generator
+* sap-srs::                             Stand-Alone Programs & Runtime Systems
+
+
+File: quintus.info,  Node: sap-srs,  Prev: sap-rge,  Up: sap
+
+Stand-Alone Programs & Runtime Systems
+======================================
+
+* Menu:
+
+* sap-srs-bas::                         Basic Concepts
+* sap-srs-qpc::                         Invoking qpc, the Prolog-to-QOF Compiler
+* sap-srs-qld::                         Invoking qld, the QOF Link eDitor
+* sap-srs-dep::                         Dependencies of QOF files
+* sap-srs-fsp::                         File Search Paths and qld
+* sap-srs-eci::                         Embedded Commands and Initialization Files
+* sap-srs-ode::                         Operator Declarations
+* sap-srs-sqf::                         Saved-States and QOF files
+* sap-srs-dfi::                         Dynamic Foreign Interface
+* sap-srs-qui::                         Linking with QUI
+
+
+File: quintus.info,  Node: sap-srs-bas,  Next: sap-srs-qpc,  Up: sap-srs
+
+Basic Concepts
+--------------
+
+* Menu:
+
+* sap-srs-bas-trm::                     Terminology
+* sap-srs-bas-sld::                     Shared Libraries and Delivering Execuatables
+* sap-srs-bas-sap::                     Stand-Alone Programs
+* sap-srs-bas-rsy::                     Runtime Systems
+* sap-srs-bas-cld::                     Compiling and Linking
+* sap-srs-bas-rdk::                     The Runtime Kernel vs. Development Kernel
+
+   Traditionally, the way to develop Prolog programs has been to compile
+all the sources into memory and then to create saved-states for stable
+portions of the program.  The use of saved-states avoids the need to
+recompile unchanged code each time that a testing/debugging session is
+started.  It can also be used as a way of packaging a completed
+application for later re-use or for use by others.
+
+   This section explains the use of tools that provide an alternative
+approach to program development: compiling and linking your sources to
+build a "stand-alone program".  This is very much like the normal way
+of developing programs written in languages such as C.
+
+
+File: quintus.info,  Node: sap-srs-bas-trm,  Next: sap-srs-bas-sld,  Up: sap-srs-bas
+
+Terminology
+...........
+
+   The following terminology is used both here and in *Note sap-rge::.
+
+"Kernel"
+     The code implementing Prolog's built-in predicates, plus support
+     code such as memory management needed for running Prolog.
+
+"Runtime Kernel"
+     Provides only the core set of built-in predicates.
+
+"Extended Runtime Kernel"
+     An add-on product.  It provides the core set of built-in
+     predicates, and in addition allows the compiler and dynamic
+     foreign language interface to be used in runtime systems.
+
+"Development Kernel"
+     Provides the facilities of the Runtime Kernel, plus additional
+     built-in predicates, the compiler, the debugger, and so on.
+
+"runtime system"
+     A Prolog application that has been linked with the Runtime Kernel;
+     intended for delivery to end-users.
+
+"stand-alone program"
+     A Prolog program that has been linked with the Development Kernel;
+     an extended version of the Development System.
+
+"static linking"
+     Linking a Prolog program to either the Development Kernel or the
+     Runtime Kernel.
+
+
+File: quintus.info,  Node: sap-srs-bas-sld,  Next: sap-srs-bas-sap,  Prev: sap-srs-bas-trm,  Up: sap-srs-bas
+
+Shared Libraries and Delivering Execuatables
+............................................
+
+   _WARNING:_ An application may depend upon "shared libraries", but
+they are separate from the executable.  So it is necessary to take
+explicit steps to ensure that they will in fact be present when the
+application is run on the target machine.  They must be explicitly
+linked in to the deliverable as described in *Note sap-rge-sos::.
+
+
+File: quintus.info,  Node: sap-srs-bas-sap,  Next: sap-srs-bas-rsy,  Prev: sap-srs-bas-sld,  Up: sap-srs-bas
+
+Stand-Alone Programs
+....................
+
+   A stand-alone Prolog program is a single, standard, executable file
+that can be considered to be an extended version of the Development
+System, with your Prolog and foreign code being pre-loaded into it.
+This approach has several advantages as compared with the saved-state
+approach:
+  1. Since a stand-alone program is a standard executable file, you can
+     use standard source-level debugging tools such as `gdb(1)' to
+     debug your foreign code at the source level.
+
+  2. Standard tools such as `make(1)' can be easily used to construct
+     your program, ensuring that everything is up-to-date.  This is
+     particularly useful if you are using a lot of foreign code.
+
+  3. Startup is faster.
+
+  4. Your code (except for dynamic predicates) will be loaded into the
+     text segment, so that it will be shared if the program is to be
+     run by more than one process at a time on a single machine.
+
+  5. Different application programs can share compiled files.  The
+     format of compiled files, "Quintus Object Format" or QOF, is
+     portable across a number of different hardware types and operating
+     systems.
+
+   The disadvantage of linking, in comparison with using a saved state,
+is that the stand-alone program will require more disk space than a
+saved state, since it contains the Development Kernel and the user's
+foreign code.
+
+
+File: quintus.info,  Node: sap-srs-bas-rsy,  Next: sap-srs-bas-cld,  Prev: sap-srs-bas-sap,  Up: sap-srs-bas
+
+Runtime Systems
+...............
+
+   Generating a stand-alone program is very much like generating a
+runtime system with the Quintus Prolog Runtime Generator.  Exactly the
+same tools are used in each case, and the use of these tools is
+described in this section.
+
+   The purpose of the Runtime Generator is to provide a convenient and
+cost-effective way to distribute application programs to end-users.  A
+runtime system differs from a stand-alone program in the following ways:
+   * A runtime system can be moved to another machine without requiring
+     an authorization code for that machine.
+
+   * A runtime system requires that its entry point be specified by
+     providing a definition for `runtime_entry/1'.  In contrast, a
+     stand-alone program starts up at the normal Prolog top level
+     (unless initializations are used; see the reference page for
+     `initialization/1').
+
+   * Runtime systems do not contain development oriented components of
+     the Development System such as the compiler, the debugger, the
+     editor interface, the on-line help system, the top level, and the
+     foreign language interface.  (Runtime systems can, of course,
+     contain foreign code, but they cannot call
+     `load_foreign_executable/1' or `load_foreign_files/2' to load
+     additional foreign code when they are run.  However, they can load
+     QOF files that load foreign code.  See *Note sap-srs-eci-ctc::)
+
+   For information on the Runtime Generator see *Note sap-rge::.
+
+
+File: quintus.info,  Node: sap-srs-bas-cld,  Next: sap-srs-bas-rdk,  Prev: sap-srs-bas-rsy,  Up: sap-srs-bas
+
+Compiling and Linking
+.....................
+
+   There are two major tools needed to convert a set of source files
+into a stand-alone program or a runtime system:
+
+  1. the compiler, `qpc', which translates Prolog files into QOF files.
+     This is described in *Note sap-srs-qpc::.
+
+  2. the link editor, `qld', which links one or more QOF files together
+     and builds an executable file.  Often the user will not need to
+     call `qld' directly because `qpc' will do this automatically.  The
+     linker is described in *Note sap-srs-qld::.
+
+   It is also possible to build QOF files by saving them directly from
+a Prolog development system session, as described in *Note ref-sls::.
+QOF files saved in this way can then be used directly to build a
+stand-alone program with `qld'.
+
+
+[See printed or HTML manual.]
+
+             Major steps in creating a stand-alone program
+
+   `qpc' allows _independent compilation_ of the files that make up an
+application program.  The dotted box in the above figure illustrates
+this functionality.
+
+   The use of `qpc' and `qld' correspond to the use of the C compiler
+and linker as follows:
+
+               Quintus Prolog         C
+
+sources:       `a.pl'                 `a.c'
+compiler:      `qpc'                  compiler
+object files:  `a.qof'                e.g. `a.o'
+linker:        `qld'                  linker
+executable:    `a.out'                e.g. `a.out'
+
+
+File: quintus.info,  Node: sap-srs-bas-rdk,  Prev: sap-srs-bas-cld,  Up: sap-srs-bas
+
+The Runtime Kernel vs. Development Kernel
+.........................................
+
+   There is a command-line option, `-D', that can be given to either
+`qpc' or `qld' to indicate that a stand-alone program rather than a
+runtime system is desired.  This flag determines whether your program
+is to be linked with the Development Kernel or the Runtime Kernel.
+Each of these kernels consists of a QOF file and an object file, which
+together supply all the necessary support code for running Prolog.
+This support code includes memory management and the built-in
+predicates.  The Development Kernel additionally contains support for
+Prolog development, such as the compiler and the debugger.
+
+
+File: quintus.info,  Node: sap-srs-qpc,  Next: sap-srs-qld,  Prev: sap-srs-bas,  Up: sap-srs
+
+Invoking `qpc', the Prolog-to-QOF Compiler
+------------------------------------------
+
+   There are two main ways to invoke `qpc':
+     % qpc -c P1.pl,...,Pn.pl  (A)
+     
+     % qpc [-D] [-o OUTPUT-FILE] P1.pl,...,Pn.pl   (B)
+
+   (A).  Invoking `qpc' with the `-c' option, means "compile to QOF and
+stop"; it simply produces a QOF file for each source file, as shown in
+the above figure.
+
+   (B).  Invoking `qpc' without specifying `-c' compiles all the
+sources to QOF and then calls `qld' to build an executable file
+corresponding to those sources.  `-D' tells `qld' that the program is
+to be linked with the Development Kernel rather than the Runtime
+Kernel.  `-o' specifies a name for the executable file to be built by
+`qld'.  Defaults to `a.out'.  The `-D' and `-o OUTPUT-FILE' options are
+passed on to `qld' if they were specified in the `qpc' command line.
+
+     *Please note:* `.pl' extensions may be omitted in the `qpc'
+     command line (provided that there is not another file with the
+     same name and no extension.)  Also, the Prolog files need not have
+     `.pl' extensions.  If a Prolog file does not have one, the name of
+     the corresponding object format file is simply the name of the
+     Prolog source file extended with `.qof'.  Otherwise, the name of
+     the corresponding object format file is the name of the Prolog
+     source file with the `.pl' extension replaced by `.qof'.  Source
+     files may be specified as absolute or relative filenames; each QOF
+     file goes in the same directory as its source.
+
+   Further options allow you to run `qpc' in a verbose mode, to specify
+initialization files or add-ons, to customize the library search path,
+or make certain predicates invisible to the debugger.
+
+   For a summary of all the options to `qpc', see *Note too-too-qpc::.
+
+
+File: quintus.info,  Node: sap-srs-qld,  Next: sap-srs-dep,  Prev: sap-srs-qpc,  Up: sap-srs
+
+Invoking `qld', the QOF Link eDitor
+-----------------------------------
+
+* Menu:
+
+* sap-srs-qld-iin::                     Implicit invocation via qpc
+* sap-srs-qld-ein::                     Explicit Invocation
+
+
+[See printed or HTML manual.]
+
+                     Components of the qld Program
+
+   This diagram expands the `qld' "black box" in the earlier figure.
+`a.qof' is a temporary QOF file, and `a.o' is a temporary object file.
+
+
+File: quintus.info,  Node: sap-srs-qld-iin,  Next: sap-srs-qld-ein,  Up: sap-srs-qld
+
+Implicit invocation via `qpc'
+.............................
+
+   When `qpc' is called without the `-c' command-line option, as in
+invocation (B), above, it first compiles all the specified Prolog files
+into QOF and then invokes `qld' as follows:
+     % qld [-W] [-D] [-v] [-o OUTPUT-FILE] -d QOF-FILES OBJECT-FILES
+
+   When `qld' is called by `qpc', it is called in the verbose mode
+(`-v'), with the following additional options:
+
+   `-W' (Windows only) determines that `qld' should build a "windowed"
+executable, which runs in its own window, as opposed to a console-based
+one, which runs in a command prompt window.  The properties of the
+Windows component of an executable built with `-W' can be controlled
+with resource files and the environment variable `CONSOLE'; see *Note
+too-too-qld::.
+
+   `-D' determines that `qld' is to be linked with the Development
+Kernel rather than the Runtime Kernel.  In either case two kernel
+files, one QOF and one object file, must be linked in addition to the
+application files.  (See the above figure.)
+
+   `-o' specifies the name of the executable file that is to be the
+final product; defaults to `a.out'.
+
+   `-d' tells `qld' to link in any additional files on which any of the
+specified QOF files depends.  See *Note sap-srs-dep:: for more details
+on file dependencies.
+
+   QOF-FILES is a list of QOF files, `P1.qof' ,..., `Pn.qof', the
+output of the `qpc' call.
+
+   OBJECT-FILES is a list of object files built by compiling your
+foreign-language files with the appropriate compiler(s).  These may
+include foreign libraries (e.g. `qpc -lX11').
+
+   In addition to the above arguments, `qpc' also passes to `qld'
+appropriate `-f', `-F' and `-L' options if any non-default file search
+paths or library directories have been specified.  The `-f', `-F' and
+`-L' options have the same meaning for `qld' as they do for `qpc'; they
+are only meaningful when the `-d' option is specified, and they tell
+`qld' where to look for file specifications.  See *Note sap-srs-fsp::
+for information on how `qld' makes use of file search paths and library
+directories.
+
+
+File: quintus.info,  Node: sap-srs-qld-ein,  Prev: sap-srs-qld-iin,  Up: sap-srs-qld
+
+Explicit Invocation
+...................
+
+   If you wish to call `qld' with other options than those described in
+*Note sap-srs-qld-iin::, use `qpc -c' and then call `qld' explicitly.
+The `-c' option to `qpc' causes `qld' to stop after generating an
+object file, rather than continuing and calling the linker.  The object
+file will be called `a.o' (UNIX) or `a.obj' (Windows) by default; this
+can be overridden with the `-o' option.  Then you can make your own
+call to the linker; this call must include any needed object-files and
+libraries.
+
+   One reason you might wish to do this is to avoid the use of shared
+object files and shared libraries in a runtime system that is to be
+delivered on a different machine.  See *Note sap-rge-sos:: for more
+information on this and an example.
+
+   The steps taken by `qld' -- as illustrated in the above figure --
+are as follows:
+  1. Link all the specified QOF files together with either the Runtime
+     Kernel or Development Kernel.  The result of this phase is a
+     temporary QOF file.
+
+  2. "Consolidate" the temporary QOF file into a temporary object file
+     using the subsidiary program `qcon'.
+
+  3. UNIX: Call the C compiler to build an executable file.  The
+     command, which is echoed to standard output if the `-v' option is
+     specified, resembles:
+
+          % cc [-v] [-o OUTPUT-FILE] RUNTIME-DIRECTORY/qprel.o TEMP.o
+                        OBJECT-FILES RUNTIME-DIRECTORY/libqp.a
+
+     The file `RUNTIME-DIRECTORY/qprel.o' is the Development Kernel
+     object file.  If you are linking to a Runtime Kernel `qprel.o'
+     will be replaced by `qprte.o' in the above command.  `temp.o' is
+     the output of Step 2.  `libqp.a' is the Quintus C library.
+
+  4. Windows: Call the C compiler, `cl' to build an executable file.
+     The form of the link command, which is echoed to standard output
+     if the `-v' option is specified, resembles:
+
+          % link [-v] [-o OUTPUT-FILE] TEMP.obj
+                      RUNTIME-DIRECTORY/qpeng.lib RUNTIME-DIRECTORY/qprel.lib
+                      [RUNTIME-DIRECTORY/libpl.lib] OBJECT-FILES
+                      RUNTIME-DIRECTORY/libqp.lib
+
+     The file `RUNTIME-DIRECTORY/qprel.lib' is the Development Kernel
+     object file.  If you are linking to a Runtime Kernel `qprel.lib'
+     will be replaced by `qprte.lib' in the above command.  `TEMP.obj'
+     is the output of Step 2.  `libqp.lib' is the Quintus C library.
+
+   For a complete summary of all the possible options to `qld', see
+*Note too-too::.
+
+
+File: quintus.info,  Node: sap-srs-dep,  Next: sap-srs-fsp,  Prev: sap-srs-qld,  Up: sap-srs
+
+Dependencies of QOF files
+-------------------------
+
+* Menu:
+
+* sap-srs-dep-qfd::                     Generating QOF Files and Dependencies
+* sap-srs-dep-exa::                     Example
+* sap-srs-dep-mak::                     Using the make(1) utility
+
+   Each QOF file contains a record of all the files, including library
+files, upon which it depends, that is, for which its source file
+contains any of the following load commands:
+     :- compile(FILES).
+     :- ensure_loaded(FILES).
+     :- use_module(FILES).
+     :- use_module(FILE, IMPORTLIST).
+     :- use_module(MODULE, FILE, IMPORTLIST).
+     :- [FILES].
+     :- reconsult(FILES).
+     :- load_foreign_executable(FILE).
+     :- load_foreign_files(FILES, LIBRARIES).
+     :- load_files (FILES).
+     :- load_files (FILES, OPTIONS).
+
+   Each record is in the form that was used to specify the file in the
+load command: it may be a relative or absolute filename, or else it may
+be a file search path specification, such as:
+   * `library(NAME)'
+
+   * `system(NAME)'
+
+   * `quintus(NAME)'
+
+   * `language(NAME)'
+
+   * `mypath(NAME)'
+
+   When the QOF file is passed to `qld' and the `-d' option is
+specified, this information will be used to find all the QOF and object
+files on which this QOF file depends.
+
+   Under Windows, a specification of the form:
+
+   * `syslib(NAME)'
+
+   has a special meaning: `qld' looks up the import library `NAME.lib'
+in a directory in the `LIB' environment variable.
+
+
+File: quintus.info,  Node: sap-srs-dep-qfd,  Next: sap-srs-dep-exa,  Up: sap-srs-dep
+
+Generating QOF Files and Dependencies
+.....................................
+
+   When Prolog files contain embedded commands to compile other files,
+each Prolog source file is compiled into a separate QOF file with one
+exception: if a module-file contains a command to load a non-module
+file, then the non-module-file is compiled directly into the QOF file
+corresponding to the module-file.  That is, there is no separate QOF
+file for a non-module-file that is loaded into a module unless it is
+loaded into the default module `user'.  Each QOF file is written into
+the same directory as the corresponding Prolog source file.
+
+   Embedded `ensure_loaded/1' and `use_module/[1,2,3]' commands also
+cause the specified files to be compiled _unless_ there is a
+corresponding QOF file more recent than the corresponding Prolog source
+file.  For example,
+     :- ensure_loaded(file).
+
+   causes `file.pl' to be compiled unless there is a `file.qof' more
+recent than the source.  In the case where the QOF file is more recent
+than the `.pl' file, then the file is not compiled again.  However, the
+QOF file's dependencies are checked and recompiled if not up to date.
+
+
+File: quintus.info,  Node: sap-srs-dep-exa,  Next: sap-srs-dep-mak,  Prev: sap-srs-dep-qfd,  Up: sap-srs-dep
+
+Example
+.......
+
+                                                              _file.pl_
+     
+     :- ensure_loaded(library(basics)).
+     :- ensure_loaded(file1).
+     :- ensure_loaded(file2).
+     
+     runtime_entry(start) :- go.
+
+                                                             _file1.pl_
+     
+     < some `foreign/[2,3]' facts >
+     < some `foreign_file/2' facts >
+     
+     :- load_foreign_files([system(foreign)],[]).
+
+     % qpc file    (A)
+
+   Given the above files, the command (A) will have these results:
+
+   * Compile `file.pl' into !sq'file.qof'
+
+   * Cause each of the QOF files in (B) to be produced unless it already
+     exists and is more recent than its source:
+          LIBRARY-DIRECTORY/basics.qof file1.qof file2.qof  (B)
+
+   * Records the dependency of `file.qof' on the three QOF files in (B)
+     and records the dependency of `file1.qof' on `foreign.o' in
+     `file1.qof', so that when `qpc' then calls (C) an executable file
+     is built for the entire program.
+          % qld -d file.qof   (C)
+
+
+   If for some reason you didn't want to use the `-d' option to `qld',
+you could achieve the same effect as `qpc file' by the following
+sequence of commands:
+     % qpc -c file file1 file2
+     % qld file.qof LIBRARY-DIRECTORY/basics.qof file1.qof file2.qof foreign.o
+
+   Alternatively, these commands would work:
+     % qpc -c file file1 file2
+     % qld file.qof "library(basics)" file1.qof file2.qof foreign.o
+
+   Note that moving a QOF file from one directory to another may render
+its dependencies incorrect, so that the `-d' option cannot be used when
+loading that file.  If relative filenames are used, a set of mutually
+dependent files _can_ safely be moved around the directory hierarchy,
+or to another machine, provided that they retain the same positions
+relative to one another.  In particular, a set of files that are all in
+the same directory can safely be moved.  Using file search path
+specifications (see *Note sap-srs-fsp:: and *Note ref-lod::) enables
+you to create alterable paths.
+
+
+File: quintus.info,  Node: sap-srs-dep-mak,  Prev: sap-srs-dep-exa,  Up: sap-srs-dep
+
+Using the `make(1)' utility
+...........................
+
+   The `make(1)' utility may also be used to ensure that QOF files are
+up to date.  For example, the following lines can be added to a make
+file to tell `make(1)' how to build a QOF file from a `.pl' file.
+
+                                                             _Makefile_
+     
+     #       Quintus Prolog Compiler (qpc) section
+     .SUFFIXES: .qof .pl
+     
+     QPC=qpc
+     QPCFLAGS=
+     
+     .pl:
+     	${QPC} $(QPCFLAGS) -o $ $<
+     .pl.qof:
+     	${QPC} $(QPCFLAGS) -cN $<
+
+
+File: quintus.info,  Node: sap-srs-fsp,  Next: sap-srs-eci,  Prev: sap-srs-dep,  Up: sap-srs
+
+File Search Paths and qld
+-------------------------
+
+   When a directive such as (A), below, is encountered by `qpc', it
+notes that the QOF file being produced has a dependency on `basics.qof'
+in the library.  The dependency is not stored as an absolute filename,
+so that when (B) is called (recall that the `-d' option causes `qld' to
+pull in all the dependencies of the specified QOF files), `basics.qof'
+will be sought wherever the current libraries are located.  These need
+not be in the same place as at compilation time; in particular the QOF
+file may have been moved to a different machine.
+     :- ensure_loaded(library(basics)).    (A)
+     
+     % qld -d ...    (B)
+
+   The `-L' option of `qpc' and `qld' allow prepending library
+directory definitions to the already existing ones.  The `-f' and `-F'
+options perform similar functions but are more flexible than `-L': `-f'
+appends a file search path definition to the already existing set,
+while `-F' prepends a file search path.  A `-f' option, as exemplified
+in (C), corresponds to a `file_search_path/2' call, (D).  In such
+calls, `path' can itself be a file search path, as in (E).
+     -f pathname:path     (C)
+     file_search_path(pathname, path)    (D)
+     
+     -f "mypath:library(mypackage)"      (E)
+
+   For more detail on these options, see *Note too-too::.
+
+
+File: quintus.info,  Node: sap-srs-eci,  Next: sap-srs-ode,  Prev: sap-srs-fsp,  Up: sap-srs
+
+Embedded Commands and Initialization Files
+------------------------------------------
+
+* Menu:
+
+* sap-srs-eci-crt::                     Compile-time code vs. Runtime code
+* sap-srs-eci-inf::                     Initialization Files
+* sap-srs-eci-sid::                     Side-Effects in Compile-Time Code
+* sap-srs-eci-mec::                     Modules and Embedded Commands
+* sap-srs-eci-spe::                     Predicates Treated in a Special Way
+* sap-srs-eci-ctc::                     Restriction on Compile-Time Code
+
+   This section discusses some differences that exist between compiling
+a file into QOF with `qpc' and compiling that file into memory using
+`compile/1' under the Development System.  In certain cases, if an
+application program was developed interactively using the built-in
+compiler, some changes may have to be made to the code before using
+`qpc' to compile it and link it with the Development Kernel or Runtime
+Kernel.
+
+   For example, if a file containing the following is compiled into
+memory, the embedded command will succeed after writing an `x' and a
+newline to the current output stream.
+     f(x).
+     f(z).
+     
+     :- f(X), write(X), nl.
+
+   Whereas, if the same file is given to `qpc', a warning will be
+printed indicating that the embedded command failed.  The reason for
+this is that when `qpc' compiles a Prolog file, it reads clauses from
+the source file one after the other and compiles them into a QOF file.
+The clauses for `f/1' are not kept in memory, and the attempt to access
+them fails.
+
+   You do _not_ need to read this section if both of the following are
+true.
+  1. The only embedded commands that you use in your Prolog files are
+     commands to load other files, that is, commands from the list at
+     the beginning of *Note sap-srs-dep::.
+
+  2. You do not use `term_expansion/2' to transform your source code at
+     compile-time.
+
+
+File: quintus.info,  Node: sap-srs-eci-crt,  Next: sap-srs-eci-inf,  Up: sap-srs-eci
+
+Compile-time code vs. Runtime code
+..................................
+
+   A Prolog program has up to three types of code in it:
+  1. code that implements the application;
+
+  2. code that helps compile the application, and that is not used
+     during the execution of the application;
+
+  3. code that is necessary to both the execution of the application
+     and its compilation.
+         The first type of code is the normal case and may be referred
+to as "runtime code", since it is intended to be executed when the
+application is run.  The second type of code is called "compile-time
+code".  Any predicates that are to be called from embedded commands are
+examples of compile-time code.  The other main use of compile-time code
+is in the definition of `term_expansion/2', which allows you to specify
+arbitrary transformations to be done by the compiler as it reads in
+clauses.  See the reference page for more information on
+`term_expansion/2'.
+
+   When using the built-in compiler in the Development System, no
+distinction has to be made between the three types of code.  They can
+coexist in one file.  Before using `qpc' on a program, however,
+compile-time code must be separated out into its own file (or files).
+Then, to each file that needs this new file or files at compile time,
+add the goal (A) near the top of the file.  This tells `qpc' to load
+NEWFILE directly into `qpc' before further compiling the current file.
+It does _not_ include NEWFILE as a runtime dependency of the file.  If
+you need NEWFILE to be loaded at compile time and also at runtime, use
+the goal (B) instead.  This approach will work in the Development
+System as well as `qpc'.
+     :- load_files(NewFile, [when(compile_time)]).   (A)
+     :- load_files(NewFile, [when(both)]).           (B)
+
+   Alternatively, you may omit the use of `load_files/2', instead
+specifying files to be loaded into `qpc' with the `-i' option.  In this
+case, when you want to compile this file into the Development System,
+remember to first load the file(s) needed at compile time.
+
+   It is good programming style to use `initialization/1' for goals to
+be activated at runtime.  Note that predicates called as `:- Goal.'
+need to be available at compile time, whereas predicates called as `:-
+initialization(Goal).' only need to be available at runtime.
+

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>term_expansion/2</code> <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile term_expansion/2.</code>
+
+   <p><code>term_expansion(</code><var>+Term1, -Term2</var><code>)</code>
+
+   <p>The user may override the standard transformations to be done by
+<code>expand_term/2</code> by defining clauses for <code>term_expansion/2</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Term1</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>Term2</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>expand_term/2</code> calls <code>term_expansion/2</code> first; if it succeeds, the
+standard grammar rule expansion is not tried.
+
+   <p><code>expand_term/2</code> always calls <code>term_expansion/2</code> in module <code>user</code>. 
+Therefore, to be visible to <code>expand_term/2</code>, <code>term_expansion/2</code> must
+either be defined in or imported into module <code>user</code>. 
+Alternatively, you may define it in any module by using module
+prefixing; refer to <a href="ref-mod-vis.html#ref-mod-vis">ref-mod-vis</a>.
+
+   <p>This hook predicate may now return a list of terms rather
+than a single term.  Each of the terms in the list is then treated as
+a separate clause.
+
+<h4 class="subheading">Tip</h4>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>expand_term/2</code>, <code>--&gt;/2</code>, <code>phrase/[2,3]</code>,
+<code>'C'</code>, <code>prolog_load_context/2</code>. 
+<a href="ref-gru.html#ref-gru">ref-gru</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-told.html#mpg-ref-told">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-teq.html#mpg-ref-teq">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

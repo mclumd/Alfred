@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>foreign/[2,3]</code> <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- discontiguous foreign/2, foreign/3.</code>
+
+   <p><code>foreign(</code><var>*Routine, *ForeignSpec</var><code>)</code>
+
+   <p><code>foreign(</code><var>*Routine, *Language, *ForeignSpec</var><code>)</code>
+
+   <p>Describes the interface between Prolog and the foreign
+<var>Routine</var>. The user has to define a <code>foreign/3</code> or the fact for
+every foreign function that is to be called from Prolog. Used by
+<code>load_foreign_files/2</code> and <code>load_foreign_executable/2</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Routine</var> <dfn>atom</dfn>
+     <dd>An atom that names a foreign code <var>Routine</var>
+
+     <br><dt><var>Language</var> <dfn>atom</dfn>
+     <dd>An atom that names the <var>Language</var>
+in which <var>Routine</var> is written. It must be one of <code>c</code>, <code>pascal</code> or
+<code>fortran</code>.
+
+     <br><dt><var>ForeignSpec</var> <dfn>foreign_spec</dfn>
+     <dd>A term of the form
+<var>PredName</var>(<var>Argspec</var>, <var>Argspec</var>, <small class="dots">...</small>) where:
+
+          <dl>
+
+          <br><dt><var>PredName</var>
+          <dd>the name of the Prolog predicate
+
+          <br><dt><var>Argspec</var>
+          <dd>an argument specification (for each
+argument of the predicate) One of the following:
+          <pre class="example">                +integer    +float    +single   +double
+                -integer    -float    -single   -double
+               [-integer]  [-float]  [-single] [-double]
+               
+                 +atom      +term     +string
+                 -atom      -term     -string
+                [-atom]    [-term]   [-string]
+               
+                +string(<var>N</var>)    +address(<var>T</var>)
+                -string(<var>N</var>)    -address(<var>T</var>)
+               [-string(<var>N</var>)]  [-address(<var>T</var>)]
+               </pre>
+          <br><dt>
+          <dd>
+where <var>N</var> is a positive integer and <var>T</var> is a foreign type name. 
+</dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>foreign/2</code> is a special
+case of <code>foreign/3</code> where <var>Language</var> is C.  <code>foreign/2</code> is
+for backward compatibility.
+
+   <p>The user has to define a <code>foreign/3</code> fact for every foreign function that
+is to be called from Prolog. Note that <var>Routine</var> does not have to be
+the same as <var>PredicateName</var>. Arguments are passed to the foreign function
+as specified in <var>ForeignSpecs</var>
+
+     <dl>
+
+     <br><dt><var>+type</var>
+     <dd>specifies that an argument is to be passed to the foreign function.
+
+     <br><dt><var>-type</var>
+     <dd>specifies that an argument is to be
+received from the foreign function.
+
+     <br><dt><var>[-type]</var>
+     <dd>argument is used to obtain the return value of a foreign function call. 
+At most one "return value" argument can be specified. 
+</dl>
+
+   <p>For more details about the passing arguments through
+the foreign interface, see <a href="fli-ffp-ppc-api.html#fli-ffp-ppc-api">fli-ffp-ppc-api</a>.
+
+   <p>The <code>foreign/3</code> facts are used only in the context of a
+<code>load_foreign_files/2</code> command and can be removed once the foreign files are loaded.
+
+   <p>If you have <code>foreign/3</code> facts in different files, Prolog will warn
+you that <code>foreign/3</code> has been previously defined in another file. 
+This is generally not a problem if you are using the module system.
+
+   <p><code>load_foreign_files/2</code> will only look for <code>foreign/3</code> facts defined
+in its source module.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Errors in the specification of <code>foreign/3</code> will
+only be detected at <code>load_foreign_files/2</code> time. Otherwise defining a
+<code>foreign/3</code> fact is just like defining any other Prolog fact.
+
+<h4 class="subheading">Tips</h4>
+
+   <p>A good practice in loading several foreign files is to
+insert the call to <code>load_foreign_files/2</code> into the file that defines
+<code>foreign/3</code> as an embedded command. For example,
+<pre class="example">             foreign(f11, c, f11(+integer)).
+             foreign(f12, c, f12(+atom, -atom)).
+             foreign_file('f1', [f11, f12]).
+             :- load_foreign_files('f1', []),
+                abolish([foreign/3,foreign_file/2]).
+     </pre>
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>solve()</code> is a C function that takes three integer
+coeffecients of a quadratic equation and returns the two solutions. 
+We assume that the solutions are not imaginary numbers.
+
+<pre class="example">
+                                       <div align="right"><em>a.pl</em>
+     </div>
+     
+     foreign(solve, c, solve(+integer, +integer, +integer,
+                             -double, -double)).
+     foreign_file('a', [solve]).
+     :- load_foreign_files(['a'], ['-lm']),
+        abolish([foreign/3, foreign_file/2]).
+     </pre>
+
+<pre class="example">
+                                        <div align="right"><em>a.c</em>
+     </div>
+     
+     void solve(a, b, c, f1, f2)
+         long int a, b, c;
+         double *f1;
+         double *f2;
+         {
+             *f1 = (-b + sqrt(b*b - 4*a*c)) / 2 * a;
+             *f2 = (-b - sqrt(b*b - 4*a*c)) / 2 * a;
+         }
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>load_foreign_files/2</code>,
+<code>foreign_file/2</code>,
+<code>extern/1</code>
+<a href="fli-p2f.html#fli-p2f">fli-p2f</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-foreign_file.html#mpg-ref-foreign_file">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-flush_output.html#mpg-ref-flush_output">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

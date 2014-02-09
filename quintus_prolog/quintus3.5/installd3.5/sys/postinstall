@@ -1,0 +1,150 @@
+#! /bin/sh
+# modify /etc/magic, make.rules, add /usr/include/quintus/quintus.h
+# and optionally add links to quintus binaries and man pages
+
+# echo "*** DEBUG: this install script (sys) is not done yet" 1>&2
+if [ "x${QP_SH_X_FLAG}" != "x" ]; then
+  set ${QP_SH_X_FLAG}
+fi
+
+# [PM] 3.5 Barf on errors!
+set -e
+LC_ALL=C
+
+BINDIR=${QPBINDIR-/usr/local/bin}
+MANDIR=${QPMANDIR-/usr/local/man}
+INCDIR=${QPINCDIR-/usr/include} # [PM] 3.5 *not* /usr/local/include
+
+# [PM] 3.5 load install-time parameters
+config_file=./config.install
+if [ -f ${config_file} ]; then
+#  echo "Loading install-time parameters from $config_file"
+  . ${config_file}
+fi
+
+necho()
+{
+	if [ $ARCHDIR = sun4-4 ]
+	then	echo -n "$*"
+	else	echo "$*\c"
+	fi
+}
+
+read_yes()
+{
+	while true
+	do
+		read ans
+		ans=`echo $ans | tr '[A-Z]' '[a-z]'`
+		[ "$ans" = y -o "$ans" = "yes" ] && return 0
+		[ "$ans" = n -o "$ans" = "no" ] && return 1
+		necho '** answer yes or no: '
+	done
+}
+
+if [ "$USER" != root ]
+then
+	echo "! Must be superuser to install the sys component"
+	exit 1
+fi
+
+#--- Copy quintus.h to ${INCDIR}
+if [ ! -d ${INCDIR}/quintus ]
+then
+	mkdir ${INCDIR}/quintus
+	chown bin ${INCDIR}/quintus
+	chgrp bin ${INCDIR}/quintus
+fi
+
+src=$QPHOME/generic/qplib$VERSION/include/quintus/quintus.h
+if cmp -s $src ${INCDIR}/quintus/quintus.h
+then
+	true		# already installed
+else
+	echo '% Installing ${INCDIR}/quintus/quintus.h'
+	cp -p $src ${INCDIR}/quintus/quintus.h || exit 1
+fi
+
+#--- Modify /etc/magic
+
+if grep -s Quintus /etc/magic > /dev/null
+then
+	true		# already installed
+else
+	echo '% Modifying /etc/magic'
+	cp -p /etc/magic /etc/magic.orig &&
+	cat <<'!END' >> /etc/magic
+0	string		QOF		Quintus Prolog Object File,
+>10	short		x		Ver %d
+>8	short		x		Rev %d
+>12	long		0x04030201	(byte-swapped)
+256	string		QOF		Quintus Prolog Saved-state,
+>266	short		x		Ver %d
+>264	short		x		Rev %d
+>268	long		0x04030201	(byte-swapped)
+!END
+
+fi
+
+#--- Modify make.rules (not yet implemented for Linux)
+
+if false; then                  # [PM] 3.5 disabled, not (yet?) updated for Linux
+  [ $ARCHDIR = sun4-4 ] && rules=/usr/include/make/default.mk
+  [ $ARCHDIR = sun4-5 ] && rules=/usr/share/lib/make/make.rules
+  [ $ARCHDIR = rs6000 ] && rules=/usr/ccs/lib/make.cfg
+
+  if grep -s Quintus $rules > /dev/null
+  then
+          true		# already installed
+  else
+          echo "% Modifying $rules"
+          cp -p $rules $rules.orig &&
+          cat <<'!END' >> $rules
+  #	Quintus Prolog Compiler (qpc) section
+  .SUFFIXES: .qof .pl
+  QPC=qpc
+  QPCFLAGS=
+  .pl:
+          ${QPC} ${QPCFLAGS} -o $@ $<
+  .pl.qof:
+          ${QPC} ${QPCFLAGS} -cN $<
+  !END
+
+  fi
+fi                              # disabled
+
+#--- Add links to executables in $BINDIR
+
+necho "Do you wish to install links in $BINDIR to the executables? (y/n) "
+
+if read_yes
+then
+	pattern='ELF.*executable'
+	executables=`file $QPHOME/bin$VERSION/$ARCHDIR/* | \
+		     grep "$pattern" | awk -F: '{print $1}'`
+
+	for exe in $executables
+	do
+		name=`basename $exe`
+		echo "% Linking $BINDIR/$name to $exe"
+		rm -f $BINDIR/$name &&
+		ln -s $exe $BINDIR/$name
+	done
+fi
+
+#--- Add links to man pages in $MANDIR
+
+necho "Do you wish to install links in $MANDIR to the man pages? (y/n) "
+
+if read_yes
+then
+	for page in $QPHOME/generic/q$VERSION/man/man1/*
+	do
+		name=`basename $page`
+		echo "% Linking $MANDIR/man1/$name to $page"
+		rm -f $MANDIR/man1/$name &&
+		ln -s $page $MANDIR/man1/$name
+	done
+fi
+
+exit 0

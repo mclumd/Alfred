@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>print_message/2</code> <dfn>hookable</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>print_message(</code><var>+Severity</var><code>, </code><var>+MessageTerm</var><code>)</code>
+
+   <p>Print a <var>Message</var> of a given <var>Severity</var>. The behavior can
+be customized using the two hooks <code>generate_message_hook/3</code> and
+<code>message_hook/3</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Severity</var> <dfn>atom</dfn>
+     <dd>Unless the default system portrayal is overidden with
+<code>message_hook/3</code>, <var>Severity</var> must be one of
+
+          <dl>
+
+          <br><dt><b>Value</b>
+          <dd><b>Prefix</b>
+
+          <br><dt><code>informational</code>
+          <dd><code>% </code>
+
+          <br><dt><code>warning</code>
+          <dd><code>* </code>
+
+          <br><dt><code>error</code>
+          <dd><code>! </code>
+
+          <br><dt><code>help</code>
+          <dd>no prefix
+
+          <br><dt><code>silent</code>
+          <dd>no prefix
+
+     </dl>
+
+     <br><dt><var>MessageTerm</var> <dfn>term</dfn>
+     <dd>any term
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Messages are parsed according to the definite clause
+grammars in <code>qplib('QU_messages')</code>, which defines
+<code>'QU_messages':generate_message/3</code>. If <code>generate_message(</code><var>MessageTerm</var><code>,</code><var>L</var><code>,[])</code>
+is true, the message is printed according to the transformation <var>L</var>;
+otherwise, the message is considered to be undefined.
+
+   <p>An unhandled exception message <var>E</var> calls <code>print_message(error, </code><var>E</var><code>)</code> before
+returning to the top level.  The convention is that an error message is the
+result of an unhandled exception.  Thus, an error message should only be
+printed if <code>raise_exception/1</code> does not find a handler and unwind to
+the top-level.
+
+   <p>All messages from the system are printed using this predicate.  Means of
+intercepting these messages before they are printed are provided.
+
+   <p><code>print_message/2</code> always prints to <code>user_error</code>. Messages can be
+redirected to other streams using <code>message_hook/3</code> and
+<code>print_message_lines/3</code>
+
+   <p>"Silent" messages do not get translated or printed. They do not
+go through <code>generate_message/3</code> or <code>generate_message_hook/3</code>
+but they can be intercepted with <code>message_hook/3</code>.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>message_hook/3</code>, <code>generate_message/3</code>,
+<code>print_message_lines/3</code>, <code>generate_message_hook/3</code>
+
+   <a href="ref-msg-tbm.html#ref-msg-tbm">ref-msg-tbm</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-print_message_lines.html#mpg-ref-print_message_lines">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-print.html#mpg-ref-print">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

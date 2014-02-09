@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Bottom Layer Read Function</h5>
+
+<pre class="example">     int <var>&lt;read function&gt;</var>(qpstream, bufptr, sizeptr)
+            QP_stream        *qpstream;
+            unsigned char   **bufptr;
+            size_t           *sizeptr;
+     
+     Return Values:   QP_FULL  : a complete record is read
+                      QP_PART  : a partial  record is read
+                      QP_EOF   : end of file is reached
+                      QP_ERROR : a partial  record is read
+     </pre>
+
+   <p>The bottom layer read function returns a record of input to its caller. 
+The returned record is buffered.  The buffer address is returned
+through <code>*bufptr</code> parameter and the size of the returned record
+is stored in <code>*sizeptr</code> parameter.  The <code>magic</code> field
+in <code>qpstream</code> should be updated to the system-dependent file address
+(see <a href="fli-ios-sst-sda.html#fli-ios-sst-sda">fli-ios-sst-sda</a>)
+for the beginning of the returned record.  If there is no
+seek permission for the stream, the <code>magic</code> field may be ignored. 
+The <code>errno</code> field in <code>QP_stream</code> stores the error code
+if an error is detected in the function.
+
+   <p>In our example, the read function does not return <code>QP_PART</code> since
+any length of input is chosen as a complete record.
+<pre class="example">     static int
+     bin_read(qpstream, bufptr, sizeptr)
+         QP_stream            *qpstream;
+         unsigned char       **bufptr;
+         size_t               *sizeptr;
+         {
+             int n;
+             register BinStream *stream = CoerceBinStream(qpstream);
+     
+             qpstream-&gt;magic.byteno += stream-&gt;last_rdsize;
+             stream-&gt;last_rdsize = 0;
+             n = read(stream-&gt;fd, (char*) stream-&gt;buffer,
+                                  (int) qpstream-&gt;max_reclen);
+             if (n &gt; 0) {
+                 *bufptr  = stream-&gt;buffer;
+                 *sizeptr = n;
+                 stream-&gt;last_rdsize = n;
+                 return QP_FULL;
+             } else if (n == 0) {
+                 *sizeptr = 0;
+                 return QP_EOF;
+             } else {
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+         }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-bot-wri.html#fli-ios-bot-wri">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ios-bot.html#fli-ios-bot">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Requesting a Solution to a Nondeterminate Prolog Query</h5>
+
+   <p>The function <code>QP_next_solution()</code> is used to return a solution from an
+open nondeterminate Prolog query.  Solutions are computed on demand, and
+multiple solutions are returned in the normal Prolog order. 
+<code>QP_next_solution()</code> is passed the <code>QP_qid</code> returned by
+<code>QP_open_query()</code> when the nondeterminate query was opened.  No
+additional input or output parameters are passed: after a call to
+<code>QP_open_query()</code>, Prolog manages inputs itself, and has been told
+where storage for outputs has been reserved.  Each time
+<code>QP_next_solution()</code> computes a new solution it writes it on the
+output storage for the foreign function to use as it likes.  Each new
+solution overwrites the old memory, destroying the previous solution,
+so it is important that the foreign function copies solutions
+elsewhere if it wants to accumulate them.
+
+   <p>Important restriction: only the innermost, i.e. the most recent, open
+query can be asked to compute a solution.  A new query can be made at
+any point whether or not other nondeterminate queries are open;
+however, while the new query remains open only it will be able to
+return solutions.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-ccp-tnq.html#fli-ffp-ccp-tnq">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-ccp-inq.html#fli-ffp-ccp-inq">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-ccp.html#fli-ffp-ccp">Up</a>
+</ul>
+</div>
+   </body></html>
+

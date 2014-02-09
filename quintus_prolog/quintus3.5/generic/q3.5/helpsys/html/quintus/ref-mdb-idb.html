@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The Internal Database</h4>
+
+   <p>The following predicates are provided solely for compatibility with
+other Prolog systems.  Their semantics can be understood by imagining
+that they are defined by the following clauses:
+<pre class="example">     recorda(Key, Term, Ref) :-
+          functor(Key, Name, Arity),
+          functor(F, Name, Arity),
+          asserta('$recorded'(F,Term), Ref).
+     recordz(Key, Term, Ref) :-
+          functor(Key, Name, Arity),
+          functor(F, Name, Arity),
+          assertz('$recorded'(F,Term), Ref).
+     recorded(Key, Term, Ref) :-
+          functor(Key, Name, Arity),
+          functor(F, Name, Arity),
+          clause('$recorded'(F,Term), _, Ref).
+     </pre>
+
+   <p>The reason for the calls to <code>functor/3</code> in the above definition is
+that only the principal functor of the key is significant.  If
+<var>Key</var> is a compound term, its arguments are ignored.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> Equivalent functionality and performance, with reduced memory
+costs, can usually be had through normal dynamic procedures and
+indexing (see <a href="ref-mdb-bas.html#ref-mdb-bas">ref-mdb-bas</a>, and indexing tutorial in
+"Writing Efficient Programs" section). 
+</blockquote>
+
+   <p>In some implementations, database references are also represented by
+compound terms, and thus subject to the limitation described above.
+
+   <p><code>recorda(</code><var>+Key</var><code>, </code><var>+Term</var><code>, </code><var>-Ref</var><code>)</code>
+records the
+ <var>Term</var> in the internal database as the first item
+for the key <var>Key</var>; a database reference to the newly-recorded term
+is returned in <var>Ref</var>.
+
+   <p><code>recordz(</code><var>+Key</var><code>, </code><var>+Term</var><code>, </code><var>-Ref</var><code>)</code> is like
+<code>recorda/3</code> except that it records the term as the last item in the
+internal database.
+
+   <p><code>recorded(</code><var>*Key</var><code>, </code><var>*Term</var><code>, </code><var>*Ref</var><code>)</code> searches
+the internal database for a term recorded under the key
+<var>Key</var> that unifies with <var>Term</var>, and whose database reference
+unifies with <var>Ref</var>.
+
+   <p><code>current_key(</code><var>*KeyName</var><code>, </code><var>*KeyTerm</var><code>)</code> succeeds when
+<var>KeyName</var> is the atom or integer that is the name of
+<var>KeyTerm</var>.  <var>KeyTerm</var> is an integer, atom, or compound term
+that is the key for a currently recorded term.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mdb-sum.html#ref-mdb-sum">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mdb-exa.html#ref-mdb-exa">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mdb.html#ref-mdb">Up</a>
+</ul>
+</div>
+   </body></html>
+

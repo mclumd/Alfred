@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>seeing/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>seeing(</code><var>-FileOrStream</var><code>)</code>
+
+   <p>Unifies <var>FileOrStream</var> with the current input stream or file.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>FileOrStream</var> <dfn>file_spec</dfn> or <dfn>stream_object</dfn>
+     <dd></dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Exactly the same as
+<code>current_input(</code><var>FileOrStream</var><code>)</code>, except that
+<var>FileOrStream</var> will be unified with a filename if the current
+input stream was opened by <code>see/1</code> (<a href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">ref-iou-sfh-opn</a>).
+
+   <p>Can be used to verify that <code>FileNameOrStream</code> is still the
+current input stream as follows:
+<pre class="example">     /* nonvar(FileNameOrStream), */
+     see(FileNameOrStream),
+     ...
+     seeing(FileNameOrStream)
+     </pre>
+
+   <p>If the current input stream has not been changed (or if changed, then
+restored), the above sequence will succeed for all file names and all
+stream objects opened by <code>open/[3,4]</code>.  However, it will fail for
+all stream objects opened by <code>see/1</code> (since only filename access
+to streams opened by <code>see/1</code> is supported).  This includes the
+stream object <code>user_input</code> (since the standard input stream is
+assumed to be opened by <code>see/1</code>, and so <code>seeing/1</code> would return
+<code>user</code> in this case).
+
+   <p>If <var>FileOrStream</var> is instantiated to a value that is not the
+identifier of the current input stream, <code>seeing</code>(<var>FileOrStream</var>)
+simply fails.
+
+   <p>Can be followed by <code>see/1</code> to ensure that a
+section of code leaves the current input unchanged:
+<pre class="example">     /* var(OldFileNameOrStream), */
+     seeing(OldFileNameOrStream),
+     ...
+     see(OldFileNameOrStream)
+     </pre>
+
+   <p>The above is analogous to its stream-object-based counterpart,
+<pre class="example">     /* var(OldStream), */
+     current_input(OldStream),
+     ...
+     set_input(OldStream)
+     </pre>
+
+   <p>Both of these sequences will always succeed regardless of whether the current
+input stream was opened by <code>see/1</code> or <code>open/3</code> (<a href="ref-iou-sfh-opn.html#ref-iou-sfh-opn">ref-iou-sfh-opn</a>).
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>see/1</code>, <code>open/[3,4]</code>, <code>current_input/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-seek.html#mpg-ref-seek">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-see.html#mpg-ref-see">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

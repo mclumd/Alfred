@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Summary of the Interface Functions</h3>
+
+   <p>In this section you will find a summary of the functions and
+procedures of the Visual Basic interface:
+
+     <dl>
+<dt><code>Function PrologOpenQuery (ByVal Goal As String) As Long</code>
+     <dd>This function will return a query identifier that can be used for
+successive retrieval of solutions. 
+Returns -1 on error, e.g. a syntax error in the query.
+
+     <br><dt><code>Sub PrologCloseQuery (ByVal qid As Long)</code>
+     <dd>This procedure will close the query represented by a query identifier
+<code>qid</code>.  <strong>Please note:</strong> if <code>qid</code> is not the
+<em>innermost</em> query (i.e. the one opened last), then all more
+recently opened queries are closed as well.
+
+     <br><dt><code>Function PrologNextSolution(ByVal qid As Long) As Integer</code>
+     <dd>This function retrieves a solution to the open query represented by the
+query identifier <code>qid</code>.  Returns 1 on success, 0 on failure, -1 on
+error.  In case of an erroneous execution, the Prolog exception raised
+can be retrieved with the <code>PrologGetException</code> procedure. 
+<strong>Please note:</strong> Several queries may be open at the same time,
+however, if <code>qid</code> is not the <em>innermost</em> query, then all more
+recently opened queries are implicitly closed.
+
+     <br><dt><code>Function PrologGetLong(ByVal qid As Long, ByVal VarName As String, Value As Long) As Integer</code>
+     <dd>Retrieves into <code>Value</code> the integer value bound to the variable
+<code>VarName</code> of the query identified by <code>qid</code>, as an integer. 
+That is, the value of the given variable is converted to an integer. 
+Returns 1 on success, i.e. if the given goal assigned an integer value
+to the variable, otherwise it returns 0. If an error occurred it returns
+-1, e.g. if an invalid <code>qid</code> was used.
+
+     <br><dt><code>Function PrologGetString(ByVal qid As Long, Val VarName As String, Value As String) As Integer</code>
+     <dd>Retrieves into <code>Value</code> the string value bound to a variable
+<code>VarName</code> of the query, as a string.  That is, the value assigned
+to the given variable is written out into an internal stream by the
+<code>write/2</code> Prolog predicate, and the characters output to this
+stream will be transferred to Visual Basic as a string.  Retuns 1 on
+success, i.e. if the given goal assigned a value to the variable,
+otherwise it returns 0. If an error occurred it returns
+-1, e.g. if an invalid <code>qid</code> was used.
+
+     <br><dt><code>Function PrologGetStringQuoted(ByVal qid As Long, ByVal VarName As String, Value As String) As Integer</code>
+     <dd>Same as <code>PrologGetString</code>, but conversion uses Prolog
+<code>writeq/2</code>.  Returns 1 on success, i.e. if the given goal assigned
+a value to the variable, otherwise it returns 0. If an error occurred it
+returns -1, e.g. if an invalid <code>qid</code> was used.
+
+     <br><dt><code>Function PrologQueryCutFail (ByVal Goal As String) As Integer</code>
+     <dd>This function will try to evaluate the Prolog goal, provided in string
+format, cut away the rest of the solutions, and finally fail.  This will
+reclaim the storage used by the call.  Returns 1 on success, 0 on
+failure and -1 on error.
+
+     <br><dt><code>Sub PrologGetException(ByRef Exc As String)</code>
+     <dd>The exception term is returned in string format into the <code>Exc</code>
+string as if written by the <code>writeq/2</code> predicate. If there is no
+exception available then the empty string is returned.
+
+     <br><dt><code>Function PrologInit() As Long</code>
+     <dd>The function loads and initiates the interface.  It returns 1
+on success, and -1 otherwise.
+
+     <br><dt><code>Function PrologDeInit() As Long</code>
+     <dd>The function deinitializes and unloads the interface, and returns any
+memory used by the interface to the operating system.  It returns 1
+on success, and -1 otherwise. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="vb-ex.html#vb-ex">Previous</a>
+<li><a rel="up" accesskey="u" href="vb.html#vb">Up</a>
+</ul>
+</div>
+   </body></html>
+

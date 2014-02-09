@@ -1,0 +1,1335 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: ref-syn-spc,  Next: ref-syn-syn,  Prev: ref-syn-com,  Up: ref-syn
+
+Predicate Specifications
+------------------------
+
+   A predicate is uniquely identified by its module (not always
+specified), name and arity (number of arguments).  In Quintus Prolog
+these are the ways of specifying a predicate as an argument of a
+predicate:
+
+  1. The form MODULE:NAME(TERM1,TERM2, ...,TERMN) is called the
+     "skeletal" predicate specification.  It identifies the predicate
+     NAME of arity N in module MODULE.  It is required by predicates
+     when the specification was likely to have been obtained from
+     predicates such as `clause/[2,3]'.  This is the case when one is
+     manipulating Prolog programs themselves.
+
+     MODULE is optional; if omitted, the predicate is assumed to be in
+     the source module.
+
+     When the skeletal specification is used as an _input_ argument,
+     the values of TERM1,TERM2, ...,TERMN are not significant; they only
+     serve as place-holders for determining the arity of NAME.  For
+     example,
+          | ?- predicate_property(put(97), P1),
+               predicate_property(put(98), P2).
+          
+          P1 = P2 = built_in ;
+          
+          no
+
+     When the skeletal specification is used as an _output_ argument,
+     MODULE:NAME(TERM1,TERM2, ...,TERMN) is made to be the most general
+     term with name NAME and arity N (that is, TERM1, TERM2, ..., TERMN
+     are each made to be variables, distinct from each other and any
+     others in the system).  For example,
+          | ?- compile(user).
+          | foo(1, 2, 3).
+          | ^D
+          % user compiled, 0.100 sec 196 bytes
+          
+          yes
+          | ?- source_file(X, user).
+          
+          X = foo(_224,_225,_226) ;
+          
+          no
+          | ?- source_file(foo(7,8,9), user).
+          
+          yes
+
+  2. The MODULE:NAME/ARITY form is an alternative representation to the
+     skeletal form.  ARITY can be a single arity, or a list of arities
+     and/or arity ranges.
+
+     MODULE is optional; if omitted, the predicate is assumed to be in
+     the current module.  For example,
+
+          `prog1:foo/1' specifies predicate `foo', arity 1 in module
+          `prog1'.  `foo/1' specifies predicate `foo' of arity 1 in the
+          current module.
+
+
+     *Notes:*
+       a. The form NAME/[ARITY] is used only by some library packages
+          and for demonstrative purposes in this manual.  Currently, it
+          is not used by any supported built-in predicates.
+
+       b. The MODULE:NAME/[ARITIES] form is required by declarations
+          that take a predicate specification (or a list of predicate
+          specifications) as an argument.  For most predicates, this
+          form requires fewer characters, which is desirable because
+          these specifications will likely be typed by the user.
+
+
+   `abolish/2' is the only predicate that does not use either of the
+above specifications.  Its first argument is the NAME of the predicate
+and the second argument is the ARITY.  For consistency, it is
+recommended that `abolish/1' be used instead.
+
+   The following predicate can be used to convert between the
+NAME/ARITY specification and the skeletal specification, or to verify
+that two specifications identify the same predicate.
+     predicate_specification(NameAritySpec, SkeletalSpec) :-
+            (nonvar(NameAritySpec) ; nonvar(SkeletalSpec)),
+             !,
+             NameAritySpec = Name/Arity,
+             functor(SkeletalSpec, Name, Arity),
+             atom(Name).
+
+
+File: quintus.info,  Node: ref-syn-syn,  Next: ref-syn-sum,  Prev: ref-syn-spc,  Up: ref-syn
+
+Formal Syntax
+-------------
+
+* Menu:
+
+* ref-syn-syn-ove::                     Overview
+* ref-syn-syn-not::                     Notation
+* ref-syn-syn-sen::                     Syntax of Sentences as Terms
+* ref-syn-syn-trm::                     Syntax of Terms as Tokens
+* ref-syn-syn-tok::                     Syntax of Tokens as Character Strings
+* ref-syn-syn-nte::                     Notes
+
+
+File: quintus.info,  Node: ref-syn-syn-ove,  Next: ref-syn-syn-not,  Up: ref-syn-syn
+
+Overview
+........
+
+   A Prolog program consists of a sequence of "sentences".  Each
+sentence is a Prolog "term".  How sentences are interpreted as terms is
+defined in *Note ref-syn-syn-sen::, below.  Note that a term
+representing a sentence may be written in any of its equivalent
+syntactic forms.  For example, the functor `:-/2' could be written in
+standard prefix notation instead of as the usual infix operator.
+
+   Terms are written as sequences of "tokens".  Tokens are sequences of
+characters, which are treated as separate symbols.  Tokens include the
+symbols for variables, constants, and functors, as well as punctuation
+characters such as parentheses and commas.
+
+   The interpretation of sequences of tokens as terms is defined in
+*Note ref-syn-syn-trm::.  Each list of tokens that is read in (for
+interpretation as a term or sentence) must be terminated by a
+
+   "full-stop" (a period followed by a layout character such as newline
+or space) token. Two tokens must be separated by a "space" if they
+could otherwise be interpreted as a single token.  Both spaces and
+"comment"s are ignored when interpreting the token list as a term.  A
+comment may appear at any point in a token list (separated from other
+tokens by spaces where necessary).
+
+   The interpretation of tokens as sequences of characters is defined on
+*Note ref-syn-syn-tok::.   The next section describes the notation used
+in the formal definition of Prolog syntax.
+
+
+File: quintus.info,  Node: ref-syn-syn-not,  Next: ref-syn-syn-sen,  Prev: ref-syn-syn-ove,  Up: ref-syn-syn
+
+Notation
+........
+
+   * Syntactic categories (or NONTERMINALS) are printed in italics, for
+     example QUERY.  Depending  on  the section, a category may
+     represent a class of either terms, token lists, or character
+     strings.
+
+   * A syntactic rule takes the general form
+          C --> F1
+               | F2
+               | F3
+               .
+               .
+               .
+
+     which states that an entity of category C may take any of the
+     alternative forms F1, F2, or F3.
+
+   * Certain definitions and restrictions are given in ordinary English,
+     enclosed in braces (`{}').
+
+   * A category written as `C...' denotes a sequence of one or more Cs.
+
+   * A category written as `?C' denotes an optional C.  Therefore
+     `?C...' denotes a sequence of zero or more Cs.
+
+   * A few syntactic categories have names with arguments, and rules in
+     which they appear may contain meta-variables in the form of
+     italicized capital letters.  The meaning of  such  rules  should
+     be  clear  from analogy with the definite clause grammars
+     described in *Note ref-gru::.
+
+   * In *Note ref-syn-syn-trm::, particular tokens of the category NAME
+     (a name beginning with a capital letter) are written as quoted
+     atoms, while tokens that are individual punctuation characters are
+     written literally.
+
+
+File: quintus.info,  Node: ref-syn-syn-sen,  Next: ref-syn-syn-trm,  Prev: ref-syn-syn-not,  Up: ref-syn-syn
+
+Syntax of Sentences as Terms
+............................
+
+
+SENTENCE       `-->' CLAUSE                  
+               | DIRECTIVE                   
+               |  GRAMMAR-RULE               
+
+CLAUSE         `-->' NON-UNIT-CLAUSE         
+               |  UNIT-CLAUSE                
+
+DIRECTIVE      `-->' COMMAND                 
+               |  QUERY                      
+
+NON-UNIT-CLAUSE`-->' HEAD `:-' GOALS         
+
+UNIT-CLAUSE    `-->' HEAD                    {where HEAD is not otherwise
+                                             a SENTENCE}
+
+COMMAND        `-->' `:-' GOALS              
+
+QUERY          `-->' `?-' GOALS              
+
+HEAD           `-->' TERM                    {where TERM is not a NUMBER
+                                             or a VARIABLE}
+
+GOALS          `-->' GOALS `,' GOALS         
+               |  GOALS   `->'   GOALS ;     
+               GOALS                         
+               |  GOALS   `->'   GOALS       
+               |  GOALS `;' GOALS            
+               |  GOAL                       
+
+GOAL           `-->' TERM                    {where TERM is not a NUMBER
+                                             and is not otherwise a GOALS}
+
+GRAMMAR-RULE   `-->' GR-HEAD `-->' GR-BODY   
+
+GR-HEAD        `-->' NONTERMINAL             
+               |  NONTERMINAL `,' TERMINALS  
+
+GR-BODY        `-->' GR-BODY `,' GR-BODY     
+               |  GR-BODY `;' GR-BODY        
+               |  GR-BODY   `->'   GR-BODY   
+               `;' GR-BODY                   
+               |  GR-BODY   `->'   GR-BODY   
+               |  NONTERMINAL                
+               |  TERMINALS                  
+               |  GR-CONDITION               
+
+NONTERMINAL    `-->' TERM                    {where TERM is not a NUMBER
+                                             or VARIABLE and is not
+                                             otherwise a GR-BODY}
+
+TERMINALS      `-->' LIST |  STRING          
+
+GR-CONDITION   `-->' `{' GOALS `}'           
+
+
+File: quintus.info,  Node: ref-syn-syn-trm,  Next: ref-syn-syn-tok,  Prev: ref-syn-syn-sen,  Up: ref-syn-syn
+
+Syntax of Terms as Tokens
+.........................
+
+
+TERM-READ-IN   `-->' SUBTERM(1200) FULL-STOP 
+
+SUBTERM(N)     `-->' TERM(M)                 {where M is less than or
+                                             equal to N}
+
+TERM(N)        `-->' OP(N,FX)                
+               |  OP(N,FY)                   
+               |  OP(N,FX) SUBTERM(N-1)      {except the case `-' NUMBER}
+                                             {if SUBTERM starts with a
+                                             `(', OP must be followed by
+                                             a SPACE}
+               |  OP(N,FY) SUBTERM(N)        {if SUBTERM starts with a
+                                             `(', OP must be followed by
+                                             a SPACE}
+               |  SUBTERM(N-1) OP(N,XFX)     
+               SUBTERM(N-1)                  
+               |  SUBTERM(N-1) OP(N,XFY)     
+               SUBTERM(N)                    
+               |  SUBTERM(N) OP(N,YFX)       
+               SUBTERM(N-1)                  
+               |  SUBTERM(N-1) OP(N,XF)      
+               |  SUBTERM(N) OP(N,YF)        
+
+TERM(1000)     `-->' SUBTERM(999) `,'        
+               SUBTERM(1000)                 
+
+TERM(0)        `-->' FUNCTOR `(' ARGUMENTS   
+               `)'                           
+                                             {provided there is no SPACE
+                                             between FUNCTOR and the `('}
+               |  `(' SUBTERM(1200) `)'      
+               |  `{' SUBTERM(1200) `}'      
+               |  LIST                       
+               |  STRING                     
+               |  CONSTANT                   
+               |  VARIABLE                   
+
+OP(N,T)        `-->' NAME                    {where NAME has been
+                                             declared as an operator of
+                                             type T and precedence N}
+
+ARGUMENTS      `-->' SUBTERM(999)            
+               |  SUBTERM(999) `,' ARGUMENTS 
+
+LIST           `-->' `[]'                    
+               |  `[' LISTEXPR `]'           
+
+LISTEXPR       `-->' SUBTERM(999)            
+               |  SUBTERM(999) `,' LISTEXPR  
+               |  SUBTERM(999) `|'           
+               SUBTERM(999)                  
+
+CONSTANT       `-->' ATOM |  NUMBER          
+
+NUMBER         `-->' INTEGER |  FLOAT        
+
+ATOM           `-->' NAME                    {where NAME is not a prefix
+                                             operator}
+
+INTEGER        `-->' NATURAL-NUMBER          
+               |  `-' NATURAL-NUMBER         
+
+FLOAT          `-->' UNSIGNED-FLOAT          
+               |  `-' UNSIGNED-FLOAT         
+
+FUNCTOR        `-->' NAME                    
+
+
+File: quintus.info,  Node: ref-syn-syn-tok,  Next: ref-syn-syn-nte,  Prev: ref-syn-syn-trm,  Up: ref-syn-syn
+
+Syntax of Tokens as Character Strings
+.....................................
+
+
+TOKEN          `-->' NAME                    
+               |  NATURAL-NUMBER             
+               |  UNSIGNED-FLOAT             
+               |  VARIABLE                   
+               |  STRING                     
+               |  PUNCTUATION-CHAR           
+               |  SPACE                      
+               |  COMMENT                    
+               |  FULL-STOP                  
+
+NAME           `-->' QUOTED-NAME             
+               |  WORD                       
+               |  SYMBOL                     
+               |  SOLO-CHAR                  
+               |  `[' ?LAYOUT-CHAR... `]'    
+               |  `{' ?LAYOUT-CHAR... `}'    
+
+QUOTED-NAME    `-->' `'' ?QUOTED-ITEM... `'' 
+
+QUOTED-ITEM    `-->' CHAR                    {other than `'' or `\'}
+               |  `'''                       
+               |  `\' ESCAPE-SEQUENCE        {unless character escapes
+                                             have been switched off}
+
+WORD           `-->' SMALL-LETTER ?ALPHA...  
+
+SYMBOL         `-->' SYMBOL-CHAR...          {except in the case of a
+                                             FULL-STOP or where the first
+                                             2 chars are `/*' }
+
+NATURAL-NUMBER `-->' DIGIT...                
+               |  BASE `'' ALPHANUMERIC...   {where each ALPHANUMERIC
+                                             must be less than BASE;
+                                             count `a' as 10, `b' as 11,
+                                             etc.}
+               | ZERO `'' QUOTED-ITEM        {This yields the ASCII
+                                             equivalent of QUOTED-ITEM}
+
+BASE           `-->' DIGIT...                {must be in the range 0..36}
+
+ZERO           `-->' `0'                     
+UNSIGNED-FLOAT `-->' SIMPLE-FLOAT            
+               |  SIMPLE-FLOAT E EXPONENT    
+
+SIMPLE-FLOAT   `-->'                         
+               DIGIT... DECIMAL-POINT        
+               DIGIT...                      
+
+DECIMAL-POINT  `-->' `.'                     
+
+E              `-->' `E' |  `e'              
+
+EXPONENT       `-->' DIGIT...                
+               |  `-' DIGIT...               
+               |  `+' DIGIT...               
+
+VARIABLE       `-->' UNDERLINE ?ALPHA...     
+
+VARIABLE       `-->' CAPITAL-LETTER ?ALPHA.. 
+
+STRING         `-->' `"' ?STRING-ITEM... `"' 
+
+STRING-ITEM    `-->' CHAR                    {other than `"' or `\'}
+               |  `""'                       
+               |  `\' ESCAPE-SEQUENCE        {unless character escapes
+                                             have been switched off}
+
+ESCAPE-SEQUENCE`-->'`b'                      {backspace, character code 8}
+               |  `t'                        {horizontal tab, character
+                                             code 9}
+               |  `n'                        {newline, character code 10}
+               |  `v'                        {vertical tab, character
+                                             code 11}
+               |  `f'                        {form feed, character code
+                                             12}
+               |  `r'                        {carriage return, character
+                                             code 13}
+               |  `e'                        {escape, character code 27}
+               |  `d'                        {delete, character code 127}
+               |  `^?'                       {delete, character code 127}
+               |  `a'                        {alarm, character code 7}
+               |  `x'CD                      {character code hex CD, 2
+                                             digits}
+               |  OCT                        {character code octal OCT,
+                                             up to 3 digits}
+               |  `^'LETTER                  {the control character
+                                             LETTER mod 32}
+               |  `c'?LAYOUT-CHAR...         {ignored}
+               |  LAYOUT-CHAR                {ignored}
+               |  CHAR                       {other than the above,
+                                             represents itself}
+
+SPACE          `-->' LAYOUT-CHAR...          
+
+COMMENT        `-->' `/*' ?CHAR... `*/'      {where ?CHAR... must not
+                                             contain `*/' }
+               |  `%' REST-OF-LINE           
+
+REST-OF-LINE   `-->' NEWLINE                 
+               |  ?NOT-END-OF-LINE...        
+               NEWLINE                       
+
+NOT-END-OF-LINE`-->'  {any character except  
+               NEWLINE}                      
+
+NEWLINE        `-->'  {ASCII code 10}        
+
+FULL-STOP      `-->' `.' LAYOUT-CHAR         
+
+
+CHAR           `-->' LAYOUT-CHAR             
+               |  ALPHA                      
+               |  SYMBOL-CHAR                
+               |  SOLO-CHAR                  
+               |  PUNCTUATION-CHAR           
+               |  QUOTE-CHAR                 
+
+LAYOUT-CHAR    `-->'  {ASCII codes 1..32     
+               and 127 -- includes space,    
+               tab, newline, and del}        
+
+ALPHA          `-->' ALPHANUMERIC |          
+               UNDERLINE                     
+
+ALPHANUMERIC   `-->' LETTER |  DIGIT         
+
+LETTER         `-->' CAPITAL-LETTER |        
+               SMALL-LETTER                  
+
+CAPITAL-LETTER `-->' `A' | `B' | `C' | `D'   
+               | `E' | `F' | `G' | `H' |     
+               `I' | `J' | `K' | `L' | `M'   
+               | `N' | `O' | `P' | `Q' |     
+               `R' | `S' | `T' | `U' | `V'   
+               | `W' | `X' | `Y' | `Z'       
+
+SMALL-LETTER   `-->' `a' | `b' | `c' | `d'   
+               | `e' | `f' | `g' | `h' |     
+               `i' | `j' | `k' | `l' | `m'   
+               | `n' | `o' | `p' | `q' |     
+               `r' | `s' | `t' | `u' | `v'   
+               | `w' | `x' | `y' | `z'       
+
+DIGIT          `-->'  `0' | `1' | `2' | `3'  
+               | `4' | `5' | `6' | `7' |     
+               `8' | `9'                     
+
+SYMBOL-CHAR    `-->'   `+' | `-' | `*' |     
+               `/' | `\' | `^' | `<' | `>'   
+               | `=' | ``' | `~' | `:' |     
+               `.' | `?' | `@' | `#' | `$'   
+               | `&'                         
+
+SOLO-CHAR      `-->' `;' | `!'               
+
+PUNCTUATION-CHAR`-->' `(' | `)' | `[' | `]'   
+               | `{' | `}' | `,' | `|' | `%' 
+
+QUOTE-CHAR     `-->' `'' | `"'               
+
+UNDERLINE      `-->' `_'                     
+
+
+File: quintus.info,  Node: ref-syn-syn-nte,  Prev: ref-syn-syn-tok,  Up: ref-syn-syn
+
+Notes
+.....
+
+  1. The expression of precedence 1000  (that is, belonging  to
+     syntactic category TERM(1000)) that is written
+          X, Y
+
+     denotes the term
+          ','(X, Y)
+
+     in standard syntax.
+
+  2. The  parenthesized  expression  (belonging   to   syntactic
+     category TERM(0))
+          (X)
+
+     denotes simply the term X.
+
+  3. The curly-bracketed expression (belonging  to  syntactic  category
+     TERM(0))
+          {X}
+
+     denotes the term
+          '{}'(X)
+
+     in standard syntax.
+
+  4. Note that, for example, `-3' denotes an integer, whereas `-(3)'
+     denotes  a  compound  term  of which the principal functor is
+     `-/1'.
+
+  5. The double quote character `"' within a string must be written
+     twice for every time it is to appear in the string.  That is,
+          """"
+
+     represents a string of one double quote character only.
+     Similarly, for the single quote character within a quoted atom,
+          ''''
+
+     represents an atom whose printed representation is one single quote
+     character.
+
+
+File: quintus.info,  Node: ref-syn-sum,  Prev: ref-syn-syn,  Up: ref-syn
+
+Summary of Predicates
+---------------------
+
+   Detailed information is found in the reference pages for the
+following:
+
+   * `current_op/3'
+
+   * `op/3'
+
+
+File: quintus.info,  Node: ref-sem,  Next: ref-all,  Prev: ref-sls,  Up: ref
+
+Semantics
+=========
+
+* Menu:
+
+* ref-sem-pro::                         Programs
+* ref-sem-typ::                         Types of Predicates Supplied with Quintus Prolog
+* ref-sem-dis::                         Disjunction
+* ref-sem-sec::                         Declarative and Procedural Semantics
+* ref-sem-cut::                         The Cut
+* ref-sem-occ::                         Occur Check
+* ref-sem-con::                         Control
+
+   This section gives an informal description of the semantics of
+Quintus Prolog.
+
+
+File: quintus.info,  Node: ref-sem-pro,  Next: ref-sem-typ,  Up: ref-sem
+
+Programs
+--------
+
+   A fundamental unit of a logic program is the  "goal" or "procedure
+call" for example:
+     gives(tom, apple, teacher)
+     
+     reverse([1,2,3], L)
+     
+      X < Y
+
+   A goal is merely a special kind of term,  distinguished  only  by
+the context  in  which it appears in the program.  The principal functor
+of a goal is called a "predicate".  It corresponds roughly to a verb  in
+natural language, or to a procedure name in a conventional programming
+language.
+
+   A logic "program" consists  simply  of  a  sequence  of  statements
+called "sentences",  which  are  analogous  to  sentences in  natural
+language.
+
+   A sentence comprises a "head" and a "body".  The  head  either
+consists  of  a  single  goal  or  is  empty.  The body consists of a
+sequence of zero or more goals (it may be empty).  If the head is not
+empty, the sentence is called a "clause".
+
+   If the body of a clause is empty, the clause is called a "unit
+clause", and is written in the form (A) where P is the head goal.  We
+interpret this _declaratively_ as (B) and _procedurally_ as (C).
+
+     P. (A)
+
+
+     ``P is true.'' (B)
+
+
+     ``Goal P is satisfied.'' (C)
+
+   If the body of a clause is non-empty, the clause is called a
+"non-unit clause", and is written in the form (D) where P is the head
+goal and Q, R, and S are the goals that make up the body.  We can read
+such a clause either declaratively as (E) or procedurally as (F).
+
+     P :- Q, R, S. (D)
+
+
+     ``P is true if Q and R and S are true.'' (E)
+
+
+     ``To satisfy goal P, satisfy goals Q, R, and S.'' (F)
+
+   A sentence with an empty head is called a "directive", of which the
+most important kind is called a "query" and is written in the form (G)
+Such a query is read declaratively as (H), and procedurally as (I).
+
+     ?- P, Q. (G)
+
+
+     ``Are P and Q true?'' (H)
+
+
+     ``Satisfy goals P and Q.'' (I)
+
+   Sentences generally contain variables.  A variable should be thought
+of as standing  for  some  definite  but unidentified  object.   This
+is analogous to the use of a pronoun in natural language.  Note that a
+variable  is  not  simply  a  writable storage  location  as  in  most
+programming languages;  rather it is a local name for some data object,
+like the variable of  pure  Lisp.  Note that  variables  in different
+sentences are completely independent, even if they have the same name --
+the _lexical scope_ of a variable  is limited  to  a single  sentence.
+To illustrate  this,  here  are  some examples  of  sentences containing
+variables, with possible declarative and procedural readings:
+
+`employed(X) :- employs(Y, X).'
+     "Any X is employed if any Y employs X."
+
+     "To find whether a person X is employed, find whether any Y
+     employs X."
+
+`derivative(X, X, 1).'
+     "For any X, the derivative of X with respect to X is 1."
+
+     "The goal of finding a derivative for the expression X with
+     respect to X itself is satisfied by the result 1."
+
+`?- ungulate(X), aquatic(X).'
+     "Is it true, for any X, that X is an ungulate and X is aquatic?"
+
+     "Find an X that is both an ungulate and aquatic."
+
+   In any program, the "procedure" for a particular predicate is the
+sequence of clauses in the program whose head goals have that predicate
+as principal functor.  For example, the procedure for a predicate
+`concatenate' of three arguments might well consist of the two clauses
+shown in (J) where `concatenate(L1, L2, L3)' means "the list L1
+concatenated with the list L2 is the list L3".
+
+     concatenate([], L, L). (J)
+     concatenate([X|L1], L2, [X|L3]) :-
+                 concatenate(L1, L2, L3). (K)
+
+   In Prolog, several predicates may have the same name but different
+arities.  Therefore, when it is important to specify a predicate
+unambiguously, the form NAME/ARITY is used, for example `concatenate/3'.
+
+
+File: quintus.info,  Node: ref-sem-typ,  Next: ref-sem-dis,  Prev: ref-sem-pro,  Up: ref-sem
+
+Types of Predicates Supplied with Quintus Prolog
+------------------------------------------------
+
+* Menu:
+
+* ref-sem-typ-hok::                     Hook Predicates
+* ref-sem-typ-rpr::                     Redefinable Predicates
+
+   Certain predicates are predefined by the Prolog system.  Most of
+these cannot be changed or retracted.  Such predicates are called
+"built-in predicates".
+
+   Certain ones, however, can be modified or totally redefined.  These
+are the hook predicates and the redefined predicates used in embedding.
+
+
+File: quintus.info,  Node: ref-sem-typ-hok,  Next: ref-sem-typ-rpr,  Up: ref-sem-typ
+
+Hook Predicates
+...............
+
+   "Hook predicates" are called by the system.  They enable you to
+modify Quintus Prolog's behavior.  They are either undefined by default
+(like `portray/1' and `message_hook/3') or else they have a simple
+default definition that is dynamic and/or multifile (like
+`file_search_path/1' and `library_directory/1', which are multifile by
+default).
+
+   If they do have a default definition, a definition provided by the
+user overrides it within the module where it is redefined.  The idea of
+a hook predicate is that its clauses are independent of each other, and
+it makes sense to spread their definitions over several files (which
+may be written by different people).
+
+
+File: quintus.info,  Node: ref-sem-typ-rpr,  Prev: ref-sem-typ-hok,  Up: ref-sem-typ
+
+Redefinable Predicates
+......................
+
+   "Redefinable predicates" exist to enable you to embed Prolog code
+within a program in another language.  They have default definitions
+that are fairly complex.  Source is provided for them.  They are all in
+modules beginning with `QU'.  Sophisticated users may wish to provide
+alternative definitions of these modules.  You can redefine embeddable
+predicates at run-time too, by simply compiling new versions of the QU_
+module-file (see *Note fli-emb::).
+
+   The key distinction is that it only makes sense to redefine
+embeddable predicates totally and globally.  Hook predicates, on the
+other hand, can be extended piecemeal, and need not have any definition
+at all.
+
+
+File: quintus.info,  Node: ref-sem-dis,  Next: ref-sem-sec,  Prev: ref-sem-typ,  Up: ref-sem
+
+Disjunction
+-----------
+
+   As we have seen, the goals in the body of a sentence  are  linked by
+the  operator `,', which can be interpreted as conjunction (`and').
+It is sometimes convenient to use an additional operator `|', standing
+for  disjunction  (`or').  (The  precedence  of  `|'  is  such that it
+dominates `,' but is dominated by `:-'.)  An example is the clause (A),
+which can be read as (B).
+     grandfather(X, Z) :-
+          (   mother(X, Y)
+          |   father(X, Y)
+          ),
+          father(Y, Z). (A)
+
+
+     ``For any X, Y, and Z,
+         X has Z as a grandfather if
+         either the mother of X is Y
+             or the father of X is Y,
+         and the father of Y is Z.'' (B)
+
+   Such uses of disjunction can usually be eliminated by defining  an
+extra predicate.  For instance, (A) is equivalent to (C)
+     grandfather(X, Z) :- parent(X, Y), father(Y, Z).
+     parent(X, Y) :- mother(X, Y).
+     parent(X, Y) :- father(X, Y). (C)
+
+   Therefore, disjunction will not be mentioned further in  the
+following more formal description of the semantics of clauses.
+
+   For historical reasons, the token `|', when used outside a list, is
+actually an alias for `;'.  The aliasing is performed when terms are
+read in, so that (D) is read as if it were (E) thus you can use `;'
+instead of `|' for disjunction if you like.
+
+     a :- b | c. (D)
+
+     a :- b ; c. (E)
+
+   Note the double use of the `.' character.  Here it is used as a
+sentence terminator, while in other instances it may be used in a
+string of symbols that make up an atom (for example, the list functor
+`.').  The rule used to disambiguate terms is that a `.' followed by a
+"layout-character" is regarded as the sentence terminator `full-stop',
+where a layout-character is defined to be any character less than or
+equal to ASCII 32 (this includes space, tab, newline, and all control
+characters).
+
+
+File: quintus.info,  Node: ref-sem-sec,  Next: ref-sem-cut,  Prev: ref-sem-dis,  Up: ref-sem
+
+Declarative and Procedural Semantics
+------------------------------------
+
+   The semantics of definite clauses should be fairly clear from the
+informal  interpretations already given.  However, it is useful to have
+a precise definition.  The "declarative semantics" of  definite  clauses
+tells  us  which  goals  can  be  considered true according to a given
+program, and is defined recursively as follows:
+
+     A goal is "true" if it is the head of some clause instance and
+     each  of  the  goals  (if  any)  in  the body of that clause
+     instance is true, where an "instance"      of a clause (or term) is
+         obtained  by  substituting,  for each of zero or more of its
+        variables, a new term for all occurrences of the variable.
+
+   For example, if a program contains the procedure for `concatenate/3',
+declared in *Note ref-sem-pro::, then the declarative semantics tells
+us that (A) is true, because this goal is the head of a certain
+instance of the second clause (K) for `concatenate/3', namely (B), and
+we know that the only goal in the body of this clause instance is true,
+because it is an instance of the unit clause that is the first clause
+for `concatenate/3'.
+     concatenate([a], [b], [a,b])
+
+     concatenate([a], [b], [a,b]):-
+        concatenate([], [b], [b]).
+
+   Note that the declarative semantics makes  no  reference  to  the
+sequencing of goals within the body of a clause, nor to the sequencing
+of clauses within a program.  This sequencing information is, however,
+very  relevant  for  the  "procedural semantics" that Prolog gives to
+definite clauses.  The procedural semantics defines  exactly  how  the
+Prolog  system  will execute a goal, and the sequencing information is
+the means by which the Prolog programmer directs the system to execute
+his  program  in a sensible way.  The effect of executing a goal is to
+enumerate, one by one, its true instances.  Here is  an  informal
+definition of the procedural semantics.
+
+     To "execute" a goal, the system searches forwards from the
+     beginning of the program for the first  clause whose   head
+     "matches"   or "unifies"  with  the  goal.   The "unification"
+     process (see "A Machine-Oriented Logic Based on the Resolution
+     Principle" by J.A. Robinson, _Journal of the ACM_ 12:23-44,
+     January 1965) finds the most general common instance  of  the  two
+     terms, which is unique if it exists.  If a match is found, the
+     matching  clause  instance is  then "activated" by executing in
+     turn, from left to right, each of the goals (if any) in its body.
+     If at any time  the system  fails to find a match for a goal, it
+     "backtracks"; that is, it rejects the most recently activated
+     clause, undoing  any substitutions made by the match with the head
+     of the clause.  Next it reconsiders the original goal  that
+     activated  the rejected clause, and tries to find a subsequent
+     clause that also matches the goal.
+
+   For example, if we execute the goal expressed by the query (A) we
+find that it matches the head of the second clause for `concatenate/3',
+with `X' instantiated to `[a|X1]'. The new variable `X1' is constrained
+by the new goal produced, which is the recursive procedure call (B) and
+this goal matches the second clause, instantiating `X1' to `[b|X2]', and
+yielding the new goal (C).
+     | ?- concatenate(X, Y, [a,b]). (A)
+
+     concatenate(X1, Y, [b]) (B)
+
+     concatenate(X2, Y, []) (C)
+
+   Now this goal will only match the first clause, instantiating both
+`X2' and `Y' to `[]'. Since there are no further goals to be executed,
+we have a solution
+     X = [a,b]
+     Y = []
+
+   That is, the following is a true instance of the original goal:
+     concatenate([a,b], [], [a,b])
+
+   If this solution is rejected, backtracking will generate  the
+further solutions
+     X = [a]
+     Y = [b]
+     
+     X = []
+     Y = [a,b]
+
+   in  that  order,  by  re-matching goals already solved once using
+the first clause of `concatenate/3', against the second clause.
+
+
+File: quintus.info,  Node: ref-sem-cut,  Next: ref-sem-occ,  Prev: ref-sem-sec,  Up: ref-sem
+
+The Cut
+-------
+
+   Besides the sequencing of goals and clauses, Prolog provides one
+other  very  important  facility  for  specifying control information.
+This is the "cut", written `!'.  It is  inserted  in  the  program just
+like  a  goal, but is not to be regarded as part of the logic of the
+program and should be ignored as far as the declarative  semantics is
+concerned.
+
+   The  effect  of  the  cut  is  as  follows.   When  first
+encountered  as  a  goal,  cut  succeeds immediately.  If backtracking
+should later return to the cut, the effect  is  to  fail  the  _parent
+goal_, that goal that matched the head of the clause containing the
+cut, and caused the clause to be activated.  In other  words,  the cut
+operation _commits_ the system to all choices made since the parent
+goal was invoked, and causes other alternatives to be discarded.   The
+goals  thus  rendered  _determinate_  are  the parent goal itself, any
+goals occurring before the cut in the clause containing the  cut,  and
+any  subgoals  that  were  executed  during  the  execution  of those
+preceding goals.
+
+   For example, the procedure
+     member(X, [X|L]).
+     member(X, [Y|L]) :-
+        member(X, L).
+
+   can be used to test whether a given term is in a list:
+     | ?- member(b, [a,b,c]).
+
+   returns the answer `yes'.  The procedure can also be used to extract
+elements from a list, as in
+     | ?- member(X, [d,e,f]).
+
+   With backtracking this will successively return each element of the
+list.  Now suppose that the first clause had been written instead:
+     member(X, [X|L]) :- !.
+
+   In this case, the second call above would extract only the first
+element of the list (`d').  On backtracking, the cut would immediately
+fail the entire procedure.
+
+   Another example:
+     x :- p, !, q.
+     x :- r.
+
+   This is analogous to "if p then q else r" in an Algol-like language.
+
+   Note that a cut discards all the alternatives subsequent to the
+parent goal, even when the cut appears within  a  disjunction.  This
+means  that  the normal method for eliminating a disjunction -- by
+defining an extra predicate -- cannot be applied to a disjunction
+containing a cut.
+
+
+File: quintus.info,  Node: ref-sem-occ,  Next: ref-sem-con,  Prev: ref-sem-cut,  Up: ref-sem
+
+Occur Check
+-----------
+
+   Prolog's unification does not have an "occur check"; that is, when
+unifying a variable  against  a  term, the system does not check to see
+if the variable occurs in the term.  When the variable occurs in  the
+term, unification should  fail,  but  the  absence of the check means
+that the unification succeeds, producing a `circular term'.  Trying to
+print a circular  term, or  trying  to unify  circular terms, will
+cause a loop.  (You can always get out of a loop by typing ^c followed
+by an `a' for abort.)
+
+   The absence of the occur check is not a bug or a design oversight,
+but a conscious design decision.  The reason for this decision is that
+unification with the occur check is at best linear on the sum of the
+sizes of the terms being unified, whereas unification without the occur
+check is linear on the size of the smallest of the terms being unified.
+For any programming language to be practical, basic operations should
+take constant time.  Unification against a variable may be thought of
+as the basic operation of Prolog, and this can take constant time only
+if the occur check is omitted.  Thus the absence of an occur check is
+essential to Prolog's practicality as a programming language.  The
+inconvenience caused by this restriction is, in practice, very slight.
+Furthermore, the functionality is available as `library(occurs)'.
+
+
+File: quintus.info,  Node: ref-sem-con,  Prev: ref-sem-occ,  Up: ref-sem
+
+Control
+-------
+
+P`,'Q
+     prove P and Q
+
+P`;'Q
+     prove P or Q
+
+`!'
+     cut any choices taken in the current procedure
+
+`CALL(P)'
+     prove (execute) P
+
+`\+' P
+     goal P is not provable
+
+P`->'Q`;'R
+     if P succeeds, prove Q; if not, prove R
+
+P`->'Q
+     if P succeeds, prove Q; if not, fail
+
+`TRUE'
+     succeed
+
+`OTHERWISE'
+     same as `true'
+
+`FAIL'
+     fail (start backtracking)
+
+`FALSE'
+     same as `fail'
+
+`REPEAT'
+     succeed repeatedly on backtracking
+
+
+File: quintus.info,  Node: ref-pro,  Next: ref-iou,  Prev: ref-olh,  Up: ref
+
+Invoking Prolog
+===============
+
+* Menu:
+
+* ref-pro-arg::                         Prolog Command Line Argument Handling
+* ref-pro-exi::                         Exiting Prolog
+
+
+File: quintus.info,  Node: ref-pro-arg,  Next: ref-pro-exi,  Up: ref-pro
+
+Prolog Command Line Argument Handling
+-------------------------------------
+
+* Menu:
+
+* ref-pro-arg-inf::                     The Initialization File
+
+   There are three ways a Prolog system can be invoked:
+
+     % PROGRAM PROLOG'S ARGUMENTS
+     
+     % PROGRAM PROLOG'S ARGUMENTS + EMACS' ARGUMENTS
+     
+     % PROGRAM PROLOG'S ARGUMENTS +z USER'S ARGUMENTS
+
+   where PROGRAM, generally `prolog', but can be an executable QOF file
+(see *Note ref-sls-sst::) or a stand-alone program (see *Note
+sap-srs::).
+
+PROLOG'S ARGUMENTS consists of:
+
+    USER'S ARGUMENTS
+          these arguments can be retrieved in a program by calling
+          `unix(argv(ArgList))'.
+
+    SYSTEM ARGUMENTS
+          The current valid system arguments are:
+
+
+
+         `+'
+               invoke Emacs; subsequent arguments passed to Emacs;
+
+         `+f'
+               fast startup; do not load user's `prolog.ini' file;
+
+         `+l FILE'
+               load the specified file on startup; FILE may be a Prolog
+               file or a QOF file, and it may be specified either as a
+               string (e.g.  `file', `~/prolog/file.pl') or as a file
+               search path specification (e.g. `library(file)',
+               `home(language(file))'); note, however, that the latter
+               needs to be quoted to escape the shell interpretation of
+               the parentheses; giving the extension is not necessary;
+               if both source (`.pl') and QOF (`.qof') files exist, the
+               more recent of the two will be loaded;
+
+         `+L FILE'
+               like `+l', but search for FILE in the directories given
+               by the shell environment variable `PATH'; and
+
+         `+p [PATH-NAME]'
+               prints the Prolog file search path definitions that
+               begin with the string PATH-NAME (e.g. `library' if `+p
+               lib' is specified); PATH-NAME is optional, and if not
+               given, causes prolog to print all file search path
+               definitions; prolog exits after producing the required
+               output to `stdout';
+
+         `+P [PATH-NAME]'
+               same as `+p', but the absolutized versions of the file
+               search path definitions are printed;
+
+         `+tty'
+               force the three standard streams associated with a Prolog
+               process to act as tty streams; a tty stream is usually
+               line buffered and handles the prompt automatically;
+
+         `+z'
+               all subsequent arguments are user's arguments.
+
+          Only one of `+' or `+z' is possible on one command line.
+
+EMACS' ARGUMENTS
+     arguments to the Emacs interface.  This may include file names to
+     edit and may also include GNU Emacs arguments (see *Note
+     ema-emi::).
+
+   All command line arguments beginning with a `+' are reserved for
+system arguments.  If user arguments need to begin with a `+', they
+should be given as `++' instead.  The `++' is converted into a single
+`+' by the argument handling routines, and thus, to the user's code,
+only the single `+' argument is visible.  An exception to this is when
+an argument is given following a `+z' option in which case no
+conversion is done.
+
+   Runtime systems do not interpret system arguments; they treat all
+arguments as user's arguments.
+
+   There can be any number of `+l' and `+L' arguments.  In Release 3,
+invoking a saved-state, an executable QOF-file, as a command causes the
+corresponding Prolog executable, the one from which the saved-state was
+created, to be invoked with the arguments `+L SAVED-STATE'.
+
+   The user's arguments are accessible in Prolog via
+`unix(argv(ArgList))', which returns a list of all the user's
+arguments.  For example, if Prolog is invoked by the command (A), then
+the Prolog goal (B) returns (C):
+     % prolog ++file1 -file2      (A)
+
+     | ?- unix(argv(ArgList)).    (B)
+
+     ArgList = ['+file1','-file2']   (C)
+
+
+File: quintus.info,  Node: ref-pro-arg-inf,  Up: ref-pro-arg
+
+The Initialization File
+.......................
+
+   Once invoked, the default `prolog' looks in your home directory for a
+file named `prolog.ini', and if it finds one, loads it.  Stand-alone
+programs also look for and load `prolog.ini'.  Runtime systems do not.
+
+   Typically, `prolog.ini' files are used to define file search paths,
+library directories, and term expansions.
+
+   If the `+f' option is specified, the initialization file
+`prolog.ini' is not loaded.
+
+
+File: quintus.info,  Node: ref-pro-exi,  Prev: ref-pro-arg,  Up: ref-pro
+
+Exiting Prolog
+--------------
+
+   To exit from the Prolog system, either type
+     | ?- halt.
+
+   or your end-of-file character.  The end-of-file character is `^d' by
+default.  You will use a different command set to exit Prolog running
+under Emacs; see *Note ema-emi-key::. The commands for exiting are as
+follows:
+
+`without Emacs:'
+     type `^d' (or `^C e'). You may                      also execute
+     the goal `halt/0'.
+
+`with GNU Emacs:'
+     type `^c ^d' (or `<ESC> X exit-emacs').
+
+`with QUI:'
+     Use Interrupt button in main window. Select Exit.
+
+   If you would like to pause Prolog while keeping the job in the
+background:
+
+`without Emacs:'
+     type `^Z'.
+
+`with GNU Emacs:'
+     type `^X^Z'.
+
+`with QUI:'
+     iconify the main window
+
+
+File: quintus.info,  Node: ref-lod,  Next: ref-iex,  Prev: ref-iou,  Up: ref
+
+Loading Programs
+================
+
+* Menu:
+
+* ref-lod-ove::                         Overview
+* ref-lod-lod::                         The Load Predicates
+* ref-lod-rpx::                         Redefining Procedures during Program Execution
+* ref-lod-lis::                         Predicate List
+
+
+File: quintus.info,  Node: ref-lod-ove,  Next: ref-lod-lod,  Up: ref-lod
+
+Overview
+--------
+
+   There are two ways of loading programs into Prolog -- compiling
+source files and loading pre-compiled QOF files.  Earlier releases of
+Prolog distinguished between compiling and consulting source files.
+Consulting a file caused the code to be loaded in an interpreted mode
+so that it could be debugged.  Now compiled code is fully debuggable,
+so there is no longer any need to distinguish between compiling and
+consulting, and the built-in predicate `consult/1' is now just a
+synonym for `compile/1'.  Interpretation is now only used for the
+execution of dynamic code.
+
+   This section contains references to the use of the module system.
+These can be ignored if the module system is not being used (see *Note
+ref-mod:: for information on the module system).
+
+
+File: quintus.info,  Node: ref-lod-lod,  Next: ref-lod-rpx,  Prev: ref-lod-ove,  Up: ref-lod
+
+The Load Predicates
+-------------------
+
+   Loading a program is accomplished by one of these predicates
+`load_files(FILE)'
+     compiles source file or loads QOF file, whichever is the more
+     recent.  `load_files(FILE)' can also be written as `[FILE]'.
+
+`compile(FILE)'
+     compiles source file.
+
+`consult(FILE)'
+     Same as `compile'
+
+`ensure_loaded(FILE)'
+     loads more recent of source and QOF files, unless the file has
+     already been loaded and it has not been modified since it was
+     loaded.
+
+`load_files(FILE, OPTIONS)'
+     loads file according to the specified options.  All the above
+     predicates can be regarded as special cases of this one.
+
+`reconsult(FILES)'
+     same as `consult'
+
+   The following notes apply to all the Load Predicates:
+
+  1. The FILE argument must be one of:
+        * an atom that is the name of a file containing Prolog code; a
+          `.pl' or a `.qof' suffix to a filename may be omitted (see
+          *Note ref-fdi-fsp-fde::;)
+
+        * a list of any atom listed above;
+
+        * the atom `user'
+
+          *Please note:* If the filename is not a valid atom, it must
+          be enclosed in single quotes.  For example,
+
+               load_files(expert)
+               load_files('Expert')
+               compile('/usr/joe/expert')
+               ensure_loaded('expert.pl')
+
+
+  2. These predicates resolve relative file names in the same way as
+     `absolute_file_name/2'.  For information on file names refer to
+     *Note ref-fdi::.
+
+  3. The above predicates raise an exception if any of the files named
+     in FILE does not exist, unless the `fileerrors' flag is set to
+     `off' using `nofileerrors/0'.
+
+     Errors detected during compilation, such as an attempt to redefine
+     a built-in predicate, also cause exceptions to be raised.
+     However, these exceptions are caught by the compiler, and an
+     appropriate error message is printed.
+
+  4. There are a number of "style warnings" that may appear when a file
+     is compiled.  These are designed to aid in catching simple errors
+     in your programs, but some or all of them can be turned off if
+     desired using `no_style_check/1'.  The possible style warnings are:
+       a. A named variable occurs only once in a clause.  Variables
+          beginning with a `_' are considered not named.
+
+       b. All the clauses for a predicate are not adjacent to one
+          another in the file.
+
+       c. A predicate is being redefined in a file different from the
+          one in which it was previously defined.
+
+  5. By default, all clauses for a predicate are required to come from
+     just one file.  A predicate must be declared `multifile' if its
+     clauses are to be spread across several different files.  See the
+     reference page for `multifile/1'.
+
+  6. If a file being loaded is not a module-file, all the predicates
+     defined in the file are loaded into the source module.  The form
+     `load_files(Module:File)' can be used to load the file into the
+     specified module.  See *Note ref-mod-def::, for information about
+     module-files.  If a file being loaded _is_ a module-file, it is
+     first loaded in the normal way, then the source module imports all
+     the public predicates of the module-file except for `use_module'
+     and `load_file' if you specify an import list.
+
+  7. If there are any directives in the file being loaded, that is, any
+     terms with principal functor `:-/1' or `?-/1', then these are
+     executed as they are encountered.  A common type of directive to
+     have in a file is one that loads another file, such as
+           :- [otherfile].
+      In this case, if otherfile is a relative filename it is
+     resolved with respect to the directory containing the file that is
+     being loaded, not the current working directory of the Prolog
+     system.
+
+     Any legal Prolog goal may be included as a directive. Note,
+     however, that if the file is compiled by `qpc', the goal will be
+     executed by `qpc', not when the `.qof' file is loaded or when
+     application begins execution.  The `initialization/1' declaration
+     provides this functionality.  There is no difference between a
+     `:-/1' and a `?-/1' goal in a file being compiled.
+
+  8. If FILE is the atom `user', or FILE is a list, and during loading
+     of the list `user' is encountered, procedures are to be typed
+     directly into Prolog from the terminal.  A special prompt, `| ',
+     is displayed at the beginning of every new clause entered from the
+     terminal.  Continuation lines of clauses typed at the terminal are
+     preceded by a prompt of five spaces.  When all clauses have been
+     typed in, the last should be followed by an end-of-file character.
+
+  9. Terms that are notational variants of Prolog terms, notably
+     grammar terms, are expanded into Prolog code during compilation.
+     By defining the hook predicate `term_expansion/2' (in module
+     user), you can specify any desired transformation to be done as
+     clauses are loaded.
+
+ 10. Any predicates that need to be called during the compilation of a
+     file, including `term_expansion/2' and all the predicates it calls,
+     must be treated specially if you wish to be able to compile that
+     file with `qpc'. See *Note sap-srs-eci-crt:: for information on
+     this.
+
+ 11. The current load context (module, file, stream, directory) can be
+     queried using `prolog_load_context/2'.
+

@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QU_stream_param()</code> user-redefinable</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     void QU_stream_param(filename, mode, format, option)
+     char          *filename;
+     int            mode;
+     unsigned char  format;
+     QP_stream     *option;
+     </pre>
+
+   <p>Embedding function, which sets up default values of user-accessible
+fields in a Prolog stream structure.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>filename</var>
+     <dd>name of the file to be opened.  If the stream does not have a
+filename, the <var>filename</var> is the empty string, <code>""</code>.  If the
+<var>filename</var> is <code>/dev/tty</code>, the caller requests <code>QU_stream_param()</code> to
+set the field values as a tty stream.
+
+     <br><dt><var>mode</var>
+     <dd>
+          <ul>
+
+          <li><code>QP_READ</code> for an input stream. 
+<li><code>QP_WRITE</code> for an output stream. 
+<li><code>QP_APPEND</code> for an output stream opened in append mode. 
+</ul>
+
+     <br><dt><var>format</var>
+     <dd>format of the stream, which could have
+one of the following values:
+
+          <ul>
+
+          <li><code>QP_DELIM_LF</code>
+<li>
+<li>
+<li>
+<li>
+<li><code>QP_VAR_LEN</code>
+<li><code>QP_DELIM_TTY</code>
+<li><code>QP_FMT_UNKNOWN</code>
+</ul>
+
+     <br><dt><var>option</var>
+     <dd>pointer to a <code>QP_stream</code> structure whose fields are to be
+set up. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The format is used in assisting <code>QU_stream_param()</code> to determine
+the best values for the other member fields of the <code>QP_stream</code> structure.
+
+   <p>All of the fields listed below of the <code>QP_stream</code> structure,
+described in <a href="fli-ios-sst.html#fli-ios-sst">fli-ios-sst</a>, are set
+by <code>QU_stream_param()</code>. Under UNIX, they are given the indicated values:
+
+     <dl>
+
+     <br><dt><b>field</b>
+     <dd><b>value</b>
+
+     <br><dt><code>filename</code>
+     <dd><var>filename</var> argument to <code>QU_stream_param()</code>
+
+     <br><dt><code>mode</code>
+     <dd><var>mode</var> argument to <code>QU_stream_param()</code>
+
+     <br><dt><code>format</code>
+     <dd><var>format</var> argument to <code>QU_stream_param()</code>
+
+     <br><dt><code>max_reclen</code>
+     <dd>8192 bytes for a file, 256 bytes for a tty
+
+     <br><dt><code>line_border</code>
+     <dd><code>QP_LF</code>
+
+     <br><dt><code>file_border</code>
+     <dd><code>QP_EOF</code>
+
+     <br><dt><code>peof_act</code>
+     <dd><code>QP_PASTEOF_ERROR</code>
+
+     <br><dt><code>prompt</code>
+     <dd>"" (empty string)
+
+     <br><dt><code>trim</code>
+     <dd>0
+
+     <br><dt><code>seek_type</code>
+     <dd><code>QP_SEEK_PREVIOUS</code> for a file, <code>QP_SEEK_ERROR</code> for a tty
+
+     <br><dt><code>flush_type</code>
+     <dd><code>QP_FLUSH_FLUSH</code>
+
+     <br><dt><code>overflow</code>
+     <dd><code>QP_OV_FLUSH</code>
+
+     <br><dt><code>errno</code>
+     <dd>0
+
+     <br><dt><code>magic</code>
+     <dd>(byteno) 0
+
+     <br><dt><code>read</code>
+     <dd><code>bad_read</code> -- a function that returns <code>QP_ERROR</code>
+
+     <br><dt><code>write</code>
+     <dd><code>bad_write</code> -- a function that returns <code>QP_ERROR</code>
+
+     <br><dt><code>flush</code>
+     <dd><code>bad_flush</code> -- a function that returns <code>QP_ERROR</code>
+
+     <br><dt><code>seek</code>
+     <dd><code>bad_seek</code> -- a function that returns <code>QP_ERROR</code>
+
+     <br><dt><code>close</code>
+     <dd><code>bad_close</code> -- a function that returns <code>QP_ERROR</code>
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-QU_open.html#cfu-ref-QU_open">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

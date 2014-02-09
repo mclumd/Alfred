@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Drawing a Textured Background</h4>
+
+   <p>The window would look more interesting with a textured background. 
+We decide that a 4x4 pixmap with two lines between
+opposite corners forming an X would make an interesting background
+texture.
+
+<pre class="example">     | ?- <kbd>create_pixmap(Pix, [size(4,4)]),
+             draw_segments(Pix, [segment(0,0,3,3), segment(0,3,3,0)]),
+             win(Window),
+             put_window_attributes(Window, [background(Pix)]).</kbd>
+     
+     Pix = pixmap(2383840),
+     Window = window(2376568)
+     </pre>
+
+   <p>The first line is as simple as it looks: it creates a 4x4 pixel
+pixmap.  The second line draws the X.  Note that coordinates are given
+with (0,0) as the northwest corner pixel, so (3,3) is the southeast
+corner.  Then the third line installs the new pixmap as the background
+pattern.
+
+   <p>You might be wondering why the window didn't change.  The reason is
+simple:  the background is used to fill parts of the window
+that have been cleared.  The easiest way to get the new background
+displayed is to use your window manager to either iconify and then
+uniconify the window, or to push it behind another window and then pull
+it back to the front.  You could also do it by calling
+<pre class="example">     | ?- <kbd>win(Window),
+          clear_window(Window).</kbd>
+     
+     Window = window(2376568)
+     </pre>
+
+   <p>Again we need to refresh the window:
+
+<pre class="example">     | ?- <kbd>win(Window),
+          draw_string(Window, 2, 19, 'Hello, world!!').</kbd>
+     
+     Window = window(2376568)
+     </pre>
+
+   <p>That doesn't look terribly interesting.  Try drawing the string in white
+instead of black.
+
+<pre class="example">     | ?- <kbd>win(Window),
+          get_screen_attributes([white_pixel(Pix)]),
+          put_graphics_attributes(Window, [foreground(Pix)]),
+          draw_string(Window, 2, 19, 'Hello, world!!').</kbd>
+     
+     Window = window(2376568),
+     Pix = 0
+     </pre>
+
+   <p>The second line determines the pixel value for white on our screen.  X
+does not establish a standard pixel value for black and white, so you
+must determine it explicitly.  In fact, X doesn't even guarantee that
+the <code>black_pixel/1</code> and <code>white_pixel/1</code> attributes will yield
+black and white, but they are <dfn>logical</dfn> black and white.
+
+   <p>The third line sets the foreground color, the color to draw in, to
+white.  Finally, we draw our message.  The default
+drawing color in ProXL is <code>black_pixel</code>; this is why you didn't have to
+specify it earlier.  But now that we've specified white, all drawing
+will be done in white until we change it again.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-tut-dshd.html#pxl-tut-dshd">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-tut-siz.html#pxl-tut-siz">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-tut.html#pxl-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

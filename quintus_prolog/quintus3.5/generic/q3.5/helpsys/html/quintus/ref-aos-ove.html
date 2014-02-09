@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Overview</h4>
+
+   <p>The predicate described here, <code>unix/1</code>, provides the most commonly
+needed access to the operating system.  This
+minor extension to the Prolog system should be sufficient for most of
+your needs.  However, you can also extend the Prolog system with
+additional C code, including system calls, using the foreign function
+interface (see <a href="fli-p2f.html#fli-p2f">fli-p2f</a>).
+
+   <p>The reason for channeling all the interaction with the operating
+system through a single built-in predicate, rather than having
+separate predicates for each function, is simply to localize the
+system dependencies.  Admittedly, this makes for more cumbersome
+commands, so you may wish to put some clauses such as these in your
+<code>prolog.ini</code> file:
+
+<pre class="example">     
+     cd :- unix(cd).
+     cd(X) :- unix(cd(X)).
+     </pre>
+
+   <p>Initialization files are discussed in
+<a href="ref-pro.html#ref-pro">ref-pro</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-aos-euc.html#ref-aos-euc">Next</a>
+<li><a rel="up" accesskey="u" href="ref-aos.html#ref-aos">Up</a>
+</ul>
+</div>
+   </body></html>
+

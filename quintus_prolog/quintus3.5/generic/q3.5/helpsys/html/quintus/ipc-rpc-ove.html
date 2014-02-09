@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Overview</h4>
+
+   <p>We recommend that if you are just starting out, do <em>not</em> use this
+package.  The TCP package is much faster and more powerful. 
+IPC/RPC is not available under Windows.
+
+   <p>In releases prior to Quintus Prolog Release 2.5, this package was simply known
+as IPC.  It is now called IPC/RPC to distinguish it from another
+interprocess communication package, which is called IPC/TCP.  That
+package is more general than this one since its facilities can be used
+to implement the functionality of this package.
+
+   <p>This package has some interesting facilities for calling a Prolog servant
+from C.  Before Release 3.0, this was the only way to call Prolog from C. 
+Now Prolog can be fully embedded in a C application.
+
+   <p>This Interprocess Communication (IPC) package provides tools for
+allowing programs written in Prolog or C to remotely call predicates
+in a Prolog program that is running as a separate process, possibly
+on a different machine.  The communication between the processes is
+implemented using sockets or pipes to send goals to the remote process
+and to retrieve answers back.
+
+   <p>We refer to the Prolog process that is
+being invoked by some other program as a <dfn>servant</dfn>, because it provides
+a goal evaluation service at the request of another program:  it is given
+a goal to invoke, invokes it, and then returns the answers to the caller. 
+It is called a servant, as opposed to a server, because it serves a single
+master.  We refer to the program that is calling the servant as the
+<dfn>master</dfn>.  The interface described here permits a program (the master)
+to call <em>one</em> servant and use it to evaluate many subgoals.  The
+characteristics of the interface vary somewhat with the programming
+language of the master.  If the master is itself a Prolog program, then
+the interface can be much more flexible than when the calling program is
+written in a procedural language, such as C.  We divide the description of
+the interface into two parts:  (1) when the master program is written in
+Prolog, and (2) when the master program is written in C.  Although only C
+calling Prolog is documented, other languages can also call Prolog if they
+adhere to the specified protocol.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> On System V versions of UNIX or VMS, the master and server
+processes are currently required to run on the same machine, and the
+communication is via pipes rather than sockets.  On UNIX systems based
+on BSD, such as SunOS 4.x, the user can choose to use either pipes or
+sockets, provided that the two processes are on the same machine. 
+Sockets must be used when the processes are on separate machines. 
+When sockets are used, there needs to be an entry in the <code>/etc/hosts</code>
+file(s) for each machine that is used. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-p2p.html#ipc-rpc-p2p">Next</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc.html#ipc-rpc">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Contrasting Old and New Models</h5>
+
+   <p>To understand the motivation for the new "embeddability" layer,
+contrast the model of foreign language interface that previously
+held, as illustrated in the two following figures, with
+the new model illustrated in the figure "New Model".
+
+<br><p>
+   <img src="images/fli-old-model.png" alt="images/fli-old-model.png">
+
+<div align="center">Former Prolog interface to foreign code</div>
+
+   <p><b>The Old Model</b>:
+
+   <p>Under the one-directional foreign language interface, it was necessary
+to write a <code>main</code> program in Prolog as illustrated in the above figure
+The foreign language interface was able to call
+foreign code from this <code>main</code>.  There were basically two components,
+the Prolog Main, and the Foreign Program.  The foreign program itself
+could have all sorts of components.  However, from the point where the
+foreign code began, no more Prolog code could be inserted.  For
+instance, if you wanted to add a Prolog component to Module C of the
+program, it would be necessary to restructure the program to enable
+control to return to the Prolog <code>main</code>, where the new Prolog code could be
+called, and then reinvoke the foreign code in Module C.
+
+   <p>Another limitation of the old foreign interface was the possibility of
+conflicts between the foreign code called by the user's Prolog code and the
+foreign code used by the Quintus Prolog kernel.  For example, the Quintus Prolog kernel
+required total control of all memory allocation to ensure that the Prolog
+memory areas were contiguous. Therefore the users code could not use
+the system call <code>sbrk(2)</code> to allocate memory, but had to use the <code>malloc(3)</code>
+function provided with Quintus Prolog (see the following figure). 
+Now, however, the foreign functions used by the Quintus Prolog kernel forms the
+Embedding Layer and it is possible for the user to redefine these
+functions to conform to the requirements of his foreign code.
+
+<br><p>
+   <img src="images/fli-kernel.png" alt="images/fli-kernel.png">
+
+<div align="center">Prolog Kernel and Application calling Foreign Code</div>
+
+   <p><b>The New Model</b>:
+
+   <p>The new model can be represented as in the following figure. 
+The Embedding Layer contains C functions that establish defaults for
+memory management and I/O.  The user can redefine any of these modules
+so as to prevent conflicts between the application's C calls and the C
+calls made by the Quintus Prolog kernel.
+
+<br><p>
+   <img src="images/fli-diagram.png" alt="images/fli-diagram.png">
+
+<div align="center">New Model</div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="fli-emb-lay.html#fli-emb-lay">Up</a>
+</ul>
+</div>
+   </body></html>
+

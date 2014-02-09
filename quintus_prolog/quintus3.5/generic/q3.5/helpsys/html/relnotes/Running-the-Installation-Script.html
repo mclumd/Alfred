@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Running the Installation Script</h3>
+
+   <p>The next step is to invoke the <code>install3.5</code> script. 
+The script will verify that you are running
+on an appropriate platform and print some information:
+
+<pre class="example">     % <kbd>./install3.5</kbd>
+     
+             Quintus Prolog Release 3.5 Installation
+     
+        Installer            : &lt;your login name&gt;
+        Hostname             : &lt;your hostname&gt;
+        Machine type         : &lt;your machine type&gt;
+        Operating System     : &lt;your OS release version&gt;
+        Date of installation : &lt;date you installed Quintus&gt;
+     </pre>
+
+   <p>The installation script then asks for the path of the
+<var>QuintusDir</var>. This must be the same as the directory where the
+install script is located and is determined automatically by the install
+script. One reason to modify it would be if the default contained
+automount directories such as <code>/tmp_mnt</code>.
+
+<pre class="example">     Enter name of Quintus home directory [&lt;default directory&gt;]:
+     </pre>
+
+   <p>The script will then print the
+path chosen for <var>QuintusDir</var> and the installation log file.
+
+<pre class="example">        Quintus directory    : <var>QuintusDir</var>
+        Installation log file: <var>QuintusDir</var>/&lt;log file&gt;
+     </pre>
+
+   <p>Next, the script lists the available components to install:
+
+<pre class="example">        Select components that you wish to install.  You may type 'all'
+        to select all components or else type the individual components
+        on one line (e.g. pro edit qui).  Components marked with '*'
+        appear to be already installed.
+     
+        The following components are available:
+     
+              edit  - Quintus Prolog Emacs support files  (0.3Mb)
+              pro   - Quintus Prolog for Sun Sparc Platform  (22.5Mb)
+              proxl - Quintus Prolog low level interface to X windows (2.6Mb)
+              proxt - Quintus Prolog interface to Motif toolkit  (1.6Mb)
+              qui   - Quintus Prolog Motif-based User Interface  (3.4Mb)
+              sys   - Quintus Prolog System Files  (0.0Mb)
+     
+     Select [all]: <kbd>pro qui edit</kbd>
+     </pre>
+
+   <p>Some components depend on others--for example, most components depend
+on the <code>pro</code> component. 
+The script will inform you if you select a component that
+is dependent on another component that is not selected or installed.
+
+   <p>The <code>sys</code> component will only appear if you are running as
+<code>root</code>.  It will appear to be installed already (i.e. marked with
+<code>*</code>) if the <code>sys</code> component has been installed
+from a previous release of Quintus Prolog.  We recommend that you install
+this again as this release may contain updated versions of certain files.
+
+   <p>The script will then print the list of components it is about to install and
+ask if you wish to continue.  If you type <kbd>n</kbd> to this then the
+installation script will abort. Otherwise it will proceed to the next stage.
+
+<pre class="example">     The following components will be installed: pro qui edit
+     
+     Do you wish to continue? (y/n) <kbd>y</kbd>
+     </pre>
+
+   <p>The postinstall scripts are then executed for each component that has
+one.  With the exception of the <code>sys</code> package, these are not
+interactive and will just print informational messages about what they
+are doing. For example:
+
+<pre class="example">     % Executing pro install script
+     % Setting paths in executables
+     % Building prolog
+     % Executing qui install script
+     % Building qui
+     % Executing proxt install script
+     % Building proxt shared objects
+     </pre>
+
+   <p>The <code>sys</code> postinstall script will request some information about
+adding links to Prolog executables from a <code>bin</code> directory.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">Release Notes</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="Running-the-License-Manager.html#Running%20the%20License%20Manager">Next</a>
+<li><a rel="previous" accesskey="p" href="Preparing-For-Installation.html#Preparing%20For%20Installation">Previous</a>
+<li><a rel="up" accesskey="u" href="Installation-Guide.html#Installation%20Guide">Up</a>
+</ul>
+</div>
+   </body></html>
+

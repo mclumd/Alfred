@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Default Stream</h5>
+
+   <p>However, while the old Prolog I/O system is based on the C standard I/O
+library, the new Prolog I/O system is not. 
+If an application performs mixed I/O operation in
+Prolog and foreign code on the three default Prolog streams,
+it might not work appropriately under the new I/O
+due to incompatibilities between the buffering mechanism in the C standard
+I/O stream and the Quintus Prolog stream.
+
+   <p>Let's look at an example of a mixed output operation
+on a Prolog session under UNIX.  Both the C standard output stream
+and the Prolog <code>user_output</code> stream write output to the same file
+descriptor, 1, which is a tty.
+<pre class="example">     | ?- <kbd>set_output(user_output), write(first), c_printf('FIRST'),
+          write(second), c_printf('SECOND'), nl, c_nl.</kbd>
+     </pre>
+
+   <p>The predicate <code>c_printf/1</code> and <code>c_nl/0</code> calls the following C functions:
+<pre class="example">     void c_printf(atom)
+          char *atom;
+          {    printf("%s", atom); }
+     void c_nl() { putchar('\n'); }
+     </pre>
+
+   <p>The query yields the following output as expected prior to Quintus Prolog
+release 3.
+<pre class="example">     firstFIRSTsecondSECOND
+     </pre>
+
+   <p>However it yields the following output on Quintus Prolog release 3
+since each stream has its own buffer and no characters are actually
+written to the file descriptor 1 until new line operation is called.
+<pre class="example">     firstsecond
+     FIRSTSECOND
+     </pre>
+
+   <p>This problem can be solved by supplying a different embedding <code>QU_initio()</code>
+function at the time of the installation of Quintus Prolog (or at the time
+of creating a statically linked Prolog system)
+to create the three default streams based on C standard I/O streams. 
+How to create an unbuffered Prolog stream based on a C standard
+I/O stream has already been shown
+in the third example of creating customized Prolog streams
+(see <a href="fli-ios-uds-sst.html#fli-ios-uds-sst">fli-ios-uds-sst</a>)
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-bci-usr.html#fli-ios-bci-usr">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ios-bci.html#fli-ios-bci">Up</a>
+</ul>
+</div>
+   </body></html>
+

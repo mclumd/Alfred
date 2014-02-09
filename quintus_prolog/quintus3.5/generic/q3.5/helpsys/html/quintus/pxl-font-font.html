@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Font Attributes</h4>
+
+   <p>Font attributes are:
+     <dl>
+
+     <br><dt><code>direction(</code><var>V</var><code>)</code>
+     <dd>Does the font draw from left to right or
+right to left?  This is just a hint. 
+Possible values are <code>left_to_right</code> or
+<code>right_to_left</code>.
+
+     <br><dt><code>min_char(</code><var>V</var><code>)</code>
+     <dd>Character code of the lowest represented
+character in this font.
+
+     <br><dt><code>max_char(</code><var>V</var><code>)</code>
+     <dd>Character code of highest represented
+character in this font.
+
+     <br><dt><code>min_charset(</code><var>V</var><code>)</code>
+     <dd>The lowest represented character set in this
+font.  This is an integer between 0 and 255.
+
+     <br><dt><code>max_charset(</code><var>V</var><code>)</code>
+     <dd>The highest represented character set in this
+font.  This is an integer between 0 and 255.
+
+     <br><dt><code>all_chars_exist(</code><var>V</var><code>)</code>
+     <dd>Do all characters between the <code>min_char</code>
+and the <code>max_char</code> in character sets between the
+<code>min_charset</code> and the <code>max_charset</code> in this font
+have nonzero size?  Possible values are <code>true</code>
+and <code>false</code>.
+
+     <br><dt><code>default_char(</code><var>V</var><code>)</code>
+     <dd>The character code of the character printed
+for missing characters.
+
+     <br><dt><code>ascent(</code><var>V</var><code>)</code>
+     <dd>The number of pixels in the font above the
+base line.  This is the nominal ascent for
+the font; some characters may write above
+this point.
+
+     <br><dt><code>descent(</code><var>V</var><code>)</code>
+     <dd>The number of pixels in the font below at or
+below the base line.  This is the nominal
+ascent for the font; some characters may
+write below this point.
+
+     <br><dt><code>height(</code><var>V</var><code>)</code>
+     <dd>The font's ascent + descent.  This is the
+nominal height for the font; some characters
+may be taller.
+
+     <br><dt><code>property(</code><var>N, V</var><code>)</code>
+     <dd><var>V</var> is the value of the <var>N</var>
+ property of the font. 
+If <var>N</var> is unbound, backtrack through
+all the properties of the font.  If <var>N</var> is
+bound, it should be an atom.  <var>V</var> will be
+bound to an integer.  Consult a
+good reference on X for information about
+font properties.
+
+     <br><dt><code>max_lbearing(</code><var>V</var><code>)</code>
+     <dd>The maximum number of pixels left of the
+base point of any character in this font.
+
+     <br><dt><code>max_rbearing(</code><var>V</var><code>)</code>
+     <dd>The maximum number of pixels at or to the
+right of the base point of any character in
+this font.
+
+     <br><dt><code>max_width(</code><var>V</var><code>)</code>
+     <dd>The width of widest character in this font.
+
+     <br><dt><code>max_ascent(</code><var>V</var><code>)</code>
+     <dd>The largest height above baseline of any
+character in this font.
+
+     <br><dt><code>max_descent(</code><var>V</var><code>)</code>
+     <dd>Largest height at or the below baseline of
+any character in this font.
+
+     <br><dt><code>min_lbearing(</code><var>V</var><code>)</code>
+     <dd>Minimum number of pixels to the left of the base
+point of any character in this font.
+
+     <br><dt><code>min_rbearing(</code><var>V</var><code>)</code>
+     <dd>Minimum number of pixels at or to the right
+of the base point of any character in this
+font.
+
+     <br><dt><code>min_width(</code><var>V</var><code>)</code>
+     <dd>Width of narrowest character in this font.
+
+     <br><dt><code>min_ascent(</code><var>V</var><code>)</code>
+     <dd>Smallest height above baseline of any
+character in this font.
+
+     <br><dt><code>min_descent(</code><var>V</var><code>)</code>
+     <dd>Smallest height at or below the baseline of
+any character in this font.
+
+     <br><dt><code>char_lbearing(</code><var>C, V</var><code>)</code>
+     <dd><var>V</var> is the number of pixels left of the base
+point for the character whose character code
+is <var>C</var>.
+
+     <br><dt><code>char_rbearing(</code><var>C, V</var><code>)</code>
+     <dd><var>V</var> is the number of pixels right of the base
+point of character <var>C</var>.
+
+     <br><dt><code>char_width(</code><var>C, V</var><code>)</code>
+     <dd><var>V</var> is width of character <var>C</var>.
+
+     <br><dt><code>char_ascent(</code><var>C, V</var><code>)</code>
+     <dd><var>V</var> is height above the baseline of character
+<var>C</var>.
+
+     <br><dt><code>char_descent(</code><var>C, V</var><code>)</code>
+     <dd><var>V</var> is height at or below the baseline of
+character <var>C</var>.
+
+     <br><dt><code>char_height(</code><var>C, V</var><code>)</code>
+     <dd><var>V</var> is the ascent plus the descent of
+character <var>C</var>.
+
+     <br><dt><code>char_attribute_bits(</code><var>C, V</var><code>)</code>
+     <dd><var>V</var> is the attribute bits, represented
+as an integer, of character <var>C</var>.  The meaning
+of the attributes is not defined by X. 
+</dl>
+
+   <p>Font attributes are <dfn>read only,</dfn> it is not possible to change them.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-font-lod.html#pxl-font-lod">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-font.html#pxl-font">Up</a>
+</ul>
+</div>
+   </body></html>
+

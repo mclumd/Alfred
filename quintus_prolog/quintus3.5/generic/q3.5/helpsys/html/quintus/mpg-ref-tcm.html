@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>@&lt;/2</code>, <code>@=&lt;/2</code>, <code>@&gt;/2</code>, <code>@&gt;=/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><var>+Term1</var> <code>@&lt;</code> <var>+Term2</var>
+
+   <p>Succeeds if term <var>Term1</var> is <em>before</em> term <var>Term2</var> in the
+standard order.
+
+   <p><var>+Term1</var> <code>@=&lt;</code> <var>+Term2</var>
+
+   <p>Succeeds if term <var>Term1</var> is <em>not after</em> term <var>Term2</var>
+in the standard order.
+
+   <p><var>+Term1</var> <code>@&gt;</code> <var>+Term2</var>
+
+   <p>Succeeds if term <var>Term1</var> is <em>after</em> term <var>Term2</var> in the
+standard order.
+
+   <p><var>+Term1</var> <code>@&gt;=</code> <var>+Term2</var>
+
+   <p>Succeeds if term <var>Term1</var> is <em>not before</em> term
+<var>Term2</var> in the standard order.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Term1</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>Term2</var> <dfn>term</dfn>
+     <dd>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>These predicates use a standard total order
+when comparing terms.  The standard total order is:
+<pre class="display">     
+     variables <code>@&lt;</code> database references <code>@&lt;</code> numbers <code>@&lt;</code> atoms <code>@&lt;</code> compound terms
+     </pre>
+
+   <p>For further details see <a href="ref-lte-cte-sot.html#ref-lte-cte-sot">ref-lte-cte-sot</a>.
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">      | ?- <kbd>foo(1) @&lt; foo(2).</kbd>
+     
+     yes
+     | ?- <kbd>chicken @&lt; egg.</kbd>
+     
+     yes
+     | ?- <kbd>a @&lt; "a".</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>liberty @=&lt; pride</kbd>.
+     
+     yes
+     |?- <kbd>1 @=&lt; 1.0.</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>fie(1,1) @&gt; fie(1).</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>1 @&gt;= 1.0.</kbd>
+     
+     no
+     | ?- <kbd>1.0 @&gt;= 1.</kbd>
+     
+     yes
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>compare/3</code>, <code>==/2</code>, <code>\==/2</code>
+<a href="ref-lte.html#ref-lte">ref-lte</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-statistics.html#mpg-ref-statistics">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-spy.html#mpg-ref-spy">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

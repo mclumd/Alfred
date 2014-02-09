@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>save_predicates/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>save_predicates(</code><var>+PredSpecs</var><code>, </code><var>+File</var><code>)</code>
+
+   <p>Saves the predicates specified by the <var>PredSpecs</var> in QOF
+format to <var>File</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>PredSpecs</var> <dfn>pred_spec_tree</dfn> [MOD]
+     <dd>A list of predicate
+specifications.
+
+     <br><dt><var>File</var> <dfn>file_spec</dfn>
+     <dd>An atom representing a filename
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>save_predicates/2</code>
+saves the current definitions of all the predicates specified by the
+list of predicate specifications in QOF format into a file.  The
+<code>exported</code> and <code>meta_predicate</code> properties of the predicates are <em>not</em>
+stored in the QOF file.  The module of the predicates saved in the QOF
+file is fixed, so it is not possible to save a predicate from any
+module <code>foo</code>, and reload it into module <code>bar</code>.  Likewise, the module
+dependencies or foreign file dependencies of these predicates are
+<em>not</em> saved into the QOF file.  A typical use of this would be to
+take a snapshot of a table of dynamic facts.  The QOF file that is
+written out can be loaded into a development system (using
+<code>load_files/1</code>) or it can be linked with other QOF files using <code>qld</code>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+the list of predicate specifications or the filename is not ground.
+
+     <br><dt><code>type_error</code>
+     <dd><dt><code>domain_error</code>
+     <dd>
+in the list of predicate specifications or in the filename.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+the file is not writable, or a predicate is built-in.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+A predicate is undefined.
+
+   </dl>
+
+<h4 class="subheading">See Also:</h4>
+
+   <p><code>load_files/1</code>, <code>save_modules/2</code>,
+<code>save_program/1</code>, <code>volatile/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-save_program.html#mpg-ref-save_program">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-save_modules.html#mpg-ref-save_modules">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

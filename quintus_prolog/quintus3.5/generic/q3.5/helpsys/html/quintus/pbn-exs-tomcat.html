@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Configuring Tomcat for PrologBeans</h4>
+
+   <p>This section will briefly describe how to set up a Tomcat server
+so that is it possible to test the example JSPs. Some knowledge
+about how to run Tomcat and how to set up your own web application
+is required. Detailed information about Tomcat is
+available at <a href="http://jakarta.apache.org/tomcat/">http://jakarta.apache.org/tomcat/</a>.
+
+   <p>Assuming that you are positioned in the Tomcat installation directory,
+do the following:
+     <ol type=1 start=1>
+<li>Add the <code>prologbeans.jar</code> to the <code>common/lib/</code> directory. 
+Note that this will give all Tomcat applications access to the PrologBeans
+system. There are other options for importing <code>prologbeans.jar</code> that
+might be better for your type of application.
+
+     <li>In the <code>conf/server.xml</code> file add the following
+(after the Tomcat Root Context tags - shown as the first lines below):
+     <pre class="example">          [...]
+          &lt;!-- Tomcat Root Context --&gt;
+          &lt;!--
+            &lt;Context path="" docBase="ROOT" debug="0"/&gt;
+          --&gt;
+          
+          
+          &lt;DefaultContext&gt;
+             &lt;Resource name="prolog/PrologSession" auth="Container"
+                       type="se.sics.prologbeans.PrologSession"/&gt;
+          
+             &lt;ResourceParams name="prolog/PrologSession"&gt;
+               &lt;parameter&gt;
+                 &lt;name&gt;factory&lt;/name&gt;
+                 &lt;value&gt;org.apache.naming.factory.BeanFactory&lt;/value&gt;
+               &lt;/parameter&gt;
+               &lt;parameter&gt;
+                 &lt;name&gt;port&lt;/name&gt;
+                 &lt;value&gt;8066&lt;/value&gt;
+               &lt;/parameter&gt;
+             &lt;/ResourceParams&gt;
+          &lt;/DefaultContext&gt;
+          [...]
+          </pre>
+     This will register a <code>PrologSession</code> instance under the name
+<code>prolog/PrologSession</code> so that it is possible to do a JNDI
+lookup.
+
+     <li>In your application's <code>web.xml</code> file, found in Tomcat's
+<code>webapps/your_application/WEB-INF</code> directory, you need the
+following resource reference:
+     <pre class="example">              &lt;resource-ref&gt;
+                &lt;res-ref-name&gt;prolog/PrologSession&lt;/res-ref-name&gt;
+                &lt;res-type&gt;se.sics.prologbeans.PrologSession&lt;/res-type&gt;
+                &lt;res-auth&gt;Container&lt;/res-auth&gt;
+              &lt;/resource-ref&gt;
+          </pre>
+
+     <li>Copy the example JSP files that you want to use (<code>sessionsum.jsp</code>
+and <code>evaluate.jsp</code>) into the Tomcat web application directory
+(<code>webapps/your_application</code>).
+
+     <li>Start the Tomcat server.
+
+     <li>Start the example that you want to test (<a href="pbn-exa.html#pbn-exa">pbn-exa</a> shows how to
+start one of the examples).
+
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pbn-exs-srv.html#pbn-exs-srv">Previous</a>
+<li><a rel="up" accesskey="u" href="pbn-exs.html#pbn-exs">Up</a>
+</ul>
+</div>
+   </body></html>
+

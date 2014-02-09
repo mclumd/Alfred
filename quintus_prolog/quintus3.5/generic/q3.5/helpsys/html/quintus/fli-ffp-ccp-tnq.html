@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Terminating a Nondeterminate Prolog Query</h5>
+
+   <p><code>QP_close_query()</code> and <code>QP_cut_query()</code> are functions that are used to
+terminate an open nondeterminate Prolog query.  They differ only in their
+effect on the Prolog heap, which can be reflected in the solutions
+Prolog has returned to C.
+
+   <p>The difference between <code>QP_close_query()</code> and <code>QP_cut_query()</code> can
+best be understood with reference to Prolog's control flow. 
+<code>QP_close_query()</code> is equivalent to the Prolog call <code>!, fail</code>. 
+The cut renders the current computation determinate, removing the
+possibility of future backtracking.  The following call to <code>fail/0</code>
+then initiates backtracking to the next previous parent goal with
+outstanding alternatives.  In doing so it pops the Prolog heap to its
+state when the parent goal succeeded, in effect throwing away any
+terms created since that parent goal.
+
+   <p>In contrast, just calling <code>!</code> in Prolog renders the computation
+determinate without initiating backtracking.  Any terms created since
+the parent goal are retained.
+
+   <p>In the context of calling Prolog from foreign languages, terminating a
+query using <code>QP_close_query()</code> generally means throwing away the most recent
+solution that was calculated, unless that solution has been copied into
+a more permanent place.  (Of course, any previous solutions must also
+be assumed to have been overwritten by subsequent solutions unless copied
+elsewhere!)  The converse of this behavior is that closing a query using
+<code>QP_close_query()</code> automatically frees up the Prolog memory that holds
+the last solution.
+
+   <p>Terminating a query using <code>QP_cut_query()</code> renders the computation
+determinate, but as it is not failed over the Prolog heap is not
+popped.  Thus when terminating a query using <code>QP_cut_query()</code> more
+space is retained, but so is the most recent solution.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-ccp-snq.html#fli-ffp-ccp-snq">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-ccp.html#fli-ffp-ccp">Up</a>
+</ul>
+</div>
+   </body></html>
+

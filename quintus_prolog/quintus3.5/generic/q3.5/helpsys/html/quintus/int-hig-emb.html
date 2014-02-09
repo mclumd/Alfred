@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Embeddability</h4>
+
+   <p>Embeddability means the ability to embed a Prolog sub-program in a
+program written in some other language or languages.  It is
+described in <a href="fli-emb.html#fli-emb">fli-emb</a>.  The specific features of this
+release that contribute towards embeddability are:
+
+     <ul>
+
+     <li><b>Callable Prolog:</b> In earlier releases, Prolog could call routines
+written in other languages but the reverse was not possible.  Now
+each language can call the other, allowing much greater freedom in the
+way that multi-language programs can be organized (see <a href="fli-ffp.html#fli-ffp">fli-ffp</a>). 
+<li><b>Terms in C:</b> Compound terms can be passed to and from C.  Routines
+are provided for testing, unifying, comparing and constructing terms in
+C.  (See <a href="fli-p2f-trm.html#fli-p2f-trm">fli-p2f-trm</a>)
+<li><b>Access to C data structures:</b> Arithmetic evaluation has been extended
+so that elements of C data structures can be accessed.  Also, there is a
+new built-in predicate <code>assign/2</code>, which allows assignment into
+C data structures (see <a href="mpg.html#mpg">mpg</a>). 
+<li><b>Open OS Interface:</b> The main interfaces between the Prolog system
+and the operating system are now open.  That is, the I/O and memory
+management interfaces are a set of documented functions, which can
+be replaced by user-defined functions.  Source code is supplied for the
+default versions of these functions. (See <a href="fli-emb.html#fli-emb">fli-emb</a>)
+<li><b>Discontiguous Memory Management:</b> As in previous releases, the
+system requests memory from the operating system only as it needs it,
+and it frees it up again when possible.  (This contrasts with many other
+Prolog implementations in which all needed memory must be
+pre-allocated.)  An important difference with this release is that the
+allocated memory need not be contiguous.  This allows Prolog to better
+co-exist with other components that share its process' address space. 
+<li><b>User-defined </b><code>main()</code><b>:</b> There is no longer any necessity to use the
+default <code>main()</code> routine.  An application may call
+individual Prolog predicates and may never need to start an
+interactive Prolog session (See <a href="fli-emb.html#fli-emb">fli-emb</a>). 
+<li><b>Signal Handling:</b> Prolog used to trap all signals and then call
+any signal handler that had been specified by a user.  release 3
+does not intercept signals that are being handled by the user's code. 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="int-hig-qof.html#int-hig-qof">Next</a>
+<li><a rel="up" accesskey="u" href="int-hig.html#int-hig">Up</a>
+</ul>
+</div>
+   </body></html>
+

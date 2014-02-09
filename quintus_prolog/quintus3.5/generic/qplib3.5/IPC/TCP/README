@@ -1,0 +1,211 @@
+SCCS   : @(#)00/06/26 README	76.1
+Author : Tom Howland
+
+## [PM] June 2000
+This version of library(tcp) has several fixes to make it work
+on Windows.
+
+Notes:
+
+. tcp_select (i.e. 'QP_select') is not interruptible by CTRL-C. For
+  this reason calling tcp_select with infinite timeout is probably a
+  bad idea. If called with infinite timoeut and if there are no open
+  sockets then QP_select (and thus tcp_select) will return immediately
+  indicating a timeout.
+
+. Even with a finite timeout value but no open sockets QP_select (and thus
+  tcp_select) will return immediately indicating a timeout.
+  
+. tcp_watch_user is not supported on windows.
+
+. tcp_address_from_shell is not supported on windows.
+
+If there is a strong demand some of these restrictions may be lifted.
+
+qpsupport@sics.se
+
+
+## [PM] June 2000 Original README follows:
+
+Note that library(tcp) is discussed in the manual.  This note is for
+users of previous releases of the package and for users of the old RPC
+package.
+
+********** release 3.2
+
+C errors are no longer printed to user_error.  Instead, they are wrapped
+up in an exception term tcp_mishap(ErrorText, StandardUnixErrorNumber).
+Thus they can be handled by exception handlers or message hooks, as the
+following illustrates.
+
+    % what were messages printed by C are now exceptions
+    
+    | ?- tcp_address_from_file('/tmp/foo',A),tcp_connect(A,_).
+    ! tcp_connect.connect host(zen), port(1108), Unix error : Connection refused
+    
+    % make a message hook just to find out what the exception was
+    
+    | ?- [user].
+    | message_hook(A,_,_):-writeq(A),nl,fail.
+    term_reading
+    | ^D
+    load_completed(0,user,compile,user,33,180)
+    % user compiled in module user, 0.033 sec 180 bytes
+    
+    yes
+    top_level(user,0,nodebug)
+    term_reading
+    | ?- tcp_address_from_file('/tmp/foo',A),tcp_connect(A,_).
+    top_level_goal
+    tcp_mishap('tcp_connect.connect host(zen), port(1108)',61)
+    ! tcp_connect.connect host(zen), port(1108), Unix error : Connection refused
+    
+    top_level(user,0,nodebug)
+    term_reading
+    | ?- abolish(message_hook/3).
+    top_level_goal
+    
+    yes
+    
+    % create a predicate, my_connect/2, that quietly fails instead of
+    % raising an exception.
+    
+    | ?- [user].
+    | my_connect(A,C) :- on_exception(tcp_mishap(_,61), tcp_connect(A,C), fail).
+    | ^D
+    % user compiled in module user, 0.017 sec 140 bytes
+    
+    yes
+    | ?- tcp_address_from_file('/tmp/foo',A),my_connect(A,_).
+    
+    no
+    | ?- 
+
+
+
+The term that is sent when tcp_send/2 is called is now encoded in a
+special format for fast decoding when read in tcp_select/1.
+tcp_select/1 will recognize the "old" unencoded terms if they are wrapped
+in a term/1 wrapper.  If you were using the tcp package from C then this
+means the end_of_file needs to be wrapped as well as normal terms.
+Otherwise the change is quiet transparent.
+
+The predicate tcp_connect/3 is being retired.  It has never been easy to
+explain and added a surprising amount of overhead to the package.  It
+caused a handshaking to go on which has never been clearly documented.
+Use tcp_connect/2 instead.
+
+Callback interface
+
+To arrange for the client to make a callback whenever there is input
+available on a given socket:
+
+	...
+        tcp_connect(Address, Socket),
+	enable_input_callback(Socket),
+	...
+
+enable_input_callback(Socket) :-
+	tcp_create_input_callback(Socket, input_on(Socket)).
+
+input_on(Socket) :-
+	tcp_input_stream(Socket, I),
+	read(I, Term),
+	...
+
+To arrange for the server to make a callback whenever there is a
+connection request:
+
+    ...
+    tcp_create_listener(address(Port, Host), PassiveSocket),
+    tcp_create_input_callback(PassiveSocket, accept(PassiveSocket)),
+    ...
+
+accept(PassiveSocket) :-
+    tcp_accept(PassiveSocket, Socket),
+    enable_input_callback(Socket).
+
+
+New predicates: tcp_create_listener/2, tcp_destroy_listener/1 and
+tcp_listener/1 have replaced tcp_listen[1,2]. This allows for
+a process to listen on multiple ports and for the port number to be
+optionally specified.  tcp_address_to_file/2 writes the address to
+a file in a form understood by tcp_address_from_file/2.
+
+********** release 3.1
+
+Two new predicates are provided.
+
+tcp_listen_at_port/2.  This may be useful for environments where
+neither NFS or "rsh" are available, or where you want to avoid using
+"handle files".
+
+tcp_address_from_shell/4:  This adds a User Id parameter, so that the
+machine that has the handle file need not have an account for every
+user that wishes to access it.
+
+********** release 3.0
+
+The good news is that this release of tcp uses the new I/O, so sending
+and receiving messages is much faster (before we were using unbuffered
+I/O).  It is also using 3.0 style critical regions and exception
+handling.
+
+The bad news is that, with release 3.0, several cosmetic changes were
+made to the tcp package.  The ones that will get you are
+
+- the term that is sent by tcp_send is now term(Term), not t(Term)
+
+- the term that tcp_select/{1,2} returns is now term(C,Term), not
+  t(C,Term)
+
+- the support code for the example program cs.c was moved from tcp.pl
+  to the example program demo/server.pl ... keeping this in the tcp
+  package was just too problematic.
+
+Also, we want to phase out the use of tcp_nfs_connect/3,
+tcp_rsh_connect/4, tcp_wakeup/2, and tcp_set_keyboard/2.  There are
+backwards compatible copies provided, but please stop using them.  We
+plan on killing them in 1993.
+
+Instead of using tcp_nfs_connect/3, use tcp_address_from_file/2 and
+tcp_connect/3.
+
+Instead of using tcp_rsh_connect/4, use tcp_address_from_shell/3 and
+tcp_connect/3.
+
+Instead of using tcp_wakeup/2, use tcp_schedule_wakeup/2.
+
+Instead of using tcp_set_keyboard/2, use tcp_watch_user/2.
+
+********************************
+
+Comparison of RPC, the old IPC package, with the new TCP
+
+The RPC package had many limitations. There was no way to call a C
+server from Prolog, for example. The most serious limitation was that
+it had no facilities for maintaining more than one channel to another
+process at a time.  TCP addresses both of these limitations and
+several others.
+
+Calling Prolog from C: The RPC package supplied a formal C interface.
+Since with 3.0 calling prolog from C is supported directly, the
+importance of this feature in RPC has diminished considerably.
+
+Timers: The TCP package supplies timing predicates that allow one to
+
+   - schedule a wakeup
+
+   - poll for data
+
+   - wait for data
+
+   - wait for data with a timeout
+
+This is an area that was not covered by the RPC package. It's
+usefulness in real-world applications should be apparent.
+
+Runtime Generator: The TCP package can be used with the Runtime
+Generator product to create stand-alone executables. With the RPC
+package expect to use saved states, which makes it impossible to use
+with the Runtime Generator.

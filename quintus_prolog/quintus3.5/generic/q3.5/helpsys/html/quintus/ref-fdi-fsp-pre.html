@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Predefined file_search_path Facts</h5>
+
+   <p>An example of a directory hierarchy that has a constant structure,
+but that may be installed at different parts of the file system, is
+the Quintus installation hierarchy.  Several <code>file_search_path/2</code>
+facts are defined in the system to support the flexibility of this
+installation.
+
+   <p>The predefined <code>file_search_path/2</code> facts are dynamic and multifile,
+so they can be redefined or expanded by users. 
+In the Quintus Prolog Development System installed for a Sparc running Solaris,
+the following predefined <code>file_search_path/2</code> facts exist
+to specify the location of certain Development System related directories:
+<pre class="example">     file_search_path(quintus,<var>quintus-directory</var>).
+     file_search_path(runtime,<var>runtime-directory</var>).
+     file_search_path(runtime,'').
+     file_search_path(system,'sun4-5').
+     file_search_path(system,sun4).
+     file_search_path(system,'').
+     file_search_path(helpsys,quintus('generic/q3.5/helpsys')).
+     file_search_path(helpsys,package(helpsys)).
+     file_search_path(qplib,quintus('generic/qplib3.5')).
+     file_search_path(library,A) :-
+             library_directory(A).
+     file_search_path(messages,qplib(embed)).
+     file_search_path(language,english).
+     file_search_path(demo,quintus('generic/q3.5/demo/bench')).
+     file_search_path(demo,quintus('generic/q3.5/demo/chat')).
+     file_search_path(demo,quintus('generic/q3.5/demo/curses')).
+     file_search_path(demo,quintus('generic/q3.5/demo/math')).
+     file_search_path(demo,quintus('generic/q3.5/demo/menu')).
+     file_search_path(demo,quintus('generic/q3.5/demo/search')).
+     file_search_path(demo,quintus('generic/q3.5/demo/wafer')).
+     file_search_path(demo,qplib('IPC/TCP/demo')).
+     file_search_path(demo,qplib('IPC/RPC/demo')).
+     file_search_path(demo,package(demo)).
+     file_search_path(tutorial,quintus('generic/q3.5/tutorial')).
+     file_search_path(tutorial,package(tutorial)).
+     file_search_path(package,qplib(structs)).
+     file_search_path(package,qplib(objects)).
+     file_search_path(package,qplib(prologbeans)).
+     file_search_path(package,quintus('qui3.5')).
+     file_search_path(package,quintus('proxt3.5')).
+     file_search_path(package,quintus('proxl3.5')).
+     </pre>
+
+   <p><var>quintus-directory</var> is the root of the Quintus installation hierarchy.  It is
+the directory where Quintus Prolog is installed, and is
+also returned by
+<pre class="example">     | ?- <kbd>prolog_flag(quintus_directory, QuintusDir).</kbd>
+     </pre>
+
+   <p>(see <a href="ref-lps-flg-cha.html#ref-lps-flg-cha">ref-lps-flg-cha</a>, for discussion of <code>prolog_flag</code>s).  The Prolog flag
+<code>host_type</code> creates the <dfn>system</dfn> facts.
+
+   <p>The path aliases predefined by the <code>file_search_path/2</code> facts above
+have the following interpretation:
+
+     <dl>
+
+     <br><dt><code>quintus</code>
+     <dd>gives the absolute name of the <var>quintus-directory</var>;
+<var>quintus-directory</var> is the root of the Quintus installation hierarchy;
+
+     <br><dt><code>runtime</code>
+     <dd>set to the value of the <code>runtime</code> <code>prolog_flag/2</code>;
+in the Development System, the current working directory is also added as a
+runtime path;
+
+     <br><dt><code>system</code>
+     <dd>gives the name of the system specific directories; see
+<a href="ref-fdi-fsp-sys.html#ref-fdi-fsp-sys">ref-fdi-fsp-sys</a>
+below for more discussion of the <code>system</code> specific directories;
+
+     <br><dt><code>helpsys</code>
+     <dd>gives the location of the help-system files; only defined
+for the Development System;
+
+     <br><dt><code>qplib</code>
+     <dd>gives the root directory of the Quintus libraries; see
+the <code>library_directory/1</code> facts below;
+
+     <br><dt><code>library</code>
+     <dd>defined in terms of the <code>library_directory/1</code> facts for
+compatibility with previous releases;
+
+     <br><dt><code>package</code>
+     <dd>lists Quintus Prolog packages, such as add-ons, for which general
+file search path facts are defined (e.g. <code>library</code>, <code>helpsys</code>, <code>demo</code>, and
+<code>tutorial</code>);
+
+     <br><dt><code>messages</code>
+     <dd>gives the location of message files (e.g. <code>QU_messages</code>);
+
+     <br><dt><code>language</code>
+     <dd>gives the name of the current language specific directory. 
+One language specific directory exists
+under the embeddability directory in the library. This directory contains,
+for example, the file <code>QU_messages.pl</code>, which thus can be retrieved
+using the file specification <code>messages(language('QU_messages'))</code>;
+
+     <br><dt><code>demo</code>
+     <dd>gives the location of the Quintus Prolog demos;
+
+     <br><dt><code>tutorial</code>
+     <dd>gives the location of the Quintus Prolog tutorials. 
+</dl>
+
+   <blockquote>
+
+        <p><strong>Windows note:</strong>
+The <code>syslib</code> file search path is provided to allow standard convention
+for Windows to be followed when searching for DLLs and libraries specified
+in <code>load_foreign_executable/1</code>. At startup time, Prolog asserts
+<code>syslib</code> file search path facts based upon the path specified in the
+environment variable <code>PATH</code> (as well as a couple of standard locations).
+
+        <p>When running <code>qld</code>, the <code>syslib</code> file search path will be initialized
+to the path specified in the environment variable <code>LIB</code> in order to
+follow the Microsoft linker convention.
+
+        <p>Therefore, the directive
+     <pre class="example">          :- load_foreign_executable(syslib(kernel32)).
+          </pre>
+
+        <p>executed in the Development System will load <code>kernel32.dll</code>
+from a directory in the <code>PATH</code> environment variable, whereas if
+it is encountered by <code>qld</code>, the environment variable <code>LIB</code> will
+be used to locate the import library <code>kernel32.lib</code>.
+
+        <p>The syslib file search paths can be modified by user code in the
+Development System or with the <code>-f</code> and <code>-F</code> options to <code>qld</code>
+if necessary. 
+</blockquote>
+
+   <p>The library directories defined by the system  are:
+
+<pre class="example">     library_directory(qplib(library)).
+     library_directory(qplib(tools)).
+     library_directory(qplib('IPC/TCP')).
+     library_directory(qplib('IPC/RPC')).
+     library_directory(qplib(embed)).
+     library_directory(package(library)).
+     </pre>
+
+   <p>Note that these <code>file_search_path/2</code> and <code>library_directory/1</code> tables,
+except for <code>helpsys</code>,
+are also defined in <code>qpc</code> and <code>qld</code> (see <a href="too-too-qpc.html#too-too-qpc">too-too-qpc</a> and
+<a href="too-too-qld.html#too-too-qld">too-too-qld</a>).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-fdi-fsp-sys.html#ref-fdi-fsp-sys">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-fdi-fsp-fde.html#ref-fdi-fsp-fde">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-fdi-fsp.html#ref-fdi-fsp">Up</a>
+</ul>
+</div>
+   </body></html>
+

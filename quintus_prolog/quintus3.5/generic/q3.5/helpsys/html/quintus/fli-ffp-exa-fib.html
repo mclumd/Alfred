@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Generating Fibonacci Numbers</h5>
+
+   <p>Prolog and foreign languages are generally intercallable in Quintus
+Prolog; in particular, arbitrarily nested calling is permitted.  The
+following example uses recursive calling between Prolog and C to
+generate Fibonacci numbers:
+
+<pre class="example">
+                                     <div align="right"><em>fib.pl</em>
+     </div>
+     
+     fib :-
+         int(I),
+         fib(I, F),
+         write(fib(I,F)), nl,
+         fail.
+     
+     int(I) :- int(0, I).
+     
+     int(I, I).
+     int(I, K) :-
+         J is I+1,
+         int(J, K).
+     
+     fib(N, F) :-
+         (   N =&lt; 1 -&gt;
+             F = 1.0
+         ;   N1 is N-1,
+             N2 is N-2,
+             c_fib(N1, F1),
+             c_fib(N2, F2),
+             F is F1+F2
+         ).
+     
+     :- extern(fib(+integer, -float)).
+     
+     foreign(c_fib, c_fib(+integer, [-float])).
+     foreign_file(fib, [c_fib]).
+     
+     :- load_foreign_files(fib, []).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>fib.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     double c_fib(i)
+         long int i;
+         {
+             float f1, f2;
+             QP_pred_ref fib = QP_predicate("fib", 2, "user");
+     
+             if (i &lt;= 1) {
+                 return 1.0;
+             } else {
+                 QP_query(fib, i-1, &amp;f1);
+                 QP_query(fib, i-2, &amp;f2);
+                 return f1+f2;
+             }
+         }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-exa-ndp.html#fli-ffp-exa-ndp">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-exa-cpl.html#fli-ffp-exa-cpl">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-exa.html#fli-ffp-exa">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Declarative and Procedural Semantics</h4>
+
+   <p>The semantics of definite clauses should be fairly clear from the
+informal  interpretations already given.  However, it is useful to have
+a precise definition.  The <dfn>declarative semantics</dfn> of  definite  clauses
+tells  us  which  goals  can  be  considered true according to a given
+program, and is defined recursively as follows:
+
+   <blockquote>
+
+        <p>A goal is <dfn>true</dfn> if it is the head of some clause instance and
+     each  of  the  goals  (if  any)  in  the body of that clause
+     instance is true, where an <dfn>instance</dfn>
+     of a clause (or term) is
+     obtained  by  substituting,  for each of zero or more of its
+     variables, a new term for all occurrences of the variable. 
+</blockquote>
+
+   <p>For example, if a program contains the procedure for <code>concatenate/3</code>,
+declared in <a href="ref-sem-pro.html#ref-sem-pro">ref-sem-pro</a>, then the declarative semantics tells us that
+(A) is true, because this goal is the head of a certain instance of
+the second clause (K) for <code>concatenate/3</code>, namely (B), and we
+know that the only goal in the body of this clause instance is true,
+because it is an instance of the unit clause that is the first clause
+for <code>concatenate/3</code>.
+<pre class="example">     concatenate([a], [b], [a,b])
+     </pre>
+
+<pre class="example">     concatenate([a], [b], [a,b]):-
+        concatenate([], [b], [b]).
+     </pre>
+
+   <p>Note that the declarative semantics makes  no  reference  to  the
+sequencing of goals within the body of a clause, nor to the sequencing
+of clauses within a program.  This sequencing information is, however,
+very  relevant  for  the  <dfn>procedural semantics</dfn> that Prolog gives to
+definite clauses.  The procedural semantics defines  exactly  how  the
+Prolog  system  will execute a goal, and the sequencing information is
+the means by which the Prolog programmer directs the system to execute
+his  program  in a sensible way.  The effect of executing a goal is to
+enumerate, one by one, its true instances.  Here is  an  informal
+definition of the procedural semantics.
+
+   <blockquote>
+
+        <p>To <dfn>execute</dfn> a goal, the system searches forwards from the beginning of
+the program for the first  clause whose   head   <dfn>matches</dfn>   or
+<dfn>unifies</dfn>  with  the  goal.   The <dfn>unification</dfn> process (see "A
+Machine-Oriented Logic Based on the Resolution Principle" by J.A. Robinson,
+<em>Journal of the ACM</em> 12:23-44, January 1965) finds the most general common
+instance  of  the  two  terms, which is unique if it exists.  If a match is
+found, the matching  clause  instance is  then <dfn>activated</dfn> by executing
+in turn, from left to right, each of the goals (if any) in its body.  If at
+any time  the system  fails to find a match for a goal, it <dfn>backtracks</dfn>;
+that is, it rejects the most recently activated clause, undoing  any
+substitutions made by the match with the head of the clause.  Next it
+reconsiders the original goal  that  activated  the rejected clause, and
+tries to find a subsequent clause that also matches the goal. 
+</blockquote>
+
+   <p>For example, if we execute the goal expressed by the query (A) we find
+that it matches the head of the second clause for <code>concatenate/3</code>, with
+<code>X</code> instantiated to <code>[a|X1]</code>. The new variable <code>X1</code> is constrained by the
+new goal produced, which is the recursive procedure call (B) and this
+goal matches the second clause, instantiating <code>X1</code> to <code>[b|X2]</code>, and
+yielding the new goal (C).
+<pre class="example">     | ?- <kbd>concatenate(X, Y, [a,b]).</kbd> (A)
+     </pre>
+
+<pre class="example">     concatenate(X1, Y, [b]) (B)
+     </pre>
+
+<pre class="example">     concatenate(X2, Y, []) (C)
+     </pre>
+
+   <p>Now this goal will only match the first clause, instantiating both <code>X2</code>
+and <code>Y</code> to <code>[]</code>. Since there are no further goals to be executed, we have
+a solution
+<pre class="example">     X = [a,b]
+     Y = []
+     </pre>
+
+   <p>That is, the following is a true instance of the original goal:
+<pre class="example">     concatenate([a,b], [], [a,b])
+     </pre>
+
+   <p>If this solution is rejected, backtracking will generate  the  further
+solutions
+<pre class="example">     X = [a]
+     Y = [b]
+     
+     X = []
+     Y = [a,b]
+     </pre>
+
+   <p>in  that  order,  by  re-matching goals already solved once using the first
+clause of <code>concatenate/3</code>, against the second clause.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sem-cut.html#ref-sem-cut">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-sem-dis.html#ref-sem-dis">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sem.html#ref-sem">Up</a>
+</ul>
+</div>
+   </body></html>
+

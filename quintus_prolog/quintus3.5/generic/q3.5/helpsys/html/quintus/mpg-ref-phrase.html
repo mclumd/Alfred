@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>phrase/[2,3]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>phrase(</code><var>+*PhraseType</var><code>, </code><var>+*List</var><code>)</code>
+
+   <p><code>phrase(</code><var>+*PhraseType</var><code>, </code><var>+*List</var><code>, </code><var>*Rest</var><code>)</code>
+
+   <p>Used in conjunction with a grammar to parse or generate strings.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>PhraseType</var> <dfn>callable</dfn>
+     <dd>non-variable, name of a phrase type.  [MOD]
+
+     <br><dt><var>List</var> <dfn>list</dfn>
+     <dd>a list of symbols -- tokens or
+character codes.
+
+     <br><dt><var>Rest</var> <dfn>list</dfn>
+     <dd>a tail of <var>List</var>; what remains of
+<var>List</var> after <var>PhraseType</var> has been found.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Runs through the grammar
+rules checking whether there is a path by which <var>PhraseType</var> can
+be rewritten as <var>List</var>.
+
+   <p>If <var>List</var> is bound, this goal corresponds
+to using the grammar for parsing.  If <var>List</var> is unbound, this
+goal corresponds to using the grammar for generation.
+
+   <p><code>phrase/2</code> succeeds when the list <var>List</var> is a phrase of type
+<var>PhraseType</var> (according to the current grammar rules), where
+<var>PhraseType</var> is either a non-terminal or, more generally, a
+grammar rule body.  This predicate is a convenient way to start
+execution of grammar rules.
+
+   <p><code>phrase/3</code> succeeds when the portion of <var>List</var> between the start of
+<var>List</var> and the start of <var>Rest</var> is a phrase of type
+<var>PhraseType</var> (according to the current grammar rules), where
+<var>PhraseType</var> is either a non-terminal or, more generally, a grammar
+rule body.
+
+   <p><code>phrase/3</code> allows variables to occur as non-terminals in grammar
+rule bodies, just as <code>call/1</code> allows variables to occur as goals
+in clause bodies.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>PhraseType</var> is not bound.
+
+     <br><dt><code>type_error</code>
+     <dd>
+<var>PhraseType</var> is not callable.
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>See example in <a href="ref-gru-exa.html#ref-gru-exa">ref-gru-exa</a>.
+
+<h4 class="subheading">See also</h4>
+
+   <p><code>--&gt;/2</code>, <code>'C'/3</code>, <code>expand_term/2</code>,
+<code>term_expansion/2</code>
+<a href="ref-gru.html#ref-gru">ref-gru</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-portray.html#mpg-ref-portray">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-peek_char.html#mpg-ref-peek_char">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

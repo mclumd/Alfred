@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>release_font/1</code></h5>
+
+<pre class="example">     release_font(+<var>Font</var>)
+     </pre>
+
+   <p>Inform ProXL that <var>Font</var> is no longer being "held onto" by the
+programmer. 
+As soon as no gcs refer to it, <var>Font</var> will be unloaded.
+
+   <p><em>Warning</em>:  A font is considered to be "held onto" when it is created,
+or when it is got from a gc (e.g., by <code>get_graphics_attributes</code>). 
+It is the
+responsibility of the programmer to ensure that she is not releasing
+a font that is being held by another branch of her code.  For example,
+If a font is created, asserted somewhere, and put into a gc, and later
+is accessed through the gc, the programmer <em>must not</em> release it at this
+point, since it is still in the database and may be used.  <em>Be careful</em>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxl-font-lod-load_font.html#pxl-font-lod-load_font">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-font-lod.html#pxl-font-lod">Up</a>
+</ul>
+</div>
+   </body></html>
+

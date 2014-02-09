@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Tracing</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ipc-rpc-tra-msg_trace.html#ipc-rpc-tra-msg_trace">ipc-rpc-tra-msg_trace</a>:                msg_trace(-OldValue, +OnOrOff)
+</ul>
+
+   <p>A simple tracing facility is available for determining what messages are
+received by and sent from the Prolog servant.  When message tracing is on,
+messages sent or received cause a trace message to be written to the current
+output stream.  It will normally be redirected to a file by
+<code>create_servant/3</code> or <code>QP_ipc_create_servant()</code>.  The
+UNIX command <kbd>tail -f</kbd> may be helpful in looking at the trace messages. 
+Each trace message indicates what the corresponding interprocess message was. 
+The precise
+form of the trace information depends on whether the Prolog servant is serving
+a C program or another Prolog program.
+
+   <p>Message tracing can be turned on and off by having the servant process call
+<code>msg_trace/2</code> which is described below.  A master that is a Prolog process
+can use <code>call_servant/1</code> to cause the servant to call <code>msg_trace/2</code>. 
+It can also call <code>msg_trace/2</code> directly to control tracing of its own
+messages.
+
+   <p>To make a servant that serves a C master trace its message, it must either
+have had tracing turned on before its saved state was created, or it must
+provide an <code>external</code> routine that can be invoked by the C master to turn
+on tracing (see Example 4 in <a href="ipc-rpc-cpp-exa.html#ipc-rpc-cpp-exa">ipc-rpc-cpp-exa</a>).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-bug.html#ipc-rpc-bug">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc-cpp.html#ipc-rpc-cpp">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc.html#ipc-rpc">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Locating Procedures</h4>
+
+   <p>The Emacs/Prolog interface provides a facility that enables you to
+quickly locate procedures in source files once the procedures have been
+loaded.  If you have loaded several files into Prolog at once, it can be
+ helpful to be able to locate a procedure directly without
+having to search through several files.
+
+   <p>While inspecting the definition of <code>foo/1</code>,
+<pre class="example">     foo(X) :- bar(X).
+     </pre>
+
+   <p>in some Prolog source window, you may want to see the definition of the
+predicate <code>bar/1</code>.  To do so put the cursor anywhere on the name
+<code>bar</code> and type <kbd>&lt;ESC&gt; .</kbd> and respond to the Emacs message line,
+
+<pre class="example">     Find: (default bar/1)
+     </pre>
+
+   <p>by pressing &lt;RET&gt;.  Prolog will then visit the file that
+defined <code>bar/1</code> (this may be the same file that defined <code>foo/1</code>) and put
+the cursor on the first clause of <code>bar/1</code> in that file.
+
+   <p>While inspecting a previously submitted Prolog query,
+<pre class="example">     | ?- <kbd>bar(X).</kbd>
+     </pre>
+
+   <p>in the Prolog execution window, you may want to see the definition of
+the predicate <code>bar/1</code>.  This is done exactly in the same manner as
+above.
+
+   <p>Alternatively, you can type <kbd>&lt;ESC&gt; .</kbd>
+at the main Prolog prompt.  The cursor moves to the bottom of the screen, and
+the system displays the message
+<pre class="example">     Find:
+     </pre>
+
+   <p>Type the name of the predicate whose procedure you want to locate followed
+by a slash and
+the arity of the predicate; then press &lt;RET&gt;.  (Recall that the
+arity is the number of
+arguments the predicate has.) 
+For example, to locate the procedure for
+<code>employee(smith, harold)</code>, you would type <kbd>employee/2</kbd>, as shown below.
+<pre class="example">     Find: <kbd>employee/2 &lt;RET&gt;</kbd>
+     </pre>
+
+   <blockquote>
+
+        <p><strong>Please note:</strong>  You can type the predicate name without typing the arity, and the
+system will still locate the predicate.  If the predicate is defined for
+more than one arity, the system will simply locate one of the definitions
+of the predicate.  You can then type <kbd>&lt;ESC&gt; ,</kbd> to successively
+locate the other definition(s).
+
+        <p>This will also search other files for additional clauses for a
+multifile predicate, or will search for a predicate of the same name
+and arity in a different module. 
+</blockquote>
+
+   <p>If Prolog cannot find a procedure of the specified name and arity,
+it displays a message telling you the procedure is undefined:
+<pre class="example">     foo/2 is undefined
+     </pre>
+
+   <p>If the specified predicate is a built-in predicate,
+Prolog displays a message to that effect:
+<pre class="example">     nl/0 is a built-in predicate
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ema-ove-pin.html#ema-ove-pin">Previous</a>
+<li><a rel="up" accesskey="u" href="ema-ove.html#ema-ove">Up</a>
+</ul>
+</div>
+   </body></html>
+

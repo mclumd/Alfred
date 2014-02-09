@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Multiple events selected by different masks</h5>
+
+   <p>Two different masks, <code>structure_notify</code> and <code>substructure_notify</code>
+select essentially the same set of events, except that in the first
+case, the user gets the events that occur in the Window and
+in the second, the events that occur in its subwindows.
+
+   <p>To accommodate this, the event specification has an extra argument,
+whose value is either <code>self</code> or <code>child</code>. If omitted, it defaults
+to <code>self</code>, except for the case of <code>create_notify</code> as explained
+below.
+
+   <p>Remember that registering a callback for any of these events means
+that the Window will also be getting the others.
+
+   <p><b>Circulate Notify Event.</b>
+The server generates a <code>circulate_notify</code> event when a window is
+restacked.
+
+   <p>To receive this event when the window itself is affected, specify either:
+<pre class="example">     circulate_notify
+     circulate_notify(self)
+     </pre>
+
+   <p>To receive this event when a child window is affected, specify:
+<pre class="example">     circulate_notify(child)
+     </pre>
+
+   <p><b>Configure Notify Event.</b>
+The server generates a <code>configure_notify</code> event when there is
+any change to a window's configuration, i.e. position, size,
+etc.
+
+   <p>To receive this event when the window itself is affected, specify either:
+<pre class="example">     configure_notify
+     configure_notify(self)
+     </pre>
+
+   <p>To receive this event when a child window is affected, specify:
+<pre class="example">     configure_notify(child)
+     </pre>
+
+   <p><b>Destroy Notify Event.</b>
+The server generates a <code>destroy_notify</code> event when a window is
+destroyed.
+
+   <p>To receive this event when the window itself is affected, specify either:
+<pre class="example">     destroy_notify
+     destroy_notify(self)
+     </pre>
+
+   <p>To receive this event when a child window is affected, specify:
+<pre class="example">     destroy_notify(child)
+     </pre>
+
+   <p><b>Gravity Notify Event.</b>
+The server generates a <code>gravity_notify</code> event when a window is moved
+because its parent's size changed.
+
+   <p>To receive this event when the window itself is affected, specify either:
+<pre class="example">     gravity_notify
+     gravity_notify(self)
+     </pre>
+
+   <p>To receive this event when a child window is affected, specify:
+<pre class="example">     gravity_notify(child)
+     </pre>
+
+   <p><b>Map Notify Event.</b>
+The server generates a <code>map_notify</code> event when a window changes
+state from unmapped to mapped.
+
+   <p>To receive this event when the window itself is affected, specify either:
+<pre class="example">     map_notify
+     map_notify(self)
+     </pre>
+
+   <p>To receive this event when a child window is affected, specify:
+<pre class="example">     map_notify(child)
+     </pre>
+
+   <p><b>Unmap Notify Event.</b>
+The server generates an <code>unmap_notify</code> event when a window changes
+state from mapped to unmapped.
+
+   <p>To receive this event when the window itself is affected, specify either:
+<pre class="example">     unmap_notify
+     unmap_notify(self)
+     </pre>
+
+   <p>To receive this event when a child window is affected, specify:
+<pre class="example">     unmap_notify(child)
+     </pre>
+
+   <p><b>Reparent Notify Event.</b>
+The server generates a <code>reparent_notify</code> event when the parent of
+a window changes.
+
+   <p>To receive this event when the window itself is affected, specify either:
+<pre class="example">     reparent_notify
+     reparent_notify(self)
+     </pre>
+
+   <p>To receive this event when a child window is affected, specify:
+<pre class="example">     reparent_notify(child)
+     </pre>
+
+   <p><b>Create Notify Event.</b>
+The server generates a <code>create_notify</code> event when a window is created. 
+A newly created window does not receive this event, its parent does. 
+Specify with either:
+<pre class="example">     create_notify
+     create_notify(child)
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-ev-spec-sev2.html#pxl-ev-spec-sev2">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-ev-spec-mev1.html#pxl-ev-spec-mev1">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-ev-spec.html#pxl-ev-spec">Up</a>
+</ul>
+</div>
+   </body></html>
+

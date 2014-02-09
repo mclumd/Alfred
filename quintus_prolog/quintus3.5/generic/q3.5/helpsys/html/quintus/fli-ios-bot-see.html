@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Bottom Layer Seek Function</h5>
+
+<pre class="example">     int <var>&lt;seek function&gt;</var>(qpstream, qpmagic, whence, bufptr, sizeptr)
+            QP_stream        *qpstream;
+            union QP_cookie  *qpmagic;
+            int               whence;
+            unsigned char   **bufptr;
+            size_t           *sizeptr;
+     
+     Return Values:   QP_SUCCESS
+                      QP_ERROR
+     </pre>
+
+   <p>The bottom layer seek function sets the stream <code>qpstream</code> to a new
+position based on the method <code>whence</code> and the system-dependent
+file address <code>qpmagic</code> specified in the parameters. 
+The output parameter <code>*bufptr</code> stores the beginning of the buffer
+and <code>*sizeptr</code> stores the size of record.  When the bottom layer
+seek function is called, the <code>magic</code> field of <code>qpstream</code>
+is the current stream position known to the user of the stream. 
+(It does not include the unconsumed characters in the buffer.) 
+Upon success, the seek function should return
+<code>QP_SUCCESS</code> and the <code>magic</code> field of <code>qpstream</code> should
+be updated to the new position.  Upon failure, it returns <code>QP_ERROR</code>
+and suitable error code should be assigned to <code>error</code> field of <code>qpstream</code>.
+
+   <p>The stream is set to a new position based on the <code>whence</code> value and
+<code>qpmagic</code> values.  (see <a href="fli-ios-sst-sda.html#fli-ios-sst-sda">fli-ios-sst-sda</a>)
+     <ul>
+
+     <li>If <code>whence</code> is <code>QP_BEGINNING</code>, the <code>magic</code> field is the
+system-dependent address to be positioned from the beginning of the
+stream.  If the <code>seek_type</code> of the stream is <code>QP_SEEK_PREVIOUS</code>,
+the <code>whence</code> value is always <code>QP_BEGINNING</code>. 
+<li>If <code>whence</code> is <code>QP_CURRENT</code>, seeking is to be performed
+from the current position.  For instance, if <code>byteno</code> is used for
+<code>magic</code> field of <code>qpstream</code>, the stream should be set to the current
+position (<code>qpstream-&gt;magic.byteno</code>) plus the offset
+specified in <code>qpmagic-&gt;byteno</code>. 
+<li>If <code>whence</code> is <code>QP_END</code>, seeking is
+to be performed from the end of file position associated with <code>qpstream</code>. 
+For instance, if <code>byteno</code> is used for
+<code>magic</code> field of <code>qpstream</code>, the stream should be set to the size
+of the file associated with <code>qpstream</code> plus the offset
+specified in <code>qpmagic-&gt;byteno</code>. 
+</ul>
+
+   <p>Due to the buffering mechanism of a stream,
+the <code>magic</code> field in <code>qpstream</code> might be different
+from the actual position for the file (or other devices) associated
+with the stream.  For example, if the current record of an input stream
+has a size of 10 and there are only 5 characters consumed, the <code>magic</code>
+field indicates the position at the sixth character rather than the
+11th character of the current record. 
+In short, the value in <code>magic</code> field of <code>qpstream</code> does not
+count any characters in the buffer that are not consumed in an input
+stream.  For an output stream, the caller of the bottom layer seek
+function will call flush function to flush output prior to calling this
+function if <code>qpstream</code> permits flushing (<code>flush_type</code> is not
+<code>QP_FLUSH_ERROR</code> ). The caller of this function
+does not permit any seeking in an output stream with no flush permission
+if there are characters in the current record (line position is not zero
+in the output stream).  However, if the bottom layer of an output
+stream without flushing permission buffers more than one output record,
+it is possible for the bottom layer seek function to be called with records
+in the buffer.  (This would be the case that there are no characters in
+the current record.)  The bottom layer seek function should write
+out the records in the buffer for this case.
+
+   <p>One effect of seeking is to clear out the buffer of a stream. 
+This should be adhered to in implementing the bottom layer seek function. 
+If <code>qpstream</code> is an input stream, <code>bufptr</code> and <code>sizeptr</code>
+have the same meaning as in the bottom layer read function. 
+If <code>qpstream</code> is an output stream, <code>bufptr</code> and <code>sizeptr</code>
+have the same meaning as in the bottom layer write function. 
+So for most of cases, <code>*bufptr</code> should be set to the beginning
+of the buffer of the stream and <code>*sizeptr</code> should be set as follows:
+<pre class="example">     *sizeptr = (qpstream-&gt;mode == QP_READ) ? 0 : qpstream-&gt;max_reclen;
+     </pre>
+
+   <p>The bottom layer seek function for our example stream:
+<pre class="example">     static int
+     bin_seek(qpstream, qpmagic, whence, bufptr, sizeptr)
+          QP_stream          *qpstream;
+          union QP_cookie    *qpmagic;
+          int                whence;
+          unsigned char      **bufptr;
+          size_t             *sizeptr;
+          {
+             BinStream *stream = CoerceBinStream(qpstream);
+             off_t        new_offset;
+     
+             switch (whence) {
+             case QP_BEGINNING:
+                 new_offset = lseek(stream-&gt;fd,qpmagic-&gt;byteno,L_SET);
+                 break;
+             case QP_CURRENT:
+                 /* The current location of file pointer is different
+                    from what the user thinks it is due to buffering.
+                    The magic field has been brought up to date by the
+                    caller of this function already, so just seek to
+                    that position first. */
+                 if (lseek(stream-&gt;fd, qpstream-&gt;magic.byteno, L_SET)
+                                                        == -1) {
+                     qpstream-&gt;errno = errno;
+                     return QP_ERROR;
+                 }
+                 new_offset = lseek(stream-&gt;fd,qpmagic-&gt;byteno,L_INCR);
+                 break;
+             case QP_END:
+                 new_offset = lseek(stream-&gt;fd,qpmagic-&gt;byteno,L_XTND);
+                 break;
+             default:
+                 qpstream-&gt;errno = QP_E_INVAL;
+                 return QP_ERROR;
+             }
+             if (new_offset == -1) { /* error in seeking */
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+     
+             qpstream-&gt;magic.byteno = new_offset;
+             *bufptr  = stream-&gt;buffer;
+             *sizeptr = (qpstream-&gt;mode == QP_READ) ? 0
+                                        : qpstream-&gt;max_reclen;
+             stream-&gt;last_rdsize = 0;
+             return QP_SUCCESS;
+          }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-bot-clo.html#fli-ios-bot-clo">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-bot-flu.html#fli-ios-bot-flu">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-bot.html#fli-ios-bot">Up</a>
+</ul>
+</div>
+   </body></html>
+

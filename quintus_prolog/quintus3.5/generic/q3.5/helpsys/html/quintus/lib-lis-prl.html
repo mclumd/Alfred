@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">What is a "Proper" List?</h4>
+
+   <p>Several of the predicate descriptions below indicate that a particular
+predicate only works when a particular argument "is a proper list". 
+A <dfn>proper list</dfn> is either the atom <code>[]</code> or else it is of the
+form <code>[_|</code><var>L</var><code>]</code> where <var>L</var> is a proper list.  <var>X</var> is a
+<dfn>partial list</dfn> if and only if <code>var(</code><var>X</var><code>)</code> or <var>X</var> is
+<code>[_|</code><var>L</var><code>]</code> where <var>L</var> is a partial list.  A term is a list
+if it is either a proper list or a partial list; that is, <code>[_|foo]</code>
+is not normally considered to be a list because its tail is neither a
+variable nor <code>[]</code>.
+
+   <p>Note that the predicate <code>is_list(</code><var>X</var><code>)</code> defined in
+<code>library(lists)</code> really tests whether <var>X</var> is a <dfn>proper</dfn>
+list.  The name is retained for compatibility with earlier releases of
+the library.  Similarly, <code>is_set(</code><var>X</var><code>)</code> and
+<code>is_ordset(</code><var>X</var><code>)</code> test whether <var>X</var> is a proper list that
+possesses the additional properties defining sets and ordered sets.
+
+   <p>The point of the definition of a proper list is that a recursive procedure
+working its way down a proper list can be certain of terminating.  Let us
+take the case of <code>last/2</code> as an example.  <code>last(X, L)</code> ought to be true when
+<code>append(_, [X], L)</code> is true.  The obvious way of doing this is
+<pre class="example">     last(Last, [Last]).
+     last(Last, [_|Tail]) :-
+             last(Last, Tail).
+     </pre>
+
+   <p>If called with the second argument a proper list, this definition
+can be sure of terminating (though it will leave an extra choice
+point behind).  However, if you call
+<pre class="example">     | ?- <kbd>last(X, L), length(L, 0).</kbd>
+     </pre>
+
+   <p>where <code>L</code>
+is a variable, it will backtrack forever, trying ever longer lists. 
+Therefore, users should be sure that only proper lists are used in those
+argument positions that require them.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-lis-lis.html#lib-lis-lis">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-lis-bas.html#lib-lis-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-lis.html#lib-lis">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>flush_output/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>flush_output(</code><var>+Stream</var><code>)</code>
+
+   <p>Forces the buffered output of the stream <var>Stream</var> to be sent
+to the associated device.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>a valid Prolog stream
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Sends the current buffered output of an output
+stream <var>Stream</var> to the actual output device, which is usually
+a disk or a tty device.  <code>flush_output/1</code> fails if <var>Stream</var>
+does not permit flushing or the bottom layer flushing function
+of <var>Stream</var> is not properly defined.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>), plus:
+     <dl>
+
+     <br><dt><code>permission_error</code>
+     <dd>
+                An error occurred in flushing out the buffered output.
+
+   </dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>If the host operating system, such as UNIX,
+buffers an output file stream, the output may be written to the disk
+some time after <code>flush_output/1</code> succeeds.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>nl/[0,1]</code>, <code>QP_flush()</code>, <code>QU_flush_output()</code>,
+<code>ttyflush/0</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-foreign.html#mpg-ref-foreign">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-float.html#mpg-ref-float">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

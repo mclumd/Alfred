@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Existential Quantifier</h5>
+
+   <p><var>X</var> <code>^</code> <var>P</var> is recognized as meaning "there exists an
+<var>X</var> such that <var>P</var> is true", and is treated as equivalent to
+simply calling <var>P</var>.  The use of the explicit existential
+quantifier outside <code>setof/3</code> and <code>bagof/3</code> is superfluous.
+
+   <p>Variables occurring in <var>Generator</var> will not be treated as free if they are
+explicitly bound within <var>Generator</var> by an existential quantifier. 
+An existential quantification is written:
+<pre class="example">     <var>Y</var>^<var>Q</var>
+     </pre>
+
+   <p>meaning "there exists a <var>Y</var> such that <var>Q</var> is true", where <var>Y</var>
+is some Prolog variable. 
+For example:
+<pre class="example">     | ?- <kbd>setof(X, Y^likes(X,Y), S).</kbd>
+     </pre>
+
+   <p>would produce the single result
+<pre class="example">     X = _400,
+     Y = _415,
+     S = [bill,dick,harry,jan,tom] <kbd>;</kbd>
+     
+     no
+     </pre>
+
+   <p>in contrast to the earlier example.
+
+   <p>Furthermore, it is possible to existentially quantify a term, where
+all the variables in that term are taken to be existentially quantified
+in the goal.  e.g.
+
+<pre class="example">     A=term(X,Y), setof(Z, A^foo(X,Y,Z), L).
+     </pre>
+
+   <p>will treat <var>X</var> and <var>Y</var> as if they are existentially quantified.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="ref-all-cse.html#ref-all-cse">Up</a>
+</ul>
+</div>
+   </body></html>
+

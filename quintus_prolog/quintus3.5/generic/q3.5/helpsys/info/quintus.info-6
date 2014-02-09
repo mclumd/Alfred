@@ -1,0 +1,1165 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: dbg-bas-upe,  Next: dbg-bas-tra,  Prev: dbg-bas-pbx,  Up: dbg-bas
+
+Understanding Prolog Execution Using The Debugger
+-------------------------------------------------
+
+   The Quintus Prolog debugger extends the procedure box control flow
+model to add extra information about the details of the execution of a
+goal, allowing you to better understand how your code behaves, and its
+efficiency.
+
+   Prolog incorporates a "backtracking" mechanism as a basic feature,
+which allows Prolog programs to efficiently search for multiple
+solutions to a problem.  A goal is "determinate"
+
+   if it has only one solution (or none).  Often, this is what is
+desired.  When a goal is not determinate, Prolog must keep around
+information to allow it to backtrack to look for alternate solutions.
+This extra information is called a "choice point" .
+
+   When a goal is intended to be nondeterminate, it may be expected to
+leave a choice point.  However, when a goal that is expected to be
+determinate leaves a choice point, this may indicate an error in the
+program.  In this case, the goal might succeed with the correct answer,
+but on backtracking produce wrong answers or not terminate.  At the
+very least, an unnecessary choice point means that memory is being
+wasted.  Quintus Prolog detects many kinds of determinate goals, and
+either does not allocate a choice point at all, or deallocates it as
+soon as possible, saving time and memory (see *Note bas-eff-cut-ove::).
+Sometimes, however, you must help Prolog out by putting a cut
+
+   (see *Note bas-eff-cut-mpd::) in your program, or by using an
+if-then-else (see *Note ref-sem-con::) construct.  The Quintus Prolog
+debugger helps you find such cases.
+
+   Quintus Prolog "indexes"  on the first argument of a predicate.
+This means that if the first arguments in the clauses of a predicate
+are not variables, and the first argument in a call to that predicate
+is non-variable, then Prolog will go directly to the clause that
+matches, without even considering those that don't. Note that in order
+for this indexing to be very efficient, it only looks at the principal
+functor of a compound term.  This means that if the first argument of
+one clause is a(a) and the first argument of the next clause is a(b),
+indexing will not be able to distinguish these clauses, so both will
+need to be tried.
+
+   Actually, indexing is more complicated than this.  Any clause whose
+head has a variable as first argument will match any call, so indexing
+cannot be applied to this clause.  Therefore, a predicate can be
+divided into alternating groups of adjacent indexable and nonindexable
+clauses.  When the first argument of a call is non-variable, Quintus
+Prolog will skip over any clauses that don't match that argument,
+within a group of adjacent indexable clauses.  Quintus Prolog will then
+try every clause in a group of adjacent nonindexable clauses, and then
+again skip nonmatching clause in an indexable group, and so on.
+
+   Even more important than time saved by indexing is its effect on
+determinacy.  In effect, indexing makes it possible to ignore clauses
+_following_ the clause being tried, as well as clauses preceding it.
+If it is possible to ignore all the clauses following the clause being
+tried, then Prolog will not create a choice point, or if a choice point
+has already been allocated for the call, Prolog will de-allocate it.
+Careful use of indexing can save a great deal time and memory running
+your program.
+
+   The Quintus Prolog debugger helps you understand these efficiency
+concerns, and also Quintus Prolog's exception handling, by extending
+the box model with three extra ports.  These ports are described below.
+
+Done
+     This is just like the Exit port, but signifies a determinate exit.
+     This will help you to find goals that are nondeterminate and
+     shouldn't be.
+
+Head
+     This port shows the clauses' heads that will be tried for
+     unification.  At the Head port, you will see which clause is about
+     to be tried, and which clause will be tried next if this clause
+     fails.  Note that the Head port is shown _after_ indexing is done,
+     so it helps you understand how indexing is working for you.  And
+     since it shows what clause will be tried next, it also helps you
+     understand how unexpected nondeterminacy may be creeping into your
+     program.
+
+Exception
+     The Exception port signifies an exception being raised while
+     executing a goal.
+
+   Here's a more complete picture of the invocation box, including the
+extended ports.
+
+              +---------+------------------------------+
+        Call  |         |                              |  Exit
+     -------->|  ------>| descendant(X, Y) :-          |------->
+              |   Head  |          offspring(X, Y).    |
+              |         |                              |  Done
+     <--------|         |                              |------->
+        Fail  |  ------>| descendant(X, Z) :-          |
+              |   Head  |          offspring(X, Y),    |
+     <--------|         |          descendant(Y, Z).   |<-------
+     Exception|         |                              |  Redo
+              +---------+------------------------------+
+
+
+File: quintus.info,  Node: dbg-bas-tra,  Next: dbg-bas-con,  Prev: dbg-bas-upe,  Up: dbg-bas
+
+Traveling Between Ports
+-----------------------
+
+* Menu:
+
+* dbg-bas-tra-btc::                     Basic Traveling Commands
+* dbg-bas-tra-spy::                     Spypoints
+* dbg-bas-tra-tss::                     Traveling Commands Sensitive to Spypoints
+* dbg-bas-tra-ccf::                     Commands That Change The Flow Of Control
+
+   The Quintus Prolog debugger provides a rich set of commands to move
+between ports (that is, execute your program in a controlled way).
+
+
+File: quintus.info,  Node: dbg-bas-tra-btc,  Next: dbg-bas-tra-spy,  Up: dbg-bas-tra
+
+Basic Traveling Commands
+........................
+
+creep
+     Causes the debugger to single-step to the very next port.
+
+skip
+     Causes the debugger to skip, or ignore, the internal details of a
+     procedure's execution.  The debugger starts showing goals again
+     when execution returns to the invocation's Done, Exit, Fail, or
+     Exception port.  If the debugger is already at the invocation's
+     Done, Exit, Fail, or Exception port, then skipping is meaningless,
+     and the debugger will just creep.  Note that skipping is very
+     fast, running at nearly full compiled speed.
+
+     One important point about skipping:  if the goal you skip over is
+     not determinate, and you later redo (backtrack) into the goal, you
+     will not be able to see the redos into goals that were skipped
+     over.  This is because the debugger does not keep any information
+     about the goals that have been skipped over, in order to achieve
+     much greater speed.  You will, however, be able to see any new
+     calls that are executed in the process of trying to redo the goal.
+
+nonstop
+     Turns off the debugger for the rest of the execution of the
+     top-level goal.  When the execution of this goal is completed, the
+     debugger returns to its current mode.  This option does _not_ turn
+     the debugger off; to turn the debugger off, you must type
+     "nodebug."  at the main Prolog prompt.  Like skip, nonstop causes
+     the debugger to run at nearly full compiled speed.
+
+
+File: quintus.info,  Node: dbg-bas-tra-spy,  Next: dbg-bas-tra-tss,  Prev: dbg-bas-tra-btc,  Up: dbg-bas-tra
+
+Spypoints
+.........
+
+   "Spypoints" allow you to indicate where to stop on a per-predicate
+or even per-goal basis.  For example, you might find that you want to
+run until some particular predicate is called.  In this case, you would
+set a spypoint on that predicate, using `spy/1'.  Such spypoints are
+turned off with `nospy/1'.
+
+   It may be desirable to stop when you get to a particular call from
+one predicate to another.  This can be done with the built-in predicate
+`add_spypoint/1'.  These spypoints can be removed with
+`remove_spypoint/1'.
+
+   To examine spypoints, use `current_spypoint/1'.  Spypoints are also
+included in the output of `debugging/0'.  Finally, spypoints can be
+removed all at once with `nospyall/0'.
+
+   The debuggers also have commands for setting spypoints, which are
+easier to use than these predicates.
+
+
+File: quintus.info,  Node: dbg-bas-tra-tss,  Next: dbg-bas-tra-ccf,  Prev: dbg-bas-tra-spy,  Up: dbg-bas-tra
+
+Traveling Commands Sensitive to Spypoints
+.........................................
+
+   The basic traveling commands listed above all ignore spypoints; the
+following commands take advantage of spypoints.
+
+leap
+     Causes the debugger to resume running your program, stopping only
+     when the next spypoint is reached, or when the program terminates.
+     Leaping can be used to follow the program's execution at a higher
+     level than exhaustive tracing through creeping.  This is done by
+     setting spypoints on a set of pertinent procedures or calls, then
+     following the control flow through these by leaping from one to the
+     next.
+
+quasi-skip
+     Causes the debugger to resume running your program, stopping when
+     the next spypoint is reached.  It also ensures that the debugger
+     will stop at the current invocation's Done, Exit, Fail, or
+     Exception port, when one is reached.  Thus quasi-skip is a
+     combination of leaping and skipping.  You may use it to travel to
+     the next spypoint while also marking a place to stop when
+     execution returns there.
+
+zip
+     Is just like leap, except that the debugger does not keep any
+     debugging information while looking for a spypoint, so it runs at
+     nearly full compiled speed.  It does mean that the debugger will
+     be unable to show you the ancestors between the invocation you
+     zipped from and the invocation you stopped at.
+
+     Zipping gives up some information in exchange for greatly increased
+     speed.  This is not always desirable, but sometimes is very
+     helpful.  A good use for zipping might be to run through a
+     time-consuming initial part of a computation that is known to work
+     properly, and stop at the beginning of a part that has a bug.
+     From that point, you might use leaping, creeping, and skipping to
+     locate the bug.
+
+
+File: quintus.info,  Node: dbg-bas-tra-ccf,  Prev: dbg-bas-tra-tss,  Up: dbg-bas-tra
+
+Commands That Change The Flow Of Control
+........................................
+
+   The debugger also has these commands that alter the flow of control
+of your program.
+
+retry
+     This can be used at any of the seven ports (although at the Call
+     port it has no effect).  Control is transferred back to the Call
+     port of the box.  It allows you to restart an invocation when, for
+     example, you find yourself leaving with some incorrect result.  The
+     state of execution is exactly the same as when you originally
+     called the procedure, except that clauses that have been changed
+     by the database modification predicates will not be changed back
+     to their original state.
+
+fail
+     This is similar to Retry except that it transfers control to the
+     Fail port of the current box.  It places your execution in a
+     situation in which it is about to backtrack out of the current
+     invocation, having failed the goal.
+
+
+File: quintus.info,  Node: dbg-bas-con,  Next: dbg-bas-sum,  Prev: dbg-bas-tra,  Up: dbg-bas
+
+Debugger Concepts
+-----------------
+
+* Menu:
+
+* dbg-bas-con-tdz::                     Trace Mode, Debug Mode, And Zip Mode
+* dbg-bas-con-lea::                     Leashing
+* dbg-bas-con-loc::                     Locked Predicates
+* dbg-bas-con-unk::                     Unknown Procedures
+* dbg-bas-con-cds::                     Current Debugging State
+
+
+File: quintus.info,  Node: dbg-bas-con-tdz,  Next: dbg-bas-con-lea,  Up: dbg-bas-con
+
+Trace Mode, Debug Mode, And Zip Mode
+....................................
+
+   The debugger has three modes of operation: trace mode, debug mode,
+and zip mode.  While trace mode is in force, every time you type a goal
+at the top level, the debugger starts single-stepping (creeping)
+immediately.   In contrast, while debug mode is in force, the debugger
+does nothing until a call is made to a procedure or goal on which you
+have placed a spypoint.  That is, it starts by leaping.   Similarly,
+when in zip mode, the debugger begins by zipping.
+
+   The debugger mode (trace, debug, or zip) determines the first
+procedure call that will be traced after a goal is typed at top level.
+There is no other difference among the three modes.  Whenever the
+debugger prompts you for input, you have a number of options, including
+those of creeping (single-stepping) leaping (jumping to the next
+spypoint), and zipping (jumping to the next spypoint without keeping
+debugging information).
+
+   The debugger mode can be set by using
+   * `prolog_flag/3' (see *Note ref-lps-ove::)
+
+   * `trace/0'
+
+   * `debug/0'
+
+   * `spy/1' also starts the debug mode if the debugger was off.
+
+   * ^c interrupts: `d' for debug mode, and `t' for trace mode.
+
+   * the Debug menu of the QUI main window (see *Note qui-mai-mai-deb::)
+
+
+File: quintus.info,  Node: dbg-bas-con-lea,  Next: dbg-bas-con-loc,  Prev: dbg-bas-con-tdz,  Up: dbg-bas-con
+
+Leashing
+........
+
+   The purpose of leashing is to allow you to speed up single-stepping
+(creeping) through a program by telling the debugger that it does not
+always need to wait for user interaction at every port.
+
+   The leashing mode only applies to procedures that do not have
+spypoints on them, and it determines which ports of such procedures are
+leashed.  By default, all ports are leashed.  On arrival at a leashed
+port, the debugger will stop to allow you to look at the execution
+state and decide what to do next.  At unleashed ports, the goal is
+displayed but program execution does not stop to allow user interaction.
+
+   At any time, there is a "leashing" mode in force, which determines at
+which of the seven ports of a procedure box (Call, Exit, Redo, Fail,
+Done, Head, and Exception) the debugger will stop and wait for a
+command.  By default, the debugger will stop at every port, but
+sometimes you may wish to reduce the number of times you have to issue
+commands.  For example, it is often convenient only to have to interact
+at the Call, Redo, and Exception ports.
+
+   To set the leashing mode, that is, to specify ports for leashing,
+call `leash/1'.  The leashing mode can also be set from the options menu
+of the source linked debugger (see *Note dbg-sld::).
+
+     *Please note:*  Spypoints are not affected by leashing; the
+     debugger will always stop at every port for a procedure or call on
+     which there is a spypoint.
+
+
+File: quintus.info,  Node: dbg-bas-con-loc,  Next: dbg-bas-con-unk,  Prev: dbg-bas-con-lea,  Up: dbg-bas-con
+
+Locked Predicates
+.................
+
+   To allow users to produce code that cannot be debugged by others (for
+security reasons), Quintus Prolog 3.0 supports the concept of a "locked
+predicate".  A locked predicate will be treated by the debugger as
+opaque: users will not be able to creep into it.  The debugger will
+behave in much the same way for locked predicates as it does for
+built-ins.
+
+   Predicates may be locked by specifying the `-h' switch to `qpc' when
+compiling a file.  See the documentation for `qpc', *Note sap-srs-qpc::.
+
+
+File: quintus.info,  Node: dbg-bas-con-unk,  Next: dbg-bas-con-cds,  Prev: dbg-bas-con-loc,  Up: dbg-bas-con
+
+Unknown Procedures
+..................
+
+   The built-in predicate `prolog_flag/3' or `unknown/2' can be used to
+determine or set Prolog's behavior when it comes across an undefined
+predicate. By default, unknown procedures raise an exception.
+
+   Procedures that are known to be dynamic fail when there are no
+clauses for them.
+
+   When an undefined predicate is called and the undefined predicate
+behavior is set to `error' rather than `fail',
+`unknown_predicate_handler/3' is called in module `user'.  By defining
+this predicate, you can (selectively) trap calls to undefined
+predicates in a program.
+
+
+File: quintus.info,  Node: dbg-bas-con-cds,  Prev: dbg-bas-con-unk,  Up: dbg-bas-con
+
+Current Debugging State
+.......................
+
+   Information about the current debugging state includes the following:
+
+   * the top-level state of the debugger
+
+   * the type of leashing in force
+
+   * the action to be taken on undefined predicates
+
+   * all the current spypoints
+
+   This information can be displayed by calling `debugging/0'.
+
+
+File: quintus.info,  Node: dbg-bas-sum,  Prev: dbg-bas-con,  Up: dbg-bas
+
+Summary of Predicates
+---------------------
+
+   * `add_spypoint/1'
+
+   * `current_spypoint/1'
+
+   * `debug/0'
+
+   * `debugging/0'
+
+   * `leash/1'
+
+   * `nodebug/0'
+
+   * `nospy/1'
+
+   * `nospyall/0'
+
+   * `notrace/0'
+
+   * `remove_spypoint/1'
+
+   * `spy/1'
+
+   * `trace/0'
+
+   * `unknown/2'
+
+   * `unknown_predicate_handler/3'
+
+
+File: quintus.info,  Node: dbg-sld,  Next: dbg-sdb,  Prev: dbg-pro,  Up: dbg
+
+The Source Linked Debugger
+==========================
+
+* Menu:
+
+* dbg-sld-bas::                         Introduction
+* dbg-sld-sps::                         Showing Your Place In The Source Code
+* dbg-sld-whe::                         When Source Linking Is Not Possible
+* dbg-sld-tra::                         Traveling Between Ports
+* dbg-sld-anc::                         Seeing Ancestor Frames
+* dbg-sld-men::                         Debugger Menus
+* dbg-sld-sta::                         The Status Panel
+* dbg-sld-oth::                         Other Windows
+
+
+File: quintus.info,  Node: dbg-sld-bas,  Next: dbg-sld-sps,  Up: dbg-sld
+
+Introduction
+------------
+
+   Quintus Prolog's source linked debugger allows you to see the source
+for the code you are running as you step through the debugging.  It
+also provides convenient, window-based ways of debugging your code, and
+provides several optional continuously-updated views of your program's
+execution state as debugging proceeds.
+
+     +--------------------------------------------------------------------+---+
+     | - |                Quintus Debugger:  family.pl                    | o |
+     +--------------------------------------------------------------------+---+
+     | File  Options  Debug  Window  Travel                              Help |
+     +-----+----+----+---+----------+-----+----+--------+----------+----------+
+     |Creep|Skip|Leap|Zip|Quasi-skip|Retry|Fail|Frame Up|Frame Down|Frame Back|
+     +-----+----+----+---+----------+-----+----+--------+----------+----------+
+     | Depth:      Predicate:                                                 |
+     +----------------------------------------------------------------------+-+
+     |   %  Family Relationships example                                    | |
+     |                                                                      | |
+     |   %  parent(?Parent, ?Child)                                         | |
+     |                                                                      | |
+     |   parent(henry, peter).                                              | |
+     |   parent(marie, peter).                                              | |
+     |   parent(henry, judy).                                               | |
+     |   parent(marie, judy).                                               | |
+     |   parent(henry, henry2).                                             | |
+     |   parent(marie, henry2).                                             | |
+     |   parent(henry, susan).                                              | |
+     |   parent(marie, susan).                                              | |
+     |   parent(peter, peter2).                                             | |
+     +----------------------------------------------------------------------+-+
+     +----------------------------------------------------------------------+-+
+
+   This picture shows what the source-linked debugger looks like.  At
+the top of the picture is the debugger window's title bar, which shows
+the name of the file currently being shown in the source code window.
+Below this is a menu bar showing names of the available menus.  Next is
+a row of buttons that are used to travel between ports while debugging.
+Below this is a status panel that shows you useful information about
+the current debugging state.  Finally, a scrolling window shows you
+where in your source code your current execution state is.  All of these
+parts of the debugger are explained below.
+
+   The source-linked debugger is displayed either by selecting one of
+the first three options in the Debug pulldown in the menu bar of the
+QUI main window (see *Note qui-mai-mai-fil::), by selecting the Trace
+button in the interrupt dialogue (see *Note qui-mai-int::), or by
+turning on the debugger with the `trace/0', `debug/0', or
+`prolog_flag/3' built-ins (see *Note dbg-bas-con-tdz::).
+
+   An alternative way of accessing the source-linked debugger is via the
+Emacs interface (see *Note ema-ove-sld::).
+
+
+File: quintus.info,  Node: dbg-sld-sps,  Next: dbg-sld-whe,  Prev: dbg-sld-bas,  Up: dbg-sld
+
+Showing Your Place In The Source Code
+-------------------------------------
+
+* Menu:
+
+* dbg-sld-sps-cal::                     The Call Port
+* dbg-sld-sps-edo::                     The Exit And Done Ports
+* dbg-sld-sps-red::                     The Redo Port
+* dbg-sld-sps-fai::                     The Fail Port
+* dbg-sld-sps-hea::                     The Head Port
+* dbg-sld-sps-exc::                     The Exception Port
+
+   The source linked debugger shows your place in your source code by
+positioning an arrow near the goal being executed or clause to be
+tried.  The position of the arrow and the direction in which it points
+reflect which debugger port you are at (see *Note dbg-bas-pbx::).
+
+   To help you visualize how this works, we repeat the picture of the
+procedure box from *Note dbg-bas-upe:::
+
+              +---------+------------------------------+
+        Call  |         |                              |  Exit
+     -------->|  ------>| descendant(X, Y) :-          |------->
+              |   Head  |          offspring(X, Y).    |
+              |         |                              |  Done
+     <--------|         |                              |------->
+        Fail  |  ------>| descendant(X, Z) :-          |
+              |   Head  |         offspring(X, Y),     |
+     <--------|         |          descendant(Y, Z).   |<-------
+     Exception|         |                              |  Redo
+              +---------+------------------------------+
+
+
+File: quintus.info,  Node: dbg-sld-sps-cal,  Next: dbg-sld-sps-edo,  Up: dbg-sld-sps
+
+The Call Port
+.............
+
+   The call port is shown by an arrow to the left of a goal, pointing
+toward it.  This indicates the arrival at a goal.
+
+                         descendant(X, Y) :-
+                            ---> parent(X, Y).
+                         descendant(X, Z) :-
+                                 parent(X, Y),
+                                 descendant(Y, Z).
+
+                             The Call Port
+
+
+File: quintus.info,  Node: dbg-sld-sps-edo,  Next: dbg-sld-sps-red,  Prev: dbg-sld-sps-cal,  Up: dbg-sld-sps
+
+The Exit And Done Ports
+.......................
+
+   The exit and done ports are shown by an arrow to the right of a goal,
+pointing away from it.  This indicates the successful completion of a
+goal.  The exit port is distinguished from the done port by having a
+forked tail; this is meant to reflect the fact that this is only one of
+possibly many solutions to this goal. The done port signifies a
+determinate exit. This will help you find goals that are nondeterminate
+and shouldn't be.
+
+                         descendant(X, Y) :-
+                                 parent(X, Y). ===>
+                         descendant(X, Z) :-
+                                 parent(X, Y),
+                                 descendant(Y, Z).
+
+                             The Exit Port
+
+                         descendant(X, Y) :-
+                                 parent(X, Y). --->
+                         descendant(X, Z) :-
+                                 parent(X, Y),
+                                 descendant(Y, Z).
+
+                             The Done Port
+
+
+File: quintus.info,  Node: dbg-sld-sps-red,  Next: dbg-sld-sps-fai,  Prev: dbg-sld-sps-edo,  Up: dbg-sld-sps
+
+The Redo Port
+.............
+
+   The redo port is shown by an arrow to the right of the goal,
+pointing toward it.  This indicates that an alternate solution to a
+completed goal is being sought.
+
+                         descendant(X, Y) :-
+                                 parent(X, Y). <---
+                         descendant(X, Z) :-
+                                 parent(X, Y),
+                                 descendant(Y, Z).
+
+                             The Redo Port
+
+
+File: quintus.info,  Node: dbg-sld-sps-fai,  Next: dbg-sld-sps-hea,  Prev: dbg-sld-sps-red,  Up: dbg-sld-sps
+
+The Fail Port
+.............
+
+   The fail port is shown by an arrow to the left of the goal, pointing
+away from it.  This indicates that no (more) solutions to this goal can
+be found.
+
+                         descendant(X, Y) :-
+                            <--- parent(X, Y).
+                         descendant(X, Z) :-
+                                 parent(X, Y),
+                                 descendant(Y, Z).
+
+                             The Fail Port
+
+
+File: quintus.info,  Node: dbg-sld-sps-hea,  Next: dbg-sld-sps-exc,  Prev: dbg-sld-sps-fai,  Up: dbg-sld-sps
+
+The Head Port
+.............
+
+   The head port is shown as an arrow to the left of the clause,
+pointing toward it.  This indicates which clause is about to be tried.
+If there are other clauses to be tried after this one, The tail of the
+arrow will be forked (suggesting that this is only one of possibly many
+clauses to be tried) and a smaller arrow will indicate the next clause
+to be tried.  Note that indexing may mean that this is not the
+textually following clause.
+
+                              parent(henry, peter).
+                              parent(marie, peter).
+                         ===> parent(henry, judy).
+                              parent(marie, judy).
+                           -> parent(henry, henry2).
+                              parent(marie, henry2).
+                              parent(henry, susan).
+                              parent(marie, susan).
+
+                       Nondeterminate Head Port
+
+                              parent(henry, peter).
+                              parent(marie, peter).
+                              parent(henry, judy).
+                              parent(marie, judy).
+                              parent(henry, henry2).
+                              parent(marie, henry2).
+                         ---> parent(henry, susan).
+                              parent(marie, susan).
+
+                         Determinate Head Port
+
+
+File: quintus.info,  Node: dbg-sld-sps-exc,  Prev: dbg-sld-sps-hea,  Up: dbg-sld-sps
+
+The Exception Port
+..................
+
+   The exception port is shown as an arrow to the left of the goal,
+pointing away from it.  The tail of this arrow is broken, suggesting
+that something may be wrong with the program or data.
+
+                         descendant(X, Y, 1) :-
+                                 parent(X, Y).
+                         descendant(X, Z, N) :-
+                                 parent(X, Y),
+                            <- - descendant(Y, Z, N1),
+                                 N1 is N+1.
+
+                          The Exception Port
+
+
+File: quintus.info,  Node: dbg-sld-whe,  Next: dbg-sld-tra,  Prev: dbg-sld-sps,  Up: dbg-sld
+
+When Source Linking Is Not Possible
+-----------------------------------
+
+   Sometimes the debugger cannot find the source code for a predicate.
+This will happen when there is no source code, or when the
+correspondence between the compiled code and source code cannot be
+determined.  For example, a dynamic predicate does not necessarily have
+source code, and so the debugger currently cannot show source.
+Similarly, a meta-call (executing a term with `call/1') does not have
+any source code.  The debugger also often cannot find the source code
+of clauses produced by `term_expansion/2'. Predicates that are compiled
+from `user' do not have source either!
+
+   When source linking is not possible, the debugger will show as much
+of the clause as it knows in place of the source file, with the
+appropriate arrows.  At a head port, it will show the goal being
+called, followed by `:- ...' indicating that this goal will be matched
+with the head of a clause.  For the head of a predicate `descendent/2',
+it might look like this:
+
+                         ===> dynamic_pred(_743) :- ...
+
+   At a call port whose source code cannot be shown, the debugger will
+show `... :-' followed by the goal, indicating that this goal is in
+some unknown clause.  The arrow will be as appropriate for that port.
+The call port for a call to `descendant/2' might look like this:
+
+                         ... :- ---> descendant(peter, _749).
+
+
+File: quintus.info,  Node: dbg-sld-tra,  Next: dbg-sld-anc,  Prev: dbg-sld-whe,  Up: dbg-sld
+
+Traveling Between Ports
+-----------------------
+
+   The source linked debugger provides a set of buttons to allow you to
+move from port to port while debugging.  The debugger's travel commands
+are described in *Note dbg-bas-tra::; these buttons are labeled with the
+names of the commands, so using them should be straightforward.
+
+         +-----+----+----+---+----------+-----+----+-     +----------+
+         |Creep|Skip|Leap|Zip|Quasi-skip|Retry|Fail|  ... |Frame Back|
+         +-----+----+----+---+----------+-----+----+-     +----------+
+
+                         The Traveling Buttons
+
+   When framed up, the skip, retry, and fail buttons operate relative to
+the invocation shown.  Framing up is explained in *Note dbg-sld-anc::.
+
+
+File: quintus.info,  Node: dbg-sld-anc,  Next: dbg-sld-men,  Prev: dbg-sld-tra,  Up: dbg-sld
+
+Seeing Ancestor Frames
+----------------------
+
+   The source linked debugger also provides a set of buttons to allow
+you to view ancestor invocation frames.
+
+                     -+--------+----------+----------+
+                      |Frame Up|Frame Down|Frame Back|
+                     -+--------+----------+----------+
+
+                          The Framing Buttons
+
+   The Frame Up button will show you the invocation before the one you
+are viewing.  That means that the arrow will point to the place the
+invocation you are currently viewing was called from.  Repeatedly
+hitting the Frame Up button will cause you to continue to traverse up
+through parent invocations, eventually stopping at the goal you typed
+at the top level prompt.
+
+   The Frame Down button may be used after you have framed up to take
+you back down toward the current invocation frame.
+
+   The Frame Back button will immediately take you back to the current
+invocation frame.  This may also be used when you have framed up or
+scrolled the source window, and want to instantly scroll back to show
+the current invocation frame, or even if you are viewing another source
+file in the source window and want to get back.
+
+   In order to remind you when the goal you are viewing is not the
+current invocation frame, the arrow shown in the source window is
+hollow, or "ghosted", rather than the usual solid arrow.
+
+                                       |\
+                               +-------+ \
+                               |          >
+                               +-------+ /
+                                       |/
+
+                   Ghost Arrow Shows Ancestor Frame
+
+   When you have framed up, certain travel buttons are interpreted
+relative to the frame you are currently viewing.  Skip will skip over
+the invocation you are viewing (this is very handy if you have
+accidentally crept into a procedure you don't want to debug).  Redo and
+Fail will take you to the call and fail ports of the selected
+invocation, respectively.  All other travel buttons are disabled when
+you have framed up.  You must either frame down or frame back in order
+to travel from the current invocation.
+
+
+File: quintus.info,  Node: dbg-sld-men,  Next: dbg-sld-sta,  Prev: dbg-sld-anc,  Up: dbg-sld
+
+Debugger Menus
+--------------
+
+* Menu:
+
+* dbg-sld-men-fil::                     The File Menu
+* dbg-sld-men-opt::                     The Options Menu
+* dbg-sld-men-spy::                     The Spypoint Menu
+* dbg-sld-men-wme::                     The Window Menu
+* dbg-sld-men-tra::                     The Travel Menu
+* dbg-sld-men-hlp::                     The Help Menu
+
+   The source linked debugger has many options and commands that are
+invoked by menus.  These are the menus available in the debugger window:
+
+       +---------------------------------------------------------+
+       | File  Options  Spypoints  Window  Travel           Help |
+       +---------------------------------------------------------+
+
+                            Debugger Menus
+
+   Below is a description of each menu and what it is used for.
+
+
+File: quintus.info,  Node: dbg-sld-men-fil,  Next: dbg-sld-men-opt,  Up: dbg-sld-men
+
+The File Menu
+.............
+
+   The File menu contains commands that affect the file that is being
+debugged, and the debugger as a whole.  The file menu is selected by
+clicking its button in the dubber window. The commands in the File menu
+are:
+
+                             +---------------+
+                             | Open...       |
+                             +---------------+
+                             | Edit Source   |
+                             +---------------+
+                             |===============|
+                             +---------------+
+                             | Nonstop       |
+                             +---------------+
+                             | Break         |
+                             +---------------+
+                             | Abort         |
+                             +---------------+
+                             |===============|
+                             +---------------+
+                             | Quit Debugger |
+                             +---------------+
+
+                        Selecting The File Menu
+
+   The Open command allows you to view another file in the source
+debugger window.  This gives you a convenient way to set spypoints.
+When you select Open, the debugger pops up a dialogue, which allows you
+to select the file to view.  Note that only files that have been loaded
+into Prolog can be viewed.  The Frame Back button, described above,
+provides a convenient way to return to the current debugging invocation
+frame.
+
+   The Edit Source command provides a quick and convenient way to begin
+editing the file in the debugger window.  A QUI editor window is opened
+on the file currently shown in the debugger window.
+
+   The Nonstop command turns off the debugger for the rest of the
+execution of the top-level goal.  When the execution of this goal is
+completed, the debugger returns to its current mode (trace, debug, or
+zip).  This option does _not_ turn the debugger off; to turn the
+debugger off, you must use the Quit Debugger option, or type `nodebug.'
+at the main Prolog prompt.
+
+   The Break command calls the built-in predicate `break/0', thus
+suspending the execution so far and putting you at the equivalent of a
+new Prolog top level.  (See the description of `break/0' in *Note
+ref-iex-int::.)  The new execution is separate from the suspended one,
+and invocation numbers will start again from 1.  The debugger is turned
+off, and the debugger window is closed, when the break level is entered,
+although the spypoints and leashing of the suspended level are retained.
+When you end the break (by typing the end-of-file character), execution
+will resume and you will be prompted once again at the port that you
+left.  Changes to leashing or to spypoints will remain in effect after
+the break has finished.
+
+   The Abort command aborts (abandons) the current execution.  All the
+execution states built so far are destroyed, and execution restarts at
+the top level (or current break level).
+
+   The Quit Debugger command turns off the debugger altogether, just
+like the `nodebug/0' command (see *Note mpg-ref-nodebug::).  The
+debugger window is also closed at this time, since it is only open when
+debugging is on.
+
+
+File: quintus.info,  Node: dbg-sld-men-opt,  Next: dbg-sld-men-spy,  Prev: dbg-sld-men-fil,  Up: dbg-sld-men
+
+The Options Menu
+................
+
+   The Options menu allows you to change various aspects of the behavior
+of the source linked debugger.  The Options menu is selected by
+clicking its button in the debugger window as shown.
+
+                       +---------------------------+
+                       | Print Format...           |
+                       +---------------------------+
+                       | Leashing...               |
+                       +---------------------------+
+                       |===========================|
+                       +---------------------------+
+                       | * Creep Initially (Trace) |
+                       +---------------------------+
+                       | o Leap Initially (Debug)  |
+                       +---------------------------+
+                       | o Zip Initially           |
+                       +---------------------------+
+
+                      Selecting The Options Menu
+
+   Beginning with the bottom part of the menu, the Creep, Leap, and Zip
+Initially toggles allow you to set the current debugging mode (see
+*Note dbg-bas-con-tdz::).
+
+   The Print Format button brings up a dialogue that will allow you to
+change the way goals will be printed when source linkage is impossible
+(see *Note dbg-sld-whe::).  This dialogue has a toggle button for each
+true/false `write_term/[2,3]' option (see Reference page), and a place
+to enter a print depth limit.  Leaving the print depth empty (or
+setting it to 0) will mean that there is no depth limit; the goal will
+be printed in full.
+
+               +-------------------------------------------+
+               | * quoted                * portrayed       |
+               |                                           |
+               | * character_escapes     o number_vars     |
+               |                        +------+           |
+               | o ignore_ops           | 5    | max_depth |
+               |                        +------+           |
+               | +----+  +--------+                        |
+               | | Ok |  | Cancel |                        |
+               | +----+  +--------+                        |
+               +-------------------------------------------+
+
+                       The Print Format Dialogue
+
+   The Leashing button brings up a dialogue that lets you set your
+leashing mode (see *Note dbg-bas-con-lea::).
+
+                   +-----------------------------------+
+                   | * Call          * Redo            |
+                   |                                   |
+                   | * Head          * Fail            |
+                   |                                   |
+                   | * Exit          * Exception       |
+                   |                                   |
+                   | * Done                            |
+                   |                                   |
+                   | +----+  +--------+                |
+                   | | Ok |  | Cancel |                |
+                   | +----+  +--------+                |
+                   +-----------------------------------+
+
+                         The Leashing Dialogue
+
+
+File: quintus.info,  Node: dbg-sld-men-spy,  Next: dbg-sld-men-wme,  Prev: dbg-sld-men-opt,  Up: dbg-sld-men
+
+The Spypoint Menu
+.................
+
+   The Spypoint menu allows you to set spypoints in your code by
+selecting the goal to be spied with the mouse, thereby highlighting the
+goal, and then selecting a spy command (see *Note dbg-bas-tra-spy:: for
+an explanation of spypoints).  You may add or remove spypoints from
+goals or predicates this way.
+
+                           +-----------------+
+                           | Spy Goal        |
+                           +-----------------+
+                           | Nospy Goal      |
+                           +-----------------+
+                           | Spy Predicate   |
+                           +-----------------+
+                           | Nospy Predicate |
+                           +-----------------+
+
+                     Selecting The Spypoints Menu
+
+   Selecting the Spy Goal command will place a spypoint on the
+currently selected goal, and selecting Nospy Goal will remove the
+spypoint.  Selecting the Spy Predicate command will place a spypoint on
+the predicate for which a goal (or clause head) is currently selected,
+and Nospy Predicate will remove the spypoint.  The difference between
+goal and predicate spypoints is that a spypoint on a predicate will
+stop the debugger regardless of how that predicate is called, while a
+goal spypoint will only stop when the predicate is called from that
+particular goal.
+
+   When a spypoint is placed on a goal, a small stop-sign is placed
+before that goal in the debugger window, indicating that it is spied.
+Similarly, when a predicate is spied, a stop-sign is placed before the
+first clause for that predicate.
+
+
+File: quintus.info,  Node: dbg-sld-men-wme,  Next: dbg-sld-men-tra,  Prev: dbg-sld-men-spy,  Up: dbg-sld-men
+
+The Window Menu
+...............
+
+   The Window menu allows you to pop up various windows, which provide
+useful information not present in the debugger window.  Selecting a
+window from this menu will open the specified window, or, if it is
+already open, cause it to pop to the front of any windows that might be
+covering it.  This menu is available in all debugger windows.
+
+                     +--------------------------+
+                     | Debugger Window          |
+                     +--------------------------+
+                     | Bindings Window          |
+                     +--------------------------+
+                     | Standard Debugger Window |
+                     +--------------------------+
+                     | Ancestors Window         |
+                     +--------------------------+
+
+                           The Windows Menu
+
+   Debugger Window refers to the main debugger window, and may be used
+when the debugger window is covered by other windows to bring it to the
+front.  The other windows, the Variable Bindings Window, Standard
+Debugger Window, and Ancestors Window are discussed in depth below.
+(see *Note dbg-sld-oth::)
+
+
+File: quintus.info,  Node: dbg-sld-men-tra,  Next: dbg-sld-men-hlp,  Prev: dbg-sld-men-wme,  Up: dbg-sld-men
+
+The Travel Menu
+...............
+
+   The Travel Menu provides all the same commands as in the travel and
+framing panels, as described in *Note dbg-sld-tra::.  They are provided
+in a menu for those who are more comfortable using menus, and also to
+document the keyboard shortcuts for the traveling and framing commands.
+
+                         +----------------------+
+                         | Creep       C        |
+                         | Skip        S        |
+                         | Leap        L        |
+                         | Zip         Z        |
+                         | Quasi-skip  Q        |
+                         | Retry       R        |
+                         | Fail        F        |
+                         +----------------------+
+                         | Frame Up    Ctrl + U |
+                         | Frame Down  Ctrl + D |
+                         | Frame Back  Ctrl + B |
+                         +----------------------+
+
+                            The Travel Menu
+
+
+File: quintus.info,  Node: dbg-sld-men-hlp,  Prev: dbg-sld-men-tra,  Up: dbg-sld-men
+
+The Help Menu
+.............
+
+   The On This Window item opens up the help window viewing the
+documentation on this window.  This menu is available in all debugger
+windows.
+
+                             +----------------+
+                             | On This Window |
+                             +----------------+
+
+                             The Help Menu
+
+
+File: quintus.info,  Node: dbg-sld-sta,  Next: dbg-sld-oth,  Prev: dbg-sld-men,  Up: dbg-sld
+
+The Status Panel
+----------------
+
+   The status panel is located just below the buttons in the debugger
+window, and shows the invocation depth of the current arrow, as well as
+information about the called predicate.
+
+             +-----------------------------------------------+
+             | Depth: 1    Predicate:  descendant/2          |
+             +-----------------------------------------------+
+
+                           The Status Panel
+
+   Note that the depth shown is the depth of the frame currently being
+shown, so if you use the Frame Up button to show ancestors (see *Note
+dbg-sld-anc::), the depth will reflect the frame being shown.
+
+   The Predicate field first shows the module (if other than user),
+name, and arity of the predicate being called.  Second is shown
+information about the predicate and the port, which is only shown when
+the there is something unusual or interesting to be noted about the
+predicate or port.  The information about the predicate is one of the
+following:
+
+`built_in'
+     for built-in predicates; or
+
+`locked'
+     for locked predicates; or
+
+`undefined'
+     for undefined predicates; or
+
+`foreign'
+     for foreign predicates (defined in another programming language);
+     or
+
+`dynamic'
+     for dynamic predicates; or
+
+`multifile'
+     for multifile predicates
+
+   Nothing is shown for ordinary user-defined static (compiled)
+procedures defined all in a single file.  The debugger also gives
+information that may help you understand why it has stopped where it
+has.  This information may be one of the following:
+
+`skipped'
+     if you previously skipped (or quasi-skipped) from this invocation;
+     or
+
+`spied'
+     if there is a spypoint on this goal or predicate
+
+
+File: quintus.info,  Node: dbg-sld-oth,  Prev: dbg-sld-sta,  Up: dbg-sld
+
+Other Windows
+-------------
+
+* Menu:
+
+* dbg-sld-oth-vbi::                     The Variable Bindings Window
+* dbg-sld-oth-sdw::                     The Standard Debugger Window
+* dbg-sld-oth-anc::                     The Ancestors Window
+* dbg-sld-oth-mwi::                     Menus For These Windows
+
+   Of course, you will want to know more than just which predicate is
+being called or which clause is about to be tried.  Other useful
+information includes the bindings of the variables in the goal being
+executed, the history of your debugging session, and the ancestors (the
+call stack) of the current goal.  This information is available in
+separate windows, which you may bring up using the window menu, as
+described in *Note dbg-sld-men-wme::.
+
+
+File: quintus.info,  Node: dbg-sld-oth-vbi,  Next: dbg-sld-oth-sdw,  Up: dbg-sld-oth
+
+The Variable Bindings Window
+............................
+
+   The variable binding window shows the current bindings of the
+variables that appear in source code for the goal being called.  This
+information is displayed in a format similar to that used when Prolog
+returns to the top level and shows the results of a user-typed goal.
+
+   For example, the variable bindings window might show the following:
+
+     +---+------------------------------------------------------------+
+     | - |             Quintus Debugger Variable Bindings             |
+     +---+------------------------------------------------------------+
+     | File  Options  Window                                     Help |
+     +----------------------------------------------------------------+
+     | X = henry                                                    | |
+     | Y = _749                                                     | |
+     |                                                              | |
+     |                                                              | |
+     +--------------------------------------------------------------+-+
+     +--------------------------------------------------------------+-+
+
+                     The Variable Bindings Window
+
+   Unlike the other windows provided by the debugger, the variable
+bindings window changes its display depending on which frame is being
+shown in the main debugger window.  This allows you to examine the
+current bindings for the arguments to any ancestor goal.  See *Note
+dbg-sld-anc:: for more information on the debugger's framing commands.
+

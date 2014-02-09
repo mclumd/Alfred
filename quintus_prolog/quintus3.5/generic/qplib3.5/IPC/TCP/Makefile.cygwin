@@ -1,0 +1,282 @@
+# -*- Mode:Makefile -*-
+# [PM] 3.5 Converted to GNU Make
+
+# SCCS   : @(#)Makefile	76.9 10/21/99
+# File   : Makefile
+# Purpose: makes tcp object files
+# Copyright (C) 1993, Quintus Computer Systems, Inc.  All rights reserved.
+#
+# The object files will be compiled into the BIN directory.  BIN is
+# expected to be defined in the "make" command line.  It should be set
+# to the hardware type for which the .o files are to be created.  For
+# example, "make BIN=sun4-4".
+
+# 1999, Oct 21 [PM] Changed use of $(MKENTRIES) to actually work. I do
+#                   not know why it is needed, i.e., why building
+#                   mkentries.exe is not done.
+# 1999, Oct 18 [PM] Changed -ML to -MT (multithreaded CLIB). This is
+# to match the rest of QP that now uses -MT (or -MD)
+
+include config.mk
+
+STATIC_LIBC ?= $(error [PM] 3.5 STATIC_LIBC must be defined here)
+DYNAMIC_LIBC ?= $(error [PM] 3.5 DYNAMIC_LIBC must be defined here)
+
+QPC=qpc
+# CC=cc
+# CFLAGS=-O -I../../embed -I/usr/include/quintus
+# BIN=sun4-4
+# O=o
+O := obj
+# SO=so
+MV=mv
+# RNLIB=ranlib
+
+# [PM] 3.5 avoid warning about missing /MACHINE arg
+LIBFLAGS := /MACHINE:IX86
+
+hosttype=$(BIN)
+# [PM] 3.5 QPRELDIR should come from command line
+QPENGLIBDIR := $(QPRELDIR)/lib/$(hosttype)
+$(warning [PM] 3.5 QPENGLIBDIR should come from command line (and not used hosttype))
+NATIVE_QPENGLIBDIR := $(call NATIVEPATH, $(QPENGLIBDIR))
+
+# [PM] where IPC goes
+QPLIBRARY_ROOT := $(QPRELDIR)/src
+REL_TCP_ROOT := $(QPLIBRARY_ROOT)/IPC/TCP
+
+# [PM] 3.5 I do not know what is the best place to look for quintus.h
+$(warning [PM] 3.5 QPINCLUDEDIR should be passed from caller)
+QPINCLUDEDIR := $(QPEMBEDDIR)
+NATIVE_QPINCLUDEDIR := $(call NATIVEPATH, $(QPINCLUDEDIR))
+
+# # rs6000/aix flags
+# QPBINDIR=../../../../bin3.4/rs6000
+# # [PM] Was (could never work): MKENTRIES=prolog +f +l ../../library/mkentries
+# #      See discussion in /q/ptg/snapshot/generic/qplib3.4/library/makefile
+MKENTRIES=prolog +f +l ../../library/mkentries.pl +z 
+# IMPORTS=-bI:$(QPBINDIR)/prolog.exp
+
+
+# PROLOG_LIBS = \
+# 	$(BIN)/tcp_p.$(SO) 	\
+# 	$(BIN)/tcp_p.a
+
+PROLOG_OBJECTS = \
+	$(BIN)/tcp_pl.$O	\
+	$(BIN)/socketio.$O	\
+	$(BIN)/readwrite.$O
+
+C_OBJECTS = \
+	$(BIN)/tcp_c.$O
+
+
+PLFILES := tcp.pl socketio.pl readwrite.pl tcp_msg.pl
+QOFS = $(PLFILES:.pl=.qof)
+
+.SUFFIXES:
+.SUFFIXES: .qof .pl
+
+.pl.qof:
+	$(QPC) -cH $?
+
+.PHONY: all
+all:	  $(BIN) $(QOFS)
+
+# sun4-4:		make_sunos
+# sun4-5:		make_svr4
+# hppa:		make_hpux
+# rs6000:		make_aix
+# alpha:		make_osf1
+# sgi:		make_irix
+# x86:		make_svr4
+.PHONY: ix86
+ix86:		make_win32
+# linux:		make_linux
+
+# make_sunos:	bindir
+#	 @ $(MAKE) BIN=$(BIN) CCFLAGS=-pic binaries
+#
+# make_svr4:	bindir
+#	 @ $(MAKE) BIN=$(BIN) CCFLAGS="-K pic" LDFLAGS=-G \
+#		   LIBS="-lsocket -lnsl -lelf" RNLIB=true binaries
+#
+# make_linux:	bindir
+#	 @ $(MAKE) BIN=$(BIN) CCFLAGS="-fPIC" LDFLAGS=-shared \
+#		   RNLIB=true binaries
+#
+# make_hpux:	bindir
+#	 @ $(MAKE) BIN=$(BIN) CCFLAGS="+DA1.0 +Z -Ae" LDFLAGS=-b SO=sl \
+#		   RNLIB=true binaries
+#
+# make_aix:	bindir
+#	 @ $(MAKE) BIN=$(BIN) CCFLAGS="-DRS6000" \
+#		   LDFLAGS="-T512 -H512 -e QP_entry" SO=o \
+#		   EXTFILES=$(BIN)/pl.o \
+#		   LIBS="$(IMPORTS) $(QPBINDIR)/libqp.a" binaries
+#
+# make_osf1:	bindir
+#	 @ $(MAKE) BIN=$(BIN) LDFLAGS="-taso -shared -expect_unresolved 'QP_*'" \
+#		   CFLAGS="$(CFLAGS) -DALPHA -ieee"\
+#		   binaries
+#
+# make_irix:	bindir
+#	 @ $(MAKE) BIN=$(BIN) CCFLAGS=-n32 LDFLAGS="-n32 -shared" RNLIB=true binaries
+
+# [PM] 3.5 Use BASECFLAGS et al
+CFLAGS = $(BASECFLAGS) $(CNODEBUG) $(IPC_TCP_CFLAGS)
+# [PM] 3.5 consider CFLAGS += $(CNOSTRICT)
+
+GENERATED_FILES += $(BIN)
+.PHONY: make_win32
+# [PM] -ML -> -MT
+make_win32:			$(warning [PM] 3.5 FIXME: rewrite to avoid recursive make (and use BASECFLAGS etc))
+	-mkdir $(BIN) 2> /dev/null || true
+	-mkdir $(BIN)/dll  2> /dev/null || true
+	-mkdir $(BIN)/static  2> /dev/null || true
+	$(MAKE) -f Makefile.cygwin BIN=$(BIN)/dll CC=cl CCFLAGS="-I$(NATIVE_QPINCLUDEDIR) -DWIN32 $(DYNAMIC_LIBC)" O=obj win_objs
+	$(MAKE) -f Makefile.cygwin BIN=$(BIN)/static CC=cl CCFLAGS="-I$(NATIVE_QPINCLUDEDIR) -DWIN32 $(STATIC_LIBC)" O=obj win_objs
+	$(MAKE) -f Makefile.cygwin BIN=$(BIN) CC=cl \
+                   CCFLAGS="-I$(NATIVE_QPINCLUDEDIR) -DWIN32" \
+                   LD=link O=obj \
+                   LDFLAGS='/MACHINE:IX86' win_binaries
+
+# # [PM] April 2000 debug target
+# make_win32_dbg:
+# 	@ if not exist $(BIN) mkdir $(BIN)
+# 	@ if not exist $(BIN)/dll mkdir $(BIN)\dll
+# 	@ if not exist $(BIN)/static mkdir $(BIN)\static
+# 	@ $(MAKE) BIN=$(BIN)/dll CC=cl CCFLAGS="-Od -Zi -W3 -DWIN32 $(DYNAMIC_LIBC)" O=obj MV=move \
+# 		  win_objs
+# 	@ $(MAKE) BIN=$(BIN)/static CC=cl CCFLAGS="-Od -Zi -W3 -DWIN32 $(STATIC_LIBC)" O=obj MV=move \
+# 		  win_objs
+# 	@ $(MAKE) BIN=$(BIN) CC=cl CCFLAGS="-Od -Zi -W3 -DWIN32" LD=link LDFLAGS="-debug" O=obj MV=move \
+# 		  win_binaries
+
+GENERATED_FILES += $(BIN)
+.PHONY: bindir
+bindir:
+	- [ -d $(BIN) ] || ( mkdir $(BIN) && chmod 775 $(BIN) )
+
+# .PHONY: binaries
+# binaries:	$(PROLOG_LIBS) $(C_OBJECTS)
+
+WIN_OBJS := $(PROLOG_OBJECTS) $(BIN)/inputservice.$O
+
+# [PM] 3.5 FIXME: these should be used instead of recursive make also
+# for building (currently used only for specifying what should be
+# copied by the install-target)
+WIN_STATIC_OBJS := $(patsubst $(BIN)/%, $(BIN)/static/%, $(WIN_OBJS))
+WIN_DLL_OBJS := $(patsubst $(BIN)/%, $(BIN)/dll/%, $(WIN_OBJS))
+
+REL_WIN_OBJS := $(addprefix $(REL_TCP_ROOT)/, $(WIN_STATIC_OBJS) $(WIN_DLL_OBJS))
+
+.PHONY: win_objs
+win_objs:	$(WIN_OBJS)
+WIN_BINARIES := $(BIN)/tcp_p.dll $(BIN)/tcp_ps.lib $(C_OBJECTS)
+
+# [PM] 3.5 not clear if the import library should be distributed but it was in 3.4.
+WIN_BINARIES_EXTRA := $(BIN)/tcp_p.lib
+REL_WIN_BINARIES := $(addprefix $(REL_TCP_ROOT)/, $(WIN_BINARIES) $(WIN_BINARIES_EXTRA))
+.PHONY: win_binaries
+win_binaries:	$(WIN_BINARIES)
+
+$(BIN)/tcp_pl.$O:	tcp.c tcp.h socketio.h
+	$(CC) $(CFLAGS) $(CCFLAGS) -DPROLOG -c tcp.c
+	$(MV) tcp.$O $(@F)
+	$(MV) $(@F) $(BIN)
+
+$(BIN)/tcp_c.$O:	tcp.c tcp.h socketio.h
+	$(CC) $(CFLAGS) $(CCFLAGS) -c tcp.c
+	$(MV) tcp.$O $(@F)
+	$(MV) $(@F) $(BIN)
+
+$(BIN)/socketio.$O $(BIN)/readwrite.$O $(BIN)/inputservice.$O $(EXTFILES):
+	$(CC) $(CFLAGS) $(CCFLAGS) -c $?
+	$(MV) $(@F) $(BIN)
+
+$(BIN)/socketio.$(O):		socketio.c
+$(BIN)/readwrite.$(O):		readwrite.c
+$(BIN)/inputservice.$(O):	inputservice.c
+
+
+$(BIN)/tcp_p.$(SO): $(PROLOG_OBJECTS) $(EXTFILES)
+	@ rm -f so_locations
+	$(LD) $(LDFLAGS) -o $(@F) $(PROLOG_OBJECTS) $(EXTFILES) $(LIBS) -lc
+	$(MV) $(@F) $(BIN)
+
+$(BIN)/tcp_p.a: $(PROLOG_OBJECTS)
+	ar rv $@ $(PROLOG_OBJECTS)
+	$(RNLIB) $@
+
+
+# win32 versions
+# [PM] 3.5 FIXME: these rules are really bad
+
+$(BIN)/tcp_p.dll: $(BIN)/dll/*.$O $(BIN)/tcp_p.exp
+	$(LD) -dll -out:$@ $(LDFLAGS) $(BIN)/dll/*.$O -def:tcp_p.def \
+	/LIBPATH:$(NATIVE_QPENGLIBDIR) qpeng.lib libqp.lib wsock32.lib
+
+$(BIN)/tcp_p.lib $(BIN)/tcp_p.exp: tcp_p.def
+	$(LD) -lib $(LIBFLAGS) -out:$(BIN)/tcp_p.lib -def:tcp_p.def
+
+$(BIN)/tcp_ps.lib: $(BIN)/static/*.$O
+	$(LD) -lib $(LIBFLAGS) -out:$@ $(BIN)/static/*.$O
+
+
+# [PM] create dummy file foo.pl to drive mkentries.pl
+#      Broken pipe is due to end_of_file. in readwrite.pl,
+#      the only file that goes after is tcp_msg.pl and it has no
+#      foreign stuff.
+#      Doing | grep -v end_of_file | might not work since
+#      'end_of_file' occurs as subterm in other files.
+GENERATED_FILES += tcp_p.def
+tcp_p.def:	$(PLFILES)
+	echo 'runtime_entry(start).' > foo.pl
+	@echo Expect broken pipe in the next command
+	cat foo.pl $(PLFILES) | $(MKENTRIES) -nt tcp_p.dll > $@
+	rm foo.pl
+
+# ------------------------------------------------------------------------------
+# [PM] 3.5 install target
+# ------------------------------------------------------------------------------
+
+DEMO_FILES := Makefile add_2_numbers.c c_server.c c_server.pl ce.pl client.pl cs.c server.pl sibling.pl
+REL_DEMO_FILES := $(addprefix $(REL_TCP_ROOT)/demo/, $(DEMO_FILES))
+
+# HOSTTYPE_FILES := $(addprefix $(hosttype)/, tcp_c.obj tcp_p.dll tcp_p.lib tcp_ps.lib)
+# REL_HOSTTYPE_FILES := $(addprefix $(REL_TCP_ROOT)/demo/, $(HOSTTYPE_FILES))
+
+
+SRC_FILES := inputservice.c readwrite.c  socketio.c socketio.h tcp.c tcp.h tcp_p.def
+MISC_FILES := Makefile Makefile.cygwin README
+
+REL_FILES := $(addprefix $(REL_TCP_ROOT)/, $(SRC_FILES) $(PLFILES) $(QOFS) $(MISC_FILES))
+
+.PHONY: install_dirs
+install_dirs:
+	- [ -d $(REL_TCP_ROOT) ] || ( mkdir -p $(REL_TCP_ROOT) && chmod 775 $(REL_TCP_ROOT) )
+	- [ -d $(REL_TCP_ROOT)/demo ] || ( mkdir -p $(REL_TCP_ROOT)/demo && chmod 775 $(REL_TCP_ROOT)/demo )
+	- [ -d $(REL_TCP_ROOT)/$(BIN) ] || ( mkdir -p $(REL_TCP_ROOT)/$(BIN) && chmod 775 $(REL_TCP_ROOT)/$(BIN) )
+	- [ -d $(REL_TCP_ROOT)/$(BIN)/static ] || ( mkdir -p $(REL_TCP_ROOT)/$(BIN)/static && chmod 775 $(REL_TCP_ROOT)/$(BIN)/static )
+	- [ -d $(REL_TCP_ROOT)/$(BIN)/dll ] || ( mkdir -p $(REL_TCP_ROOT)/$(BIN)/dll && chmod 775 $(REL_TCP_ROOT)/$(BIN)/dll )
+
+$(REL_TCP_ROOT)/% : %
+	cp -p $< $@
+
+REL_ALL := $(REL_FILES) $(REL_DEMO_FILES) $(REL_WIN_OBJS) $(REL_WIN_BINARIES)
+.PHONY: install
+install: install_dirs $(REL_ALL) # $(warning REL_ALL==$(REL_ALL), REL_FILES==$(REL_FILES) REL_DEMO_FILES==$(REL_DEMO_FILES) REL_TCP_ROOT==$(REL_TCP_ROOT), BIN==$(BIN))
+
+
+# # aix glue file
+# 
+# $(BIN)/pl.o:	pl.c
+
+pl.c:	$(PLFILES)
+	cat $(PLFILES) | $(MKENTRIES) > $@
+
+.PHONY: clean
+clean: 
+	rm -rf $(GENERATED_FILES)
+	rm -f $(OBJECTS) $(QOFS)

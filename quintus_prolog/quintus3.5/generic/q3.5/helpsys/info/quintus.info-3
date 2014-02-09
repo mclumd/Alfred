@@ -1,0 +1,1431 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: bas-eff-det-wha,  Prev: bas-eff-det-opt,  Up: bas-eff-det
+
+What is Detected
+................
+
+   As mentioned earlier, it is not in general possible to find exactly
+which places in a program will lead to nondeterminacy.  The determinacy
+checker gives predicates the benefit of the doubt: when it's possible
+that a predicate will be determinate, it will not be reported.  The
+checker will only report places in your program that will be
+nondeterminate regardless of which arguments are bound.  Despite this,
+the checker catches most unwanted nondeterminacy in practice.
+
+   The determinacy checker looks for the following sources of
+nondeterminacy:
+   * multiple clauses that can't be distinguished by the principal
+     functor of the first arguments, and are not made determinate with
+     an explicit cut, `fail/0', `false/0', or `raise_exception/1'.
+     First argument indexing is not considered for multifile
+     predicates, because another file may have a clause for this
+     predicate with the same principal functor of its first argument.
+
+   * a clause with a disjunction not forced to be determinate by a cut,
+     `fail/0', `false/0', or `raise_exception/1' in each arm of the
+     disjunction but the last, or where the whole disjunction is
+     followed by a cut, `fail/0', `false/0', or `raise_exception/1'.
+
+   * a clause that calls something known to be nondeterminate, other
+     than when it is followed by a cut, `fail/0', `false/0', or
+     `raise_exception/1', or where it appears in the condition of an
+     if-then-else construct.  Known nondeterminate predicates include
+     those declared nondeterminate or dynamic (since they can be
+     modified, dynamic predicates are assumed to be nondeterminate),
+     plus the following built-in predicates:
+        - `absolute_file_name/3', when the second argument is a list
+          containing the term `solutions(all)'
+
+        - `bagof/3' , when the second argument contains any variables
+          not appearing earlier in the clause (including the clause
+          head).
+
+        - `clause/[2,3]'
+
+        - `current_op/3', when any argument contains any variables not
+          appearing earlier in the clause (including the clause head).
+
+        - `current_key/2', when the second argument contains any
+          variables not appearing earlier in the clause (including the
+          clause head).
+
+        - `current_predicate/2', when the second argument contains any
+          variables not appearing earlier in the clause (including the
+          clause head).
+
+        - `length/2', when both arguments are variables not appearing
+          earlier in the clause (including the clause head).
+
+        - `predicate_property/2', when either argument contains any
+          variables not appearing earlier in the clause (including the
+          clause head).
+
+        - `recorded/3'
+
+        - `repeat/0'
+
+        - `retract/1'
+
+        - `setof/3', when the second argument contains any variables not
+          appearing earlier in the clause (including the clause head).
+
+        - `source_file/[1,2,3]' when the last argument contains any
+          variables not appearing earlier in the clause (including the
+          clause head).
+
+
+
+File: quintus.info,  Node: bas-eff-lco,  Next: bas-eff-bdm,  Prev: bas-eff-det,  Up: bas-eff
+
+Last Call Optimization
+----------------------
+
+* Menu:
+
+* bas-eff-lco-acp::                     Accumulating Parameters
+* bas-eff-lco-acl::                     Accumulating Lists
+
+   Another important efficiency feature of Quintus Prolog is last call
+optimization.  This is a space optimization technique, which applies
+when a predicate is determinate at the point where it is about to call
+the last goal in the body of a clause.  For example,
+
+     % for(Int, Lower, Upper)
+     % Lower and Upper should be integers such that Lower =< Upper.
+     % Int should be uninstantiated; it will be bound successively on
+     % backtracking to Lower, Lower+1, ... Upper.
+     
+     for(Int, Int, _Upper).
+     for(Int, Lower, Upper) :-
+             Lower < Upper,
+             Next is Lower + 1,
+             for(Int, Next, Upper).
+
+   This predicate is determinate at the point where the recursive call
+is about to be made, since this is the last clause and the preceding
+goals (`</2' and `is/2') are determinate.  Thus last call optimization
+can be applied; effectively, the stack space being used for the current
+predicate call is reclaimed before the recursive call is made.  This
+means that this predicate uses only a constant amount of space, no
+matter how deep the recursion.
+
+
+File: quintus.info,  Node: bas-eff-lco-acp,  Next: bas-eff-lco-acl,  Up: bas-eff-lco
+
+Accumulating Parameters
+.......................
+
+   To take best advantage of this feature, make sure that goals in
+recursive predicates are determinate, and whenever possible put the
+recursive call at the end of the predicate.
+
+   This isn't always possible, but often can be done through the use of
+"accumulating parameters".  An accumulating parameter is an added
+argument to a predicate that builds up the result as computation
+proceeds.  For example, in our factorial example (see *Note
+bas-eff-cut-mpd::), the last goal in the body of the recursive case is
+`is/2', not the recursive call to `fac/2'.
+
+     fac(N, X) :-
+         (   N > 0 ->
+                 N1 is N - 1,
+                 fac(N1, Y),
+                 X is N * Y
+         ;   N =:= 0 ->
+                 X = 1
+         ).
+
+   This can be corrected by adding another argument to `fac/2' to
+accumulate the factorial.
+
+     fac(N, X) :- fac(N, 1, X).
+     
+     %  fac(+N, +M, -X)
+     %  X is M * the factorial of N.
+     
+     fac(N, M, X) :-
+         (   N > 0 ->
+                 N1 is N - 1,
+                 M1 is N * M,
+                 fac(N1, M1, X)
+         ;   N =:= 0 ->
+                 X = M
+         ).
+
+   Here we do the multiplication before calling `fac/3' recursively.
+Note that we supply the base case, 1, at the start of the computation,
+and that we are multiplying by decreasing numbers.  In the earlier
+version, `fac/2', we multiply after the recursive call, and so we
+multiply by increasing numbers.  Effectively, the new version builds
+the result backwards.  This is correct because multiplication is
+associative.
+
+
+File: quintus.info,  Node: bas-eff-lco-acl,  Prev: bas-eff-lco-acp,  Up: bas-eff-lco
+
+Accumulating Lists
+..................
+
+   This technique becomes much more important when extended to lists, as
+in this case it can save much building of unneeded lists through
+unnecessary calls to append sublists together.  For example, the naive
+way to reverse a list is:
+
+     nreverse([], []).
+     nreverse([H|T], L) :-
+             nreverse(T, L1),
+             append(L1, [H], L).
+
+   This is very wasteful, since each call to `append/3' copies the
+initial part of the list, and adds one element to it.  Fortunately,
+this can be very easily rewritten to use an accumulating parameter:
+
+     reverse(L1, L2) :- reverse(L1, [], L2).
+     
+     %  reverse(+X, +Y, -Z)
+     %  Z is X reversed, followed by Y
+     reverse([], Z, Z).
+     reverse([H|T], L0, L) :-
+             reverse(T, [H|L0], L).
+
+   This version of reverse is many times faster than the naive version,
+and uses much less memory.  The key to understanding the behavior of
+this predicate is the observation made earlier:  using an accumulating
+parameter, we build the result backwards.
+
+   Don't let this confuse you.  Building a list forward is easy.  For
+example, a predicate that returns a list L of consecutive numbers from
+1 to N could be written in two different ways:  counting up and
+collecting the resulting list forward, or counting down and
+accumulating the result backward.
+
+     iota1(N, L) :- iota1(1, N, L).
+     
+     iota1(N, Max, L) :-
+             (   N > Max ->
+                     L = []
+             ;   N1 is N+1,
+                 L = [N|L1],
+                 iota1(N1, Max, L1)
+             ).
+
+   or,
+
+     iota2(N, L) :- iota2(N, [], L).
+     
+     iota2(N, L0, L) :-
+             (   N =< 0 ->
+                     L = L0
+             ;   N1 is N-1,
+                 iota2(N1, [N|L0], L)
+             ).
+
+   Both versions generate the same results, and neither waste any space.
+The second version is slightly faster.  Choose whichever approach you
+prefer.
+
+
+File: quintus.info,  Node: bas-eff-bdm,  Next: bas-eff-cdi,  Prev: bas-eff-lco,  Up: bas-eff
+
+Building and Dismantling Terms
+------------------------------
+
+   The built-in predicate `=../2' is a clear way of building terms and
+taking them apart.  However, it is almost never the most efficient way.
+`functor/3' and `arg/3' are generally much more efficient, though less
+direct.  The best blend of efficiency and clarity is to write a
+clearly-named predicate that implements the desired operation and to
+use `functor/3' and `arg/3' in that predicate.
+
+   Here is an actual example.  The task is to reimplement the built-in
+predicate `==/2'.  The first variant uses `=../2' (this symbol is
+pronounced "univ" for historical reasons).  Some Prolog textbooks
+recommend code similar to this.
+     ident_univ(X, Y) :-
+             var(X),                 % If X is a variable,
+             !,
+             var(Y),                 % so must Y be, and
+             samevar(X, Y).          % they must be the same.
+     ident_univ(X, Y) :-             % If X is not a variable,
+             nonvar(Y),              % neither may Y be;
+             X =.. [F|L],            % they must have the
+             Y =.. [F|M],            % same function symbol F
+             ident_list(L, M).       % and identical arguments
+     
+     ident_list([], []).
+     ident_list([H1|T1], [H2|T2]) :-
+             ident_univ(H1, H2),
+             ident_list(T1, T2).
+     
+     samevar(29, Y) :-               % If binding X to 29
+             var(Y),                 % leaves Y unbound,
+             !,                      % they were not the same
+             fail.                   % variable.
+     samevar(_, _).                  % Otherwise they were.
+
+   This code performs the function intended; however, every time it
+touches a non-variable term of arity N, it constructs a list with N+1
+elements, and if the two terms are identical, these lists are reclaimed
+only when backtracked over or garbage-collected.
+
+   Better code uses `functor/3' and `arg/3'.
+     ident_farg(X, Y) :-
+             (   var(X) ->           % If X is a variable,
+                     var(Y),         % so must Y be, and
+                     samevar(X, Y)   % they must be the same;
+             ;   nonvar(Y),          % otherwise Y must be nonvar
+                 functor(X, F, N),   % The principal functors of X
+                 functor(Y, F, N),   % and Y must be identical,
+                 ident_farg(N, X, Y) % including the last N args.
+             ).
+     
+     ident_farg(0, _, _) :- !.
+     ident_farg(N, X, Y) :-          % The last N arguments are
+             arg(N, X, Xn),          % identical
+             arg(N, Y, Yn),          % if the Nth arguments
+             ident_farg(Xn, Yn),     % are identical,
+             M is N-1,               % and the last N-1 arguments
+             ident_farg(M, X, Y).    % are also identical.
+
+   This approach to walking through terms using `functor/3' and `arg/3'
+avoids the construction of useless lists.
+
+   The pattern shown in the example, in which a predicate of arity K
+calls an auxiliary predicate of the same name of arity K+1 (the
+additional argument denoting the number of items remaining to process),
+is very common.  It is not necessary to use the same name for this
+auxiliary predicate, but this convention is generally less prone to
+confusion.
+
+   In order to simply find out the principal function symbol of a term,
+use
+     | ?- the_term_is(Term),
+     |    functor(Term, FunctionSymbol, _).
+
+   The use of `=../2', as in
+     | ?- the_term_is(Term),
+     |    Term =.. [FunctionSymbol|_].
+
+   is wasteful, and should generally be avoided.  The same remark
+applies if the arity of a term is desired.
+
+   `=../2' should not be used to locate a particular argument of some
+term.  For example, instead of
+     Term =.. [_F,_,ArgTwo|_]
+
+   you should write
+     arg(2, Term, ArgTwo)
+
+   It is generally easier to get the explicit number "2" right than to
+write the correct number of "don't care" variables in the call to
+`=../2'.  Other people reading the program will find the call to
+`arg/3' a much clearer expression of the program's intent.  The program
+will also be more efficient.  Even if  several arguments of a term must
+be located, it is clearer and more efficient to write
+     arg(1, Term, First),
+     arg(3, Term, Third),
+     arg(4, Term, Fourth)
+
+   than to write
+     Term =.. [_,First,_,Third,Fourth|_]
+
+   Finally, `=../2' should not be used when the functor of the term to
+be operated on is known (that is, when both the function symbol and the
+arity are known).  For example, to make a new term with the same
+function symbol and first arguments as another term, but one additional
+argument, the obvious solution might seem to be to write something like
+the following:
+     add_date(OldItem, Date, NewItem) :-
+             OldItem =.. [item,Type,Ship,Serial],
+             NewItem =.. [item,Type,Ship,Serial,Date].
+
+   However, this could be expressed more clearly and more efficiently as
+     add_date(OldItem, Date, NewItem) :-
+             OldItem = item(Type,Ship,Serial),
+             NewItem = item(Type,Ship,Serial,Date).
+
+   or even
+     add_date(item(Type,Ship,Serial),
+              Date,
+              item(Type,Ship,Serial,Date)
+             ).
+
+
+File: quintus.info,  Node: bas-eff-cdi,  Next: bas-eff-xref,  Prev: bas-eff-bdm,  Up: bas-eff
+
+Conditionals and Disjunction
+----------------------------
+
+   There is an efficiency advantage in using conditionals whose test
+part consists only of arithmetic comparisons or type tests.  Consider
+the following alternative definitions of the predicate
+`type_of_character/2'.  In the first definition, four clauses are used
+to group characters on the basis of arithmetic comparisons.
+
+     type_of_character(Ch, Type) :-
+             Ch >= "a", Ch =< "z",
+             !,
+             Type = lowercase.
+     type_of_character(Ch, Type) :-
+             Ch >= "A", Ch =< "Z",
+             !,
+             Type = uppercase.
+     type_of_character(Ch, Type) :-
+             Ch >= "0", Ch =< "9",
+             !,
+             Type = digit.
+     type_of_character(_Ch, Type) :-
+             Type = other.
+
+   In the second definition, a single clause with a conditional is
+used.  The compiler generates optimized code for the conditional; the
+second version of `type_of_character/2' runs faster than the first and
+uses less memory.
+     type_of_character(Ch, Type) :-
+             (   Ch >= "a", Ch =< "z" ->
+                     Type = lowercase
+             ;   Ch >= "A", Ch =< "Z" ->
+                     Type = uppercase
+             ;   Ch >= "0", Ch =< "9" ->
+                     Type = digit
+             ;   otherwise ->
+                     Type = other
+             ).
+
+   Following is a list of builtin predicates that are compiled
+efficiently in conditionals:
+
+   * `atom/1'
+
+   * `atomic/1'
+
+   * `callable/1'
+
+   * `compound/1'
+
+   * `db_reference/1'
+
+   * `float/1'
+
+   * `integer/1'
+
+   * `nonvar/1'
+
+   * `number/1'
+
+   * `simple/1'
+
+   * `var/1'
+
+   * `</1'
+
+   * `=</1'
+
+   * `=:=/1'
+
+   * `=\=/1'
+
+   * `>=/1'
+
+   * `>/1'
+
+   * `@</1'
+
+   * `@=</1'
+
+   * `==/1'
+
+   * `\==/1'
+
+   * `@>=/1'
+
+   * `@>/1'
+
+
+File: quintus.info,  Node: bas-eff-xref,  Prev: bas-eff-cdi,  Up: bas-eff
+
+The Quintus Cross-Referencer
+----------------------------
+
+* Menu:
+
+* bas-eff-xref-bas::                    Introduction
+* bas-eff-xref-use::                    Basic Use
+* bas-eff-xref-prx::                    Practice and Experience
+
+
+File: quintus.info,  Node: bas-eff-xref-bas,  Next: bas-eff-xref-use,  Up: bas-eff-xref
+
+Introduction
+............
+
+   The main purpose of the cross-referencer, `qpxref', is to find
+undefined predicates and unreachable code.  To this end, it begins by
+looking for initializations, hooks and `public' directives to start
+tracing the reachable code from.  If an entire application is being
+checked, it also traces from `user:runtime_entry/1'.  If individual
+module-files are being checked, it also traces from their export lists.
+
+   A second function of `qpxref' is to aid in the formation of module
+statements.  `qpxref' can list all of the required `module/2' and
+`use_module/2' statements by file.
+
+
+File: quintus.info,  Node: bas-eff-xref-use,  Next: bas-eff-xref-prx,  Prev: bas-eff-xref-bas,  Up: bas-eff-xref
+
+Basic Use
+.........
+
+   The cross-referencer is run from the shell prompt, specifying the
+names of the Prolog source files you wish to check.  You may omit the
+`.pl' suffix if you like.
+     % qpxref [-R] [-v] [-c] [-i IFILE] [-w WFILE] [-x XFILE] [-u UFILE] FSPEC ...
+
+   The `qpxref' program is placed in the Quintus `tools' directory, and
+is not built by default when Prolog is installed, so you may have to
+build it (by typing `make qpxref' in the `tools' directory) first.  The
+tool takes a number of options, as follows.  FILE arguments should be
+given as atoms or as `-', denoting the standard output stream.
+
+`-R'
+     Check an application, i.e. follow `user:runtime_entry/1', as
+     opposed to module declarations.
+
+`-c'
+     Generate standard compiler style error messages.
+
+`-v'
+     Verbose output. This echoes the names of the files being read.
+
+`-i IFILE'
+     An initialization file, which is loaded before processing begins.
+
+`-w WFILE'
+     Warning file. Warnings are written to the standard error stream by
+     default.
+
+`-x XFILE'
+     Generate a cross-reference file. This is not generated by default.
+
+`-m MFILE'
+     Generate a file indicating which predicates are imported and which
+     are exported for each file. This is not generated by default.
+
+`-u UFILE'
+     Generate a file listing all the undefined predicates.  This is not
+     generated by default.
+
+
+File: quintus.info,  Node: bas-eff-xref-prx,  Prev: bas-eff-xref-use,  Up: bas-eff-xref
+
+Practice and Experience
+.......................
+
+   Your code will probably rely on operator declarations and possibly
+term expansion. The cross-referencer handles this in much the same way
+as `qpc(1)': you must supply an initialization file, using the `-i
+IFILE' option.
+
+   Supply meta-predicate declarations for your meta-predicates.
+Otherwise, the cross-referencer will not follow the meta-predicates'
+arguments.  Be sure the cross-referencer encounters the meta-predicate
+declarations _before_ it encounters calls to the declared predicates.
+
+   The cross-referencer traces from initializations, hooks, predicates
+declared `public', and optionally from `user:runtime_entry/1' and
+module declarations.  The way it handles meta-predicates requires that
+your application load its module-files before its non-module-files.
+
+   This cross-referencer was written in order to tear out the copious
+dead code from the application that the author became responsible for.
+If you are doing such a thing, the cross-referencer is an invaluable
+tool. Be sure to save the output from the first run that you get from
+the cross referencer: this is very useful resource to help you find
+things that you've accidentally ripped out and that you really needed
+after all.
+
+   There are situations where the cross-referencer does not follow
+certain predicates. This can happen if the predicate name is
+constructed on the fly, or if it is retrieved from the database. In
+this case, add `public' declarations for these.  Alternatively, you
+could create term expansions that are peculiar to the cross-referencer.
+
+
+File: quintus.info,  Node: qui,  Next: ema,  Prev: bas,  Up: Top
+
+The Quintus User Interface
+**************************
+
+* Menu:
+
+* qui-qui::                             Quintus User Interface
+* qui-mai::                             QUI Main Window
+* qui-edi::                             Edit Windows
+* qui-ied::                             Interface to External Editors
+* qui-dbg::                             QUI Debug Window
+* qui-hlp::                             QUI Help Window
+* qui-ciq::                             Customizing and Interfacing with QUI
+
+
+File: quintus.info,  Node: qui-qui,  Next: qui-mai,  Up: qui
+
+Quintus User Interface
+======================
+
+* Menu:
+
+* qui-qui-sta::                         Starting Up QUI
+* qui-qui-exi::                         Exiting QUI
+
+   The Quintus User Interface (QUI) is a Motif-based window interface
+to the Quintus Prolog development system.  It is not available in the
+Windows distribution.  It includes the following:
+   * Main Window:  Query interpreter window with history menu
+
+   * Debug window:  See *Note dbg-sld::
+
+   * Edit windows
+
+   * Interface to external editors, such as GNU Emacs
+
+   * Error dialogue windows
+
+   * Help window
+
+   All these windows facilitate rapid program development by making
+common Prolog commands available using the mouse. For more information
+about Motif widgets such as the file browser, see the "OSF/Motif
+Series" and other references cited in *Note int-man-bib::.
+
+
+File: quintus.info,  Node: qui-qui-sta,  Next: qui-qui-exi,  Up: qui-qui
+
+Starting Up QUI
+---------------
+
+   Before starting up QUI, you must be running an X-windows server
+process on the machine upon which you want QUI windows to be displayed.
+
+   To access the QUI facilities, you must invoke a Quintus Prolog
+Development System executable that has the QUI libraries included in
+it.  See the Quintus Prolog Development System installation
+instructions for more details on how to install such an executable.
+
+   Assuming a Quintus Prolog Development System executable that
+includes QUI is installed under the name `qui', you invoke it by typing,
+     % qui
+
+   The QUI main window will be displayed on your screen.  See the
+figure below.
+
+   To run QUI across local network on a machine called REMOTE and have
+QUI displayed on a machine called HOST, you should first issue the
+command
+     % xhost +REMOTE
+
+   on the machine HOST, and do either of the following commands on the
+machine REMOTE when running under `csh' type,
+     (1)  % qui -display host:0.0
+     
+     (2)  % set environment variable DISPLAY to HOST:0.0
+          % qui
+
+   Apart from those X resources that you can specify in environment
+variables you can set X resources in the various X resource database
+files that are referenced by this Motif application.  See *Note
+qui-ciq:: for more information.
+
+
+File: quintus.info,  Node: qui-qui-exi,  Prev: qui-qui-sta,  Up: qui-qui
+
+Exiting QUI
+-----------
+
+   To exit QUI, select the `Quit' option from the `File' menu.
+Alternatively, type `halt.', `^D' (^D is the end of file character),
+`^C' (^C is the interrupt key) and exit option, or type `end_of_file.'
+at the Prolog toplevel prompt `| ?-' when you are not inside a break
+level. In any of these cases, a dialogue window will pop-up asking for
+confirmation.  Choosing the Exit button in the dialogue window will
+exit QUI while choosing the Cancel button will return to the `| ?-'
+prompt.
+
+
+File: quintus.info,  Node: qui-mai,  Next: qui-edi,  Prev: qui-qui,  Up: qui
+
+QUI Main Window
+===============
+
+* Menu:
+
+* qui-mai-mai::                         Main Window Menu Bar
+* qui-mai-his::                         QUI Query History Menu
+* qui-mai-top::                         QUI Query Interpreter Sub-Window
+* qui-mai-int::                         QUI Interrupt Button
+* qui-mai-nxa::                         QUI Next Answer Buttons
+* qui-mai-err::                         QUI Error Dialogue Window
+
+
+[See printed or HTML manual.]
+
+                          The QUI Main Window
+
+
+File: quintus.info,  Node: qui-mai-mai,  Next: qui-mai-his,  Up: qui-mai
+
+Main Window Menu Bar
+--------------------
+
+* Menu:
+
+* qui-mai-mai-fil::                     File Pulldown
+* qui-mai-mai-deb::                     Debug Pulldown
+* qui-mai-mai-hlp::                     Help Pulldown
+
+
+File: quintus.info,  Node: qui-mai-mai-fil,  Next: qui-mai-mai-deb,  Up: qui-mai-mai
+
+File Pulldown
+.............
+
+Edit...
+     Begin editing a file. The editor will allow you to choose the file
+     to edit. By default, the QUI editor will be used, but you may
+     choose another editor with the `QUINTUS_EDITOR_PATH' environment
+     variable, as explained in *Note qui-ied::. The QUI editor is
+     described in *Note qui-edi::.
+
+Load...
+     Load a file using `load_files/1'. A Motif file selection dialog
+     will be displayed to allow you to specify the file to load.  By
+     default, this button is only enabled when Prolog is at the
+     toplevel prompt. It can be changed through the resource file so
+     that this button is disabled only when Prolog code is running
+     enabling you to reload code while you are debugging (see *Note
+     qui-ciq-cqr::).
+
+Log ->
+     Write all or part of the history to a file. Putting your mouse
+     cursor near the right end of this menu item will display a submenu
+     with two choices: `Entire Session...' and `From Selection...'.
+     `Entire Session...' will log the entire session to a file, while
+     `From Selection...' will only log the current selection. After
+     selecting either of the options, a dialog will be presented in
+     which you can enter the name of the file in which to write the
+     log. Note that you can select a large range conveniently by
+     selecting one end, scrolling to the other end, and then selecting
+     it _while holding down either shift key_.
+
+Quit...
+     Exit Prolog (and QUI). First, a dialogue is displayed asking if
+     you are sure you want to exit Prolog.  If you indicate that you
+     are sure, execution is halted and all QUI windows are closed.  You
+     will be returned to the operating system shell that invoked QUI.
+
+
+File: quintus.info,  Node: qui-mai-mai-deb,  Next: qui-mai-mai-hlp,  Prev: qui-mai-mai-fil,  Up: qui-mai-mai
+
+Debug Pulldown
+..............
+
+Trace (Creep Initially)
+     puts the debugger into trace mode
+
+Debug (Leap Initially)
+     puts the debugger into leap mode
+
+Zip (Zip Initially)
+     puts the debugger into zip mode
+
+Nodebug
+     turns off the debugger
+
+   Selecting one of the first three choices will open the debugger
+window (if it's not already open).  Choosing Nodebug will close it.
+Note that the diamond to the left of one of these menu items will be
+darkened, indicating your current debugging mode.  See *Note
+dbg-bas-con-tdz:: for an explanation of these modes.
+
+
+File: quintus.info,  Node: qui-mai-mai-hlp,  Prev: qui-mai-mai-deb,  Up: qui-mai-mai
+
+Help Pulldown
+.............
+
+   See *Note qui-hlp-hlp:: for more information.
+
+
+File: quintus.info,  Node: qui-mai-his,  Next: qui-mai-top,  Prev: qui-mai-mai,  Up: qui-mai
+
+QUI Query History Menu
+----------------------
+
+   The query history menu contains all previously entered queries.
+Initially this menu is empty.  Only queries will appear in this menu,
+and not input submitted to general Prolog I/O predicates.  When you
+single click on an entry in the query history menu, that entry will
+replace any text that has already been typed into the query interpreter
+sub-window.  When you double click on an entry, that entry will replace
+any text that has already been typed into the query interpreter
+sub-window and the query will be submitted to Prolog.  A history menu
+entry will be compressed into a single line even if it consisted of
+multiple lines when it was submitted.
+
+
+File: quintus.info,  Node: qui-mai-top,  Next: qui-mai-int,  Prev: qui-mai-his,  Up: qui-mai
+
+QUI Query Interpreter Sub-Window
+--------------------------------
+
+* Menu:
+
+* qui-mai-top-poi::                     Prolog Output and Input
+* qui-mai-top-key::                     Key Bindings
+
+     *Motif caveat:* When the main window originally appears, the
+     insertion point caret is not visible.  To make it visible, click
+     the left mouse button anywhere after the Prolog prompt.
+
+
+
+File: quintus.info,  Node: qui-mai-top-poi,  Next: qui-mai-top-key,  Up: qui-mai-top
+
+Prolog Output and Input
+.......................
+
+   The output from Prolog (both `stdout' and `stderr') is redirected to
+this window.  As output is being redirected to this window, the window
+is scrolled so that the insertion point is always visible.
+
+   Input to Prolog is also received from this window.  When Prolog is
+expecting to receive a term (which also includes a query), the term
+will not be transmitted to Prolog until its full-stop is followed by a
+newline.  This allows you to edit previously typed lines in a
+multi-line term before transmitting those lines to Prolog.  When Prolog
+is expecting to receive input that is not a term, a newline will
+immediately transmit the line just typed.
+
+   The text that appears before the current prompt is not editable.
+You cannot type characters into this window while output is also being
+redirected into it.
+
+
+File: quintus.info,  Node: qui-mai-top-key,  Prev: qui-mai-top-poi,  Up: qui-mai-top
+
+Key Bindings
+............
+
+   The following key bindings have been added to the existing Motif
+text widget key bindings in the query interpreter sub-window:
+<DEL>
+     Deletes the character to the left of the insertion point.
+
+`^C'
+     Interrupts Prolog execution (see *Note qui-mai-int:: for more
+     information).
+
+`^D'
+     Deletes the next character. If there are no characters on the
+     current line, then an end of file signal is transmitted to Prolog.
+
+`^K'
+     Deletes all characters to the right of the insertion point on the
+     current line.
+
+`^U'
+     Deletes all the characters to the left of the insertion point up
+     to the Prolog prompt on the current line.
+
+`^P'
+     Moves the insertion point to the previous line.
+
+`^N'
+     Moves the insertion point to the next line.
+
+`^A'
+     Moves the insertion point to the beginning of the current line.
+
+`^E'
+     Moves the insertion point to the end of the current line.
+
+`^B'
+     Moves the insertion point one character to the left.
+
+`^F'
+     Moves the insertion point one character to the right.
+
+
+File: quintus.info,  Node: qui-mai-int,  Next: qui-mai-nxa,  Prev: qui-mai-top,  Up: qui-mai
+
+QUI Interrupt Button
+--------------------
+
+   When you select the Interrupt button, Prolog execution is suspended.
+A selection dialogue is then displayed from which you will determine
+the next action,
+Continue
+     Execution is resumed.  Execution will continue as if Prolog had
+     never been interrupted.
+
+Abort
+     Execution is immediately aborted (see *Note ref-iex-int:: for more
+     information about abort).
+
+Trace
+     Execution is continued but traps to the debug window when the next
+     debug port is reached.
+
+Quit
+     Execution is halted and all QUI windows are closed.
+
+   Typing `^C' in the main window will also display the interrupt
+dialogue (see *Note qui-mai-top-key:: for more information).
+
+
+File: quintus.info,  Node: qui-mai-nxa,  Next: qui-mai-err,  Prev: qui-mai-int,  Up: qui-mai
+
+QUI Next Answer Buttons
+-----------------------
+
+   When Prolog prints a set of variable bindings for one solution, it
+waits to find out whether you want to see the bindings for the next
+solution, if any.  When Prolog is in such a wait state the next answer
+buttons at the bottom of the main window are active.
+Next Answer
+     Displays the next set of variable bindings, if any, and waits
+     again.  If there are no more bindings, you will be returned to
+     query input mode and the next answer buttons will be inactive.
+
+No More Answers
+     You will be returned to query input mode and the next answer
+     buttons will be inactive.
+
+Remaining Answers
+     Displays all remaining sets of variable bindings; you will be
+     returned to query input mode and the next answer buttons will be
+     inactive.  If there is an infinite number of remaining bindings
+     then you must abort execution using the Interrupt button or its
+     equivalent (default is `^C') key binding (see *Note qui-mai-int::
+     for more information).
+
+
+File: quintus.info,  Node: qui-mai-err,  Prev: qui-mai-nxa,  Up: qui-mai
+
+QUI Error Dialogue Window
+-------------------------
+
+   Each Prolog error message is printed in its own dialogue window.
+Both types of dialogue window give you the option to either continue or
+abort the execution.  Execution is suspended until you select one of
+these two options,
+Continue
+     Execution is continued following the exception handler that
+     printed the error or warning message (see *Note ref-ere:: for more
+     information about exception handling).
+
+Abort
+     Execution is immediately aborted (see *Note ref-iex-int:: for more
+     information about abort).
+
+   After you select an option, the error or warning message is placed
+in the Prolog output window so that subsequent inspection of the
+interactive session will show the context of the message.  The
+EXECUTION ABORTED error message is not displayed in a dialogue window.
+
+
+File: quintus.info,  Node: qui-edi,  Next: qui-ied,  Prev: qui-mai,  Up: qui
+
+Edit Windows
+============
+
+* Menu:
+
+* qui-edi-ewi::                         Invoking an Edit Window
+* qui-edi-fil::                         File Pulldown
+* qui-edi-mis::                         Misc Pulldown
+* qui-edi-hlp::                         Help Pulldown
+* qui-edi-key::                         Key Bindings
+
+   The name of the file that is loaded into the edit window is
+displayed in the title bar of the window.  An indication of whether or
+not the file is modified also appears in the title bar.  Below the
+title bar is the menu bar of options that are available in the edit
+window.  Below the menu bar is the text window that contains the loaded
+file.
+
+
+File: quintus.info,  Node: qui-edi-ewi,  Next: qui-edi-fil,  Up: qui-edi
+
+Invoking an Edit Window
+-----------------------
+
+   An edit window is displayed by selecting the Edit...  option of the
+File pulldown in the main window or the Edit option of the File
+pulldown in the debugger main window.  See *Note qui-mai-mai-fil:: for
+more information.  The following figure shows an edit window before a
+file is loaded.
+
+
+[See printed or HTML manual.]
+
+                     Edit Window with File Browser
+
+
+File: quintus.info,  Node: qui-edi-fil,  Next: qui-edi-mis,  Prev: qui-edi-ewi,  Up: qui-edi
+
+File Pulldown
+-------------
+
+   Pulling down your File Pulldown menu will give you the options
+listed below.
+Edit...
+     Displays a file browser.  The file you select is loaded into the
+     edit window.
+
+Compile
+     The contents of the edit window is saved into the file associated
+     with the edit window if the file has changed since loaded into the
+     window or since last save and that file is compiled by the Prolog
+     system. This item is disabled when compiling file is not permitted
+     (see *Note qui-mai-mai-fil::).
+
+Save
+     The contents of the edit window is saved into the file associated
+     with the edit window.
+
+Save As...
+     Displays a dialogue that prompts you for the name of a file.  The
+     contents of the edit window is saved into the file you specify.
+
+Insert...
+     Displays a file browser.  The file you select is copied at the
+     location of the insertion point.
+
+Quit
+     Quits the edit window.  If the edit window has modifications that
+     have not been saved, then it displays a dialogue that asks you
+     whether you want to save the modifications.
+
+   Once you select Edit and load a file the edit window looks like this:
+
+
+[See printed or HTML manual.]
+
+                     Edit Window with File Loaded
+
+
+File: quintus.info,  Node: qui-edi-mis,  Next: qui-edi-hlp,  Prev: qui-edi-fil,  Up: qui-edi
+
+Misc Pulldown
+-------------
+
+   The following choices may be selected by pulling down the Misc
+Pulldown menu.
+Find and Replace...
+     Displays a dialogue that has the following options,
+    Find
+          Find the string specified in the box to the right of this
+          button in the direction indicated by the toggles (i.e.
+          forward or backward).  If the wraparound option is selected
+          then the search wraps from bottom to top if the direction
+          toggle is forward or from top to bottom is the direction
+          toggle is backward.
+
+    Replace
+          Replace the next occurrence of the string specified in the
+          box to the right of the Find button with the string specified
+          in the box to the right of this button in the direction
+          indicated by the toggles (i.e.  forward or backward).  If the
+          wraparound option is selected then the replacement wraps from
+          bottom to top if the direction toggle is forward or from top
+          to bottom is the direction toggle is backward.
+
+    Replace All
+          Replace all occurrences of the string specified in the box to
+          the right of the Find button with the string specified in the
+          box to the right of the Replace button.
+
+    Quit
+          Quit the Find and Replace... dialogue box.
+
+Go to A Line
+     Pops up a dialogue allowing you to enter a line number.  The
+     insertion point will move to the line you specify.
+
+
+File: quintus.info,  Node: qui-edi-hlp,  Next: qui-edi-key,  Prev: qui-edi-mis,  Up: qui-edi
+
+Help Pulldown
+-------------
+
+On This Window
+     Displays information regarding the edit window.
+
+
+File: quintus.info,  Node: qui-edi-key,  Prev: qui-edi-hlp,  Up: qui-edi
+
+Key Bindings
+------------
+
+   The following key bindings have been added to the existing Motif
+text widget key bindings in the edit window,
+<DEL>
+     Deletes the character to the left of the insertion point.
+
+`^D'
+     Deletes the character to the right of the insertion point.
+
+`^K'
+     Deletes all characters to the right of the insertion point on the
+     current line.
+
+`^P'
+     Moves the insertion point to the previous line.
+
+`^N'
+     Moves the insertion point to the next line.
+
+`^A'
+     Moves the insertion point to the beginning of the current line.
+
+`^E'
+     Moves the insertion point to the end of the current line.
+
+`^B'
+     Moves the insertion point one character to the left.
+
+`^F'
+     Moves the insertion point one character to the right.
+
+`^L'
+     Redraws the display of the editor window.
+
+`^H'
+     Deletes the previous character to the left of the insertion point.
+
+`^J'
+     Inserts a new line to the right of the insertion points and
+     indents the new line so that it starts from the same column as the
+     current line.
+
+`^M'
+     Inserts a new line to the right of the insertion point.
+
+`^O'
+     Inserts a new line to the right of the insertion point without
+     moving the insertion point.
+
+`^T'
+     Moves the insertion point to the beginning of the file.
+
+`^U'
+     Moves the insertion point to the previous page.
+
+`^V'
+     Moves the insertion point to the next page.
+
+`^W'
+     Deletes the selected region of text.
+
+`^Y'
+     Yanks back deleted text.
+
+`^X'
+     Moves the insertion point to the end of the file.
+
+
+File: quintus.info,  Node: qui-ied,  Next: qui-dbg,  Prev: qui-edi,  Up: qui
+
+Interface to External Editors
+=============================
+
+* Menu:
+
+* qui-ied-ige::                         Interface to GNU Emacs
+
+   While using the Quintus User Interface you can also interact with an
+external editor.  You might choose to do this if you are more
+comfortable or familiar with another editor that QUI supports.
+Currently QUI only provides an interface to the GNU Emacs editor, in
+addition to the default QUI editor.
+
+
+File: quintus.info,  Node: qui-ied-ige,  Up: qui-ied
+
+Interface to GNU Emacs
+----------------------
+
+* Menu:
+
+* qui-ied-ige-gem::                     Invoking GNU Emacs to Edit Files From QUI
+* qui-ied-ige-keq::                     Key Bindings in "qui" mode
+
+   In order to set up GNU Emacs as the editor for QUI, you need to set
+the shell environment variable `QUINTUS_EDITOR_PATH' to the path of the
+GNU Emacs executable.  You may also need to set the following shell
+variables:
+`QUINTUS_LISP_PATH'
+     When QUI invokes the GNU Emacs editor, it instructs GNU Emacs to
+     load initial lisp files from `QUINTUS-DIRECTORY/editor3.5/gnu'.
+
+`DISPLAY'
+     If the `DISPLAY' variable is set GNU Emacs will try to create a
+     window on the appropriate display, otherwise it will run in the
+     window that invoked QUI.
+
+
+File: quintus.info,  Node: qui-ied-ige-gem,  Next: qui-ied-ige-keq,  Up: qui-ied-ige
+
+Invoking GNU Emacs to Edit Files From QUI
+.........................................
+
+   There are two ways to invoke GNU Emacs from QUI.  The first way is by
+selecting the Edit... item of the File pulldown menu in the QUI window.
+The second way is by selecting the Edit Source item of the File
+pulldown menu in the debugger window. In order to use this second
+method of invoking GNU Emacs, you must already have a file loaded in
+your Prolog program under QUI and it must be displayed in the debugger
+source window. Selecting this menu item will invoke GNU Emacs and place
+the cursor at the position of the file that defines the predicate you
+are currently debugging. If you have invoked GNU Emacs from the QUI
+window, a scratch buffer `*qui-emacs*' is displayed on start up. This
+scratch buffer is needed to set up the communication channels with QUI.
+Although the buffer is in `qui' mode, (which is the minor mode in which
+all files with the extension `.pl' are placed) you cannot use it as a
+normal prolog buffer as this buffer is not associated with any file.
+Note that the `*qui-emacs*' buffer is displayed only if you invoke the
+editor from the QUI main window. If you invoke the editor from the
+debugger, the file that defines the predicate you are debugging is
+displayed, not the `*qui-emacs*' buffer, which is hidden.
+
+
+File: quintus.info,  Node: qui-ied-ige-keq,  Prev: qui-ied-ige-gem,  Up: qui-ied-ige
+
+Key Bindings in "qui" mode
+..........................
+
+   The key bindings are exactly the same as in the Prolog/Emacs
+interface. You can compile regions, procedures and buffers; you can
+search for definitions of predicates (find definition) and you can move
+around clauses.
+
+   To use find-definition in QUI, ensure that a gnuemacs process is
+running, move the cursor into that window, and proceed as in a straight
+emacs interface (see *Note ema-emi-key::).  It cannot be done directly
+from the QUI main window, so most likely it will be necessary to type
+in the procedure name and arity rather than select it.
+
+   The only thing that is different is that there are no bindings to
+repeat previous queries to prolog as the QUI window serves that
+purpose. For a detailed description of the key bindings see *Note
+ema-emi-key::.
+
+
+File: quintus.info,  Node: qui-dbg,  Next: qui-hlp,  Prev: qui-ied,  Up: qui
+
+QUI Debug Window
+================
+
+   The debug window is displayed either by selecting one of the first
+three options in the Debug pulldown in the menu bar of the main window
+(see *Note qui-mai-mai-fil::), by selecting the Trace button in the
+interrupt dialogue (see *Note qui-mai-int::), or by turning on the
+debugger with the `trace/0', `debug/0', or `prolog_flag/3' built-ins
+(see *Note dbg-bas-con-tdz::).
+
+   The debug window is described in the debugger section of this manual
+set.  See *Note dbg-sld:: for its description.
+
+
+File: quintus.info,  Node: qui-hlp,  Next: qui-ciq,  Prev: qui-dbg,  Up: qui
+
+QUI Help Window
+===============
+
+* Menu:
+
+* qui-hlp-hlp::                         Invoking Help
+* qui-hlp-hwi::                         Help Window
+* qui-hlp-hwm::                         Help Window Menu Bar
+
+
+[See printed or HTML manual.]
+
+                          The QUI Help Window
+
+
+File: quintus.info,  Node: qui-hlp-hlp,  Next: qui-hlp-hwi,  Up: qui-hlp
+
+Invoking Help
+-------------
+
+   The help window allows you to navigate through all parts of the
+on-line version of the Quintus manual set.  This window is displayed
+using the Help pulldown on the control panel of the QUI Main Window or
+by calling `help/1' or `manual/[0,1]' (e.g. by typing `help(compile).')
+at the top level.  Each Prolog help predicate accesses the manual set
+in a different way.  See *Note qui-hlp-hwm-gto:: for more information.
+
+   If any requests for help are invoked while the help window is
+already displayed, then this same help window is loaded with the newly
+requested portion of the manual set that is requested.
+
+   Instead of invoking help through the Prolog help predicates, you can
+use the Help Pulldown in the Control Panel of the QUI Main Window.
+Each button in this pulldown displays a different part of the manual
+set:
+On Prolog
+     Displays the menu of on-line Quintus manuals.
+
+On QUI
+     Displays the on-line version of this description of the Quintus
+     User Interface.
+
+On This Window
+     Displays information regarding the main window.
+
+
+File: quintus.info,  Node: qui-hlp-hwi,  Next: qui-hlp-hwm,  Prev: qui-hlp-hlp,  Up: qui-hlp
+
+Help Window
+-----------
+
+* Menu:
+
+* qui-hlp-hwi-sbs::                     Selecting a Sub-Section from a Menu
+* qui-hlp-hwi-xre::                     Following Cross-References in Text
+* qui-hlp-hwi-top::                     Selecting a Topic in Text
+
+   The name of the current manual is displayed in the title bar of the
+window.  Below the title bar is the menu bar of options that are
+available in the help window.  Below the menu bar is the name of the
+current section.  Below the name is the current section, either a menu
+of sub-sections or text.
+
+
+File: quintus.info,  Node: qui-hlp-hwi-sbs,  Next: qui-hlp-hwi-xre,  Up: qui-hlp-hwi
+
+Selecting a Sub-Section from a Menu
+...................................
+
+   When a menu is displayed, you can display one of the sub-sections
+listed by selecting the appropriate menu item.  When you select a line
+of the menu, the sub-section indicated by the line is displayed.
+
+
+File: quintus.info,  Node: qui-hlp-hwi-xre,  Next: qui-hlp-hwi-top,  Prev: qui-hlp-hwi-sbs,  Up: qui-hlp-hwi
+
+Following Cross-References in Text
+..................................
+
+   When a text section is displayed, it may contain cross-references.
+Cross-references are underlined.  When you double-click on the
+cross-reference, the section indicated by it is displayed.
+
+
+File: quintus.info,  Node: qui-hlp-hwi-top,  Prev: qui-hlp-hwi-xre,  Up: qui-hlp-hwi
+
+Selecting a Topic in Text
+.........................
+
+   When a text section is displayed, you can select a new topic by
+pointing to a word and clicking the left mouse button.  That word will
+then be highlighted. If you click again on the highlighted word then it
+is sent to Prolog via `help/1'. It is the same as entering the topic
+through `index...' dialogue in the Goto pulldown menu.
+
+   A recognized topic is a word in the form of [A-Z a-z][A-Z a-z 0-9_-]*
+possibly followed by a slash preceding an arity specification such as
+`/1' and `/[1,2]'. Words consisting of non-alphanumeric characters such
+as `@>' will not be recognized.
+
+
+File: quintus.info,  Node: qui-hlp-hwm,  Prev: qui-hlp-hwi,  Up: qui-hlp
+
+Help Window Menu Bar
+--------------------
+
+* Menu:
+
+* qui-hlp-hwm-fil::                     File Pulldown
+* qui-hlp-hwm-got::                     Goto Pulldown
+* qui-hlp-hwm-gto::                     Invoking Goto Options from Prolog Predicates
+* qui-hlp-hwm-his::                     History Pulldown
+* qui-hlp-hwm-mis::                     Misc Pulldown --- Search
+
+
+File: quintus.info,  Node: qui-hlp-hwm-fil,  Next: qui-hlp-hwm-got,  Up: qui-hlp-hwm
+
+File Pulldown
+.............
+
+Quit
+     Selecting this button quits the help window.  Any subsequent help
+     command will redisplay the window.
+
+
+File: quintus.info,  Node: qui-hlp-hwm-got,  Next: qui-hlp-hwm-gto,  Prev: qui-hlp-hwm-fil,  Up: qui-hlp-hwm
+
+Goto Pulldown
+.............
+
+   Each button in this pulldown allows you to directly display various
+parts of the manual set.
+Next Section
+     Travel to the following adjacent section of the manual. It is like
+     paging through a paper manual.
+
+Previous Section
+     Travel to the previous adjacent section of the manual.
+
+Parent
+     When you select this button, the parent (a menu) of the current
+     section is displayed.  This button is not available when the
+     current section does not have a parent.  The only sections that do
+     not have a parent are the top-most menu of manuals and any menu
+     generated from index entries.
+
+Top
+     When you select this button, the top-most menu of manuals is
+     displayed.
+
+Index...
+     When you select this button, a dialogue that prompts you for an
+     index topic is displayed.  When you enter a valid index topic, the
+     help window will generate and display a menu of index entries that
+     refer to that topic.  If you enter an invalid index topic, the
+     display will remain as it was.  The form of the index topic is the
+     same as the one passed to `help/1'.
+
+Section...
+     When you select this button, a dialogue that prompts you for a
+     manual section is displayed.  When you enter a valid section, the
+     help window will display that section.  If you enter an invalid
+     section, an error dialogue will appear.  The form of the section
+     is the same as the one passed to `manual/1'.
+
+
+File: quintus.info,  Node: qui-hlp-hwm-gto,  Next: qui-hlp-hwm-his,  Prev: qui-hlp-hwm-got,  Up: qui-hlp-hwm
+
+Invoking Goto Options from Prolog Predicates
+............................................
+
+   Each Prolog help predicate is mapped to a QUI Goto pulldown button.
+`manual/0'
+     Same as selecting the Top button from the Goto pulldown.
+
+`manual/1'
+     Same as selecting the Section button from the Goto pulldown.
+
+`help/1'
+     Same as selecting the Index button from the Goto pulldown.
+

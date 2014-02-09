@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Checking Functors -- <code>library(samefunctor)</code></h4>
+
+   <p>This library package is supplied to solve the following problem:  often you
+could
+write code that works more than one way around except that this requires
+calling <code>functor/3</code>
+twice, and one of the calls must therefore precede the other.  For
+example,
+<pre class="example">     reverse_terms(Term1, Term2) :-
+             functor(Term1, F, N),   % ***
+             functor(Term2, F, N),   % ***
+             reverse_terms(N, 1, Term1, Term2).
+     
+     reverse_terms(0, _, _, _) :- !.
+     reverse_terms(Z, A, Term1, Term2) :-
+             arg(Z, Term1, Arg),
+             arg(A, Term2, Arg),
+             Y is Z-1, B is A+1,
+             reverse_terms(Y, B, Term1, Term2).
+     </pre>
+
+   <p>As written, this can only be used to find <var>Term2</var> given <var>Term1</var>. 
+If you swapped the two *** lines, you could find <var>Term1</var> given
+<var>Term2</var>, but then could not find <var>Term2</var> given <var>Term1</var>.  You can make a
+bidirectional version of <code>reverse_terms/2</code> by using the
+predicate <code>same_functor/3</code> in place of the *** lines:
+
+<pre class="example">     reverse_terms(Term1, Term2) :-
+             same_functor(Term1, Term2, N),  % ***
+             reverse_terms(N, 1, Term1, Term2).
+     </pre>
+
+   <p><code>library(samefunctor)</code> defines the following predicates:
+
+     <dl>
+
+     <br><dt><code>same_functor(</code><var>?Term1</var><code>, </code><var>?Term2</var><code>, </code><var>?Symbol</var><code>, </code><var>?Arity</var><code>)</code>
+     <dd>
+is true when <var>Term1</var> and <var>Term2</var> have the same principal functor,
+the function symbol being <var>Symbol</var> and the arity being <var>Arity</var>. 
+In other words,
+     <pre class="example">          same_functor(T1, T2, F, N) if
+                  functor(T1, F, N) and
+                  functor(T2, F, N) are both true.
+          </pre>
+
+     <p>Either <var>Term1</var>, or <var>Term2</var>, or <em>both</em> <var>Symbol</var> and <var>Arity</var>
+should be instantiated.  This is the most general variant.
+
+     <br><dt><code>same_functor(</code><var>?Term1</var><code>, </code><var>?Term2</var><code>, </code><var>?Arity</var><code>)</code>
+     <dd>
+is true when <var>Term1</var> and <var>Term2</var> have the same principal functor,
+and <var>Arity</var> is their common arity.  Either <var>Term1</var> or <var>Term2</var>
+should be instantiated, and the other arguments can then be found. 
+Often, <code>same_functor/3</code> is appropriate and the greater
+generality of <code>same_functor/4</code> is not needed.
+
+     <br><dt><code>same_functor(</code><var>?Term1</var><code>, </code><var>?Term2</var><code>)</code>
+     <dd>
+is true when <var>Term1</var> and <var>Term2</var> have the same principal functor. 
+Either <var>Term1</var> or <var>Term2</var> should be instantiated, and the other
+argument can then be found. 
+</dl>
+
+   <p>Note that <code>same_functor/4</code> has the same argument order as
+<code>functor/3</code> except that it has <em>two</em> "term" arguments at the front. 
+Whenever a predicate's arguments include a functor specification expressed as
+two arguments, the function symbol and its arity,
+those two arguments should always
+be adjacent, with the function symbol first and the arity immediately
+following.  <code>functor/3</code> and <code>same_functor/4</code> obey this rule.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-tma-subsumes.html#lib-tma-subsumes">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-tma-aor.html#lib-tma-aor">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-tma.html#lib-tma">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>query_abbreviation/3</code> <dfn>extendable</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile 'QU_messages':query_abbreviation/3.</code>
+
+   <p><code>query_abbreviation(</code><var>+Tag</var><code>, </code><var>-Prompt</var><code>, </code><var>-Pairs</var><code>)</code>
+
+   <p>A way to specify one letter abbreviations for responses to queries
+from the Prolog System.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Tag</var> <dfn>atom</dfn>
+     <dd>This indicates which query type.
+
+     <br><dt><var>Prompt</var> <dfn>atom</dfn>
+     <dd>An atom indicating appropriate abbreviations.
+
+     <br><dt><var>Pairs</var> <dfn>list of pair</dfn>
+     <dd>A list of word-abbreviation pairs.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Prolog only asks for keyboard input in a few different ways.  These
+are enumerated in the clauses for <code>query_abbreviation/3</code> in the
+module <code>messages(language('QU_messages'))</code>.  These clauses specify
+valid abbreviations for a given key word.  For example,
+
+<pre class="example">     query_abbreviation(yes_or_no,'(y/n)',[yes-"yY",no-"nN"]).
+     </pre>
+
+   <p>a French translator might decide that the letters <code>O</code> and <code>o</code> are reasonable
+abreviations for <code>oui</code> (yes), and therefore write
+
+<pre class="example">     query_abbreviation(yes_or_no,'(o/n)',[yes-"oO",no-"nN"]).
+     </pre>
+
+   <p>For an example of how this is used with <code>query_hook/6</code>, see
+the reference page for <code>query_hook_example</code>.
+
+<h4 class="subheading">See Also:</h4>
+
+   <a href="ref-msg-umf-int.html#ref-msg-umf-int">ref-msg-umf-int</a>, and the reference
+page for <code>query_hook/6</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-query_hook.html#mpg-ref-query_hook">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-put.html#mpg-ref-put">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

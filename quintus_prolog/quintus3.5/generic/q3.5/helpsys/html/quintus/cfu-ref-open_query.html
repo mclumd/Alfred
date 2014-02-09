@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_open_query()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     QP_qid QP_open_query(pred_ref, arg1,...,arg255)
+     QP_pred_ref pred_ref;
+     </pre>
+
+   <p>Initiates a nondeterminate Prolog query.
+
+<h4 class="subheading">Description</h4>
+
+   <p>The first argument passed to <code>QP_query()</code> is a reference to the
+Prolog predicate to be called.  <code>QP_query()</code> accepts between 0 and
+255 arguments after its first argument.  Any arguments after the first
+represent parameters to be passed to and from the Prolog predicate. 
+For the types of arguments that may be passed between C and Prolog predicates,
+see <a href="fli-ffp.html#fli-ffp">fli-ffp</a>.
+
+   <p>The arguments passed to <code>QP_open_query()</code> are identical to those that
+would be passed to <code>QP_query()</code>; however, <code>QP_open_query()</code> does
+not compute a solution to the query.  Its effect is to prepare Prolog
+for the computation of solutions to the query, which must be initiated
+using <code>QP_next_solution()</code>.  For consistency checking,
+<code>QP_open_query()</code> returns a <code>QP_qid</code>, which represents the Prolog
+query.  The type definition for <code>QP_qid</code> is found in the file
+<code>&lt;quintus/quintus.h&gt;</code>.
+
+   <p>The <code>QP_qid</code> returned
+by a call to <code>QP_open_query()</code> must be passed to each call to
+<code>QP_next_solution()</code> for that query, as well as to <code>QP_cut_query()</code> or
+<code>QP_close_query()</code> when terminating the query.
+
+   <p>When requesting solutions from an open nondeterminate query, input and
+output parameters are <em>not</em> passed.  The effect of <code>QP_open_query()</code> is to
+pass inputs to Prolog, which subsequently maintains them.  It also tells
+Prolog where storage for outputs has been reserved.  This storage will
+be written to when solutions are returned.
+
+<h4 class="subheading">Return Value</h4>
+
+     <dl>
+
+     <br><dt><code>QP_qid</code>
+     <dd>query was opened successfully
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>an error occurred when attempting to open the
+query and the query was automatically terminated
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_cut_query()</code>, <code>QP_close_query()</code>,
+<code>QP_query()</code>, <code>QP_next_solution()</code>, <code>QP_pred()</code>, <code>QP_predicate()</code>,
+
+   <a href="fli-ffp.html#fli-ffp">fli-ffp</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-peekc.html#cfu-ref-peekc">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-next_solution.html#cfu-ref-next_solution">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

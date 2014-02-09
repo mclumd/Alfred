@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>grab_pointer/9</code></h5>
+
+<pre class="example">     grab_pointer(+<var>Window</var>,
+             +<var>OwnerEvents</var>, +<var>EventsMask</var>, +<var>PointerMode</var>,
+             +<var>KeyboardMode</var>,
+             +<var>WindowConfine</var>, +<var>Cursor</var>, +<var>Time</var>,
+             -<var>GrabStatus</var>)
+     </pre>
+
+   <p>This predicate actively grabs control of the pointer and
+generates <code>enter_notify</code> and <code>leave_notify</code> events as
+appropriate.
+
+   <p><var>Window</var> is the ProXL window to which events will be reported while
+the grab is in effect.
+
+   <p><var>OwnerEvents</var> is one of:
+     <dl>
+
+     <br><dt><code>true</code>
+     <dd>If pointer events should be reported normally.
+
+     <br><dt><code>false</code>
+     <dd>If pointer events should be reported only to the the grab window. 
+</dl>
+
+   <p><var>EventsMask</var> is an integer bitmask specifying the events that are selected
+and should be reported to the client. The valid event mask names are:
+     <ul>
+
+     <li><code>button_press</code>
+<li><code>button_release</code>
+<li><code>enter_window</code>
+<li><code>leave_window</code>
+<li><code>pointer_motion</code>
+<li><code>pointer_motion_hint</code>
+<li><code>button1_motion</code>
+<li><code>button2_motion</code>
+<li><code>button3_motion</code>
+<li><code>button4_motion</code>
+<li><code>button5_motion</code>
+<li><code>button_motion</code>
+<li><code>keymap_state</code>
+</ul>
+
+   <p>The predicate <code>event_list_mask/2</code> is useful to translate between
+event mask names and integer bitmasks.
+
+   <p><var>PointerMode</var> controls further processing of pointer events:
+     <dl>
+
+     <br><dt><code>async</code>
+     <dd>Pointer event processing continues normally.
+
+     <br><dt><code>sync</code>
+     <dd>The state of the pointer, as seen by applications,
+appears to freeze. No further pointer events
+are generated until the grabbing client calls
+<code>allow_events/[1,2,3]</code> or the pointer grab is released. 
+</dl>
+
+   <p><var>KeyboardMode</var> controls further processing of keyboard events:
+     <dl>
+
+     <br><dt><code>async</code>
+     <dd>Keyboard event processing continues normally.
+
+     <br><dt><code>sync</code>
+     <dd>The state of the keyboard, as seen by applications,
+appears to freeze. No further keyboard events
+are generated until the grabbing client calls
+<code>allow_events/[1,2,3]</code> or the keyboard grab is released. 
+</dl>
+
+   <p><var>WindowConfine</var> is the ProXL window to which the pointer will be
+confined while the grab is in effect, or the atom <code>none</code>.
+
+   <p><var>Cursor</var> is the ProXL cursor to be displayed during the grab, or
+the atom <code>none</code>.
+
+   <p><var>Time</var> is a timestamp in milliseconds (from an event) or the atom
+<code>current_time</code>.
+
+   <p><var>GrabStatus</var> is unified by <code>grab_pointer/9</code> with one of:
+     <dl>
+
+     <br><dt><code>success</code>
+     <dd>If the grab was successful.
+
+     <br><dt><code>already_grabbed</code>
+     <dd>If the attempt is unsuccessful because the pointer
+is already actively grabbed  by some other
+client.
+
+     <br><dt><code>invalid_time</code>
+     <dd>If the attempt is unsuccessful because the specified
+<var>Time</var> is earlier than the last-pointer-grab time, or later than
+the current server time.
+
+     <br><dt><code>not_viewable</code>
+     <dd>If the attempt is unsuccessful because either of the
+grabbing <var>Window</var> or the <var>WindowConfine</var> is not viewable.
+
+     <br><dt><code>frozen</code>
+     <dd>If the attempt is unsuccessful because the pointer is
+frozen by an active grab of another client. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-wmf-grp-grab_button.html#pxl-wmf-grp-grab_button">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-wmf-grp.html#pxl-wmf-grp">Up</a>
+</ul>
+</div>
+   </body></html>
+

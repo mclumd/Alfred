@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Passing Prolog Terms</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-p2f-trm-pas.html#fli-p2f-trm-pas">fli-p2f-trm-pas</a>:                      Passing a Prolog term to a Foreign Function
+<li><a accesskey="2" href="fli-p2f-trm-ret.html#fli-p2f-trm-ret">fli-p2f-trm-ret</a>:                      Returning a Prolog term from a Foreign Function
+<li><a accesskey="3" href="fli-p2f-trm-fft.html#fli-p2f-trm-fft">fli-p2f-trm-fft</a>:                      A Prolog term returned as a value of a Foreign Function
+</ul>
+
+   <p>This section describes passing Prolog terms to a foreign function and
+receiving Prolog terms from a foreign function. For the current release
+this interface is supported only for C.
+
+   <p>There is a difference between passing atomic objects (atoms, floats,
+db_reference and integers) and generic Prolog terms through the
+foreign interface.  Generic Prolog terms passed to a C function (using
+<code>+term</code>) are not converted to any representation in C. Instead the
+foreign function in C gets a reference to the Prolog term, which is of
+type <code>QP_term_ref</code> (defined in <code>&lt;quintus/quintus.h&gt;</code>). 
+Similarly when a generic term is returned (using <code>-term</code> or <code>[-term]</code>)
+from a foreign function there is no conversion of any data structures
+in the foreign language into an equivalent Prolog representation. The
+foreign function has to return a reference to a Prolog term, which it
+originally got from Prolog or from one of the functions/macros
+provided to manipulate Prolog terms such as the <code>QP_put*</code> and
+<code>QP_cons*</code> families of functions.
+
+   <p>When Prolog terms are referred to from C, what the C function holds
+is an indirect reference to the Prolog term. There is a reason
+for this indirection. Prolog terms live in the Prolog global
+stack, and migrate when Prolog does garbage collection
+or stack shifting. If the C function held onto a direct reference
+to a Prolog term it would become invalid after one of these
+memory management operations.  Prolog cannot update and relocate
+these references that C is holding onto since it is impossible to
+distinguish between Prolog references and other integers and
+pointers that C holds onto.
+
+   <p>The C code should also be aware of the scope (or lifetime) of the
+references to Prolog terms passed to it. Once you return
+to Prolog from a call to a foreign function, all the references to Prolog
+terms passed to the foreign function are invalid. All references to
+terms created by the foreign function are also invalid.
+
+   <blockquote>
+
+        <p><em>WARNING:</em> You should not store references to prolog terms into
+global variables in the foreign language. 
+</blockquote>
+
+   <p>The scope of references to terms are more restricted when C calls Prolog. 
+If Prolog returns a term as a result of a C call to a Prolog predicate,
+that term is valid only till the call for the next solution from that
+Prolog predicate (using <code>QP_next_solution()</code>). 
+This also holds true for terms created in C. If you create a term after one
+call to a Prolog predicate then the reference to that term is only valid
+till the call for next solution from that Prolog predicate. 
+.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-poi.html#fli-p2f-poi">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-atm.html#fli-p2f-atm">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f.html#fli-p2f">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

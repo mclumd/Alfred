@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Prolog Side</h5>
+
+   <p>The interface for calling a Prolog program from a C program is strictly
+typed.  In the Prolog servant program, the user must declare
+which Prolog procedures can be called from the
+C program, the types of the data elements to be passed between them, and the
+direction the elements are to be sent.  This is done in Prolog by defining
+<code>external/3</code> facts to provide this information.  These facts are very
+similar to those for <code>foreign/3</code> and have the following form:
+
+<pre class="example">     external(<var>CommandName</var>, <var>Protocol</var>, <var>PredicateSpecification</var>).
+     </pre>
+
+   <p><var>CommandName</var> is the name by which the C program invokes this
+predicate. 
+<var>Protocol</var> is the protocol to be used, which currently must
+be <code>xdr</code>. 
+<var>PredicateSpecification</var> is a term that describes the
+Prolog predicate and the interface, and is of the form:
+
+<pre class="example">     <var>PredicateName</var>(<var>ArgSpec1</var>, <var>ArgSpec2</var>, ...)
+     </pre>
+
+   <p><var>PredicateName</var> is the name of the Prolog predicate (an atom). 
+There is an <var>ArgSpec</var> for each argument of the predicate, and
+ <var>ArgSpec</var> is one of:
+
+<pre class="example">     +integer        +float          +atom           +string
+     -integer        -float          -atom           -string
+     </pre>
+
+   <p>Examples:
+
+<pre class="example">     external(add, xdr, addtwoints(+integer,+integer,-integer)).
+     external(ancestor, xdr, ancestor(+string,-string)).
+     
+     /* Define addtwoints/3 for use by C caller. */
+     addtwoints(X, Y, Z) :- Z is X+Y.
+     
+     /* Define ancestor/2 for use by C caller */
+     ancestor(X, Y) :- parent(X, Y).
+     ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
+     </pre>
+
+   <p>The interface allows the simple Prolog data types (atoms, integers, and
+floating-point numbers) to be passed to and from a calling C program.  The
+<code>+</code> annotation on an argument specification means that the corresponding
+value will be passed from the calling C program to the called Prolog
+predicate.  A <code>-</code> annotation means that the value will be passed
+from the
+Prolog predicate back to the calling C program.  The <code>+</code> and <code>-</code>
+annotations are always from the point of view of the master (or caller). 
+In this case the C program is the master.
+
+   <p>The argument specifications have the same meanings as they do in
+<code>foreign/3</code> facts, but note the directions implied by <code>+</code>
+and <code>-</code>.  Also note that the <code>...</code> specifications are
+not allowed.  The limitations on the sizes of integers, floats, and
+strings in Prolog are the same as for the interface to foreign
+routines.
+
+   <p>The values passed as <code>atom</code> arguments will be treated as unsigned
+integers in the C program.  Their uses
+must be restricted to
+the same invocation of the Prolog servant.  These integers can be
+converted to and from the associated strings by using the C functions
+<code>QP_ipc_atom_from_string()</code> and <code>QP_ipc_string_from_atom()</code> below.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-cpp-save_ipc_servant.html#ipc-rpc-cpp-save_ipc_servant">Next</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc-cpp.html#ipc-rpc-cpp">Up</a>
+</ul>
+</div>
+   </body></html>
+

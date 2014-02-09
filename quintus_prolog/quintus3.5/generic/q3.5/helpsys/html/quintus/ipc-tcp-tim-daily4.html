@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_daily(</code><var>+Hour</var><code>, </code><var>+Minute</var><code>, </code><var>+Seconds</var><code>, </code><var>-Timeval</var><code>)</code></h5>
+
+   <p>This predicate is useful for scheduling daily events.  The given time
+will be translated into the equivalent absolute time, and that time
+will definitely be within the next 24 hours.  For example,
+<pre class="example">     tcp_daily(13, 0, 0, Timeval)
+     </pre>
+    unifies <var>Timeval</var> with the
+<code>timeval/2</code> representation for 1 pm.  If the goal was submitted at noon,
+<var>Timeval</var> will represent an hour later.  If the goal was
+submitted at 2 pm, <var>Timeval</var> will represent 1 pm the following
+day.
+
+   <p><var>Hour</var>, <var>Minute</var>, and <var>Second</var> must all be integers.
+
+   <p>The following example wakes up every 24 hours
+
+<pre class="example">             ...
+             tcp_daily(H, M, S, Timeval)
+             tcp_schedule_wakeup(Timeval, time(H,M,S)),
+             repeat,
+                 tcp_select(X),
+                 dispatch(X),
+             fail.
+     
+         dispatch(wakeup(T)):-
+             T = time(H,M,S),
+             tcp_daily(H, M, S, Timeval),
+             tcp_schedule_wakeup(Timeval, T),
+             ...
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-tim-date_timeval2.html#ipc-tcp-tim-date_timeval2">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-tim-can.html#ipc-tcp-tim-can">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-tim.html#ipc-tcp-tim">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Installing an Application:  runtime(<var>File</var>)</h4>
+
+   <p>A runtime system is a single, executable program that can easily be transferred
+to a different machine.  However, in many cases, application programs require
+access to some auxiliary files in the course of their execution.  These may be
+files of Prolog code that are to be consulted at run time, or they may be data
+files in any arbitrary format.  If your application requires some such files,
+you may need to require users of the application to follow some installation
+procedure before they can use it.
+
+   <p>One approach to this problem is to use the runtime file search path for
+accessing all your auxiliary files.  The default runtime file search path is
+the runtime directory where Prolog executables and objects are located. 
+You can modify this by putting a goal such as the
+following in your <code>prolog.ini</code> file.
+<pre class="example">     :- retractall(file_search_path(runtime,_)),
+        assert(file_search_path(runtime,
+                               '/usr/fred/runtime_files')).
+     </pre>
+
+   <p>This allows you to use
+<code>runtime(</code><var>File</var><code>)</code> anywhere you need to specify a file, such
+as in calls to <code>open/3</code>, <code>see/1</code>, <code>consult/1</code> or
+<code>absolute_file_name/2</code>.  When you do this, the file will be sought
+in the directory <code>/usr/fred/runtime_files</code>.
+
+   <p>When you have built a runtime system, you can change the runtime directory
+and thus the runtime file_search_path by means of the <code>qsetpath</code> utility
+program (see <a href="too-too-qsetpath.html#too-too-qsetpath">too-too-qsetpath</a>). 
+This can be changed, perhaps from an installation shell script to be run by
+the end user.  The appropriate command is:
+<pre class="example">     % <kbd>qsetpath -r</kbd><var>directory</var><kbd> </kbd><var>runtime-system</var><kbd></kbd>
+     </pre>
+
+   <p>The program <var>runtime-system</var> will then look in <var>directory</var> for its
+runtime files.  Note that write permission will be needed on
+<var>runtime-system</var> for the <code>qsetpath</code> command to work.
+
+   <p>There is another utility, <code>qgetpath</code>
+(see <a href="too-too-qgetpath.html#too-too-qgetpath">too-too-qgetpath</a>), which can
+be used to print the runtime directory of a runtime system.  For example,
+<pre class="example">     % <kbd>qgetpath -r </kbd><var>runtime-system</var><kbd></kbd>
+     </pre>
+
+   <p>writes the runtime directory to standard output.  See the
+<code>qsetpath</code> and <code>qgetpath</code> Reference Pages
+for more information.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="sap-rge-dll.html#sap-rge-dll">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-rge.html#sap-rge">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Defining your own main()</h5>
+
+   <p>Normally, when building an executable with <code>qld</code> the Quintus <code>main()</code>
+routine is linked in to the executable, which initializes the Prolog
+environment and calls <code>QP_toplevel()</code>.  <code>QP_toplevel()</code> will either:
+
+     <ol type=1 start=1>
+
+     <li>Start an interactive top-level, which prompts for a command to be
+typed; or
+<li>Call runtime(start) in the case of a runtime system
+(i.e. if <code>-D</code> was omitted in the call to <code>qld</code>).
+        </ol>
+
+   <p>However, you are not limited to using this default <code>main()</code>.  You can
+define your <code>main()</code> and have Prolog as a function call.
+
+   <p>This should be done if the Prolog component(s) of your
+application are such that they may not be called in a given run of the
+program.  In that case, you would not want to initialize Prolog unless
+it became necessary.
+
+   <p>An example of this sort of case is a program written in C
+that utilizes menus.  The end user can select a number of options. 
+One of these options involves further decision making, and runs an
+expert system written in Prolog.  If the user doesn't happen to select
+this menu option on a given occasion, there is no reason to use the
+resources involved in initializing Prolog.  So you would write a <code>main()</code>
+that is dependent upon this menu selection.  Once the user selects
+this option and thus starts up Prolog, however, subsequent invocations
+will recognize that Prolog is already initialized and will not do it again.
+
+   <p>Another situation where it makes sense to "redefine" <code>main()</code> is where
+you already have a large application written in C or some other foreign
+language and you wish to extend it with a module written in Prolog
+without having to rewrite the top level of the existing program.
+
+   <p>If you choose to use a different <code>main()</code>, you should be aware that the
+default Quintus <code>main()</code> provides certain functionality, which will have to be
+included in the user-supplied <code>main()</code>:
+
+     <ul>
+
+     <li>Initialize memory, I/O. 
+<li>Set up command line arguments. 
+<li>Initialize file search paths, file tables and symbol tables. 
+<li>Do start up hooks associated with a statically linked component in QOF
+files. 
+<li>Do any necessary restores, and any start up hooks associated
+with the restored files. 
+</ul>
+
+   <p>The built-in function <code>QP_initialize()</code> takes care of these tasks. 
+An example of a user-supplied <code>main()</code> can be found in the reference page
+for <code>QP_initialize()</code>.
+
+   <p>The QP_* functions require that Prolog be initialized for memory
+management, etc.  Thus, whenever <code>main()</code> is redefined, it will be
+necessary to call <code>QP_initialize()</code>.  There is no harm in calling this
+routine more than once. 
+So people writing portions of large projects can safely
+assume Prolog isn't initialized, and call <code>QP_initialize()</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-emb-how-mem.html#fli-emb-how-mem">Next</a>
+<li><a rel="up" accesskey="u" href="fli-emb-how.html#fli-emb-how">Up</a>
+</ul>
+</div>
+   </body></html>
+

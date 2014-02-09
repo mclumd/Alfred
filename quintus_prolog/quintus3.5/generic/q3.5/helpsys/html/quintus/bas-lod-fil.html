@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Loading a File into Prolog</h4>
+
+   <p>If you have created a Prolog program and stored it in a file called
+<code>myfile.pl</code>, you can load that file into Prolog by typing the
+following:
+<pre class="example">     | ?- <kbd>compile(myfile)</kbd>.
+     </pre>
+
+   <p>This goal has the effect of compiling your file into the
+Prolog database. 
+A message is displayed showing the absolute filename:
+<pre class="example">     % compiling /ufs/joe/myfile.pl...
+     </pre>
+
+   <p>When Prolog finishes compiling a file, it displays the name of the
+file that was compiled, the amount of time it took to compile the
+file, and the number of bytes required to store the compiled file in
+memory.  If an earlier version of the file or another file of the same
+name has been previously compiled during this Prolog session, this
+last number represents the number of <em>additional</em> bytes required to
+recompile the file, and may be zero (or even negative, if the new
+version takes up less space than the old).
+<pre class="example">     % myfile.pl compiled 2.354 sec 2346 bytes
+     | ?-
+     </pre>
+
+   <p>As shown above, the main Prolog prompt reappears after the
+system finishes compiling a file.  At this point, you can begin
+running or testing by typing calls to the predicates
+that the file defines.
+
+   <p>The predicate <code>compile/1</code> also accepts a list of
+files as an argument.  For example, to compile three files called
+<code>file1.pl</code>, <code>file2.pl</code>, and <code>file3.pl</code>, type
+<pre class="example">     | ?- <kbd>compile([file1,file2,file3]).</kbd>
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-lod-qof.html#bas-lod-qof">Next</a>
+<li><a rel="up" accesskey="u" href="bas-lod.html#bas-lod">Up</a>
+</ul>
+</div>
+   </body></html>
+

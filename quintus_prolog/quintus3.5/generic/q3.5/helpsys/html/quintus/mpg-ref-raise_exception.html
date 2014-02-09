@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>raise_exception/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>raise_exception(</code><var>+Exception</var><code>)</code>
+
+   <p>Raise an exception (that might be intercepted by <code>on_exception/3</code>).
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Exception</var> <dfn>nonvar</dfn>
+     <dd>Any term.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>A call to <code>raise_exception/1</code> can
+<em>never</em> backtrack, fail or succeed.  Rather, <code>raise_exception/1</code>
+searches for an ancestor of the current goal, <var>ProtectedGoal</var>,
+which is of the form:
+
+<pre class="example">     on_exception(<var>E</var>,<var>ProtectedGoal</var>,<var>Handler</var>)
+     </pre>
+
+   <p>The first argument, <var>E</var>, unifies with <var>Exception</var>. 
+It then executes the <var>Handler</var> instead of the
+<var>ProtectedGoal</var>.  It will always find a handler at the top level,
+which prints out a message corresponding to the exception.  See
+<a href="ref-msg-tbm.html#ref-msg-tbm">ref-msg-tbm</a> for a discussion on how exceptions are printed.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+when <var>Exception</var> is unbound.  When a built-in predicate detects
+an error situation, it causes an exception to be raised.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>on_exception/3</code>.
+
+   <a href="ref-ere.html#ref-ere">ref-ere</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-read.html#mpg-ref-read">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-qui.html#mpg-ref-qui">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

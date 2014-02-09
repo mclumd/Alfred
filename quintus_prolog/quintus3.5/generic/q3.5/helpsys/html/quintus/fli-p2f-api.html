@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Specifying the Argument Passing Interface</h4>
+
+   <p>The argument passing interface is specified by defining facts for
+<code>foreign/3</code> of the form:
+<pre class="example">     <code>foreign(</code><var>+Routine</var><code>, </code><var>+Language</var><code>, </code><var>+PredicateSpecification</var><code>)</code>
+     </pre>
+
+   <p><var>Routine</var> is an atom that names a foreign code routine and
+<var>Language</var> is an atom (either <code>c</code>, <code>pascal</code>, or <code>fortran</code>) that
+names the language in which the routine is written.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> Assembly code can be loaded if it emulates the exact
+calling conventions of one of C, FORTRAN, or Pascal.  <var>Language</var> is
+then chosen, accordingly, to be one of <code>c</code>, <code>fortran</code>, or <code>pascal</code>.
+
+   </blockquote>
+
+   <p><var>PredicateSpecification</var> specifies the Prolog name given to the
+foreign code routine and how its arguments will be passed to and from
+the foreign code routine.
+
+   <p><var>PredicateSpecification</var> is of the form:
+<pre class="example">     <var>PredicateName(ArgSpec1, ArgSpec2, <small class="dots">...</small>ArgSpecN)</var>
+     </pre>
+
+   <p>where <var>PredicateName</var> is the name of the Prolog predicate (an atom)
+and each <var>ArgSpec</var> is an argument specification for each argument of
+the predicate.  An <var>ArgSpec</var> informs the Prolog system how to pass
+or receive a Prolog term in the corresponding argument position.
+
+   <p>Prolog checks the types of the input arguments; a foreign function
+call will raise an exception if any input argument is not of the right type.
+
+   <p>If the argument passed is an atomic object then the interface
+automatically converts between Prolog's representation of the data and
+the representation expected by the foreign function.  Thus the
+external function does not need to know how Prolog represents atoms,
+integers, or floats in order to communicate with Prolog.  This feature
+simplifies the integration of foreign code with Prolog; in particular,
+it makes it easier to interface directly with already-written
+functions in libraries and other programs.  It also allows for
+compatibility with later versions of Quintus Prolog and with versions
+of Quintus Prolog running on other hardware.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> The only atomic object that cannot be passed directly
+through the foreign interface is a db_reference. db_references
+can be passed to foreign code using the general
+term passing mechanism using <code>+term</code> and <code>-term</code>. You can take apart
+and build db_references in foreign language using the <code>QP_get_db_reference()</code>
+and <code>QP_put_db_reference()</code> functions. 
+</blockquote>
+
+   <p>On the other hand, generic Prolog terms passed to a foreign function
+(using <code>+term</code>) are not converted to any representation in the foreign
+language.  Instead the foreign function gets a reference to a Prolog
+term.  A set of functions/macros is provided to type test, access and
+create Prolog terms through these references (see
+<a href="cfu.html#cfu">cfu</a>).  Similarly when a generic term is returned
+(using <code>-term</code> or <code>[-term]</code>) from a foreign function there is no
+conversion of any data structures in the foreign language into an
+equivalent Prolog representation. The foreign function has to return a
+reference to a Prolog term, which it originally got from Prolog or from
+one of the functions/macros provided to manipulate Prolog terms (the
+<code>QP_put*</code> and <code>QP_cons*</code> families of functions) Further details in
+<a href="fli-p2f-trm.html#fli-p2f-trm">fli-p2f-trm</a>.
+
+   <p>Arguments are passed to foreign functions in the same order as they
+appear in the Prolog call, except for the return value. 
+At most one "return value" argument can be
+specified; that is, there can be only one <code>[-integer]</code>, <code>[-float]</code>, <code>[-atom]</code>,
+<code>[-string]</code>, <code>[-string(</code><var>N</var><code>)]</code>, or <code>[-address(</code><var>typename</var><code>)]</code> specification. 
+There need not be any "return value"
+argument, in which case the value returned by the function is ignored. 
+Both input and output specifications cause data to be passed to the foreign
+function (except of course for the
+"return value" argument, if present). 
+Each input argument is appropriately converted and passed,
+by reference or by value,
+depending on the language's calling convention, and each output
+argument is passed as a pointer through which the foreign function will send
+back the result. 
+Note that for C, input arguments are always passed by value.
+
+   <p>Prolog assumes that a foreign function will return output arguments of the
+specified types; if it does not, the result is unpredictable.  Normally,
+unbound variables will be supplied in the Prolog goal for all the output
+argument positions.  However, any value may be supplied for an output argument;
+when the foreign function has been completed, its outputs are unified with the
+values supplied and a failure to unify results in the failure of the Prolog
+goal.
+
+   <p>Detailed information about passing particular data types through the
+foreign interface can be found in <a href="fli-p2f-int.html#fli-p2f-int">fli-p2f-int</a> through
+<a href="fli-p2f-poi.html#fli-p2f-poi">fli-p2f-poi</a>.  Examples showing the correct use of the
+foreign interface are presented in <a href="fli-p2f-fex.html#fli-p2f-fex">fli-p2f-fex</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-int.html#fli-p2f-int">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-lnk.html#fli-p2f-lnk">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f.html#fli-p2f">Up</a>
+</ul>
+</div>
+   </body></html>
+

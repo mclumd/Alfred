@@ -1,0 +1,150 @@
+#############################################################################
+#	SCCS: @(#)91/05/23 makefile.static	1.3
+#
+#	Makefile for building runtime systems without shared libraries
+#	==============================================================
+#
+#	Release 3.1 of QP/RG for Sun-3/4 systems introduced support for
+#	shared libraries.  By default, we use shared libraries so that
+#	the size of executable files (either runtime systems or extended
+#	versions of the Development System) is kept to a minimum, and so
+#	that libraries such as the X11 libraries can be shared with other
+#	programs that are running at the same time.
+#
+#	Unfortunately, the use of shared libraries is often not desirable 
+#	for runtime systems because of the need to be able to easily move 
+#	them to other machines where QP is not installed.  In a future
+#	release, qld will have an option to specify that shared libraries 
+#	should not be used, and this will be the default for building 
+#	runtime systems.
+#
+#	In the meantime, to build a runtime system that can be moved to
+#	other machines requires that qld be called with the -C option so
+#	that it produces a .o file and stops.  Then an explict call to ld
+#	must be made.  The call to ld must specify the .a (non-shared)
+#	versions of the libraries used, not the .so versions.
+#
+#	This makefile does what is needed.  To use it you need to substitute 
+#	the names of your own files in the definition of QOFS and ALIBS.
+#	You may also need to adjust the installation details section below.
+#
+#	To find out whether or not a runtime system (or other executable)
+#	has dependencies on shared libraries use the SunOS command 
+#	"ldd runtime", where "runtime" is the name of the file.  If runtime 
+#	is built as shown here you should get back the response 
+#
+#		"runtime: statically linked"
+#
+#	In some cases you may want to use some mixture of shared and 
+#	non-shared libraries, e.g. you might want to share libraries that 
+#	you expect to be present on all the machines that you will deploy 
+#	the runtime on.  See the comment below on removing the -Bstatic 
+#	option.
+#
+#	NOTE: if qld runs out of space in /usr/tmp, set your TMPDIR
+#	environment variable to a directory which has more space and reissue
+#	the make command.  E.g. 
+#
+#		setenv TMPDIR /usr/fred/tmp
+#
+#############################################################################
+
+
+#############################################################################
+#	The object files in the program (.qof and .a)
+#
+#	If your program loads shared libraries with load_foreign_executable
+#	(other than ones supplied by Quintus), ALIBS should contain the
+#	static version of the shared libraries.  Otherwise, ALIBS can be
+#	left out.  You may give the -l<lib> specification of the library.
+#############################################################################
+
+QOFS=	foo.qof
+
+ALIBS=	-lfoo1 libfoo2.a
+
+#############################################################################
+#	Name of the runtime system.  Use "make" to build this.
+#
+#	To build a test version named $(TEST) use "make qui".  This
+#	uses shared libraries and links with QUI so that you can debug
+#	with the source-linked debugger.
+#############################################################################
+
+RUNTIME=runtime
+
+TEST=test
+
+#############################################################################
+#	Installation details
+#
+#	Note that the OS_MINOR depends on the version used to install Prolog.
+#	If you installed under SunOS 4.0.3 but are running 4.1, the OS_MINOR
+#	is still 0, not 1.
+#############################################################################
+
+QDIR=/ae0/install
+QVER=3.1.1
+PLATFORM=sun4
+OS_MAJOR=4
+OS_MINOR=0
+
+#############################################################################
+#	Quintus supplied libraries (non-shared versions)
+#
+#	(It may speed up the process of building a runtime system if
+#	you comment out the libraries in QLIBS that you are not using.)
+#############################################################################
+
+QBIN=$(QDIR)/bin$(QVER)/$(PLATFORM)-$(OS_MAJOR).$(OS_MINOR)
+QPLIB=$(QDIR)/generic/qplib$(QVER)
+
+QLIBS=	$(QPLIB)/library/$(PLATFORM)-$(OS_MAJOR)/libpl.a 		\
+	$(QPLIB)/library/$(PLATFORM)-$(OS_MAJOR)/libplm.a 		\
+	$(QPLIB)/IPC/TCP/$(PLATFORM)-$(OS_MAJOR)/tcp_p.a		\
+	$(QPLIB)/structs/library/$(PLATFORM)-$(OS_MAJOR)/structs.a 	\
+	$(QDIR)/proxt$(QVER)/library/$(PLATFORM)-$(OS_MAJOR)/proxt.a 	\
+	$(QDIR)/proxl$(QVER)/library/$(PLATFORM)-$(OS_MAJOR)/proxl.a 	\
+	$(QDIR)/proxl$(QVER)/library/$(PLATFORM)-$(OS_MAJOR)/proxllib.a \
+	$(QBIN)/libqp.a							\
+	$(QBIN)/libXm.a							\
+	$(QBIN)/libXt.a							\
+	$(QBIN)/libX11.a						
+
+#############################################################################
+#	How QOF files are made
+#############################################################################
+
+.SUFFIXES: .qof .pl
+
+.pl.qof:
+	qpc -c $*.pl
+
+#############################################################################
+#	Building a runtime with no shared libraries
+#
+#	The -Bstatic can be omitted if you want to use a shared version
+#	of the C library.  In this case the runtime system must be
+#	built on the oldest version (lowest version number) of the OS
+#	that it needs to run on.  E.g. if you build it on SunOS 4.0.1
+#	it will run on SunOS 4.1 but not vice versa.  If you use the
+#	-Bstatic this won't be an issue.
+#
+#	Also, use the ld supplied with the Quintus Prolog release (a
+#	SunOS 4.0 ld) to get around certain SunOS 4.1 ld bugs.
+#############################################################################
+
+$(RUNTIME): $(RUNTIME).o
+	$(QBIN)/ld -e start -Bstatic $(RUNTIME).o $(ALIBS) $(QLIBS) -lc -o $@
+
+$(RUNTIME).o: $(QOFS)
+	qld -Cd $(QOFS) -o $@
+
+#############################################################################
+#	Building a test version of the same program, including QUI.
+#############################################################################
+
+qui:	$(TEST)
+
+$(TEST): $(QOFS)
+	qld -dD $(QOFS) 'library(qui)' -o $@

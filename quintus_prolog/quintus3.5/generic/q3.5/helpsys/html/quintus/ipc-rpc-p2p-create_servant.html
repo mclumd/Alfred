@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>create_servant(</code><var>+Machine, +SavedState, +OutFile</var><code>)</code></h5>
+
+   <p>Before a master can use a servant, the servant must first be started up
+and connections to it must be made.  This is done by a call to
+<code>create_servant/[2,3]</code>.
+
+   <p><var>Machine</var> is the name of the machine on which to run the servant. 
+If <var>Machine</var> is omitted, or set to the null atom <code>''</code>, the
+servant is run on the same machine, and communication is via pipes. 
+If <var>Machine</var> is the atom <code>local</code>, the servant is run on the
+same machine but communication is via sockets.  If <var>Machine</var> names
+another machine, communication will be via sockets.  You need to be
+able to use <code>rsh</code> on that machine.
+
+   <p><var>SavedState</var> is the name of the file that contains the Prolog saved state
+on that machine.  It must have been previously created with <code>save_servant/1</code>.
+
+   <p><var>OutFile</var> is the name of the file to which output from the servant will be
+written.  This file is on the local machine and it will be created if it does
+not already exist.  <em>This file should be examined if there are problems with
+the communication to the servant.</em>  Tracing information (if any, see
+<a href="ipc-rpc-tra.html#ipc-rpc-tra">ipc-rpc-tra</a>) will also be written to this file.
+
+   <p>If <var>OutFile</var> is the atom <code>user</code>, then all
+output will be sent to the standard output stream of the master. 
+If it is the null atom <code>''</code>, the servant's standard output is discarded and its
+standard error is directed to the master's standard error.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-p2p-call_servant.html#ipc-rpc-p2p-call_servant">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc-p2p-save_servant.html#ipc-rpc-p2p-save_servant">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc-p2p.html#ipc-rpc-p2p">Up</a>
+</ul>
+</div>
+   </body></html>
+

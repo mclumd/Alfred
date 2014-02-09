@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">tcp: Network Communication Package</h3>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ipc-tcp-csr.html#ipc-tcp-csr">ipc-tcp-csr</a>:                          The client/server relationship
+<li><a accesskey="2" href="ipc-tcp-utc.html#ipc-tcp-utc">ipc-tcp-utc</a>:                          Using tcp
+<li><a accesskey="3" href="ipc-tcp-mco.html#ipc-tcp-mco">ipc-tcp-mco</a>:                          Maintaining Connections
+<li><a accesskey="4" href="ipc-tcp-trm.html#ipc-tcp-trm">ipc-tcp-trm</a>:                          Sending and Receiving Terms
+<li><a accesskey="5" href="ipc-tcp-tim.html#ipc-tcp-tim">ipc-tcp-tim</a>:                          Time Predicates
+<li><a accesskey="6" href="ipc-tcp-ups.html#ipc-tcp-ups">ipc-tcp-ups</a>:                          Using Prolog streams
+<li><a accesskey="7" href="ipc-tcp-cbi.html#ipc-tcp-cbi">ipc-tcp-cbi</a>:                          The Callback Interface
+<li><a accesskey="8" href="ipc-tcp-cfu.html#ipc-tcp-cfu">ipc-tcp-cfu</a>:                          The C functions
+<li><a accesskey="9" href="ipc-tcp-exa.html#ipc-tcp-exa">ipc-tcp-exa</a>:                          Examples
+</ul>
+
+   <p>This package supplies the necessary primitives for network
+communication.  This allows the user to take advantage of the
+computing power of a network of computers by allowing the construction
+of a set of cooperating processes running on different machines.
+
+   <p>In general, the <code>tcp</code> package provides facilities to
+
+     <ul>
+
+     <li>Send output to some connected process;
+<li>Wait for input from some connected process, with or without a timeout;
+and
+<li>Schedule wakeups.<a rel="footnote" href="#fn-1"><sup>1</sup></a>
+</ul>
+
+   <p>This package implements a <dfn>stream</dfn> socket with the TCP protocol
+providing the underlying communication support.  A <dfn>stream</dfn> socket
+provides for bidirectional, reliable, sequenced and unduplicated flow
+of data without record boundaries.  Two other types of sockets, the
+<dfn>datagram</dfn> socket and the <dfn>raw</dfn> socket, are not used here.  TCP
+stands for the Internet Transmission Control Protocol.
+
+   <p>This library package is intended for network communication, however,
+it does not require that each process be on a separate machine.  It
+can be used to establish connections and communicate with processes on
+the same machine in just the same way that it would establish
+connections and communicate with processes on other machines.
+
+   <p>Here is a simple example of the kind of thing you can do with this
+package.  The example is the producer-filter-consumer problem, each
+running as a separate process.  The producer produces successive terms
+and passes them on to the filter.  The filter reads successive terms
+from the producer and then either passes them on to the consumer or
+discards them.  The consumer reads and echos the terms passed to it by
+the filter.  It is taken from the example program <code>IPC/TCP/demo/ce.pl</code>.
+
+<pre class="example">     :-use_module(library(random)).
+     :-use_module(library(tcp)).
+     
+     % on machine A we have the producer process:
+     
+     producer:-
+         tcp_address_from_file(filter, Address),
+         tcp_connect(Address, Filter),
+         repeat,
+             random(X),
+             tcp_send(Filter, X),
+         fail.
+     
+     % on machine B we have the filter process:
+     
+     filter:-
+         tcp_create_listener(AddressA, _),
+         tcp_address_to_file(filter, AddressA),
+         tcp_address_from_file(consumer, AddressC),
+         tcp_connect(AddressC, Consumer),
+         repeat,
+             tcp_select(term(_,X)),
+             0.2 =&lt; X, X &lt; 0.7,
+             tcp_send(Consumer, X),
+         fail.
+     
+     % and on machine C we have the consumer process:
+     
+     consumer:-
+         tcp_create_listener(Address, _),
+         tcp_address_to_file(consumer, Address),
+         repeat,
+             tcp_select(term(_,X)),
+             format('The filtered number: ~d~n', [X]),
+         fail.
+     </pre>
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>Not available for C processes.</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc.html#ipc-rpc">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc.html#ipc">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

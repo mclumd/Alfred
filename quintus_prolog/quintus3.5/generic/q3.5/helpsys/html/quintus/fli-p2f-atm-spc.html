@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Passing Atoms as Strings between Prolog and C</h5>
+
+   <p>This section describes passing atoms as pointers to null-terminated
+character strings.  This is the way to pass atoms as strings between
+Prolog and C.  For FORTRAN and Pascal, the specification of string
+arguments is different than for C; see <a href="fli-p2f-atm-spf.html#fli-p2f-atm-spf">fli-p2f-atm-spf</a>.
+
+<pre class="example">     Prolog:  +string
+     C:       char *x
+     Pascal:  Not supported
+     FORTRAN: Not supported
+     </pre>
+
+   <p>The argument must be instantiated to an atom, otherwise
+   the call will signal an error. 
+   A pointer to a null-terminated string of characters
+   is passed to the C function.  This
+   string must not be overwritten by the C function.
+
+<pre class="example">     Prolog:  -string
+     C:       char **x;
+              *x = ...
+     Pascal:  Not supported
+     FORTRAN: Not supported
+     </pre>
+
+   <p>A pointer to a character pointer is passed to the C function.  It is
+   assumed that C will overwrite this character pointer with the result it
+   wishes to return.  This result should be a pointer to a null-terminated
+   string of characters.  When the C function returns, the atom that has
+   the printed representation specified by the string is unified with the
+   corresponding argument of the Prolog call.  The argument can be of any
+   type; if it cannot be unified with the returned atom, then the call fails. 
+   If the C function does not overwrite the character pointer, then
+   the result is undefined.
+
+   <p>Prolog copies the string if required, so
+   that it is not necessary for the C program to worry about retaining it. 
+   Beware, however, that the string must not be an <code>auto</code>, because in this
+   case its storage may be reclaimed after the foreign function exits but
+   before Prolog has managed to copy it.
+
+<pre class="example">     Prolog:  [-string]
+     C        char *f(...)
+                {
+                  char *x;
+                  return x;
+                }
+     Pascal:  Not supported
+     FORTRAN: Not supported
+     </pre>
+
+   <p>No argument is passed to C. The return value from the C function is
+   assumed to be a character pointer pointing to a null-terminated string
+   of characters.  The atom that has the printed representation specified
+   by the string is unified with the corresponding argument of the Prolog
+   call.  The argument can be of any type; if it cannot be unified with the
+   returned atom, the call fails.
+
+   <p>Prolog copies the string if required, so
+   that it is not necessary for the C program to worry about retaining it. 
+   Beware, however, that the string must not be an <code>auto</code>, because in this
+   case its storage may be reclaimed after the foreign function exits but
+   before Prolog has managed to copy it.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-atm-spf.html#fli-p2f-atm-spf">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-atm-cat.html#fli-p2f-atm-cat">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-atm.html#fli-p2f-atm">Up</a>
+</ul>
+</div>
+   </body></html>
+

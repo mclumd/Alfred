@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Debugging Foreign Code Routines</h4>
+
+   <p>In order to debug foreign code in conjunction with Prolog code, it is
+necessary to statically link your program together with the
+Development Kernel as discussed in <a href="sap-srs.html#sap-srs">sap-srs</a>.  The
+resulting executable can then be debugged using any standard debugger,
+such as <code>gdb(1)</code>.
+
+   <p>Note that it is often useful for debugging purposes to
+build an application that is linked with QUI, since then both the
+Prolog and the non-Prolog parts of the application can be debugged
+simultaneously, using the QUI debugger and the standard debugger
+respectively.  See <a href="sap-srs-qui.html#sap-srs-qui">sap-srs-qui</a> for how to do this.  If you do
+this, you may find that the standard debugger gets affected by the way
+that QUI uses the <code>SIGIO</code> signal.  Most standard debuggers provide a way
+of ignoring specified signals, which is what is needed here.  For
+example, under <code>gdb(1)</code> the command <code>handle SIGIO noprint nostop pass</code> should be issued
+before starting up the QUI with the <code>run</code> command.
+
+   <blockquote>
+
+        <p><em>WARNING:</em> Under source-level debuggers such as <code>gdb(1)</code>, single stepping
+out of a function that was called from Prolog does not work
+properly.  You should always <code>continue</code> in such a situation. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-lfe.html#fli-p2f-lfe">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-pas.html#fli-p2f-pas">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f.html#fli-p2f">Up</a>
+</ul>
+</div>
+   </body></html>
+

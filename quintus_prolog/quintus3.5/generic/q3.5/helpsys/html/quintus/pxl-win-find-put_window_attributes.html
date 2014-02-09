@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>put_window_attributes/[2,3]</code></h5>
+
+<pre class="example">     put_window_attributes(+<var>Windowable</var>, +<var>Attribs</var>)
+     put_window_attributes(+<var>Windowable</var>, +<var>Attribs</var>, +<var>Graphics_attribs</var>)
+     </pre>
+
+   <p><var>Windowable</var> is a windowable, and <var>Attribs</var> is a ground list
+of attributes.  The window associated with <var>Windowable</var> is changed
+such that <var>Attribs</var> is a list of its attributes.  There are a few
+attributes of a window that may not be changed once the window is
+created.  These are listed above, with the descriptions of the actual
+attributes.  Of course, if you specify a screen or display for
+<var>Windowable</var>, it doesn't make sense to change very many
+attributes, and it is recommended that you not change any.
+
+   <p>If <var>Graphics_attribs</var> is given, it is a list of graphics
+attributes to be given to the window.  The predicate
+<code>put_window_attributes/3</code> is as if defined by the following
+procedure, but it is more efficient.
+
+<pre class="example">     put_window_attributes(Windowable, Attribs, Graphics_attribs):-
+          put_window_attributes(Windowable, Attribs),
+          put_graphics_attributes(Window, Graphics_attribs).
+     </pre>
+
+   <p>See <a href="pxl-graf.html#pxl-graf">pxl-graf</a> for
+information about graphics attributes.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-win-find-rotate_window_properties.html#pxl-win-find-rotate_window_properties">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-win-find-get_window_attributes.html#pxl-win-find-get_window_attributes">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-win-find.html#pxl-win-find">Up</a>
+</ul>
+</div>
+   </body></html>
+

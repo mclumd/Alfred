@@ -1,0 +1,1435 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: ref-fdi-fsp-sys,  Next: ref-fdi-fsp-lip,  Prev: ref-fdi-fsp-pre,  Up: ref-fdi-fsp
+
+The system file_search_path
+...........................
+
+   The `system' directory is used to store system dependent files.  Its
+main purpose is to allow different platforms sharing the same file
+system to share system independent files, such as `.pl' and `.qof'
+files, but still be able to locate the necessary system dependent files.
+
+   Generally, several `system' directories are defined by
+`file_search_path/2' facts to include different host and operating
+system combinations.  The reason for this is that certain system files
+are only machine dependent and can be shared by applications running on
+the same type of machine, but some system files are operating system
+dependent also.
+
+   The most commonly used system files are object files that are loaded
+by `load_foreign_files/2' and `load_foreign_executable/1' predicates.
+Quintus Prolog libraries, for example, make frequent use of system
+dependent foreign code, but also contain system independent files that
+are shared by all platforms.  Therefore, the system dependent object
+files are stored in a system directory for each platform.  The system
+directories are located under the library directory, and the library
+files use calls like these:
+     :- load_foreign_files([system('file')], []).
+
+     :- load_foreign_executable(system('file')).
+
+   to specify files located in system directories.  The library object
+files are compiled for each platform at installation time, and placed
+in the system directory specific to the platform.
+
+   The `file_search_path/2' list in *Note ref-fdi-fsp-pre::, shows the
+different combinations of `system' `file_search_path' facts for a Sun 4
+running SunOS 5.x.  The order of search starts at the most specific
+system definition, which includes the host and full operating system,
+and proceeds to less specific forms of the system definitions.
+Finally, if none of the system directories exist, or none contain the
+specified file, the current working directory is tried.  This way, if
+Quintus Prolog is to run on a single platform, the system dependent
+files may reside in the same directory as the system independent files.
+
+
+File: quintus.info,  Node: ref-fdi-fsp-lip,  Next: ref-fdi-fsp-lse,  Prev: ref-fdi-fsp-sys,  Up: ref-fdi-fsp
+
+The Library Paths
+.................
+
+   The library path is special in that there are two methods of
+establishing and finding library search paths.  Although
+`file_search_path/2' is more general and more powerful, you may choose
+to define `library_directory/1' if it is adequate for your needs.
+
+   The default clauses for `library_directory/1' in the Prolog system
+can be seen by calling `listing/[0,1]', or by usint the `+p library'
+option to prolog (see *Note too-too-prolog::).  They are also shown in
+*Note ref-fdi-fsp-pre::.  To specify an additional directory to be
+searched before the default ones, add a goal of the form
+
+     :- asserta(library_directory(DIRECTORY)).
+ to your `prolog.ini' file.  See *Note ref-pro:: for a description
+of `prolog.ini' files.
+
+
+File: quintus.info,  Node: ref-fdi-fsp-lse,  Prev: ref-fdi-fsp-lip,  Up: ref-fdi-fsp
+
+Editor Command for Library Search
+.................................
+
+   Under the Emacs interface there is a command `<ESC> x library',
+which, when given FILENAME as an argument, visits the file specified by
+`library(FILENAME)'.  This facility is provided so one can visit/edit
+the copy of the file that will be accessed as a result of a library
+search.
+
+   The notes at the end of *Note ref-fdi-fsp-def:: apply here as well.
+
+
+File: quintus.info,  Node: ref-fdi-pre,  Prev: ref-fdi-fsp,  Up: ref-fdi
+
+List of Predicates
+------------------
+
+   * `absolute_file_name/[2,3]'
+
+   * `file_search_path/2'
+
+   * `library_directory/1'
+
+   * `source_file/[1,2,3]'
+
+
+File: quintus.info,  Node: ref-iou,  Next: ref-lod,  Prev: ref-pro,  Up: ref
+
+Input and Output
+================
+
+* Menu:
+
+* ref-iou-bas::                         Introduction
+* ref-iou-str::                         About Streams
+* ref-iou-tin::                         Term Input
+* ref-iou-tou::                         Term Output
+* ref-iou-cin::                         Character Input
+* ref-iou-cou::                         Character Output
+* ref-iou-sfh::                         Stream and File Handling
+* ref-iou-sos::                         Reading the State of Opened Streams
+* ref-iou-raf::                         Random Access to Files
+* ref-iou-sum::                         Summary of Predicates and Functions
+* ref-iou-lib::                         Library Support
+
+
+File: quintus.info,  Node: ref-iou-bas,  Next: ref-iou-str,  Up: ref-iou
+
+Introduction
+------------
+
+   Prolog provides two classes of predicates for input and output:
+those that handle individual characters, and those that handle complete
+Prolog terms.
+
+   The following predicates have been added for I/O at the Prolog level:
+
+   * `at_end_of_file/[0,1]'
+
+   * `at_end_of_line/[0,1]'
+
+   * `open/4'
+
+   * `peek_char/[1,2]'
+
+   * `prompt/3'
+
+   * `read_term/[2,3]'
+
+   * `seek/4'
+
+   * `skip_line/[0,1]'
+
+   * `write_term/[1,2]'
+
+   Input and output happen with respect to "stream"s.  Therefore, this
+section discusses predicates that handle files and streams in addition
+to those that handle input and output of characters and terms.
+
+   In Quintus Prolog Release 3, the I/O system has been redesigned.
+Streams are now record based by default, for an increase in efficiency
+and portability.  This leads to increased efficiency in opening streams,
+putting characters, flushing output, and in character I/O operations
+involving lines (end of line, new line, skipping lines).  For a
+description of the new model, see *Note fli-ios-iom::.  Combining Prolog
+and C I/O operations on the same stream is facilitated by a more
+complete set of functions.
+
+
+File: quintus.info,  Node: ref-iou-str,  Next: ref-iou-tin,  Prev: ref-iou-bas,  Up: ref-iou
+
+About Streams
+-------------
+
+* Menu:
+
+* ref-iou-str-not::                     Programming Note
+* ref-iou-str-sca::                     Stream Categories
+
+   A Prolog stream can refer to a file or to the user's terminal(1).
+Each stream is used either for input or for output, but not for both.
+At any one time there is a "current input" stream and a "current output"
+stream.
+
+   Input and output predicates fall into three categories:
+  1. those that use the current input or output stream;
+
+  2. those that take an explicit stream argument;
+
+  3. those that use the "standard" input or output stream -- these
+     generally refer to the user's terminal.  Their names begin with
+     `tty'.
+
+   Initially, the current input and output streams both refer to the
+user's terminal.  Each input and output built-in predicate refers
+implicitly or explicitly to a stream.  The predicates that perform
+character and term I/O operations come in pairs such that (A) refers to
+the current stream, and (B) specifies a stream.
+
+          PREDICATE_NAME/N (A)
+          PREDICATE_NAME/N+1 (B)
+
+   ---------- Footnotes ----------
+
+   (1) At the C level, you can define more general streams, e.g.
+referring to pipes or to encrypted files (see *Note fli-ios-uds-est::).
+
+
+File: quintus.info,  Node: ref-iou-str-not,  Next: ref-iou-str-sca,  Up: ref-iou-str
+
+Programming Note
+................
+
+   Deciding which version to use involves a trade-off between speed and
+readability of code: In general, version (B), which specifies a stream,
+runs slower than (A).  So it may be desirable to write code that
+changes the current stream and uses version (A).  However, the use of
+(B) avoids the use of global variables and results in more readable
+programs.
+
+
+File: quintus.info,  Node: ref-iou-str-sca,  Prev: ref-iou-str-not,  Up: ref-iou-str
+
+Stream Categories
+.................
+
+   Quintus Prolog streams are divided into two categories, those opened
+by `see/1' or `tell/1' and those opened by `open/[3,4]'.  A stream in
+the former group is referred to by its "file specification", while a
+stream in the latter group is referred to by its "stream object" (see
+the figure "Categorization of Stream Handling Predicates").  For
+further information about file specifications, see *Note ref-fdi::.
+Stream objects are discussed in *Note ref-iou-sfh-sob::.  Reading the
+state of open streams is discussed in *Note ref-iou-sos::.
+
+   Each operating system permits a different number of streams to be
+open.  For more information on this, refer to *Note bas-lim::.
+
+
+File: quintus.info,  Node: ref-iou-tin,  Next: ref-iou-tou,  Prev: ref-iou-str,  Up: ref-iou
+
+Term Input
+----------
+
+* Menu:
+
+* ref-iou-tin-trm::                     Reading Terms: The "Read" Predicates
+* ref-iou-tin-cpr::                     Changing the Prompt
+
+   Term input operations include:
+   * reading a term and
+
+   * changing the prompt that appears while reading.
+
+
+File: quintus.info,  Node: ref-iou-tin-trm,  Next: ref-iou-tin-cpr,  Up: ref-iou-tin
+
+Reading Terms: The "Read" Predicates
+....................................
+
+   The "Read" predicates are
+   * `read(-TERM)'
+
+   * `read(+STREAM, -TERM)'
+
+   * `read_term(+OPTIONS, -TERM)'
+
+   * `read_term(+STREAM, +OPTIONS, -TERM)'
+
+   `read_term/[2,3]' offers many options to return extra information
+about the term.
+
+   When Prolog reads a term from the current input stream the following
+conditions hold:
+
+   * The term must be followed by a full-stop.  See *Note
+     ref-syn-syn-ove::.  The full-stop is removed from the input stream
+     but is not a part of the term that is read.
+
+     `read/[1,2]' does not terminate until the full-stop is
+     encountered.  Thus, if you type at top level
+          | ?- read(X)
+
+     you will keep getting prompts (first `|: ', and five spaces
+     thereafter) every time you type <RET>, but nothing else will
+     happen, whatever you type, until you type a full-stop.
+
+   * The term is read with respect to current operator declarations.
+     See *Note ref-syn-ops::, for a discussion of operators.
+
+   * When a syntax error is encountered, an error message is printed
+     and then the "read" predicate tries again, starting immediately
+     after the full-stop that terminated the erroneous `term'.  That
+     is, it does not fail on a syntax error, but perseveres until it
+     eventually manages to read a term. This behavior can be changed
+     with `prolog_flag/3' or using `read_term/[2,3]'.
+
+   * If the end of the current input stream has been reached, then
+     `read(X)' will cause X to be unified with the atom `end_of_file'.
+
+
+
+File: quintus.info,  Node: ref-iou-tin-cpr,  Prev: ref-iou-tin-trm,  Up: ref-iou-tin
+
+Changing the Prompt
+...................
+
+   To query or change the sequence of characters (prompt) that
+indicates that the system is waiting for user input, call
+`prompt/[2,3]'.
+
+   This predicate affects only the prompt given when a user's program
+is trying to read from the terminal (for example, by calling `read/1' or
+`get0/1').  Note also that the prompt is reset to the default `|: ' on
+return to the top level.
+
+
+File: quintus.info,  Node: ref-iou-tou,  Next: ref-iou-cin,  Prev: ref-iou-tin,  Up: ref-iou
+
+Term Output
+-----------
+
+* Menu:
+
+* ref-iou-tou-wrt::                     Writing Terms: the "Write" Predicates
+* ref-iou-tou-cha::                     Common Characteristics
+* ref-iou-tou-dis::                     Distinctions Among the "write" Predicates
+* ref-iou-tou-dsp::                     Displaying Terms
+* ref-iou-tou-por::                     Using the portray hook
+* ref-iou-tou-pcl::                     Portraying a Clause
+
+   Term output operations include:
+
+   * writing to a stream (various "write" Predicates)
+
+   * displaying, usually on the user's terminal (`display/1')
+
+   * changing the effects of `print/1' `portray/1'
+
+   * writing a clause as `listing/[0,1]' does. (`portray_clause')
+
+
+File: quintus.info,  Node: ref-iou-tou-wrt,  Next: ref-iou-tou-cha,  Up: ref-iou-tou
+
+Writing Terms: the "Write" Predicates
+.....................................
+
+   * `write(+STREAM, +TERM)'
+
+   * `write(+TERM)'
+
+   * `writeq(+STREAM, +TERM)'
+
+   * `writeq(+TERM)'
+
+   * `write_canonical(+TERM)'
+
+   * `write_canonical(+STREAM, +TERM)'
+
+   * `write_term(+STREAM, +TERM, +OPTIONS)'
+
+   * `write_term(+TERM, +OPTIONS)'
+
+   `write_term/[2,3]' is a generalization of the others and provides a
+number of options.
+
+
+File: quintus.info,  Node: ref-iou-tou-cha,  Next: ref-iou-tou-dis,  Prev: ref-iou-tou-wrt,  Up: ref-iou-tou
+
+Common Characteristics
+......................
+
+   The output of the "Write" predicates is not terminated by a
+full-stop; therefore, if you want the term to be acceptable as input to
+`read/[1,2]', you must send the terminating full-stop to the output
+stream yourself.  For example,
+     | ?- write(a), put(0'.), nl.
+
+   If TERM is uninstantiated, it is written as an anonymous variable
+(an underscore followed by a non-negative integer).
+
+   `write_canonical/[1,2]' is provided so that TERM, if written to a
+file, can be read back by `read/[1,2]' regardless of special characters
+in TERM or prevailing operator declarations.
+
+
+File: quintus.info,  Node: ref-iou-tou-dis,  Next: ref-iou-tou-dsp,  Prev: ref-iou-tou-cha,  Up: ref-iou-tou
+
+Distinctions Among the "write" Predicates
+.........................................
+
+   * With `write' and `writeq' the term is written with respect to
+     current operator declarations (See *Note ref-syn-ops::, for a
+     discussion of operators).
+
+     `write_canonical(TERM)' writes TERM to the current or specified
+     output stream in standard syntax (see *Note ref-syn:: on Prolog
+     syntax), and quotes atoms and functors to make them acceptable as
+     input to `read/[1,2]'.  That is, operator declarations are not
+     used and compound terms are therefore always written in the form:
+
+          PREDICATE_NAME(ARG1, ..., ARGN)
+
+   * Atoms output by `write/[1,2]' cannot in general be read back using
+     `read/[1,2]'.  For example,
+          | ?- write('a b').
+          a b
+
+     If you want to be sure that the atom can be read back by
+     `read/[1,2]', you should use `writeq/[1,2]', or
+     `write_canonical/[1,2]', which put quotes around atoms when
+     necessary, or use `write_term/[2,3]' with the `quoted' option set
+     to `yes'.
+
+   *  `write/[1,2]' and `writeq/[1,2]' treat terms of the form
+     `'$VAR'(N)' specially: they write `A' if N=0, `B' if N=1, ...`Z'
+     if N=25, `A1' if N=26, etc.  Terms of this form are generated by
+     `numbervars/3' (see *Note ref-lte-anv::).  Terms of the form
+     `'$VAR'(X)', where X is not a number are written as unquoted
+     terms. For example,
+          | ?- writeq(a('$VAR'(0),'$VAR'('Test'))).
+          a(A,Test)
+
+     `write_canonical/1' does _not_ treat terms of the form `'$VAR'(N)'
+     specially.  It writes square bracket lists using `./2' and `[]'
+     (that is, `[a,b]' is written as `.(a,.(b,[]))').  If the
+     `character_escapes' flag is `on' then `write_canonical/1' tries to
+     write layout characters (except ASCII 9 and ASCII 32) in the form
+     `\LOWER-CASE-LETTER', if possible; otherwise, `write_canonical/1'
+     writes the `\^CONTROL-CHAR' form.  If the `character_escapes' flag
+     is `off' then it writes the actual character, without using an
+     escape sequence (see *Note ref-syn-ces::).
+
+   * Depending upon whether character escaping is on or off,
+     `writeq/[1,2]' and `write_canonical/[1,2]' behave differently when
+     writing quoted atoms.  If character escaping is on:
+
+       1. The characters with ASCII codes 9 (horizontal tab), 32
+          (space), and 33 through 126 (non-layout characters) are
+          written as themselves.
+
+       2. The characters with ASCII codes 8, 10, 11, 12, 13, 27, and
+          127 are written in their `\LOWERCASE LETTER' form.
+
+       3. The character with ASCII code 39 (single quote) is written as
+          two consecutive single quotes.
+
+       4. The character with ASCII code 92 (back slash) is written as
+          two consecutive back slashes.
+
+       5. All other characters are written in their `\^CONTROL CHAR'
+          form.
+
+     If character escaping is off:
+       1. The character with ASCII code 39 (single quote) is written as
+          two consecutive single quotes.
+
+       2. All other characters are written as themselves.
+
+       3. In general, one can only read (using `read/[1,2]') a term
+          written by `write_canonical/[1,2]' if the value of the
+          `character_escapes' flag is the same when the term is read as
+          when it was written.
+
+
+
+File: quintus.info,  Node: ref-iou-tou-dsp,  Next: ref-iou-tou-por,  Prev: ref-iou-tou-dis,  Up: ref-iou-tou
+
+Displaying Terms
+................
+
+   Like `write_canonical', `display/1' ignores operator declarations and
+shows all compound terms in standard prefix form.  For example, the
+command
+      | ?- display(a+b).
+ produces the following:
+      +(a,b)
+
+   Calling `display/1' is a good way of finding out how Prolog parses a
+term with several operators. Unlike `write_canonical/[1,2]', `display/1'
+does not put quotes around atoms and functors.
+
+
+File: quintus.info,  Node: ref-iou-tou-por,  Next: ref-iou-tou-pcl,  Prev: ref-iou-tou-dsp,  Up: ref-iou-tou
+
+Using the `portray' hook
+........................
+
+   `print/1' is called from within the system in two places:
+
+  1. to print the bindings of variables after a question has succeeded
+
+  2. to print a goal during debugging
+
+   By default, the effect of `print/1' is the same as that of
+`write/1', but you can change its effect by providing clauses for the
+hook predicate `portray/1'.
+
+   If X is a variable, then it is printed using `write(X)'.  Otherwise
+the user-definable procedure `portray(X)' is called.  If this succeeds,
+then it is assumed that X has been printed and `print/1' exits
+(succeeds).  Note that `print/1' always calls `portray/1' in module
+`user'.  Therefore, to be visible to `print/1', `portray/1' must either
+be defined in or imported into module `user'.
+
+   If the call to `portray/1' fails, and if X is a compound term, then
+`write/1' is used to write the principal functor of X and `print/1' is
+called recursively on its arguments.  If X is atomic, it is written
+using `write/1'.
+
+   When `print/1' has to print a list, say `[X1,X2,...,Xn]', it passes
+the whole list to `portray/1'.  As usual, if `portray/1' succeeds, it
+is assumed to have printed the entire list, and `print/1' does nothing
+further with this term.  Otherwise `print/1' writes the list using
+bracket notation, calling `print/1' on each element of the list in turn.
+
+   Since `[X1,X2,...,Xn]' is simply a different way of writing
+`.(X1,[X2,...,Xn])', one might expect `print/1' to be called
+recursively on the two arguments `X1' and `[X2,...,Xn]', giving
+`portray/1' a second chance at `[X2,...,Xn]'.  This does _not_ happen;
+lists are a special case in which `print/1' is called separately for
+each of `X1,X2,...Xn'.
+
+   If you would like lists of character codes printed         by
+`print/1' using double-quote notation, you should         include
+`library(printchars)' (described in  *Note lib::)  as part of your
+version         of `portray/1'.
+
+   Often it is desirable to define clauses for `portray/1' in different
+files.  This can be achieved either by declaring it multifile in each
+of the files, or by using `library(addportray)'.
+
+
+File: quintus.info,  Node: ref-iou-tou-pcl,  Prev: ref-iou-tou-por,  Up: ref-iou-tou
+
+Portraying a Clause
+...................
+
+   If you want to print a clause, `portray_clause/1' is almost
+certainly the command you want. None of the other term output commands
+puts a full-stop after the written term.  If you are writing a file of
+facts to be loaded by `compile/1', use `portray_clause/1', which
+attempts to ensure that the clauses it writes out can be read in again
+as clauses.
+
+   The output format used by `portray_clause/1' and `listing/1' has been
+carefully designed to be clear.  We recommend that you use a similar
+style.  In particular, never put a semicolon (disjunction symbol) at
+the end of a line in Prolog.
+
+
+File: quintus.info,  Node: ref-iou-cin,  Next: ref-iou-cou,  Prev: ref-iou-tou,  Up: ref-iou
+
+Character Input
+---------------
+
+* Menu:
+
+* ref-iou-cin-ove::                     Overview
+* ref-iou-cin-cha::                     Reading Characters
+* ref-iou-cin-pee::                     Peeking
+* ref-iou-cin-ski::                     Skipping
+* ref-iou-cin-elf::                     Finding the End of Line and End of File
+
+
+File: quintus.info,  Node: ref-iou-cin-ove,  Next: ref-iou-cin-cha,  Up: ref-iou-cin
+
+Overview
+........
+
+     *Please note:*  For compatibility with DEC-10 Character I/O a set
+     of predicates are provided, which are similar to the primary ones
+     except that they always use the standard input and output streams,
+     which normally refer to the user's terminal rather than to the
+     current input stream or current output stream.  They are easily
+     recognizable as they all begin with `tty'.
+
+     Given stream-based input/output, these predicates are actually
+     redundant.  For example, you could write `get0(user, C)' instead of
+     `ttyget0(C)'.
+
+     This note applies to the character output as well (see *Note
+     ref-iou-cou::).
+
+
+   The operations in this category are:
+   * reading characters ("get" predicates),
+
+   * peeking
+
+   * skipping
+
+   * checking for end of line or end of file
+
+
+File: quintus.info,  Node: ref-iou-cin-cha,  Next: ref-iou-cin-pee,  Prev: ref-iou-cin-ove,  Up: ref-iou-cin
+
+Reading Characters
+..................
+
+   `get0(N)' unifies N with the ASCII code of the next character from
+the current input stream. Cf. `ttyget0/1'.
+
+   `get(N)' unifies N with the ASCII code of the next non-layout
+character from the current input stream.  Layout characters are all
+outside the inclusive range 33..126; this includes space, tab,
+linefeed, delete, and all control characters.  Cf. `ttyget/1'.
+
+
+File: quintus.info,  Node: ref-iou-cin-pee,  Next: ref-iou-cin-ski,  Prev: ref-iou-cin-cha,  Up: ref-iou-cin
+
+Peeking
+.......
+
+   Peeking at the next character without consuming it is useful when the
+interpretation of "this character" depends on what the next one is.
+Use `peek_char/[1,2]'.
+
+
+File: quintus.info,  Node: ref-iou-cin-ski,  Next: ref-iou-cin-elf,  Prev: ref-iou-cin-pee,  Up: ref-iou-cin
+
+Skipping
+........
+
+   There are two ways of skipping over characters in the current input
+stream: skip to a given character, or skip to the end of a line (or
+record).
+
+   * To skip over characters from the current input or specified stream
+     through the first occurrence of the character with ASCII code N,
+     (see *Note mpg-ref-skip::) Cf. `ttyskip/1'.
+
+   * Generally it is more useful to skip to the end of a line using
+     `skip_line/[0,1]'. Use of this predicate helps portability of code
+     since it avoids dependence on any particular character code(s)
+     being returned at the end of a line.
+
+
+File: quintus.info,  Node: ref-iou-cin-elf,  Prev: ref-iou-cin-ski,  Up: ref-iou-cin
+
+Finding the End of Line and End of File
+.......................................
+
+   To test whether the end of a line on the end of the file has been
+reached on the current or specified input stream, use
+`at_end_of_line/[0,1]' or `at_end_of_file/[0,1]'.
+
+
+File: quintus.info,  Node: ref-iou-cou,  Next: ref-iou-sfh,  Prev: ref-iou-cin,  Up: ref-iou
+
+Character Output
+----------------
+
+* Menu:
+
+* ref-iou-cou-cha::                     Writing Characters
+* ref-iou-cou-nln::                     New Line
+* ref-iou-cou-tab::                     Tabs
+* ref-iou-cou-fou::                     Formatted Output
+
+   The character output operations are:
+   * writing (putting) characters
+
+   * creating newlines and tabs
+
+   * flushing buffers
+
+   * formatting output.
+
+     *Please note:* The note about "tty-" predicates at the beginning of
+     *Note ref-iou-cin:: applies here as well.
+
+
+File: quintus.info,  Node: ref-iou-cou-cha,  Next: ref-iou-cou-nln,  Up: ref-iou-cou
+
+Writing Characters
+..................
+
+   `put(N)' writes N to the current output stream or `put'(STREAM, N)
+writes N to a specified one, STREAM.  N should be a legal ASCII
+character code or an integer expression.
+
+   If N evaluates to an integer, the least significant 8 bits are
+written.
+
+   The character is not necessarily printed immediately; they may be
+flushed if the buffer is full.  See *Note ref-iou-sfh-flu::.
+
+   Cf.  `ttyput/1'.
+
+
+File: quintus.info,  Node: ref-iou-cou-nln,  Next: ref-iou-cou-tab,  Prev: ref-iou-cou-cha,  Up: ref-iou-cou
+
+New Line
+........
+
+   `nl' and `nl(STREAM)' terminates the current output record on the
+current output stream or on a specified one, STREAM.  If the stream
+format is `delimited(lf)' or `delimited(tty)' (the default), a linefeed
+character (ASCII) is printed.
+
+   Cf. `ttynl/0'.
+
+
+File: quintus.info,  Node: ref-iou-cou-tab,  Next: ref-iou-cou-fou,  Prev: ref-iou-cou-nln,  Up: ref-iou-cou
+
+Tabs
+....
+
+   `tab(N)' writes N spaces to the current output stream.  N may be an
+integer expression.
+
+   The spaces are not necessarily printed immediately; see *Note
+ref-iou-sfh-flu::.
+
+   Cf. `ttytab/1'
+
+
+File: quintus.info,  Node: ref-iou-cou-fou,  Prev: ref-iou-cou-tab,  Up: ref-iou-cou
+
+Formatted Output
+................
+
+   `format(CONTROL, ARGUMENTS)' interprets the ARGUMENTS according to
+the CONTROL string and prints the result on the current output stream.
+A stream can be specified using `format/3'.
+
+   This is used to produce output like this, either on the current
+output or on a specified stream:
+
+     | ?- toc(1.5).
+     Table of Contents                                               i
+
+                                Table of Contents
+     
+     1. Documentation supplement for Quintus Prolog Release 1.5 ........... 2
+     
+        1-1 Definition of the term "loaded" ............................... 2
+        1-2 Finding all solutions ......................................... 3
+        1-3 Searching for a file in a library ............................. 4
+        1-4 New Built-in Predicates ....................................... 5
+            1-4-1 write_canonical (?Term) ................................. 5
+                         .
+                         .
+                         .
+        1-7 File Specifications .......................................... 17
+            1-7-1 multifile(+PredSpec) ................................... 18
+     
+     yes
+
+   For details, including the code to produce this example, see the
+example program in the reference page for `format/[2,3]'.  The
+character escaping facility is also used.
+
+
+File: quintus.info,  Node: ref-iou-sfh,  Next: ref-iou-sos,  Prev: ref-iou-cou,  Up: ref-iou
+
+Stream and File Handling
+------------------------
+
+* Menu:
+
+* ref-iou-sfh-sob::                     Stream Objects
+* ref-iou-sfh-est::                     Exceptions related to Streams
+* ref-iou-sfh-sem::                     Suppressing Error Messages
+* ref-iou-sfh-opn::                     Opening a Stream
+* ref-iou-sfh-cis::                     Finding the Current Input Stream
+* ref-iou-sfh-cos::                     Finding the current output stream
+* ref-iou-sfh-bos::                     Backtracking through Open Streams
+* ref-iou-sfh-cst::                     Closing a Stream
+* ref-iou-sfh-flu::                     Flushing Output
+
+   The operations implemented are opening, closing, querying status,
+flushing, error handling, setting.
+
+   The predicates in the "see" and "tell" families are supplied for
+DEC-10 Prolog compatibility.  They take either file specifications or
+stream objects as arguments (see *Note mpg-ref::) and they specify an
+alternative, less powerful, mechanism for dealing with files and
+streams than the similar predicates (`open/[3,4]', etc.), which take
+stream objects (see the figure "Categorization of Stream Handling
+Predicates").
+
+
+[See printed or HTML manual.]
+
+             Categorization of Stream Handling Predicates
+
+
+File: quintus.info,  Node: ref-iou-sfh-sob,  Next: ref-iou-sfh-est,  Up: ref-iou-sfh
+
+Stream Objects
+..............
+
+   Each input and output stream is represented by a unique Prolog term,
+a "stream_object".  In general, this term is of the form
+
+     '$stream'(X).
+
+   where X is an integer.  In addition, the following terms are used to
+identify the standard I/O streams:
+   * `user_input'
+
+   * `user_output'
+
+   * `user_error'
+
+   Stream objects are created by the predicate `open/[3,4]' *Note
+ref-iou-sfh-opn::and passed as arguments to those predicates that need
+them.  Representation for stream objects to be used in C code is
+different.  Use `stream_code/2' to convert from one to the other when
+appropriate.
+
+
+File: quintus.info,  Node: ref-iou-sfh-est,  Next: ref-iou-sfh-sem,  Prev: ref-iou-sfh-sob,  Up: ref-iou-sfh
+
+Exceptions related to Streams
+.............................
+
+   All predicates that take a stream argument will raise the following
+exceptions:
+
+`instantiation_error'
+     STREAM argument is not ground
+
+`type_error'
+     STREAM is not an input (or output) stream type.
+
+`existence_error'
+     STREAM is syntactically valid but does not name an open stream.
+
+`permission_error'
+     STREAM names an open stream but the stream is not open for input
+     (or output).
+
+   The reference page for each stream predicate will simply refer to
+these as "Stream errors" and will go on to detail other exceptions that
+may be raised for a particular predicate.
+
+
+File: quintus.info,  Node: ref-iou-sfh-sem,  Next: ref-iou-sfh-opn,  Prev: ref-iou-sfh-est,  Up: ref-iou-sfh
+
+Suppressing Error Messages
+..........................
+
+   `nofileerrors/0' resets the `fileerrors' flag, so that the built-in
+predicates that open files simply fail, instead of raising an exception
+if the specified file cannot be opened.
+
+   To cancel the effect of `fileerrors/0', call `nofileerrors/0'.  It
+sets the `fileerrors' flag to its default state, `on', in which an
+error message is produced by `see/1', `tell/1', and `open/3' if the
+specified file cannot be opened.  The error message is followed by an
+`abort/0'; that is, execution of the program is abandoned and the system
+returns to top level.
+
+   The `fileerrors' flag is only enabled or disabled by an explicit
+call to `fileerrors/0' or `nofileerrors/0', or via `prolog_flag/[2,3]',
+which can also be used to obtain the current value of the `fileerrors'
+flag.  See *Note ref-lps-ove::, for more information on the
+`fileerrors' flag.
+
+
+File: quintus.info,  Node: ref-iou-sfh-opn,  Next: ref-iou-sfh-cis,  Prev: ref-iou-sfh-sem,  Up: ref-iou-sfh
+
+Opening a Stream
+................
+
+   Before I/O operations can take place on a stream, the stream must be
+opened, and it must be set to be current input or current output.  As
+illustrated in the figure "Categorization of Stream Handling
+Predicates", the operations of opening and setting are separate with
+respect to the stream predicates, and combined in the File
+Specification Predicates.
+
+   * `open(+FILE, +MODE, -STREAM)' attempts to open the file FILE in
+     the mode specified (read,write or append).  If the `open/3'
+     request is successful, a stream object, which can be subsequently
+     used for input or output to the given file, is unified with STREAM.
+
+     The `read' mode is used for input.  The `write' and `append' modes
+     are used for output.  The `write' option causes a new file to be
+     created for output.  If the file already exists, then it is set to
+     empty and its previous contents are lost.  The `append' option
+     opens an already-existing file and adds output to the end of it.
+     The `append' option will create the file if it does not already
+     exist.
+
+     Options can be specified by calling `open/4'.
+
+   * `set_input(STREAM)' makes STREAM the current input stream.
+     Subsequent input predicates such as `read/1' and `get0/1' will
+     henceforth use this stream.
+
+   * `set_output(STREAM)' makes STREAM the current output stream.
+     Subsequent output predicates such as `write/1' and `put/1' will
+     henceforth use this stream.
+
+
+   Opening a stream and making it current are combined in `see' and
+`tell':
+
+   * `see(S)' makes file S the current input stream.  If S is an atom,
+     it is taken to be a file specification, and
+        - if there is an open input stream associated with the
+          filename, and that stream was opened by `see/1', then it is
+          made the current input stream;
+
+        - Otherwise, the specified file is opened for input and made
+          the current input stream.  If it is not possible to open the
+          file, `see/1' fails.  In addition, if the `fileerrors' flag
+          is set (as it is by default), `see/1' sends an error message
+          to the standard error stream and calls `abort/0', returning
+          to the top level.
+
+   * `tell(S)' makes S the current output stream.
+        - if there is an open output stream currently associated with
+          the filename, and that stream was opened by `tell/1', then it
+          is made the current output stream;
+
+        - Otherwise, the specified file is opened for output and made
+          the current output stream.  If the file does not exist, it is
+          created.  If it is not possible to open the file (because of
+          protections, for example), `tell/1' fails.  In addition, if
+          the `fileerrors' flag is set (which it is by default),
+          `tell/1' sends an error message to the standard error stream
+          and calls `abort/0', returning to the top level.
+
+
+   It is important to remember to close streams when you have finished
+with them. Use `seen/0' or `close/1' for input files, and `told/0' or
+`close/1' for output files.
+
+   * `open_null_stream(STREAM)' opens an output stream that is not
+     connected to any file and unifies its stream object with STREAM.
+     Characters or terms that are sent to this stream are thrown away.
+     This predicate is useful because various pieces of local state are
+     kept for null streams: the predicates `character_count/2',
+     `line_count/2', and `line_position/2' can be used on these streams
+     (see *Note ref-iou-sos::).
+
+
+
+File: quintus.info,  Node: ref-iou-sfh-cis,  Next: ref-iou-sfh-cos,  Prev: ref-iou-sfh-opn,  Up: ref-iou-sfh
+
+Finding the Current Input Stream
+................................
+
+   * `current_input(STREAM)' unifies STREAM with the current input
+     stream.
+
+   * `seeing(S)' unifies S with the current input stream.  This is
+     exactly the same as `current_input'(S), except that S will be
+     unified with a filename if the current input stream was opened by
+     `see/1' (see *Note ref-iou-sfh-opn::).
+
+     `seeing/1' can be used to verify that FileNameOrStream is still the
+     current input stream as follows:
+          /* nonvar(FileNameOrStream), */
+          see(FileNameOrStream),
+          ...
+          seeing(FileNameOrStream)
+
+     If the current input stream has not been changed (or if changed,
+     then restored), the above sequence will succeed for all file names
+     and all stream objects opened by `open/[3,4]'.  However, it will
+     fail for all stream objects opened by `see/1' (since only filename
+     access to streams opened by `see/1' is supported).  This includes
+     the stream object `user_input' (since the standard input stream is
+     assumed to be opened by `see/1', and so `seeing/1' would return
+     `user' in this case).
+
+     `seeing/1' can be followed by `see/1' to ensure that a section of
+     code leaves the current input unchanged
+
+
+File: quintus.info,  Node: ref-iou-sfh-cos,  Next: ref-iou-sfh-bos,  Prev: ref-iou-sfh-cis,  Up: ref-iou-sfh
+
+Finding the current output stream
+.................................
+
+   * `current_output(STREAM)' unifies STREAM with the current output
+
+     stream.
+
+   * `telling(S)' unifies S with the current output stream.  This is
+     exactly the same as `current_output'(S), except that S will be
+     unified with a filename if the current output stream was opened by
+     `tell/1'.
+
+     A common usage of `telling/1' is
+          tell('Some File Name')
+          ...
+          telling('Some File Name')
+
+     `telling/1' should succeed if the current input stream was not
+     changed (or if changed, restored).  It succeeds for any filename
+     (including `user') and any stream object opened by `open/3' (see
+     *Note ref-iou-sfh-opn::), but fails for `user_output' and any
+     stream object opened by `tell/1' (see *Note ref-iou-sfh-opn::).
+     Passing file names to `tell/1' is the only DEC-10 Prolog usage of
+     `telling/1', so Quintus Prolog is compatible with this usage.
+
+          _WARNING_:  The sequence
+               telling(File),
+               ...
+               set_output(File),
+
+          will signal an error if the current output stream was opened
+          by `tell/1'.  The only sequences that are guaranteed to
+          succeed are
+               telling(FileOrStream),
+               ...
+               tell(FileOrStream)
+
+          and
+               current_output(Stream),
+               ...
+               set_output(Stream)
+
+
+
+
+File: quintus.info,  Node: ref-iou-sfh-bos,  Next: ref-iou-sfh-cst,  Prev: ref-iou-sfh-cos,  Up: ref-iou-sfh
+
+Backtracking through Open Streams
+.................................
+
+   * `current_stream(*FILE, *MODE, *STREAM)' succeeds if STREAM is a
+     stream that is currently open on file FILE in mode MODE, where
+     MODE is either `read', `write', or `append'.  None of the
+     arguments need be initially instantiated.  This predicate is
+     nondeterminate and can be used to backtrack through all open
+     streams.  It fails when there are no (further) matching open
+     streams.
+
+     `current_stream/3' ignores the three special streams for the
+     standard input, output, and error channels.
+
+
+File: quintus.info,  Node: ref-iou-sfh-cst,  Next: ref-iou-sfh-flu,  Prev: ref-iou-sfh-bos,  Up: ref-iou-sfh
+
+Closing a Stream
+................
+
+   *  `close(X)' closes the stream corresponding to X.
+
+     If X is a stream object, then if the corresponding stream is open,
+     it will be closed; otherwise, `close/1' succeeds immediately,
+     taking no action.
+
+     If X is a file specification, the corresponding stream will be
+     closed.  It is only closed if the file was opened by `see/1' or
+     `tell/1'.  In the example
+          see(foo),
+          ...
+          close(foo)
+
+     `foo' will be closed.  However, in the example
+          open(foo, read, S),
+          ...
+          close(foo)
+
+     an exception will be raised and `foo' will not be closed.
+
+   * `told/0' closes the current output stream.  The current output
+     stream is then set to be `user_output'; that is, the user's
+     terminal.
+
+   * `seen/0' closes the current input stream.  The current input
+     stream is then set to be `user_input'; that is, the user's
+     terminal.
+
+
+
+File: quintus.info,  Node: ref-iou-sfh-flu,  Prev: ref-iou-sfh-cst,  Up: ref-iou-sfh
+
+Flushing Output
+...............
+
+   Output to a stream is not necessarily sent immediately; it is
+buffered.  The predicate `flush_output/1' flushes the output buffer for
+the specified stream and thus ensures that everything that has been
+written to the stream is actually sent at that point.
+
+   * `flush_output(STREAM)' sends all data in the output buffer to
+     stream STREAM.
+
+   * `ttyflush/0' is equivalent to `flush_output(user)'.
+
+
+
+File: quintus.info,  Node: ref-iou-sos,  Next: ref-iou-raf,  Prev: ref-iou-sfh,  Up: ref-iou
+
+Reading the State of Opened Streams
+-----------------------------------
+
+* Menu:
+
+* ref-iou-sos-spt::                     Stream Position Information for Terminal I/O
+
+   Character count, line count and line position for a specified stream
+are obtained as follows:
+
+   * `character_count(STREAM, N)' unifies N with the total number of
+     characters either read or written on the open stream STREAM.
+
+   * `line_count(STREAM, N)' unifies N with the total number of lines
+     either read or written on the open stream STREAM.  A freshly
+     opened stream has a line count of 1.
+
+   * `line_position(STREAM, N)' unifies N with the total number of
+     characters either read or written on the current line of the open
+     stream STREAM.  A fresh line has a line position of 0.
+
+
+
+File: quintus.info,  Node: ref-iou-sos-spt,  Up: ref-iou-sos
+
+Stream Position Information for Terminal I/O
+............................................
+
+   Input from Prolog streams that have opened the user's terminal for
+reading is echoed back as output to the same terminal.  This is
+interleaved with output from other Prolog streams that have opened the
+user's terminal for writing.  Therefore, all streams  connected to the
+user's terminal share the same set of position counts and thus return
+the same values for each of the predicates `character_count/2',
+`line_count/2', and `line_position/2'.  The following example assumes
+that `user_input', `user_output', and `user_error' are all connected to
+the user's terminal (which may not always be true if I/O is being
+redirected),
+     | ?- line_count(user, X1),
+          line_count(user_input, X2),
+          line_count(user_output, X3),
+          line_count(user_error, X4).
+     
+     X1 = X2 = X3 = X4 = 36 ;
+     
+     no
+     | ?- line_position(user, X1),
+          line_position(user_input, X2),
+          line_position(user_output, X3),
+          line_position(user_error, X4).
+     
+     X1 = X2 = X3 = X4 = 0 ;
+     
+     no
+     | ?- character_count(user, X1),
+          character_count(user_input, X2),
+          character_count(user_output, X3),
+          character_count(user_error, X4).
+     
+     X1 = X2 = X3 = X4 = 1304 ;
+     
+     no
+
+
+File: quintus.info,  Node: ref-iou-raf,  Next: ref-iou-sum,  Prev: ref-iou-sos,  Up: ref-iou
+
+Random Access to Files
+----------------------
+
+   There are two methods of finding and setting the stream position,
+"stream positioning" and "seeking".  The current position of the
+read/write pointer in a specified stream can be obtained by using
+`stream_position/2'.  It may be changed by using `stream_position/3'.
+Alternatively, `seek/4' may be used.
+
+   Seeking is more general, and stream positioning is more portable.
+The differences between them are:
+   * `stream_position/2' is equivalent to `seek/4' with OFFSET = 0, and
+     METHOD = `current'.
+
+   * Where `stream_position/3' asks for stream position objects,
+     `seek/4' uses integer expressions to represent the position or
+     offset.  Stream position objects are obtained by calling
+     `stream_position/[2,3]', and are discussed in the reference page.
+
+   * `seek/4' is supported only on certain operating systems.
+     `stream_position/3' is portable.
+
+
+File: quintus.info,  Node: ref-iou-sum,  Next: ref-iou-lib,  Prev: ref-iou-raf,  Up: ref-iou
+
+Summary of Predicates and Functions
+-----------------------------------
+
+   Reference pages for the following provide further detail on the
+material in this section.
+
+   * `at_end_of_file/[0,1]'
+
+   * `at_end_of_line/[0,1]'
+
+   * `character_count/2'
+
+   * `close/1'
+
+   * `current_input/1'
+
+   * `current_output/1'
+
+   * `current_stream/3'
+
+   * `display/1'
+
+   * `fileerrors/0'
+
+   * `flush_output/1'
+
+   * `format/[2,3]'
+
+   * `get0/[1,2]'
+
+   * `get/[1,2]'
+
+   * `line_count/2'
+
+   * `line_position/2'
+
+   * `nl/[0,1]'
+
+   * `nofileerrors/0'
+
+   * `open/[3,4]'
+
+   * `open_null_stream/1'
+
+   * `peek_char/[1,2]'
+
+   * `portray/1'
+
+   * `portray_clause/1'
+
+   * `print/[1,2]'
+
+   * `prompt/[2,3]'
+
+   * `put/[1,2]'
+
+   * `read/[1,2]'
+
+   * `read_term/[2,3]'
+
+   * `see/1'
+
+   * `seeing/1'
+
+   * `seek/4'
+
+   * `seen/0'
+
+   * `set_input/1'
+
+   * `set_output/1'
+
+   * `skip/[1,2]'
+
+   * `skip_line/[0,1]'
+
+   * `stream_position/[2,3]'
+
+   * `tab/[1,2]'
+
+   * `tell/1'
+
+   * `telling/1'
+
+   * `told/0'
+
+   * `ttyflush/0'
+
+   * `ttyget0/1'
+
+   * `ttyget/1'
+
+   * `ttynl/0'
+
+   * `ttyput/1'
+
+   * `ttyskip/1'
+
+   * `ttytab/1'
+
+   * `write/[1,2]'
+
+   * `write_canonical/[1,2]'
+
+   * `writeq/[1,2]'
+
+   * `write_term/[2,3]'
+
+   Also, see *Note fli-ios::.
+
+
+File: quintus.info,  Node: ref-iou-lib,  Prev: ref-iou-sum,  Up: ref-iou
+
+Library Support
+---------------
+
+   * `library(addportray)'
+
+   *   * `library(printchars)'
+
+
+File: quintus.info,  Node: ref-ari,  Next: ref-mdb,  Up: ref
+
+Arithmetic
+==========
+
+* Menu:
+
+* ref-ari-ove::                         Overview
+* ref-ari-eae::                         Evaluating Arithmetic Expressions
+* ref-ari-acm::                         Arithmetic Comparison
+* ref-ari-aex::                         Arithmetic Expressions
+* ref-ari-sum::                         Predicate Summary
+* ref-ari-lib::                         Library Support
+
+
+File: quintus.info,  Node: ref-ari-ove,  Next: ref-ari-eae,  Up: ref-ari
+
+Overview
+--------
+
+   In Prolog, arithmetic is performed by certain built-in predicates,
+which take arithmetic expressions as their arguments and evaluate them.
+Arithmetic expressions can evaluate to integers or floating-point
+numbers (floats).
+
+   With release 3 Quintus Prolog has full 32 bit integer arithmetic and
+full 64 bit double precision floating point arithmetic.  The range of
+integers is -2147483648 (-2^31) to 2147483647 (2^31-1) both inclusive.
+Arithmetic operations like integer addition and multiplication raise a
+representation error if there is an overflow.
+
+   The range of floating-point numbers is approximately 2.3E-308 to
+1.7E+308.  Floats are represented by 64 bits and they conform to the
+IEEE 754 standard.  The behavior on floating-point overflow or
+underflow is machine-dependent.
+
+   Chapter summary: The arithmetic operations of evaluation and
+comparison are implemented in the predicates described in *Note
+ref-ari-eae:: and *Note ref-ari-acm::.  All of them take arguments of
+the type "Expr", which is described in detail in *Note ref-ari-aex::.
+
+
+File: quintus.info,  Node: ref-ari-eae,  Next: ref-ari-acm,  Prev: ref-ari-ove,  Up: ref-ari
+
+Evaluating Arithmetic Expressions
+---------------------------------
+
+   The most common way to do arithmetic calculations in Prolog is to use
+the built-in predicate `is/2'.
+
+`-TERM is +EXPR'
+     TERM is the value of arithmetic expression EXPR.
+
+   TERM must not contain any uninstantiated variables.  Do not confuse
+`is/2' with `=/2'.
+
+
+File: quintus.info,  Node: ref-ari-acm,  Next: ref-ari-aex,  Prev: ref-ari-eae,  Up: ref-ari
+
+Arithmetic Comparison
+---------------------
+
+   Each of the following predicates evaluates each of its arguments as
+an arithmetic expression, then compares the results.  If one argument
+evaluates to an integer and the other to a float, the integer is
+coerced to a float before the comparison is made.
+
+   Note that two floating-point numbers are equal if and only if they
+have the same bit pattern.  Because of rounding error, it is not
+normally useful to compare two floats for equality.
+
+`EXPR1 `=:=' EXPR2'
+     succeeds if the results of evaluating terms EXPR1 and EXPR2 as
+     arithmetic expressions are equal
+
+`EXPR1 `=\=' EXPR2'
+     succeeds if the results of evaluating terms EXPR1 and EXPR2 as
+     arithmetic expressions are not equal
+
+`EXPR1 `<' EXPR2'
+     succeeds if the result of evaluating EXPR1 as an arithmetic
+     expression is less than the result of evaluating EXPR2 as an
+     arithmetic expression.
+
+`EXPR1 `>' EXPR2'
+     succeeds if the result of evaluating EXPR1 as an arithmetic
+     expression EXPR1 is greater than the result of evaluating EXPR2 as
+     an arithmetic expression.
+
+`EXPR1 `=<' EXPR2'
+     succeeds if the result of evaluating EXPR1 as an arithmetic
+     expression is not greater than the result of evaluating EXPR2 as
+     an arithmetic expression.
+
+`EXPR1 `>=' EXPR2'
+     succeeds if the result of evaluating EXPR1 as an arithmetic
+     expression is not less than the result of evaluating EXPR2 as an
+     arithmetic expression.
+
+
+File: quintus.info,  Node: ref-ari-aex,  Next: ref-ari-sum,  Prev: ref-ari-acm,  Up: ref-ari
+
+Arithmetic Expressions
+----------------------
+
+* Menu:
+
+* ref-ari-aex-aca::                     Arithmetic calculations
+* ref-ari-aex-pee::                     Peeking into Memory
+* ref-ari-aex-bit::                     Bit-vector Operations
+* ref-ari-aex-cco::                     Character Codes
+
+   Arithmetic evaluation and testing is performed by predicates that
+take arithmetic expressions as arguments.  An "arithmetic expression"
+is a term built from numbers, variables, and functors that represent
+arithmetic functions.  These expressions are evaluated to yield an
+arithmetic result, which may be either an integer or a float; the type
+is determined by the rules described below.
+
+   At the time of evaluation, each variable in an arithmetic expression
+must be bound to a number or another arithmetic expression. If the
+expression is not sufficiently bound or if it is bound to terms of the
+wrong type then Prolog raises exceptions of the appropriate type (see
+*Note ref-ere-hex::). Some arithmetic operations can also detect
+overflows.  They also raise exceptions. e.g. Division by zero results
+in a domain error being raised.
+
+   Only certain functors are permitted in arithmetic expressions.  These
+are listed below, together with a description of their arithmetic
+meanings.  For the rest of the section, X and Y are considered to be
+arithmetic expressions.
+

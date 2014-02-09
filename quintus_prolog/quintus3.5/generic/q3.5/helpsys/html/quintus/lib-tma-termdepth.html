@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>library(termdepth)</code></h4>
+
+   <p>Many resolution-based theorem provers impose a depth bound on the
+terms they create.  Not the least of the reasons for this is to
+prevent infinite loops.  <code>library(termdepth)</code> provides five predicates:
+     <dl>
+
+     <br><dt><code>term_depth(</code><var>+Term</var><code>, </code><var>-Depth</var><code>)</code>
+     <dd>
+<var>Depth</var> is unified with the depth of <var>Term</var>,
+calculated according to the following definition:
+     <pre class="example">          term_depth(Var) = 0
+          term_depth(Const) = 0
+          term_depth(F(T1,...,Tn)) =
+              1 + max(term_depth(T1), ..., term_depth(Tn))
+          </pre>
+
+     <br><dt><code>depth_bound(</code><var>+Term</var><code>, </code><var>+Bound</var><code>)</code>
+     <dd>
+This succeeds when the depth of <var>Term</var>, as calculated by <code>term_depth/2</code>,
+is less than or equal to <var>Bound</var>.  <var>Bound</var> is assumed
+to be a strictly positive integer.  Note that <code>depth_bound/2</code> will terminate
+even if <var>Term</var> is cyclic.
+
+     <br><dt><code>term_size(</code><var>+Term</var><code>, </code><var>-Size</var><code>)</code>
+     <dd>
+Unify <var>Size</var> with the size of <var>Term</var>, where the size is
+the number of constants and function symbols in the term. 
+(Note that this is a lower bound on the size of any term instantiated
+from <var>Term</var>, and that instantiating any variable to a non-variable must
+increase the size.  This latter property is why  variables are counted as 0
+rather than as 1.)  The definition is
+     <pre class="example">          term_size(Var) = 0
+          term_size(Const) = 1
+          term_size(F(T1,...,Tn)) =
+              1 + term_size(T1) + ... + term_size(Tn).
+          </pre>
+
+     <br><dt><code>size_bound(</code><var>+Term</var><code>, </code><var>+Bound</var><code>)</code>
+     <dd>
+This succeeds when the size of <var>Term</var>, as calculated by <code>term_size/2</code>,
+is less than or equal to <var>Bound</var>.  <var>Bound</var> is assumed
+to be a non-negative integer.  Note that <code>size_bound/2</code> will always terminate
+even if <var>Term</var> is cyclic.
+
+     <br><dt><code>length_bound(</code><var>+List</var><code>, </code><var>+Bound</var><code>)</code>
+     <dd>
+is true when <var>List</var> is a list having at most <var>Bound</var> elements. 
+<var>Bound</var> must be instantiated.  If <var>List</var> ends with a variable,
+it will be instantiated to successively longer proper lists, up to the
+length permitted by <var>Bound</var>.  Note that
+the depth of a list of constants is its length. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-tma-unify.html#lib-tma-unify">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-tma.html#lib-tma">Up</a>
+</ul>
+</div>
+   </body></html>
+

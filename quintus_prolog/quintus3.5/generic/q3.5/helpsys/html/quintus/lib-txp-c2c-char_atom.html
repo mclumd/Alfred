@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>char_atom(</code><var>?Char</var><code>, </code><var>?Atom</var><code>)</code></h5>
+
+   <p><code>char_atom/2</code> converts between character codes and atoms. 
+<var>Atom</var> must be an atom or a variable. 
+<var>Char</var> must be a character code or a variable. 
+Character codes are integers in the range 1..255.
+
+   <p>If either argument is instantiated, but <var>Char</var> is not a
+valid character code or <var>Atom</var> is not an atom, <code>char_atom/2</code>
+fails silently.
+
+   <p>If <var>Char</var> is a valid character code, <var>Atom</var> is unified
+with the atom whose name is [<var>Char</var>].
+
+   <p>If <var>Atom</var> is an atom, and its name contains a single character,
+<var>Char</var> is unified with the code of that character.
+
+   <p><code>char_atom(</code><var>Char</var><code>, </code><var>Atom</var><code>)</code> is true when <var>Char</var> is a character code,
+<var>Atom</var> is an atom whose name contains exactly one character,
+and <var>Code</var> is the code of that character.  If <var>Atom</var>'s name has
+no characters, or more than one, this predicate is simply
+false.  Error exceptions and efficiency aside, <code>char_atom/2</code> could be defined as
+<pre class="example">     char_atom(Char, Atom) :-
+             atom_chars(Atom, [Char]).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-c2c-number_chars.html#lib-txp-c2c-number_chars">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp-c2c.html#lib-txp-c2c">Up</a>
+</ul>
+</div>
+   </body></html>
+

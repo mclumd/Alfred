@@ -1,0 +1,210 @@
+%   Subfile: filename.cms
+%   Author : Richard A. O'Keefe
+%   Updated: 29 Aug 1989
+%   Purpose: CMS file name parsing and unparsing.
+
+%   Copyright (C) 1989, Quintus Computer Systems, Inc.  All rights reserved.
+
+%-----------------------------------------------------------------------+
+%	Parsing CMS file and directory names				|
+%-----------------------------------------------------------------------+
+
+chars_to_file_word(host, Host) -->		% Use File Pool name for Host.
+	cms_rest_name(8, 3, [Char|Chars]),
+	( ":" -> "" | "" ),
+	{ atom_chars(Host, [Char|Chars]) }.
+chars_to_file_word(device, Device) -->		% Use Minidisc name for Device
+	cms_minidisc(Device, _).
+chars_to_file_word(name, Name) -->
+	cms_word(Name).
+chars_to_file_word(type, Type) -->
+	cms_word(Type).
+
+
+chars_to_file_site(file_name(Host,Device,AbsRel,Directories,-1,-1,'')) -->
+	(   cms_directory(Host, Device, AbsRel, Directories, _) -> []
+	;   { Host = -1, Device = 'A', AbsRel - 0, Directories = [] }
+	).
+
+
+chars_to_file_name(file_name(Host,Device,AbsRel,Directories,
+			     Name,Extension,Version)) -->
+	cms_word(Name),
+	dot_or_space,
+	cms_word(Extension),
+	(   dot_or_space ->
+	    cms_directory(Host, Device, AbsRel, Directories, Version)
+	;   { Host = -1, AbsRel = 0, Directories = [] },
+	    { Device = 'A', Version = 1 }	% default is A1
+	).
+
+
+cms_directory(Host, Device, AbsRel, Directories, Version) -->
+	(   "+" ->
+	    { Host = -1, AbsRel = 0 },
+	    cms_minidisc(Device, Version),
+	    cms_subdirs(8, Directories)
+	;   "-" ->
+	    { Host = -1, AbsRel = 1 },
+	    cms_minidisc(Device, Version),
+	    cms_subdirs(8, Directories)
+	;   (	cms_rest_name(8, 3, Hs), ":" -> ""	% File Pool
+	    ;	{ Hs = "" }				% omitted
+	    ),
+	    cms_rest_name(8, 3, Us), "." ->		% User ID
+	    { atom_chars(Host, Hs), atom_chars(User, Us) },
+	    { AbsRel = -2, Device = -1, Version = '' },
+	    cms_subdirs(7, User, Directories)
+	;   { Host = -1, AbsRel = 0, Directories = [] },
+	    cms_minidisc(Device, Version)
+	).
+
+cms_minidisc(Device, Version) -->
+	[ C ], { cms_char(C, 0, X), atom_chars(Device, [X]) },
+	( [D], { cms_char(D, 2, D) } -> { Version is D-"0" }
+	; /* no file mode digit */ { Version = '' }
+	).
+
+cms_subdirs(N, User, [User,Dir|Dirs]) -->
+	[C], { cms_char(C, T, D), T < 2 },
+	!,
+	cms_rest_name(15, 3, Ds),
+	{ atom_chars(Dir, [D|Ds]) },
+	{ M is N-1 },
+	cms_subdirs(M, Dirs).
+cms_subdirs(_, User, [User]) --> "".
+
+
+cms_subdirs(N, [Dir|Dirs]) --> ".", { N > 0 }, !,
+	cms_subdir(Dir),
+	{ M is N-1 },
+	cms_subdirs(M, Dirs).
+cms_subdirs(_, []) --> "".
+
+cms_subdir(Dir) -->
+	[C], { cms_char(C, T, D), T < 2 },
+	cms_rest_name(15, 3, Ds),
+	{ atom_chars(Dir, [D|Ds]) }.
+
+dot_or_space --> [C], { C =< " " -> true ; C =:= "." }, spaces_0.
+
+spaces_0 --> [C], { C =< " " } -> spaces_0 ; "".
+
+
+normalise_subdirs([], []).
+normalise_subdirs([Dir|Dirs], [Norm|Norms]) :-
+	atom_chars(Dir, Chars),
+	cms_subdir(Norm, Chars, ""),
+	normalise_subdirs(Dirs, Norms).
+
+
+%   cms_word(-Name)
+%   skips over leading blanks &c, then reads 1 to 8 letters, digits, or
+%   special characters, packing them in upper case as the atom Name.
+%   Any remaining letters, digits, or special characters over the 8 are
+%   discarded quietly.
+
+cms_word(Name) --> [C], { cms_char(C, S, D), S < 4 },
+	cms_rest_name(7, 4, Ds),
+	{ atom_chars(Name, [D|Ds]) }.
+
+file_name_to_chars(file_name(Host,Device,AbsRel,Directories,
+			     Name,Extension,Version)) -->
+	( { atom(Name) } -> explode(Name) ; "" ), " ",
+	( { atom(Extension) } -> explode(Extension) ; ""),
+	( { atom(Host) } ->
+	  ( { Host == '' } -> subdirs_cms(Directories, 0' )
+	  ; " ", explode(Host), subdirs_cms(Directories, 0':)
+	  )
+	; { atom(Device) } -> " ",
+	  ( { AbsRel > 0 } -> "-"
+	  ; { Directories \== [] } -> "+"
+	  ; ""
+	  ),
+	  explode(Device),
+	  ( { Version >= 0 } -> explode(Version) ; "" ),
+	  subdirs_cms(Directories, 0'.)
+	; ""
+	).
+
+subdirs_cms([], _) --> "".
+subdirs_cms([Dir|Dirs], C) --> [C], explode(Dir), subdirs_cms(Dirs, 0'.).
+
+
+
+%   cms_char(Character, Class, UpperCase)
+%   The Classes are
+%   0	Letter.    Can be used as a minidisc name (file mode letter)
+%   1	National.  Is a letter, but can't be used as a minidisc.
+%   2	Digit.	   Can appear in user names, subdirectories, &c.
+%   3	Extra.	   Can appear in file name and type, not elsewhere.
+
+cms_char(0'A, 0, 0'A).
+cms_char(0'B, 0, 0'B).
+cms_char(0'C, 0, 0'C).
+cms_char(0'D, 0, 0'D).
+cms_char(0'E, 0, 0'E).
+cms_char(0'F, 0, 0'F).
+cms_char(0'G, 0, 0'G).
+cms_char(0'H, 0, 0'H).
+cms_char(0'I, 0, 0'I).
+cms_char(0'J, 0, 0'J).
+cms_char(0'K, 0, 0'K).
+cms_char(0'L, 0, 0'L).
+cms_char(0'M, 0, 0'M).
+cms_char(0'N, 0, 0'N).
+cms_char(0'O, 0, 0'O).
+cms_char(0'P, 0, 0'P).
+cms_char(0'Q, 0, 0'Q).
+cms_char(0'R, 0, 0'R).
+cms_char(0'S, 0, 0'S).
+cms_char(0'T, 0, 0'T).
+cms_char(0'U, 0, 0'U).
+cms_char(0'V, 0, 0'V).
+cms_char(0'W, 0, 0'W).
+cms_char(0'X, 0, 0'X).
+cms_char(0'Y, 0, 0'Y).
+cms_char(0'Z, 0, 0'Z).
+cms_char(0'a, 0, 0'A).
+cms_char(0'b, 0, 0'B).
+cms_char(0'c, 0, 0'C).
+cms_char(0'd, 0, 0'D).
+cms_char(0'e, 0, 0'E).
+cms_char(0'f, 0, 0'F).
+cms_char(0'g, 0, 0'G).
+cms_char(0'h, 0, 0'H).
+cms_char(0'i, 0, 0'I).
+cms_char(0'j, 0, 0'J).
+cms_char(0'k, 0, 0'K).
+cms_char(0'l, 0, 0'L).
+cms_char(0'm, 0, 0'M).
+cms_char(0'n, 0, 0'N).
+cms_char(0'o, 0, 0'O).
+cms_char(0'p, 0, 0'P).
+cms_char(0'q, 0, 0'Q).
+cms_char(0'r, 0, 0'R).
+cms_char(0's, 0, 0'S).
+cms_char(0't, 0, 0'T).
+cms_char(0'u, 0, 0'U).
+cms_char(0'v, 0, 0'V).
+cms_char(0'w, 0, 0'W).
+cms_char(0'x, 0, 0'X).
+cms_char(0'y, 0, 0'Y).
+cms_char(0'z, 0, 0'Z).
+cms_char(0'$, 1, 0'$).
+cms_char(0'#, 1, 0'#).
+cms_char(0'@, 1, 0'@).
+cms_char(0'0, 2, 0'0).
+cms_char(0'1, 2, 0'1).
+cms_char(0'2, 2, 0'2).
+cms_char(0'3, 2, 0'3).
+cms_char(0'4, 2, 0'4).
+cms_char(0'5, 2, 0'5).
+cms_char(0'6, 2, 0'6).
+cms_char(0'7, 2, 0'7).
+cms_char(0'8, 2, 0'8).
+cms_char(0'9, 2, 0'9).
+cms_char(0'+, 3, 0'+).
+cms_char(0'-, 3, 0'-).
+cms_char(0':, 3, 0':).
+cms_char(0'_, 3, 0'_).

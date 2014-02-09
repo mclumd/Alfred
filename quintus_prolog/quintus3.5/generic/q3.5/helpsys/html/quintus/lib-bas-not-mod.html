@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Mode Annotations</h5>
+
+   <p>A new system of representing the modes of arguments has been adapted
+in Release 3, is described in <a href="mpg.html#mpg">mpg</a>. The
+library, including IPC, is still documented under the old system of
+mode annotations:
+
+   <p>Each predicate definition is headed by a goal template such as
+<pre class="example">     setof(<var>?X</var>,<var>+Goal</var>,<var>-Set</var>)
+     </pre>
+
+   <p>Here <var>X</var> and the others are meta-variables, which name the arguments so
+that we don't have to keep saying "its first argument" and so on.  The
+characters that precede the meta-variables will seem familiar if you know
+the mode declarations of DEC-10 Prolog; their significance is as follows:
+     <dl>
+
+     <br><dt><code>+</code>
+     <dd>This argument is an input to the predicate.  It must initially
+be instantiated;
+otherwise, the predicate raises an error exception.
+
+     <br><dt><code>-</code>
+     <dd>This argument is an output.  It is returned by the predicate. 
+That is, the
+output value is unified with any value that was supplied for this
+argument.  The predicate fails if this unification fails.  If no value
+is supplied, the predicate succeeds, and the output variable is unified
+with the return value.
+
+     <br><dt><code>?</code>
+     <dd>This argument does not fall into either of the above categories.  It
+is not necessarily an input nor an output, and it need not be instantiated. 
+</dl>
+
+   <p>Note that it is not an error to call a predicate with a <code>-</code> argument already
+instantiated.  The value supplied will simply be unified with the result
+returned, and if that unification fails, the predicate fails.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-bas-not-cco.html#lib-bas-not-cco">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-bas-not.html#lib-bas-not">Up</a>
+</ul>
+</div>
+   </body></html>
+

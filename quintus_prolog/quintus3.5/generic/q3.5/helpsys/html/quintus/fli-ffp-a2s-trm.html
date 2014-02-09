@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Passing Terms</h5>
+
+   <p>The foreign function interface allows Prolog terms to be passed from C
+functions.  Like most of the simple data types that may be passed
+to and from Prolog, terms to be passed can originate either in Prolog or
+in C (see <a href="fli-p2f-trm.html#fli-p2f-trm">fli-p2f-trm</a>).  Like terms in Prolog, terms that are
+passed to C are automatically made safe from damage by operations that
+might change their absolute position in Prolog memory, like stack shifting
+and garbage collection.
+
+<pre class="example">     Prolog:  +term
+     C:       QP_term_ref
+     </pre>
+
+   <p>The argument passed from the C function is a <code>QP_term_ref</code>
+   initialized to a Prolog term.  If something other than a term reference
+   is passed to Prolog, the results are undefined.
+
+<pre class="example">     Prolog:  -term
+     C:       QP_term_ref
+     </pre>
+
+   <p>A <code>QP_term_ref</code> is passed to the foreign interface.  When Prolog returns
+a solution, the foreign interface writes a reference to the Prolog
+term in the corresponding argument of the call into the <code>QP_term_ref</code>. 
+The previous contents of the <code>QP_term_ref</code> are destroyed.  Unlike the
+other passing types, there are no associated type errors when passing
+terms.
+
+   <p>Note that the output term, as well as the input term is represented in
+the C code by a <code>QP_term_ref</code>.  This contrasts with other output types,
+which are usually represented in C as pointers to the corresponding
+input type.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-a2s-adr.html#fli-ffp-a2s-adr">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-a2s-str.html#fli-ffp-a2s-str">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-a2s.html#fli-ffp-a2s">Up</a>
+</ul>
+</div>
+   </body></html>
+

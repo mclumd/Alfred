@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>library(date)</code></h4>
+
+   <p><code>library(date)</code> is a time-stamp package.
+     <ul>
+
+     <li>Dates are records of the form <code>date(</code><var>Year</var><code>, </code><var>Month</var><code>, </code><var>Day</var><code>)</code>. 
+<li>Times are records of the form <code>time(</code><var>Hour</var><code>, </code><var>Minute</var><code>, </code><var>Second</var><code>)</code>. 
+<li>Datimes are records of the form
+<code>date(</code><var>Year</var><code>, </code><var>Month</var><code>, </code><var>Day</var><code>, </code><var>Hour</var><code>, </code><var>Minute</var><code>, </code><var>Second</var><code>)</code>. 
+<li>"When" values are 32-bit time-stamps representing the number of seconds
+since the beginning of January 1st 1970, represented as integers. 
+</ul>
+
+   <p>The parameter ranges are
+
+   <p><table>
+<tr align="left"><td valign="top"><var>Year</var>    </td><td valign="top">year-1900  </td><td valign="top">(e.g. 1987 -&gt; 87)
+<br></td></tr><tr align="left"><td valign="top"><var>Month</var>   </td><td valign="top">0..11      </td><td valign="top">(e.g. January -&gt; 0, September -&gt; 8)
+<br></td></tr><tr align="left"><td valign="top"><var>Day</var>     </td><td valign="top">1..31      </td><td valign="top">(e.g. 27 -&gt; 27)
+<br></td></tr><tr align="left"><td valign="top"><var>Hour</var>    </td><td valign="top">0..23      </td><td valign="top">(e.g. midnight -&gt; 0, noon -&gt; 12)
+<br></td></tr><tr align="left"><td valign="top"><var>Minute</var>  </td><td valign="top">0..59
+<br></td></tr><tr align="left"><td valign="top"><var>Second</var>  </td><td valign="top">0..59
+   <br></td></tr></table>
+
+   <p>These parameter ranges are compatible with the library function
+<code>localtime(3)</code>.  Note that the range for months is not what you might expect.
+
+   <p>The predicates provided are:
+     <ul>
+
+     <li><code>now(</code><var>?When</var><code>)</code>
+<li><code>date(</code><var>-DateNow</var><code>)</code>
+<li><code>date(</code><var>+When</var><code>, </code><var>-DateThen</var><code>)</code>
+<li><code>time(</code><var>-TimeNow</var><code>)</code>
+<li><code>time(</code><var>+When</var><code>, -TimeThen)</code>
+<li><code>datime(</code><var>-DatimeNow</var><code>)</code>
+<li><code>datime(</code><var>+When</var><code>, </code><var>-DatimeThen</var><code>)</code>
+<li><code>datime(</code><var>?Datime</var><code>, </code><var>?Date</var><code>, </code><var>?Time</var><code>)</code>
+<li><code>date_and_time(</code><var>-DateNow</var><code>, </code><var>-TimeNow</var><code>)</code>
+<li><code>date_and_time(</code><var>+When</var><code>, </code><var>-DateThen</var><code>, </code><var>-TimeThen</var><code>)</code>
+<li><code>portray_date(</code><var>+TimeStamp</var><code>)</code>
+<li><code>time_stamp(</code><var>+Format</var><code>, </code><var>-TimeStamp</var><code>)</code>
+<li><code>time_stamp(</code><var>+When</var><code>, </code><var>+Format</var><code>, </code><var>-TimeStamp</var><code>)</code>
+</ul>
+
+   <p>For example,
+<pre class="example">     | ?- <kbd>date(X), portray_date(X).</kbd>
+     11-Jan-90
+     X = date(90,0,11)
+     </pre>
+
+   <p>Note that if you want both the current date and time, you should call either
+<code>datime/1</code> or <code>date_and_time/2</code>.  It is an error to obtain the date and time in
+separate calls, because midnight could intervene and put you nearly 24 hours
+out.
+
+   <p>Dates and datimes are also returned by <code>directory_property/3</code>
+and <code>file_property/3</code> (see <code>library(directory)</code>).  All these
+records can be compared using term comparison.
+
+   <p>The predicates <code>time_stamp/[2,3]</code> provide a way of creating a time-stamp atom
+using a special kind of format string.  For example,
+<pre class="example">     | ?- <kbd>time_stamp('%W, %d %M %y',Date).</kbd>
+     
+     Date = 'Thursday, 11 January 1990'
+     </pre>
+
+   <p>The details of the format strings are explained in a comment in the sources. 
+Please note that, in the interests of internationalization, <code>time_stamp/[2,3]</code>
+are likely to be superseded in a future release by something based on the ANSI
+C operation <code>strftime(3)</code>.  The other predicates in this package will <em>not</em>
+change at that time.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-mis-activeread.html#lib-mis-activeread">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-mis-ctr.html#lib-mis-ctr">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-mis.html#lib-mis">Up</a>
+</ul>
+</div>
+   </body></html>
+

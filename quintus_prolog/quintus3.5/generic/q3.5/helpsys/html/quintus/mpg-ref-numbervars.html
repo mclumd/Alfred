@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>numbervars/3</code> <dfn>meta-logical</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>numbervars(</code><var>+-Term</var><code>, </code><var>+FirstVar</var><code>, </code><var>-LastVar</var><code>)</code>
+
+   <p>instantiates  each of the variables in <var>Term</var> to a term of the form
+<code>'$VAR'(</code><var>N</var><code>)</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>FirstVar</var> <dfn>integer</dfn>
+     <dd>
+<br><dt><var>LastVar</var> <dfn>integer</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>FirstVar</var> is used as the value of
+<var>N</var> for the first variable in <var>Term</var> (starting from the left). 
+The second distinct variable in
+<var>Term</var> is given a value of <var>N</var> satisfying "<var>N</var> is
+<var>FirstVar</var>+1"; the third distinct variable gets the value
+<var>FirstVar</var>+2,
+and so on.  The last variable in <var>Term</var> has the value <var>LastVar</var>-1.
+
+   <p>Notice that in the example below, <code>display/1</code> is used
+rather than <code>write/1</code>.  This is because <code>write/1</code>
+treats terms of the form <code>'$VAR'(</code><var>N</var><code>)</code>
+specially; it writes <code>A</code> if <var>N</var>=0, <code>B</code> if <var>N</var>=1, <small class="dots">...</small><code>Z</code> if <var>N</var>=25,
+<code>A1</code> if <var>N</var>=26,
+etc.  That is why, if you type the goal in the example below,
+the variable bindings will also be printed out as follows:
+<pre class="example">     Term = foo(W,W,X),
+     A = W,
+     B = X
+     </pre>
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+                <var>Number</var> and <var>Chars</var> are both instantiated
+
+     <br><dt><code>type_error</code>
+     <dd>
+                <var>Number</var> is not a number or <var>Char</var> is not a list
+
+   </dl>
+
+<h4 class="subheading">Example</h4>
+
+<pre class="example">     | ?- <kbd>Term = foo(A, A, B), numbervars(Term, 22, _),
+          display(Term).</kbd>
+     foo($VAR(22),$VAR(22),$VAR(23))
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>write_term/1</code>, <code>write_canonical/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-on_exception.html#mpg-ref-on_exception">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-number_chars.html#mpg-ref-number_chars">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

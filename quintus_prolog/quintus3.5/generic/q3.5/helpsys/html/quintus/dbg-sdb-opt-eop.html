@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Environment Options</h5>
+
+     <dl>
+
+     <br><dt><kbd>n</kbd>
+     <dd>nonstop --
+This option turns off the debugger for the rest of the
+execution of the top-level goal.  When the execution of this
+goal is completed, the debugger returns to its current mode
+(trace, debug, or zip).  This option does <em>not</em>
+turn the debugger off; to turn the debugger off, you must type:
+     <pre class="example">          | ?- <kbd>call nodebug</kbd>
+          </pre>
+
+     <br><dt><kbd>+</kbd>
+     <dd>spy this --
+This option places a spypoint on the procedure currently being shown.
+
+     <br><dt><kbd>-</kbd>
+     <dd>nospy this --
+This option removes any spypoint on the procedure currently being shown.
+
+     <br><dt><kbd>@</kbd>
+     <dd>command --
+This option prompts for a single Prolog goal, which is executed as a command
+without any variable results being shown.  The command is run as
+a new execution, with the current execution suspended, but
+without any debugging.  This is particularly useful for quickly
+changing debugging parameters without entering a break level.
+
+     <br><dt><kbd>b</kbd>
+     <dd>break --
+This option calls the built-in predicate <code>break/0</code>, thus suspending
+the execution so far and putting you at the top level of the interpreter. 
+(See the description of <code>break/0</code> in <a href="ref-iex-int.html#ref-iex-int">ref-iex-int</a>.) 
+The new execution is separate from the
+suspended one, and invocation numbers will start again from 1. 
+The debugger is turned off when the break level is entered, although
+the spypoints and leashing of the suspended level are retained. 
+When you end the break (by typing the end-of-file character),
+execution will resume and you will be prompted once again at the port
+that you left.  Changes to leashing or to spypoints
+will remain in effect after the break has finished.
+
+     <br><dt><kbd>a</kbd>
+     <dd>abort --
+This option aborts (abandons) the current execution.  All the execution
+states built so far are destroyed, and execution restarts at
+the top level of the interpreter.
+
+     <br><dt><kbd>.</kbd>
+     <dd>find-definition --
+This works only under the editor interface.  The source code
+corresponding to the current procedure call is found and
+displayed in the text window.
+
+     <br><dt><kbd>,</kbd>
+     <dd>find-more-definition --
+This works only under the Emacs interfaces, and can be used after doing
+a find-definition, in the case where there is more than one possible
+definition.  This is useful in several cases:
+          <ol type=1 start=1>
+
+          <li>where a predicate is multifile -- you can find all the files that
+have clauses for that predicate;
+<li>where you specify a name but no arity -- you can find all the
+definitions of predicates with that name and with different arities;
+<li>where you have the same name/arity defining predicates in different
+modules.
+          </ol>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-sdb-opt-hop.html#dbg-sdb-opt-hop">Next</a>
+<li><a rel="previous" accesskey="p" href="dbg-sdb-opt-adv.html#dbg-sdb-opt-adv">Previous</a>
+<li><a rel="up" accesskey="u" href="dbg-sdb-opt.html#dbg-sdb-opt">Up</a>
+</ul>
+</div>
+   </body></html>
+

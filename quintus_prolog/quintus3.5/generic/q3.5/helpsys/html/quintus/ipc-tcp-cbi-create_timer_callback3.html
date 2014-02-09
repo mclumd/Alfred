@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_create_timer_callback(</code><var>+Timeval</var><code>, </code><var>+Goal</var><code>, </code><var>-TimerId</var><code>)</code></h5>
+
+   <p><code>tcp_create_timer_callback/3</code> arranges things so that <var>Goal</var>
+will be called when the absolute time value <var>Timeval</var> is called.
+
+   <p>Note that this goal will only be called when your program is in a wait
+state.  Therefore all the tcp package can do is guarantee that if your
+program goes to sleep at <code>QP_select()</code> and the absolute time specified is
+reached or passed, then the goal is called.  It does not work using
+asynchronous operating system timers.
+
+   <p>The output argument <var>TimerId</var> can be used for destroying the timer
+callback just created.
+
+   <p>To arrange for a goal to be called at some absolute time:
+
+<pre class="example">         ...,
+         tcp_create_timer_callback(Timeval, Goal, TimerId),
+         ...
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-cbi-destroy_timer_callback1.html#ipc-tcp-cbi-destroy_timer_callback1">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-cbi-input_callback2.html#ipc-tcp-cbi-input_callback2">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-cbi.html#ipc-tcp-cbi">Up</a>
+</ul>
+</div>
+   </body></html>
+

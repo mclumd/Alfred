@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>midstring/[3,4,5,6]</code></h5>
+
+   <p>The <code>midstring/N</code> family has four members:
+     <ul>
+
+     <li><code>midstring(</code><var>ABC</var><code>, </code><var>B</var><code>, </code><var>AC</var><code>, </code><var>LenA</var><code>, </code><var>LenB</var><code>, </code><var>LenC</var><code>)</code>
+
+     <li><code>midstring(</code><var>ABC</var><code>, </code><var>B</var><code>, </code><var>AC</var><code>, </code><var>LenA</var><code>, </code><var>LenB</var><code>)</code>
+<li><code>midstring(</code><var>ABC</var><code>, </code><var>B</var><code>, </code><var>AC</var><code>, </code><var>LenA</var><code>)</code>
+<li><code>midstring(</code><var>ABC</var><code>, </code><var>B</var><code>, </code><var>AC</var><code>)</code>
+</ul>
+
+   <p>The principal routine for taking apart an atom is <code>midstring/6</code>.
+
+     <dl>
+
+     <br><dt><code>midstring/6</code>
+     <dd>is true when
+          <ul>
+
+          <li><var>ABC</var>, <var>B</var>, and <var>AC</var> are all atoms. 
+<li><var>ABC</var> can be broken into three pieces <var>A</var>, <var>B</var>, and <var>C</var>,
+<li><var>AC</var> is the concatenation of <var>A</var> and <var>C</var>,
+<li><var>LenA</var> is the length of <var>A</var>,
+<li><var>LenB</var> is the length of <var>B</var>, and
+<li><var>LenC</var> is the length of <var>C</var>. 
+</ul>
+
+   </dl>
+
+   <p>Either <var>ABC</var> or both <var>B</var> and <var>AC</var> should be instantiated. 
+Apart from this restriction, <code>midstring/6</code> is a genuine relation, and all
+the other arguments can be solved for.
+
+   <p>How can you be expected to remember all these arguments? 
+The arguments fall into two groups:  three text objects and three integers. 
+The three integers form a little picture of what you want.
+<pre class="example">                 |   LenA    |     LenB    |  LenC   |
+         ABC=     a a a a a a B B B B B B B c c c c c
+     </pre>
+
+   <p>So the order of the three integer arguments is the same as the order of
+the substrings whose lengths they are.  Note that none of these
+arguments is a "position" in any string:  all three of them are to
+be understood as <em>lengths</em> of strings.
+
+   <p>The order of the text arguments was chosen to extend the order used
+by <code>substring/5</code> (see <a href="lib-txp-sub-substring.html#lib-txp-sub-substring">lib-txp-sub-substring</a>).  Generally, you are more likely
+to know <var>ABC</var> than <var>B</var> or <var>AC</var>, and you are more likely
+to know <var>B</var> than <var>AC</var>. 
+For example, a common use of the <code>midstring/[3,4,5,6]</code> family is to ask
+"if <var>B</var> is deleted from <var>ABC</var>, what results?",
+which can be done by asking
+<pre class="example">     | ?- <kbd>midstring(this_is_abc, is, AC, _, _, _).</kbd>
+     
+     AC = th_is_abc <kbd>;</kbd>
+     
+     AC = this__abc <kbd>;</kbd>
+     
+     no
+     </pre>
+
+   <p>Earlier in this section we saw <code>midstring/4</code> used to append two
+strings.  Now we can see how that works:
+<pre class="example">     | ?- <kbd>midstring(BC, B, C, 0).</kbd>
+     </pre>
+
+   <p>is true when <var>BC</var> can be broken into three parts, <var>A</var>, <var>B</var>, and <var>C</var>, such that 0
+is the length of <var>A</var>, the lengths of <var>B</var> and <var>C</var> are unconstrained, and <var>C</var> is
+the concatenation of <var>A</var> and <var>C</var>.
+
+   <p>Another way to see this is that
+<pre class="example">     | ?- <kbd>midstring (ABC, B, AC, N).</kbd>
+     </pre>
+
+   <p>is true when <var>ABC</var> is obtained by inserting <var>B</var> just after the <var>N</var>th character
+of <var>AC</var>.
+
+   <p>Some other examples using the <code>midstring/N</code> family:
+     <ul>
+
+     <li>To delete 7 characters from <code>I"m going, Tom</code>, retaining the first 4
+characters:
+     <pre class="example">          | ?- <kbd>midstring('I''m going, Tom', _, Answer, 4, 7).</kbd>
+          
+          Answer = 'I''m Tom'
+          </pre>
+
+     <p>To search for the text <code>ab</code> in <code>abracadabra</code>:
+     <pre class="example">          | ?- <kbd>midstring(abracadabra, ab, _, Offset).</kbd>
+          
+          Offset = 0 <kbd>;</kbd>
+          Offset = 7 <kbd>;</kbd>
+          no
+          </pre>
+
+     </p><li>To divide <var>Whole</var> into <var>Front</var> and <var>Back</var>, where the length of <var>Front</var> is
+known:
+     <pre class="example">          | ?- <kbd>midstring(Whole, Front, Back, 0, FrontLength).</kbd>
+          </pre>
+
+     <li>To divide <var>Whole</var> into <var>Front</var> and <var>Back</var>, where the length of <var>Back</var> is
+known:
+     <pre class="example">          | ?- <kbd>midstring(Whole, Front, Back, 0, _, BackLength).</kbd>
+          </pre>
+
+     <li>To insert <var>Part</var> into <var>Fringes</var> at a given <var>Offset</var> from the left, yielding
+<var>Whole</var>:
+     <pre class="example">          | ?- <kbd>midstring(Whole, Part, Fringes, Offset).</kbd>
+          </pre>
+
+     <li>To insert <var>Part</var> into <var>Fringes</var> at a given <var>Offset</var> from the right, yielding
+<var>Whole</var>:
+     <pre class="example">          | ?- <kbd>midstring(Whole, Part, Fringes, _, _, Offset).</kbd>
+          </pre>
+
+     <li>To delete <var>Drop</var> characters from <var>Whole</var>, starting at a given <var>Offset</var> from
+the left, yielding Short:
+     <pre class="example">          | ?- <kbd>midstring(Whole, _, Short, Offset, Drop).</kbd>
+          </pre>
+
+     <li>To delete <var>Drop</var> characters from <var>Whole</var>, starting at a given <var>Offset</var> from
+the right, yielding <var>Short</var>:
+     <pre class="example">          | ?- <kbd>midstring(Whole, _, Short, _, Drop, Offset).</kbd>
+          </pre>
+
+     <li>To determine the <var>Length</var> of <var>Text</var>:
+     <pre class="example">          | ?- <kbd>midstring(Text, Text, '', 0, Length, 0).</kbd>
+          </pre>
+
+   </ul>
+
+   <p>It would not be useful to try to memorize these examples. 
+Instead, remember the <em>picture</em>:
+<pre class="example">     ABC,  B,  AC,  LenA,  LenB,  LenC
+     </pre>
+
+   <p>Note that <code>midstring/[3,4,5,6]</code> has been carefully designed so that you can
+extract and insert from either the left or the right with equal
+facility, and so that successive calls to extract related fragments
+will require a minimum of arithmetic.  For example, suppose we want to
+break a text <var>ABCD</var> into four pieces, where the lengths of <var>B</var> and <var>D</var> are
+known.  We think about the picture
+<pre class="example">             ABCD = '' (ABC) D
+             ABC  = A (B) C
+             AC   = A (C) ''
+     </pre>
+
+   <p>and then write
+<pre class="example">     four_parts(ABCD, A, B, C, D, LenB, LenD) :-
+             /* this is an example */
+             midstring(ABCD, ABC, D, 0, _, LenD),
+             midstring(ABC, B, AC, LenA, LenB),
+             midstring(AC, C, A, LenA, _, 0).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-sub-substring.html#lib-txp-sub-substring">Next</a>
+<li><a rel="up" accesskey="u" href="lib-txp-sub.html#lib-txp-sub">Up</a>
+</ul>
+</div>
+   </body></html>
+

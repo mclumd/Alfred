@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_unify()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_unify(term1, term2)
+     QP_term_ref term1;
+     QP_term_ref term2;
+     </pre>
+
+   <p>Unify two Prolog terms.
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>QP_unify()</code> unifies the two terms
+referenced by <var>term1</var> and <var>term2</var>. Both should be
+initialized references. If the unification succeeds, the function
+returns <code>QP_SUCCESS</code>, otherwise it returns <code>QP_FAILURE</code>. If
+the unification results in any bindings then the bindings are trailed. If
+Prolog backtracks over the foreign function that called
+<code>QP_unify()</code> then the bindings are undone.
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>c_unify(term1, term2)</code> is equivalent to the usual
+Prolog builtin <code>=/2</code>, but it returns a third argument, which is
+an integer indicating success or failure.
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(c_unify, c, c_unify(+term, +term, [-integer])).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     long int c_unify(t1, t2);
+     QP_term_ref t1, t2;
+     {
+         return QP_unify(t1, t2);
+     }
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>=/2</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-vfprintf.html#cfu-ref-vfprintf">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-ungetc.html#cfu-ref-ungetc">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

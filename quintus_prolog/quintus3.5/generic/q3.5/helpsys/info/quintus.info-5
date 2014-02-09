@@ -1,0 +1,1194 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: ema-emi-mod,  Next: ema-emi-lay,  Prev: ema-emi-key,  Up: ema-emi
+
+Prolog Mode
+-----------
+
+   Prolog mode applies automatically whenever you are editing a file
+that ends with the characters `.pl'.  This mode is useful when you are
+editing Prolog source code.  In Prolog mode:
+   * Whenever you type a closing parenthesis or bracket, the
+     corresponding opening one is flashed.  This bracket matching
+     attempts to be clever about strings in quotes, because normally a
+     bracket written within quotes should not count for matching
+     purposes.  Unfortunately, this means that the bracket matching
+     does not work properly when radix notation (for example, 16'100 is
+     hexadecimal 100, or 256 decimal) is used.
+
+   * The definition of <LFD> is modified.  Immediately after a line
+     with no leading space characters (normally the head of a clause), a
+     <LFD> is equivalent to a <RET> followed by 8 spaces. ( This can be
+     overridden by assigning the variable body-predicate-indent some
+     other value.)  Otherwise it is equivalent to a <RET> followed by
+     enough tabs and spaces to put the cursor underneath the first
+     non-space character in the previous line. A different set of rules
+     apply for indentation within if-then-else constructs. Refer to
+     `QUINTUS-DIRECTORY/editor3.5/gnu/README' for details. Note that
+     the <TAB> key also indents the current line as prolog code. It
+     differs from <LFD> in that a newline is not generated.
+
+
+
+File: quintus.info,  Node: ema-emi-lay,  Next: ema-emi-keb,  Prev: ema-emi-mod,  Up: ema-emi
+
+Prolog Source Code Layout Restrictions
+--------------------------------------
+
+   There are some restrictions on program layout, which are necessary
+for `<ESC> k p' (compiling a procedure), `<ESC> .' (find-definition)
+and for indentation in prolog mode to work properly.  In order for
+these commands to function correctly, you must:
+  1.  Group Prolog clauses of the same name and arity together.  That
+     is, do not intersperse clauses of one procedure with clauses of
+     another.  Normally breaching this restriction will cause a style
+     warning (see *Note bas-lod-sty::).
+
+  2. Start the heads of all Prolog clauses at the beginning of the line;
+     indent any additional lines for those clauses. Within prolog mode
+     the TAB and the <LFD> can be used for indenting the current line
+     as prolog code.
+
+  3. If a comment continues onto another line, indent the continuation
+     line(s).
+
+  4. Do not write clause definitions that use operators in the heads of
+     the clauses.  For example, if you want to define clauses for `+/2',
+     then write the head of the clause in the form `+(A, B)' and not `A
+     + B'.
+
+
+File: quintus.info,  Node: ema-emi-keb,  Next: ema-emi-pge,  Prev: ema-emi-lay,  Up: ema-emi
+
+Rebinding Keys in Your Initialization File
+------------------------------------------
+
+   You can customize GNU Emacs by defining key bindings and/or
+Emacs-Lisp functions in a special GNU Emacs initialization file called
+`.emacs', which must be kept in your home directory.  To locate it, do
+`^x ^f' and type `~/.emacs' as the filename. (Windows users: the `~'
+character is a abbreviation, inherited from UNIX, for your home
+directory.)
+
+   When GNU Emacs is started, it loads your GNU Emacs initialization
+file, if you have one, before loading the Emacs-Lisp files defining the
+editor interface.  This means that any key bindings that you make in
+this file may be overridden by the editor interface package.  However,
+you can tailor the interface, if you wish, by defining one or both of
+the following "hook functions":
+`prolog-startup-hook'
+     If a function by this name is defined, it will be called after all
+     the initializations done on invoking Prolog through the editor
+     interface are completed, and before the screen is displayed.
+
+`prolog-mode-hook'
+     If a function by this name is defined, it will be called every
+     time Prolog mode is entered.  Prolog mode is entered every time you
+     edit a file with a `.pl' extension, and can also be entered by
+     using the command `<ESC> x prolog-mode'.
+
+   For example, if you don't like incremental search, and you prefer to
+use `<ESC> e' for moving to the end of a sentence, rather than for
+enlarging the current window, then you should add the following
+function definition to your initialization file:
+     (defun
+          prolog-startup-hook ()
+             (global-set-key  "\C-s" 'search-forward)
+             (global-set-key  "\C-r" 'search-reverse)
+             (global-set-key  "\ee"  'forward-sentence)
+             (global-set-key  "\e\e"
+                              'enlarge-window))
+
+   Note that the command strings could be written as : `"\C-s"'
+(Backslash `C-s') for example.  This version of `prolog-startup-hook'
+also binds the useful `enlarge-window' command, which is normally on
+`<ESC> e' in this interface, to `<ESC> <ESC>'.
+
+   If you wish to change key bindings in Prolog mode, you should use
+`local-set-key' rather than `global-set-key', because the effect of
+Prolog mode is local to a particular window.  For example, if you don't
+like the way <LFD> works in Prolog mode, you can define
+     (defun
+          prolog-mode-hook ()
+             (local-set-key  "\C-j" 'newline-and-indent))
+
+   This restores the default binding of <LFD>.
+
+
+File: quintus.info,  Node: ema-emi-pge,  Prev: ema-emi-keb,  Up: ema-emi
+
+Programming the Prolog/GNU Emacs Interface
+------------------------------------------
+
+* Menu:
+
+* ema-emi-pge-gqu::                     Submitting Prolog Queries from GNU Emacs
+* ema-emi-pge-lfp::                     Invoking Emacs-Lisp Functions from Prolog
+
+   This section describes how the user can program the Quintus
+Prolog/GNU Emacs interface.  In order to make effective use of the
+interface, the user must be very familiar with GNU Emacs's extension
+language, Emacs-Lisp.  We do not provide support for users' Emacs-Lisp
+code.
+
+   Before deciding to use Emacs-Lisp code in your applications, you
+should be aware of two potential problems.  First, we does not support
+the GNU Emacs editor interface and as such reserves the right to change
+the editor environment at any time.  This could render your non-Prolog
+code inoperative or irrelevant.  Second, Runtime Systems, which is the
+usual way of packaging Prolog applications for end users, do not
+support the GNU Emacs environment.  Thus they will not run your
+Emacs-Lisp code.
+
+   With these cautions in mind, if you decide to use Emacs-Lisp code in
+your applications, these notes should have all of the information that
+you need to proceed.  If your application is very complex, you may also
+find that you need to understand in some detail how the GNU Emacs
+interface is built.  We supply with the distribution the Emacs-Lisp
+source code for the interface. You are free to go ahead and change any
+part of the interface to suit your needs but please be careful to
+follow the guidelines set by the Free Software Foundation as to how
+this should be done. These guidelines may be found in any standard
+distribution of the GNU Emacs editor. You will find the files `help.el',
+`commands.el', and `qprocess.el' especially useful, although depending
+upon what you are trying to do you may need information from any of the
+Emacs-Lisp source files.
+
+
+File: quintus.info,  Node: ema-emi-pge-gqu,  Next: ema-emi-pge-lfp,  Up: ema-emi-pge
+
+Submitting Prolog Queries from GNU Emacs
+........................................
+
+   GNU Emacs talks to Prolog by writing an Emacs-Lisp string in the
+form of a Prolog query (of any kind), terminated by a full-stop and
+prefixed by a special character code, to Prolog's standard input
+stream.  When Prolog detects one of these prefixed queries in its term
+input stream, it executes the query as if it had been typed by the user
+at the top level.  The query prefix character is ASCII 29.
+
+   As an example, define the function
+     (defun to-prolog ()
+         (process-send-string "prolog"
+                   "\035nl,write(hello),nl.\n")
+     )
+
+   Upon invoking this function from GNU Emacs, the results of the query
+are displayed in the Prolog execution buffer.  Notice that the Prolog
+process is called `prolog', the query prefix character (ASCII 29) is
+denoted in an Emacs-Lisp string by the _octal_ escape sequence `\035',
+and the full-stop at the end of the query must be a period followed by
+a newline character (denoted in an Emacs-Lisp string by the escape
+sequence `\n').
+
+   To make things simpler, the interface defines a function called
+`send-prolog', which, given a query string as its one argument, sends
+that query to the Prolog process, prefixed by the query prefix
+character and followed by a full-stop.  So the above function can be
+more clearly written as
+     (defun to-prolog ()
+         (send-prolog "nl,write(hello),nl")
+     )
+
+     WARNING: GNU Emacs should only send a prefixed query to Prolog when
+     Prolog is waiting for the user to type a term at the terminal.
+     Note that this occurs not only when the user explicitly calls
+     `read/[1,2]' but also when Prolog is at the top-level prompt.
+
+
+File: quintus.info,  Node: ema-emi-pge-lfp,  Prev: ema-emi-pge-gqu,  Up: ema-emi-pge
+
+Invoking Emacs-Lisp Functions from Prolog
+.........................................
+
+   Prolog talks to GNU Emacs by writing a sequence of one or more
+Emacs-Lisp function calls (including the parentheses) to the standard
+output stream, where this sequence is delimited by two special
+character codes.  When GNU Emacs detects one of these delimited
+"packets" (as they are referred to in the Emacs-Lisp code) being
+written, it executes the function calls that occur between the
+delimiters.  The packet start character is ASCII 30 and the packet end
+character is ASCII 29.
+
+   As an  example,  define and call the predicate
+     to_emacs :-
+             put(30),
+             write('(message "hello") (sit-for 50)'),
+             put(29).
+
+     WARNING: Attempting to debug or interrupt (with `^c ^c') this
+     predicate, thus submitting only a partial packet to GNU Emacs,
+     will cause subsequent output to be considered as a continuation of
+     the current packet and disaster will ensue.  If such a situation
+     occurs, try typing the command
+
+          put(29).
+
+     to terminate the packet.  You may want to consider using a
+     critical region to prevent this problem, see `library(critical)'.
+
+   You will notice that after the message (`hello') is printed out in
+the message buffer (also called the minibuffer in GNU Emacs literature)
+and the "sit-for" period expires, it then disappears.  This is a
+side-effect of the design of the GNU Emacs interface.  Any Emacs-Lisp
+function that is called by Prolog should display messages using the
+function
+     (&qp-message MESSAGE-STRING)
+
+   where MESSAGE-STRING must be a single string (this is unlike
+`message', which can take multiple strings; use the Emacs-Lisp function
+`concat' to make a single string out of multiple strings).  This string
+will be displayed in the message buffer after GNU Emacs has processed
+the current "packet" from Prolog.  Therefore, if you redefine the
+predicate as
+     to_emacs :-
+             put(30),
+             write('(&qp-message "hello")'),
+             put(29).
+
+   and reinvoke it, you will find that the message remains in the
+message buffer.
+
+
+File: quintus.info,  Node: vb,  Next: dbg,  Prev: ema,  Up: Top
+
+The Visual Basic Interface
+**************************
+
+   Quintus Prolog provides an interface that lets you load and call
+Quintus Prolog programs from Visual Basic.
+
+* Menu:
+
+* vb-ove::
+* vb-vbp::
+* vb-use::
+* vb-ex::
+* vb-sum::
+
+
+File: quintus.info,  Node: vb-ove,  Next: vb-vbp,  Up: vb
+
+Overview
+========
+
+   Quintus Prolog provides an easy-to-use one-directional Visual Basic
+interface that lets you load and call Quintus Prolog programs from
+Visual Basic but not the other way around.  The idea is that Visual
+Basic is used for creating the user interface while the Prolog program
+works as a knowledge server in the background.
+
+   The control structure of this interface is rather similar to that of
+the foreign language interface.  However, in contrary to that interface,
+there is currently no way of handling pointers to Prolog terms or
+queries. The queries to be passed to Prolog have to be given as strings
+on the Visual Basic side and the terms output by Prolog are received as
+strings or integers in Visual Basic variables.
+
+   The interface provides functions for:
+
+   * passing a query to Prolog
+
+   * evaluating the Prolog query
+
+   * retrieving a value (string or integer) assigned to a variable by
+     the Prolog query
+
+   * getting information about the exceptions that have occurred in the
+     Prolog query
+
+
+File: quintus.info,  Node: vb-vbp,  Next: vb-use,  Prev: vb-ove,  Up: vb
+
+How to Call Prolog from Visual Basic
+====================================
+
+* Menu:
+
+* vb-vbp-oc::
+* vb-vbp-sol::
+* vb-vbp-val::
+* vb-vbp-sid::
+* vb-vbp-excp::
+
+
+File: quintus.info,  Node: vb-vbp-oc,  Next: vb-vbp-sol,  Up: vb-vbp
+
+Opening and Closing a Query
+---------------------------
+
+   Prolog queries are represented in Visual Basic in textual form, i.e.
+as a string containing the query, but not followed by a full stop.  For
+example, the following Visual Basic code fragments create valid Prolog
+queries:
+
+     'Q1 is a query finding the first "good" element of the list [1,2,3]
+     Q1 = "member(X,[1,2,3]), good(X)"
+     
+     'create a Q2 query finding the first "good" element of the list
+     '[1,2,...,N]:
+     Q2 = "member(X,["
+     For i = 1 To N-1
+        Q2 = Q2 & i & ","
+     Next
+     Q2 = Q2 & N & "]), good(X)"
+
+   Before executing a query, it has to be explicitly opened, via the
+`PrologOpenQuery' function, which will return a "query identifier" that
+can be used for successive retrieval of solutions.
+
+   The `PrologCloseQuery' procedure will close the query represented by
+a query identifier.  The use of an invalid query identifier will result
+in undefined behavior.  For example:
+
+     Dim qid As Long
+     
+     Q1 = "member(X,[1,2,3]), good(X)"
+     qid = PrologOpenQuery(Q1)
+     
+        ... <execution of the query> ...
+     
+     PrologCloseQuery(qid)
+
+
+File: quintus.info,  Node: vb-vbp-sol,  Next: vb-vbp-val,  Prev: vb-vbp-oc,  Up: vb-vbp
+
+Finding the Solutions of a Query
+--------------------------------
+
+   Prolog queries can be executed with the help of the
+`PrologNextSolution' function: this retrieves a solution to the open
+query represented by the query identifier given as the parameter.
+Returns 1 on success, 0 on failure, -1 on error.
+
+
+File: quintus.info,  Node: vb-vbp-val,  Next: vb-vbp-sid,  Prev: vb-vbp-sol,  Up: vb-vbp
+
+Retrieving Variable Values
+--------------------------
+
+   After the successful return of `PrologNextSolution', the values
+assigned to the variables of the query can be retrieved by specific
+functions of the interface.  There are separate functions for retrieving
+the variable values in string, quoted string and integer formats.
+
+   The `PrologGetLong' function retrieves the integer value of a given
+variable within a query and assigns it to a variable.  That is, the
+value of the given variable is converted to an integer.  Returns 1 on
+success.
+
+   Example: The following code fragment assigns the value 2 to the
+variable `v':
+
+     Dim qid As Long
+     
+     Q = "member(X,[1,2,3]), X > 1"
+     
+     qid = PrologOpenQuery(Q)
+     Call PrologNextSolution(qid)
+     Call PrologGetLong(qid,"X",v)
+
+   The `PrologGetString' function retrieves the value of a given
+variable in a query as a string.  That is, the value of the variable is
+written out using the `write/2' Prolog predicate, and the resulting
+output is stored in a Visual Basic variable.  Retuns 1 on success.
+
+   Example: suppose we have the following clause in a Prolog program:
+
+     capital_of('Sweden'-'Stockholm').
+
+   The code fragment below assigns the string `"Sweden-Stockholm"' to
+the variable `capital':
+
+     Dim qid As Long
+     
+     Q = "capital_of(Expr)"
+     
+     qid = PrologOpenQuery(Q)
+     If PrologNextSolution(qid) = 1 Then
+       Call PrologGetString(qid,"Expr",capital)
+     End if
+     Call PrologCloseQuery(qid)
+
+   The `PrologGetStringQuoted' function is the same as
+`PrologGetString', but the conversion uses the `writeq/2' Prolog
+predicate.  Returns 1 on success.
+
+   Example: if the function `PrologGetStringQuoted' is used in the code
+above instead of the `PrologGetString' function, then the value
+assigned to the variable `capital' is `"'Sweden'-'Stockholm'"'.
+
+   The only way of transferring information from Prolog to Visual Basic
+is by the above three `PrologGet...' functions.  This means that,
+although arbitrary terms can be passed to Visual Basic, there is no
+support for the transfer of composite data such as lists or structures.
+We will show examples of how to overcome this limitation later in the
+manual (*note vb-ex::).
+
+
+File: quintus.info,  Node: vb-vbp-sid,  Next: vb-vbp-excp,  Prev: vb-vbp-val,  Up: vb-vbp
+
+Evaluating a Query with Side-Effects
+------------------------------------
+
+   If you are only interested in the side-effects of a predicate you can
+execute it with the `PrologQueryCutFail' function call, which will find
+the first solution of the Prolog goal provided, cut away the rest of
+the solutions, and finally fail.  This will reclaim the storage used by
+the call.
+
+   Example: this is how a Prolog file can be loaded into the Visual
+Basic program:
+
+     ret = PrologQueryCutFail("load_files(myfile)")
+
+   This code will return 1 if `myfile' was loaded successfully, and -1
+otherwise (this may indicate, for example, the `existence_error'
+exception if the file does not exist).
+
+
+File: quintus.info,  Node: vb-vbp-excp,  Prev: vb-vbp-sid,  Up: vb-vbp
+
+Handling Exceptions in Visual Basic
+-----------------------------------
+
+   If an exception has been raised during Prolog execution, the
+functions `PrologQueryCutFail' or `PrologNextSolution' return -1.  To
+access the exception term, the procedure `PrologGetException' can be
+used. This procedure will deposit the exception term in string format
+into an output parameter, as if written via the `writeq/2' predicate.
+
+   Example: when the following code fragment is executed, the message
+box will display the `domain_error(_1268 is 1+a,2,expression,a)' error
+string.
+
+     Dim exc As String
+     
+     qid = PrologOpenQuery("X is 1+a")
+     If PrologNextSolution(qid) < 0 Then
+        PrologGetException(exc)
+        Msg exc,48,"Error"
+     End if
+
+
+File: quintus.info,  Node: vb-use,  Next: vb-ex,  Prev: vb-vbp,  Up: vb
+
+How to Use the Interface
+========================
+
+   In this section we describe how to create a Visual Basic program that
+is to execute Prolog queries.
+
+* Menu:
+
+* vb-use-set::
+* vb-use-ini::
+* vb-use-dei::
+* vb-use-lod::
+
+
+File: quintus.info,  Node: vb-use-set,  Next: vb-use-ini,  Up: vb-use
+
+Setting Up the interface
+------------------------
+
+   The Visual Basic - Quintus Prolog interface consists of the
+following files:
+
+   * `vbqp.dll' (The Prolog code and Quintus runtime)
+
+   * `vbqp.bas' (The Visual Basic code)
+
+   In order to use the interface, perform the following steps:
+
+   * Include the file `vbqp.bas' in your Visual Basic project.
+
+   * Put `vbqp.dll' in a place where DLLs are searched for (for example
+     the same directory as your applications EXE file or the
+     Windows-System directory). Alternatively put it in
+     `QUINTUS-DIR\bin\ix86\' and ensure that `QUINTUS-DIR\bin\ix86\' is
+     in the PATH environment variable.
+
+   * Make the Quintus runtime DLL etc. available. Typically by running
+     `qpvars.bat' or by putting `QUINTUS-DIR\bin\ix86\' in the `PATH'
+     environment variable.
+
+
+File: quintus.info,  Node: vb-use-ini,  Next: vb-use-dei,  Prev: vb-use-set,  Up: vb-use
+
+Initializing the Prolog engine
+------------------------------
+
+   The Visual Basic interface must be explicitly initialized: you must
+call `PrologInit()' before calling any other interface function. The
+`PrologInit()' function loads and initializes the interface.  It
+returns 1 if the initialization was successful, and -1 otherwise.
+
+
+File: quintus.info,  Node: vb-use-dei,  Next: vb-use-lod,  Prev: vb-use-ini,  Up: vb-use
+
+Deinitializing the Prolog Engine From VB
+----------------------------------------
+
+   The Visual Basic interface should be deinitialized: you should call
+`PrologDeInit()' before exiting e.g. from a `Form_Unload' method.
+
+
+File: quintus.info,  Node: vb-use-lod,  Prev: vb-use-dei,  Up: vb-use
+
+Loading the Prolog code
+-----------------------
+
+   Prolog code (source or QOF) can be loaded by submitting normal Prolog
+load predicates as queries. Note that Quintus uses slashes `/' in file
+names where Windows uses backslash `\'.  Example:
+
+     PrologQueryCutFail("load_files('d:/xxx/myfile')")
+
+   To facilitate the location of Prolog files, two file search paths
+are predefined:
+
+`app'
+     identifies the directory path of the Visual Basic project or the
+     applications executable.
+
+     That is, you can load the file `myfile' located in the same
+     directory as the project/executable, issuing the query:
+
+          PrologQueryCutFail("load_files(app(myfile))")
+
+`vbqp'
+     identifies the directory path of the `vbqp.dll' file.
+
+     That is, you can use the following query to load the file `myfile'
+     if it is located in the same directory as `vbqp.dll':
+
+          PrologQueryCutFail("load_files(vbqp(myfile))")
+
+
+File: quintus.info,  Node: vb-ex,  Next: vb-sum,  Prev: vb-use,  Up: vb
+
+Examples
+========
+
+* Menu:
+
+* vb-ex-calc::
+* vb-ex-tr::
+* vb-ex-qn::
+
+   The code for the following examples are available in the directory
+`examples' in the `VBQP' directory.
+
+
+File: quintus.info,  Node: vb-ex-calc,  Next: vb-ex-tr,  Up: vb-ex
+
+Example 1 - Calculator
+----------------------
+
+   This example contains a simple program that allows you to enter an
+arithmetic expression (conforming to Prolog syntax) as a string and
+displays the value of the given expression, as shown in the following
+figure:
+
+[See printed or HTML manual.]
+
+   The calculation itself will be done in Prolog.
+
+   We now we will go through the steps of developing this program.
+
+  1. Start a new project called `calculator'.
+
+  2. Add the `vbsp.bas' file to the project.
+
+  3. Create a form window called `calculator'.  Edit it, adding two
+     textboxes `txtExpr' and `txtValue', and two command buttons,
+     `cmdCalc' and `cmdQuit':
+
+     [See printed or HTML manual.]
+
+     Save the form window to the `calculator.frm' file.  Then the
+     project will contain the following two files:
+
+     [See printed or HTML manual.]
+
+  4. Write the Prolog code in the file `calc.pl', evaluating the given
+     expression with the `is/2' predicate, and providing a minimal level
+     of exception handling:
+
+          prolog_calculate(Expr, Value) :-
+             on_exception(Exc, Value is Expr, handler(Exc,Value)).
+          
+          handler(domain_error(_,_,_,_),'Incorrect expression').
+          handler(Exc,Exc).
+
+     Note that this example focuses on a minimal implementation of the
+     problem, more elaborate exception handling will be illustrated in
+     the Train example (*note vb-ex-tr::).
+
+     Compile this file, and deposit the file `calc' in the directory
+     where the `calculator.vbp' project is contained.
+
+  5. Now you have to write the Visual Basic code in which Quintus
+     Prolog will be called at two points:
+
+        * Initialize Prolog in the `Form_Load' procedure executed when
+          the `calc' form is loaded, calling the `PrologInit()'
+          function and loading the `calc' file with the help of the
+          `PrologQueryCutFail(..))' function:
+
+               Private Sub Form_Load()
+                   If PrologInit() <> 1 Then GoTo Err
+                   If PrologQueryCutFail("ensure_loaded(app(calc))") <> 1 Then GoTo Err
+                   Exit Sub
+               
+               Err:
+                   MsgBox "Prolog initialization failed", 48, "Error"
+                   Unload Me
+               End Sub
+
+        * Do the expression evaluation in the `calculate' procedure
+          activated by the `cmdRun' command button.  This procedure
+          will execute the `prolog_calculate(X,Y)' procedure defined in
+          the `calc.pl' Prolog file:
+
+               Public Function calculate(ByVal Expr As String) As String
+                   Dim qid As Long
+                   Dim result As String
+                   Dim ret As Long
+                   Dim Q As String
+               
+                   Q = "prolog_calculate(" & Expr & ",Value)"
+                   qid = PrologOpenQuery(Q)
+                   If qid = -1 Then GoTo Err ' e.g. syntax error
+               
+                   ret = PrologNextSolution(qid)
+                   If ret <> 1 Then GoTo Err ' failed or error
+               
+                   ret = PrologGetString(qid, "Value", result)
+                   If ret <> 1 Then GoTo Err
+                   calculate = result
+                   Call PrologCloseQuery(qid)
+               
+                   Exit Function
+               
+               Err:
+                   MsgBox "Bad expression", 48, "Error!"
+                   calculate = ""
+               End Function
+
+        * Deinitialize Prolog in the `Form_Unload' procedure executed
+          when the `calc' form is unloaded, e.g. when the application
+          exits.
+
+               Private Sub Form_Unload(Cancel As Integer)
+                   PrologDeInit
+               End Sub
+
+
+File: quintus.info,  Node: vb-ex-tr,  Next: vb-ex-qn,  Prev: vb-ex-calc,  Up: vb-ex
+
+Example 2 - Train
+-----------------
+
+   This example provides a Visual Basic user interface to the Prolog
+program finding train routes between two points.
+
+   The Visual Basic program `train' contains the following form window:
+
+[See printed or HTML manual.]
+
+   Clicking the `cmdRun' command button will display all the available
+routes between Stockholm and Orebro. These are calculated as solutions
+of the Prolog query `places('Stockholm','Orebro',Way)'. For each
+solution, the value assigned to the variable `Way' is retrieved into
+the Visual Basic variable `result' and is inserted as a new item into
+the `listConnection' listbox.
+
+   The Visual Basic program consists of four parts:
+
+   * loading the Prolog code
+
+   * opening the query
+
+   * a loop generating the solutions, each cycle doing the following
+        - requesting the next solution
+
+        - getting the value of the solution variable
+
+        - adding the solution to the listbox
+
+   * closing the query
+
+     Private Sub cmdRun_Click()
+         Dim qid As Long
+         Dim result As String
+         Dim s As String
+         Dim rc As Integer
+     
+         qid = -1 ' make it safe to PrologCloseQuery(qid) in Err:
+     
+         'load the `train.pl' Prolog file
+         rc = PrologQueryCutFail("ensure_loaded(app(train))")
+         If rc < 1 Then
+             Msg = "ensure_loaded(train)"
+             GoTo Err
+         End If
+         'open the query
+         qid = PrologOpenQuery("places('Stockholm','Orebro',Way)")
+         If qid = -1 Then
+             rc = 0
+             Msg = "Open places/3"
+             GoTo Err
+         End If
+         'generate solutions
+         Do
+             rc = PrologNextSolution(qid)
+             If rc = 0 Then Exit Do ' failed
+             If rc < 0 Then
+                 Msg = "places/3"
+                 GoTo Err
+             End If
+             If PrologGetString(qid, "Way", result) < 1 Then
+                 rc = 0
+                 Msg = "PrologGetString Way"
+                 GoTo Err
+             End If
+             listConnections.AddItem result
+         Loop While True
+         'after all solutions are found, the query is closed
+         Call PrologCloseQuery(qid)
+         Exit Sub
+
+   Note that each part does elaborate error checking and passes control
+to the error display instructions shown below:
+
+     Err:
+         Call PrologCloseQuery(qid) ' Always close opened queries
+     
+         'error message is prepared, adding either the - failed - or
+         'the - raised exception - suffix to the Msg string specific
+         'to the function called
+         If rc = 0 Then
+              Msg = Msg + " failed"
+         Else
+             Call PrologGetException(s)
+             Msg = Msg + " raised exception: " + s
+         End If
+         MsgBox Msg, 48, "Error"
+     End Sub
+
+   The Prolog predicate `places/3' is defined in the `train.pl' file,
+as mentioned earlier.
+
+
+File: quintus.info,  Node: vb-ex-qn,  Prev: vb-ex-tr,  Up: vb-ex
+
+Example 3 - Queens
+------------------
+
+   This example gives a Visual Basic user interface to an N-queens
+program.  The purpose of this example is to show how to handle Prolog
+lists through the Visual Basic interface.  The full source of the
+example is found in the distribution.
+
+   The user interface shown in this example will allow the user to
+specify the number of queens, and, with the help of the `Next Solution'
+command button all the solutions of the N-Queens problem will be
+enumerated.  A given solution will be represented in a simple graphical
+way as a PictureBox, using the basic `Circle' and `Line' methods.
+
+[See printed or HTML manual.]
+
+   The problem itself will be solved in Prolog, using a
+`queens(+N,?POSITIONLIST)' Prolog predicate, stored in the file
+`queens'.
+
+   We now present two solutions, using different techniques for
+retrieving Prolog lists.
+
+   *Example 3a - N-Queens, generating a variable list into the Prolog
+call*
+
+   The first implementation of the N-Queens problem is based on the
+technique of generating a given length list of Prolog variables into the
+Prolog query.
+
+   For example, if the N-Queens problem is to be solved for N = 4, i.e.
+with the query "`queens(4,L)'", then the problem of retrieving a list
+from Visual Basic will arise. However, if the query is presented as
+"`queens(4,[X1,X2,X3,X4])'", then instead of retrieving the list it is
+enough to access the `X1,X2,X3,X4' values.  Since the number of queens
+is not fixed in the program, this query has to be generated, and the
+retrieval of the XI values must be done in a cycle.
+
+   This approach can always be applied when the format of the solution
+is known at the time of calling the query.
+
+   We now go over the complete code of the program.
+
+   Global declarations used in the program (`General/declarations'):
+
+     Dim nQueens As Long       'number of queens
+     Dim nSol As Long          'index of solution
+     Dim nActqid As Long       'actual query identifier
+     Dim nQueryOpen As Boolean 'there is an open query
+
+   The initialization of the program will be done when the form window
+is loaded:
+
+     Private Sub Form_Load()
+         nQueens = 0
+         nSol = 1
+         nQueryOpen = False
+     
+         'initialize Prolog
+         If PrologInit() <> 1 Then GoTo Err
+         'Load `queens.pl'
+         If PrologQueryCutFail("load_files(app(queens))") <> 1 Then GoTo Err
+         Exit Sub
+     
+     Err:
+         MsgBox "Prolog initialization failed", 48, "Error"
+         Unload Me
+     End Sub
+
+   Deinitialization of the Prolog engine will be done when the form
+windows is closed, exactly as for the calculator example.
+
+   When the number of queens changes (i.e. the value of the text box
+`textSpecNo' changes), a new query has to be opened, after the previous
+query, if there has been any, is closed.
+
+     Private Sub textSpecNo_Change()
+         nQueens = Val(textSpecNo)
+         nSol = 1
+     
+         If nQueryOpen Then PrologCloseQuery (nActqid)
+     
+         'create Prolog query in form: queens(4,[X1,X2,X3,X4])
+     
+         Q = "queens(" & Str(nQueens) & ", ["
+         For i = 1 To nQueens - 1 Step 1
+             Q = Q & "X" & i & ","
+         Next
+         Q = Q & "X" & nQueens & "])"
+     
+         nActqid = PrologOpenQuery(Q)
+         nQueryOpen = True
+     End Sub
+
+   The `Next command' button executes and shows the next solution of the
+current query:
+
+     Private Sub cmdNext_Click()
+         Dim nPos As Long
+         Dim aPos(100) As Long
+     
+         If Not nQueryOpen Then
+             MsgBox "Specify number of queens first!", 48, ""
+             Exit Sub
+         End If
+         If PrologNextSolution(nActqid) < 1 Then
+             MsgBox "No more solutions!", 48, ""
+         Else
+             For i = 1 To nQueens Step 1
+                If PrologGetLong(nActqid, "X" & i, nPos) = 1 Then
+                    aPos(i - 1) = nPos
+                End If
+             Next i
+     
+             'display nth solution
+             txtSolNo = "Solution number: " & Str(nSol)
+             Call draw_grid(nQueens)
+     
+             nLine = 1
+             For Each xElem In aPos
+                 Call draw_circle(nLine, xElem, nQueens)
+                 nLine = nLine + 1
+             Next
+     
+             nSol = nSol + 1
+         End If
+     End Sub
+
+   Drawing itself is performed by the `draw_grid' and `draw_circle'
+procedures.
+
+   *Example 3b - N-Queens, converting the resulting Prolog list to an
+atom*
+
+   The second variant of the N-Queens program uses the technique of
+converting the resulting Prolog list into a string via the
+`PrologGetString' function, and decomposing it into an array in Visual
+Basic.  Here we show only those parts of the program which have changed
+with respect to the first version.
+
+   In the `textSpecNo_Change' routine the `queens/2' predicate is
+called with a single variable in its second argument:
+
+     Q = "queens(" & Str(nQueens) & ",Queens)"
+     nActqid = PrologOpenQuery(Q)
+
+   In the `cmdNext_Click' routine the solution list is retrieved into a
+single string which is then split up along the commas, and deposited
+into the `aPos' array by the `convert_prolog_list' routine.  (`aPos' is
+now an array of strings, rather than integers.)
+
+   Finally, we include the code of the routine for splitting up a Prolog
+list:
+
+     Private Sub convert_prolog_list(ByVal inList As String,
+                                     ByRef inArray() As String)
+         'drop brackets
+         xList = Mid(inList, 2, Len(inList) - 2)
+     
+         i = 0
+     
+         startPos = 1
+         xList = Mid(xList, startPos)
+     
+         Do While xList <> ""
+             endPos = InStr(xList, ",")
+             If endPos = 0 Then
+                 xElem = xList
+                 inArray(i) = xElem
+                 Exit Do
+             End If
+             xElem = Mid(xList, 1, endPos - 1)
+             inArray(i) = xElem
+             i = i + 1
+             xList = Mid(xList, endPos + 1)
+             startPos = endPos + 1
+         Loop
+     End Sub
+
+
+File: quintus.info,  Node: vb-sum,  Prev: vb-ex,  Up: vb
+
+Summary of the Interface Functions
+==================================
+
+   In this section you will find a summary of the functions and
+procedures of the Visual Basic interface:
+
+`Function PrologOpenQuery (ByVal Goal As String) As Long'
+     This function will return a query identifier that can be used for
+     successive retrieval of solutions.  Returns -1 on error, e.g. a
+     syntax error in the query.
+
+`Sub PrologCloseQuery (ByVal qid As Long)'
+     This procedure will close the query represented by a query
+     identifier `qid'.  *Please note:* if `qid' is not the _innermost_
+     query (i.e. the one opened last), then all more recently opened
+     queries are closed as well.
+
+`Function PrologNextSolution(ByVal qid As Long) As Integer'
+     This function retrieves a solution to the open query represented
+     by the query identifier `qid'.  Returns 1 on success, 0 on
+     failure, -1 on error.  In case of an erroneous execution, the
+     Prolog exception raised can be retrieved with the
+     `PrologGetException' procedure.  *Please note:* Several queries
+     may be open at the same time, however, if `qid' is not the
+     _innermost_ query, then all more recently opened queries are
+     implicitly closed.
+
+`Function PrologGetLong(ByVal qid As Long, ByVal VarName As String, Value As Long) As Integer'
+     Retrieves into `Value' the integer value bound to the variable
+     `VarName' of the query identified by `qid', as an integer.  That
+     is, the value of the given variable is converted to an integer.
+     Returns 1 on success, i.e. if the given goal assigned an integer
+     value to the variable, otherwise it returns 0. If an error
+     occurred it returns -1, e.g. if an invalid `qid' was used.
+
+`Function PrologGetString(ByVal qid As Long, Val VarName As String, Value As String) As Integer'
+     Retrieves into `Value' the string value bound to a variable
+     `VarName' of the query, as a string.  That is, the value assigned
+     to the given variable is written out into an internal stream by the
+     `write/2' Prolog predicate, and the characters output to this
+     stream will be transferred to Visual Basic as a string.  Retuns 1
+     on success, i.e. if the given goal assigned a value to the
+     variable, otherwise it returns 0. If an error occurred it returns
+     -1, e.g. if an invalid `qid' was used.
+
+`Function PrologGetStringQuoted(ByVal qid As Long, ByVal VarName As String, Value As String) As Integer'
+     Same as `PrologGetString', but conversion uses Prolog `writeq/2'.
+     Returns 1 on success, i.e. if the given goal assigned a value to
+     the variable, otherwise it returns 0. If an error occurred it
+     returns -1, e.g. if an invalid `qid' was used.
+
+`Function PrologQueryCutFail (ByVal Goal As String) As Integer'
+     This function will try to evaluate the Prolog goal, provided in
+     string format, cut away the rest of the solutions, and finally
+     fail.  This will reclaim the storage used by the call.  Returns 1
+     on success, 0 on failure and -1 on error.
+
+`Sub PrologGetException(ByRef Exc As String)'
+     The exception term is returned in string format into the `Exc'
+     string as if written by the `writeq/2' predicate. If there is no
+     exception available then the empty string is returned.
+
+`Function PrologInit() As Long'
+     The function loads and initiates the interface.  It returns 1 on
+     success, and -1 otherwise.
+
+`Function PrologDeInit() As Long'
+     The function deinitializes and unloads the interface, and returns
+     any memory used by the interface to the operating system.  It
+     returns 1 on success, and -1 otherwise.
+
+
+File: quintus.info,  Node: dbg,  Next: glo,  Prev: vb,  Up: Top
+
+The Debugger
+************
+
+* Menu:
+
+* dbg-adv::                             The Advice Facility
+* dbg-bas::                             Debugging Basics
+* dbg-pro::                             The Profiler
+* dbg-sld::                             The Source Linked Debugger
+* dbg-sdb::                             The Standard Debugger
+
+
+File: quintus.info,  Node: dbg-bas,  Next: dbg-pro,  Prev: dbg-adv,  Up: dbg
+
+Debugging Basics
+================
+
+* Menu:
+
+* dbg-bas-bas::                         Introduction
+* dbg-bas-pbx::                         The Procedure Box Control Flow Model
+* dbg-bas-upe::                         Understanding Prolog Execution Using The Debugger
+* dbg-bas-tra::                         Traveling Between Ports
+* dbg-bas-con::                         Debugger Concepts
+* dbg-bas-sum::                         Summary of Predicates
+
+
+File: quintus.info,  Node: dbg-bas-bas,  Next: dbg-bas-pbx,  Up: dbg-bas
+
+Introduction
+------------
+
+   This section explains the basic concepts and terminology used by the
+Quintus Prolog debugger.  Following sections describe the two debuggers
+available in the Quintus Prolog system:  the X Windows-based source
+linked debugger and the standard debugger.
+
+   The main features of the debugging package are:
+   * The "procedure box" control flow model of Prolog execution, which
+     provides a simple way of visualizing control flow, especially
+     during backtracking.
+
+   * Full debugging of compiled code. It is not necessary to reload your
+     program, or load it in any special way, in order to debug it.
+
+   * The ability to exhaustively trace your program or to selectively
+     set spypoints.  Spypoints allow you to specify procedures or goals
+     where the program is to pause so that you can interact.
+
+   * A wide choice of control and information options available during
+     debugging.
+
+   * Tools to aid in the understanding of your program's performance
+     characteristics.
+
+   Debugging foreign code is discussed in *Note fli-p2f-fcr::.
+
+
+File: quintus.info,  Node: dbg-bas-pbx,  Next: dbg-bas-upe,  Prev: dbg-bas-bas,  Up: dbg-bas
+
+The Procedure Box Control Flow Model
+------------------------------------
+
+   During debugging, the debugger stops at various points in the
+execution of a goal, allowing you see what arguments the goal is called
+with, what arguments it returns with, and whether it succeeds or fails.
+As in other programming languages, key points of interest are
+procedure entry and return, but in Prolog there is the additional
+complexity of backtracking.  One of the major confusions that novice
+Prolog programmers have to face is the question of what actually
+happens when a goal fails and the system suddenly begins backtracking.
+The procedure box model of Prolog execution views program control flow
+in terms of movement from clause to clause in the procedures of the
+program.  This model provides a basis for the debugging mechanism and
+enables the user to view program behavior in a consistent way.
+
+   Let us look at a representative Prolog procedure:
+
+              +----------------------------------------+
+        Call  |                                        |  Exit
+     -------->|  descendant(X, Y) :- offspring(X, Y).  |------->
+              |                                        |
+              |  descendant(X, Z) :-                   |
+     <--------|     offspring(X, Y), descendant(Y, Z). |<-------
+        Fail  |                                        |  Redo
+              +----------------------------------------+
+
+   The first clause states that Y is a descendant of X if Y is an
+offspring of X, and the second clause states that Z is a descendant of
+X if Y is an offspring of X and if Z is a descendant of Y.  In the
+diagram a box has been drawn around the whole procedure; labeled arrows
+indicate the control flow into and out of this box.  There are four
+such arrows, which we shall describe in turn.
+
+Call
+     This arrow represents an initial invocation of the procedure.
+     When a goal of the form `descendant(X,Y)' must be satisfied,
+     control passes through the Call port of the `descendant/2' box
+     with the intention of matching the head of a component clause and
+     then satisfying any subgoals in the body of that clause.  Notice
+     that this is independent of whether such a match is possible;
+     first the box is called, and then the attempt to match takes
+     place.  Textually we can imagine moving to the code for
+     `descendant/2' when meeting a call to `descendant/2' in some other
+     part of the code.
+
+Exit
+     This arrow represents a successful return from the procedure.
+     This occurs when the initial goal has been unified with the head
+     of one of the component clauses and all subgoals have been
+     satisfied.  Control now passes out of the Exit port of the
+     `descendant/2' box.  Textually we stop following the code for
+     `descendant/2' and go back to the code we came from.
+
+Redo
+     This arrow indicates that a subsequent goal has failed and that
+     the system is backtracking in an attempt to find alternatives to
+     previous solutions.  Control passes into the `descendant/2' box
+     through the Redo port.  An attempt will now be made to resatisfy
+     one of the component subgoals in the body of the clause that last
+     succeeded; or, if that fails, to completely rematch the original
+     goal with an alternative clause and then try to satisfy any
+     subgoals in the body of this new clause.  Textually we follow the
+     code backwards up the way we came looking for new ways of
+     succeeding, possibly dropping down onto another clause and
+     following that if necessary.
+
+Fail
+     This arrow represents a failure of the initial goal, which might
+     occur if no clause is matched, or if subgoals are never satisfied,
+     or if all solutions produced are always rejected by later
+     processing.  Control now passes out of the Fail port of the
+     `descendant/2' box and the system continues to backtrack.
+     Textually we move back to the code that called this procedure and
+     keep moving backwards up the code looking for new ways of
+     succeeding.
+
+   Note that the box we have drawn around the procedure should really
+be seen as an "invocation" box, rather than a procedure box.  Often,
+there are many different Calls and Exits to a particular procedure in
+the control flow, but these are for different invocations.  Each
+invocation box is given a unique integer identifier to prevent
+confusion.
+

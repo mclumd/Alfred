@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Example 1 - Calculator</h4>
+
+   <p>This example contains a simple program that allows you to enter an
+arithmetic expression (conforming to Prolog syntax) as a string and
+displays the value of the given expression, as shown in the following
+figure:
+
+   <img src="images/vbspcalcspec.png" alt="images/vbspcalcspec.png">
+
+   <p>The calculation itself will be done in Prolog.
+
+   <p>We now we will go through the steps of developing this program.
+
+     <ol type=1 start=1>
+<li>Start a new project called <code>calculator</code>. 
+<li>Add the <code>vbsp.bas</code> file to the project. 
+<li>Create a form window called <code>calculator</code>. 
+Edit it, adding two textboxes
+<code>txtExpr</code> and <code>txtValue</code>, and two command buttons,
+<code>cmdCalc</code> and <code>cmdQuit</code>:
+
+     <img src="images/vbspcalcform1.png" alt="images/vbspcalcform1.png">
+
+     <p>Save the form window to the <code>calculator.frm</code> file. 
+Then the project will contain the following two files:
+
+     <img src="images/vbspproject.png" alt="images/vbspproject.png">
+
+     </p><li>Write the Prolog code in the file <code>calc.pl</code>, evaluating the given
+expression with the <code>is/2</code> predicate, and providing a minimal level
+of exception handling:
+
+     <pre class="example">          prolog_calculate(Expr, Value) :-
+             on_exception(Exc, Value is Expr, handler(Exc,Value)).
+          
+          handler(domain_error(_,_,_,_),'Incorrect expression').
+          handler(Exc,Exc).
+          </pre>
+
+     <p>Note that this example focuses on a minimal implementation of the
+problem, more elaborate exception handling will be illustrated in the
+Train example (see <a href="vb-ex-tr.html#vb-ex-tr">vb-ex-tr</a>).
+
+     <p>Compile this file, and deposit the file <code>calc</code> in the directory
+where the <code>calculator.vbp</code> project is contained.
+
+     </p><li>Now you have to write the Visual Basic code in which
+Quintus Prolog will be called at two points:
+
+          <ul>
+<li>Initialize Prolog in the <code>Form_Load</code> procedure executed when the
+<code>calc</code> form is loaded, calling the <code>PrologInit()</code> function and
+loading the <code>calc</code> file with the help of the
+<code>PrologQueryCutFail(..))</code> function:
+
+          <pre class="example">               Private Sub Form_Load()
+                   If PrologInit() &lt;&gt; 1 Then GoTo Err
+                   If PrologQueryCutFail("ensure_loaded(app(calc))") &lt;&gt; 1 Then GoTo Err
+                   Exit Sub
+               
+               Err:
+                   MsgBox "Prolog initialization failed", 48, "Error"
+                   Unload Me
+               End Sub
+               </pre>
+
+          <li>Do the expression evaluation in the <code>calculate</code> procedure activated
+by the <code>cmdRun</code> command button.  This procedure will execute the
+<code>prolog_calculate(X,Y)</code> procedure defined in the <code>calc.pl</code>
+Prolog file:
+
+          <pre class="example">               Public Function calculate(ByVal Expr As String) As String
+                   Dim qid As Long
+                   Dim result As String
+                   Dim ret As Long
+                   Dim Q As String
+               
+                   Q = "prolog_calculate(" &amp; Expr &amp; ",Value)"
+                   qid = PrologOpenQuery(Q)
+                   If qid = -1 Then GoTo Err ' e.g. syntax error
+               
+                   ret = PrologNextSolution(qid)
+                   If ret &lt;&gt; 1 Then GoTo Err ' failed or error
+               
+                   ret = PrologGetString(qid, "Value", result)
+                   If ret &lt;&gt; 1 Then GoTo Err
+                   calculate = result
+                   Call PrologCloseQuery(qid)
+               
+                   Exit Function
+               
+               Err:
+                   MsgBox "Bad expression", 48, "Error!"
+                   calculate = ""
+               End Function
+               </pre>
+
+          <li>Deinitialize Prolog in the <code>Form_Unload</code> procedure executed when
+the <code>calc</code> form is unloaded, e.g. when the application exits.
+
+          <pre class="example">               Private Sub Form_Unload(Cancel As Integer)
+                   PrologDeInit
+               End Sub
+               </pre>
+          </ul>
+     </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="vb-ex-tr.html#vb-ex-tr">Next</a>
+<li><a rel="up" accesskey="u" href="vb-ex.html#vb-ex">Up</a>
+</ul>
+</div>
+   </body></html>
+

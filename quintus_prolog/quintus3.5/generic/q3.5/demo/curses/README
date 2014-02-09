@@ -1,0 +1,78 @@
+
+/* @(#)README	28.1 02/11/91 */
+
+	+--------------------------------------------------------+
+	| 							 |
+        |    Curses Package README (a C-interface example)       |
+        |							 |
+        |							 |
+	|  Copyright (C) 1985,  Quintus Computer Systems, Inc.   |
+	|  All rights reserved.					 |
+	|							 |
+	+--------------------------------------------------------+
+
+The "curses" package is a library package supplied with Berkeley Unix (BSD)
+and System V (U5) that allows convenient control of the terminal screen. This 
+example of the C interface attaches the curses package to Quintus Prolog so
+that each of the entry points to the package is available as a Prolog 
+predicate.
+
+The curses packages supplied with Berkeley Unix and System V are not 
+compatible with each other.  This directory contains the files necessary
+to run the curses demo under Quintus Prolog.  The files that are used
+with the Berkeley Unix version of the curses demo have the 'BSD' tag
+and the System V files have the 'U5' tag.
+
+BSDcurses.c	Many of the entry points into this package consist of macros
+U5curses.c 	rather than C functions.  Since the C-Interface can only work
+		for C functions, these files defines dummy functions whose
+		only purpose is to call the #defined macro.
+	  
+BSDcurses.pl	These files contain the declarations for the curses functions
+U5curses.pl 	available to the C-Interface.  The file ends with a call to
+		load_foreign_files that will actually load the C code.
+
+BSDdemo.pl	These files contain some Prolog procedures built on top of 
+U5demo.pl 	the curses package along with comments showing how to call
+		the example demos.
+
+
+To run the curses demo on  Berkeley Unix (BSD)
+----------------------------------------------
+
+	first compile BSDcurses.c (to produce BSDcurses.o):
+
+		% cc -c BSDcurses.c
+
+	or do 'make' in this directory.
+
+	Then, start prolog and load the curses package:
+
+		| ?- [demo('BSDcurses')].   % or compile(demo('BSDcurses')).
+
+	At this point, the curses package is loaded.  To run the canned demos,
+	load the demo file and call one of the demos.
+
+		| ?- [demo('BSDdemo')].	    % or compile(demo('BSDdemo')).
+		| ?- go.
+
+
+
+To run the curses demo on  System V (U5) 
+----------------------------------------------
+ 
+        first compile U5curses.c (to produce U5curses.o):
+ 
+                % cc -c U5curses.c
+
+	or do 'make' in this directory
+                                               
+        Then, start prolog and load the curses package:
+ 
+                | ?- [demo('U5curses')].   % or compile(demo('U5curses')).
+ 
+        At this point, the curses package is loaded.  To run the canned demos,
+        load the demo file and call one of the demos.
+ 
+                | ?- [demo('U5demo')]. 	   % or compile(demo('U5demo')).
+                | ?- go. 

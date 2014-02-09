@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_atom_from_string()</code>, <code>QP_atom_from_padded_string()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     QP_atom QP_atom_from_string(string)
+     char *string;
+     </pre>
+
+   <p>Returns the canonical representation of the atom whose printed
+representation is the (null-terminated) string <var>string</var>.
+
+<pre class="example">     QP_atom QP_atom_from_padded_string(p_atom, p_string, p_length)
+     QP_atom *p_atom;
+     char    *p_string;
+     int     *p_length;
+     </pre>
+
+   <p>Computes the canonical representation of the
+atom whose printed representation is the (blank-padded) string
+<var>p_string</var> in a character array of length <var>p_length</var>.
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>QP_atom_from_string()</code> returns the canonical representation of the atom
+whose printed representation is <var>string</var>. <var>string</var> must be a valid
+null-terminated string. The string is copied and
+internalised by Prolog and the foreign function can reuse the string and its
+space.
+
+   <p><code>QP_atom_from_padded_string()</code> is useful for Pascal and FORTRAN
+and can be used with any language that has a C-compatible calling convention
+for passing integers and pointers (on the user's platform). e.g. some Pascal and FORTRAN compilers running under UNIX.
+
+   <p><var>p_string</var> is a pointer to a character array and <var>p_length</var> is a
+pointer to an integer specifying the length of the array. 
+<code>QP_atom_from_padded_string()</code> sets the atom referenced by <var>p_atom</var>
+to the canonical representation of the atom whose printed representation
+is the string (less any trailing blanks) in the character array. 
+It returns the length of
+the resulting atom (not the character array's length) as the function
+value.
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>rev_atom()</code> is a C function that takes an atom
+and returns an atom whose string representation is the reverse of the
+string representation of the atom passed in.
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(rev_atom, c, rev_atom(+atom, [-atom])).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     QP_atom rev_atom(atom)
+     QP_atom atom;
+     {
+         char *string[MAX_ATOM_LEN];
+     
+         strcpy(string, QP_string_from_atom(atom));
+         reverse(string); /* reverses string in place */
+         return QP_atom_from_string(string);
+     }
+     </pre>
+
+   <p>Giving:
+
+<pre class="example">     | ?- <kbd>rev_atom(draw, X).</kbd>
+     
+     X = ward
+     
+     yes
+     | ?-
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_string_from_atom()</code>,
+<code>QP_padded_string_from_atom()</code>
+
+   <a href="fli-p2f-atm.html#fli-p2f-atm">fli-p2f-atm</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-char_count.html#cfu-ref-char_count">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-add_tty.html#cfu-ref-add_tty">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

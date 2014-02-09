@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Key Bindings</h4>
+
+   <p>This section describes the key bindings associated with the Prolog/GNU Emacs
+interface.  For a complete listing of all the key bindings applicable in a
+particular window, type <kbd>&lt;ESC&gt; x describe-bindings</kbd> or <kbd>^h b</kbd>.
+
+   <p>The following key bindings apply only in the Prolog window, not in the
+text window(s):
+     <dl>
+
+     <br><dt><kbd>^c ^d</kbd>
+     <dd>Sends an end-of-file to Prolog.  This can be used
+to exit from a break level or to
+exit from Prolog altogether (see <a href="ref-iex-int.html#ref-iex-int">ref-iex-int</a> for
+more information on <code>break/0</code>). 
+Having exited from Prolog using this command,
+the only way of start up a new Prolog is by typing
+<kbd>&lt;ESC&gt; x run-prolog</kbd>.
+
+     <br><dt><kbd>^x ^z</kbd>
+     <dd>Suspends Prolog and GNU Emacs.
+
+     <br><dt><kbd>^x ^e</kbd>
+     <dd>Allows you to edit a query you previously typed
+to the Prolog prompt and resubmit it.  Effectively, it grabs the last
+query and brings it down to the mini-buffer.  There you can edit it if
+necessary, then move your cursor to the last line of the query and
+type &lt;RET&gt;.  This places the query in the prolog window, where you
+can edit it further, if necessary, and type &lt;RET&gt; to submit the query
+to Prolog.  You can also grab queries other than the most recent one
+by specifying a prefix argument to this command (using <kbd>&lt;ESC&gt;</kbd>, or
+<kbd>^u</kbd>): 2 to get the second last, 3 to get the third last, and so
+on.  Another way to do this is to move the cursor back to the query
+you want to copy and type <kbd>^x ^e</kbd>. This last alternative
+does not place the query in the mini-buffer but places it directly in
+the prolog window. In the cases where a query is placed in the
+mini-buffer, you can step up a list of previously executed
+queries by typing in <kbd>&lt;ESC&gt; p</kbd> or down the list by typing in <kbd>&lt;ESC&gt;
+n</kbd>. Since the mini-buffer is only one line, a multi-line
+query can be stepped around by using the conventional <kbd>^p</kbd>,
+<kbd>^n</kbd> key strokes. To obtain the set of bindings that are active
+within the mini-buffer when you execute the yank-query key sequence
+type in
+<kbd>^h b</kbd>. This method of stepping through a goal history
+is similar to GNU Emacs method of stepping through a command history.
+
+     <br><dt><kbd>^x ^y</kbd>
+     <dd>Allows you to edit the most recent query matching
+a regular expression. You are first prompted for a regular expression;
+on entering a regular expression and hitting &lt;RET&gt;, the most
+recently submitted goal matching the regular expression is displayed
+in the mini-buffer. You can choose to submit this query to prolog
+(after editing it in the minibuffer, if necessary) or locate the next
+most recent goal matching the given regular expression.
+
+     <br><dt><kbd>^c ^c</kbd>
+     <dd>Sends an interrupt to the Prolog process (exactly
+as if you were not running under GNU Emacs).
+
+   </dl>
+
+   <p><strong>Please note:</strong>  to send a numeric argument to a GNU Emacs command, type <kbd>&lt;ESC&gt;</kbd>
+followed by the desired number (for example, <kbd>&lt;ESC&gt; 1</kbd> or <kbd>&lt;ESC&gt; 12</kbd>);
+then type the command.  <kbd>^u</kbd> also works as an argument prefix,
+as in "standard" GNU Emacs.
+
+   <p>The following key bindings apply in any window:
+     <dl>
+
+     <br><dt><kbd>^x ^c</kbd>
+     <dd>Causes an irreversible exit from GNU Emacs and
+Prolog.  You will be prompted to make sure that (1) the Prolog and all
+other subprocesses should indeed be killed, and (2) any unsaved buffers
+should indeed be discarded.
+
+     <br><dt><kbd>^x ^z</kbd>
+     <dd>If you are running GNU Emacs from a UNIX terminal window, this
+suspends (pauses) the GNU Emacs process and returns you
+to the operating system prompt.  If
+a Prolog program is running, it will continue to run, but you
+will not see any output from it.  You can get your GNU Emacs/Prolog session
+back by typing <kbd>fg</kbd>.  (This pause facility is only available if
+you are running <code>csh</code>; it does not work under <code>sh</code>.)
+
+     <br><dt><kbd>&lt;ESC&gt; .</kbd>
+     <dd>Finds the source code for a particular procedure.  If the
+cursor is positioned on or before the predicate name part of a goal,
+you can simply press &lt;RET&gt; to find the clauses for its
+procedure.  Otherwise, in response to the prompt <code>Find: </code>,
+you should type the name of the predicate, optionally followed by a
+<code>/</code> and its arity.  The file containing the procedure for the
+specified predicate is then visited, and the cursor is positioned at
+the beginning of the procedure.  There are some layout conventions,
+which must be followed for this facility to work: see
+<a href="ema-emi-lay.html#ema-emi-lay">ema-emi-lay</a>.  The facility is also available via the
+<kbd>.</kbd>  debugger option (see <a href="dbg.html#dbg">dbg</a>).  In QUI,
+find-definition must be invoked within the GNU Emacs process, not the
+QUI main window.
+
+     <br><dt><kbd>&lt;ESC&gt; ,</kbd>
+     <dd>This command can only be used after <kbd>&lt;ESC&gt; .</kbd>.  It
+successively locates other procedure definition(s) for a
+predicate. 
+<kbd>&lt;ESC&gt; ,</kbd> will
+search other files for additional clauses for a multifile predicate,
+will search for a predicate of the same name and arity in a different module,
+or will search for predicates with the same name and different arities (in
+the case where the arity was not specified).
+
+     <br><dt><kbd>&lt;ESC&gt; x prolog-mode</kbd>
+     <dd>Changes the current buffer to Prolog mode.  See
+<a href="ema-emi-mod.html#ema-emi-mod">ema-emi-mod</a>.
+
+     <br><dt><kbd>&lt;ESC&gt; x library</kbd>
+     <dd>Prompts for a file and locates it in the Quintus
+Prolog Library directories.
+
+     <br><dt><kbd>&lt;ESC&gt; x cd</kbd>
+     <dd>Prompts for a directory and changes the directory of the
+Prolog window and of the Prolog process.
+
+     <br><dt><kbd>&lt;ESC&gt; x enable-prolog-source-debugger</kbd>
+     <dd>Enables the source linked debugger.
+
+     <br><dt><kbd>&lt;ESC&gt; x disable-prolog-source-debugger</kbd>
+     <dd>Disables the source linked debugger.
+
+   </dl>
+
+   <p>The following key bindings apply in any edit window except the Prolog
+window:
+     <dl>
+
+     <br><dt><kbd>&lt;ESC&gt; k</kbd>
+     <dd>(for "kompile") is used to load procedures from the
+edit buffer. You are then
+prompted to choose one of three options; you can compile
+          <ol type=1 start=1>
+
+          <li>the procedure in which the cursor is currently positioned (see
+<a href="ema-emi-lay.html#ema-emi-lay">ema-emi-lay</a>, for restrictions on program layout necessary for
+this to work);
+<li>the region between the cursor and the mark; or
+<li>the whole buffer.
+          </ol>
+
+     <br><dt><kbd>&lt;ESC&gt; i</kbd>
+     <dd>(for interpret) is synonymous to <kbd>&lt;ESC&gt; k</kbd>; and is
+there for backward compatibility.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ema-emi-mod.html#ema-emi-mod">Next</a>
+<li><a rel="previous" accesskey="p" href="ema-emi-ove.html#ema-emi-ove">Previous</a>
+<li><a rel="up" accesskey="u" href="ema-emi.html#ema-emi">Up</a>
+</ul>
+</div>
+   </body></html>
+

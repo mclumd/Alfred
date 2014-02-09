@@ -1,0 +1,564 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Java Interface</h3>
+
+   <p>The Java interface is centered around the class <code>PrologSession</code>,
+which represents a connection (or session) to a Prolog
+server. <code>PrologSession</code> contains static methods for looking up
+named <code>PrologSession</code> instances using JNDI (Java Naming and
+Directory Interface) as well as methods for querying the Prolog server. 
+Other important classes are: <code>QueryAnswer</code>, which contains the
+answer for a query sent to the Prolog server; <code>Term</code>, which
+represents a Prolog term; and <code>Bindings</code>, which supports stuffing
+of variable values used in queries.
+
+   <p>General information about Java, Servlets and JNDI is available at the
+Java Technology site: <a href="http://java.sun.com/">http://java.sun.com/</a>
+
+   <p>A brief description of the methods in the provided Java classes are
+presented below.
+
+   <p>The <code>PrologSession</code> object is the connection to the Prolog
+server. The constructor <code>PrologSession()</code>
+creates a <code>PrologSession</code> with the default settings
+(<code>host = localhost, port = 8066</code>. 
+<code>PrologSession</code> contains the following methods:
+
+<p>
+<table width="100%">
+<tr>
+<td align="left">static <b>PrologSession</b><i> getPrologSession </i><code>(String name)</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the <code>PrologSession</code> registered in JNDI with the given
+name.  Use this method in application servers where services are
+registered using JNDI. <strong>Please note</strong>: the application server must
+be configured to register the <code>PrologSession</code> with the given name
+for this method to work. See Tomcat configuration in <a href="pbn-exs-tomcat.html#pbn-exs-tomcat">pbn-exs-tomcat</a>. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left">static <b>PrologSession</b><i> getPrologSession </i><code>(String name, HTTPSession session)</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the <code>PrologSession</code> registered in JNDI with the given
+name.  The <code>PrologSession</code> will make use of sessions and the
+session id will be the same as in the <code>HTTPSession</code>. Use this
+method in web application servers with support for servlets and
+<code>HTTPSession</code> (and when support for sessions is desired). 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>String</b><i> getHost </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the host of the Prolog server (exactly as registered in
+<code>setHost</code>). 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>void</b><i> setHost </i><code>(String prologServerHost)</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+sets the host of the Prolog server (default <code>localhost</code>). Either
+IP-address or host name is allowed. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>int</b><i> getPort </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the port of the Prolog server. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>void</b><i> setPort </i><code>(int port)</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+sets the port of the Prolog server (default <code>8066</code>). 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>void</b><i> connect </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+connects to the Prolog server. By default the <code>executeQuery</code> will
+automatically connect to the server when called. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>void</b><i> setAutoConnect </i><code>(boolean autoConnect)</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+sets the connection mode of this <code>PrologSession</code>. If set to
+<code>true</code> it will ensure that it is connected to the Prolog server as
+soon as a call to <code>executeQuery</code> or anything else causing a need for
+communication happens. This is by default set to <code>true</code>
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> isAutoConnecting </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the state of the AutoConnect mode. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>QueryAnswer</b><i> executeQuery </i><code>(String query)</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+sends a query to the Prolog server and waits for the answer before
+returning the <code>QueryAnswer</code>. Anonymous variables (underscore,
+<code>_</code>), will be ignored, and thus not accessible in the
+<code>QueryAnswer</code>.  <code>executeQuery</code> throws <code>IOException</code> if
+communication problems with the server occurs. <strong>Please note</strong>:
+<code>executeQuery</code> will only return one answer. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>QueryAnswer</b><i> executeQuery </i><code>(String query, Bindings bindings)</code><i>
+     </i></td>
+<td align="right">Method on PrologSession</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+sends a query to the Prolog server and waits for the answer before returning
+the <code>QueryAnswer</code>. <code>Bindings</code> are variable bindings for
+the given <var>query</var> and will ensure that the values are stuffed correctly. 
+An example:
+     <pre class="example">          QueryAnswer answer =
+             executeQuery("evaluate(In,Out)",
+                          new Bindings().bind("In","4*9."));
+          </pre>
+     </td></tr>
+</table>
+
+   <p>The <code>QueryAnswer</code> contains the answer (new bindings) for a query
+(or the error that occurred during the query process). 
+<code>QueryAnswer</code> inherits from <code>Bindings</code>, and extends and
+modifies it with the following methods:
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>Term</b><i> getValue </i><code>(String variableName)</code><i>
+     </i></td>
+<td align="right">Method on QueryAnswer</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the value of the given variable. If there is a value a
+<code>Term</code> (a parsed Prolog term) is returned, otherwise
+<code>null</code> is returned. All bindings from the query are
+available in the <code>QueryAnswer</code>. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> queryFailed </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on QueryAnswer</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns <code>true</code> if the query failed (e.g. the Prolog returned <code>no</code>). 
+In this case, there will be no answers (no new bindings, and
+<code>isError</code> will return <code>false</code>). 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> isError </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on QueryAnswer</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns <code>true</code> if there was an error. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>String</b><i> getError </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on QueryAnswer</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the error message (which is only set if there was an error,
+otherwise it will be <code>null</code>). 
+</td></tr>
+</table>
+
+   <p>The <code>Term</code> object is for representing parsed Prolog terms, and has
+the following methods:
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> isAtom </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns <code>true</code> if the <code>Term</code> is an atom. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> isInteger </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns <code>true</code> if the <code>Term</code> is an integer. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> isFloat </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns <code>true</code> if the <code>Term</code> is a floating-point number. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> isCompound </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns <code>true</code> if the <code>Term</code> is a compound term. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> isList </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns <code>true</code> if and only if <code>Term</code> is a compound term with
+principal functor <code>./2</code>. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> isString </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns <code>true</code> if the <code>Term</code> an instance
+of <code>PBString</code> (which can be used for fast string access
+by a type-cast to <code>PBString</code> and the use of the method
+<code>getString()</code> that returns the string).
+
+        </td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>boolean</b><i> isVariable </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns <code>true</code> if the <code>Term</code> is a variable. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>int</b><i> intValue </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the <code>int</code> value of the integer. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>long</b><i> longValue </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the <code>long</code> value of the integer. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>float</b><i> floatValue </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the <code>float</code> value of the floating-point number. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>double</b><i> doubleValue </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the <code>double</code> value of the floating-point number. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>String</b><i> getName </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the functor name of the <code>Term</code> (see <code>functor/3</code>). 
+If the Term represents a variable (<code>isVariable()</code> returns <code>true</code>),
+the variable name is returned. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>int</b><i> getArity </i><code>()</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the number of arguments of this term
+(e.g. <code>parent(A1,A2)</code> would return 2) (see <code>functor/3</code>). 
+If the term is not a compound term, <code>getArity()</code> will return 0. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>Term</b><i> getArgument </i><code>(int index)</code><i>
+     </i></td>
+<td align="right">Method on Term</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+returns the <code>Term</code> representing the argument at the position
+given by <var>index</var>. If there are no arguments, or if an argument
+with the specified index does not exist,
+<code>IndexOutOfBoundsException</code> will be thrown.  The first argument
+has index one (see <code>arg/3</code>). 
+</td></tr>
+</table>
+
+   <p><code>Bindings</code> is used for binding variables to values
+in a query sent to the Prolog. The values will be automatically
+stuffed before they are sent to the Prolog server.
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>void</b><i> bind </i><code>(String name, int value)</code><i>
+     </i></td>
+<td align="right">Method on Bindings</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+binds the variable with the given name to the given
+value. <strong>Please note</strong>: this method is also available for values
+of type <code>long</code>, <code>float</code>, <code>double</code>, and
+<code>Term</code>. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>void</b><i> bind </i><code>(String name, String value)</code><i>
+     </i></td>
+<td align="right">Method on Bindings</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+binds the variable with the given name to the given value.  The value
+will be seen as a list of <code>UNICODE</code> character codes in Prolog. 
+</td></tr>
+</table>
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><b>void</b><i> bindAtom </i><code>(String name, String value)</code><i>
+     </i></td>
+<td align="right">Method on Bindings</td>
+</tr>
+</table>
+<table width="95%" align="center">
+<tr><td>
+binds the variable with the given name to the given
+value. <strong>Please note</strong>: this method will encode the String as an
+atom when querying the Prolog server. 
+</td></tr>
+</table>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pbn-pro.html#pbn-pro">Next</a>
+<li><a rel="previous" accesskey="p" href="pbn-exa.html#pbn-exa">Previous</a>
+<li><a rel="up" accesskey="u" href="pbn.html#pbn">Up</a>
+</ul>
+</div>
+   </body></html>
+

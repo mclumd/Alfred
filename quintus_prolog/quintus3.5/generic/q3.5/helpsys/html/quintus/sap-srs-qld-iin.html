@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Implicit invocation via <code>qpc</code></h5>
+
+   <p>When <code>qpc</code> is called without the <code>-c</code> command-line
+option, as in invocation (B), above, it first compiles all the
+specified Prolog files into QOF and then invokes <code>qld</code> as
+follows:
+<pre class="example">     % <kbd>qld [-W] [-D] [-v] [-o </kbd><var>output-file</var><kbd>] -d </kbd><var>qof-files</var><kbd> </kbd><var>object-files</var><kbd></kbd>
+     </pre>
+
+   <p>When <code>qld</code> is called by <code>qpc</code>, it is called in the
+verbose mode (<code>-v</code>), with the following additional options:
+
+   <p><code>-W</code> (Windows only) determines that <code>qld</code> should build a
+"windowed" executable, which runs in its own window, as opposed to
+a console-based one, which runs in a command prompt window.  The
+properties of the Windows component of an executable built with
+<code>-W</code> can be controlled with resource files and the environment
+variable <code>CONSOLE</code>; see <a href="too-too-qld.html#too-too-qld">too-too-qld</a>.
+
+   <p><code>-D</code> determines that <code>qld</code> is to be linked with
+the Development Kernel rather than the Runtime Kernel.  In either case
+two kernel files, one QOF and one object file, must be linked
+in addition to the application files.  (See the above figure.)
+
+   <p><code>-o</code> specifies the name of the executable file that is to be
+the final product; defaults to <code>a.out</code>.
+
+   <p><code>-d</code> tells <code>qld</code> to link in
+any additional files on which any of the specified QOF files depends. 
+See <a href="sap-srs-dep.html#sap-srs-dep">sap-srs-dep</a> for more details on file dependencies.
+
+   <p><var>qof-files</var> is a list of QOF files, <code>P1.qof</code> ,<small class="dots">...</small>,
+<code>Pn.qof</code>, the output of the <code>qpc</code> call.
+
+   <p><var>object-files</var> is a list of object files built by
+compiling your foreign-language files with the appropriate
+compiler(s).  These may include foreign libraries (e.g. <code>qpc -lX11</code>).
+
+   <p>In addition to the above arguments, <code>qpc</code> also passes to
+<code>qld</code> appropriate <code>-f</code>, <code>-F</code> and <code>-L</code> options
+if any non-default file search paths or library directories have been
+specified.  The <code>-f</code>, <code>-F</code> and <code>-L</code> options have the same
+meaning for <code>qld</code> as they do for <code>qpc</code>; they are
+only meaningful when the <code>-d</code> option is specified, and they
+tell <code>qld</code> where to look for file specifications.  See
+<a href="sap-srs-fsp.html#sap-srs-fsp">sap-srs-fsp</a> for information on how <code>qld</code>
+makes use of file search paths and library directories.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-qld-ein.html#sap-srs-qld-ein">Next</a>
+<li><a rel="up" accesskey="u" href="sap-srs-qld.html#sap-srs-qld">Up</a>
+</ul>
+</div>
+   </body></html>
+

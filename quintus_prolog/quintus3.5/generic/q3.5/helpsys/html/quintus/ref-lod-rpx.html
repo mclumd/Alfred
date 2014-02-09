@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Redefining Procedures during Program Execution</h4>
+
+   <p>You can redefine procedures during the execution of the program, which
+can be very useful while debugging.  The normal way to do this is to
+use the <code>break</code> option of the debugger to enter a break state (see
+<code>break/0</code>, <a href="ref-iex-int.html#ref-iex-int">ref-iex-int</a>), and then load an altered version of
+some procedures.  If you do this, it is advisable, after redefining
+the procedures and exiting from the break state, to wind the
+computation back to the first call to any of the procedures you are
+changing: you can do this by using the <code>retry</code> option with an
+argument that is the invocation number of that call.  If you do not
+wind the computation back like this, then:
+     <ul>
+
+     <li>if you are in the middle of
+executing a procedure that you redefine, you will find that the old
+definition of the procedure continues to be used until it exits or fails;
+<li>if you should fail back into a procedure you have just redefined, then
+alternative clauses in the old definition will still be used. 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-lod-lis.html#ref-lod-lis">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-lod-lod.html#ref-lod-lod">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-lod.html#ref-lod">Up</a>
+</ul>
+</div>
+   </body></html>
+

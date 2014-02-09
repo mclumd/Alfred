@@ -1,0 +1,1573 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: ref-gru-tra,  Next: ref-gru-sum,  Prev: ref-gru-exa,  Up: ref-gru
+
+Translation of Grammar Rules into Prolog Clauses
+------------------------------------------------
+
+* Menu:
+
+* ref-gru-tra-lgr::                     Listing Grammar Rules
+
+   Grammar rules are merely  a  convenient abbreviation  for ordinary
+Prolog clauses.  Each grammar rule is translated into a Prolog clause
+as it is compiled.  This translation is described below.
+
+   The procedural interpretation of a grammar rule is that it takes an
+input list of symbols or character codes, analyzes some initial portion
+of that list, and produces the remaining portion (possibly enlarged) as
+output for further analysis.  The arguments required for the input and
+output lists are not written explicitly in a grammar rule, but are
+added when the rule is translated into an ordinary Prolog clause.  The
+translations shown differ from the output of `listing/[0,1]' in that
+internal translations such as variable renaming are not represented.
+This is done in the interests of clarity.  For example, a rule such as
+(A) will be depicted as translating into (B) rather than (C).
+     p(X) --> q(X). (A)
+
+     p(X, S0, S) :-
+             q(X, S0, S). (B)
+
+     p(A,B,C) :-
+             q(A,B,C). (C)
+
+   If there is more than one non-terminal on the right-hand side, as in
+(D) the corresponding input and output arguments are identified,
+translating into (E):
+
+     p(X, Y) --> q(X), r(X, Y), s(Y). (D)
+
+
+     p(X, Y, S0, S) :- (E)
+         q(X, S0, S1),
+         r(X, Y, S1, S2),
+         s(Y, S2, S).
+
+   Terminals are translated using the built-in predicate `'C'(S1, X,
+S2)', read as "point S1 is connected by terminal X to point S2", and
+defined by the single clause
+
+     'C'([X|S], X, S).
+
+   (This predicate is not normally useful in itself; it has been given
+the name uppercase `c' simply to avoid pre-empting a more useful name.)
+Then, for instance (F) is translated into (G):
+
+     p(X) --> [go, to], q(X), [stop]. (F)
+
+     p(X, S0, S) :- (G)
+         'C'(S0, go, S1),
+         'C'(S1, to, S2),
+         q(X, S2, S3),
+         'C'(S3, stop, S).
+
+   Extra conditions expressed as explicit procedure calls, enclosed in
+curly braces, naturally translate into themselves.  For example (H)
+translates to (I):
+     p(X) --> [X], {integer(X), X > 0}, q(X). (H)
+
+     p(X, S0, S) :- (I)
+         'C'(S0, X, S1),
+         integer(X),
+         X > 0,
+         q(X, S1, S).
+
+   Similarly, a cut is translated literally.
+
+   Terminals on the left-hand side of a rule, enclosed in square
+brackets, translate into `'C'/3' goals with the first and third
+arguments reversed.  For example, (J) becomes (K):
+     is(N), [not] --> [aint]. (J)
+
+     is(N, S0, S) :- (K)
+         'C'(S0, aint, S1),
+         'C'(S, not, S1).
+
+   Disjunction has a fairly obvious translation.  For example, (L), a
+rule that equates phrases like "(sent) a letter to him" and "(sent) him
+a letter", translates to (M):
+     args(X, Y) --> (L)
+             dir(X), [to], indir(Y) |
+             indir(Y), dir(X).
+
+     args(X, Y, S0, S) :- (M)
+         (   dir(X, S0, S1),
+             'C'(S1, to, S2),
+             indir(Y, S2, S)
+         |   indir(Y, S0, S1),
+             dir(X, S1, S)
+         ).
+
+
+File: quintus.info,  Node: ref-gru-tra-lgr,  Up: ref-gru-tra
+
+Listing Grammar Rules
+.....................
+
+   In order to look at these translations, declare the grammar rules
+dynamic and use `listing/[0,1]'.  However, in a grammar rule like `HEAD
+--> BODY', if the functor of HEAD is `foo/n', the dynamic declaration
+is for `foo/n+2'.  For example, the following declaration for grammar
+rule (L) would enable you to list its translation, (M):
+      :- dynamic(args/4).
+
+
+File: quintus.info,  Node: ref-gru-sum,  Prev: ref-gru-tra,  Up: ref-gru
+
+Summary of Predicates
+---------------------
+
+   * `-->/2'
+
+   * `'C'/3'
+
+   * `expand_term/2'
+
+   * `phrase/[2,3]'
+
+   * `term_expansion/2'
+
+
+File: quintus.info,  Node: ref-olh,  Next: ref-pro,  Prev: ref-gru,  Up: ref
+
+On-line Help
+============
+
+* Menu:
+
+* ref-olh-bas::                         Introduction
+* ref-olh-hfi::                         Help Files
+* ref-olh-hlp::                         Emacs Commands for Using the Help System
+
+
+File: quintus.info,  Node: ref-olh-bas,  Next: ref-olh-hfi,  Up: ref-olh
+
+Introduction
+------------
+
+   The documentation for Quintus Prolog is contained in the Quintus
+Prolog Manual.  This documentation can be accessed on-line by using
+special built-in predicates, which are described below.  These
+predicates view the manual as a single tree structure with nodes
+threaded together by cross-references, which you can traverse in order
+to find the information you need.  It is easier to use this help system
+through the Emacs interface or the Quintus User Interface, but it is
+possible to do everything without them.  For documentation on using the
+help system for Quintus User Interface see *Note qui-hlp-hlp::.
+
+   There are two basic ways of getting to information in the help
+system.  The first is via a series of menus, which corresponds to the
+hierarchy of parts, chapters, sections and subsections in the manual.
+This method of access is analogous to looking through the Table of
+Contents sections of the printed document.  The second method is by
+keyword search.  This method is analogous to looking in the Index
+sections of the printed manual.  These access methods are described in
+*Note ref-olh-hlp-sum::.
+
+
+File: quintus.info,  Node: ref-olh-hfi,  Next: ref-olh-hlp,  Prev: ref-olh-bas,  Up: ref-olh
+
+Help Files
+----------
+
+* Menu:
+
+* ref-olh-hfi-ove::                     Overview
+* ref-olh-hfi-mfi::                     Menus
+* ref-olh-hfi-xref::                    Cross-References
+* ref-olh-hfi-hlp::                     Displaying help files
+
+
+File: quintus.info,  Node: ref-olh-hfi-ove,  Next: ref-olh-hfi-mfi,  Up: ref-olh-hfi
+
+Overview
+........
+
+   The help system is largely based on the Info file format, which GNU
+Emacs uses for on-line documentation.  When accessed by following a menu
+entry or a cross reference, the help system will locate the
+corresponding Info node.  When accessed by keyword search, an ad-hoc
+menu will be created instead.
+
+   If you are running outside Emacs, the information will be displayed
+on the terminal, controlled by the environment variable `PAGER'.
+
+   If you are running under Emacs, Emacs will try to use the Info
+subsystem as far as possible.  If Emacs is unable to find the Info nodes
+requested, or when displaying an ad-hoc menu, it displays the
+information in a buffer where specialized key bindings apply as
+summarized in *Note ref-olh-hlp::.  The most important key binding is
+`?', which will display the appropriate key-binding summary.  After
+typing a question mark, typing a `b' will get you back to where you
+were.
+
+   The organization of the help files corresponds directly to that of
+the printed manual.  Files that do not begin with a menu correspond to
+"leaf" nodes of the manual tree; that is, to sections of the manual
+that have no subdivisions.  Files that do begin with a menu correspond
+to the non-leaf nodes of the tree.
+
+
+File: quintus.info,  Node: ref-olh-hfi-mfi,  Next: ref-olh-hfi-xref,  Prev: ref-olh-hfi-ove,  Up: ref-olh-hfi
+
+Menus
+.....
+
+   A menu consists of a numbered sequence of choices.  Each choice has
+the form
+     * {manual(TAG)}                      SUBJECT
+
+   If you are running Prolog without Emacs, you can select a menu
+choice by typing
+     | ?- manual(TAG).
+
+   where TAG is exactly as shown in the menu.  Tags are in general of
+the form CHAPTER-SECTION-SUBSECTION-... where CHAPTER, SECTION, and
+SUBSECTION are abbreviations of a section in the printed manual.
+
+   _Under Emacs:_ you will find that a special mode is entered when you
+are looking at a menu. See *Note ref-olh-hlp::, for more information.
+
+
+File: quintus.info,  Node: ref-olh-hfi-xref,  Next: ref-olh-hfi-hlp,  Prev: ref-olh-hfi-mfi,  Up: ref-olh-hfi
+
+Cross-References
+................
+
+   Occasionally you will see a cross-reference in the text.
+Cross-references look like (A) in the printed manual, and like (B) in
+the on-line manual:
+     ...see also Section 1.3 [int-dir], page 11 (A)
+
+   and
+     ...see also {manual(int-dir)} (B)
+
+   If you are not using Emacs, then you should type the following goal
+in order to follow this cross-reference.
+     | ?- manual(int-dir).
+
+   _Under Emacs:_ There is a more convenient way to do this: type `x'
+to move the cursor to the front of the cross-reference, then type <RET>
+to display the cross-referenced text.
+
+
+File: quintus.info,  Node: ref-olh-hfi-hlp,  Prev: ref-olh-hfi-xref,  Up: ref-olh-hfi
+
+Displaying help files
+.....................
+
+   The help-system always writes its output to `current_output' instead
+of `user_output'.  This makes it possible to redirect information
+produced by `help/[0,1]' or `manual/[0,1]' to a file.  For example, to
+save the documentation on `assert/1' in a file called `assert.doc',
+type:
+
+     ?- tell('assert.doc'), help(assert), told.
+
+   Furthermore, if the `current_output' is the same as `user_output'
+(i.e. the terminal), then the environment variable `PAGER' is used, if
+set, to display the information.  If `PAGER' is not set, the default
+pager, `more', is used.
+
+   _Under Emacs:_ This strategy is not applicable in the Emacs
+interface, which provides its own way of saving displayed text, nor in
+QUI.
+
+
+File: quintus.info,  Node: ref-olh-hlp,  Prev: ref-olh-hfi,  Up: ref-olh
+
+Emacs Commands for Using the Help System
+----------------------------------------
+
+* Menu:
+
+* ref-olh-hlp-mco::                     Emacs Commands
+* ref-olh-hlp-sum::                     Predicate Summary
+
+
+File: quintus.info,  Node: ref-olh-hlp-mco,  Next: ref-olh-hlp-sum,  Up: ref-olh-hlp
+
+Emacs Commands
+..............
+
+   The keys available when viewing a menu file of the help system under
+Emacs are:
+
+`q'
+     Quit the help system.
+
+`b'
+`l'
+     Move Back to the previous help file viewed.
+
+`u'
+     Move Up to the parent menu in the manual hierarchy.
+
+`?'
+     Display this manual page.
+
+`x'
+     Move to the next menu entry.
+
+`X'
+     Move to the previous menu entry.
+
+`<RET>'
+     Select the current menu entry.
+
+`<ESC> z'
+     Scroll the menu one line up.
+
+`<ESC> ^z'
+     Scroll the menu one line down.
+
+`<SPC>'
+     Scroll the menu one page up.
+
+`<BSP>'
+     Scroll the menu one page down.
+
+`<'
+     Go to the beginning of the buffer.
+
+`>'
+     Go to the end of the buffer.
+
+     *Please note:*  If you are viewing this under Emacs, type `b' to
+     return to where you just were.
+
+
+File: quintus.info,  Node: ref-olh-hlp-sum,  Prev: ref-olh-hlp-mco,  Up: ref-olh-hlp
+
+Predicate Summary
+.................
+
+`help'
+     prints the top level menu of the manual set
+
+`help(Topic)'
+     gives index access to the on-line manual
+
+`manual'
+     accesses the top level of the on-line manual
+
+`manual(X)'
+     accesses the manual section specified by X
+
+`user_help'
+     hook; called by `help/0'
+
+
+File: quintus.info,  Node: ref-aos,  Prev: ref-syn,  Up: ref
+
+Access to the Operating System
+==============================
+
+* Menu:
+
+* ref-aos-ove::                         Overview
+* ref-aos-euc::                         Executing Commands from Prolog
+* ref-aos-ala::                         Accessing Command Line Arguments
+* ref-aos-sum::                         Predicate Summary
+* ref-aos-lib::                         Library Support
+
+
+File: quintus.info,  Node: ref-aos-ove,  Next: ref-aos-euc,  Up: ref-aos
+
+Overview
+--------
+
+   The predicate described here, `unix/1', provides the most commonly
+needed access to the operating system.  This minor extension to the
+Prolog system should be sufficient for most of your needs.  However,
+you can also extend the Prolog system with additional C code, including
+system calls, using the foreign function interface (see *Note
+fli-p2f::).
+
+   The reason for channeling all the interaction with the operating
+system through a single built-in predicate, rather than having separate
+predicates for each function, is simply to localize the system
+dependencies.  Admittedly, this makes for more cumbersome commands, so
+you may wish to put some clauses such as these in your `prolog.ini'
+file:
+
+
+     cd :- unix(cd).
+     cd(X) :- unix(cd(X)).
+
+   Initialization files are discussed in *Note ref-pro::.
+
+
+File: quintus.info,  Node: ref-aos-euc,  Next: ref-aos-ala,  Prev: ref-aos-ove,  Up: ref-aos
+
+Executing Commands from Prolog
+------------------------------
+
+* Menu:
+
+* ref-aos-euc-cwd::                     Changing the Working Directory
+* ref-aos-euc-oth::                     Other Commands
+* ref-aos-euc-spa::                     Spawning an Interactive Shell
+
+
+File: quintus.info,  Node: ref-aos-euc-cwd,  Next: ref-aos-euc-oth,  Up: ref-aos-euc
+
+Changing the Working Directory
+..............................
+
+   `unix(cd(+PATH))' changes the working directory of Prolog (and of
+Emacs, if running under the editor interface) to that specified by
+PATH, which should be an atom corresponding to a legal directory.  If
+PATH is not specified, `unix(cd)' changes the working directory of
+Prolog (and of Emacs if running under the editor interface) to your
+home directory.
+
+   Note that the `<ESC> x cd PATH' and `<ESC> x cd' commands under
+Emacs have the same effect as this, except that Emacs also provides
+filename completion.
+
+
+File: quintus.info,  Node: ref-aos-euc-oth,  Next: ref-aos-euc-spa,  Prev: ref-aos-euc-cwd,  Up: ref-aos-euc
+
+Other Commands
+..............
+
+   To spawn a command interpreter and execute a command use
+`unix(shell(+COMMAND))'.  The reference page for `unix/1' contains
+examples.  If COMMAND is an atom, a new shell process is invoked, and
+COMMAND is passed to it for execution as a shell command.  Under UNIX,
+the shell invoked depends on your `SHELL' environment variable.  Under
+Windows, the default shell is used, as determined by the `system()' C
+library function.  If the shell returns with a non-zero result (for
+example, because the command was not found), `unix(shell(COMMAND))'
+simply fails.
+
+   Similarly, a new standard shell process can be invoked by calling
+`unix(system(+COMMAND))'.  The standard shell is `sh(1)' under UNIX and
+as determined by the `system()' C library function under Windows.
+
+
+File: quintus.info,  Node: ref-aos-euc-spa,  Prev: ref-aos-euc-oth,  Up: ref-aos-euc
+
+Spawning an Interactive Shell
+.............................
+
+   `unix(shell)' starts up an interactive shell.  Under UNIX, the shell
+run depends on your `SHELL' environment variable.  You can exit from the
+shell by typing `^d' (or your end-of-file character) unless under
+Emacs, in which case you should type `^x ^d'.  The Prolog idiom
+`end_of_file.' will not work in this context.  If `ignoreeof' is set
+(for example, in your `.cshrc' file), `^d' may not work (setting
+`ignoreeof' turns off `^d').  In this case, you may type `exit' to the
+shell to kill it.  The call to `unix(shell)' fails if a non-zero result
+is returned by the shell.
+
+     *Please note:*  Under UNIX, invoking the predicate `unix(shell)'
+     when your `SHELL' environment variable is set to a non-standard
+     shell (not `csh(1)' or `sh(1)') may cause echoing problems under
+     the Emacs interface due to the `stty' settings of the non-standard
+     shell.  If a non-standard shell proves to be a problem, an
+     alternative is to use either `unix(shell(sh))' or
+     `unix(shell(csh))' to invoke the standard shell, respectively.
+
+
+File: quintus.info,  Node: ref-aos-ala,  Next: ref-aos-sum,  Prev: ref-aos-euc,  Up: ref-aos
+
+Accessing Command Line Arguments
+--------------------------------
+
+* Menu:
+
+* ref-aos-ala-ans::                     Arguments as Numbers or as Strings
+* ref-aos-ala-aac::                     Accessing Prolog's Arguments from C
+
+   To return the arguments that were typed on the command line
+following the command that invoked the current Prolog saved state (see
+*Note ref-pro::) use either of the following:
+     | ?- unix(argv(ArgList)).  % mnemonic; `vector', `value'
+     
+     | ?- unix(args(ArgList)).  % mnemonic; `string'
+
+
+File: quintus.info,  Node: ref-aos-ala-ans,  Next: ref-aos-ala-aac,  Up: ref-aos-ala
+
+Arguments as Numbers or as Strings
+..................................
+
+   The difference between using `argv' and `args' is evident when
+Prolog is invoked with numbers as arguments.
+
+   The objects returned by `unix(argv(_))' are Prolog objects; that is,
+if the command line argument is a number, then it will be returned as a
+number.  Thus:
+     % prolog 1
+         .
+         .
+         .
+     | ?- unix(argv([1])).
+     
+     yes
+     | ?- unix(argv(['1'])).
+     
+     no
+     | ?- unix(args(['1'])).
+     
+     yes
+
+     % prolog 1 6.999999
+         .
+         .
+         .
+     
+     | ?- unix(argv(X)).
+     
+     X = [1, 6.9999999E+00]
+     
+     | ?- unix(args(X)).
+     
+     X = ['1', '6.999999']
+
+   So if your program treats the command line argument as a number, use
+the form with `argv', but if it is to be treated as a string, use
+`args'.  For example if the program is called with a number and
+performs some arithmetic operation on the argument then displays the
+result, use `argv'.
+
+     | ?- [user].
+     | runtime_entry(start) :-
+          unix(argv([A])),
+          Y is A+1,
+          display(Y).
+     | ^D
+     % user compiled in module user, 0.083 sec 8 bytes
+     
+     yes
+     | ?- runtime_entry(start).
+     46
+     yes
+
+
+File: quintus.info,  Node: ref-aos-ala-aac,  Prev: ref-aos-ala-ans,  Up: ref-aos-ala
+
+Accessing Prolog's Arguments from C
+...................................
+
+   The command line arguments passed to Prolog can be accessed from C
+through `QP_argv' and `QP_argc'.  These are similar to `argc' and
+`argv' of the `main()' API, except that they only store Prolog's
+arguments.  In `<quintus/quintus.h>' they are classed as
+
+         extern  int QP_argc
+         extern  char **QP_argv
+
+
+File: quintus.info,  Node: ref-aos-sum,  Next: ref-aos-lib,  Prev: ref-aos-ala,  Up: ref-aos
+
+Predicate Summary
+-----------------
+
+   * `unix/1'
+
+   * `QP_initialize()'
+
+   * `toplevel'
+
+
+File: quintus.info,  Node: ref-aos-lib,  Prev: ref-aos-sum,  Up: ref-aos
+
+Library Support
+---------------
+
+   `system/1' -- from `library(strings)'
+
+
+File: quintus.info,  Node: ref-ere,  Next: ref-fdi,  Prev: ref-mdb,  Up: ref
+
+Errors and Exceptions
+=====================
+
+* Menu:
+
+* ref-ere-ove::                         Overview
+* ref-ere-rex::                         Raising Exceptions
+* ref-ere-hex::                         Handling Exceptions
+* ref-ere-err::                         Error Classes
+* ref-ere-exa::                         An Example
+* ref-ere-ecr::                         Exceptions and Critical Regions
+* ref-ere-sum::                         Summary of Predicates and Functions
+* ref-ere-sli::                         Summary of Relevant Libraries
+
+
+File: quintus.info,  Node: ref-ere-ove,  Next: ref-ere-rex,  Up: ref-ere
+
+Overview
+--------
+
+   Whenever the Prolog system encounters a situation where it cannot
+continue execution, it raises an exception.  For example, if a built-in
+predicate detects an argument of the wrong type, it raises a
+`type_error' exception.  The manual page description of each built-in
+predicate lists the kinds of exceptions that can be raised by that
+built-in predicate.
+
+   The default effect of raising an exception is to terminate the
+current computation and then print an error message.  After the error
+message, you are back at Prolog's top level.  For example, if the goal
+     X is a/2
+
+   is executed somewhere in a program you get
+     ! Type error in argument 2 of is/2
+     ! number expected, but a found
+     ! goal:  A is a/2
+     
+     | ?-
+
+   Particular things to notice in this message are:
+`! '
+     This character indicates that this is an error message rather than
+     a warning(1) or informational message.
+
+`Type Error'
+     This is the "exception class".  Every exception raised by the
+     system is categorized into one of a small number of classes.  The
+     classes are listed in *Note ref-ere-err::.
+
+`goal:'
+     The goal that caused the exception to be raised.
+
+   ---------- Footnotes ----------
+
+   (1) The difference between an error (including exceptions) and a
+warning: A "warning" is issued if Prolog detects a situation that is
+likely to cause problems, though it is possible that you intended it.
+An "error", however, indicates that Prolog recognizes a situation where
+it cannot continue.
+
+
+File: quintus.info,  Node: ref-ere-rex,  Next: ref-ere-hex,  Prev: ref-ere-ove,  Up: ref-ere
+
+Raising Exceptions
+------------------
+
+   You can raise exceptions from your own code using the built-in
+predicate
+     raise_exception(+EXCEPTIONCODE)
+
+   The argument to this predicate is the "exception code"; it is an
+arbitrary non-variable term of which the principal functor indicates
+the exception class.  You can use the same exception classes as the
+system (see *Note ref-ere-err::), or you can use your own exception
+classes.
+
+   Error messages like the one shown above are printed using the
+built-in predicate `print_message/2'.  One of the arguments to
+`print_message' is the exception code.  `print_message' can be
+extended, as described in *Note ref-msg::, so that you can have
+appropriate error messages printed corresponding to your own exception
+classes.
+
+
+File: quintus.info,  Node: ref-ere-hex,  Next: ref-ere-err,  Prev: ref-ere-rex,  Up: ref-ere
+
+Handling Exceptions
+-------------------
+
+* Menu:
+
+* ref-ere-hex-pgo::                     Protecting a Particular Goal
+* ref-ere-hex-hup::                     Handling Unknown Predicates
+
+   It is possible to protect a part of a program against abrupt
+termination in the event of an exception.  There are two ways to do
+this:
+   * Trap exceptions to a particular goal by calling `on_exception/3' as
+     described in *Note ref-ere-hex-pgo::.
+
+   * Handle undefined predicates or subsets of them through the hook
+     predicate `unknown_predicate_handler/3'; see *Note
+     ref-ere-hex-hup::.
+
+
+File: quintus.info,  Node: ref-ere-hex-pgo,  Next: ref-ere-hex-hup,  Up: ref-ere-hex
+
+Protecting a Particular Goal
+............................
+
+   The built-in predicate `on_exception/3' enables you to handle
+exceptions to a specific goal:
+
+   `on_exception(?EXCEPTIONCODE, +PROTECTEDGOAL, +HANDLER)'
+
+   PROTECTEDGOAL is executed.  If all goes well, it will behave just as
+if you had written PROTECTEDGOAL without the `on_exception/3' wrapper.
+If an exception is raised while PROTECTEDGOAL is running, Prolog will
+abandon PROTECTEDGOAL entirely.  Any bindings made by PROTECTEDGOAL
+will be undone, just as if it had failed.  Side-effects, such as
+asserts and retracts, are not undone, just as they are not undone when
+a goal fails.  After undoing the bindings, Prolog tries to unify the
+exception code raised with the EXCEPTIONCODE argument.  If this
+unification succeeds, HANDLER will be executed as if you had written
+
+     EXCEPTIONCODE=<the actual exception code>,
+     HANDLER
+
+   If this unification fails, Prolog will keep searching up the
+ancestor list looking for another exception handler.  If it reaches
+Prolog's top level (or a break level) without having found a call to
+`on_exception/3' with a matching EXCEPTIONCODE, an appropriate error
+message is printed (using `print_message/2').
+
+   PROTECTEDGOAL need not be determinate.  That is, backtracking into
+PROTECTEDGOAL is possible, and the exception handler becomes reactivated
+in this case.  However, if PROTECTEDGOAL is determinate, then the call
+to `on_exception/3' is also determinate.
+
+   Setting up an exception handler with `on_exception/3' is cheap
+provided that PROTECTEDGOAL is an ordinary goal.  Some efficiency is
+lost, in the current implementation, if PROTECTEDGOAL is of the form
+(GOAL1,GOAL2) or (GOAL1;GOAL2).
+
+   The PROTECTEDGOAL is logically _inside_ the `on_exception/3' form,
+but the HANDLER is _not_.  If an exception is raised inside the
+HANDLER, this `on_exception/3' form will _not_ be reactivated.  If you
+want an exception handler that protects itself, you have to program it,
+perhaps like this:
+     recursive_on_exception_handler(Err, Goal, Handler) :-
+         on_exception(Err, Goal,
+             recursive_on_exception_handler(Err, Handler, Handler)).
+
+
+File: quintus.info,  Node: ref-ere-hex-hup,  Prev: ref-ere-hex-pgo,  Up: ref-ere-hex
+
+Handling Unknown Predicates
+...........................
+
+   Users can write a handler for the specific exception occurring when
+an undefined predicate is called by defining clauses for the hook
+predicate `unknown_predicate_handler/3'.  This can be thought of as a
+"global" exception handler for this particular exception, because
+unlike `on_exception/3', its effect is not limited to a particular
+goal.  Furthermore, the exception is handled at the point where the
+undefined predicate is called.
+
+   The handler can be written to apply to all unknown predicates, or to
+a class of them.  The reference page contains an example of
+constraining the handler to certain predicates.
+
+
+File: quintus.info,  Node: ref-ere-err,  Next: ref-ere-exa,  Prev: ref-ere-hex,  Up: ref-ere
+
+Error Classes
+-------------
+
+* Menu:
+
+* ref-ere-err-ins::                     Instantiation Errors
+* ref-ere-err-typ::                     Type Errors
+* ref-ere-err-dom::                     Domain Errors
+* ref-ere-err-ran::                     Range Errors
+* ref-ere-err-rep::                     Representation Errors
+* ref-ere-err-exi::                     Existence Errors
+* ref-ere-err-per::                     Permission Errors
+* ref-ere-err-con::                     Context Errors
+* ref-ere-err-cns::                     Consistency Errors
+* ref-ere-err-syn::                     Syntax Errors
+* ref-ere-err-res::                     Resource Errors
+* ref-ere-err-sys::                     System Errors
+
+   Exceptions raised by the Prolog system are called errors.  The set
+of exception classes used by the system has been kept small.  Here is a
+complete list:
+Instantiation Error
+     An input argument is insufficiently instantiated.
+
+Type Error
+     An input argument is of the type.
+
+Domain Error
+     An input argument is illegal but of the right type.
+
+Range Error
+     A value specified for an output argument is illegal.
+
+Representation Error
+     A computed value cannot be represented.
+
+Existence Error
+     Something does not exist.
+
+Permission Error
+     Specified operation is not permitted.
+
+Context Error
+     Specified operation is not permitted in this context.
+
+Consistency Error
+     Two otherwise correct values are inconsistent with each other.
+
+Syntax Error
+     Error in reading a term.
+
+Resource Error
+     Some resource limit has been exceeded.
+
+System Error
+     An error detected by the operating system.
+
+   The exception codes corresponding to these classes are:
+   * `instantiation_error(GOAL, ARGNO)'
+
+   * `type_error(GOAL, ARGNO, TYPENAME, CULPRIT)'
+
+   * `domain_error(GOAL, ARGNO, DOMAINNAME, CULPRIT, MESSAGE)'
+
+   * `range_error(GOAL, ARGNO, TYPENAME, CULPRIT)'
+
+   * `representation_error(GOAL, ARGNO, MESSAGE)'
+
+   * `existence_error(GOAL, ARGNO, OBJECTTYPE, CULPRIT, MESSAGE)'
+
+   * `permission_error(GOAL, OPERATION, OBJECTTYPE, CULPRIT, MESSAGE)'
+
+   * `context_error(GOAL, CONTEXTTYPE, COMMANDTYPE)'
+
+   * `consistency_error(GOAL, CULPRIT1, CULPRIT2, MESSAGE)'
+
+   * `syntax_error(GOAL, POSITION, MESSAGE, LEFT, RIGHT)'
+
+   * `resource_error(GOAL, RESOURCE, MESSAGE)'
+
+   * `system_error(MESSAGE)'
+
+   Most exception codes include a copy of the GOAL that raised the
+exception.
+
+   In general, built-in predicates that cause side-effects, such as the
+opening of a stream or asserting a clause into the Prolog database,
+attempt to do all error checking before the side-effect is performed.
+Unless otherwise indicated in the documentation for a particular
+predicate or error class, it should be assumed that goals that raise
+exceptions have not performed any side-effect.
+
+
+File: quintus.info,  Node: ref-ere-err-ins,  Next: ref-ere-err-typ,  Up: ref-ere-err
+
+Instantiation Errors
+....................
+
+   An instantiation error occurs when a predicate or command is called
+with one of its input arguments insufficiently instantiated.
+
+   The exception code associated with an instantiation error is
+     instantiation_error(GOAL, ARGNO)
+
+   ARGNO is a non-negative integer indicating which argument caused the
+problem.  ArgNo=0 means that the problem could not be localized to a
+single argument.  , `atom_chars/2', `functor/3' etc., which allow
+alternative instantiation patterns.  Maybe this will be fixed but lets
+leave it vague for now. -DLB}
+
+   Note that the ARGNOth argument of GOAL might well be a non-variable:
+the error is _in_ that argument.  For example, the goal
+     X is Y+1
+
+   where Y is uninstantiated raises the exception
+     instantiation_error(_2298 is _2301+1,2)
+
+   because the second argument to `is/2' contains a variable.
+
+
+File: quintus.info,  Node: ref-ere-err-typ,  Next: ref-ere-err-dom,  Prev: ref-ere-err-ins,  Up: ref-ere-err
+
+Type Errors
+...........
+
+   A type error occurs when an input argument is of the wrong "type".
+In general, a "type" is taken to be a class of terms for which there
+exists a unary "type test predicate".  Some types are built-in, such as
+`atom/1' and `integer/1'.  Some are defined in `library(types)', such
+as `chars/1'.
+
+   The type of a term is the sort of thing you can tell just by looking
+at it, without checking to see how _big_ it is.  So "integer" is a
+type, but "non-negative integer" is not, and "atom" is a type, but
+"atom with 5 letters in its name" and "atom starting with `x'" are not.
+
+   The point of a type error is that you have _obviously_ passed the
+wrong sort of argument to a command; perhaps you have switched two
+arguments, or perhaps you have called the wrong predicate, but it isn't
+a subtle matter of being off by one.
+
+   Most built-in predicates check all their input arguments for type
+errors.
+
+   The exception code associated with a type error is
+     type_error(GOAL, ARGNO, TYPENAME, CULPRIT)
+
+ARGNO
+     CULPRIT occurs somewhere in the ARGNOth argument of GOAL.
+
+TYPENAME
+     says what sort of term was expected; it should be the name of a
+     unary predicate that is true of whatever terms would not provoke a
+     type error.
+
+     Some TYPENAMEs recognized by the system include:
+        * `0' -- No type name specified
+
+        * `atom'
+
+        * `atomic'
+
+        * `callable'
+
+        * `db_reference'
+
+        * `integer'
+
+        * `number'
+
+CULPRIT
+     is the actual term being complained about: TYPENAME(CULPRIT)
+     should be false.
+
+   For example, suppose we had a predicate
+     date_plus(NUMBEROFDAYS, DATE0, DATE)
+
+   true when DATE0 and DATE were `date(Y,M,D)' records and NUMBEROFDAYS
+was the number of days between those two dates.  You might see an error
+term such as
+     type_error(/* Goal     */ date_plus(27, date(18,mar,11), _235),
+                /* Argno    */ 2,
+                /* TypeName */ integer,
+                /* Culprit  */ mar
+
+
+File: quintus.info,  Node: ref-ere-err-dom,  Next: ref-ere-err-ran,  Prev: ref-ere-err-typ,  Up: ref-ere-err
+
+Domain Errors
+.............
+
+   A domain error occurs when an input argument is of the right type but
+there is something wrong with its value.  For example, the second
+argument to `open/3' is supposed to be an atom that represents a valid
+mode for opening a file, such as `read' or `write'.  If a number or a
+compound term is given instead, that is a type error.  If an atom is
+given that is not a valid mode, that is a domain error.
+
+   The main reason that we distinguish between type errors and domain
+errors is that they usually represent different sorts of mistake in
+your program.  A type error usually indicates that you have passed the
+wrong argument to a command, whereas a domain error usually indicates
+that you passed the argument you meant to check, but you hadn't checked
+it enough.
+
+   The exception code associated with a domain error is
+     domain_error(GOAL, ARGNO, DOMAINNAME, CULPRIT, MESSAGE)
+
+   The arguments correspond to those of the exception code for a type
+error, except that DOMAINNAME is not in general the name of a unary
+predicate: it needn't even be an atom.  For example, if some command
+requires an argument to be an integer in the range 1..99, it might use
+`between(1,99)' as the DOMAINNAME.  With respect to the `date_plus'
+example under Type Errors, if the month had been given as 13 it would
+have passed the type test but would raise a domain error.
+
+   For example, the goal
+     open(somefile,rread,S)
+
+   raises the exception
+     domain_error(open(somefile,rread,_2490),2,'i/o mode',rread,'')
+
+   The Message argument is used to provide extra information about the
+problem.
+
+   Some DOMAINNAMEs recognized by the system include:
+   * `0' -- no domain name specified
+
+   * `atom'
+
+   * `'atom or list''
+
+   * `atomic'
+
+   * `between(L,H)' -- 'something between L and H
+
+   * `built_in'
+
+   * `callable'
+
+   * `char'
+
+   * `character'
+
+   * `compiled'
+
+   * `directory'
+
+   * `declaration'
+
+   * `db_reference'
+
+   * `foreign'
+
+   * `file'
+
+   * `flag'
+
+   * `imported_predicate'
+
+   * `integer'
+
+   * `interpreted'
+
+   * `list'
+
+   * `module'
+
+   * `number'
+
+   * `one_of(LIST)' -- a member of the set LIST
+
+   * `pair'
+
+   * `predicate_specification'
+
+   * `procedure'
+
+   * `stream'
+
+   * `term'
+
+   * `value(X)' -- the value X
+
+   * `clause'
+
+
+File: quintus.info,  Node: ref-ere-err-ran,  Next: ref-ere-err-rep,  Prev: ref-ere-err-dom,  Up: ref-ere-err
+
+Range Errors
+............
+
+   A range error occurs when an _output_ argument was supplied with an
+illegal value.  This is similar to a type error or a domain error,
+except that it is a hint that a variable would be a good thing to
+supply instead; type and domain errors are associated with input
+arguments, where a variable would usually not be a good idea.
+
+   The exception code associated with a range error is
+     range_error(GOAL, ARGNO, TYPENAME, CULPRIT)
+
+   This has the same arguments as a type error.
+
+   Most built-in predicates do not raise any range errors.  Instead
+they fail quietly when an output argument fails to unify.
+
+
+File: quintus.info,  Node: ref-ere-err-rep,  Next: ref-ere-err-exi,  Prev: ref-ere-err-ran,  Up: ref-ere-err
+
+Representation Errors
+.....................
+
+   A representation error occurs when your program calls for the
+computation of some well-defined value that cannot be represented.
+
+   Most representation errors are some sort of overflow:
+     functor(T, f, 1000)             % maximum arity is 255
+     X is 16'7fffffff, Y is X+1      % 32-bit signed integers
+     atom_chars(X, L)                % if length of L > 1024
+
+   are all representation errors.  Floating-point overflow is a
+representation error.
+
+   The exception code for a representation error is
+     representation_error(GOAL, ARGNO, MESSAGE)
+
+ARGNO
+     identifies the argument of the goal that cannot be constructed.
+
+MESSAGE
+     further classifies the problem.  A message of `0' or `''' provides
+     no further information.
+
+
+File: quintus.info,  Node: ref-ere-err-exi,  Next: ref-ere-err-per,  Prev: ref-ere-err-rep,  Up: ref-ere-err
+
+Existence Errors
+................
+
+   An existence error occurs when a predicate attempts to access
+something that does not exist.  For example, trying to compile a file
+that does not exist, erasing a database reference that has already been
+erased.  A less obvious example:  reading past the end of file marker
+in a stream is regarded as asking for an object (the next character)
+that does not exist.
+
+   The exception code associated with an existence error is
+     existence_error(GOAL, ARGNO, OBJECTTYPE, CULPRIT, MESSAGE)
+
+ARGNO
+     index of argument of GOAL where CULPRIT appears
+
+OBJECTTYPE
+     expected type of non-existent object
+
+CULPRIT
+     name for the non-existent object
+
+MESSAGE
+     the constant `0' or `''', or
+
+
+     some additional information provided by the operating system or
+     other support system indicating why CULPRIT is thought not to
+     exist.
+
+   For example, `see('../brother/niece')' might raise the exception
+     existence_error(see('../brother/niece'),
+             1, file, '/usr/stella/parent/brother/niece',
+             errno(20))
+
+   where the MESSAGE encodes the system error `ENOTDIR' (some component
+of the path is not a directory).
+
+   As a general rule, if CULPRIT was provided in the goal as some sort
+of context-sensitive name, the Prolog system will try to resolve it to
+an absolute name, as shown here, so that you can see whether the
+problem is just that the name was resolved in the wrong context.
+
+
+File: quintus.info,  Node: ref-ere-err-per,  Next: ref-ere-err-con,  Prev: ref-ere-err-exi,  Up: ref-ere-err
+
+Permission Errors
+.................
+
+   A permission error occurs when an operation is attempted that is
+among the kinds of operation that the system is in general capable of
+performing, and among the kinds that you are in general allowed to
+request, but this particular time it isn't permitted.  Usually, the
+reason for a permission error is that the "owner" of one of the objects
+has requested that the object be protected.
+
+   An example of this inside Prolog is attempting to change a predicate
+that has not been declared `:-dynamic'.
+
+   File system protection is the main cause of such errors.
+
+   The exception code associated with a permission error is
+     permission_error(GOAL, OPERATION, OBJECTTYPE, CULPRIT, MESSAGE)
+
+OPERATION
+     operation attempted; OPERATION exists but is not permitted with
+     CULPRIT.
+
+     Some OPERATIONs recognized by the system include:
+        * `0' -- no operation specified
+
+        * `'find absolute path of''
+
+        * `'get the time stamp of''
+
+        * `'set prompt on''
+
+        * `'use close(filename) on''
+
+        * `abolish'
+
+        * `change'
+
+        * `check_advice'
+
+        * `clauses'access clauses of
+
+        * `close'
+
+        * `create'
+
+        * `export'
+
+        * `flush'
+
+        * `load'
+
+        * `nospy'
+
+        * `nocheck_advice'
+
+        * `open'
+
+        * `position'
+
+        * `read'
+
+        * `redefine'
+
+        * `save'
+
+        * `spy'
+
+        * `write'
+
+OBJECTTYPE
+     CULPRIT's type.
+
+CULPRIT
+     name of protected object.
+
+MESSAGE
+     provides such operating-system-specific additional information as
+     may be available.  A message of `0' or `''' provides no further
+     information.
+
+
+File: quintus.info,  Node: ref-ere-err-con,  Next: ref-ere-err-cns,  Prev: ref-ere-err-per,  Up: ref-ere-err
+
+Context Errors
+..............
+
+   A context error occurs when a goal or declaration appears in the
+wrong place.  There may or may not be anything wrong with the goal or
+declaration as such; the point is that it is out of place.  Calling
+`multifile/1' as a goal is a context error, as is having `:-module/2'
+anywhere but as the first term in a source file.
+
+   The exception code associated with a context error is
+     context_error(GOAL, CONTEXTTYPE, COMMANDTYPE)
+
+CONTEXTTYPE
+     the context in which the command was attempted.
+
+     Some CONTEXTTYPEs recognized by the system include:
+        * `'pseudo-file ''user'''' -- for pseudo-file `'user''
+
+        * `if' -- inside an if
+
+        * `bof' -- at beginning of file
+
+        * `bom' -- at beginning of module
+
+        * `query' -- in query
+
+        * `before' -- before
+
+        * `'after clauses'' -- after clauses
+
+        * `'not multifile and defined'' -- for defined, non-multifile
+          procedure
+
+        * `'static multifile'' -- for static multifile procedure.
+
+        * `language(L)' -- for language L.
+
+        * `file_load' -- during load of file(s).
+
+        * `started' -- started up
+
+        * `notoplevel' -- when no top level
+
+COMMANDTYPE
+     the type of command that was attempted.
+
+     Some COMMANDTYPEs recognized by the system include:
+        * `0' -- no commandtype specified
+
+        * `cut'
+
+        * `clause'
+
+        * `declaration'
+
+        * `'meta_predicate declaration''
+
+        * `use_module'
+
+        * `'multifile assert''
+
+        * `'module declaration''
+
+        * `'dynamic declaration''
+
+        * `meta_predicate(M)' -- meta_predicate declaration for M
+
+        * `argspec(A)' -- Invalid argument specification A
+
+        * `foreign_file(FILE)' -- `foreign_file/2' declaration for FILE
+
+        * `foreign(F)' -- `foreign/3' declaration for F
+
+        * `(initialization)' -- initialization hook
+
+        * `abort' -- call to `abort/0'
+
+
+File: quintus.info,  Node: ref-ere-err-cns,  Next: ref-ere-err-syn,  Prev: ref-ere-err-con,  Up: ref-ere-err
+
+Consistency Errors
+..................
+
+   A consistency error occurs when two otherwise valid values or
+operations have been specified that are inconsistent with each other.
+For example, if two modules each import the same predicate from the
+other, that is a consistency error.
+
+   The exception code associated with a consistency error is
+     consistency_error(GOAL, CULPRIT1, CULPRIT2, MESSAGE)
+
+CULPRIT1
+     One of the conflicting values/operations.
+
+CULPRIT2
+     The other conflicting value/operation..
+
+MESSAGE
+     Additional information, or `0', or `'''.
+
+
+File: quintus.info,  Node: ref-ere-err-syn,  Next: ref-ere-err-res,  Prev: ref-ere-err-cns,  Up: ref-ere-err
+
+Syntax Errors
+.............
+
+   A syntax error occurs when data are read from some external source
+but have an improper format or cannot be processed for some other
+reason.  This category mainly applies to `read/1' and its variants.
+
+   The exception code associated with a syntax error is
+     syntax_error(GOAL, POSITION, MESSAGE, LEFT, RIGHT)
+
+   where GOAL is the goal in question, POSITION identifies the position
+in the stream where reading started, and MESSAGE describes the error.
+Left and right are lists of tokens before and after the error,
+respectively.
+
+   Note that the POSITION is where reading started, not where the error
+_is_.
+
+   `read/1' does two things.  First, it reads a sequence of characters
+from the current input stream up to and including a clause terminator,
+or the end of file marker, whichever comes first.  Then it attempts to
+parse the sequence of characters as a Prolog term.  If the parse is
+unsuccessful, a syntax error occurs.  Thus, in the case of syntax
+errors, `read/1' disobeys the normal rule that predicates should detect
+and report errors before they perform any side-effects, because the
+side-effect of reading the characters has been done.
+
+   A syntax error does not necessarily cause an exception to be raised.
+The behavior can be controlled via a Prolog flag as follows:
+`prolog_flag(syntax_errors, quiet)'
+     When a syntax error is detected, nothing is printed, and `read/1'
+     just quietly fails.
+
+`prolog_flag(syntax_errors, dec10)'
+     This provides compatibility with DEC-10 Prolog and earlier versions
+     of Quintus Prolog:  when a syntax error is detected, a syntax
+     error message is printed on `user_error', and the `read' is
+     repeated.  This is the default for the sake of compatibility with
+     earlier releases.
+
+`prolog_flag(syntax_errors, fail)'
+     This provides compatibility with C Prolog.  When a syntax error is
+     detected, a syntax error message is printed on `user_error', and
+     the `read' then fails.
+
+`prolog_flag(syntax_errors, error)'
+     When a syntax error is detected, an exception is raised.
+
+
+File: quintus.info,  Node: ref-ere-err-res,  Next: ref-ere-err-sys,  Prev: ref-ere-err-syn,  Up: ref-ere-err
+
+Resource Errors
+...............
+
+   A resource error occurs when some resource runs out.  For example,
+you can run out of virtual memory, or you can exceed the operating
+system limit on the number of simultaneously open files.
+
+   Often a resource error arises because of a programming mistake:  for
+example, you may exceed the maximum number of open files because your
+program doesn't close files when it has finished with them.  Or, you
+may run out of virtual memory because you have a non-terminating
+recursion in your program.
+
+   The exception code for a resource error is
+     resource_error(GOAL, RESOURCE, MESSAGE)
+
+GOAL
+     A copy of the goal, or `0' if no goal was responsible; for example
+     there is no particular goal to blame if you run out of virtual
+     memory.
+
+RESOURCE
+     identifies the resource that was exhausted.
+
+     Some RESOURCEs recognized by the system include:
+        * `0' -- No resource specified
+
+        * `memory' -- out of memory
+
+        * `'too many open files''
+
+MESSAGE
+     an operating-system-specific message.  Usually it will be
+     `errno(ERRNO)'.
+
+
+File: quintus.info,  Node: ref-ere-err-sys,  Prev: ref-ere-err-res,  Up: ref-ere-err
+
+System Errors
+.............
+
+   System errors are problems that the operating system notices (or
+causes).  Note that many of the exception indications returned by the
+operating system (such as "file does not exist") are mapped to Prolog
+exceptions; it is only really unexpected things that show up as system
+errors.
+
+   The exception code for a system error is
+     system_error(MESSAGE)
+
+   where MESSAGE is not further specified.
+
+
+File: quintus.info,  Node: ref-ere-exa,  Next: ref-ere-ecr,  Prev: ref-ere-err,  Up: ref-ere
+
+An Example
+----------
+
+   Suppose you want a routine that is given a filename and a prompt
+string.  This routine is to open the file if it can; otherwise it is to
+prompt the user for a replacement name.  If the user enters an empty
+name, it is to fail.  Otherwise, it is to keep asking the user for a
+name until something works, and then it is to return the stream that
+was opened.  (There is no need to return the file name that was finally
+used.  We can get it from the stream.)
+
+     :- use_module(library(prompt), [
+             prompted_line/2
+        ]).
+     
+     open_output(FileName, Prompt, Stream) :-
+             on_exception(Error,
+                 open(FileName, write, Stream),
+                 (   file_error(Error) ->
+                     print_message(warning, Error),
+                     retry_open_output(Prompt, Stream)
+                 ;   raise_exception(Error)
+                 )).
+     
+     file_error(domain_error(open(_,_,_), 1, _, _, _)).
+     file_error(existence_error(open(_,_,_), 1, _, _, _)).
+     file_error(permission_error(open(_,_,_), _, _, _, _)).
+     
+     retry_open_output(Prompt, Stream) :-
+             prompted_line(Prompt, Chars),
+             atom_chars(FileName, Chars),
+             FileName \== '',
+             open_output(FileName, Prompt, Stream).
+
+   What this example does _not_ catch is as interesting as what it does.
+All instantiation errors, type errors, context errors, and range errors
+are re-raised, as they represent errors in the program.
+
+   As the previous example shows, you generally do not want to catch
+_all_ exceptions that a particular goal might raise.
+
+
+File: quintus.info,  Node: ref-ere-ecr,  Next: ref-ere-sum,  Prev: ref-ere-exa,  Up: ref-ere
+
+Exceptions and Critical Regions
+-------------------------------
+
+   The point of critical regions in your code is that sometimes you
+have data-base updates or other operations that, once started, must be
+completed in order to avoid an inconsistent state.  In particular, such
+operations should not be interrupted by a `^C' from the keyboard.
+
+   In releases of Quintus Prolog prior to release 3.0,
+`library(critical)' was provided to allow critical regions to be
+specified using the predicates `begin_critical/0' and `end_critical/0'.
+These predicates are still provided, but they should be regarded as
+obsolete since they do not interact well with exception handling.  An
+exception occurring in between the `begin_critical' and the
+`end_critical' could cause two problems:
+  1. the Prolog database could be left in an inconsistent state, and
+
+  2. the critical region would never be exited, so interrupts would be
+     left disabled indefinitely.
+
+   To avoid these problems, you should use the new predicates
+     critical(GOAL)
+     critical_on_exception(ERRORCODE, GOAL, HANDLER)
+
+   which `library(critical)' now provides.
+
+   `critical/1' runs the specified goal inside a critical region.  It
+solves (2)  by catching any exceptions that are raised and taking care
+to close the critical region before re-raising the exception.
+
+   `critical_on_exception/3' allows you to solve (1) by specifying
+appropriate clean-up actions in HANDLER.  If an exception occurs during
+GOAL, and the exception code unifies with ERRORCODE,
+`critical_on_exception/3' acts as if you had written
+     critical(HANDLER)
+
+   instead.  That is, the HANDLER will still be inside the critical
+region, and only the first solution it returns will be taken.
+
+   These forms also have the effect of committing to the first solution
+of GOAL.  Since the point of a critical region is to ensure that some
+operation with side-effects is completed, GOAL should be determinate
+anyway, so this should be no problem.
+
+
+File: quintus.info,  Node: ref-ere-sum,  Next: ref-ere-sli,  Prev: ref-ere-ecr,  Up: ref-ere
+
+Summary of Predicates and Functions
+-----------------------------------
+
+   * `critical/1'
+
+   * `critical_on_exception/3'
+
+   * `on_exception/3'
+
+   * `raise_exception/3'
+
+   * `QP_error_message()'
+
+   * `QP_exception_term()'
+
+   * `QP_perror()'
+
+   * `print_message/2'
+
+
+File: quintus.info,  Node: ref-ere-sli,  Prev: ref-ere-sum,  Up: ref-ere
+
+Summary of Relevant Libraries
+-----------------------------
+
+   * `critical'
+
+
+File: quintus.info,  Node: ref-msg,  Next: ref-mod,  Prev: ref-mgc,  Up: ref
+
+Messages
+========
+
+* Menu:
+
+* ref-msg-ove::                         Overview
+* ref-msg-tbm::                         Implementation: Term-Based Messages
+* ref-msg-umf::                         Examples of Using the Message Facility
+* ref-msg-ime::                         Internationalization of Quintus Prolog messages
+* ref-msg-sum::                         Summary of Predicates
+

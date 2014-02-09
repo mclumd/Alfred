@@ -1,0 +1,332 @@
+%   Subfile: filename.vms
+%   Author : Richard A. O'Keefe
+%   Updated: 29 Aug 1989
+%   Purpose: VAX/VMS file name parsing and unparsing.
+
+%   Copyright (C) 1989, Quintus Computer Systems, Inc.  All rights reserved.
+
+
+%-----------------------------------------------------------------------+
+%	Parsing VMS file names						|
+%-----------------------------------------------------------------------+
+
+/*  The VMS C run time system, and the DEC/Shell, accept a UNIX-like syntax
+    for VMS file-names.  In fact the DEC/Shell _has_ to, as VMS directories
+    look like Shell patterns.  Now DEC *could* have done it like this:
+	[[<host>.][<device>]!] [/] {<subdir>/} [<name>] [.<ext>] [.<ver>] 
+    and that would have been quite unambiguous.  Alas, that's not what DEC,
+    in their infinite wisdom, saw fit to do.  For example, they say
+	bin/today	-> [BIN]TODAY or [BIN.TODAY]
+    depending on whether or not the latter directory exists.  Now in my
+    scheme,
+	bin/today	-> [.BIN]TODAY
+    and to get the other interpretations you would write
+	/bin/today	-> [BIN]TODAY
+    or	/bin/today/	-> [BIN.TODAY]
+    Note that it is a *UNIX* convention that names ending with slashes
+    unambiguously designate directories (there is an implicit "." at the end).
+    (If you don't believe this, try "cat /etc/passwd/" some time.)
+
+    The example in the VAX-11 C manual is
+	BEATLE::DBA0:[MCCARTNEY]SONGS.LIS		(VMS style)
+	beatle!/dba0/mccartney/songs.lis		(DEC/Shell style)
+	beatle.dba0!/mccartney/songs.lis		(my style)
+    A relative file name would look like
+	BEATLE::DBA1:[.LENNON]RECORDS.CAT		(VMS style)
+	(( impossible ))				(DEC/Shell style)
+	beatle.dba1!lennon/records.cat			(my style)
+    Suppose you have a directory SYS$DISK:[USER.BLOODNOK.SCRIPT]
+    and also a file SYS$DISK:[USER.BLOODNOK]SCRIPT.  There is nothing at
+    all to prevent this.  Suppose that currently,
+	$ SET DEFAULT SYS$DISK:[USER.BLOODNOK]
+    to make the SCRIPT directory the default, you would do
+	vms(cd('[.SCRIPT]'))				(VMS style)
+	(* it's not easy folks *)			(DEC/Shell style)
+	vms(cd('script/'))				(my style)
+
+    I am strongly tempted to provide my Unix-like syntax as an option,
+    *BUT* this stuff may have to co-exist with customer-written C code
+    and/or with customer-written DEC/Shell scripts, so it would not be
+    a good idea for Prolog to use something different.  If any Unix-
+    like syntax were to be provided, it ought to be precisely what the
+    VMS customers are used to.  Unfortunately, not only is DEC/Shell
+    syntax ambiguous at run time (it cannot be parsed without reference
+    to the file system), the description in the manuals that I currently
+    have (which are a couple of releases out of date) is not at all
+    clear, so I really don't know exactly what is possible.  For example,
+    are dot and dot-dot allowed?  The answer is silence.
+
+    Therefore, this file accepts and generates ***ONLY*** VMS (DCL)
+    native file name syntax.
+
+    There is an inconsistency in the limits: it is claimed that a
+    logical device name can be up to 255 characters and that a device
+    name in a file string must be followed by a colon, yet it is also
+    claimed that a file name string can be at most 255 characters long
+    total.  I assume therefore that a device can be at most 254
+    characters long.
+
+    Here is my understanding of when a component of a VMS file name
+    might be subject to logical name translation:
+
+	translateable(file_name(Host,_,_,_,_,_,_), node(Node)) :-
+		(   atom(Host) -> Node = Host
+		;   Host = Node/_
+		).
+	translateable(file_name(-1,Device,_,_,_,_,_), device(Device)) :-
+		atom(Device).
+	translateable(file_name(-1,-1,-1,[],Name,-1,''), name(Name)) :-
+		atom(Name).
+
+    The actual VMS implementation of this file should put the characters
+    into a buffer and call SYS$PARSE on it; that way you can get the
+    real truth about whatever VMS currently thinks file names look like;
+    the trick of course is to handle the syntax errors.
+
+    One extra-special VMS-specific piece of hair is remote non-VMS file
+    specifications, which have the form
+	node["access string"]::"remote-file-spec"
+    I treat these as having Name={'remote-file-spec'}, and no version,
+    extension, or directory.  Note that you can supply a "foreign file
+    spec" on its own without a node; this is so that you can merge it
+    with another file name which supplies the node.  Case is preserved
+    in foreign-file-specs and access-control-strings, so that if the
+    foreign system preserves case it won't be lost.
+*/
+
+chars_to_file_word(host, Node) -->
+	vms_word(14, Chars),
+	(   """" -> vms_string(42, 0'", String)
+	;   { String = "" }
+	),
+	( "::" -> "" ; "" ),
+	{   atom(String) ->
+	    atom_chars(Node, Chars)
+	;   Node = Site/Access,
+	    atom_chars(Site, Chars),
+	    atom_chars(Access, String)
+	}.
+
+chars_to_file_word(device, Device) -->
+	vms_word(253, Chars),
+	( ":" -> "" | "" ),
+	{ atom_chars(Device, Chars) }.
+chars_to_file_word(name, Name) -->
+	vms_word(38, Chars),
+	{ atom_chars(Name, Chars) }.
+chars_to_file_word('type', Type) -->
+	( "." -> "" | "" ),		% allow and ignore a dot.
+	cms_rest_name(39, 3, Chars),
+	{ atom_chars(Type, Chars) }.
+
+
+chars_to_file_site(file_name(Host,Device,AbsRel,Directories,-1,-1,'')) -->
+	chars_to_file_name(file_name(Host,Device,AbsRel,Directories,_,_,_)).
+
+
+chars_to_file_name(file_name(Host,Device,AbsRel,Directories,
+			      Name,Extension,Version)) -->
+	vms_node(Host),	
+	vms_device(Device),
+	(   "[" -> vms_directory(AbsRel, Directories)
+	;   "<" -> vms_directory(AbsRel, Directories)
+	;   { AbsRel = -1, Directories = [] }
+	),
+	(   """" ->
+	    { Device = -1, AbsRel = -1, Directories = [] },
+	    { Name = {Remote}, Extension = -1, Version = '' },
+	    vms_string(250, 0'", Foreign),
+	    { atom_chars(Remote, Foreign) }
+	;   vms_word(38, Ns) -> { atom_chars(Name, Ns) }
+	; /* no name component */ { Name = -1 }
+	),
+	(   "." -> cms_rest_name(39, 3, Es), { atom_chars(Extension, Es) }
+	;   { Extension = -1 }
+	),
+	(   ";" -> vms_version(Version)
+	;   "." -> vms_version(Version)
+	;          { Version = '' }
+	).
+
+vms_node(Node) -->
+	vms_word(14, Chars),
+	(   """" -> vms_string(42, 0'", String)
+	;   { String = "" }
+	),
+	"::",
+	!,
+	{   atom(String) ->
+	    atom_chars(Node, Chars)
+	;   Node = Site/Access,
+	    atom_chars(Site, Chars),
+	    atom_chars(Access, String)
+	}.
+vms_node(-1) --> "".
+
+vms_device(Device) -->
+	vms_word(253, Chars), ":",
+	!,
+	{ atom_chars(Device, Chars) }.
+vms_device(-1) --> "".
+
+vms_word(N, [D|Ds]) -->
+	[C], { cms_char(C, 0, D) },
+	cms_rest_name(N, 3, Ds).
+
+vms_string(0, Q, [])     --> !, vms_string(Q).
+vms_string(N, Q, [Q|Cs]) --> [Q,Q], !, {M is N-1}, vms_string(M, Q, Cs).
+vms_string(_, Q, [])     --> [Q],   !.
+vms_string(N, Q, [C|Cs]) --> [C],      {M is N-1}, vms_string(M, Q, Cs).  
+
+vms_string(Q) --> [Q,Q], !, vms_string(Q).
+vms_string(Q) --> [Q],   !.
+vms_string(Q) --> [_],      vms_string(Q).
+
+vms_string([], Q) --> [Q].
+vms_string([Q|Cs], Q) --> !, [Q,Q], vms_string(Cs, Q).
+vms_string([C|Cs], Q) -->     [C] , vms_string(Cs, Q).
+
+vms_directory(AbsRel, Directories) -->
+	dashes(0, N),
+	(   "]" -> { AbsRel = N, Directories = [] }
+	;   ">" -> { AbsRel = N, Directories = [] }
+	;   "." -> { AbsRel = N }, vms_directory(Directories)
+	;   { N=:=0, AbsRel= -2 }, vms_directory(Directories)
+	).
+
+vms_dirs([], _) --> "]".
+vms_dirs([Dir|Dirs], C) --> [C], explode(Dir), vms_dirs(Dirs, 0'.).
+
+
+dashes(N0, N) --> "-", !, { N1 is N0+1 }, dashes(N1, N).
+dashes(N,  N) --> "".
+
+dashes(N) --> { N > 0 } -> "-", { M is N-1 }, dashes(M) ; "".
+
+vms_directory([Dir|Dirs]) -->
+	vms_subdir(Dir),
+	(   "." -> vms_directory(Dirs)
+	;   "]" -> { Dirs = [] }
+	;   ">" -> { Dirs = [] }
+	).
+
+vms_subdir(Dir) -->
+	vms_word(38, Chars),
+	{ atom_chars(Dir, Chars) }.
+
+vms_version(Version) --> "-", !, digits(0, N), { Version is -N }.
+vms_version(Version) -->         digits(0, Version).
+
+digits(N0, N) --> [C], { C >= "0", C =< "9" }, !,
+		  { N1 is N0*10-"0"+C }, digits(N1, N).
+digits(N, N) --> "".
+
+normalise_subdirs([], []).
+normalise_subdirs([Dir|Dirs], [Norm|Norms]) :-
+	atom_chars(Dir, Chars),
+	vms_subdir(Norm, Chars, ""),
+	normalise_subdirs(Dirs, Norms).
+
+
+file_name_to_chars(file_name(Host,Device,AbsRel,Directories,
+			Name,Extension,Version)) -->
+	(   { Host = Site/Access } ->
+	    explode(Site), { atom_chars(Access, String) },
+	    """", vms_string(String, 0'"), "::"
+	;   { atom(Host) } ->
+	    explode(Host), "::"
+	;   ""
+	),
+	(   { atom(Device) } -> explode(Device), ":"
+	;   ""
+	),
+	(   { AbsRel >= 0 } -> "[", dashes(AbsRel), vms_dirs(Directories, 0'.)
+	;   { AbsRel < -1 } -> vms_dirs(Directories, 0'[)
+	;   ""
+	),
+	(   { atom(Name) } -> explode(Name)
+	;   { integer(Name) } -> ""
+	;   { Name = {Remote}, atom_chars(Remote, Foreign) },
+	    """", vms_string(Foreign, 0'")
+	),
+	(   { atom(Extension) } -> ".", explode(Extension)
+	;   ""
+	),
+	(   { integer(Version) } -> ";", explode(Version)
+	;   ""
+	).
+
+
+%   cms_char(Character, Class, UpperCase)
+%   The Classes are
+%   0	Letter.    Can be used as a minidisc name (file mode letter)
+%   1	National.  Is a letter, but can't be used as a minidisc.
+%   2	Digit.	   Can appear in user names, subdirectories, &c.
+%   3	Extra.	   Can appear in file name and type, not elsewhere.
+
+cms_char(0'A, 0, 0'A).
+cms_char(0'B, 0, 0'B).
+cms_char(0'C, 0, 0'C).
+cms_char(0'D, 0, 0'D).
+cms_char(0'E, 0, 0'E).
+cms_char(0'F, 0, 0'F).
+cms_char(0'G, 0, 0'G).
+cms_char(0'H, 0, 0'H).
+cms_char(0'I, 0, 0'I).
+cms_char(0'J, 0, 0'J).
+cms_char(0'K, 0, 0'K).
+cms_char(0'L, 0, 0'L).
+cms_char(0'M, 0, 0'M).
+cms_char(0'N, 0, 0'N).
+cms_char(0'O, 0, 0'O).
+cms_char(0'P, 0, 0'P).
+cms_char(0'Q, 0, 0'Q).
+cms_char(0'R, 0, 0'R).
+cms_char(0'S, 0, 0'S).
+cms_char(0'T, 0, 0'T).
+cms_char(0'U, 0, 0'U).
+cms_char(0'V, 0, 0'V).
+cms_char(0'W, 0, 0'W).
+cms_char(0'X, 0, 0'X).
+cms_char(0'Y, 0, 0'Y).
+cms_char(0'Z, 0, 0'Z).
+cms_char(0'a, 0, 0'A).
+cms_char(0'b, 0, 0'B).
+cms_char(0'c, 0, 0'C).
+cms_char(0'd, 0, 0'D).
+cms_char(0'e, 0, 0'E).
+cms_char(0'f, 0, 0'F).
+cms_char(0'g, 0, 0'G).
+cms_char(0'h, 0, 0'H).
+cms_char(0'i, 0, 0'I).
+cms_char(0'j, 0, 0'J).
+cms_char(0'k, 0, 0'K).
+cms_char(0'l, 0, 0'L).
+cms_char(0'm, 0, 0'M).
+cms_char(0'n, 0, 0'N).
+cms_char(0'o, 0, 0'O).
+cms_char(0'p, 0, 0'P).
+cms_char(0'q, 0, 0'Q).
+cms_char(0'r, 0, 0'R).
+cms_char(0's, 0, 0'S).
+cms_char(0't, 0, 0'T).
+cms_char(0'u, 0, 0'U).
+cms_char(0'v, 0, 0'V).
+cms_char(0'w, 0, 0'W).
+cms_char(0'x, 0, 0'X).
+cms_char(0'y, 0, 0'Y).
+cms_char(0'z, 0, 0'Z).
+cms_char(0'$, 1, 0'$).
+cms_char(0'-, 1, 0'#).
+cms_char(0'_, 1, 0'@).
+cms_char(0'0, 2, 0'0).
+cms_char(0'1, 2, 0'1).
+cms_char(0'2, 2, 0'2).
+cms_char(0'3, 2, 0'3).
+cms_char(0'4, 2, 0'4).
+cms_char(0'5, 2, 0'5).
+cms_char(0'6, 2, 0'6).
+cms_char(0'7, 2, 0'7).
+cms_char(0'8, 2, 0'8).
+cms_char(0'9, 2, 0'9).
+

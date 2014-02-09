@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>&lt;/2</code>, <code>=:=/2</code>, <code>=&lt;/2</code>, <code>=\=/2</code>, <code>&gt;/2</code>, <code>&gt;=/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><var>+Expr1</var> <code>&lt;</code> <var>+Expr2</var>
+
+   <p>Evaluates <var>Expr1</var> and <var>Expr2</var> as arithmetic expressions. 
+The goal succeeds if the result of evaluating <var>Expr1</var> is strictly
+<em>less than</em> the result of evaluating <var>Expr2</var>.
+
+   <p><var>+Expr1</var> <code>=:=</code> <var>+Expr2</var>
+
+   <p>Succeeds if the results of evaluating <var>Expr1</var> and
+<var>Expr2</var> <em>are equal</em>.
+
+   <p><var>+Expr1</var> <code>=&lt;</code> <var>+Expr2</var>
+
+   <p>Succeeds if the result of evaluating <var>Expr1</var> is <em>less
+than or equal</em> to the result of evaluating <var>Expr2</var>.
+
+   <p><var>+Expr1</var> <code>=\=</code> <var>+Expr2</var>
+
+   <p>Succeeds if the results of evaluating <var>Expr1</var> and
+<var>Expr2</var> are <em>not equal</em>.
+
+   <p><var>+Expr1</var> <code>&gt;</code> <var>+Expr2</var>
+
+   <p>Succeeds if the result of evaluating <var>Expr1</var> is strictly
+<em>greater than</em> the result of evaluating <var>Expr2</var>.
+
+   <p><var>+Expr1</var> <code>&gt;=</code> <var>+Expr2</var>
+
+   <p>Succeeds if the result of evaluating <var>Expr1</var> is <em>greater
+than or equal to</em> the result of evaluating <var>Expr2</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Expr1</var> <dfn>expr</dfn>
+     <dd>Arithmetic expression
+
+     <br><dt><var>Expr2</var> <dfn>expr</dfn>
+     <dd>Arithmetic expression
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>All of these predicates evaluate
+<var>Expr1</var> and <var>Expr2</var> as arithmetic expressions and
+compare the results.
+
+   <p>The possible values for <var>Expr</var> are
+spelled out in detail in <a href="ref-ari-aex.html#ref-ari-aex">ref-ari-aex</a>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+
+     <br><dt><code>type_error</code>
+     <dd>
+
+     <br><dt><code>representation_error</code>
+     <dd>
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>Expr1</var> or <var>Expr2</var> does not evaluate to a number.
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     | ?- <kbd>23 + 2.2  &lt;  23 - 2.2.</kbd>
+     
+     yes
+     | ?- <kbd>X = 31, Y = 25, X + Y  &lt;  X - Y</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>1.0 + 1.0 =:= 2.</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>"a" =:= 97.</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>42 =&lt; 42.</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>"b" =&lt; "a".</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>7 =\= 14/2.</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>7 =\= 15/2.</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>"g" &gt; "g".</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>4*2 &gt; 15/2.</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>42 &gt;= 42.</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>"b" &gt;= "a".</kbd>
+     
+     yes
+     </pre>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>Note that the symbol <code>=&lt;</code> is used here
+rather than <code>&lt;=</code>, which is used in some other languages.  One way to
+remember this is that the inequality symbols in Prolog are the ones
+that cannot be thought of as looking like arrows.  The <code>&lt;</code> or <code>&gt;</code>
+always points at the <code>=</code>.
+
+<h4 class="subheading">See Also</h4>
+
+   <a href="ref-ari.html#ref-ari">ref-ari</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-assert.html#mpg-ref-assert">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-arg.html#mpg-ref-arg">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

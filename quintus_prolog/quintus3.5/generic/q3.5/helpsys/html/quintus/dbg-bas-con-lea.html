@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Leashing</h5>
+
+   <p>The purpose of leashing is to allow you to speed up single-stepping
+(creeping) through a program by telling the debugger that it does not
+always need to wait for user interaction at every port.
+
+   <p>The leashing mode only applies to procedures that do not have spypoints
+on them, and it determines which ports of such procedures are leashed.  By
+default, all ports are leashed.  On arrival at a leashed port, the
+debugger will stop to allow you to look at the execution state and decide
+what to do next.  At unleashed ports, the goal is displayed but program
+execution does not stop to allow user interaction.
+
+   <p>At any time, there is a <dfn>leashing</dfn> mode in force, which determines at
+which of the seven ports of a procedure box (Call, Exit, Redo, Fail,
+Done, Head, and Exception) the debugger will stop and wait for a
+command.  By default, the debugger will stop at every port, but
+sometimes you may wish to reduce the number of times you have to issue
+commands.  For example, it is often convenient only to have to interact
+at the Call, Redo, and Exception ports.
+
+   <p>To set the leashing mode, that is, to specify ports for leashing, call
+<code>leash/1</code>.  The leashing mode can also be set from the options menu
+of the source linked debugger (see <a href="dbg-sld.html#dbg-sld">dbg-sld</a>).
+
+   <blockquote>
+
+        <p><strong>Please note:</strong>  Spypoints are not affected by leashing; the debugger will always
+stop at every port for a procedure or call on which there is a spypoint. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-bas-con-loc.html#dbg-bas-con-loc">Next</a>
+<li><a rel="previous" accesskey="p" href="dbg-bas-con-tdz.html#dbg-bas-con-tdz">Previous</a>
+<li><a rel="up" accesskey="u" href="dbg-bas-con.html#dbg-bas-con">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_next_solution()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_next_solution(qid)
+     QP_qid qid;
+     </pre>
+
+   <p>Returns the next solution (if any) from an open nondeterminate Prolog query.
+
+<h4 class="subheading">Description</h4>
+
+   <p>Solutions are computed on demand, and multiple solutions are returned
+in the normal Prolog order.  <code>QP_next_solution()</code> is passed the
+<code>QP_qid</code> returned by <code>QP_open_query()</code> when the nondeterminate query
+was opened.  No additional input or output parameters are passed:
+after a call to <code>QP_open_query()</code>, Prolog manages inputs itself, and
+has been told where storage for outputs has been reserved.
+
+   <p>Each time <code>QP_next_solution()</code> computes a new solution it writes it on
+the output storage for the foreign function to use as it likes.  Each
+new solution overwrites the old memory, destroying the previous
+solution, so it is important that the foreign function copies
+solutions elsewhere if it wants to accumulate them.
+
+<h4 class="subheading">Comment</h4>
+
+   <p>An important restriction: only the innermost,
+i.e. the most recent, open query can be asked to compute a solution. 
+A new nondeterminate query can be made at any point whether or not
+other queries are open; however, while the new query remains open only
+it will be able to return solutions.  Of course, determinate queries
+can be made at any time.
+
+<h4 class="subheading">Return Values</h4>
+
+     <dl>
+
+     <br><dt><code>QP_SUCCESS</code>
+     <dd>Solution found
+
+     <br><dt><code>QP_FAILURE</code>
+     <dd>No solution found
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_cut_query()</code>, <code>QP_close_query()</code>,
+<code>QP_query()</code>, <code>QP_open_query()</code>, <code>QP_pred()</code>, <code>QP_predicate()</code>,
+
+   <a href="fli-ffp.html#fli-ffp">fli-ffp</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-open_query.html#cfu-ref-open_query">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-newln.html#cfu-ref-newln">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

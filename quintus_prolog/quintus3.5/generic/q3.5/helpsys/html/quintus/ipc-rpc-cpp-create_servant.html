@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>QP_ipc_create_servant()</code></h5>
+
+<pre class="example">     int QP_ipc_create_servant(<var>host, QP_save_state, QP_outfile</var>)
+         char *<var>host</var>, *<var>QP_save_state</var>, *<var>QP_outfile</var>;
+     </pre>
+
+   <p><var>host</var> is the name of the machine on which the Prolog servant is
+to run.  If <var>host</var> is the string <code>"local"</code>, then the servant
+is run on the same machine as the master.  If <var>host</var> is the empty
+string <code>""</code>, the servant is run on the local machine but pipes
+are used for the interprocess communication rather than sockets, which
+are used otherwise.
+
+   <p><var>QP_save_state</var> is the name of
+a file containing
+a Prolog saved state that was created by <code>save_ipc_servant/1</code>.  This
+saved state must contain the definitions of the predicates to be called and
+the <code>external/3</code> facts that specify the interface. 
+If <var>QP_save_state</var> is not an absolute filename, it will be sought,
+on the specified machine, in
+the sequence of directories specified by your <code>PATH</code> environment variable. 
+If this search fails, the current working directory will be tried, if it exists
+on that machine.
+
+   <p><var>QP_outfile</var> is the name of the file to which to route the Prolog
+servant's output (<code>stdout</code> and <code>stderr</code>).  If <var>QP_outfile</var> is the string
+<code>"user"</code>, then the servant's output is routed to the C program's <code>stdout</code>.  If
+it is the empty string <code>""</code>, the servant's <code>stdout</code> stream is discarded, and its
+<code>stderr</code> stream is routed to the master's <code>stderr</code>.
+
+   <p>This routine returns the file descriptor of the connecting socket if the
+connection was made successfully and -1 if not.  This routine starts the Prolog
+servant and may take several seconds to complete.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-cpp-lookup.html#ipc-rpc-cpp-lookup">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc-cpp-csi.html#ipc-rpc-cpp-csi">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc-cpp.html#ipc-rpc-cpp">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>no_style_check/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>no_style_check(</code><var>+Type</var><code>)</code>
+
+   <p>Turns off the specified <var>Type</var> of compile-time style checking.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Type</var>
+     <dd>is one of the following atoms:
+          <dl>
+
+          <br><dt><code>all</code>
+          <dd>Turn off all style checking.
+
+          <br><dt><code>single_var</code>
+          <dd>Turn off checking for clauses containing a single
+                   instance of a named variable, where variables that
+                   start with a <code>_</code> are not considered named.
+
+          <br><dt><code>discontiguous</code>
+          <dd>Turn off checking for procedures whose clauses
+                    are not all adjacent to one another in the file.
+
+          <br><dt><code>multiple</code>
+          <dd>Turn off checking for multiple definitions of
+the same procedure in different files. 
+</dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The normal use of this predicate is as an embedded command in a file
+that has not been written to follow the recommended style conventions
+(see <a href="bas-lod-sty.html#bas-lod-sty">bas-lod-sty</a>).  For example, you could put
+<pre class="example">     :- no_style_check(discontiguous).
+     </pre>
+
+   <p>at the beginning of a file and
+<pre class="example">     :- style_check(discontiguous).
+     </pre>
+
+   <p>at the end of the file.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>Type</var> is not bound.
+
+     <br><dt><code>type_error</code>
+     <dd>
+<var>Type</var> is not an atom.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>Type</var> is not a valid type of style checking.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>style_check/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-nocheck_advice.html#mpg-ref-nocheck_advice">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-nl.html#mpg-ref-nl">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

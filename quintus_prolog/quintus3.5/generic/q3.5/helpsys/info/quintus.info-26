@@ -1,0 +1,1299 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: lib-tma-changearg,  Next: lib-tma-occurs,  Prev: lib-tma-arg,  Up: lib-tma
+
+Altering Term Arguments -- `library(changearg)'
+-----------------------------------------------
+
+   The predicates in `library(changearg)' allow you to construct a new
+term that is identical to an old term except that one of its elements
+has been replaced or two of its elements have been swapped.  Using
+these operations, you could use terms as one-dimensional arrays;
+however, though the elements of such arrays can be accessed in O(1)
+time using `arg/3', changing an element takes O(N) time, where N is the
+arity of the term.  See `library(logarr)' for a more efficient way of
+implementing arrays in Prolog.
+
+   Why then are these operations provided?  To aid in the construction
+of term-rewriting systems.  For example, suppose you have a set of
+rewrite rules expressed as a table
+     rewrite_rule(X*0, 0).
+     rewrite_rule(X*1, X).
+     rewrite_rule(K*X, X*K) :- integer(K).
+     rewrite_rule(X*(Y*Z), (X*Y)*Z).
+        .
+        .
+        .
+
+   which you want exhaustively applied to a term.  You could write
+     waterfall(Expr, Final) :-
+             path_arg(Path, Expr, Lhs),
+             rewrite_rule(Lhs, Rhs),
+             change_path_arg(Path, Expr, Modified, Rhs),
+             !,
+             waterfall(Modified, Final).
+     waterfall(Expr, Expr).
+
+   Then
+     | ?- waterfall((a*b)*(c*0)*d, X).
+     
+     X = 0
+     
+     | ?- waterfall((1*a)*(2*b), X).
+     
+     X = a*2*b
+
+   The predicates supplied by `library(changearg)' are as follows:
+`change_arg(+INDEX, ?OLDTERM, ?OLDARG, ?NEWTERM, ?NEWARG)'
+     is true when OLDTERM and NEWTERM are identical except that the
+     INDEXth argument of OLDTERM is OLDARG and the INDEXth argument of
+     NEWTERM is NEWARG.  Either OLDTERM or NEWTERM should be supplied;
+     the other term can then be found.  `change_arg/5' is actually
+     quite symmetric:
+          change_arg(K, O, X, N, Y)
+
+     and
+          change_arg(K, N, Y, O, X)
+
+     have exactly the same effect.  For example:
+          | ?- change_arg(1, c(o,l,t), X, N, u).
+          
+          X = o,
+          N = c(u,l,t)
+          
+          | ?- change_arg(1, N, u, c(o,l,t), X).
+          
+          N = c(u,l,t),
+          X = o
+
+          | ?- change_arg(3, SALE, E, s(a,l,t), T).
+          
+          SALE = s(a,l,E),
+          E = _755,
+          T = t
+          
+          | ?- change_arg(3, a+b, b, X, c).
+          
+          no
+
+`change_arg(+INDEX, ?OLDTERM, ?NEWTERM, ?NEWARG)'
+     is identical to `change_arg/5' except that the OLDARG argument is
+     omitted.  *Please note:*  this argument order may be surprising if
+     you think about this predicate on its own; however, it makes sense
+     in the context of the entire group.
+
+`change_arg0/[4,5]'
+     like `change_arg/[4,5]' except that INDEX=0 is allowed, in which
+     case the principal function symbol is changed.  Do not use this in
+     new programs; use `change_arg/5' or `change_functor/5' directly.
+     The order in which values for INDEX are enumerated is _not
+     defined_.
+
+`change_functor(?OLDTERM, ?OLDSYMBOL, ?NEWTERM, ?NEWSYMBOL, ?ARITY)'
+     is true when OLDTERM and NEWTERM are identical terms, except that
+     the functor of OLDTERM is OLDSYMBOL/ARITY, and the functor of
+     NEWTERM is NEWSYMBOL/ARITY.  This is similar to `same_functor/3'
+     in some respects (*Note lib-tma-samefunctor::), such as the fact
+     that any of the arguments can be solved for.  If OLDTERM and
+     NEWSYMBOL are instantiated, or NEWTERM and OLDSYMBOL are
+     instantiated, or NEWSYMBOL, OLDSYMBOL, and ARITY are instantiated,
+     that is enough information to proceed.  Note that OLDSYMBOL or
+     NEWSYMBOL may be a number, in which case ARITY must be 0.
+
+`swap_args(+INDEX1, +INDEX2, ?OLDTERM, ?ARG1, ?NEWTERM, ?ARG2)'
+     is true when OLDTERM and NEWTERM are identical except that
+
+                           at Index1       at Index2
+          in OldTerm          Arg1            Arg2
+          in NewTerm          Arg2            Arg1
+
+     that is, the arguments at INDEX1 and INDEX2 have been swapped.  As
+     with `change_arg/5', `swap_args/6' is symmetric; the following
+     terms have exactly the same effect.
+          swap_args(I, J, O, X, N, Y)
+          
+          swap_args(I, J, N, Y, O, X)
+
+     For example:
+          | ?- swap_args(1, 4, f(X,e,a,Y,e,r), r, T, d).
+          
+          X = r,
+          Y = d,
+          T = f(d,e,a,r,e,r)
+
+`swap_args(+INDEX1, +INDEX2, ?OLDTERM, ?NEWTERM)'
+     is identical to `swap_args/6' except that the ARG1 and ARG2
+     arguments are omitted.
+          | ?- swap_args(1, 4, f(r,e,a,d), X).
+          
+          X = f(d,e,a,r)
+
+`change_path_arg(+PATH, ?OLDTERM, ?OLDSUB, ?NEWTERM, ?NEWSUB)'
+     is true when OLDTERM and NEWTERM are identical terms except that
+          path_arg(PATH, OLDTERM, OLDSUB),
+          path_arg(PATH, NEWTERM, NEWSUB)
+
+     That is, the subterm of OLDTERM at PATH was OLDSUB and is replaced
+     by NEWSUB in NEWTERM, and there are no other differences between
+     OLDTERM and NEWTERM.  This is to `change_arg/5' as `path_arg/3' is
+     to `arg/3'.
+
+`change_path_arg(+PATH, ?OLDTERM, ?NEWTERM, ?NEWSUB)'
+     is identical to `change_path_arg/5' except that the OLDSUB
+     argument is omitted.
+          | ?- OldTerm = this*is+an*example,
+          |    path_arg(Path, OldTerm, this),
+          |    change_path_arg(Path, OldTerm, NewTerm, it).
+          
+          OldTerm = this*is+an*example,
+          Path = [1,1],
+          NewTerm = it*is+an*example
+
+
+File: quintus.info,  Node: lib-tma-occurs,  Next: lib-tma-aor,  Prev: lib-tma-changearg,  Up: lib-tma
+
+Checking Terms for Subterms -- `library(occurs)'
+------------------------------------------------
+
+   The predicates in `library(occurs)' test whether a given term is a
+subterm of another or not.  We define a subterm thus:
+   * T is a subterm of T
+
+   * S is a subterm of T if A is an argument of T and S is a subterm of
+     A
+
+   A "proper" subterm of a term T would be any subterm of T other than
+T itself.  There are no library predicates concerned with the "proper
+subterm" relationship, only the "subterm" relationship.
+
+   There are two questions we might ask:
+   * does S unify with (is it `=' to) some subterm of T?  The
+     predicates that ask this question have `_term' in their names.
+
+   * is S identical to (is it `==' to) some subterm of T?  The
+     predicates that ask this question have `_var' in their names.
+
+
+   When the predicates are applied to ground terms, both questions have
+the same answers.
+
+   Seven predicates are defined by `library(occurs)':
+`contains_term(+SUBTERM, +TERM)'
+     is true when TERM contains a subterm that unifies with (`=')
+     SUBTERM.
+
+`contains_var(+SUBTERM, +TERM)'
+     is true when TERM contains a subterm that is identical to (`==')
+     SUBTERM.  The reason for the name is that this predicate is
+     normally used to check whether TERM contains a particular
+     _variable_ SUBTERM.  But `contains_var/2' makes sense even when
+     SUBTERM is not a variable.  In fact, if TERM and SUBTERM are both
+     ground, `contains_term/2' and `contains_var/2' are the same test.
+
+`free_of_term(+SUBTERM, +TERM)'
+     is true when TERM does _not_ contain a subterm that unifies with
+     (`=') SUBTERM.
+
+`free_of_var(+SUBTERM, +TERM)'
+     is true when TERM does _not_ contain a subterm that is identical
+     to (`==') SUBTERM.  This is the "occur check", which is needed for
+     sound unification:  a variable X should unify with a non-variable
+     term T only if `free_of_var(X, T)'.  See `library(unify)' (*Note
+     lib-tma-unify::) for an example of the use of this predicate.
+
+`occurrences_of_term(+SUBTERM, +TERM, ?TALLY)'
+     unifies TALLY with the number of subterms of TERM that unify with
+     (`=') SUBTERM.
+
+`occurrences_of_var(+SUBTERM, +TERM, ?TALLY)'
+     unifies TALLY with the number of subterms of TERM that are
+     identical to (`==') SUBTERM.
+
+`sub_term(-SUBTERM, +TERM)'
+     enumerates the SUBTERMs of TERM.  The order in that the subterms
+     are enumerated is not fully defined, though each subterm will be
+     reported before any of its own subterms.  Be careful:  terms tend
+     to have _lots_ of subterms.
+          | ?- sub_term(X, (a+b)*(c+d)), tab(8),
+          write(X), nl, fail.
+          
+                  (a+b)*(c+d)
+                  c+d
+                  d
+                  c
+                  a+b
+                  b
+                  a
+          no
+
+     The order in which these terms are generated is subject to change,
+     and should not be relied upon.
+
+
+File: quintus.info,  Node: lib-tma-aor,  Next: lib-tma-samefunctor,  Prev: lib-tma-occurs,  Up: lib-tma
+
+Note on Argument Order
+----------------------
+
+   All the predicates in `library(occurs)' have the same argument
+pattern:
+     {PREFIX}_{term|var}(SUBTERM, TERM[, EXTRA])
+
+   where EXTRA includes any other arguments.  Why does the SUBTERM
+argument appear first?  The answer involves `library(call)' and
+`library(maplist)'.  Here are some of the things you can do with the
+arguments this way around:
+
+     terms_containing_term(SubTerm, Terms, Selected) :-
+             include(contains_term(SubTerm), Terms, Selected).
+         %   if member(Term, Terms), then Term will be included in
+         %   Selected iff contains_term(SubTerm, Term) succeeds.
+     
+     terms_free_of_var(SubTerm, Terms, Selected) :-
+             exclude(contains_var(SubTerm), Terms, Selected).
+         %   if member(Term, Terms), then Term will be included in
+         %   Selected iff contains_var(SubTerm, Term) fails.
+     
+     tallies_of_term(SubTerm, Terms, Tallies) :-
+             maplist(occurrences_of_term(SubTerm), Terms, Tallies).
+         %   if nth1(N, Terms, Term), then nth1(N, Tally, Tallies)
+         %   where occurrences_of_term(SubTerm, Term, Tally).
+
+   The same argument order is used for `sub_term/2' even though it is
+not used in this way, in order to preserve consistency.
+
+
+File: quintus.info,  Node: lib-tma-samefunctor,  Next: lib-tma-subsumes,  Prev: lib-tma-aor,  Up: lib-tma
+
+Checking Functors -- `library(samefunctor)'
+-------------------------------------------
+
+   This library package is supplied to solve the following problem:
+often you could write code that works more than one way around except
+that this requires calling `functor/3' twice, and one of the calls must
+therefore precede the other.  For example,
+     reverse_terms(Term1, Term2) :-
+             functor(Term1, F, N),   % ***
+             functor(Term2, F, N),   % ***
+             reverse_terms(N, 1, Term1, Term2).
+     
+     reverse_terms(0, _, _, _) :- !.
+     reverse_terms(Z, A, Term1, Term2) :-
+             arg(Z, Term1, Arg),
+             arg(A, Term2, Arg),
+             Y is Z-1, B is A+1,
+             reverse_terms(Y, B, Term1, Term2).
+
+   As written, this can only be used to find TERM2 given TERM1.  If you
+swapped the two *** lines, you could find TERM1 given TERM2, but then
+could not find TERM2 given TERM1.  You can make a bidirectional version
+of `reverse_terms/2' by using the predicate `same_functor/3' in place
+of the *** lines:
+
+     reverse_terms(Term1, Term2) :-
+             same_functor(Term1, Term2, N),  % ***
+             reverse_terms(N, 1, Term1, Term2).
+
+   `library(samefunctor)' defines the following predicates:
+
+`same_functor(?TERM1, ?TERM2, ?SYMBOL, ?ARITY)'
+     is true when TERM1 and TERM2 have the same principal functor, the
+     function symbol being SYMBOL and the arity being ARITY.  In other
+     words,
+          same_functor(T1, T2, F, N) if
+                  functor(T1, F, N) and
+                  functor(T2, F, N) are both true.
+
+     Either TERM1, or TERM2, or _both_ SYMBOL and ARITY should be
+     instantiated.  This is the most general variant.
+
+`same_functor(?TERM1, ?TERM2, ?ARITY)'
+     is true when TERM1 and TERM2 have the same principal functor, and
+     ARITY is their common arity.  Either TERM1 or TERM2 should be
+     instantiated, and the other arguments can then be found.  Often,
+     `same_functor/3' is appropriate and the greater generality of
+     `same_functor/4' is not needed.
+
+`same_functor(?TERM1, ?TERM2)'
+     is true when TERM1 and TERM2 have the same principal functor.
+     Either TERM1 or TERM2 should be instantiated, and the other
+     argument can then be found.
+
+   Note that `same_functor/4' has the same argument order as
+`functor/3' except that it has _two_ "term" arguments at the front.
+Whenever a predicate's arguments include a functor specification
+expressed as two arguments, the function symbol and its arity, those
+two arguments should always be adjacent, with the function symbol first
+and the arity immediately following.  `functor/3' and `same_functor/4'
+obey this rule.
+
+
+File: quintus.info,  Node: lib-tma-subsumes,  Next: lib-tma-unify,  Prev: lib-tma-samefunctor,  Up: lib-tma
+
+Term Subsumption -- `library(subsumes)'
+---------------------------------------
+
+   Term subsumption is a sort of one-way unification.  Recall that
+terms S and T unify if they have a common instance, and that
+unification in Prolog instantiates both terms to that common instance.
+S subsumes T if T is already an instance of S.  For our purposes, T is
+an "instance" of S if there is a substitution that leaves T unchanged
+and makes S identical to T.
+
+   Two terms are "alphabetic variants" if they are identical except for
+variable names, and all common variables appear in corresponding
+positions.  For example,
+
+     `f(X,Y,X)'  and  `f(X,Z,X)' are alphabetic variants;
+     `f(X,Y,X)'  and  `f(Y,X,Y)' are not;
+     `f(X,Y,X)'  and  `f(X,Y,Y)' are not;
+     `f(X,Y,X)'  and  `f(Z,V,Z)' are
+
+   This file used to define `subsumes_chk/2', but this is now a built-in
+predicate:
+`subsumes_chk(+GENERAL, +SPECIFIC)'
+     is true when GENERAL subsumes SPECIFIC; that is, when SPECIFIC is
+     already an instance of GENERAL.  It does not bind any variables in
+     GENERAL or in SPECIFIC.
+
+   There are currently two predicates in this file:
+`subsumes(?GENERAL, +SPECIFIC)'
+     is true when GENERAL subsumes SPECIFIC, and instantiates GENERAL
+     so that it becomes identical to SPECIFIC.  It does not further
+     instantiate SPECIFIC.
+
+`variant(?TERM1, ?TERM2)'
+     is true when TERM1 and TERM2 are alphabetic variants.  That is,
+     `variant(TERM1, TERM2)' holds precisely when `subsumes_chk(TERM1,
+     TERM2)' and `subsumes_chk(TERM2, TERM1)' both hold.
+
+
+File: quintus.info,  Node: lib-tma-unify,  Next: lib-tma-termdepth,  Prev: lib-tma-subsumes,  Up: lib-tma
+
+Unification -- `library(unify)'
+-------------------------------
+
+   This file defines only one predicate.
+
+`unify(?TERM1, ?TERM2)'
+     is true when TERM1 unifies with TERM2.  The only difference between
+     this predicate and the built-in predicate `TERM1 = TERM2' is that
+     `unify/2' applies the "occur check" and the built-in predicate
+     `=/2' does not.  This means that according to ordinary logic, a
+     variable X should _not_ unify with a term containing X.  `unify/2'
+     does this correctly and `=/2' does not.  Thus
+
+          | ?- unify(X, [X]).
+          
+          no
+          
+          | ?- X = [X].
+          
+          X = [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[...
+
+     Whenever `unify(X, Y)' succeeds, `X `=' Y' would have succeeded and
+     made the same variable bindings.
+
+
+File: quintus.info,  Node: lib-tma-termdepth,  Prev: lib-tma-unify,  Up: lib-tma
+
+`library(termdepth)'
+--------------------
+
+   Many resolution-based theorem provers impose a depth bound on the
+terms they create.  Not the least of the reasons for this is to prevent
+infinite loops.  `library(termdepth)' provides five predicates:
+`term_depth(+TERM, -DEPTH)'
+     DEPTH is unified with the depth of TERM, calculated according to
+     the following definition:
+          term_depth(Var) = 0
+          term_depth(Const) = 0
+          term_depth(F(T1,...,Tn)) =
+              1 + max(term_depth(T1), ..., term_depth(Tn))
+
+`depth_bound(+TERM, +BOUND)'
+     This succeeds when the depth of TERM, as calculated by
+     `term_depth/2', is less than or equal to BOUND.  BOUND is assumed
+     to be a strictly positive integer.  Note that `depth_bound/2' will
+     terminate even if TERM is cyclic.
+
+`term_size(+TERM, -SIZE)'
+     Unify SIZE with the size of TERM, where the size is the number of
+     constants and function symbols in the term.  (Note that this is a
+     lower bound on the size of any term instantiated from TERM, and
+     that instantiating any variable to a non-variable must increase
+     the size.  This latter property is why  variables are counted as 0
+     rather than as 1.)  The definition is
+          term_size(Var) = 0
+          term_size(Const) = 1
+          term_size(F(T1,...,Tn)) =
+              1 + term_size(T1) + ... + term_size(Tn).
+
+`size_bound(+TERM, +BOUND)'
+     This succeeds when the size of TERM, as calculated by
+     `term_size/2', is less than or equal to BOUND.  BOUND is assumed
+     to be a non-negative integer.  Note that `size_bound/2' will
+     always terminate even if TERM is cyclic.
+
+`length_bound(+LIST, +BOUND)'
+     is true when LIST is a list having at most BOUND elements.  BOUND
+     must be instantiated.  If LIST ends with a variable, it will be
+     instantiated to successively longer proper lists, up to the length
+     permitted by BOUND.  Note that the depth of a list of constants is
+     its length.
+
+
+File: quintus.info,  Node: lib-txp,  Next: lib-xml,  Prev: lib-tma,  Up: lib
+
+Text Processing
+===============
+
+* Menu:
+
+* lib-txp-bas::                         Introduction --- library(strings)
+* lib-txp-typ::                         Type Testing
+* lib-txp-c2c::                         Converting Between Constants and Characters
+* lib-txp-cto::                         Comparing Text Objects
+* lib-txp-con::                         Concatenation
+* lib-txp-lct::                         Finding the Length and Contents of a Text Object
+* lib-txp-printlength::                 Finding the width of a term --- library(printlength)
+* lib-txp-sub::                         Finding and Extracting Substrings
+* lib-txp-ato::                         Generating Atoms
+* lib-txp-ctypes::                      Case Conversion --- library(ctypes)
+* lib-txp-nte::                         Note
+
+
+File: quintus.info,  Node: lib-txp-bas,  Next: lib-txp-typ,  Up: lib-txp
+
+Introduction -- `library(strings)'
+----------------------------------
+
+* Menu:
+
+* lib-txp-bas-system::                  Access to operating system --- system/1
+
+   Quintus Prolog has two data types that can be used to represent
+sequences of characters.  For each sequence of up to N characters for
+some implementation-defined limit (N is 65532 in Quintus Prolog) there
+is exactly one atom with that character sequence as its name.  Further,
+each atom has exactly one name.
+
+   Atoms provide a convenient and storage-efficient way of handling
+modest amounts of character data.  Two atoms can be compared for
+identity very quickly using the built-in predicate `==/2'.
+
+   The second data type is "chars".  A convention in Prolog is that a
+list of values all of which belong to the data type THING is said to be
+of type THINGS.  A further convention is that integers representing
+character codes (the range is 1..255) are said to be of type "char".  So
+a "chars" value is a (possibly empty) list of character codes.  A list
+can be of any length.  Two lists can be compared for identity in time
+proportional to their length by using the built-in predicate `==/2'.
+
+   In the text that follows, the term "text object" can generally be
+taken to refer to an atom.
+
+   This section describes how to use the predicates defined in
+`library(strings)'.  If you plan to do extensive text processing, you
+should consider using lists of character codes rather than atoms,
+because you will then be able to use an exceptionally powerful
+pattern-matching language for recognizing patterns and also for
+constructing new chars.  See *Note ref-gru:: for more about this
+facility.  It is highly recommended that you use grammar rules freely
+for list and text processing, and that you always consider whether
+grammar rules can be used clearly to accomplished a desired text
+processing effect before using the operations in `library(strings)'.
+
+
+File: quintus.info,  Node: lib-txp-bas-system,  Up: lib-txp-bas
+
+Access to operating system -- `system/1'
+........................................
+
+`system(ListOfTextObjects)'
+     is a version of `unix(shell(_))' that builds the command up out of
+     pieces without the cost of interning a new atom, which may never be
+     used again.  It does whatever the C function `system(3)' does.
+
+
+File: quintus.info,  Node: lib-txp-typ,  Next: lib-txp-c2c,  Prev: lib-txp-bas,  Up: lib-txp
+
+Type Testing
+------------
+
+`name(+CONSTANT)'
+     is true when CONSTANT is a text object.  Same as `atom/1'.
+
+   Note particularly:
+     | ?- name("chars").
+     
+     no
+     
+     | ?- name("").
+     
+     yes
+     
+     | ?- atom("").
+     
+     yes
+
+
+File: quintus.info,  Node: lib-txp-c2c,  Next: lib-txp-cto,  Prev: lib-txp-typ,  Up: lib-txp
+
+Converting Between Constants and Characters
+-------------------------------------------
+
+* Menu:
+
+* lib-txp-c2c-name::                    name(?Constant, ?Chars)
+* lib-txp-c2c-atom_chars::              atom_chars(?Atom, ?Chars)
+* lib-txp-c2c-number_chars::            number_chars(?Number, ?Chars)
+* lib-txp-c2c-char_atom::               char_atom(?Char, ?Atom)
+
+   Quintus Prolog currently supports the following kinds of constants:
+
+   * atoms
+
+   * integers
+
+   * floating-point numbers
+
+
+   The data type "list of character codes" is called "chars".  You can
+convert between atoms, numbers, and chars using the following
+predicates:
+   * `name(+CONSTANT, -CHARS)'
+
+   * `atom_chars(?ATOM, ?CHARS)'
+
+   * `number_chars(?NUMBER, ?CHARS)'
+
+   * `char_atom(?CHAR, ?ATOM)'
+
+
+   `name/2' is retained for compatibility with DEC-10 Prolog, C-Prolog,
+and earlier releases of Quintus Prolog.  All the other predicates have
+names that follow a rule, which you would do well to follow in your own
+code.
+
+   Suppose you have two data types FOO and BAZ, and a predicate that
+converts from one type to another.  If each value of type FOO
+corresponds to exactly one value of type BAZ, and if each value of type
+BAZ corresponds to at most one value of type FOO, the predicate should
+be called
+     FOO_BAZ(?The_FOO, ?The_BAZ)
+
+   As an example, let FOO be the data type "character code" (we call
+this "char"), and let BAZ be the data type "atom".  Given any char C,
+there is exactly one atom whose name is [C].  Given any atom, either
+its name contains one single character C, or it contains some other
+number of characters, in which case there is no unique character to
+which it corresponds.  Therefore, a predicate that converts between
+character codes and single-character atoms will have the name
+     char_atom(?CHAR, ?ATOM)
+
+   Remember that this pattern means that we can _always_ solve for the
+second argument given a value for the first, and that we _may_ be able
+to solve for the first argument given a value for the second.
+
+   If a FOO can be converted to a unique BAZ, but a BAZ might
+correspond to more than one FOO, the predicate is to be called
+     FOO_to_BAZ(+The_FOO, ?The_BAZ)
+
+   The `_to_' tells you that the conversion only works one way around.
+For example, given an atom or number, there is a unique list of
+character codes that can be made from it, but a given list of character
+codes such as `"0'" could have come from an atom or an integer.
+Therefore a predicate that converts between arbitrary constants and
+character codes should be called
+     constant_to_chars(+CONSTANT, ?CHARS)
+
+   In fact this operation is called `name/2', because that is what it
+was called in DEC-10 Prolog.
+
+   All the new data type conversion predicates follow these naming
+rules.  Now let us look at them.
+
+
+File: quintus.info,  Node: lib-txp-c2c-name,  Next: lib-txp-c2c-atom_chars,  Up: lib-txp-c2c
+
+`name(?CONSTANT, ?CHARS)'
+.........................
+
+   If CONSTANT is supplied, it should be an atom or number.  CHARS is
+unified with a list of character codes representing the "name" of the
+constant.  These are precisely the characters that `write/1' would
+write if asked to write CONSTANT.
+
+   If CONSTANT is a variable, CHARS should be a proper list of
+character codes.  If CHARS looks like the name of a number, CONSTANT
+will be unified with that number.  The syntax for numbers that is
+accepted by `name/2' is exactly the one that `read/1' accepts.  If
+CHARS does not look like the name of a number, CONSTANT will be unified
+with an atom.
+
+   This attempt to guess what sort of constant you want means that
+there are atoms that can be constructed by `read/1' and by
+`atom_chars/2', but not by `name/2'.  `name/2' is retained for
+backwards compatibility with DEC-10 Prolog, C-Prolog, and earlier
+versions of Quintus Prolog.  New programs should use `atom_chars/2' or
+`number_chars/2', whichever is appropriate.
+
+   `name/2' is a built-in predicate.  `library(strings)' contains a
+predicate `name1/2', which is identical to `name/2' except that it
+reports errors in the same way as other library predicates.
+
+
+File: quintus.info,  Node: lib-txp-c2c-atom_chars,  Next: lib-txp-c2c-number_chars,  Prev: lib-txp-c2c-name,  Up: lib-txp-c2c
+
+`atom_chars(?ATOM, ?CHARS)'
+...........................
+
+   CHARS is the list of character codes comprising the printed
+representation of ATOM.  Initially, either ATOM must be instantiated to
+an atom, or CHARS must be instantiated to a proper list of character
+codes.
+
+   If ATOM is initially instantiated to an atom, CHARS is unified with
+a list of the character codes that make up its printed representation.
+If ATOM is uninstantiated and CHARS is initially instantiated to a list
+of characters, ATOM is instantiated to an atom containing exactly those
+characters, even if the characters look like the printed representation
+of a number.  If the arguments to `atom_chars/2' are both
+uninstantiated, an error is signalled.
+
+   `atom_chars/2' was built into the system in Release 2.0.  Before
+that, it was a library predicate.  `library(strings)' still contains
+the old code under the name `atom_chars1/2'.
+
+
+File: quintus.info,  Node: lib-txp-c2c-number_chars,  Next: lib-txp-c2c-char_atom,  Prev: lib-txp-c2c-atom_chars,  Up: lib-txp-c2c
+
+`number_chars(?NUMBER, ?CHARS)'
+...............................
+
+   CHARS is the list of character codes comprising the printed
+representation of NUMBER.  Initially, either NUMBER must be
+instantiated to a number, or CHARS must be instantiated to a proper
+list of character codes.
+
+   If NUMBER is initially instantiated to a number, CHARS is unified
+with the list of character codes that make up its printed
+representation.  If NUMBER is uninstantiated and CHARS is initially
+instantiated to a list of characters that corresponds to the correct
+syntax of a number (either integer or float), NUMBER is bound to that
+number; otherwise `number_chars/2' will simply fail.  If the arguments
+to `number_chars/2' are both uninstantiated, it signals an error.
+
+   `number_chars/2' was built into the system in Release 2.0.  Before
+that, it was a library predicate.  `library(strings)' still contains
+the old code under the name `number_chars1/2'.
+
+
+File: quintus.info,  Node: lib-txp-c2c-char_atom,  Prev: lib-txp-c2c-number_chars,  Up: lib-txp-c2c
+
+`char_atom(?CHAR, ?ATOM)'
+.........................
+
+   `char_atom/2' converts between character codes and atoms.  ATOM must
+be an atom or a variable.  CHAR must be a character code or a variable.
+Character codes are integers in the range 1..255.
+
+   If either argument is instantiated, but CHAR is not a valid
+character code or ATOM is not an atom, `char_atom/2' fails silently.
+
+   If CHAR is a valid character code, ATOM is unified with the atom
+whose name is [CHAR].
+
+   If ATOM is an atom, and its name contains a single character, CHAR
+is unified with the code of that character.
+
+   `char_atom(CHAR, ATOM)' is true when CHAR is a character code, ATOM
+is an atom whose name contains exactly one character, and CODE is the
+code of that character.  If ATOM's name has no characters, or more than
+one, this predicate is simply false.  Error exceptions and efficiency
+aside, `char_atom/2' could be defined as
+     char_atom(Char, Atom) :-
+             atom_chars(Atom, [Char]).
+
+
+File: quintus.info,  Node: lib-txp-cto,  Next: lib-txp-con,  Prev: lib-txp-c2c,  Up: lib-txp
+
+Comparing Text Objects
+----------------------
+
+   If you have two atoms, two character codes, or two lists of
+character codes to compare, the following built-in predicates can be
+used:
+`@</2'
+     lexicographically less than
+
+`@>=/2'
+     not less than
+
+`@>/2'
+     lexicographically greater than
+
+`@=</2'
+     not greater than
+
+`==/2'
+     identical to
+
+`\==/2'
+     not identical to
+
+`compare/3'
+     three-way comparison
+
+   For example,
+     | ?- a @< b.
+     
+     yes
+     
+     | ?- a @> b.
+     
+     no
+
+     | ?- compare(R, "fred", "jim").
+     
+     R = <
+     
+     | ?- 0'a @< 0'z.
+     
+     yes
+
+   There are several points to note about these built-in comparison
+predicates:
+  1. They are sensitive to alphabetic case
+
+  2. If the two terms being compared are of different types, it is the
+     types that are compared (integer < atom < list).
+
+  3. They behave as though the two operands were converted to character
+     lists and the shorter operand were padded on the right with -1's.
+
+   It would be useful to have routines that ignored alphabetic case.
+`to_lower/2' and `to_upper/2' in `library(ctypes)' (*Note
+lib-txp-ctypes::) may be useful in writing your own.
+
+   `library(strings)' provides two string comparison predicates that
+address the other two points.
+
+`compare_strings(-RELATION, +TEXT1, +TEXT2)'
+     takes two text objects and compares them, binding RELATION to
+    `<'
+          if TEXT1 lexicographically precedes TEXT2
+
+    `='
+          if TEXT1 and TEXT2 are identical (but for type)
+
+    `>'
+          if TEXT1 lexicographically follows TEXT2
+
+`compare_strings(-RELATION, +TEXT1, +TEXT2, +PAD)'
+     is the same as `compare_strings/3', except that it takes an
+     additional parameter, which is a character code (an integer).  In
+     effect, it pads the shorter of TEXT1 or TEXT2 on the right with
+     the padding character PAD, and calls `compare_strings/3' on the
+     result.
+
+   We could have defined `compare_strings/[3,4]' this way:
+     compare_strings(Relation, Text1, Text2) :-
+             name(Text1), name(Text1, Name1),
+             name(Text2), name(Text2, Name2),
+             compare(Relation, Name1, Name2).
+     compare_strings(Relation, Text1, Text2, Pad) :-
+             name(Text1), name(Text1, Name1),
+             name(Text2), name(Text2, Name2),
+             pad(Name1, Name2, Pad, Full1, Full2),
+             compare(Relation, Full1, Full2).
+
+     pad(Name1, [], Pad, Name1, Full2) :- !,
+             pad(Name1, Pad, Full2).
+     pad([], Name2, Pad, Full1, Name2) :-
+             pad(Name2, Pad, Full1).
+     pad([Char1|Name1], [Char2|Name2], Pad,
+         [Char1|Full1], [Char2|Full2]) :-
+             pad(Name1, Name2, Pad, Full1, Full2).
+
+     pad([], _, []).
+     pad([_|X], Pad, [Pad|Y]) :-
+             pad(X, Pad, Y).
+
+   The point of `compare_strings/4' is that some programming languages
+define string comparison to use blank padding (`Pad'=32), while others
+define it to use NUL padding (`Pad'=0), and yet others use
+lexicographic comparison (`Pad'= -1) as `compare/3' and
+`compare_strings/3' do; `compare_strings/4' allows you to specify
+whichever is most useful for your application.
+
+   The host language function used to implement these operations is
+considerably more general.  You may want to experiment with it.
+
+   Here are some examples:
+     | ?- % illustrating the difference between compare/3
+     |    % and compare_strings/3
+     |    compare(R1, fred, jim),
+     |    compare(R2, "fred", "jim").
+     
+     R1 = <,
+     R2 = <
+
+     | ?- compare_strings(R1, fred, jim).
+     
+     R1 = <
+
+     | ?- compare_strings(R2, "fred", "jim").
+     ! Type error in argument 2 of compare_strings/3
+     ! atom expected, but [102,114,101,100] found
+     ! Goal:  compare_strings(_286,[102,114,101,100],
+                                   [106,105,109])
+
+     | ?- % illustrating compare_strings/4
+     |    Space is " ",
+     |    compare_strings(R, ' ', ''),
+     |    compare_strings(S, ' ', '', Space).
+     
+     Space = 32,
+     R = <,
+     S = =
+
+   Another convention is sometimes used, in which the lengths of the
+atoms are compared first, and the text is examined only for atoms of
+the same length.  You could program it thus:
+     xpl_compare(Relation, Text1, Text2) :-
+             /* this is not in library(strings) */
+             string_length(Text1, Length1),
+             string_length(Text2, Length2),
+             (   Length1 =:= Length2 ->
+                 compare_strings(Relation, Text1, Text2)
+             ;   compare(Relation, Length1, Length2)
+             ).
+
+
+File: quintus.info,  Node: lib-txp-con,  Next: lib-txp-lct,  Prev: lib-txp-cto,  Up: lib-txp
+
+Concatenation
+-------------
+
+* Menu:
+
+* lib-txp-con-cfu::                     Concatenation Functions
+
+   There are two approaches to concatenation.  One is to provide a
+concatenation _function_ that takes some number of text objects and
+yields their concatenation.  The other is to provide a concatenation
+_relation_.
+
+   Quintus Prolog provides a built-in concatenation relation for lists,
+namely `append/3'.  This concatenation relation can perforce be applied
+to lists of character codes.
+
+     | ?- ensure_loaded(library(printchars)).
+     
+     | ?- append("app", "end", X).
+     
+     X = "append"
+     
+     | ?- append(X, "end", "intend").
+     
+     X = "int"
+     
+     | ?- append(_, [C|_], "to be written"),
+     |    put(C), fail.
+     
+     to be written
+     no
+
+   `library(strings)' contains a concatenation relation for text
+objects.  This relation was inherited from the DEC-10 Prolog library.
+The original code was written to support `gensym/2' (described in *Note
+lib-txp-ato::) and then generalized.
+
+`concat(?TEXT1, +CONSTANT2, ?TEXT3)'
+     is true when TEXT1 and TEXT3 are the same kind of text object,
+     CONSTANT2 is any sort of constant, and
+          name(TEXT1, Name1),
+          name(CONSTANT2, Name2),
+          name(TEXT3, Name3),
+          append(Name1, Name2, Name3)
+
+     is true.  It can be used to solve for TEXT1 given the other two
+     arguments or to solve for TEXT3 given the other two arguments, but
+     unlike `append/3' it cannot be used to solve for CONSTANT2.
+
+   This definition is retained for backwards compatibility with the
+DEC-10 Prolog and C-Prolog libraries, and with earlier versions of the
+Quintus library.  `concat/3' may be removed from future versions of the
+Quintus library.
+
+   There is a proper concatenation relation that is exactly analogous
+to `append/3':
+`string_append(?A, ?Z, ?AZ)'
+     is true when A, Z, and AZ are all atoms, and
+
+     name(A, NameA),
+     name(Z, NameZ),
+     name(AZ, NameAZ)
+     append(NameA, NameZ, NameAZ)
+
+   is true.  It can be used to solve for any one of its arguments given
+the other two.
+
+   As a point of interest, `string_append/3' could have been defined
+using `midstring/4', which is defined below.
+     append_strings(A, Z, AZ) :-
+             midstring(AZ, A, Z, 0).
+
+   Examples:
+     | ?- concat(app, end, X).
+     X = append
+     
+     | ?- string_append(app, end, X).
+     X = append
+     
+     | ?- concat(X, end, append).
+     X = app
+     
+     | ?- string_append(X, end, append).
+     X = app
+     
+     | ?- concat(app, X, append).  % SURPRISE!
+     no
+     
+     | ?- string_append(app, X, append).
+     X = end
+     
+     | ?- concat(app, 137, X).
+     X = app137
+     
+     | ?- string_append(app, 137, X).
+     no
+     
+     | ?- concat(X, Y, ab).  % SURPRISE!
+     no
+     
+     | ?- string_append(X, Y, ab).
+     X = '', Y = ab ;
+     X = a, Y = b ;
+     X = ab, Y = '' ;
+     no
+
+
+File: quintus.info,  Node: lib-txp-con-cfu,  Up: lib-txp-con
+
+Concatenation Functions
+.......................
+
+   `library(strings)' defines a set of concatenation functions.  Each
+of them takes a list of constants as its first argument, and returns
+the concatenation of the names of the constants as its second argument.
+They are
+
+`concat_atom(+LISTOFCONSTANTS, -ATOM)'
+     unifies ATOM with the atom whose name is the concatenation of the
+     names of the LISTOFCONSTANTS.
+
+`concat_atom(+LISTOFCONSTANTS, SEPARATOR, -ATOM)'
+     like `concat_atom/2', except that the elements of ATOM are
+     separated by SEPARATOR.
+
+`concat_chars(+LISTOFCONSTANTS, -CHARS)'
+     unifies CHARS with the list of character codes that is the
+     concatenation of the names of the LISTOFCONSTANTS.
+
+`concat_chars(+LISTOFCONSTANTS, +SEPARATOR, -CHARS)'
+     like `concat_chars/2', except that the elements of CHARS are
+     separated by +SEPARATOR.
+
+   Simplified versions of these predicates could have been defined thus:
+     concat_atom(Constants, Atom) :-
+             concat_chars(Constants, Chars),
+             atom_chars(Atom, Chars).
+
+     concat_chars([], []).
+     concat_chars([Constant|Constants], Chars0) :-
+             name(Constant, Name),
+             append(Name, Chars1, Chars0),
+             concat_chars(Constants, Chars1).
+
+   There is one additional "feature":  in place of a constant, you may
+supply a non-empty list of character codes.  For example,
+     | ?- concat_atom([fred_,27], X).
+     
+     X = fred_27
+
+   and
+     | ?- concat_atom([fred,"_",27], X).
+     
+     X = fred_27
+
+   both work.  Beware:  an empty list of character codes, `""', is in
+fact the atom written `[]'. Because of this ambiguity it is not
+possible to write a predicate that will accept _any_ atom and _any_
+list of character codes, because `"" = []' is both.  `[]' is the atom
+`[]', which has two punctuation marks in its name.  This is for
+compatibility with other Edinburgh Prologs.  So while you might expect
+
+     | ?- concat_atom([fr,"",ed], fred).
+     
+     no
+
+   you will in fact get
+     | ?- concat_atom([fr,"",ed], X).
+     
+     X = 'fr[]ed'
+
+   This "feature" of allowing non-empty lists of character codes is thus
+sufficiently confusing that it is likely to be withdrawn in future
+releases of the Quintus library, and is retained in this release for
+backward compatibility with earlier releases of the library.  The
+concatenation functions themselves will remain.
+
+
+File: quintus.info,  Node: lib-txp-lct,  Next: lib-txp-printlength,  Prev: lib-txp-con,  Up: lib-txp
+
+Finding the Length and Contents of a Text Object
+------------------------------------------------
+
+   There are two predicates for determining the length of a text object:
+`string_size(+TEXT, -LENGTH)'
+
+`string_length(+TEXT, -LENGTH)'
+     LENGTH is unified with the number of characters in the name of
+     TEXT, which must be an atom.
+
+   These two predicates are identical except that `string_length/2'
+will report an error if its first argument is not a text object.
+
+   There are versions of Quintus Prolog on stock hardware that support
+Kanji.  Those versions currently represent Kanji by _pairs_ of
+characters.  Beware of this difference.  This is likely to change.
+
+   There are two predicates for extracting a character from a text
+object:
+
+`string_char(?INDEX, +TEXT, ?CHAR)'
+     unifies CHAR with the character code of the character at position
+     INDEX (counting from 1) in TEXT.  Being a selector predicate, its
+     arguments follow the convention of being in the same order as
+     those of `arg/3'; see the description of `library(args)', *Note
+     lib-tma-arg::.  TEXT must be instantiated to a text object.  INDEX,
+     if instantiated, must be an integer.  If INDEX is less than one or
+     greater than the length of TEXT, `string_char/3' fails quietly.
+     If INDEX is a variable, `string_char/3' will enumerate suitable
+     values for INDEX and CHAR.
+
+`nth_char(?OFFSET, +TEXT, ?CHAR)'
+     is the same as `string_char/3' except that OFFSET counts from 0
+     rather than from 1.  This predicate was added in this release to
+     simplify conversion from another dialect, which is why it is
+     inconsistent with Prolog conventions.  We recommend that you use
+     `string_char/3' in new programs instead.
+
+     | ?- string_size(fred, X).
+     
+     X = 4
+     
+     | ?- string_size(47, X).
+     
+     no
+     
+     | ?- string_length(fred, X).
+     
+     X = 4
+
+     | ?- string_length(47, X).
+     ! Type error in argument 1 of string_length/2
+     ! symbol expected, but 47 found
+     ! goal:  string_length(47,_43)
+     
+     | ?- X is " ".
+     
+     X = 32
+     
+     | ?- string_char(3, 'an example', X).
+     
+     X = 32
+
+     | ?- nth_char(2, 'an example', X).
+     
+     X = 32
+     
+     | ?- string_char(I, 'an example', 0'a).
+     
+     I = 1 ;
+     I = 6 ;
+     no
+     
+     | ?- nth_char(I, 'an example', 0'a).
+     
+     I = 0 ;
+     I = 5 ;
+     no
+
+   We shall see in the next section that `nth_char/3' could have been
+defined by
+     nth_char(Offset, Text, Char) :-
+             subchars(Text, [Char], Offset, 1, _).
+
+   If you wanted a predicate like `nth_char/3' but that counted from
+the right-hand end of the text instead of the left-hand end, you could
+define
+     nth_char_from_right(Offset, Text, Char) :-
+             /* this is not in library(strings) */
+             subchars(Text, [Char], _, 1, Offset).
+
+
+File: quintus.info,  Node: lib-txp-printlength,  Next: lib-txp-sub,  Prev: lib-txp-lct,  Up: lib-txp
+
+Finding the width of a term -- `library(printlength)'
+-----------------------------------------------------
+
+   `library(printlength)' provides four predicates to determine how
+wide a term would be if written:
+
+`print_length(+COMMAND, -LENGTH)'
+     This succeeds when COMMAND would write LENGTH characters to the
+     current output stream, none of them being newline characters.
+     `print_length/2' allows you to determine how many columns an atom
+     (or other term) would take if printed according to COMMAND.  The
+     length of the output of any command at all can be determined this
+     way, provided that it writes to the current stream, and not to a
+     stream argument.  `print_length/2' fails if COMMAND fails.
+
+`print_length(+COMMAND, ?STARTCOLUMN, ?ENDCOLUMN)'
+     This succeeds when executing COMMAND would write
+     ENDCOLUMN-STARTCOLUMN characters.  Either STARTCOLUMN or ENDCOLUMN
+     should be instantiated to an integer.  Then one can solve for the
+     other argument.  Quintus Prolog numbers columns starting from 0
+     (think of `line_position' as "the number of characters that have
+     already been read from/written on this line"), so `print_length/3'
+     will fail if STARTCOLUMN is negative.  `print_length/3' fails if
+     COMMAND fails.
+
+`print_lines(+COMMAND, -LINES)'
+     is true when Command would write LINES new-line characters to the
+     current output stream.  One use of this is to tell whether there
+     would be any point in calling `print_length/2'.
+
+`tab_to(+COLUMN)'
+     Ensure that `line_position(CURRENT_OUTPUT, COLUMN)' is true by
+     writing 0 or 1 newlines and at most COLUMN spaces to the
+     CURRENT_OUTPUT stream.
+
+
+File: quintus.info,  Node: lib-txp-sub,  Next: lib-txp-ato,  Prev: lib-txp-printlength,  Up: lib-txp
+
+Finding and Extracting Substrings
+---------------------------------
+
+* Menu:
+
+* lib-txp-sub-midstring::               midstring/[3,4,5,6]
+* lib-txp-sub-substring::               substring/[4,5]
+* lib-txp-sub-subchars::                subchars/[4,5]
+* lib-txp-sub-spa::                     The "span" family
+
+   The beauty of Prolog as a text processing language is that definite
+clause grammars (DCG's) are not only part of it, but almost an
+inevitable part, and may be used for constructing and decomposing
+pieces of text as well as matching them.
+
+   As an example of the power of definite clause grammars, suppose we
+want to take American-style dates apart.  Here is a grammar:
+
+     usa_date(Y, M, D, MDY) :-
+             usa_date(Y, M, D, MDY, "").
+     
+     usa_date(Y, M, D) -->
+             digits(M), "/", digits(D), "/", digits(Y).
+     
+     digits([D|Ds]) -->
+             [D], {is_digit(D)},
+             (   digits(Ds)
+             ;   {Ds = []}
+             ).
+
+   With this definition, we can take dates apart:
+     | ?- usa_date(Y, M, D, "12/25/86").
+     
+     Y = "86",
+     M = "12",
+     D = "25"
+     
+     | ?- usa_date(Y, M, D, "2/1/87").
+     
+     Y = "87",
+     M = "2",
+     D = "1".
+     
+     | ?- usa_date(Y, M, D, "1-feb-87").
+     
+     no
+
+   We can also put dates together:
+     | ?- usa_date("86", "12", "25", Date).
+     
+     Date = "12/25/86"
+     
+     | ?- usa_date("87", "2", "1", Date).
+     
+     Date = "2/1/87"
+
+   Thanks to the fact that non-terminals in a DCG can take arguments,
+and with a little care, you can write quite complicated grammars that
+can be used for composition as well as decomposition.
+
+   If you want to do any sort of text processing in Prolog, you should
+learn how to use grammar rules.  A well-written grammar requires less
+mental decoding than a program using the operations in
+`library(strings)'.  Here are versions of `usa_date/4' written using
+the operations in `library(strings)'.  `cons_date/4' can only build a
+date, and `dest_date/4' can only take one apart.  Both are simplified,
+and do not check that Y, M, and D are made of digits.
+     cons_date(Y, M, D, Date) :-
+             concat_atom([Y,/,M,/,D], Date).
+     
+     dest_date(Y, M, D, Date) :-
+             substring(Date, /, I, 1),       % find left /
+             substring(Date, /, J, 1, R),    % find right /
+             J > I,
+             substring(Date, Y, 0, I),       % extract Y
+             substring(Date, D, _, R, 0),    % extract D
+             P is I+1, Q is R+1,             % widen fringes
+             substring(Date, M, P, _, Q).    % extract M
+
+   It is not immediately obvious what this does, whereas the version
+using grammar rules is considerably clearer.
+
+   The argument is sometimes raised that, while grammar rules may be
+more elegant, string operations are more efficient.  However, it is the
+daily experience of Prolog programmers that "clean" and "efficient"
+tend to describe the same code.
+
+   The following relative times were measured using Quintus Prolog on
+an MC68020:
+     cons_date('86', '12', '25', _)
+     ------------------------------ = 1.5
+     usa_date( "86", "12", "25", _)
+     
+     dest_date(_, _, _, '86/12/25')
+     ------------------------------ = 4.5
+     usa_date( _, _, _, "86/12/25")
+
+   In both cases, processing lists of character codes using grammar
+rules was more efficient than using "string" operations.  If the
+"string" operations were built in, rather than being part of the
+library, they could be faster than they are.  Even so, using grammar
+rules would still be the preferred method.
+

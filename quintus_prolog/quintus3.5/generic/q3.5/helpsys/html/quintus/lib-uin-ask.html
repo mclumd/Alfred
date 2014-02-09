@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Yes-no Questions, and Others -- <code>library(ask)</code></h4>
+
+   <p>The file <code>library(ask)</code> defines a set of commands for asking questions
+whose answer is a single character, and for asking for file names
+(see <a href="lib-ofi-oth-ask.html#lib-ofi-oth-ask">lib-ofi-oth-ask</a>).
+
+   <p><code>library(ask)</code> uses several commands from <code>library(prompt)</code>,
+but if you want to use them in your program you should
+explicitly include the directive
+<pre class="example">     :- ensure_loaded(library(prompt)).
+     </pre>
+
+   <p>in your program.  The principal such command is <code>prompt/1</code>, which
+is used to print the question or prompt.
+
+     <dl>
+
+     <br><dt><code>yesno(</code><var>+Question</var><code>)</code>
+     <dd>
+writes <var>Question</var> (using <code>write/1</code>) to the terminal, regardless of
+the current output stream, and reads an answer. 
+The prompt is followed by <code>? </code>, so you should not put a question
+mark in the question yourself.  The answer
+is the first character typed in response; anything following on the
+same line will be thrown away.  If the answer is <kbd>y</kbd> or <kbd>Y</kbd>, <code>yesno/1</code>
+succeeds.  If the answer is <kbd>n</kbd> or <kbd>N</kbd>, <code>yesno/1</code> fails.  Otherwise it
+repeats the question.  The user has to explicitly type a <kbd>y</kbd> or <kbd>n</kbd>
+before it will stop.  Because the rest of the line is thrown
+away, the user can type <kbd>yes</kbd>, <kbd>Yes</kbd>, <kbd>You'd better not</kbd>, and so
+forth with exactly the same effect as a plain <kbd>y</kbd>.  If the user
+just presses &lt;RET&gt;, that is <em>not</em> taken as <kbd>yes</kbd>.
+
+     <br><dt><code>yesno(</code><var>+Question</var><code>, </code><var>+Default</var><code>)</code>
+     <dd>
+is like <code>yesno/1</code> except that
+          <ul>
+
+          <li><var>Default</var> may be an atom
+(the first character of whose name will be used), a string (whose
+first character will be used) or an ASCII code, and will be written
+in brackets before the question mark; and
+<li>if the user just presses &lt;RET&gt;,  <var>Default</var> will be used as the answer. 
+</ul>
+
+     <p>For example,
+     <pre class="example">          yesno('Do you want an extended trace', yes)
+          </pre>
+
+     <p>prints
+     <pre class="example">          Do you want an extended trace [y]? _
+          </pre>
+
+     <p>and leaves the terminal's cursor where the underscore is.  If the
+user presses &lt;RET&gt;, this call to <code>yesno/1</code> will succeed. 
+If the user answers <kbd>yes</kbd> it will succeed.  If the user answers
+<kbd>no</kbd> it will fail.      If the first non-layout character of the user's answer
+is neither <kbd>n</kbd>, <kbd>N</kbd>, <kbd>y</kbd>, nor <kbd>Y</kbd>, the question will be
+repeated.
+
+     <br><dt><code>ask(</code><var>+Question</var><code>, </code><var>-Answer</var><code>)</code>
+     <dd>
+writes <var>Question</var> to the terminal as <code>yesno/1</code> would, and
+reads a single character <var>Answer</var>.  <var>Answer</var> must be a "graphic"
+character (a printing character other than space).  <code>ask/2</code> will
+continue asking until it is given such a character.  The remainder
+of the input line will be thrown away.
+
+     <br><dt><code>ask(</code><var>+Question</var><code>, </code><var>+Default</var><code>, </code><var>-Answer</var><code>)</code>
+     <dd>
+uses <var>Default</var> as the default character the way that <code>yesno/2</code> does,
+and mentions the default in brackets just before the question
+mark.  If the user presses carriage return,  <var>Default</var> will be
+returned as his <var>Answer</var>.  <var>Answer</var> can be instantiated, in which
+case the call to <code>ask/2</code> or <code>ask/3</code> will fail if the user does not
+give that answer.  For example, <code>yesno/2</code> could (almost) have been
+defined as
+     <pre class="example">          yesno(Question, Default) :-
+                  ask(Question, Default, 0'y).
+          </pre>
+
+     <br><dt><code>ask_chars(</code><var>+Prompt</var><code>, </code><var>+MinLength</var><code>, </code><var>+MaxLength</var><code>, </code><var>-Answer</var><code>)</code>
+     <dd>
+writes <var>Prompt</var> to the terminal, and reads a line of characters from it. 
+This response must contain between <var>MinLength</var> and <var>MaxLength</var>
+characters inclusive, otherwise the question will be repeated until an
+answer of satisfactory length is obtained. 
+Leading and/or trailing layout characters are retained in the result,
+and are counted when determining the length of the answer. 
+The list of character codes read is unified with <var>Answer</var>. 
+Note that a colon and a space (<code>: </code>) are added to the Prompt,
+so don't add such punctuation yourself. 
+The end-user can find out what sort of input is required by typing
+a line that starts with a question mark.  Therefore it is not possible
+to read such a line as data.  See <code>prompted_line/2</code> in <code>library(prompt)</code>.
+
+     <p>Examples:
+     <pre class="example">          | ?- <kbd>ask_chars('Label', 1, 8, Answer).</kbd>
+          Label: <kbd>213456789</kbd>
+          Please enter between 1 and 8 characters.
+          Do not add a full stop unless it is part of the answer.
+          Label: <kbd>four</kbd>
+          
+          Answer = "four"
+          
+          | ?- <kbd>ask_chars('Heading', 1, 30, Answer).</kbd>
+          Heading: <kbd>?</kbd>
+          Please enter between 1 and 30 characters.
+          Do not add a full stop unless it is part of the answer.
+          Heading: <kbd>   three leading spaces</kbd>
+          
+          Answer = "   three leading spaces"
+          </pre>
+
+     <br><dt><code>ask_number(</code><var>+Prompt, +Default, -Answer</var><code>)</code>
+     <dd>
+writes <var>Prompt</var> on the terminal, and reads a line from it in response. 
+If, after "garbage" characters are thrown away, the line read represents
+a Prolog number, that number is unified with <var>Answer</var>. 
+The "garbage" characters that are thrown away are layout characters
+(including spaces and tabs), underscores <code>_</code>, and plus signs <code>+</code>. 
+For example, the input <code>+ 123_456</code> would be treated as if the
+user had typed <code>123456</code>.  The conversion is done by <code>number_chars/2</code>. 
+If the user entered an integer, <var>Answer</var> will be unified with an
+integer.  If the user entered a floating-point number, <var>Answer</var> will
+be unified with a floating-point number.  No conversion is done. 
+If the line contains only "garbage" characters and there is a
+<var>Default</var> argument, <var>Answer</var> is unified with <var>Default</var>. 
+This happens regardless of whether or not <var>Default</var> is a number. 
+If the input is unacceptable, the question will be repeated after
+an explanation of what is expected.  The user can type <kbd>?</kbd> for help. 
+Examples:
+     <pre class="example">          | ?- <kbd>ask_number('Pick a number', X).</kbd>
+          Pick a number: <kbd>?</kbd>
+          Please enter a number followed by RETURN
+          Pick a number: <kbd>27</kbd>
+          
+          X = 27
+          
+          | ?- <kbd>ask_number('Say cheese', X).</kbd>
+          Say cheese:
+          Please enter a number followed by RETURN
+          Say cheese: <kbd>3 . 141 _ 593</kbd>
+          
+          X = 3.14159
+          
+          | ?- <kbd>ask_number('Your guess', '100%', X).</kbd>
+          Your guess [100%]: <kbd>38.</kbd>
+          Please enter a number followed by RETURN
+          Your guess [100%]: <kbd>38</kbd>
+          
+          X = 38
+          
+          | ?- <kbd>ask_number('Your guess', '100%', X).</kbd>
+          Your guess [100%]: <kbd>&lt;RET&gt;</kbd>
+          
+          X = '100%'
+          </pre>
+
+     <br><dt><code>ask_number(</code><var>+Prompt</var><code>, </code><var>+Lower</var><code>, </code><var>+Upper</var><code>[, </code><var>+Default</var><code>], </code><var>-Answer</var><code>)</code>
+     <dd>
+These two predicates are a combination of <code>ask_between/[4,5]</code> and
+<code>ask_number/[2,3]</code>.  They write the prompt to the terminal, read a line from
+it in response, throw away "garbage" characters, try to parse the result
+as a number, and check that it is between the <var>Lower</var> and <var>Upper</var> bounds. 
+<var>Lower</var> and <var>Upper</var> may severally be integers or floating point
+numbers.  <var>Answer</var> will be unified with an integer if the user typed
+an integer, with a floating-point number if the user typed a floating-point
+number, or with whatever <var>Default</var> happens to be if there is a
+<var>Default</var> and the user entered an empty line.  If you want a floating-point
+result whatever the user typed, you will have to do your own
+conversion with <code>is/2</code>. 
+Examples:
+     <pre class="example">          | ?- <kbd>ask_number('Enter temperature in Fahrenheit',
+                           32.0, 212.0, 77.0, Temp).</kbd>
+          Enter temperature in Fahrenheit [77.0]: <kbd>10</kbd>
+          Please enter a number between 32.0 and 212.0 followed
+          by RETURN
+          Enter temperature in Fahrenheit [77.0]: <kbd>68</kbd>
+          
+          Temp = 68
+          </pre>
+
+     <br><dt><code>ask_file(</code><var>+Question</var><code>, </code><var>-Filename</var><code>)</code>
+     <dd>same as <code>ask_file/3</code>.
+
+     <br><dt><code>ask_file(</code><var>+Question</var><code>, </code><var>+Mode</var><code>, </code><var>-FileName</var><code>)</code>
+     <dd>
+writes <var>Question</var> to the terminal and reads a filename from the terminal,
+regardless of the current I/O streams.  If the user presses &lt;RET&gt;,
+<code>ask_file/3</code> just fails; an empty filename is taken as an indication
+that the user has finished entering file names.  A reply
+beginning with a question mark will cause a brief help message to be
+printed (explaining that a filename is wanted, and how to enter one),
+and the question will be repeated.  Otherwise, <code>ask_file/3</code> checks that
+the file can be opened in the mode specified by <var>Mode</var> (<code>read</code>,
+<code>write</code>, or <code>append</code>). 
+If it is not possible to open the file in mode <var>Mode</var>,
+the operating system's error
+result is reported and the question is repeated.  If it is possible
+to open the file in this mode, the name of the file is returned
+as <var>FileName</var>. 
+However, <code>ask_file/3</code> does <em>not</em> open the file for you, it simply checks that
+it is <em>possible</em> to open the file.  Here is an example "dialogue":
+     <pre class="example">          | ?- <kbd>ask_file('Where should the cross-reference go? ',
+               write, File).</kbd>
+          Where should the cross-reference go? <kbd>?</kbd>
+          Please enter the name of a file that can be opened
+          in write mode, followed by &lt;RET&gt;.  To end this
+          operation, just type &lt;RET&gt; with no filename.
+          Where should the cross-reference go? <kbd>call.pl</kbd>
+          
+          ! Permission error: cannot access file 'call.pl'
+          ! O/S error : Permission denied
+          ! goal:  can_open_file('call.pl',write,warn)
+          </pre>
+
+     <pre class="example">          | ?- <kbd>ask_file('Where should the cross-reference go? ',
+               write, File).</kbd>
+          Where should the cross-reference go? <kbd>call.xref</kbd>
+          
+          File = 'call.xref'
+          
+          | ?- <kbd>ask_file('Next file: ', read, File).</kbd>
+          Next file: <kbd>call.pl</kbd>
+          
+          ! Permission error: cannot access file 'call.pl'
+          ! O/S error : Permission denied
+          ! goal:  can_open_file('call.pl',read,warn)
+          </pre>
+
+     <pre class="example">          | ?- <kbd>ask_file('Next file: ', read, File).</kbd>
+          Next file: <kbd>call.xref</kbd>
+          
+          ! Existence error in can_open_file/3
+          ! file call.xref does not exist
+          ! O/S error : No such file or directory
+          ! goal:  can_open_file('call.xref',read,warn)
+          </pre>
+
+     <p>Points to note:
+          <ul>
+
+          <li><code>ask_file/3</code> does not add a question mark and space to the prompt; you
+must  put them in the question yourself. 
+<li>Although the first call
+to <code>ask_file/3</code> found that it was <em>possible</em> to open <code>call.xref</code> for output,
+it <em>did not</em> open it, so the second call to <code>ask_file/3</code> could not find any
+such file. 
+</ul>
+
+     <br><dt><code>ask_between(</code><var>+Prompt</var><code>, </code><var>+Lower</var><code>, </code><var>+Upper</var><code>[, </code><var>+Default</var><code>], </code><var>-Answer</var><code>)</code>
+     <dd>
+writes <var>Prompt</var> on the terminal, and reads a line in response.  If
+the line read represents a Prolog integer between <var>Lower</var> and <var>Upper</var>
+inclusive, this line
+is unified with <var>Answer</var>.  The line may contain only digits and perhaps
+a leading minus sign.  If the line is empty and there is a <var>Default</var>
+argument, <var>Answer</var> is unified with <var>Default</var>.  This happens regardless of
+whether <var>Default</var> is an integer or in the indicated range.  If the answer
+read is not acceptable, the user is told what sort of answer is wanted and
+is prompted again.  For example, after defining
+     <pre class="example">          p(X) :-
+             ask_between('Number of samples',1,20,
+                          [none],X),
+             integer(X).
+          </pre>
+
+     <p>the following conversation might take place.
+     <pre class="example">          | ?- <kbd>p(X).</kbd>
+          Number of samples [none]: <kbd>?</kbd>
+          Please enter an integer between 1 and 20
+          Do not add a full stop.
+          Number of samples [none]: <kbd>0</kbd>
+          Please enter an integer between 1 and 20
+          Do not add a full stop.
+          Number of samples [none]: <kbd>9</kbd>
+          
+          X = 9
+          
+          | ?- <kbd>p(X).</kbd>
+          Number of samples [none]: <kbd>&lt;RET&gt;</kbd>
+          no
+          </pre>
+
+     <p>The prompt that is printed is <code></code><var>Prompt</var><code> [</code><var>Default</var><code>]: </code> if
+there is a <var>Default</var>
+argument, <code></code><var>Prompt</var><code>: </code> otherwise, so that you can use the same prompt
+whether or not there is a default argument.
+
+     <br><dt><code>ask_oneof(</code><var>+Prompt</var><code>, </code><var>+Constants</var><code>[, </code><var>+Default</var><code>], </code><var>-Answer</var><code>)</code>
+     <dd>
+
+     <p>prints <var>Prompt</var> on the terminal, and reads a line in response. 
+<var>Constants</var>
+should be a list of constants (terms that are acceptable as the first
+argument of <code>name/2</code>).  If the user's response is the full name of one
+of the
+constants, <var>Answer</var> is unified with that constant.  Failing that, if the
+user's response is a prefix of exactly one of the constants, <var>Answer</var> is
+unified with that constant.  If the response is just &lt;RET&gt;,
+and there is
+a <var>Default</var> argument, <var>Answer</var> is unified with <var>Default</var> (which need
+not be a
+constant, nor need it be an element of <var>Constants</var>).  If nothing else works,
+the user is told what sort of response is wanted, and is prompted again.
+
+     <p>The prompt that is printed is <code></code><var>Prompt</var><code> [</code><var>Default</var><code>]: </code> if there
+is a <var>Default</var>
+argument, <code></code><var>Prompt</var><code>: </code> otherwise, so that you can use the same prompt
+whether or not there is a default argument. 
+</dl>
+
+   <p>You should find it straightforward to define your own simple queries using
+this kit.  As a general rule, try to arrange things so that if the user
+types a question mark s/he is told what sort of response is wanted.  All
+the queries defined in this section do that.
+
+   <p>The commands for reading English sentences do nothing special
+when their input is a single question mark.  Here is an example of how
+you can build a query from them that does something sensible in this
+case.
+<pre class="example">     ask_sentence(Prompt, Sentence) :-
+         repeat,
+             prompt(Prompt),
+             read_in(X),
+             (   X = [?] -&gt;
+                 format(user_output,
+                     'Please enter an English sentence.~n', []),
+                 fail
+             ;   true
+             ),
+         !,
+         Sentence = X.
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-uin-prompt.html#lib-uin-prompt">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-uin-ese.html#lib-uin-ese">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-uin.html#lib-uin">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Comparing Text Objects</h4>
+
+   <p>If you have two atoms,
+two character codes, or two lists of character codes to compare, the
+following built-in predicates can be used:
+     <dl>
+
+     <br><dt><code>@&lt;/2</code>
+     <dd>lexicographically less than
+
+     <br><dt><code>@&gt;=/2</code>
+     <dd>not less than
+
+     <br><dt><code>@&gt;/2</code>
+     <dd>lexicographically greater than
+
+     <br><dt><code>@=&lt;/2</code>
+     <dd>not greater than
+
+     <br><dt><code>==/2</code>
+     <dd>identical to
+
+     <br><dt><code>\==/2</code>
+     <dd>not identical to
+
+     <br><dt><code>compare/3</code>
+     <dd>three-way comparison
+</dl>
+
+   <p>For example,
+<pre class="example">     | ?- <kbd>a @&lt; b.</kbd>
+     
+     yes
+     
+     | ?- <kbd>a @&gt; b.</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>compare(R, "fred", "jim").</kbd>
+     
+     R = &lt;
+     
+     | ?- <kbd>0'a @&lt; 0'z.</kbd>
+     
+     yes
+     </pre>
+
+   <p>There are several points to note about these built-in comparison
+predicates:
+     <ol type=1 start=1>
+
+     <li>They are sensitive to alphabetic case
+<li>If the two terms being compared are of different types,
+it is the types that are compared (integer &lt; atom &lt; list). 
+<li>They behave as though the two operands were converted to character lists
+and the shorter operand were padded on the right with -1's.
+        </ol>
+
+   <p>It would be useful to have routines that ignored alphabetic case. 
+<code>to_lower/2</code> and <code>to_upper/2</code> in <code>library(ctypes)</code>
+(<a href="lib-txp-ctypes.html#lib-txp-ctypes">lib-txp-ctypes</a>)
+may be useful in writing your own.
+
+   <p><code>library(strings)</code> provides two string comparison predicates
+that address the other two points.
+
+     <dl>
+
+     <br><dt><code>compare_strings(</code><var>-Relation</var><code>, </code><var>+Text1</var><code>, </code><var>+Text2</var><code>)</code>
+     <dd>
+takes two text objects
+and compares them, binding <var>Relation</var> to
+          <dl>
+
+          <br><dt><code>&lt;</code>
+          <dd>if <var>Text1</var> lexicographically precedes <var>Text2</var>
+
+          <br><dt><code>=</code>
+          <dd>if <var>Text1</var> and <var>Text2</var> are identical (but for type)
+
+          <br><dt><code>&gt;</code>
+          <dd>if <var>Text1</var> lexicographically follows <var>Text2</var>
+</dl>
+
+     <br><dt><code>compare_strings(</code><var>-Relation</var><code>, </code><var>+Text1</var><code>, </code><var>+Text2</var><code>, </code><var>+Pad</var><code>)</code>
+     <dd>
+is the same as <code>compare_strings/3</code>, except that it
+takes an additional parameter, which is a character code (an
+integer).  In effect, it pads the shorter of <var>Text1</var> or <var>Text2</var>
+on the right with the padding character <var>Pad</var>, and calls
+<code>compare_strings/3</code> on the result. 
+</dl>
+
+   <p>We could have defined <code>compare_strings/[3,4]</code> this way:
+<pre class="example">     compare_strings(Relation, Text1, Text2) :-
+             name(Text1), name(Text1, Name1),
+             name(Text2), name(Text2, Name2),
+             compare(Relation, Name1, Name2).
+     compare_strings(Relation, Text1, Text2, Pad) :-
+             name(Text1), name(Text1, Name1),
+             name(Text2), name(Text2, Name2),
+             pad(Name1, Name2, Pad, Full1, Full2),
+             compare(Relation, Full1, Full2).
+     </pre>
+
+<pre class="example">     pad(Name1, [], Pad, Name1, Full2) :- !,
+             pad(Name1, Pad, Full2).
+     pad([], Name2, Pad, Full1, Name2) :-
+             pad(Name2, Pad, Full1).
+     pad([Char1|Name1], [Char2|Name2], Pad,
+         [Char1|Full1], [Char2|Full2]) :-
+             pad(Name1, Name2, Pad, Full1, Full2).
+     </pre>
+
+<pre class="example">     pad([], _, []).
+     pad([_|X], Pad, [Pad|Y]) :-
+             pad(X, Pad, Y).
+     </pre>
+
+   <p>The point of <code>compare_strings/4</code> is that some programming languages
+define string comparison to use blank padding (<code>Pad</code>=32), while
+others define it to use NUL padding (<code>Pad</code>=0), and yet others use
+lexicographic comparison (<code>Pad</code>= -1) as <code>compare/3</code> and
+<code>compare_strings/3</code> do; <code>compare_strings/4</code> allows you to specify whichever
+is most useful for your application.
+
+   <p>The host language function used to implement these operations is
+considerably more general.  You may want to experiment with it.
+
+   <p>Here are some examples:
+<pre class="example">     | ?- <kbd>% illustrating the difference between compare/3</kbd>
+     |    <kbd>% and compare_strings/3</kbd>
+     |    <kbd>compare(R1, fred, jim),</kbd>
+     |    <kbd>compare(R2, "fred", "jim").</kbd>
+     
+     R1 = &lt;,
+     R2 = &lt;
+     </pre>
+
+<pre class="example">     | ?- <kbd>compare_strings(R1, fred, jim).</kbd>
+     
+     R1 = &lt;
+     </pre>
+
+<pre class="example">     | ?- <kbd>compare_strings(R2, "fred", "jim").</kbd>
+     ! Type error in argument 2 of compare_strings/3
+     ! atom expected, but [102,114,101,100] found
+     ! Goal:  compare_strings(_286,[102,114,101,100],
+                                   [106,105,109])
+     </pre>
+
+<pre class="example">     | ?- <kbd>% illustrating compare_strings/4</kbd>
+     |    <kbd>Space is " ",</kbd>
+     |    <kbd>compare_strings(R, ' ', ''),</kbd>
+     |    <kbd>compare_strings(S, ' ', '', Space).</kbd>
+     
+     Space = 32,
+     R = &lt;,
+     S = =
+     </pre>
+
+   <p>Another convention is sometimes used, in which the lengths of the
+atoms are compared first, and the text is examined only for
+atoms of the same length.  You could program it thus:
+<pre class="example">     xpl_compare(Relation, Text1, Text2) :-
+             /* this is not in library(strings) */
+             string_length(Text1, Length1),
+             string_length(Text2, Length2),
+             (   Length1 =:= Length2 -&gt;
+                 compare_strings(Relation, Text1, Text2)
+             ;   compare(Relation, Length1, Length2)
+             ).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-con.html#lib-txp-con">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-c2c.html#lib-txp-c2c">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp.html#lib-txp">Up</a>
+</ul>
+</div>
+   </body></html>
+

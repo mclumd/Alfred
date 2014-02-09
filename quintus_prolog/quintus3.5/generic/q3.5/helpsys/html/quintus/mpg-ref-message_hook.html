@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>message_hook/3</code> <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile message_hook/3.</code>
+
+   <p><code>message_hook(</code><var>+MessageTerm</var><code>, </code><var>+Severity</var><code>, </code><var>+Lines</var><code>)</code>
+
+   <p>Overrides the call to <code>print_message_lines/3</code> in <code>print_message/2</code>. 
+A way for the user to intercept the <var>Message</var> of type
+<var>Severity</var>, whose translations is <var>Lines</var>, before it is
+actually printed.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>MessageTerm</var> <dfn>term</dfn>
+     <dd>any term
+
+     <br><dt><var>Severity</var> <dfn>one of </dfn><code>[informational,warning,error,help,silent]</code><dfn></dfn>
+     <dd>
+<br><dt><var>Lines</var> <dfn>list of pair</dfn>
+     <dd>is of the form <code>[</code><var>Line1</var><code>, </code><var>Line2</var><code>, ...]</code>, where each <var>Linei</var> is
+of the form <code>[</code><var>Control_1-Args_1</var><code>,</code><var>Control_2-Args_2</var><code>, ...]</code>.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>After a message is parsed, but before the message is
+written, <code>print_message/2</code> calls
+
+<pre class="example">     user:message_hook(+MsgTerm,+Severity,+Lines)
+     </pre>
+
+   <p>If the call to <code>user:message_hook/3</code> succeeds, <code>print_message</code>
+succeeds without further processing.  Otherwise the built-in message
+display is used.  It is often useful to have a message hook that
+performs some action and then fails, allowing other message hooks to
+run, and eventually allowing the message to be printed as usual. 
+See <a href="ref-msg-umf-ipm.html#ref-msg-umf-ipm">ref-msg-umf-ipm</a> for an example.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>An exception raised by this predicate causes
+an error message to be printed and then the original message is
+printed using the default message text and formatting.  Since the user
+defines <code>message_hook/3</code>, they can write code that might raise
+exceptions.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>The following is the default, built-in message portrayal
+predicate:
+
+<pre class="example">     message_hook(MessageTerm,Severity,Lines):-
+       ( Severity == silent -&gt;
+         true
+         /* Don't translate or print silent messages */
+       ; severity_prefix(Severity,Prefix,Stream) -&gt;
+         print_message_lines(Stream,Prefix,Lines)
+       ; raise_exception(domain_error(
+             print_message(Severity,MessageTerm),1,
+             one_of([help,error,warning,
+                     informational,silent]),
+             Severity)).
+     
+     severity_prefix(silent,         '', user_error).
+     severity_prefix(help,           '', user_error).
+     severity_prefix(error,       '! ',  user_error).
+     severity_prefix(warning,     '* ',  user_error).
+     severity_prefix(informational,'% ', user_error).
+     </pre>
+
+   <p>The reasoning behind the assignment of streams is that all unsolicited output
+should go to <code>user_error</code>.
+
+<h4 class="subheading">Tips</h4>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>print_message/2</code>, <code>generate_message/3</code>,
+<code>print_message_lines/3</code>
+
+   <a href="ref-msg.html#ref-msg">ref-msg</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-meta_predicate.html#mpg-ref-meta_predicate">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-manual.html#mpg-ref-manual">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The system file_search_path</h5>
+
+   <p>The <code>system</code> directory is used to store system dependent files.  Its
+main purpose is to allow different platforms sharing the same file
+system to share system independent files, such as <code>.pl</code> and <code>.qof</code>
+files, but still be able to locate the necessary system dependent
+files.
+
+   <p>Generally, several <code>system</code> directories are defined by
+<code>file_search_path/2</code> facts to include different
+host and operating system combinations.  The reason for this is that
+certain system files are only machine dependent and can be shared by
+applications running on the same type of machine, but some system
+files are operating system dependent also.
+
+   <p>The most commonly used system files are object files that are loaded
+by <code>load_foreign_files/2</code> and <code>load_foreign_executable/1</code> predicates. 
+Quintus Prolog libraries, for example, make frequent
+use of system dependent foreign code, but also contain system independent files
+that are shared by all platforms. 
+Therefore, the system dependent object files are stored in
+a system directory for each platform.  The system directories are located
+under the library directory, and the library files use calls like these:
+<pre class="example">     :- load_foreign_files([system('file')], []).
+     </pre>
+
+<pre class="example">     :- load_foreign_executable(system('file')).
+     </pre>
+
+   <p>to specify files located in system directories. 
+The library object files are compiled for each platform at installation
+time, and placed in the system directory specific to the platform.
+
+   <p>The <code>file_search_path/2</code> list in <a href="ref-fdi-fsp-pre.html#ref-fdi-fsp-pre">ref-fdi-fsp-pre</a>, shows the different combinations of <code>system</code>
+<code>file_search_path</code> facts for a Sun 4 running SunOS 5.x.  The order
+of search starts at the most specific system definition, which includes
+the host and full operating system, and proceeds to less specific
+forms of the system definitions.  Finally, if none of the system
+directories exist, or none contain the specified file, the current
+working directory is tried.  This way, if Quintus Prolog is to run on
+a single platform, the system dependent files may reside in the same
+directory as the system independent files.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-fdi-fsp-lip.html#ref-fdi-fsp-lip">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-fdi-fsp-pre.html#ref-fdi-fsp-pre">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-fdi-fsp.html#ref-fdi-fsp">Up</a>
+</ul>
+</div>
+   </body></html>
+

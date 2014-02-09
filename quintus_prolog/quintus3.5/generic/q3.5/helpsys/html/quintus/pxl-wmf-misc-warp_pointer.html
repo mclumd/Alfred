@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>warp_pointer/8</code></h5>
+
+<pre class="example">     warp_pointer(+<var>SrcWindow</var>, +<var>DestWindow</var>,
+             +<var>SrcX</var>, +\<var>SrcY</var>, +<var>SrcW</var>, +<var>SrcH</var>,
+             +<var>DestX</var>, +<var>DestY</var>)
+     </pre>
+
+   <p>Moves the pointer to the coordinates specified by
+<var>DestX</var> and <var>DestY</var>, relative to <var>DestWindow</var>'s origin. 
+It generates
+events just as if the user had moved the pointer.
+
+   <p><var>SrcWindow</var> is one of:
+     <dl>
+
+     <br><dt>A ProXL Window
+     <dd>If the move should only take place if the pointer is
+currently inside <var>SrcWindow</var>, and in a visible portion of the
+rectangle specified by <var>SrcX</var>, <var>SrcY</var>, <var>SrcW</var>, and <var>SrcH</var>.
+
+     <br><dt><code>none</code>
+     <dd>If the move is independent of the current pointer
+position. 
+</dl>
+
+   <p><var>DestWindow</var> is one of:
+     <dl>
+
+     <br><dt>A ProXL Window
+     <dd>If the final destination of the move is relative
+to the origin of this window.
+
+     <br><dt><code>none</code>
+     <dd>If the move is relative to the current position
+of the pointer. 
+</dl>
+
+   <p><var>SrcX, SrcY, SrcW, SrcH</var> are integers that specify the region, if any,
+inside <var>SrcWindow</var> where the pointer must be prior to the move.
+
+   <p><var>DestX, DestY</var> are integers giving the coordinates of the final
+pointer destination.
+
+   <p><code>warp_pointer/8</code> allows a lot of freedom for specifying pointer
+movements, but its use is rarely necessary because
+<code>put_pointer_attributes/2</code> handles
+the usual cases.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-wmf-misc-set_input_focus.html#pxl-wmf-misc-set_input_focus">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-wmf-misc.html#pxl-wmf-misc">Up</a>
+</ul>
+</div>
+   </body></html>
+

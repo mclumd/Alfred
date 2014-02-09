@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_initialize()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_initialize(argc, argv)
+     int    argc;
+     char **argv;
+     </pre>
+
+   <p>Initializes Prolog's memory management, I/O, symbol table, etc.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+<dt><var>argc</var>
+     <dd>number of command line arguments (or 0)
+
+     <br><dt><var>argv</var>
+     <dd>list of command line arguments  (or NULL)
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>You can ignore
+<code>QP_initialize()</code> if you aren't redefining <code>main()</code>.
+
+   <p>Must be called before any other QP_ functions if you are redefining
+<code>main()</code> (in which case your top-level view of Prolog is via
+<code>QP_predicate()</code> and <code>QP_query()</code>).
+
+   <p>Summary of functionality: Initializes memory, I/O; sets up command
+line arguments; initializes file search paths, file tables and symbol
+tables; do initializations and
+start up hooks associated with a statically linked
+component in qof files; do any necessary restores, and any initlization
+and start up hooks associated with the restored files.
+
+   <p><code>QP_initialize()</code> also sets up signal handlers so that users
+can interrupt the execution of a start-up goal or initialization
+with a <kbd>^c</kbd>. If users chose the <kbd>a</kbd> option after a <kbd>^c</kbd> (or
+if the builtin <code>abort/0</code> is called) when initializations are run,
+then <code>QP_initialize()</code> returns. In a default system, (where <code>main()</code>
+hasnt been redefined) this means that <code>QP_toplevel()</code> gets called. 
+<code>QP_toplevel()</code> executes the toplevel read-prove loop in a development
+system. In a runtime system, it results in <code>runtime_entry(start)</code>
+being called.
+
+   <p><var>argc</var> and <var>argv</var> are necessary for Prolog to execute the builtin
+<code>unix/1</code> (e.g. <code>unix(argv(_))</code> etc.) properly,
+as well as for restoring saved states.
+
+   <p>Can be safely called any number of times.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong>  The first call to <code>QP_initialize()</code> with
+non-null arguments will determine the command line arguments as seen
+by Prolog.
+
+   </blockquote>
+
+<h4 class="subheading">Return Value</h4>
+
+     <dl>
+
+     <br><dt><code>QP_SUCCESS</code>
+     <dd>Prolog was successfully initialized.
+
+     <br><dt><code>QP_FAILURE</code>
+     <dd>otherwise
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>In Quintus Prolog the default implementation of <code>main()</code> looks like this:
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     main(argc, argv)
+         int argc;
+         char **argv;
+         {
+             int status;
+     
+             status = QP_initialize(argc, argv);
+     
+             if (status == QP_SUCCESS) QP_toplevel();
+         }
+     </pre>
+
+   <p>The user can choose not to have the default <code>main()</code> and the default
+toplevel loop. Here is an example of how the user can call a Prolog
+predicate with their own <code>main()</code>.
+
+<pre class="example">
+                                   <div align="right"><em>hello.pl</em>
+     </div>
+     
+     :- extern(hi(+atom)).
+     
+     hi(X) :-
+         format('Hello world from ~a to Prolog~n',[X]).
+     </pre>
+
+<pre class="example">
+                                     <div align="right"><em>main.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     main(argc, argv)
+         int argc;
+         char **argv;
+         {
+             int status;
+             QP_pred_ref pred;
+     
+             status = QP_initialize(argc, argv);
+     
+             if (status == QP_SUCCESS) {
+                pred = QP_predicate("hi", 1, "user");
+     
+                if (pred != QP_BAD_PREDREF) {
+                     status = QP_query(pred,
+                              QP_atom_from_string("C"));
+     
+                     if (status == QP_FAILURE) {
+                         printf("hi/1 failed\n");
+                         exit(1);
+                     } else if (status == QP_ERROR) {
+                       printf("hi/1 raised exception\n");
+                         /* Use QP_exception_term to get
+                            the error term signaled */
+                         exit(1);
+                     }
+                } else {
+                     printf("hi/1 doesn't exist or ");
+                     printf("doesn't have an extern ");
+                     printf("declaration\n");
+                     exit(1);
+                }
+             } else {
+                printf("QP_initialize didn't succeed\n");
+                exit(1);
+             }
+         }
+     </pre>
+
+   <p>Steps to produce the executable:
+     <ol type=1 start=1>
+
+     <li>Compile <code>hello.pl</code> using <kbd>qpc -c hello.pl</kbd>
+<li>Compile <code>main.c</code> using <kbd>cc -c main.c</kbd>
+<li>Link the two using <kbd>qld -Dd hello.qof main.o -o qtest</kbd>
+
+     <li>Run <code>qtest</code>.  The output should be:  <code>Hello from C to Prolog</code>
+        </ol>
+
+<h4 class="subheading">See Also:</h4>
+
+   <p><code>runtime_entry/1</code>, <code>unix/1</code>, <code>QP_predicate()</code>,
+<code>QP_query()</code>, <code>QP_toplevel()</code>
+
+   <a href="fli-emb.html#fli-emb">fli-emb</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-is.html#cfu-ref-is">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-getpos.html#cfu-ref-getpos">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

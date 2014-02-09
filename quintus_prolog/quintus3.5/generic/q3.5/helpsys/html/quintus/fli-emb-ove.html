@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Overview</h4>
+
+   <p>As outlined in <a href="int-hig.html#int-hig">int-hig</a>, a constellation of new features
+greatly extends the relationship between Quintus Prolog code and foreign language
+code.  It is now possible to embed Prolog code in a program written in
+another language without restrictions.  Clearly, the first requirement
+for embedding Prolog code freely in foreign code is to be able
+to call Prolog from foreign code and vice versa. 
+C calling Prolog is a major new feature of release 3 and is discussed
+in <a href="fli-ffp.html#fli-ffp">fli-ffp</a>.
+
+   <p>A further requirement is that all types of data structures can be
+passed between Prolog and the foreign code.  Previously it was not
+possible to pass compound Prolog terms between Prolog and foreign
+code.  In addition there were serious limitations on passing mathematical
+data.  release 3 adds
+     <ul>
+
+     <li>the ability to access Prolog terms from the foreign language once
+they are passed to it and perform Prolog operations on them. 
+(Discussed in detail in <a href="fli-p2f.html#fli-p2f">fli-p2f</a> and <a href="fli-ffp.html#fli-ffp">fli-ffp</a>, and in the
+reference pages cited there for term passing predicates and functions). 
+<li>the ability to access data structures in a foreign language from
+Prolog and to perform destructive operations on them.  (Discussed in
+<a href="fli-p2f-poi.html#fli-p2f-poi">fli-p2f-poi</a> and <code>assign/2</code> and <code>is/2</code>). 
+<li>32 bit integers and 64 bit floats
+</ul>
+
+   <p>With these new features, Quintus Prolog fulfills the full data passing requirement.
+
+   <p>The foreign language interface is now fully bidirectional.  This in
+itself is not sufficient for embeddability in a strong sense.  The
+Prolog portions of the application must in addition be
+<em>well-behaved</em>.  That is, they must not make any assumptions about
+how the operating system will handle such matters as memory and
+input/output operations.  This is where the <dfn>embedding layer</dfn> of
+Quintus Prolog comes in.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-emb-lay.html#fli-emb-lay">Next</a>
+<li><a rel="up" accesskey="u" href="fli-emb.html#fli-emb">Up</a>
+</ul>
+</div>
+   </body></html>
+

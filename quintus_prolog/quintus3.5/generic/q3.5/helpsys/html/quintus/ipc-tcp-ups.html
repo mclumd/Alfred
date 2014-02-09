@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Using Prolog streams</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ipc-tcp-ups-select_from1.html#ipc-tcp-ups-select_from1">ipc-tcp-ups-select_from1</a>:             tcp_select_from(-Term)
+<li><a accesskey="2" href="ipc-tcp-ups-select_from2.html#ipc-tcp-ups-select_from2">ipc-tcp-ups-select_from2</a>:             tcp_select_from(+Timeout, -Term)
+<li><a accesskey="3" href="ipc-tcp-ups-input_stream2.html#ipc-tcp-ups-input_stream2">ipc-tcp-ups-input_stream2</a>:            tcp_input_stream(?Socket, ?Stream)
+<li><a accesskey="4" href="ipc-tcp-ups-output_stream2.html#ipc-tcp-ups-output_stream2">ipc-tcp-ups-output_stream2</a>:           tcp_output_stream(?Socket, ?Stream)
+</ul>
+
+   <p>Sometimes the format of data being exchanged between processes is not
+known in advance and it is not possible to assume that the data sent
+are valid Prolog terms.  This package provides Prolog streams for each
+connection that can be read from or written to using the stream
+input/output predicates.  For more information about Prolog streams,
+see <a href="ref-iou-str.html#ref-iou-str">ref-iou-str</a>.
+
+   <p>Although these streams can be written to or read from using the
+standard input/output predicates supplied by Prolog, they must be
+closed using <code>tcp_shutdown/1</code> instead of <code>close/1</code>, otherwise
+the database internal to <code>library(tcp)</code> will become inconsistent.
+
+   <p>There is a subtle point about <code>end_of_file</code>: in a correct implementation
+of TCP it is possible to receive zero-length packets, so that a socket
+<em>should</em> be able to signal end-of-file repeatedly just like a
+terminal.  So does <code>end_of_file(</code><var>Socket</var><code>)</code> mean "connection lost
+to <var>Socket</var>", or does it mean "zero-length packet received from
+<var>Socket</var>"?  Using <code>tcp_select/1</code> or <code>tcp_select/2</code>,
+<code>end_of_file</code> causes the connection to be shutdown.  Reading the
+streams yourself lets you decide what <code>end_of_file</code> means on your
+sockets.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-cbi.html#ipc-tcp-cbi">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-tim.html#ipc-tcp-tim">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp.html#ipc-tcp">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

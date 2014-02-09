@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Suggesting a Size and Shape for the Window</h5>
+
+   <p>There are many possible ways to suggest to a window manager the
+screen size and position of your window.  First, you may specify two
+separate sets of size and position hints.  The <dfn>normal</dfn> size hints
+are specified by the attribute
+<pre class="example">     
+     property('WM_NORMAL_HINTS',<var>Hints</var>)
+     </pre>
+
+   <p>The <dfn>zoomed</dfn> size hints, that is, the large or <dfn>full screen</dfn>
+size hints, are specified by the attribute
+<pre class="example">     property('WM_ZOOM_HINTS',<var>Hints</var>)
+     </pre>
+
+   <p>In both cases, the <var>Hints</var> specified should be a term of the form
+<pre class="example">     wm_size_hints(<var>Position</var>,<var>Size</var>,<var>Min_size</var>,<var>Max_size</var>,<var>Resize_inc</var>,<var>Aspect</var>)
+     </pre>
+    The meaning of the arguments of the
+<code>wm_size_hints/6</code> term is as follows:
+
+     <dl>
+
+     <br><dt><b>Argument</b>
+     <dd><b>Meaning</b>
+
+     <br><dt><var>Position</var>
+     <dd>Specifies the window's position.  It may be either:
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>No hint is being made about the window's
+position.
+
+          <br><dt><code>user_position</code><var>(X,Y)</var><code></code>
+          <dd>This means that <code>position</code>
+<var>(X,Y)</var> is suggested, and that the suggestion comes from
+the user.
+
+          <br><dt><code>program_position</code><var>(X,Y)</var><code></code>
+          <dd>This means that <code>position</code>
+<var>(X,Y)</var> is suggested, and that the suggestion comes from
+the program. 
+</dl>
+
+     <br><dt><var>Size</var>
+     <dd>Specifies the window's size.  It may be either:
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>meaning that no hint is being made about the window's
+size.
+
+          <br><dt><code>user_size</code><var>(W,H)</var><code></code>
+          <dd><var>W</var> by <var>H</var> is the
+suggested size, and the suggestion comes from the
+user.
+
+          <br><dt><code>program_size</code><var>(W,H)</var><code></code>
+          <dd><var>W</var> by <var>H</var> is the
+suggested size, and the suggestion comes from the
+program. 
+</dl>
+
+     <br><dt><var>Min_size</var>
+     <dd>Specifies the minimum suggested size for the window. 
+The window manager may choose to make the window smaller
+than this, if it likes.  This may be either:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>No hint is being made about the window's
+minimum size.
+
+          <br><dt><code>size</code><var>(W,H)</var><code></code>
+          <dd><var>W</var> by <var>H</var> is the suggested minimum size. 
+</dl>
+
+     <br><dt><var>Max_size</var>
+     <dd>Specifies the maximum suggested size for the window. 
+The window manager may choose to make the window larger
+than this, if it likes.  This may be either:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>No hint is being made about the window's
+maximum size.
+
+          <br><dt><code>size</code><var>(W,H)</var><code></code>
+          <dd><var>W</var> by <var>H</var> is the suggested maximum size. 
+</dl>
+
+     <br><dt><var>Resize_inc</var>
+     <dd>Specifies the increments in which your application
+would like the window to be resized.  This may be either:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>No hint is being made about the
+window's resize increment.
+
+          <br><dt><code>size</code><var>(W,H)</var><code></code>
+          <dd>The window should be made wider or narrower in
+<var>W</var> pixel increments and taller or shorter in <var>H</var> pixel increments. 
+</dl>
+
+     <br><dt><var>Aspect</var>
+     <dd>Specifies the minimum and maximum aspect ratio you
+would like the window to have.  This may be either:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>No hint is being made about the
+window's aspect ratio.
+
+          <br><dt><code></code><var>Min</var><code>-</code><var>Max</var><code></code>
+          <dd>The  window's aspect ratio should be between <var>Min</var>
+and <var>Max</var>.  <var>Min</var> and <var>Max</var> should be (possibly floating
+point) numbers specifying the ratio of width to height. 
+</dl>
+
+   </dl>
+
+   <p>You may specify as many or as few of these arguments as you like, using
+<code>none</code> to avoid specifying a value.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-win-wmi-wini.html#pxl-win-wmi-wini">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-win-wmi-inam.html#pxl-win-wmi-inam">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-win-wmi.html#pxl-win-wmi">Up</a>
+</ul>
+</div>
+   </body></html>
+

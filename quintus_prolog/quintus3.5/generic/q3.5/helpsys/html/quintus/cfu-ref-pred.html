@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_pred()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     QP_pred_ref QP_pred(name_atom, arity, module_atom)
+     QP_atom name_atom;
+     int     arity;
+     QP_atom module_atom;
+     </pre>
+
+   <p>Looks up a callable Prolog predicate.
+
+   <p><code>QP_pred()</code> is faster, but less convenient, than <code>QP_predicate()</code>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Differences from <code>QP_predicate()</code>:
+Name and module arguments passed as Prolog atoms.  These may
+have been returned to C from Prolog, or may have been built in the
+foreign language using <code>QP_atom_from_string()</code>.
+
+   <p>The name passed is <em>not</em> the name of the Prolog predicate to be called,
+but rather the name of the interface predicate constructed when the
+Prolog predicate was made callable from foreign code (see <a href="fli-ffp-ppc.html#fli-ffp-ppc">fli-ffp-ppc</a>).
+
+   <p>Much of the cost of <code>QP_predicate()</code> is from having to look up Prolog
+atoms for its name and module arguments.  By avoiding doing this
+unnecessarily, what <code>QP_pred()</code> gives up in convenience is returned in
+performance.
+
+<h4 class="subheading">Return Value</h4>
+
+     <dl>
+
+     <br><dt><code>QP_pred_ref</code>
+     <dd>a valid predicate reference
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>if the predicate called hasn't been declared callable or
+doesn't exist
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_predicate()</code>, <code>QP_query()</code>,
+<code>QP_open_query()</code>, <code>QP_next_solution()</code>, <code>QP_cut_query()</code>,
+<code>QP_close_query()</code>, <a href="fli-ffp.html#fli-ffp">fli-ffp</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-predicate.html#cfu-ref-predicate">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-perror.html#cfu-ref-perror">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

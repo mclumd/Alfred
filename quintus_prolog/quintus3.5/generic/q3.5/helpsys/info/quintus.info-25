@@ -1,0 +1,1206 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: lib-lis-lists,  Next: lib-lis-set,  Prev: lib-lis-basics,  Up: lib-lis
+
+Lists as Sequences -- `library(lists)'
+--------------------------------------
+
+   `library(lists)' provides a large number of list processing
+operations.  See also *Note lib-lis-basics::, which describes the more
+basic list processing operations that are provided by `library(basics)'.
+
+   The predicates defined by this library file are:
+`is_list(+LIST)'
+     is true when LIST is instantiated to a proper list:  that is, to
+     either `[]' or `[_|TAIL]' where TAIL is a proper list.  A
+     variable, or a list that ends with a variable, will fail this test.
+
+`append(+LISTOFLISTS, ?LIST)'
+     is true when LISTOFLISTS is a list `[L1,...,LN]' of lists, LIST is
+     a list, and appending L1, ..., LN together yields LIST.  If
+     LISTOFLISTS is not a proper list, `append/2' will fail.
+     Additionally, either List should be a proper list, or each of L1,
+     ..., LN should be a proper list.  The behavior on non-lists is
+     undefined.  LISTOFLISTS must be proper because for any given
+     solution, infinitely many more can be obtained by inserting nils
+     (`[]') into LISTOFLIST.
+
+`append(?PREFIX, ?TAIL1, ?LIST1, ?TAIL2, ?LIST2)'
+     is logically equivalent to:
+          append(PREFIX, TAIL1, LIST1),
+          append(PREFIX, TAIL2, LIST2).
+
+     but is much more efficient.  `append/5' is guaranteed to halt in
+     finite time if any one of PREFIX, LIST1, or LIST2 is a proper list.
+
+     You can use `append/5' to add a common PREFIX to the front of
+     TAIL1 and TAIL2, to remove a common PREFIX from LIST1 and LIST2,
+     or in several other ways.
+
+     Here is an example of the use of `append/5'.  The task is to check
+     whether WORD1 and WORD2 are the same except for exactly one
+     insertion, deletion, or transposition error.
+          spell(i, Word1, Word2) :-
+             append(_, Suffix, Word1, [_|Suffix], Word2).
+          spell(d, Word1, Word2) :-
+             append(_, [_|Suffix], Word1, Suffix, Word2).
+          spell(t, Word1, Word2) :-
+             append(_, [X,Y|Suffix], Word1, [Y,X|Suffix], Word2).
+          
+          | ?- spell(E, Word1, "fog"),
+               print(E-Word1), nl, fail.
+          i-"og"
+          i-"fg"
+          i-"fo"
+          d-[_682,102,111,103]
+          d-[102,_682,111,103]
+          d-[102,111,_682,103]
+          d-[102,111,103,_682]
+          t-"ofg"
+          t-"fgo"
+          no
+
+`correspond(?X, ?XLIST, ?YLIST, ?Y)'
+     is true when XLIST and YLIST are lists, X is an element of XLIST,
+     Y is an element of YLIST, and X and Y are in corresponding places
+     in their lists.  Nothing is said about the other elements of the
+     two lists, nor even whether they are the same length.  Only one
+     solution is ever found, as the procedure for `correspond/4'
+     contains a cut.  For a logical predicate having similar effects
+     (that is, one that finds all solutions), see `select/4'.  Either
+     XLIST or YLIST should be a proper list.
+
+`delete(+LIST, +ELEM, ?RESIDUE)'
+     is true when LIST is a list, in which ELEM may or may not occur,
+     and RESIDUE is a copy of LIST with all elements equal to ELEM
+     deleted.  To extract a single copy of ELEM, use `select(ELEM,
+     LIST, RESIDUE)'.  For a given ELEM and RESIDUE, there are
+     infinitely many LISTs containing ELEM or not.  Therefore, this
+     predicate only works one way around:  LIST must be a proper list
+     and ELEM should be instantiated.  Only one solution is ever found.
+
+`delete(+LIST, +ELEM, +COUNT, ?RESIDUE)'
+     is true when LIST is a list, in which ELEM may or may not occur,
+     and COUNT is a non-negative integer.  RESIDUE is a copy of LIST
+     with the first COUNT elements equal to ELEM deleted.  If LIST has
+     fewer than COUNT elements equal to COUNT, all of them are deleted.
+     If LIST is not proper, `delete/4' may fail.  ELEM and the
+     elements of LIST should be sufficiently instantiated for `\=' to be
+     sound.
+
+`keys_and_values(?KEYVALLIST, ?KEYLIST, ?VALLIST)'
+     is true when all three arguments are lists of the same length (at
+     least one of them should be a proper list), and are of the form
+          KEYVALLIST = [K1-V1,K2-V2,...,KN-VN]
+          KEYLIST    = [K1,   K2   ,...,KN   ]
+          VALLIST    = [   V1,   V2,...,   VN]
+
+     That is, the Ith element of KEYVALLIST is a pair `KI-VI', where KI
+     is the Ith element of KEYLIST and VI is the Ith element of
+     VALLIST.  The main point of this, of course, is that KEYVALLIST is
+     the kind of list that the built-in predicate `keysort/2' sorts,
+     where the KI are the keys that are sorted on and the VI go along
+     for the ride.  You can, for example, sort a list without
+     discarding duplicate elements, using
+          msort(Raw, Sorted) :-
+                  keys_and_values(RawKV, Raw, _),
+                  keysort(RawKV, SortedKV),
+                  keys_and_values(SortedKV, Sorted, _).
+
+     `keys_and_values/3' can also be used for constructing the input
+     (list) argument of `list_to_map/2' and for decomposing the result
+     of `map_to_list/2' -- see `library(maps)' (*Note lib-abs::).
+          | ?- keys_and_values([light-dark,
+                                    near-far,
+                                    wet-dry],
+                                    Keys, Vals).
+          
+          Keys = [light,near,wet],
+          Vals = [dark,far,dry]
+          
+          | ?- keys_and_values(Pairs, [light,near,wet],
+          |                           [dark,far,dry]).
+          
+          Pairs = [light-dark,near-far,wet-dry]
+
+`last(?LAST, +LIST)'
+     is true when LIST is a list and LAST is its last element.  This
+     could be defined as
+          last(X, L) :-
+             append(_, [X], L).
+
+`nextto(?X, ?Y, +LIST)'
+     is true when X and Y appear side-by-side in LIST.  It could be
+     defined as
+          nextto(X, Y, List) :- append(_, [X,Y|_], List).
+
+     `nextto/3' may be used to enumerate successive pairs from LIST.
+     LIST should be a proper list.
+
+`nth0(?N, ?LIST, ?ELEM)'
+     is true when ELEM is the Nth member of LIST, counting the first as
+     element 0 (that is, throw away the first N elements and unify ELEM
+     with the next one).  Note that the argument pattern resembles that
+     of `arg/3'.  Unlike `arg/3' (but like `genarg/3'; see *Note
+     lib-tma-arg::), `nth0/3' can be used to solve for either N or ELEM.
+     If used to solve for N, LIST should be a proper list.
+
+`nth0(?N, ?LIST, ?ELEM, ?REST)'
+     unifies ELEM with the Nth element of LIST, counting from 0, and
+     REST with the remaining elements.  `nth0/4' can be used to select
+     the Nth element of LIST (yielding ELEM and REST), or to insert
+     ELEM before the Nth (counting from 0) element of REST, (yielding
+     LIST).  Either N should be instantiated, or LIST should be a
+     proper list, or REST should be a proper list; any one is enough.
+          | ?- nth0(2, List, c, [a,b,d,e]).
+          
+          List = [a,b,c,d,e]
+          
+          | ?- nth0(2, [a,b,c,d,e], Elem, Rest).
+          
+          Elem = c,
+          Rest = [a,b,d,e]
+
+          | ?- nth0(N, [a,b,c,d,e], c, Rest).
+          
+          N = 2,
+          Rest = [a,b,d,e]
+          
+          | ?- nth0(1, List, Elem, Rest).
+          
+          List = [_973,Elem|_976],
+          Elem = _755,
+          Rest = [_973|_976]
+
+`nth1(?N, ?LIST, ?ELEM)'
+     is the same as `nth0/3', except that it counts from 1 so that, for
+     example,
+          nth1(1, [H|T], H)
+
+     is true.  LIST should be a proper list.
+
+`nth1(?N, ?LIST, ?ELEM, ?REST)'
+     is the same as `nth0/4' except that it counts from 1.  It can be
+     used to select the Nth element of LIST (yielding ELEM and REST),
+     or to insert ELEM before the N+1st element of REST, when it yields
+     LIST.  Either N should be instantiated, or LIST should be a proper
+     list, or REST should be a proper list; any one is enough.
+          | ?- nth1(3, List, c, [a,b,d,e]).
+          
+          List = [a,b,c,d,e]
+          
+          | ?- nth1(3, [a,b,c,d,e], Elem, Rest).
+          
+          Elem = c
+          Rest = [a,b,d,e]
+
+          | ?- nth1(N, [a,b,c,d,e], c, Rest).
+          
+          N = 3
+          Rest = [a,b,d,e]
+          
+          | ?- nth1(1, List, Elem, Rest).
+          
+          List = [Elem|Rest],
+          Elem = _755,
+          Rest = _770
+
+`perm(+LIST, ?PERM)'
+     is true when LIST and PERM are permutations of each other.  If you
+     simply want to test this, the best way is to sort the two lists
+     and see if the results are the same; use `samsort/2' from
+     `library(samsort)' (*Note lib-abs::) in preference to `sort/2'.
+
+     The point of `perm/2' is to generate permutations; it only works
+     if LIST is a proper list.  `perm/2' should not be used in new
+     programs; use `permutation/2' instead.
+
+`permutation(?LIST, ?PERM)'
+     is true when LIST and PERM are permutations of each other.  Unlike
+     `perm/2', it will work even when LIST is not a proper list.
+     `permutation/2' will return reasonable results when PERM is also
+     not proper, but will still backtrack forever unless one of the
+     arguments is proper.  Be careful:  `permutation/2' is is quite
+     efficient, but the number of permutations of an N-element list is
+     N! (N-factorial).  Even for a 7-element list that is 5040.
+
+`perm2(?A, ?B, ?C, ?D)'
+     is true when `[A, B]' is a permutation of `[C, D]'.  `perm2/4' is
+     very useful for writing pattern matchers over commutative
+     operators.  It is used more often than `perm/2'.  `perm2/4' is not
+     really an operation on lists.  `perm2/4' is in `library(lists)'
+     only because  `permutation/2' is there.
+
+`remove_dups(+LIST, ?PRUNED)'
+     removes duplicated elements from LIST, which should be a proper
+     list.  If LIST contains non-ground elements, PRUNED may contain
+     elements that unify.  Two elements will be considered duplicates
+     if and only if all possible substitutions cause them to be
+     identical.
+          | ?- remove_dups([X,X], L).
+          
+          X = _123
+          L = [X]
+          
+          | ?- remove_dups([X,Y], L).
+          
+          X = _123
+          Y = _126
+          L = [X,Y]
+          
+          | ?- remove_dups([3,1,4,1], L).
+          
+          L = [1,3,4]
+
+     `remove_dups/2' does not preserve the original order of the
+     elements of LIST.
+
+`rev(+LIST, ?REVERSED)'
+     is true when LIST and REVERSED are lists with the same elements
+     but in opposite orders.  LIST must be supplied as a proper list; if
+     LIST is partial, `rev/2' may find a solution, but if backtracked
+     into will backtrack forever,  trying ever longer lists.  Use
+     `rev/2' only when you know that LIST is proper; it is then twice
+     as fast as calling `reverse/2'.
+
+`reverse(?LIST, ?REVERSED)'
+     is true when LIST and REVERSED are lists with the same elements
+     but in opposite orders.  Either LIST or REVERSED should be a
+     proper list:  given either argument the other can be found.  If
+     both are partial, `reverse/2' will keep trying longer instances of
+     both.  If you want an invertible relation, use this.  If you only
+     want the reversal to work one way around, `rev/2' is adequate.
+
+`same_length(?LIST1, ?LIST2)'
+     is true when LIST1 and LIST2 are both lists and have the same
+     number of elements.  No relation between the elements of LIST1 and
+     LIST2 is implied.  This predicate may be used to generate either
+     list given the other, or indeed to generate two lists of the same
+     length, in which case the arguments will be bound to lists of
+     length 0, 1, 2, and so on.  `same_length/2' is supplied to make it
+     easier to write invertible predicates, transferring the proper
+     list status of either argument to the other.  same_length(LIST1,
+     LIST2) has the same effect as the following call to
+     `same_length/3':
+          same_length(LIST1, LIST2, _ /* any length */)
+
+`same_length(?LIST1, ?LIST2, ?LENGTH)'
+     is true when LIST1 and LIST2 are both lists and have the same
+     number of elements, and LENGTH is an integer that is the common
+     length of the two lists.  No relation between the elements of LIST1
+     and LIST2 is implied.  This predicate may be used to generate any
+     of its arguments.  If LENGTH is given, or if either LIST1 or LIST2
+     is a proper list at the time of call, `same_length/3' is
+     determinate and terminates.  Otherwise it will backtrack forever,
+     binding its arguments to lists of length 0, 1, 2, and so on.
+     `same_length/3' is logically equivalent to
+          length(LIST1, Length),
+          length(LIST2, Length)
+
+     except that if LIST2 is known and the other arguments are not, this
+     code will not terminate if backtracked into, while `same_length/3'
+     will terminate determinately.
+
+`select(?X, ?XLIST, ?Y, ?YLIST)'
+     is true when X is the Kth element of XLIST and Y the Kth element
+     of YLIST for some K, and apart from that element XLIST and YLIST
+     are the same.  You can use `select/4' to replace X by Y or vice
+     versa.  Either XLIST or YLIST should be a proper list.
+
+`selectchk(?X, ?XLIST, ?Y, ?YLIST)'
+     is to `select/4' what `memberchk/2' is to `member/2' in
+     `library(basics)'.
+
+`shorter_list(?SHORT, ?LONG)'
+     is true when SHORT is a list strictly shorter than LONG.  No
+     relation between the elements of SHORT and LONG is implied.  LONG
+     does not have to be a proper list provided it has one more element
+     than SHORT.  This can be used to generate lists shorter than LONG;
+     lengths 0, 1, 2, and so on will be tried, but backtracking will
+     terminate with a list that is one element shorter than LONG.
+     `shorter_list/2' cannot be used to generate lists longer than
+     SHORT, because it does not look at all the elements of the longer
+     list.
+
+`subseq(?SEQUENCE, ?SUBSEQUENCE, ?COMPLEMENT)'
+     is true when SUBSEQUENCE and COMPLEMENT are both subsequences of
+     the list SEQUENCE (the order of corresponding elements being
+     preserved) and every element of SEQUENCE that is not in
+     SUBSEQUENCE is in COMPLEMENT and vice versa.  Among other things,
+     this means that
+          length(Sequence) = length(SubSequence) +
+                             length(Complement)
+
+     and
+          subseq([1,2,3,4], [1,3,4], [2]).
+
+     `subseq/3' was written to generate subsets and their complements
+     together from SEQUENCE, but can also be used to interleave two
+     lists SUBSEQUENCE and COMPLEMENT in all possible ways.  Either
+     SEQUENCE should be a proper list, or both SUBSEQUENCE and
+     COMPLEMENT should both be proper lists.  Note that if S1 is a
+     subset of S2, it will be generated _before_ S2 as a SUBSEQUENCE
+     and _after_ it as a COMPLEMENT.  To be specific, take `S1 = [a]',
+     `S2 = [a,c]', `SEQUENCE = [a,b,c]':
+          | ?- subseq([a,b,c], Sub, Com).
+          
+          Sub = [],
+          Com = [a,b,c] ;
+          
+          Sub = [c],
+          Com = [a,b] ;
+          
+          Sub = [b],
+          Com = [a,c] ;       % S2 generated as COMPLEMENT
+          
+          Sub = [b,c],
+          Com = [a] ;         % S1 generated as COMPLEMENT
+                               % (AFTER S2)
+          Sub = [a],           % S1 generated as SUBSEQUENCE
+          Com = [b,c] ;       % (BEFORE S2)
+          
+          Sub = [a,c],         % S2 generated as SUBSEQUENCE
+          Com = [b] ;
+          
+          Sub = [a,b],
+          Com = [c] ;
+          
+          Sub = [a,b,c],
+          Com = [] ;
+          
+          no               % these 8 are all the solutions.
+
+     Further examples of the use of `subseq/3' are:
+          | ?- subseq([1,2,3,4], X, [2]).
+          
+          X = [1,3,4]
+          
+          | ?- subseq([a,b], Subs, Comp).
+          
+          Subs = [],
+          Comp = [a,b] ;
+          
+          Subs = [b],
+          Comp = [a] ;
+          
+          Subs = [a],
+          Comp = [b] ;
+          
+          Subs = [a,b],
+          Comp = [] ;
+          
+          no
+
+          | ?- subseq(Seq, [@], [#]).
+          
+          Seq = [#,@] ;
+          
+          Seq = [@,#] ;
+          
+          no
+
+`subseq0(+SEQUENCE, ?SUBSEQUENCE)'
+     is true when SUBSEQUENCE is a subsequence of SEQUENCE, but may be
+     SEQUENCE itself.  Thus:
+          | ?- subseq0([a,b], [a,b]).
+          
+          yes
+          | ?- subseq0([a,b], [a]).
+          
+          yes
+
+     Also,
+          | ?- setof(X, subseq0([a,b,c],X), Xs).
+          
+          Xs = [[],[a],[a,b],[a,b,c],[a,c],[b],[b,c],[c]]
+          
+          | ?- bagof(X, subseq0([a,b,c,d],X), Xs).
+          
+          Xs = [[a,b,c,d],[b,c,d],[c,d],[d],[],[c],[b,d],
+          [b],[b,c],[a,c,d],[a,d],[a],[a,c],[a,b,d],[a,b],
+          [a,b,c]]
+
+     SEQUENCE must be a proper list.
+
+`subseq1(+SEQUENCE, ?SUBSEQUENCE)'
+     is true when SUBSEQUENCE is a proper subsequence of SEQUENCE; that
+     is, SUBSEQUENCE contains at least one element less than SEQUENCE.
+     SEQUENCE must be a proper list.
+          | ?- % note that [a,b,c] does NOT appear in Xs:
+          |    setof(X, subseq1([a,b,c],X), Xs).
+          
+          Xs = [[],[a],[a,b],[a,c],[b],[b,c],[c]]
+          
+          | ?- % note that [a,b,c,d] does NOT appear in Xs:
+          |    bagof(X, subseq1([a,b,c,d],X), Xs).
+          
+          Xs = [[b,c,d],[c,d],[d],[],[c],[b,d],[b],[b,c],
+          [a,c,d],[a,d],[a],[a,c],[a,b,d],[a,b],[a,b,c]]
+
+`sumlist(+NUMBERS, ?TOTAL)'
+     is true when NUMBERS is a proper list of numbers, and TOTAL is
+     their sum.  Note that a list of arithmetic expressions will _not_
+     work.  If any of the NUMBERS is a floating-point number, TOTAL
+     will be a floating-point number; otherwise it will be an integer.
+
+`transpose(?X, ?Y)'
+     is true when X is a list of the form
+     [[X11,...,X1M],...,[XN1,...,XNM]] and Y is its transpose, that is,
+     Y = [[X11,...,XN1],...,[X1M,...,XNM]].
+
+     To make the `transpose/2' invertible, all the sublists of the list
+     being transposed must be of the same length.  If they are not, it
+     will fail.
+
+
+File: quintus.info,  Node: lib-lis-set,  Next: lib-lis-ordsets,  Prev: lib-lis-lists,  Up: lib-lis
+
+Lists as Sets
+-------------
+
+* Menu:
+
+* lib-lis-set-sets::                    Set Processing --- library(sets)
+* lib-lis-set-pre::                     Predicates Related to Sets
+
+
+File: quintus.info,  Node: lib-lis-set-sets,  Next: lib-lis-set-pre,  Up: lib-lis-set
+
+Set Processing -- `library(sets)'
+.................................
+
+   The `library(sets)' package represents sets as lists with no
+repeated elements.  Some of the predicates provided by this package may
+return sensible answers if given arguments that contain repeated
+elements, but that is a lucky accident.  When in doubt, use
+`list_to_set/2' to convert from a list (with possibly repeated
+elements) to a set.  For a list of predicates related to set
+manipulation that are not in the `library(sets)' package, see *Note
+lib-lis-set-pre::.  For some applications, _ordered_ sets are more
+appropriate; see *Note lib-lis-ordsets:: for more information.
+
+   The predicates defined in `library(sets)' are described below:
+`add_element(+ELEM, +SET1, -SET2)'
+     is true when SET1 and SET2 are sets represented as unordered lists,
+     and `SET2 = SET1 U {ELEM}'.  `add_element/3' may only be used to
+     calculate SET2 given ELEM and SET1.  However, it is permissible
+     for SET1 to be  a list with a variable at the end; in this case,
+     `add_element/3' will add new elements to the end of SET2.
+
+`del_element(+ELEM, +SET1, -SET2)'
+     is true when SET1 and SET2 are sets represented as unordered lists,
+     and `SET2 = SET1 \ {ELEM}'.  `del_element/3' may only be used to
+     calculate SET2 given ELEM and SET1.  If SET1 does not contain
+     ELEM, SET1 and SET2 will be equal.  If SET1 contains more than one
+     copy of ELEM (in which case SET1 is not really a set
+     representation), only the first copy of ELEM will be removed.  See
+     `delete/3' in `library(lists)' (*Note lib-lis-lists::) for a
+     predicate that removes all copies of a given element.  When SET1
+     and SET2 are identical, there are infinitely many ELEMs that would
+     make this predicate true, so we could not solve for ELEM.
+     Therefore, we do not attempt to solve for ELEM in _any_ case,
+     which is why it is a `+' argument.
+
+`is_set(+SET)'
+     is true when SET is a proper list that contains no repeated
+     elements (that is, a proper set).  `is_set/1' does not check for
+     any particular order.  If SET is not a proper list, `is_set/1'
+     fails.
+
+`disjoint(+SET1, +SET2)'
+     is true when SET1 and SET2 have  no elements in common.
+     `disjoint/2' is the opposite of `intersect/2' (below).
+
+`select(?ELEMENT, ?SET, ?RESIDUE)'
+     is true when SET is a list, ELEMENT occurs in SET, and RESIDUE is
+     everything in SET except ELEMENT (the order of elements is
+     preserved).  To ensure termination, either SET or RESIDUE should
+     be proper.  `select/3' works on lists as well as on sets.
+
+     `select/3' is closely related to the predicate `select/4' in
+     `library(lists)' (*Note lib-lis-lists::).  Although `select/3' is
+     normally used to solve for ELEMENT and RESIDUE, you can read
+     `select(X, S, Y, R)' as dq"replace X by Y in S giving R", and
+     `select(X, S, R)' can be read as "replace X by _nothing_ in S
+     giving R".
+          | ?- select(a, [a,r,a], R).
+          
+          R = [r,a] ;
+          
+          R = [a,r] ;
+          
+          no
+          
+          | ?- select(a, [a,r,a], e, R).
+          
+          R = [e,r,a] ;
+          
+          R = [a,r,e] ;
+          
+          no
+
+`selectchk(+ELEMENT, +SET, ?RESIDUE)'
+     is to `select/3' what `memberchk/2' is to `member/2' in
+     `library(basics)'.  That is, it locates the first occurrence of
+     ELEMENT in SET and deletes it, returning the resulting list in
+     RESIDUE.  It is steadfast in RESIDUE.
+
+`pairfrom(?SET, ?ELEMENT1, ?ELEMENT2, ?RESIDUE)'
+     is true  when SET is a set, ELEMENT1 occurs in SET, ELEMENT2
+     occurs in SET after ELEMENT1, and RESIDUE is everything in SET
+     except ELEMENT1 and ELEMENT2.  The point of `pairfrom/4' is to
+     select pairs of elements from a set without selecting the same pair
+     twice in different orders.  To ensure termination, either SET or
+     RESIDUE should be proper.  `pairfrom/4' works on lists as well as
+     on sets.
+
+`intersect(+SET1, +SET2)'
+     is true when SET1 and SET2 have  a member in common.  It assumes
+     that both sets are known, and that you  do not need to know which
+     element it is that they share.
+
+`intersect/3'
+     is an obsolete predicate and should not be used in new programs.
+
+`subset(+SUBSET, +SET)'
+     is true when each member of SUBSET occurs in SET.  `subset/2' can
+     only be used to test two given sets; it cannot be used to generate
+     subsets.
+
+     To generate subsets, use `subseq0/[2,3]' or `subseq1/[2,3]' from
+     `library(lists)' (*Note lib-lis-lists::); they will generate each
+     subset (or each proper subset) (and, for the three-argument
+     versions, its complement) precisely once, but cannot be used for
+     testing whether a given set is a subset of another.  Note that
+     they generate sub-_sequences_; to really generate sub-_sets_ they
+     would have to enumerate all the permutations of each subsequence,
+     which would be quite costly.
+
+`seteq(+SET1, +SET2)'
+     is true when SET1 is a subset of SET2, and vice-versa.  Since set
+     representations should not contain duplicates, we could check
+     whether one is a permutation of the other.  The method used by
+     `seteq/2' works even if SET1 and SET2 do contain duplicates.
+
+`list_to_set(+LIST, ?SET)'
+     is true when LIST and SET  are lists, and SET contains the same
+     elements as LIST in the same order, except that SET contains no
+     duplicates.   LIST and SET are thus equal when considered as sets.
+     `list_to_ord_set/2' is faster at converting a list to a set, but
+     the method used by `list_to_set/2' preserves as much of the
+     original ordering as possible.
+
+`intersection(+SET1, +SET2, ?INTERSECTION)'
+     is true when  INTERSECTION is the intersection of SET1 and SET2,
+     taken in a particular order.  In fact it is precisely the elements
+     of SET1 taken in their original order, with elements not in SET2
+     deleted.  If SET1 contains duplicates, so may INTERSECTION.
+
+`intersection(+SETS, ?INTERSECTION)'
+     is true when SETS is  a proper list of sets, and INTERSECTION is
+     the intersection of all the sets in SETS.  In fact, INTERSECTION
+     is precisely the elements of the head of SETS, with elements that
+     do not occur in all of the other sets dropped.   SETS must not be
+     empty.
+
+`subtract(+SET1, +SET2, ?DIFFERENCE)'
+     is like `intersection/3', but here it is the elements of SET1 that
+     _are_ in SET2 that are deleted.
+
+`symdiff(+SET1, +SET2, ?DIFF)'
+     is true when DIFF is the  symmetric difference of SET1 and SET2;
+     that is, if each element of DIFF occurs in one of SET1 and SET2,
+     but not both.  The construction method is such that the answer
+     will contain no duplicates even if SET1 and SET2 do.
+
+`setproduct(+SET1, +SET2, ?CARTESIANPRODUCT)'
+     is true when SET1 is a set (list) and SET2 is a set (list) and
+     CARTESIANPRODUCT is a set of ELT1-ELT2 pairs, with a pair for each
+     element ELT1 of SET1 and ELT2 of SET2.  For example,
+          | ?- setproduct([b,a], [1,2], Product).
+          
+          Product = [[b-1],[b-2],[a-1],[a-2]]
+
+`union(+SET1, +SET2, ?UNION)'
+     is true when UNION is the elements of SET1 that do not occur in
+     SET2, followed by all the elements of SET2, that is, when the
+     following are true:
+
+          subtract(SET1, SET2, DIFF)
+          append(DIFF, SET2, UNION.
+
+`union(+SETS, ?UNION)'
+     is true when SETS is a list of sets and UNION is the union of all
+     the sets in SETS.  SETS must be a proper list, but it may be empty.
+
+`union(+SET1, +SET2, ?UNION, ?DIFFERENCE)'
+     added to keep `sets.pl' and `ordsets.pl' parallel.  This predicate
+     is true when the following are true:
+
+          union(Set1, Set2, Union),
+          subtract(Set1, Set2, Difference).
+
+`power_set(?SET, ?POWERSET)'
+     is true when SET is a list and POWERSET is a list of all the
+     subsets of SET.  The elements of POWERSET are ordered so that if A
+     and B are subsets of SET and B is a subset of A (for example,
+     SET=[1,2,3], A=[1,3], B=[3]) then A will appear before B in
+     POWERSET.  Note that `length(POWERSET) = 2^length(SET)', so this
+     is only useful for a small SET.
+          | ?- power_set([a,b], X).
+          X = [[a,b],[a],[b],[]]
+
+
+File: quintus.info,  Node: lib-lis-set-pre,  Prev: lib-lis-set-sets,  Up: lib-lis-set
+
+Predicates Related to Sets
+..........................
+
+   The following predicates are relevant to sets, but are not in
+`library(sets)':
+`length(-LIST, +INTEGER)'
+     built-in predicate:  do not use this if SET might contain
+     duplicates.  See *Note ref-all:: for more information.
+
+`append(+*LIST1, +*LIST2, +*LIST3)'
+     built-in predicate:  only use `append/3' this way when SET1 and
+     SET2 are known to be disjoint, and put a comment in your code
+     explaining the hack.
+
+`member(?ELEM, ?SET)'
+     in `library(basics)' (*Note lib-lis-basics-member::)
+
+`memberchk(?ELEM, ?SET)'
+     in `library(basics)' (*Note lib-lis-basics-memberchk::)
+
+`subseq0(+SET, ?SUBSET)'
+     in `library(lists)' (*Note lib-lis-lists::): you can only use
+     `subseq0/2' to generate subsets of a given SET, not to test
+     whether a given SUBSET is a subset of a given SET, because
+     `subseq0/2' preserves the order of the elements, which is
+     irrelevant to sets.  However, you _can_ use it to generate subsets
+     of an ordered set, as the order of the elements _does_ matter
+     there.
+
+`subseq1(+SET, ?PROPERSUBSET)'
+     in `library(lists)' (*Note lib-lis-lists::): you can only use
+     `subseq1/2' to generate proper subsets of a given SET, not to test
+     whether a given SUBSET is a proper subset of a given SET, because
+     `subseq1/2' preserves the order of the elements, which is
+     irrelevant to sets.  However, you _can_ use it to generate proper
+     subsets of an ordered set, as the order of the elements _does_
+     matter there.
+
+
+File: quintus.info,  Node: lib-lis-ordsets,  Next: lib-lis-listparts,  Prev: lib-lis-set,  Up: lib-lis
+
+Lists as Ordered Sets -- `library(ordsets)'
+-------------------------------------------
+
+   In this group of predicates, sets are represented by ordered lists
+with no duplicates.  Thus {c,r,a,f,t} would be `[a,c,f,r,t]'.  The
+ordering is defined by the `@<' family of term comparison predicates,
+and is the ordering used by the built-in predicates `sort/2' and
+`setof/3'.  Note that `sort/2' and `setof/3' produce ordered sets as
+their results.  See *Note ref-all:: for more information.
+
+   The benefit of the ordered representation is that the elementary set
+operations can be done in time proportional to the _sum_ of the
+argument sizes rather than their _product_.
+
+   A number of predicates described elsewhere can be used on unordered
+sets.  Examples are `length/2' (built-in; see *Note ref-lte::),
+`member/2' (from `library(basics)'; see *Note lib-lis-basics-member::),
+`subseq1/2' (from `library(lists)'; see *Note lib-lis-lists::),
+`select/3' (from `library(sets)'; see *Note lib-lis-set-sets::), and
+`sublist/3' (from `library(maplist)'; see *Note lib-abs::).
+
+`is_ordset(+LIST)'
+     is true when LIST is a proper list of terms [T1,T2, ...,Tn] and the
+     terms are strictly increasing:  `T1 @< T2 @< ... @< Tn'.  The
+     output of `sort/2' and `setof/3' always satisfies this test.
+     Anything that satisfies this test can be given to the predicates in
+     `library(ordsets)', regardless of how it was generated.
+
+`list_to_ord_set(+LIST, ?SET)'
+     is true when SET is the ordered representation of the set
+     designated by the unordered representation LIST.  (This is in fact
+     no more than an alias for `sort/2'.)
+
+`ord_add_element(+SET1, +ELEMENT, ?SET2)'
+     calculates `SET2 = SET1 U {ELEMENT}'.  It only works this way
+     around.  `ord_add_element/3' is the ordered equivalent of
+     `add_element/3' (*Note lib-lis-set-sets::).
+
+`ord_del_element(+SET1, +ELEMENT, ?SET2)'
+     calculates SET2 = SET1 \ {ELEMENT}.  It only works this way
+     around.  `ord_del_element/3' is the ordered equivalent of
+     `del_element/3' (*Note lib-lis-set-sets::).
+
+`ord_disjoint(+SET1, +SET2)'
+     is true when SET1 and SET2 have no element in common.  It is not
+     defined for unsorted lists.
+
+`ord_intersect(+SET1, +SET2)'
+     is true when SET1 and SET2 have at least one element in common.
+     Note that the test is `==' rather than `=' .
+
+`ord_intersect(+SET1, +SET2, ?INTERSECTION)'
+     is an obsolete synonym for `ord_intersection/3'.  It should not be
+     used in new programs.
+
+`ord_intersection(+SET1, +SET2, ?INTERSECTION)'
+     is true when INTERSECTION is the ordered representation of the
+     intersection of SET1 and SET2, provided that SET1 and  SET2 are
+     ordered sets.
+
+`ord_intersection(+SETS, ?INTERSECTION)'
+     is true when INTERSECTION is the ordered representation of the
+     intersection of all the sets in SETS (which must be a non-empty
+     proper list of ordered sets).
+
+`ord_seteq(+SET1, +SET2)'
+     is true when SET1 and SET2 represent the same set.  Since they are
+     assumed to be ordered representations, SET1 and SET2 must be
+     identical.
+
+`ord_setproduct(+SET1, +SET2, ?PRODUCT)'
+     is true when PRODUCT is a sorted list of ELT1-ELT2 pairs, with a
+     pair for each element ELT1 of SET1 and each element ELT2 of SET2.
+     SET1 and SET2 are assumed to be ordered; if they are not, the
+     result may not be.
+          | ?- list_to_ord_set([t,o,y], Set1),
+          |    list_to_ord_set([d,o,g], Set2),
+          |    ord_setproduct(Set1, Set2, Product).
+          
+          Set1 = [o,t,y],
+          Set2 = [d,g,o],
+          Product = [o-d,o-g,o-o,t-d,t-g,t-o,y-d,y-g,y-o]
+          
+          | ?- % but with unordered arguments:
+          |    ord_setproduct([t,o,y], [d,o,g], Product).
+          
+          Product = [t-d,t-o,t-g,o-d,o-o,o-g,y-d,y-o,y-g]
+
+`ord_subset(+SET1, +SET2)'
+     is true when every element of the ordered set SET1 appears in the
+     ordered set SET2.  To generate subsets, use a member of the
+     `subseq0/2' family from `library(lists)' (*Note lib-lis-lists::).
+
+`ord_subtract(+SET1, +SET2, ?DIFFERENCE)'
+     is true when DIFFERENCE contains all and only the elements of SET1
+     that are not also in SET2.
+
+`ord_symdiff(+SET1, +SET2, ?DIFFERENCE)'
+     is true when DIFFERENCE is the symmetric difference of SET1 and
+     SET2.
+
+`ord_union(+SET1, +SET2, ?UNION)'
+     is true when UNION is the union of SET1 and SET2.  Note that when
+     an element occurs in both SET1 and SET2, only one copy is retained.
+
+`ord_union(+SETS, ?UNION)'
+     is true when UNION is the ordered representation of the union of
+     all the sets in SETS (which must be a proper list of ordered sets).
+     This is quite efficient.  In fact `ord_union/2' can be seen as a
+     generalization of `sort/2'.
+
+`ord_union(+OLDSET, +NEWSET, ?UNION, ?REALLYNEW)'
+     is true when UNION is NEWSET U OLDSET, and REALLYNEW is NEWSET \
+     OLDSET.  This is useful when you have an iterative problem, and
+     you're adding some possibly new elements (NEWSET) to a set
+     (OLDSET), and as well as getting the updated set (UNION) you would
+     like to know which if any of the "new" elements didn't already
+     occur in the set (REALLYNEW).
+
+   If operations on ordered sets or ordered lists are useful to you,
+you may also find `library(ordered)' (*Note lib-abs::) or
+`library(ordprefix)' (*Note lib-abs::) of interest.
+
+
+File: quintus.info,  Node: lib-lis-listparts,  Prev: lib-lis-ordsets,  Up: lib-lis
+
+Parts of lists -- `library(listparts)'
+--------------------------------------
+
+   `library(listparts)' exists to establish a common vocabulary for
+names of parts of lists among Prolog programmers.  You will seldom have
+occasion to use `head/2' or `tail/2' in your programs -- pattern
+matching is clearer and faster -- but you will often use these words
+when talking about your programs.  The predicates provided are
+`cons(?HEAD, ?TAIL, ?LIST)'
+     HEAD is the head of LIST and TAIL is its tail; i.e.
+     `append([HEAD', TAIL, LIST)].  No restrictions.
+
+`last(?FORE, ?LAST, ?LIST)'
+     LAST is the last element of LIST and FORE is the list of preceding
+     elements, e.g.  `append(FORE, [LAST', LIST)].  FORE or LAST should
+     be proper.  It is expected that LIST will be proper and FORE
+     unbound, but it will work in reverse too.
+
+   The remaining predicates are binary, and `PART(WHOLE, PART)' is to be
+read as "PART is the/a PART of WHOLE".  When both `PART/2' and
+`proper_PART/2' exist, proper PARTs are strictly smaller than WHOLE,
+whereas WHOLE may be a PART of itself.  N is the length of the whole
+argument, assumed to be a proper list.  This order is strictly in
+accord with the fundamental principle of argument ordering in Prolog:
+INPUTS BEFORE OUTPUTS.
+`head(LIST, HEAD)'
+     LIST is a non-empty list and HEAD is its head.  A list has only
+     one head.  No restrictions.
+
+`tail(LIST, TAIL)'
+     LIST is a non-empty list and TAIL is its tail.  A list has only
+     one tail.  No restrictions.
+
+`prefix(LIST, PREFIX)'
+     LIST and PREFIX are lists and PREFIX is a proper prefix of LIST.
+
+`proper_prefix(LIST, PREFIX)'
+     LIST and PREFIX are lists and PREFIX is a proper prefix of LIST.
+     That is, PREFIX is a prefix of LIST but is not LIST itself.   It
+     terminates if either argument is proper, and has at most N
+     solutions.  Prefixes are enumerated in ascending order of length.
+
+`suffix(LIST, SUFFIX)'
+     LIST and SUFFIX are lists and SUFFIX is a suffix of LIST.  It
+     terminates only if LIST is proper, and has at most N+1 solutions.
+     Suffixes are enumerated in descending order of length.
+
+`proper_suffix(LIST, SUFFIX)'
+     LIST and SUFFIX are lists and SUFFIX is a proper suffix of LIST.
+     That is, SUFFIX is a suffix of LIST.  It terminates only if LIST is
+     proper, and has at most N+1 solutions.  Suffixes are enumerated in
+     descending order of length.
+
+`segment(LIST, SEGMENT)'
+     LIST and SEGMENT are lists and SEGMENT is a sublist of LIST.
+
+`proper_segment(LIST, SEGMENT)'
+     LIST and SEGMENT are lists and SEGMENT is a proper sublist of LIST.
+
+`sublist/2'
+     same as `segment/2'
+
+`proper_sublist/2'
+     same as `proper_segment/2'
+
+
+File: quintus.info,  Node: lib-tma,  Next: lib-txp,  Prev: lib-lis,  Up: lib
+
+Term Manipulation
+=================
+
+* Menu:
+
+* lib-tma-bas::                         Introduction
+* lib-tma-trm::                         The Six Term Manipulation Packages
+* lib-tma-arg::                         Finding a Term's Arguments --- library(arg)
+* lib-tma-changearg::                   Altering Term Arguments --- library(changearg)
+* lib-tma-occurs::                      Checking Terms for Subterms --- library(occurs)
+* lib-tma-aor::                         Note on Argument Order
+* lib-tma-samefunctor::                 Checking Functors --- library(samefunctor)
+* lib-tma-subsumes::                    Term Subsumption --- library(subsumes)
+* lib-tma-unify::                       Unification --- library(unify)
+* lib-tma-termdepth::                   library(termdepth)
+
+
+File: quintus.info,  Node: lib-tma-bas,  Next: lib-tma-trm,  Up: lib-tma
+
+Introduction
+------------
+
+   There are two ways of looking at Prolog data structures.  One is the
+proper "object-level" logical way, in which you think of arguments as
+values.  The other is the "meta-logical" way, in which you see them not
+as lists or trees (or whatever your object-level data types are), but
+as "terms".
+
+   Prolog has the following built-in operations that operate on terms
+as such:
+
+`functor(+TERM, -NAME, -ARITY)'
+     is true when TERM is a term, and the principal function symbol of
+     TERM is NAME, and the arity (number of arguments) of TERM is
+     ARITY.  Alternatively, you may think of this as being true when
+     TERM is a term and the principal functor of TERM is NAME/ARITY.
+     All constants, including numbers, are their own principal function
+     symbols, so `functor(1.3, 1.3, 0)' is true.  This may be used to
+     find the functor of a given term, or to construct a term having a
+     given functor.
+
+`arg(+ARGNUM, +TERM, -ARG)'
+     is true when TERM is a non-variable, ARGNUM is a positive integer,
+     and ARG is the ARGNUMth argument of TERM.  Argument numbering
+     starts at 1.  This can only be used to find ARG; ARGNUM and TERM
+     must be given.
+
+`+-TERM =.. +-LIST'
+     is true when TERM is a term, LIST is its principal function symbol
+     and the list of the remaining arguments.  Use of `=../2' can
+     nearly always be avoided, and should be whenever possible, as it
+     is very slow and uses memory unnecessarily (see *Note
+     bas-eff-bdm::).
+
+`copy_term(+TERM, -COPY)'
+     unifies COPY with an alphabetic variant of TERM that contains all
+     new variables (see *Note lib-tma-subsumes::).  That is,
+     `copy_term/2' makes a copy of TERM by replacing each distinct
+     variable in TERM by a new variable that occurs nowhere else in the
+     system, and unifies COPY with the result.
+
+`compare(-ORDER, +TERM1, +TERM2)'
+     compares TERM1 and TERM2 with respect to ORDER, which may be one
+     of `<', `>', or `='.  If ORDER is `=', the comparison is actually
+     done with respect to the `==/2' operator on terms.
+
+   The system also includes the term comparison predicates `==/2',
+`\==/2', `@</2', `@>/2', `@>/2', `@=</2'.  See *Note ref-lte:: for more
+details.
+
+
+File: quintus.info,  Node: lib-tma-trm,  Next: lib-tma-arg,  Prev: lib-tma-bas,  Up: lib-tma
+
+The Six Term Manipulation Packages
+----------------------------------
+
+   There are currently six library packages that extend Prolog's
+built-in set of operations on terms.  They are
+
+`library(arg)'
+     some generalizations of `arg/3'
+
+`library(changearg)'
+     some operations for building new terms
+
+`library(occurs)'
+     testing whether a given term does or does not contain another term
+     or variable
+
+`library(samefunctor)'
+     some generalizations of `functor/3'
+
+`library(subsumes)'
+     testing whether one term subsumes another
+
+`library(unify)'
+     sound unification
+
+
+File: quintus.info,  Node: lib-tma-arg,  Next: lib-tma-changearg,  Prev: lib-tma-trm,  Up: lib-tma
+
+Finding a Term's Arguments -- `library(arg)'
+--------------------------------------------
+
+   `library(arg)' defines seven predicates, all of which are
+generalizations of the built-in predicate `arg/3'.
+
+`arg(+ARGNUM, +TERM, -ARG)'
+     unifies ARG with the ARGNUMth argument of TERM.  TERM must not be
+     a variable, but any other kind of term is acceptable.  Even a
+     number is acceptable as TERM; numbers are simply terms that happen
+     to have no arguments.  ARGNUM must be instantiated to an integer.
+     If ARGNUM is less than 1 or greater than the number of arguments
+     of TERM, `arg/3' signals an error.  Basically, `arg/3' pretends to
+     be the infinite table
+          arg(1, a(X), X).
+          arg(1, a(X,_), X).
+          arg(2, a(_,X), X).
+          ...
+          arg(5, zebra_finch(_,_,_,_,X,_,_,_), X).
+          ...
+
+     except that it can only be used to find the ARG for a given INDEX
+     and TERM, and cannot find the INDEX.  `arg/3' is a built-in
+     predicate, and is  described in the reference pages, not actually
+     defined in `library(arg)'.
+
+`arg0(+INDEX, +TERM, ?ARG)'
+     unifies ARG with the INDEXth argument of TERM if `INDEX > 0', or
+     with the principal function symbol of TERM if `INDEX = 0'.  This
+     predicate is supplied because some other Prolog implementations
+     have made `arg/3' do this, and this makes it easier to convert
+     code originally written for those systems.  The one reason you
+     might use `arg0/3' is that it reports errors, while `arg/3', for
+     backwards compatibility with DEC-10 Prolog, does not.  Examples:
+          | ?- arg0(2, f(o,x,y), X).
+          
+          X = x
+          
+          | ?- arg0(0, f(o,x,y), X).
+          
+          X = f
+          
+          | ?- arg0(N, f(o,x,y), X).
+          ! Instantiation error in argument 1 of arg0/3
+          ! goal:  arg0(_732,f(o,x,y),_767)
+          
+          | ?- arg0(y, f(o,x,y), N).
+          ! Type error in argument 1 of arg0/3
+          ! integer expected, but y found
+          ! goal:  arg0(y,f(o,x,y),_764)
+
+`genarg(?INDEX, +TERM, ?ARG)'
+     is a version of `arg/3' that is able to solve for INDEX as well as
+     for ARG.
+          | ?- arg(N, f(a,b), X).
+          
+          no
+          
+          | ?- genarg(N, f(a,b), X).
+          
+          N = 2,
+          X = b ;
+          
+          N = 1,
+          X = a ;
+          
+          no
+
+          | ?- genarg(N, f(1,b,2), X), atom(X).
+          
+          N = 2,
+          X = b ;
+          
+          no
+          
+          | ?- genarg(3, f(1,b,2), X).
+          
+          X = 2
+
+     If INDEX is instantiated, `genarg/3' generates the same result as
+     `arg/3'.  If INDEX is uninstantiated, `genarg/3' picks out each
+     argument in turn.  The order in which the arguments are tried is
+     _not_ defined; the current implementation works from right to
+     left, but this order should _not_ be relied upon.
+
+`genarg0(?INDEX, +TERM, ?ARG)'
+     is a version of `arg0/3' that is able to solve for INDEX as well as
+     ARG.
+
+`args(?INDEX, +TERMS, ?ARGS)'
+     is true when TERMS and ARGS are lists of the same length, each
+     element of TERMS is instantiated to a term having at least INDEX
+     arguments, and `arg(INDEX, TERM, ARG)' is true for each pair
+     `<TERM, ARG>' of corresponding elements of `<TERMS, ARGS>'.  INDEX
+     is strictly positive, and only arguments are found, not principal
+     function symbols.  This is a generalization of `genarg/3'.  For
+     example,
+          | ?- args(1, [a+b,c-d,e*f,g/h], X).
+          
+          X = [a,c,e,g]
+          
+          | ?- args(2, [a+A,c-B,e*C,g/D], [b,d,f,h]).
+          
+          A = b,
+          B = d,
+          C = f,
+          D = h
+
+          | ?- args(I, [1-a,2-b,3-c,4-d], X).
+          
+          I = 2,
+          X = [a,b,c,d] ;
+          
+          I = 1,
+          X = [1,2,3,4]
+
+`args0(?INDEX, +TERMS, ?ARGS)'
+     is like `args/3' except that `INDEX = 0' selects the principal
+     function symbol.
+          | ?- args0(0, [a+b,c-d,e*f,g/h,27], X).
+          
+          X = [+,-,*,/,27]
+          
+          | ?- args0(I, [1-a,2-b,3-c,4-d], X).
+          
+          I = 2,
+          X = [a,b,c,d] ;
+          
+          I = 1,
+          X = [1,2,3,4] ;
+          
+          I = 0,
+          X = [-,-,-,-]
+
+     This is a generalization of `genarg0/3'.
+
+`project(+TERMS, ?INDEX, ?ARGS)'
+     is identical to `args0/3' except for the argument order.  The
+     argument order of `project/3' is not consistent with anything else
+     in the library.  This predicate is retained for backwards
+     compatibility.  Use `args0/3' instead in new programs.
+
+`path_arg(?PATH, +TERM, ?SUBTERM)'
+     unifies SUBTERM with the subterm of TERM found by following PATH,
+     where PATH is a sequence of positive integers.  For example, the
+     goal
+          path_arg([I,J], MyTerm, MySubTerm)
+
+     unifies `MySubTerm' with the `J''th argument of the `I''th
+     argument of `MyTerm'.  In general, TERM should be ground.
+     `path_arg/3' may be regarded as a generalization of `genarg/3'.
+     It can be used to find the SUBTERM and a known PATH, or to find a
+     PATH to a known SUBTERM.  It could have been defined as
+          path_arg([], Term, Term).
+          path_arg([Index|Indices], Term, SubTerm) :-
+                  genarg(Index, Term, Arg),
+                  path_arg(Indices, Arg, SubTerm).
+
+     The actual library program is rather more complicated because it
+     contains error-reporting code.  Examples of its use include:
+          /* Here is a sample table of all the subterms of
+          /* the quadratic formula "(a*x^2) + (b*x) + c = 0"
+          /*
+          []          a*x^2+b*x+c=0
+          [1]         a*x^2+b*x+c
+          [1,1]       a*x^2+b*x
+          [1,1,1]     a*x^2
+          [1,1,1,1]   a
+          [1,1,1,2]     x^2
+          [1,1,1,2,1]   x
+          [1,1,1,2,2]     2
+          [1,1,2]           b*x
+          [1,1,2,1]         b
+          [1,1,2,2]           x
+          [1,2]                 c
+          [2]                     0
+          */
+          
+          | ?- path_arg([1,1,2,2],   a*x^2+b*x+c=0, X).
+          
+          X = x                              ^
+
+          | ?- path_arg([1,1,1,2,2], a*x^2+b*x+c=0, X).
+          
+          X = 2                          ^
+          
+          | ?- path_arg(Path,        a*x^2+b*x+c=0, b).
+          
+          Path = [1,1,2,1]                 ^
+
+     This notation for locating subtrees of a tree is widely used
+     throughout computer science.
+
+   Note that except for `project/3', which is included only in the
+interests of backwards compatibility, all of these predicates have the
+same pattern of arguments:
+   * first INDEX (or its equivalent, PATH)
+
+   * then TERM (or TERMS)
+
+   * and finally ARG (or ARGS)
+
+   For consistency, we recommend that you use this argument order for
+"selector" predicates generally:  first the argument or arguments that
+constitute the selector or index, then the thing or things that are
+being selected from, and finally the result or results.
+

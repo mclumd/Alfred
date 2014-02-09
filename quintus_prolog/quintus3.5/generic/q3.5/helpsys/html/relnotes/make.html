@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Updating Default Rules File</h4>
+
+   <p>The UNIX utility <code>make(1)</code> may be configured to ensure that QOF
+files are up to date by modifying the default make rules to recognize
+certain kinds of files generated and used by Quintus Prolog and various
+Quintus utilities.
+
+   <p>The <code>sys</code> component postinstall script attempts to modify this
+file, adding the following rules at the end:
+
+<pre class="example">     # Quintus Prolog Compiler (qpc) section
+     .SUFFIXES: .qof .pl
+     QPC=qpc
+     QPCFLAGS=
+     .pl:
+              $(QPC) $(QPCFLAGS) -o $@ $&lt;
+     .pl.qof:
+              $(QPC) $(QPCFLAGS) -cN $&lt;
+     </pre>
+
+   <p>Once in place, <code>make(1)</code> will be able to automatically update
+QOF files.  <code>QPCFLAGS</code> can be set to pass <code>qpc</code> any flags
+needed when building your application.
+
+   <p>If you do not install the <code>sys</code> component on your system
+then the same effect can be produced by including the above rules
+in any makefiles involving <code>qpc</code> and Prolog code.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">Release Notes</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="magic.html#magic">Next</a>
+<li><a rel="previous" accesskey="p" href="quintus.h.html#quintus.h">Previous</a>
+<li><a rel="up" accesskey="u" href="The-Sys-Component.html#The%20Sys%20Component">Up</a>
+</ul>
+</div>
+   </body></html>
+

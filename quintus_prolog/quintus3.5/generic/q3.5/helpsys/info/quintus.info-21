@@ -1,0 +1,1008 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: fli-ios-sst-pef,  Next: fli-ios-sst-pro,  Prev: fli-ios-sst-fbc,  Up: fli-ios-sst
+
+Reading Past End Of File
+........................
+
+     open/4 option:  eof_action(Action)
+     QP_stream:      unsigned char peof_act
+
+   This field is only used for an input stream.  There are three states
+for an input stream, normal, end of file, and past end of file.  An
+input stream is in normal state until it reaches end of file, where the
+state is switched to end of file state.  If there is no file border
+code or the file border code is consumed,  the input stream is switched
+to past end of file state.  The field `peof_act' specifies which action
+to take for reading from a stream at past end of file state.  The value
+of `peof_act' can be one of the following.
+
+`QP_SEEK_ERROR'
+     specified as `seek(error)' in `open/4'.  An error for any type of
+     seeking in the stream.
+
+`QP_PASTEOF_ERROR'
+     specified as `eof_action(error)' in `open/4'.  The `errno' field
+     of the stream is set to `QP_E_EXHAUSTED', and the read call fails.
+
+`QP_PASTEOF_EOFCODE'
+     specified as `eof_action(eof_code)' in `open/4'.  Retuns the file
+     border code for reading at the past end of file state.  The state
+     of the input stream does not change.  If there is no file border
+     code for the input stream, it is the same as setting the field to
+     `QP_PASTEOF_ERROR'.
+
+`QP_PASTEOF_RESET'
+     specified as `eof_action(reset)' in `open/4'.  Resets the state of
+     an input stream to normal state and calls the bottom layer read
+     function to get the input record for reading at past end of file
+     state.  Setting the field to this value may be useful for the
+     stream with `QP_DELIM_TTY' format.  It is possible to get more
+     records from a tty device after the end of file character is typed.
+
+   Once an input stream reaches end of file state, its bottom layer
+read function will not be called unless the `peof_act' field is
+`QP_PASTEOF_RESET'.
+
+
+File: quintus.info,  Node: fli-ios-sst-pro,  Next: fli-ios-sst-trm,  Prev: fli-ios-sst-pef,  Up: fli-ios-sst
+
+Prompt String
+.............
+
+     QP_stream:      char *prompt
+
+   A prompt string is a character string that will be written out when
+a tty stream (a stream with `QP_DELIM_TTY' format) reads input at the
+beginning of a line.  The prompt string is stored in this field.  This
+field is only used for an input tty stream.  The prompt string will not
+be written out if there are no output tty streams connected to the same
+tty as the input tty stream (see *Note fli-ios-tty::).  A prompt string
+of a stream may be changed after the stream is created through
+`prompt/[2,3]' or by assigning a new character string to this field
+directly.
+
+
+File: quintus.info,  Node: fli-ios-sst-trm,  Next: fli-ios-sst-see,  Prev: fli-ios-sst-pro,  Up: fli-ios-sst
+
+Record Trimming
+...............
+
+     open/4 option:  trim
+     QP_stream:      unsigned char trim
+
+   A non-zero value in `trim' field indicates trimming should be
+performed on each record of an input stream with
+
+   `QP_VAR_LEN' format.  The trailing blank characters in each of the
+records are removed in the trimming operation.  This field has no
+impact on an input stream with other formats or for any output stream.
+
+
+File: quintus.info,  Node: fli-ios-sst-see,  Next: fli-ios-sst-flu,  Prev: fli-ios-sst-trm,  Up: fli-ios-sst
+
+Seek Type
+.........
+
+     open/4 option:  seek(SeekType)
+     QP_stream:      unsigned char seek_type
+
+   This field specifies which type of seeking can be performed on the
+stream.  The possible values for `seek_type' are:
+
+`QP_SEEK_ERROR'
+     specified as `seek(error)' in `open/4'.  It is an error to perform
+     any type of seeking operation on the stream.  Any call to
+     `seek/4', `stream_position/3', `QP_seek()' or `QP_setpos()' is an
+     error.
+
+`QP_SEEK_PREVIOUS'
+     specified as `seek(previous)' in `open/4'.  The stream only seeks
+     back to a previous read or written position.  The previous
+     position must be saved through `QP_getpos()' or
+     `stream_position/[2,3]'.  The seeking can only be performed through
+     `stream_position/3' or `QP_setpos()'.
+
+`QP_SEEK_BYTE'
+     specified as `seek(byte)' in `open/4'.  The stream can seek to any
+     arbitrary byte offset in the file or to any previously saved
+     position.  In addition to the seeking method described in
+     `QP_SEEK_PREVIOUS', the stream can also seek through `seek/4' or
+     `QP_seek()'.
+
+`QP_SEEK_RECORD'
+     specified as `seek(record)' in `open/4'.  The stream can seek to
+     an arbitrary record number in the file or to any previously saved
+     position.
+
+   The seek function must be supplied for a user-defined stream with
+`seek_type' set to any value other than `QP_SEEK_ERROR'.
+
+
+File: quintus.info,  Node: fli-ios-sst-flu,  Next: fli-ios-sst-obo,  Prev: fli-ios-sst-see,  Up: fli-ios-sst
+
+Flushing An Output Stream
+.........................
+
+     open/4 option:  flush(FlushType)
+     QP_stream:      unsigned char flush_type
+
+   This field specifies whether or not the characters buffered in an
+output stream can be written out immediately as a partial record.  It
+is not used for an input stream.  Characters written to an output
+stream are buffered until the current record is terminated or the
+output buffer overflows.  When an output record is terminated, it is
+passed to the bottom layer of the write function of the stream.  The
+completed record is either written to the associated device of the
+stream or further buffered by the bottom layer write function.  If the
+output buffer overflows, or `flush_output/1' is called, buffered
+characters may be forced out through flushing the output stream.  The
+possible values for `flush_type' are:
+
+`QP_FLUSH_ERROR'
+     specified as `flush(error)' in `open/4'.  It is an error to flush
+     the output stream.  Any call to `flush_output/1' or `QP_flush()'
+     is an error.
+
+`QP_FLUSH_FLUSH'
+     specified as `flush(flush)' in `open/4'.  Write out any characters
+     in the output buffer to the associated device of the stream.  The
+     host system must permit writing out of partial records to support
+     this option.  The bottom layer flush function must be supplied for
+     the output stream.
+
+
+File: quintus.info,  Node: fli-ios-sst-obo,  Next: fli-ios-sst-sec,  Prev: fli-ios-sst-flu,  Up: fli-ios-sst
+
+Output Stream Buffer Overflow
+.............................
+
+     open/4 option:  overflow(OverFlowAction)
+     QP_stream:      unsigned char overflow
+
+   Written characters are stored in the buffer of an output stream by
+the middle layer output function until the current record is
+terminated, through a newline operation (such as `nl/[0,1]' or
+`QP_newln()') or by writing the line border code of the stream.  If a
+character is written when the buffer of an output stream is full, it
+overflows the output buffer.  The `overflow' field specifies the action
+that the middle layer function should take if this happens.  The
+possible values for `overflow' are:
+
+`QP_OV_ERROR'
+     specified as `overflow(error)' in `open/4'.  It is an error when
+     output stream buffer overflows.
+
+`QP_OV_TRUNCATE'
+     specified as `overflow(truncate)' in `open/4'.  Keeps the
+     characters in the buffer and throws away the current character
+     that overflows the output buffer.
+
+`QP_OV_FLUSH'
+     specified as `overflow(flush)' in `open/4'.  Pass the current
+     buffer storing a partial record of the output stream to the bottom
+     layer flush function to write out the buffer.  The host operating
+     system must support writing of partial records for the device
+     associated with the stream.
+
+   Note that if an output stream is unbuffered (i.e. `max_reclen' is 0)
+then the middle layer function ignores the `overflow' field and calls
+the `write' function for each character written to the stream.
+
+
+File: quintus.info,  Node: fli-ios-sst-sec,  Next: fli-ios-sst-sda,  Prev: fli-ios-sst-obo,  Up: fli-ios-sst
+
+Storing Error Condition Of A Stream
+...................................
+
+     QP_stream:      int errno;
+
+   An error code is stored in the `errno' field of a stream structure
+when an error is detected in any of the three layers of input/output
+functions.  The top layer QP functions set the error code to `QP_errno'
+when an error occurs in the call to the functions.  The error code
+stored in this field may not last more than two QP input/output
+functions calls since middle layer functions and some QP functions
+clear out this field before they call the bottom layer function.  If an
+error is detected in the bottom layer function, the `errno' field
+should be given an appropriate error code before the function returns.
+The error code stored in `errno' field can be any of the host operating
+system error numbers, QP error numbers or user-defined error numbers.
+
+
+File: quintus.info,  Node: fli-ios-sst-sda,  Next: fli-ios-sst-bot,  Prev: fli-ios-sst-sec,  Up: fli-ios-sst
+
+System-Dependent Address In A File Stream
+.........................................
+
+     QP_stream:      union QP_cookie magic;
+
+   The system-dependent address of the current position in a stream is
+stored in the `magic' field of the stream structure.  It is only used
+when there is any kind of seek to be performed on the stream.  This
+field is a C type `union cookie', which is defined in
+`<quintus/quintus.h>' as follows:
+
+                     union QP_cookie {
+                           struct RFA {
+                                  int  BlockNumber;
+                                  short Offset;
+                           } vms_rfa;
+                           int mvs_rrn;
+                           int  cms_recno;
+                           off_t byteno;
+                           int user_defined[2];
+                     } magic;
+
+   Depending on the host operating system, different field names of
+`union cookie' are used to store the position address of the stream
+depending on the host operating system.  Under UNIX, `magic.byteno' is
+used to record the current location of the file pointer as an absolute
+byte offset from the beginning of the stream; `magic.vms_rfa' is used
+on VMS; `magic.mvs_rrn' is used on MVS; `magic.cms_recno' is used on
+CMS.  `magic.user_defined' is used for a user's specific method of
+recording the current location of a stream.  These values must be
+maintained in the bottom layer functions of a stream with seek
+permission.
+
+
+File: quintus.info,  Node: fli-ios-sst-bot,  Prev: fli-ios-sst-sda,  Up: fli-ios-sst
+
+Bottom Layer Functions
+......................
+
+     QP_stream:      int (*read)(), (*write)(), (*flush)(),
+                         (*seek)(), (*close)();
+
+   These fields store the address of the corresponding bottom layer
+functions of the stream.  See *Note fli-ios-bot:: for description about
+how to define these functions.
+
+
+File: quintus.info,  Node: fli-ios-tty,  Next: fli-ios-cps,  Prev: fli-ios-sst,  Up: fli-ios
+
+TTY Stream
+----------
+
+   A Prolog stream is a tty stream if the format of the stream is
+`QP_DELIM_TTY'.  A tty stream is normally associated with a terminal
+device, a pseudo-terminal device or a terminal emulator.  A set of tty
+streams can be grouped together through a distinct character string key
+for each group of tty streams.  All the tty streams from the same tty
+device (emulator) should normally be grouped together.  A tty stream
+registers itself to a tty stream group by calling `QP_add_tty()' with
+the specific character string key for the group.
+
+   There are two services provided automatically by Prolog I/O system
+to each tty stream group.  When a tty stream is closed, it is
+automatically removed from its tty group.
+
+Prompt Handling
+     There must be at least one output stream in the tty stream group
+     in order to write out the prompt string of an input stream in the
+     group.  When an input tty stream reads at the beginning of a line,
+     the middle layer input function writes out the prompt of the input
+     stream to the latest registered output stream in the tty group
+     before the bottom layer of the read function of the input stream
+     is called.
+
+Stream Position
+     Character count, line count and line position for each stream in
+     the tty group are automatically adjusted for each tty group.  When
+     the buffer of an output stream is written out (such as the output
+     line is terminated, the buffer overflows, or the stream output is
+     flushed), the counts of all the output streams in the tty group
+     are brought up to date.  When an input streams reads input to its
+     buffer, the counts of all the streams in its tty group are updated
+     to the current counts.  Linking the counts of tty streams in the
+     tty group makes the count of a tty stream correspond to its
+     physical appearance on the tty device.
+
+   A sample Prolog session demonstrates the special services performed
+for tty streams.  The default `open/[3,4]' automatically registers tty
+streams to the tty group using filename as the key.  After writing
+`write\n' to `Output1', the counts for `Output1' and `Output2' are
+brought up to date.  The counts in Input1 is not changed since counts
+in input stream are only updated when reading from the input stream.
+After reading from Input1, the counts for all the three streams are
+updated.  The prompt `INPUT>> ' is written out either through `Output1'
+or `Output2', so it is included in the counts.  The count in Input1 is
+different from `Output1' and `Output2' since only character `r' is
+consumed in the input of `read\n'.
+
+     | ?- compile(user).
+     | write_count(Input, Output1, Output2) :-
+          character_count(Input, C0), line_count(Input, L0),
+              line_position(Input, P0),
+          character_count(Output1, C1), line_count(Output1, L1),
+              line_position(Output1, P1),
+          character_count(Output2, C2), line_count(Output2, L2),
+              line_position(Output2, P2),
+          format('input   : ~d, ~d, ~d~n', [C0, L0, P0]),
+          format('output1 : ~d, ~d, ~d~n', [C1, L1, P1]),
+          format('output2 : ~d, ~d, ~d~n', [C2, L2, P2]).
+     | ^D
+     % user compiled in module user, 0.216 sec 384 bytes
+     
+     yes
+     | ?- open('/dev/tty', read, Input), prompt(Input, _, 'INPUT>> '),
+          open('/dev/tty', write, Output1),
+          open('/dev/tty', write, Output2),
+          format(Output1, 'write~n', []),
+          write_count(Input, Output1, Output2),
+          get0(Input, _), write_count(Input, Output1, Output2).
+     write
+     input   : 0, 1, 0
+     output1 : 6, 2, 0
+     output2 : 6, 2, 0
+     INPUT>> read
+     input   : 15, 2, 9
+     output1 : 19, 3, 0
+     output2 : 19, 3, 0
+
+   Notice that the I/O in the `user_input' and `user_output' are not
+included in the counts although both streams are connected to the same
+tty.  The three default streams (`user_input', `user_output' and
+`user_error') are put into a different tty group in the embedding
+initialization function, `QU_initio()'.
+
+
+File: quintus.info,  Node: fli-ios-cps,  Next: fli-ios-bot,  Prev: fli-ios-tty,  Up: fli-ios
+
+Defining A Customized Prolog Stream
+-----------------------------------
+
+* Menu:
+
+* fli-ios-cps-sum::                     Summary of Steps
+* fli-ios-cps-sst::                     Defining a Stream Structure
+* fli-ios-cps-opn::                     Opening The User-Defined Stream
+* fli-ios-cps-all::                     Allocating Space And Setting Field Values For the User-Defined Stream
+* fli-ios-cps-sqs::                     Setting Up The QP_stream Structure
+* fli-ios-cps-ire::                     Initialize and Register The Created Stream
+* fli-ios-cps-tty::                     TTY Group For TTY Stream
+
+   In addition to calling default open predicates or functions -- such
+as `open/[3,4]' or `QP_fopen()' to create a stream, a user can define a
+stream through the method described in this section.  A common reason
+to do this is to create a stream, which is not supported directly by
+the Prolog input/output system, such as a stream for inter-process
+communication.  The created stream can be passed as the stream argument
+to all the input/output related Prolog predicates and functions.  This
+section presupposes *Note fli-ios-sst:: on stream structure.
+
+
+File: quintus.info,  Node: fli-ios-cps-sum,  Next: fli-ios-cps-sst,  Up: fli-ios-cps
+
+Summary of Steps
+................
+
+   The following steps are required to create a user-defined stream in
+foreign code, such as C.  The stream is represented in C as a pointer
+to a `QP_stream' structure.  It can then be converted back to Prolog
+stream representation through `stream_code/2'.  The predicate
+`stream_code/2' converts, in either direction, between Prolog and C
+representations of a stream.
+
+  1. Define the user-defined stream structure, containing fields
+     required to operate the stream.  (see *Note fli-ios-cps-sst::)
+
+  2. Prepare creation of the user-defined stream. This usually requires
+     a function to perform the following steps:
+       a. Open the I/O channel, e.g. open a file or set up
+          inter-process communication.  (see *Note fli-ios-cps-opn::)
+
+       b. Allocate memory for the user-defined stream and set values in
+          the fields of the allocated user-defined stream.  (see *Note
+          fli-ios-cps-all::)
+
+       c. Set up the default values for the `QP_stream' part of the
+          user-defined stream through `QU_stream_param()' and modify
+          these values as necessary.  (see *Note fli-ios-cps-sqs::)
+
+       d. Initialize the remaining fields of `QP_stream' structure used
+          internally by the Prolog system through `QP_prepare_stream()'
+          and register the created stream through
+          `QP_register_stream()'.  (see *Note fli-ios-cps-ire::)
+
+       e. If the stream is a tty stream, register the stream to its tty
+          group through `QP_add_tty()'.  (see *Note fli-ios-cps-tty::)
+
+  3. Implement the bottom layer functions to be used for the stream.
+     These may include read, write, flush, seek and close functions.
+     (see *Note fli-ios-bot::)
+
+   These steps are described in more detail in the remainder of this
+section.  An example of creating a stream for a binary file in one of
+read, write or append modes is discussed.  The example is written in C
+although it can also be written in other languages, such as Pascal or
+Fortran.
+
+   The example opens a file as a binary stream.  The characters input
+from or output to the stream are exactly the same as stored in file.
+Seeking to a random byte position and flushing output are permitted in
+the stream.  The first example lists complete source code (see *Note
+fli-ios-uds::).  Note that binary streams are in fact supported in the
+system.
+
+
+File: quintus.info,  Node: fli-ios-cps-sst,  Next: fli-ios-cps-opn,  Prev: fli-ios-cps-sum,  Up: fli-ios-cps
+
+Defining a Stream Structure
+...........................
+
+   The first field of the user-defined stream structure must be of type
+`QP_stream'.  Other fields in the user-defined stream structure can be
+anything that is required to operate on the user-defined stream.  The
+Prolog input/output system passes a `QP_stream' pointer as the first
+argument to the bottom layer functions; casting this to the
+user-defined stream structure enables other fields in the user-defined
+stream to be accessed.  The example below declares a binary stream
+structure as:
+     typedef struct
+         {
+             QP_stream qpinfo;
+             int fd;                 /* UNIX file descriptor */
+             int last_rdsize;        /* size of last returned record */
+             unsigned char buffer[Buffer_Size];      /* I/O buffer */
+         } BinStream;
+     
+     #define CoerceBinStream(x) ((BinStream *)(x))
+
+   The field `qpinfo' stores information about the binary stream known
+to the Prolog input/output system.  There is a `buffer' field in the
+structure since the I/O buffer is allocated by the user.   The macro
+`CoerceBinStream' is used to convert a pointer to `QP_stream' into a
+pointer to `BinStream'. We use this macro to convert the pointer so
+that fields in the `BinStream' structure can be accessed.
+
+
+File: quintus.info,  Node: fli-ios-cps-opn,  Next: fli-ios-cps-all,  Prev: fli-ios-cps-sst,  Up: fli-ios-cps
+
+Opening The User-Defined Stream
+...............................
+
+   Depending on the specific user-defined stream, there are different
+operations needed for the stream.  A stream that operates on a file
+needs to open the file; a stream that operates for inter-process
+communication needs to build the connection to different process.  Our
+example stream operates on files, so we just open the file to get file
+descriptor.  The parameters of our function and local variables in the
+function are also listed.
+
+     QP_stream *
+     open_bin(filename, modename, error_num)
+         char   *filename, *modename;
+         int    *error_num;
+         {
+             BinStream       *stream;
+             QP_stream       *option;
+             int             fd, mode;
+     
+             switch (*modename) {
+             case 'r': mode = QP_READ;
+                       fd = open(filename, O_RDONLY, 0000);
+                       break;
+             case 'w': mode = QP_APPEND;
+                       fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC,
+                                           0666);
+                       break;
+             case 'a': mode = QP_APPEND;
+                       fd = open(filename, O_WRONLY|O_CREAT, 0666);
+                       break;
+             default:  *error_num = QP_E_BAD_MODE;
+                       return QP_NULL_STREAM;
+             }
+             if (fd < 0) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+     
+             ......  allocate space and set user-stream fields  ......
+             ......  set up QP_stream structure fields  ......
+             ......  register the created QP_stream  ......
+     
+             return &stream->qpinfo;
+         }
+
+   This function can be called from Prolog using the Prolog calling C
+interface described in *Note fli-p2f::. The address returned by this
+function is converted into the Prolog representation of a stream using
+`stream_code/2'.
+
+
+File: quintus.info,  Node: fli-ios-cps-all,  Next: fli-ios-cps-sqs,  Prev: fli-ios-cps-opn,  Up: fli-ios-cps
+
+Allocating Space And Setting Field Values For the User-Defined Stream
+.....................................................................
+
+   The memory space for a user-defined stream structure and its buffer
+are controlled by the user application.  It is recommended to use
+`QP_malloc()' to allocate the space for more efficient memory
+utilization in the Prolog system.  In our example, the buffer is a field
+in the `BinStream' structure so that only one `QP_malloc()' call
+allocates both buffer and stream space.
+
+   After memory is allocated, the fields in the stream structure are
+set appropriately.  The fields of `QP_stream' part in the stream
+structure is set up in the next step.
+
+             if ((stream = (BinStream *) QP_malloc(sizeof(*stream)))
+                             == ((BinStream *) 0) ) {
+                 (void) close(fd);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+             stream->fd = fd;
+             stream->last_rdsize = 0;
+
+
+File: quintus.info,  Node: fli-ios-cps-sqs,  Next: fli-ios-cps-ire,  Prev: fli-ios-cps-all,  Up: fli-ios-cps
+
+Setting Up The QP_stream Structure
+..................................
+
+   The default values in the fields of `QP_stream' part of the
+user-defined stream are set through the `QU_stream_param()' function.
+The declaration of `QU_stream_param()' is given as:
+     void QU_stream_param(filename, mode, format, option)
+         char        *filename;
+         int         mode;
+         int         format;
+         QP_stream   *option;
+
+   If the stream does not have a filename, the empty string `""' should
+be used.  The parameter `mode' can be one of `QP_READ', `QP_WRITE' or
+`QP_APPEND'.  The parameter `format' can be one of the format types
+listed in *Note fli-ios-sst-fmt::.  The default version of
+`QU_stream_param()' source code is shipped with Quintus Prolog (see
+*Note cfu-ref-QU_stream_param:: also lists the source).
+
+   The fields in the `QP_stream' structure can then be modified based on
+the desired features of the user-defined stream.  All the fields
+described in the Stream Structure section can be modified (see *Note
+fli-ios-sst::), but often the only modified fields are `max_reclen',
+`seek_type' and bottom layer function fields.
+
+   In our example, the format `QP_VAR_LEN' is chosen for non-tty files,
+and the `line_border' field is reset so that the middle layer functions
+do not alter any of the input/output records.  The fields `max_reclen'
+and `seek_type' are set to the right values for our stream.  The bottom
+layer function fields are set based on the mode and the `seek_type' of
+the stream.  If the stream is opened for append, the file pointer of
+the stream is moved to the end of file and the `magic' field is updated
+(`magic.byteno' is used since it is a UNIX file).
+             option = &stream->qpinfo;
+             QU_stream_param(filename, mode, QP_VAR_LEN, option);
+             option->max_reclen = Buffer_Size;
+             option->line_border = QP_NOLB;
+             if (isatty(fd)) {
+                 option->format = QP_DELIM_TTY;
+                 option->seek_type = QP_SEEK_ERROR;
+             } else {
+                 option->seek_type = QP_SEEK_BYTE;
+                 option->seek = bin_seek;
+             }
+             if (mode != QP_READ) {
+                 option->write = bin_write;
+                 option->flush = bin_write;
+             } else
+                 option->read = bin_read;
+             if (option->mode == QP_APPEND &&
+                                 option->format != QP_DELIM_TTY) {
+                 if ((option->magic.byteno=lseek(fd,0L,L_XTND)) < 0) {
+                     (void) close(fd);
+                     *error_num = errno;
+                     return QP_NULL_STREAM;
+                 }
+             }
+             option->close = bin_close;
+
+
+File: quintus.info,  Node: fli-ios-cps-ire,  Next: fli-ios-cps-tty,  Prev: fli-ios-cps-sqs,  Up: fli-ios-cps
+
+Initialize and Register The Created Stream
+..........................................
+
+   The fields of `QP_stream' structure used internally by the Prolog
+system are initialized through `QP_prepare_stream()'.  It should be
+called after other fields in `QP_stream' are properly set up.
+`QP_prepare_stream()' takes a pointer to `QP_stream' as its first
+parameter and the address of the input/output buffer for the stream as
+its second parameter.
+
+   `QP_register_stream()' is then called to register the user-defined
+stream so that the stream can be used in Prolog code.  In our example,
+if the registration fails the bottom layer function is used to close
+the opened file and deallocate the memory space for the created stream
+and a null stream is returned.
+             QP_prepare_stream(&stream->qpinfo, stream->buffer);
+             if (QP_register_stream(&stream->qpinfo) == QP_ERROR)
+             {   (void) stream->qpinfo.close(&stream->qpinfo);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+
+
+File: quintus.info,  Node: fli-ios-cps-tty,  Prev: fli-ios-cps-ire,  Up: fli-ios-cps
+
+TTY Group For TTY Stream
+........................
+
+   This is an optional step only for tty streams.  A tty stream needs
+to register to its group for special tty service (see *Note
+fli-ios-tty::).
+
+   Finally the pointer to the created stream is returned to Prolog, and
+converted to Prolog stream representation through `stream_code/2'.  In
+our example, we use the filename of the stream as the key to register
+into its group.
+
+             if (option->format == QP_DELIM_TTY)
+                 (void) QP_add_tty(&stream->qpinfo, filename);
+     
+             return &stream->qpinfo;
+
+
+File: quintus.info,  Node: fli-ios-bot,  Next: fli-ios-uds,  Prev: fli-ios-cps,  Up: fli-ios
+
+The Bottom Layer Functions
+--------------------------
+
+* Menu:
+
+* fli-ios-bot-rea::                     The Bottom Layer Read Function
+* fli-ios-bot-wri::                     The Bottom Layer Write Function
+* fli-ios-bot-flu::                     The Bottom Layer Flush Function
+* fli-ios-bot-see::                     The Bottom Layer Seek Function
+* fli-ios-bot-clo::                     The Bottom Layer Close Function
+
+   There are five bottom layer functions for a stream: read, write,
+flush, seek and close. However, not all of these functions are needed
+for every stream:
+   * The `seek' function is not required when the `seek_type' is
+     `QP_SEEK_ERROR'.
+
+   * The `read' function is only required for an input stream.
+
+   * The `write' function is only required for an output stream.
+
+   * The `flush' function is not required when the `flush_type' is
+     `QP_FLUSH_ERROR'.
+
+   * The `close' function should be supplied for every stream.
+
+   These functions usually only operate on the specific fields of a
+particular user-defined stream.  (i.e. Fields other than the first
+field in a user-defined stream structure.)  The `errno' field and
+`magic' field in `QP_stream' part may also be maintained by the bottom
+layer functions.  The `mode' field and `max_reclen' field are also
+typically accessed by the bottom layer functions.
+
+   Except for the read function, all the bottom layer functions return
+`QP_SUCCESS' upon success, and return `QP_ERROR' and assign an error
+code to the `errno' field upon failure.  These functions are described
+further in subsequent sub-sections.
+
+
+File: quintus.info,  Node: fli-ios-bot-rea,  Next: fli-ios-bot-wri,  Up: fli-ios-bot
+
+The Bottom Layer Read Function
+..............................
+
+     int <READ FUNCTION>(qpstream, bufptr, sizeptr)
+            QP_stream        *qpstream;
+            unsigned char   **bufptr;
+            size_t           *sizeptr;
+     
+     Return Values:   QP_FULL  : a complete record is read
+                      QP_PART  : a partial  record is read
+                      QP_EOF   : end of file is reached
+                      QP_ERROR : a partial  record is read
+
+   The bottom layer read function returns a record of input to its
+caller.  The returned record is buffered.  The buffer address is
+returned through `*bufptr' parameter and the size of the returned record
+is stored in `*sizeptr' parameter.  The `magic' field in `qpstream'
+should be updated to the system-dependent file address (see *Note
+fli-ios-sst-sda::) for the beginning of the returned record.  If there
+is no seek permission for the stream, the `magic' field may be ignored.
+The `errno' field in `QP_stream' stores the error code if an error is
+detected in the function.
+
+   In our example, the read function does not return `QP_PART' since
+any length of input is chosen as a complete record.
+     static int
+     bin_read(qpstream, bufptr, sizeptr)
+         QP_stream            *qpstream;
+         unsigned char       **bufptr;
+         size_t               *sizeptr;
+         {
+             int n;
+             register BinStream *stream = CoerceBinStream(qpstream);
+     
+             qpstream->magic.byteno += stream->last_rdsize;
+             stream->last_rdsize = 0;
+             n = read(stream->fd, (char*) stream->buffer,
+                                  (int) qpstream->max_reclen);
+             if (n > 0) {
+                 *bufptr  = stream->buffer;
+                 *sizeptr = n;
+                 stream->last_rdsize = n;
+                 return QP_FULL;
+             } else if (n == 0) {
+                 *sizeptr = 0;
+                 return QP_EOF;
+             } else {
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+         }
+
+
+File: quintus.info,  Node: fli-ios-bot-wri,  Next: fli-ios-bot-flu,  Prev: fli-ios-bot-rea,  Up: fli-ios-bot
+
+The Bottom Layer Write Function
+...............................
+
+     int <WRITE FUNCTION>(qpstream, bufptr, sizeptr)
+            QP_stream         *qpstream;
+            unsigned char    **bufptr;
+            size_t            *sizeptr;
+     
+     Return Values:   QP_SUCCESS
+                      QP_ERROR
+
+   The bottom layer write function writes out a record from buffer
+address stored in `*bufptr' and the size of the record stored in
+`*sizeptr'.  Upon successful return, `*sizeptr' stores the maximum
+record size and `*bufptr' stores the address of the beginning of the
+buffer for the next output record.  The `magic' field in `qpstream'
+should be updated to the system-dependent file address (see *Note
+fli-ios-sst-sda::) for the beginning of the next output record.  If
+there is no seek permission for the stream, the `magic' field may be
+ignored.  The `errno' field in `QP_stream' stores the error code if an
+error is detected in the function and `QP_ERROR' is returned.  The
+output record passed into the write function may be a partial record if
+output record overflows the output buffer for a stream that permits
+overflow.
+
+     static int
+     bin_write(qpstream, bufptr, sizeptr)
+         QP_stream            *qpstream;
+         unsigned char       **bufptr;
+         size_t               *sizeptr;
+         {
+             BinStream  *stream = CoerceBinStream(qpstream);
+             int        n, len=(int) *sizeptr;
+             char        *buf = (char *) *bufptr;
+     
+             while ((n = write(stream->fd, buf, len)) > 0 && n < len) {
+                 buf += n;
+                 len -= n;
+             }
+             if (n >= 0) {
+                 qpstream->magic.byteno += *sizeptr;
+                 *sizeptr = qpstream->max_reclen;
+                 *bufptr  = stream->buffer;
+                 return QP_SUCCESS;
+             } else {
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+         }
+
+
+File: quintus.info,  Node: fli-ios-bot-flu,  Next: fli-ios-bot-see,  Prev: fli-ios-bot-wri,  Up: fli-ios-bot
+
+The Bottom Layer Flush Function
+...............................
+
+     int <FLUSH FUNCTION>(qpstream, bufptr, sizeptr)
+            QP_stream         *qpstream;
+            unsigned char    **bufptr;
+            size_t            *sizeptr;
+     
+     Return Values:   QP_SUCCESS
+                      QP_ERROR
+
+   The parameters and the return values of the flush function have the
+same syntax and the same meaning as the write function.  The write
+function may buffer the output record without writing the record out.
+The flush function should write out the output record immediately when
+it is called.  The middle layer function will not call the write
+function with an empty record (`*sizeptr' is zero), but the flush
+function may be called with an empty record passed in.  In general, the
+flush function can be the same as write function unless the write
+function buffers output records.  An output stream needs a bottom layer
+flush function only if `flush_type' of the stream is not `FLUSH_ERROR'.
+
+   In our example, the bottom layer write function does not buffer
+output record and it can also handle writing an empty record, so the
+bottom layer flush function is the same as the write function.
+
+
+File: quintus.info,  Node: fli-ios-bot-see,  Next: fli-ios-bot-clo,  Prev: fli-ios-bot-flu,  Up: fli-ios-bot
+
+The Bottom Layer Seek Function
+..............................
+
+     int <SEEK FUNCTION>(qpstream, qpmagic, whence, bufptr, sizeptr)
+            QP_stream        *qpstream;
+            union QP_cookie  *qpmagic;
+            int               whence;
+            unsigned char   **bufptr;
+            size_t           *sizeptr;
+     
+     Return Values:   QP_SUCCESS
+                      QP_ERROR
+
+   The bottom layer seek function sets the stream `qpstream' to a new
+position based on the method `whence' and the system-dependent file
+address `qpmagic' specified in the parameters.  The output parameter
+`*bufptr' stores the beginning of the buffer and `*sizeptr' stores the
+size of record.  When the bottom layer seek function is called, the
+`magic' field of `qpstream' is the current stream position known to the
+user of the stream.  (It does not include the unconsumed characters in
+the buffer.)  Upon success, the seek function should return
+`QP_SUCCESS' and the `magic' field of `qpstream' should be updated to
+the new position.  Upon failure, it returns `QP_ERROR' and suitable
+error code should be assigned to `error' field of `qpstream'.
+
+   The stream is set to a new position based on the `whence' value and
+`qpmagic' values.  (see *Note fli-ios-sst-sda::)
+   * If `whence' is `QP_BEGINNING', the `magic' field is the
+     system-dependent address to be positioned from the beginning of the
+     stream.  If the `seek_type' of the stream is `QP_SEEK_PREVIOUS',
+     the `whence' value is always `QP_BEGINNING'.
+
+   * If `whence' is `QP_CURRENT', seeking is to be performed from the
+     current position.  For instance, if `byteno' is used for `magic'
+     field of `qpstream', the stream should be set to the current
+     position (`qpstream->magic.byteno') plus the offset specified in
+     `qpmagic->byteno'.
+
+   * If `whence' is `QP_END', seeking is to be performed from the end
+     of file position associated with `qpstream'.  For instance, if
+     `byteno' is used for `magic' field of `qpstream', the stream
+     should be set to the size of the file associated with `qpstream'
+     plus the offset specified in `qpmagic->byteno'.
+
+   Due to the buffering mechanism of a stream, the `magic' field in
+`qpstream' might be different from the actual position for the file (or
+other devices) associated with the stream.  For example, if the current
+record of an input stream has a size of 10 and there are only 5
+characters consumed, the `magic' field indicates the position at the
+sixth character rather than the 11th character of the current record.
+In short, the value in `magic' field of `qpstream' does not count any
+characters in the buffer that are not consumed in an input stream.  For
+an output stream, the caller of the bottom layer seek function will
+call flush function to flush output prior to calling this function if
+`qpstream' permits flushing (`flush_type' is not `QP_FLUSH_ERROR' ).
+The caller of this function does not permit any seeking in an output
+stream with no flush permission if there are characters in the current
+record (line position is not zero in the output stream).  However, if
+the bottom layer of an output stream without flushing permission
+buffers more than one output record, it is possible for the bottom
+layer seek function to be called with records in the buffer.  (This
+would be the case that there are no characters in the current record.)
+The bottom layer seek function should write out the records in the
+buffer for this case.
+
+   One effect of seeking is to clear out the buffer of a stream.  This
+should be adhered to in implementing the bottom layer seek function.
+If `qpstream' is an input stream, `bufptr' and `sizeptr' have the same
+meaning as in the bottom layer read function.  If `qpstream' is an
+output stream, `bufptr' and `sizeptr' have the same meaning as in the
+bottom layer write function.  So for most of cases, `*bufptr' should be
+set to the beginning of the buffer of the stream and `*sizeptr' should
+be set as follows:
+     *sizeptr = (qpstream->mode == QP_READ) ? 0 : qpstream->max_reclen;
+
+   The bottom layer seek function for our example stream:
+     static int
+     bin_seek(qpstream, qpmagic, whence, bufptr, sizeptr)
+          QP_stream          *qpstream;
+          union QP_cookie    *qpmagic;
+          int                whence;
+          unsigned char      **bufptr;
+          size_t             *sizeptr;
+          {
+             BinStream *stream = CoerceBinStream(qpstream);
+             off_t        new_offset;
+     
+             switch (whence) {
+             case QP_BEGINNING:
+                 new_offset = lseek(stream->fd,qpmagic->byteno,L_SET);
+                 break;
+             case QP_CURRENT:
+                 /* The current location of file pointer is different
+                    from what the user thinks it is due to buffering.
+                    The magic field has been brought up to date by the
+                    caller of this function already, so just seek to
+                    that position first. */
+                 if (lseek(stream->fd, qpstream->magic.byteno, L_SET)
+                                                        == -1) {
+                     qpstream->errno = errno;
+                     return QP_ERROR;
+                 }
+                 new_offset = lseek(stream->fd,qpmagic->byteno,L_INCR);
+                 break;
+             case QP_END:
+                 new_offset = lseek(stream->fd,qpmagic->byteno,L_XTND);
+                 break;
+             default:
+                 qpstream->errno = QP_E_INVAL;
+                 return QP_ERROR;
+             }
+             if (new_offset == -1) { /* error in seeking */
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+     
+             qpstream->magic.byteno = new_offset;
+             *bufptr  = stream->buffer;
+             *sizeptr = (qpstream->mode == QP_READ) ? 0
+                                        : qpstream->max_reclen;
+             stream->last_rdsize = 0;
+             return QP_SUCCESS;
+          }
+
+
+File: quintus.info,  Node: fli-ios-bot-clo,  Prev: fli-ios-bot-see,  Up: fli-ios-bot
+
+The Bottom Layer Close Function
+...............................
+
+     int <CLOSE FUNCTION>(qpstream)
+             QP_stream   *qpstream;
+     
+     Return Value:   QP_SUCCESS
+                     QP_ERROR
+
+   The bottom layer close function performs the specific close
+operation of a user-defined stream and deallocates the memory space for
+the stream.  It returns `QP_ERROR' and assigns an appropriate error code
+to the `errno' field of `QP_stream' if an error occurs in the function.
+In our example, we use `QP_free()' to deallocate memory space since the
+memory is allocated by `QP_malloc()'.
+
+     static int
+     bin_close(qpstream)
+         QP_stream   *qpstream;
+         {
+             BinStream *stream = CoerceBinStream(qpstream);
+             int fd = stream->fd;
+     
+             if (close(fd) < 0) {
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+             (void) QP_free(qpstream);
+             return QP_SUCCESS;
+         }
+
+
+File: quintus.info,  Node: fli-ios-uds,  Next: fli-ios-bio,  Prev: fli-ios-bot,  Up: fli-ios
+
+Examples Of User-Defined Streams
+--------------------------------
+
+* Menu:
+
+* fli-ios-uds-bst::                     Creating A Binary Stream
+* fli-ios-uds-est::                     Creating A Stream To Read An Encrypted File
+* fli-ios-uds-sst::                     Creating A Stream Based On C Standard I/O Library
+
+   Three examples of creating a user-defined stream are listed in this
+section.  The foreign code examples are written in C language under
+UNIX operating system.
+

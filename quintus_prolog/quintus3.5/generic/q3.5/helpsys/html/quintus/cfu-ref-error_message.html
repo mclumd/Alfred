@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_error_message()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_error_message(errno, is_qp_error, error_string)
+     int    errno;
+     int   *is_qp_error;
+     char **error_string;
+     </pre>
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+<dt><var>errno</var>
+     <dd>the error number in question
+
+     <br><dt><var>is_qp_error</var>
+     <dd>set to:
+<br><dt>
+     <dd>
+          <dl>
+
+          <br><dt>0
+          <dd>if it <em>is not</em> an error number created by Quintus.
+
+          <br><dt>1
+          <dd>if it <em>is</em> an error number created by Quintus. 
+</dl>
+
+     <br><dt><var>error_string</var>
+     <dd>the text of the error message.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>This function supplies the text corresponding to
+the error
+number <var>errno</var>.  The output parameter <var>is_qp_error</var> can be used to
+determine if the error number was one created by Quintus or is a system error
+number.
+
+   <p>Typically, the error number of interest is the one in the global variable
+<code>QP_errno</code>.  This variable is discussed in the man pages for
+<code>QP_perror()</code>.
+
+<h4 class="subheading">Return Value</h4>
+
+   <p><code>QP_SUCCESS</code>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>The following fragment takes the status value returned by
+some function that returns C calling Prolog style status values and prints out
+the corresponding error.
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+         ...
+     int is_qp_error;
+     char *error_message;
+         ...
+     status = some_function();
+     switch(status) {
+     case QP_ERROR:
+         (void) QP_error_message(QP_errno, &amp;is_qp_error,
+             &amp;error_message);
+         if(is_qp_error)
+             (void) QP_fputs("prolog error: ", QP_stderr);
+         else (void) QP_fputs("UNIX error: ", QP_stderr);
+         (void) QP_fputs(error_message, QP_stderr);
+         (void) QP_fnewln(QP_stderr);
+         ...
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_perror()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-exception_term.html#cfu-ref-exception_term">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-cut_query.html#cfu-ref-cut_query">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

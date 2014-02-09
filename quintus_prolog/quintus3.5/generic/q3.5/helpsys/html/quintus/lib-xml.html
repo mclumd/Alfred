@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">XML Parsing and Generation</h3>
+
+   <p><code>library(xml)</code> is a package for parsing XML with Prolog, which
+provides Prolog applications with a simple "Document Value Model"
+interface to XML documents.  A description of the subset of XML that it
+supports can be found at:
+<a href="http://homepages.tesco.net/binding-time/xml.pl.html">http://homepages.tesco.net/binding-time/xml.pl.html</a>
+
+   <p>The package, originally written by Binding Time Ltd., is in the public
+domain and unsupported.  To use the package, enter the query:
+
+<pre class="example">     | ?- <kbd>use_module(library(xml)).</kbd>
+     </pre>
+
+   <p>The package represents XML documents by the abstract data type
+<var>document</var>, which is defined by the following grammar:
+
+   <p><table><tr align="left"><td valign="top"><var>document</var> </td><td valign="top">::= <code>xml(</code><var>attributes</var><code>,</code><var>content</var><code>)</code> </td><td valign="top">{ well-formed document }
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>malformed(</code><var>attributes</var><code>,</code><var>content</var><code>)</code> </td><td valign="top">{ malformed document }
+<br></td></tr><tr align="left"><td valign="top"><br></td></tr><tr align="left"><td valign="top"><var>attributes</var> </td><td valign="top">::= <code>[]</code>
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>[</code><var>name</var><code>=</code><var>chardata</var><code>|</code><var>attributes</var><code>]</code>
+<br></td></tr><tr align="left"><td valign="top"><br></td></tr><tr align="left"><td valign="top"><var>content</var> </td><td valign="top">::= <code>[]</code>
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>[</code><var>cterm</var><code>|</code><var>content</var><code>]</code>
+<br></td></tr><tr align="left"><td valign="top"><br></td></tr><tr align="left"><td valign="top"><var>cterm</var> </td><td valign="top">::= <code>pcdata(</code><var>chardata</var><code>)</code> </td><td valign="top">{ text }
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>comment(</code><var>chardata</var><code>)</code> </td><td valign="top">{ an XML comment }
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>namespace(</code><var>URI</var><code>,</code><var>prefix</var><code>,</code><var>element</var><code>)</code> </td><td valign="top">{ a Namespace }
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>element(</code><var>tag</var><code></code><var>attributes</var><code>,</code><var>content</var><code>)</code> </td><td valign="top">{ &lt;<var>tag</var>&gt;..&lt;/<var>tag</var>&gt; encloses <var>content</var> or &lt;<var>tag</var> /&gt; if empty }
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>instructions(</code><var>name</var><code>,</code><var>chardata</var><code>)</code> </td><td valign="top">{ A PI &lt;? <var>name</var> <var>chardata</var> ?&gt; }
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>cdata(</code><var>chardata</var><code>)</code> </td><td valign="top">{ &lt;![CDATA[<var>chardata</var>]]&gt;  }
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>doctype(</code><var>tag</var><code>,</code><var>doctypeid</var><code>)</code> </td><td valign="top">{ DTD &lt;!DOCTYPE .. &gt; }
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>unparsed(</code><var>chardata</var><code>)</code> </td><td valign="top">{ text that hasn't been parsed }
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>out_of_context(</code><var>tag</var><code>)</code> </td><td valign="top">{ <var>tag</var> is not closed }
+<br></td></tr><tr align="left"><td valign="top"><br></td></tr><tr align="left"><td valign="top"><var>tag</var> </td><td valign="top">::= <dfn>atom</dfn> </td><td valign="top">{ naming an element }
+<br></td></tr><tr align="left"><td valign="top"><br></td></tr><tr align="left"><td valign="top"><var>name</var> </td><td valign="top">::= <dfn>atom</dfn> </td><td valign="top">{ not naming an element }
+<br></td></tr><tr align="left"><td valign="top"><br></td></tr><tr align="left"><td valign="top"><var>URI</var> </td><td valign="top">::= <dfn>atom</dfn> </td><td valign="top">{ giving the URI of a namespace }
+<br></td></tr><tr align="left"><td valign="top"><br></td></tr><tr align="left"><td valign="top"><var>chardata</var> </td><td valign="top">::= <dfn>chars</dfn> </td><td valign="top">{ see <a href="mpg-ref-aty-ety.html#mpg-ref-aty-ety">mpg-ref-aty-ety</a> }
+<br></td></tr><tr align="left"><td valign="top"><br></td></tr><tr align="left"><td valign="top"><var>doctypeid</var> </td><td valign="top">::= <code>public(</code><var>chardata</var><code>,</code><var>chardata</var><code>)</code>
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>system(</code><var>chardata</var><code>)</code>
+<br></td></tr><tr align="left"><td valign="top"></td><td valign="top">|   <code>local</code>
+   <br></td></tr></table>
+
+   <p>The following predicates are exported by the package:
+
+     <dl>
+<dt><code>xml_parse(</code><var>+Chars</var><code>, </code><var>-Document</var><code>[, </code><var>+Options</var><code>])</code>
+     <dd>
+
+     <p>Parses <var>Chars</var>, a <dfn>chars</dfn>, to <var>Document</var>, a
+<var>document</var>.  <var>Chars</var> is not required to represent strictly
+well-formed XML.
+
+     <p><var>Options</var> is a list of zero or more of the following, where
+<var>Boolean</var> must be <code>true</code> or <code>false</code>:
+
+          <dl>
+<dt><code>format(</code><var>Boolean</var><code>)</code>
+          <dd>Indent the element content (default <code>true</code>).
+
+          <br><dt><code>extended_characters(</code><var>Boolean</var><code>)</code>
+          <dd>Use the extended character entities for XHTML (default <code>true</code>).
+
+          <br><dt><code>remove_attribute_prefixes(</code><var>Boolean</var><code>)</code>
+          <dd>Remove namespace prefixes from attributes when it's the same as the
+prefix of the parent element (default <code>false</code>). 
+</dl>
+
+     <br><dt><code>xml_parse(</code><var>-Chars</var><code>, </code><var>+Document</var><code>[, </code><var>+Options</var><code>])</code>
+     <dd>Generates <var>Chars</var>, a <dfn>chars</dfn>,
+from <var>Document</var>, a <var>document</var>. 
+If <var>Document</var> is not a valid <var>document</var> term representing
+well-formed XML, an exception is raised.
+
+     <p>In this usage of the predicate, the only option available is <code>format/1</code>.
+
+     <br><dt><code>xml_subterm(</code><var>+Term</var><code>, </code><var>?Subterm</var><code>)</code>
+     <dd>
+
+     <p>Unifies <var>Subterm</var> with a sub-term of <var>Term</var>, a
+<var>document</var>. This can be especially useful when trying to test or
+retrieve a deeply-nested subterm from a document.
+
+     <br><dt><code>xml_pp(</code><var>+Document</var><code>)</code>
+     <dd>
+
+     <p>"Pretty prints" <var>Document</var>, a <var>document</var>, on the current
+output stream. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-neg.html#lib-neg">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp.html#lib-txp">Previous</a>
+<li><a rel="up" accesskey="u" href="lib.html#lib">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,148 @@
+
+
+The demo script in this directory assumes that the ProXL saved state 
+is called 'proxl', and is on your search path.
+
+If the ProXL saved state has a different name, say 'proxl1.0', but is
+still on your search path then invoke the demo commands below with
+the option "-p proxl1.0".  For example,
+
+	% ./demo -p proxl1.0 browser
+
+Regardless of the name of ProXL saved state, if it is not on your
+search path you must either put it on your search path and proceed as
+above or specify the absolute file name of the saved state or the file
+name of the saved state relative to this demos directory.  For example,
+
+	% ./demo -p ../proxl browser
+
+	% ./demo -p ../proxl1.0 browser
+
+	% ./demo -p /usr/local/bin/proxl browser
+
+	% ./demo -p /usr/local/bin/proxl1.0 browser
+
+
+All of the demos contained in this directory are still in various
+stages of development, but they work and illustrate the techniques
+required to use ProXL. Significant enhancements to this programs
+can be expected in future releases.
+
+The demos contained in this directory are:
+
+	browser: menu-oriented browser of ProXL entities and their
+		 attribute/value pairs.
+
+	draw: a simple figure drawing program which demostrates interactive
+	      graphics.
+
+	hello: a "Hello World" program enhanced to show all major ProXL
+	       features.
+
+	top_level: an interactive Prolog top-level window.
+
+	puzzle: A demo from the X11 tape which has been transcribed into
+		ProXL. 
+
+
+To run all of these demos type:
+
+	% ./demo all
+
+To run a single demo (e.g. the browser demo) type:
+
+	% ./demo browser
+
+To run more than one demo, but not all, (e.g. the browser and draw
+demos) type:
+
+	% ./demo browser draw
+
+
+
+Additional release notes for the browser demo:
+----------------------------------------------
+
+As provided, the browser demo shows you the attributes of the
+default screen. 
+
+Click on the items shown on bold to examine them further.
+
+To destroy a browser window, just hit the q key.
+
+Browser exits when all its windows are destroyed.
+
+
+
+Additional release notes for the draw demo:
+-------------------------------------------
+
+This is a very simple MacDraw (tm) like editor with circles, ellipses,
+squares, rectangles and lines. 
+
+Click on a figure on the menu to select the mode. A left mouse button
+down on the draw area defines the upper left corner of the figure's
+bounding box, and the program rubber-bands as long as the mouse button
+is held. The mouse button release event defines the opposite corner of
+the figure's bounding box and draws it.
+
+To exit the program, click on the small square window on the right hand
+side of the title area.
+
+
+Additional release notes for the hello demo:
+--------------------------------------------
+
+Click any mouse button inside to exit the demo.
+
+
+Additional release notes for the top_level demo:
+----------------------------------------------------
+
+This demos provides a very rudimentary interactive top-level for
+Prolog, so you still have access to Prolog while the ProXL handle_events
+loop is running.
+
+A (mis)feature at the moment is that typing carriage return will try to
+execute the current goal. This is convenient because you don't need
+to type the full stop, followed by blank space at the end, but it can 
+also be very annoying.
+
+Control-U will erase the current goal, and delete and backspace work.
+
+To exit the program, click on the small square window on the right hand
+side of the title area.
+
+
+Additional release notes for the puzzle demo:
+---------------------------------------------
+
+This demo puts up a color or black & white image of the well known
+mandrill and turns it into a NxN puzzle, similar to the 15-puzzle.
+
+The program determines, by examining your default screen's visual if
+the image should be in color or b&w. By default, the size is 4x4.
+
+Click on any "piece" horizontally or vertically adjacent to the 
+"empty space" to move it.
+
+The 'Scramble' button randonmly scrambles the puzzle.
+
+The 'Solve' button calls the solver to re-arrange the puzzle.
+
+The 'Auto' button starts an infinite scramble-solve loop with a small
+delay between the two operations.
+
+The 'Stop' button stops any on-going operation, eg. a scramble, solve
+or auto.
+
+The 'Show Facts' button pops up a window that shows the state of the
+puzzle as Prolog facts. To get rid of the pop-up window, click on the
+'Hide Facts' button it contains.
+
+The 'Quit' button exits this program.
+
+
+
+
+

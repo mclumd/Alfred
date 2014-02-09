@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Direct Slot Access</h5>
+
+   <p>Get and put methods are not automatically generated for private and protected
+slots. Those slots are accessed by the <code>fetch_slot/2</code> and
+<code>store_slot/2</code> predicates, which may only appear in the body of a
+method clause and which always operate on the object to which the
+message is sent. It is not possible to access the slots of another
+object with these predicates.
+
+   <p>You may declare a slot to be private or protected in order to limit access to
+it. However, it is still possible, and frequently useful, to define
+get and put methods for such a slot.
+
+   <p>For example, if numerator and denominator slots of the rational number
+class were
+private rather than public, it would be possible to define put
+methods to ensure that the denominator is never 0 and that the
+numerator and denominator are relatively prime. The get methods merely
+fetch slot values, but they need to be defined explicitly, since the
+slots are private. The new definition of the rational number class
+might start as follows:
+
+<pre class="example">     :- class rational =
+             [num:integer=0,
+              denom:integer=1].
+     
+     Self &gt;&gt; num(N) :-
+             fetch_slot(num, N).
+     
+     Self &gt;&gt; denom(D) :-
+             fetch_slot(denom, D).
+     
+     Self &gt;&gt; (N/D) :-
+             Self &gt;&gt; num(N),
+             Self &gt;&gt; denom(D).
+     </pre>
+
+   <p>One of the put methods for the class might be
+
+<pre class="example">     Self &lt;&lt; num(NO) :-
+             fetch_slot(denom, DO)
+             reduce(NO, DO, N, D),
+             store_slot(num, N),
+             store_slot(denom, D).
+     </pre>
+
+   <p>where the <code>reduce/4</code> predicate would be defined to divide <code>NO</code> and
+<code>DO</code> by their greatest common divisor, producing <code>N</code> and <code>D</code>,
+respectively.
+
+   <p>The definition of <code>reduce/4</code> and the remaining put methods is left
+as an exercise.  The put methods should fail for any message that
+attempts to set the denominator to 0.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-scl-meth-send.html#obj-scl-meth-send">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-scl-meth-getput.html#obj-scl-meth-getput">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-scl-meth.html#obj-scl-meth">Up</a>
+</ul>
+</div>
+   </body></html>
+

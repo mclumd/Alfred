@@ -1,0 +1,253 @@
+%   File: plint.doc
+%   SCCS: @(#)88/11/02 plint.doc	27.1
+
+                            THE PROLOG LINT CHECKER
+
+Although  UNIX  "object"  files  may  contain  information  about  the types of
+variables and procedures, only the debuggers access this information.  When the
+loader, "ld", combines object files, it does not check that the files which use
+an external procedure agree with the file that defines it.  There is nothing to
+stop a C programmer writing
+
+/* File: definer.c */
+
+void int_log_2(x, n)
+    int x;
+    int *n;
+    {
+        int i;
+
+        for (i = 0; x > 1; i++, x >>= 1) ;
+        *n = i;
+    }
+
+
+/* File: caller.c */
+extern int int_log_2();
+
+main()
+    {
+        printf("%d\n", int_log_2(27));
+    }
+
+Of  course  this  is  nonsense.    The  definition  and the use of the function
+"int_log_2" are quite incompatible.  But nothing in UNIX notices this.  So  the
+following can happen:
+
+% cc -c definer.c
+% cc caller.c definer.o
+% a.out
+Segmentation fault (core dumped)
+
+Quintus  Prolog  uses  the  ordinary UNIX loader to load foreign files.  So the
+Quintus Prolog foreign interface inherits this weakness of  the  "ld"  command.
+With the same version of definer.c, you could write in Quintus Prolog
+
+/* File: caller.pl */
+foreign_file('definer.o',
+    [   int_log_2
+    ]).
+
+foreign(int_log_2, c, int_log_2(+integer,[-integer])).
+
+:- load_foreign_files(['definer.o'], []),
+   abolish([foreign_file/2,foreign/3]).
+
+The  foreign/3  declaration  here is just as inconsistent with definer.c as the
+declaration in caller.c was.  Here is what happens when you try to load and run
+this file.
+
+| ?- compile(caller).
+[foreign file /u/henry_crun/definer.o loaded]
+[/u/henry_crun/caller.pl compiled 0.600 sec 1328 bytes]
+
+yes
+| ?- int_log_2(27, X).
+
+X = 1
+
+For  entirely  accidental  and  meaningless  reasons,  this  produced an answer
+instead of crashing.  But the answer is still wrong: it  should  have  been  4.
+The foreign/3 declaration should, of course, have been
+
+foreign(int_log_2, c, int_log_2(+integer,-integer)).
+
+It  is  perilously  easy  to write foreign declarations which disagree with the
+actual foreign code.  This is not a peculiar defect of Prolog.  Prolog has this
+defect  because  the  UNIX loader has the defect.  It is also periously easy to
+write Fortran, or C, or Pascal code where two files disagree about the types of
+global variables or procedures.
+
+How  can you possibly have any confidence in your programs?  The answer is that
+UNIX has a separate utility for  checking  that  several  C  source  files  are
+consistent with each other.  This utility is called "lint", and is described in
+the UNIX manual.  The UNIX command
+
+% man 1 lint
+
+should show you the appropriate section of the on-line manual.   Here  is  what
+"lint" does with our example under 4.2 BSD.
+
+% lint caller.c definer.c
+caller.c:
+definer.c:
+Lint pass2:
+int_log_2: variable # of args.  definer.c(4)  ::  caller.c(5)
+int_log_2 value used inconsistently     definer.c(4)  ::  caller.c(5)
+int_log_2 value declared inconsistently definer.c(4)  ::  caller.c(5)
+printf returns value which is always ignored
+int_log_2 value is used, but none returned
+
+Here is what "lint" does with our example under System V.2.
+
+% lint caller.c definer.c
+caller.c:
+
+caller.c
+==============
+(6)  warning: main() returns random value to invocation environment
+
+definer.c:
+
+==============
+value type used inconsistently
+    int_log_2           definer.c(4) :: caller.c(5)
+value type declared inconsistently
+    int_log_2           definer.c(4) :: caller.c(5)
+function called with variable number of arguments
+    int_log_2           definer.c(4) :: caller.c(5)
+function value is used, but none returned
+    int_log_2
+function returns value which is always ignored
+    printf
+
+Would  it  not  be  pleasant  if  there  were a similar command which checked a
+mixture of C and Prolog?  Ah, but  there  is!    The  command  is  supplied  by
+Quintus, and is called "plint".
+
+The  Quintus  Prolog  library  consists of two areas, the "library" area, which
+contains code that you are likely to load  into  your  own  programs,  and  the
+"tools" area, which contains utility programs.  Suppose the Quintus library has
+been installed in
+
+/usr/local/quintus
+
+Then the pathname of the "plint" command would be
+
+/usr/local/quintus/tools/plint
+
+You run the Prolog Lint checker by issuing a UNIX command
+
+tools_directory/plint -lint options file...
+
+To  find  out  what  the  lint  options  are,   consult   your   UNIX   manual.
+Unfortunately,  the  options differ from UNIX version to UNIX version, System V
+and 4.2BSD often using the same option for  exactly  opposite  meanings.    The
+files  may be any mix of ".c" source files, ".h" header files, and ".pl" source
+files.
+
+The "plint" command creates a new C source file in the current directory.  This
+file  includes  all  the ".h" header files.  This is so that it can pick up all
+the type definitions in those files.  It then collects the foreign/3 files from
+the  ".pl"  Prolog  source files and constructs a suitable C call for each one.
+It then hands the lint options, the new C file, and the other  ".c"  files,  to
+the UNIX "lint" command.  Finally, it deletes the new C source file.
+
+The C compiler and Lint checker are "clever" about included header files.  They
+will search through several directories to find them.  However, this  does  not
+apply  to  any "*.h" files you specify in the "plint" command.  If you give the
+command
+
+% plint -u bluebottle.h seagon/neddy.pl spriggs/jim.c
+
+the C file which "plint" constructs will include the same file that
+
+% cat bluebottle.h
+
+would display, namely the one in the current directory.  Even  if  there  is  a
+file   seagoon/bluebottle.h   or  spriggs/bluebottle.h,  that  doesn't  matter.
+Furthermore, all that "plint" does with the "-I" option is to  pass  it  on  to
+"lint".   Of course, if the "*.c" files you specify to "plint" contain #include
+directives, those directives will be processed by "lint" and "lint" will search
+for them as usual.
+
+There  is a special option which makes it easy to include Quintus library files
+among the files to be checked by "plint".
+
+        -Q file
+
+is the same as
+
+        quintus_library/file
+
+The space is optional,  but  it  is  clearer  if  you  put  it  in.    Assuming
+/usr/local/quintus as before, here are some examples:
+
+-Q quintus.h    => /usr/local/quintus/library/quintus.h
+-Q files.c      => /usr/local/quintus/library/files.c
+
+Here is what happens when "plint" is applied to our example.
+
+% plint -bchu caller.pl definer.c
+
+[ End of Prolog execution ]
+/tmp/plint12345.c:
+definer.c:
+Lint pass2:
+int_log_2: variable # of args.  definer.c(4)  ::  /tmp/plint12345.c(75)
+int_log_2 value used inconsistently     definer.c(4)  ::  /tmp/plint12345.c(75)
+int_log_2 value declared inconsistently definer.c(4)  ::  /tmp/plint12345.c(75)
+int_log_2 value is used, but none returned
+
+or, using a System V lint,
+% plint -bchu caller.pl definer.c
+
+[ End of Prolog execution ]
+/tmp/plint12345.c:
+definer.c:
+
+
+==============
+value type used inconsistently
+    int_log_2           definer.c(4) :: /tmp/plint12345.c(75)
+value type declared inconsistently
+    int_log_2           definer.c(4) :: /tmp/plint12345.c(75)
+function called with variable number of arguments
+    int_log_2           definer.c(4) :: /tmp/plint12345.c(75)
+function value is used, but none returned
+    int_log_2
+
+What  has  happened here is that "plint" has turned the caller.pl file into the
+following C code (embedded in a suitable context):
+
+ 1.     /* Prolog: caller.pl */
+ 2.     /* Near line 1 */
+ 3.     /* Foreign: definer.o */
+ 4.     /* Near line 5 */
+ 5.     {
+ 6.         int ii1 = 0;
+ 7.         int ri2 = 0;
+ 8.         extern int int_log_2();
+ 9.         ri2 = int_log_2(ii1);
+10.         (void)printf("%d", ri2);
+11.     }
+
+The line numbers have been added for this  explanation.    Line  1  says  which
+Prolog  source  file the following lines came from.  Lines 2 and 4 say that the
+following C was generated from a Prolog term which started on or after the line
+in  question.    For example, if you look at 'calller.pl', start on line 1, and
+skip comments until you come to the beginning of a Prolog term, you will find a
+foreign_file/2  fact.    The  "/*  Near line 1 */" comment refers to that.  The
+foreign file name is extracted from  the  foreign_file/2  fact,  but  there  is
+nothing  useful  that  plint can do with it except write it out as a comment in
+line 3 so that you know where the following  functions  are  expected  to  come
+from.
+
+Lines  5  to  11 are the expansion of the foreign/3 fact.  The printf() call in
+line 10 is there to stop Lint complaining about ri2 being set but not used.
+
+The C code produced by plint always contains such an expansion for each of  the
+built  in  C  functions  provided  by  Quintus Prolog, except QP_make_stream().
+These functions are listed in the include file "quintus.h" which you will  find
+in the library directory.  When you are developing your own C code to be loaded
+into Quintus Prolog, you will find "quintus.h" helpful.

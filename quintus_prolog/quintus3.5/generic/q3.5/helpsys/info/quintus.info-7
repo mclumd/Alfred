@@ -1,0 +1,929 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: dbg-sld-oth-sdw,  Next: dbg-sld-oth-anc,  Prev: dbg-sld-oth-vbi,  Up: dbg-sld-oth
+
+The Standard Debugger Window
+............................
+
+   The "standard debugger window" shows what would be shown by the
+standard debugger (see *Note dbg-sdb::).  This gives you a history of
+the debugging session from the time you opened the Standard Debugger
+window that you may scroll back through later to review what has
+happened.  The standard debugger window might look like this:
+
+     +---+------------------------------------------------------------+
+     | - |                 Quintus Standard Debugger                  |
+     +---+------------------------------------------------------------+
+     | File  Options  Window                                     Help |
+     +----------------------------------------------------------------+
+     |   (2) 1 Exit: parent(henry,peter)                            | |
+     |   (1) 0 Exit: descendant(henry,peter)                        | |
+     |   (1) 0 Redo: descendant(henry,peter)                        | |
+     |   (2) 1 Redo: parent(henry,peter)                            | |
+     |                                                              | |
+     +--------------------------------------------------------------+-+
+     +--------------------------------------------------------------+-+
+
+                     The Standard Debugger Window
+
+
+File: quintus.info,  Node: dbg-sld-oth-anc,  Next: dbg-sld-oth-mwi,  Prev: dbg-sld-oth-sdw,  Up: dbg-sld-oth
+
+The Ancestors Window
+....................
+
+   The ancestors window shows the current invocation and all its
+ancestors, and is continuously updated.  It can be a very powerful tool
+in debugging, as it lets you quickly see how variable bindings
+propagate to ancestor goals.  The ancestors window might look like this:
+
+     +---+------------------------------------------------------------+
+     | - |               Quintus Debugger Ancestor List               |
+     +---+------------------------------------------------------------+
+     | File  Options  Window                                     Help |
+     +----------------------------------------------------------------+
+     |   (8) 3 : parent(peter2,_749)                                | |
+     |   (7) 2 : descendant(peter2,_749)                            | |
+     |   (4) 1 : descendant(peter,_749)                             | |
+     |   (1) 0 : descendant(henry,_749)                             | |
+     |                                                              | |
+     +--------------------------------------------------------------+-+
+     +--------------------------------------------------------------+-+
+
+                         The Ancestors Window
+
+   Since the ancestors window is updated every time the debugger stops,
+when there are very many ancestors, you may notice some slowdown in the
+debugger.  In this case, you may wish to close the ancestors window,
+and only open it when you really need to examine the ancestors.
+Usually, though, the slowdown caused by having the ancestors window open
+is small.
+
+
+File: quintus.info,  Node: dbg-sld-oth-mwi,  Prev: dbg-sld-oth-anc,  Up: dbg-sld-oth
+
+Menus For These Windows
+.......................
+
+   All of these extra windows have the same menus, with the same
+options.  These menus are as follows:
+
+     +----------------------------------------------------------------+
+     | File  Options  Window                                     Help |
+     +----------------------------------------------------------------+
+
+                          Extra Window Menus
+
+   The File menu contains only a close command, which simply closes that
+window:
+
+                                 +-------+
+                                 | Close |
+                                 +-------+
+
+                      The Extra Window File Menu
+
+   The Options menu contains only a Print Format command:
+
+                             +-----------------+
+                             | Print Format... |
+                             +-----------------+
+
+                     The Extra Window Options Menu
+
+   Selecting Print Format will pop up a dialogue, which allows you to
+control the printout of the information in that window.  The operation
+of this dialogue is explained in *Note dbg-sld-men-opt::.
+
+   Note that changing the print format of the variable bindings window
+or the ancestors window will cause that window to be updated
+immediately, to reflect the new print format.  However, changing the
+print format of the standard debugger window will only change the
+format of subsequent entries in the window; lines already written will
+not be changed.
+
+
+File: quintus.info,  Node: dbg-sdb,  Prev: dbg-sld,  Up: dbg
+
+The Standard Debugger
+=====================
+
+* Menu:
+
+* dbg-sdb-dme::                         Format of Debugging Messages
+* dbg-sdb-opt::                         Options Available during Debugging
+
+   The standard debugger is a traditional terminal-based (as opposed to
+window-based) debugger.  *Note dbg-bas-bas:: describes the basic
+debugger facilities; this section only describes the features of the
+standard debugger.
+
+
+File: quintus.info,  Node: dbg-sdb-dme,  Next: dbg-sdb-opt,  Up: dbg-sdb
+
+Format of Debugging Messages
+----------------------------
+
+* Menu:
+
+* dbg-sdb-dme-hpm::                     Format of Head Port Messages
+* dbg-sdb-dme-epm::                     Format of Exception Port Messages
+
+   After you turn on the debugger and type the goal you want to debug,
+the system begins to show the steps of the procedure's execution.  As
+the system passes through each port of a procedure, it displays a
+debugging message on your terminal.
+
+   A sample debugging message and an explanation of its symbols are
+shown below.
+
+     ** (23) 0 Call (dynamic): mymodule:foo(hello,there,_123) ?
+
+`**'
+     The first two characters indicate whether this is a spypoint and
+     whether this port is being entered after a `skip'.  The possible
+     combinations are:
+    `**'
+          This is a spypoint.  (`foo/3' has been spied.)
+
+    `*>'
+          This is a spypoint; you are returning from a `skip'.
+
+    ` >'
+          This is not a spypoint; you are returning from a `skip'.
+
+    `  '
+          This is not a spypoint.  (For this condition, two blank
+          spaces are displayed at the left of the message.)
+
+`(23)'
+     The number in parentheses is the unique invocation identifier.
+     This identifies a particular call to the procedure.  This number
+     can be used to correlate the trace messages for the various ports,
+     since it is unique for every invocation.  It will also give an
+     indication of the number of procedure calls made since the start
+     of the execution.  The invocation counter is reset to 1 whenever a
+     new goal is typed at the top level, and is also reset when retries
+     (see *Note dbg-bas-tra-ccf::) are performed.
+
+`0'
+     The next number is the current depth -- that is, the number of
+     direct ancestors this goal has.  The ancestors can be printed using
+     the `g' debugging option.  The depth increases as procedures are
+     called and decreases as procedures return.  There may be many
+     goals at the same depth, which is why the unique invocation
+     identifier is also provided.  If the depth is shown as 0, this
+     spypoint is on a compiled procedure and no depth or ancestor
+     information is available.  The depth is reset to 0 when a compiled
+     procedure is executed, and begins growing again from there
+     afterward.
+
+`Call'
+     The next word shows the particular port:  Head, Call, Exit, Done,
+     Redo, Fail, or Exception.
+
+`(dynamic)'
+     The next parenthesized item, if present, indicates when there is
+     something unusual about the predicate.  The possibilities are:
+    `built_in'
+          for built-in predicates; or
+
+    `locked'
+          for locked predicates; or
+
+    `undefined'
+          for undefined predicates; or
+
+    `foreign'
+          for foreign predicates (defined in another programming
+          language); or
+
+    `dynamic'
+          for dynamic predicates; or
+
+    `multifile'
+          for multifile predicates.
+
+`mymodule'
+     If the procedure currently being debugged was loaded into a module
+     other than `user', the module name will be displayed here, followed
+     by a colon.
+
+`foo(hello,there,_123)'
+     The goal is then printed so that its current instantiation state
+     can be seen.  (At Redo ports, the instantiation state shown is the
+     same as at the previous Exit.)  This is done using `print/1' so
+     that all goals displayed by the debugger can be "pretty printed",
+     if the user wishes, using `portray/1' clauses. The debugger also
+     maintains a print depth limit and will only show terms nested down
+     to this depth.  The system initially uses a limit of 10, but this
+     can be changed using the `<' debugging option.
+
+`?'
+     The final `?' is the prompt indicating that you should type in one
+     of the option codes (see next section).  If this particular port
+     is unleashed, there will be no prompt and the debugger will
+     continue to the next port.
+
+   *Please note:*  Since the system does not allow the placing of
+spypoints on built-in predicates, the only way to show the execution of
+built-in predicates typed at the main Prolog prompt is to select trace
+mode.  For example, if you typed `write(foo).' at the main Prolog
+prompt with the debugger in debug mode, the system would simply display
+the word `foo' without tracing the execution of the predicate `write/1'.
+However, if a built-in predicate such as `write/1' were called from
+within a program, the execution of the predicate would be shown in any
+case that the execution of the procedure containing it would be shown.
+There are a few basic built-in predicates for which information is not
+displayed because it is more convenient not to trace them.  These are:
+`true/0', `otherwise/0', `false/0', `fail/0', `=/2', `!/0' (cut), `;/2'
+(or), `,/2' (and), and `->/2' (local cut).
+
+
+File: quintus.info,  Node: dbg-sdb-dme-hpm,  Next: dbg-sdb-dme-epm,  Up: dbg-sdb-dme
+
+Format of Head Port Messages
+............................
+
+   The message shown at a Head port is slightly different than the
+messages at other ports.  Rather than optionally showing something
+unusual about the predicate (`dynamic' in the above example), the Head
+port shows you which clause of the predicate is being, and which, if
+any, will be tried next.  For example, a Head port might be printed as
+follows:
+
+        (23) 0 Head [2->4]: mymodule:foo(hello,there,_123) ?
+
+   Here the `[2->4]' means that clause 2 for predicate `mymodule:foo/3'
+is about to be tried.  If this clause's head should fail to unify, or
+if a goal in the body of the clause fails, clause 4 will be tried next.
+Clause 3 will be skipped, due to indexing (see *Note bas-eff-ind::).  If
+clause 2 were the last clause to be tried, it would be shown as `[2]'.
+And in the case where clause 2 is being tried, and all the following
+clauses are indexable, but none can match the goal, the debugger will
+show `[2->fail]', suggesting that a choice point is being left, even
+though no more solutions will be possible (see *Note bas-eff-ind:: for
+an explanation of indexable clauses, and how indexing works).
+
+
+File: quintus.info,  Node: dbg-sdb-dme-epm,  Prev: dbg-sdb-dme-hpm,  Up: dbg-sdb-dme
+
+Format of Exception Port Messages
+.................................
+
+   The Exception port shows the exception term describing the exception
+that has been raised.  This is printed on a separate line before the
+line printed for the port itself.  For example:
+
+     ! type_error(_2069 is a,2,'arithmetic expression',a)
+        (2) 1 Exception (built_in): _2050 is a ?
+
+   For exception term formats or more information about the exception
+handling system of Quintus Prolog, see *Note ref-ere::.
+
+
+File: quintus.info,  Node: dbg-sdb-opt,  Prev: dbg-sdb-dme,  Up: dbg-sdb
+
+Options Available during Debugging
+----------------------------------
+
+* Menu:
+
+* dbg-sdb-opt-bas::                     Introduction
+* dbg-sdb-opt-bco::                     Basic Control Options
+* dbg-sdb-opt-pri::                     Printing Options
+* dbg-sdb-opt-adv::                     Advanced Control Options
+* dbg-sdb-opt-eop::                     Environment Options
+* dbg-sdb-opt-hop::                     Help Options
+
+
+File: quintus.info,  Node: dbg-sdb-opt-bas,  Next: dbg-sdb-opt-bco,  Up: dbg-sdb-opt
+
+Introduction
+............
+
+   This section describes the options that you can select in response
+to the `? ' prompt, which is displayed after the debugger prints out a
+goal.  The options are one-letter mnemonics, some of which optionally
+can be followed by a decimal integer.  Any layout characters are
+ignored up to the next newline.
+
+   The most important option to remember is `h' (for help).  When you
+type `h', the following list of available options is displayed:
+
+     Debugging options:
+     
+     <cr>   creep      p      print         r [i]  retry i      @    command
+      c     creep      w      write         f [i]  fail i       b    break
+      l     leap       d      display                           a    abort
+      s [i] skip i                                              h    help
+      z     zip        g [n]  n ancestors   +      spy pred     ?    help
+      n     nonstop    < [n]  set depth     -      nospy pred   =    debugging
+      q     quasi-skip .      find defn     e      raise_exception
+
+   These options provide a number of different functions, which fall
+into the following classes:
+Basic control
+     he basic ways of continuing with the execution
+
+Printing
+     howing the goal, or its ancestors, in various ways
+
+Advanced control
+     ffecting control flow
+
+Environment
+     hanging spypoints, executing commands, breaking
+         and aborting, access to source code
+
+Help
+     howing the debugger state and listing options
+
+   Each of the options is described below.
+
+
+File: quintus.info,  Node: dbg-sdb-opt-bco,  Next: dbg-sdb-opt-pri,  Prev: dbg-sdb-opt-bas,  Up: dbg-sdb-opt
+
+Basic Control Options
+.....................
+
+   These commands are described in depth in *Note dbg-bas-tra:: and
+*Note dbg-bas-tra-spy::.
+
+<RET>
+     (the Return key) -- This is the same as the `c' (creep) option but
+     is reduced to a single keystroke for convenience.
+
+`c'
+     creep -- This causes the debugger to single-step to the next port
+     and display its goal.
+
+`l'
+     leap -- This causes the debugger to resume running your program,
+     stopping only when the next spypoint is reached, or when the
+     program terminates.
+
+`s'
+     skip -- At a Call, Redo, or Head port, this skips over the entire
+     execution of the procedure.  At any other port, this is equivalent
+     to the `c' (creep) option.
+
+`s I'
+     skip over ancestor invocation -- If you specify an invocation
+     identifier (see *Note dbg-sdb-dme::) of an ancestor invocation
+     after the skip command, it will skip over that invocation.  This
+     means that that ancestor goal will be completed without stopping.
+
+`z'
+     zip -- This causes the debugger to run until the next spypoint is
+     reached, just like leaping, except that no debugging information
+     is kept, so execution is _much_ faster.  See *Note
+     dbg-bas-tra-tss:: for more information on the trade-offs between
+     speed and information when using this option.
+
+`q'
+     quasi-skip -- This causes the debugger to run until the next
+     spypoint is reached, or until this invocation is completed.  This
+     option combines the behavior of leaping and skipping.  It also
+     ensures that the debugger will stop at the Exit, Done, or Fail
+     port of the current invocation, as soon as it is reached.
+
+
+File: quintus.info,  Node: dbg-sdb-opt-pri,  Next: dbg-sdb-opt-adv,  Prev: dbg-sdb-opt-bco,  Up: dbg-sdb-opt
+
+Printing Options
+................
+
+`p'
+     print -- This option prints the current goal using `print/1' and
+     the current debugger print depth limit.  The depth limit prevents
+     very large structures from being shown in their entirety; it can
+     be changed with the `<' (set depth) option (see below).
+
+`w'
+     write -- This option writes the current goal on the terminal using
+     `write/1'.  This may be useful if your "pretty print" routine
+     (`portray/1') is not doing what you want.  The `write' option has
+     no depth limit.
+
+`d'
+     display -- This option displays the current goal on the terminal
+     using `display/1'.  This shows the goal in prefix notation.  The
+     `display' option has no depth limit.
+
+`g'
+     ancestors -- This option prints the list of ancestors of the
+     current goal (that is, all goals that are between the current goal
+     and the top-level goal in the calling sequence).  Each ancestor
+     goal is printed using `print/1' with the current debugger depth
+     limit.  Goals shown in the ancestor list are always accessible to
+     invocations for the `r' (retry) option.
+
+`g N'
+     ancestors --
+
+     This is a version of the `g' option, which prints only N ancestors.
+     That is, the last N ancestors will be printed counting back from
+     the current goal.
+
+`< N'
+     set depth -- This option sets the debugger print depth limit to N.
+     This limit determines the depth to which goals are printed when
+     they are shown by the debugger.  The depth limit is also used when
+     showing the ancestor list.  If N is 0, or is omitted, the debugger
+     will then use no limit when printing goals.  The default limit is
+     10.
+
+
+File: quintus.info,  Node: dbg-sdb-opt-adv,  Next: dbg-sdb-opt-eop,  Prev: dbg-sdb-opt-pri,  Up: dbg-sdb-opt
+
+Advanced Control Options
+........................
+
+   These options are described in greater depth in *Note
+dbg-bas-tra-ccf::.
+
+`r'
+     retry -- This option restarts the current invocation.  This may be
+     useful when, for example, you find yourself leaving with some
+     incorrect result.  When a retry is performed, the invocation
+     counter is reset so that counting will continue from the current
+     invocation number regardless of what happened before the retry.
+     This is in accord with the fact that execution has returned to the
+     state it was in at the time of the original call.  The message
+          % Retrying goal
+
+     is displayed to indicate where this occurred, in case you wish to
+     follow these numbers later.
+
+`r I'
+     retry previous invocation -- If you supply an integer after the
+     retry command, then this is taken as specifying an invocation
+     number and the system tries to get you to the Call port, not of
+     the current box, but of the invocation box you have specified.
+     This must be an ancestor invocation.
+
+`f'
+     fail -- This is similar to Retry except that it transfers control
+     to the Fail port of the current box.  This places your execution
+     in a situation in which it is about to backtrack out of the current
+     invocation, having failed the goal.
+
+`f I'
+     fail previous invocation -- This is similar to `r I' except that
+     it transfers control to the Fail port of the invocation specified
+     (which must be an ancestor).
+
+
+File: quintus.info,  Node: dbg-sdb-opt-eop,  Next: dbg-sdb-opt-hop,  Prev: dbg-sdb-opt-adv,  Up: dbg-sdb-opt
+
+Environment Options
+...................
+
+`n'
+     nonstop -- This option turns off the debugger for the rest of the
+     execution of the top-level goal.  When the execution of this goal
+     is completed, the debugger returns to its current mode (trace,
+     debug, or zip).  This option does _not_ turn the debugger off; to
+     turn the debugger off, you must type:
+          | ?- call nodebug
+
+`+'
+     spy this -- This option places a spypoint on the procedure
+     currently being shown.
+
+`-'
+     nospy this -- This option removes any spypoint on the procedure
+     currently being shown.
+
+`@'
+     command -- This option prompts for a single Prolog goal, which is
+     executed as a command without any variable results being shown.
+     The command is run as a new execution, with the current execution
+     suspended, but without any debugging.  This is particularly useful
+     for quickly changing debugging parameters without entering a break
+     level.
+
+`b'
+     break -- This option calls the built-in predicate `break/0', thus
+     suspending the execution so far and putting you at the top level
+     of the interpreter.  (See the description of `break/0' in *Note
+     ref-iex-int::.)  The new execution is separate from the suspended
+     one, and invocation numbers will start again from 1.  The debugger
+     is turned off when the break level is entered, although the
+     spypoints and leashing of the suspended level are retained.  When
+     you end the break (by typing the end-of-file character), execution
+     will resume and you will be prompted once again at the port that
+     you left.  Changes to leashing or to spypoints will remain in
+     effect after the break has finished.
+
+`a'
+     abort -- This option aborts (abandons) the current execution.  All
+     the execution states built so far are destroyed, and execution
+     restarts at the top level of the interpreter.
+
+`.'
+     find-definition -- This works only under the editor interface.
+     The source code corresponding to the current procedure call is
+     found and displayed in the text window.
+
+`,'
+     find-more-definition -- This works only under the Emacs
+     interfaces, and can be used after doing a find-definition, in the
+     case where there is more than one possible definition.  This is
+     useful in several cases:
+       1. where a predicate is multifile -- you can find all the files
+          that have clauses for that predicate;
+
+       2. where you specify a name but no arity -- you can find all the
+          definitions of predicates with that name and with different
+          arities;
+
+       3. where you have the same name/arity defining predicates in
+          different modules.
+
+
+File: quintus.info,  Node: dbg-sdb-opt-hop,  Prev: dbg-sdb-opt-eop,  Up: dbg-sdb-opt
+
+Help Options
+............
+
+`h'
+     help -- This option displays the table of options given above.
+
+`?'
+     help -- This is equivalent to the `h' option.
+
+`='
+     debugging -- This option shows the current state of the debugger,
+     the spypoints that have been set, the leashed ports, and the
+     behavior on undefined procedures.
+
+
+File: quintus.info,  Node: dbg-adv,  Next: dbg-bas,  Up: dbg
+
+The Advice Facility
+===================
+
+* Menu:
+
+* dbg-adv-uad::                         Use of Advice Predicates
+* dbg-adv-prf::                         Performance
+* dbg-adv-sum::                         Summary of Predicates
+
+   The "advice" facility for program debugging and maintenance makes it
+possible to associate user-specified goals with any of the ports of a
+predicate (see *Note dbg-bas-pbx::).  Advice may not change the
+relation computed by the advised predicate, but it may switch on or off
+debugging facilities, or can check that calls are well-formed and that
+results make sense.  Any user-defined predicate may be advised;
+however, it is not currently possible to put advice on built-ins.
+
+
+File: quintus.info,  Node: dbg-adv-uad,  Next: dbg-adv-prf,  Up: dbg-adv
+
+Use of Advice Predicates
+------------------------
+
+   Whether a predicate has advice associated with it is independent of
+whether advice on that predicate is being "checked".  Advice may be
+thought of as a generalized spypoint, where the user specifies the
+action to be performed at each debugger port.  Distinct built-in
+predicates are provided for modifying advice and influencing whether
+advice is being checked.  Advice is associated with a predicate using
+`add_advice/3' and deleted using `remove_advice/3'.  You can determine
+what advice is outstanding by using `current_advice/3'.  Advice on a
+predicate is retained if that predicate is abolished, as is likely to
+happen during program development.  It also survives that predicate
+being saved to a QOF file, and is reinstated when that QOF file is
+loaded.
+
+   Advice checking can be enabled one predicate at a time using
+`check_advice/1' and disabled one predicate at a time with
+`nocheck_advice/1'.  These are analogous to `spy/1' and `nospy/1', and
+are similarly defined as prefix operators of precedence 900.  As a
+convenience, `check_advice/0' is provided to enable checking for all
+predicates that currently have advice associated with them.
+`nocheck_advice/0' can also be used to turn off all advice checking
+easily.  It is possible to use `check_advice/1' to turn advice checking
+on for a predicate that does not currently have any advice, although
+doing so will have no effect until advice is added to the predicate.
+As `check_advice/0' only affects predicates that currently have advice,
+it cannot be used for this purpose.  Like the advice itself, advice
+checking survives a checked predicate being abolished and redefined.
+
+   Note that whether a particular call to an advised predicate is
+checked is determined once the call is made.  If advice checking is
+enabled after a predicate has been entered but before it reaches a
+subsequent advised port of the predicate, advice checking will not be
+done.
+
+   Advice on any given port is checked before any debugger interaction
+for that port.  Taking advice checking as well as debugger interaction
+into account in the procedure box model of Prolog execution (see *Note
+dbg-bas-pbx::), we have
+
+                              +-----------+
+     Call -> Advice -> Spy -> |           | Advice -> Spy -> Exit ->
+                              | procedure |
+                              |    box    |
+     Fail <- Spy <- Advice <- |           | <- Spy <- Advice <- Redo
+                              +-----------+
+
+   This is necessary so that advice actions can control the debugger.
+
+   It is possible (and often advisable) to write an application where
+advice is always present on appropriate predicates, but that advice is
+not checked by default.  When required, advice checking can be turned on
+and the application monitored or debugged using the advice.  This makes
+it unnecessary to add advice each time you want it only having to remove
+it when you don't want it any longer.  Instead, the application's advice
+can persist, with modifications as desired, through development.  It
+can also be retained once development is completed, providing
+diagnostics that can be turned on in case of problems.
+
+   Predicate properties (see `predicate_property/2') have been added to
+allow you to determine what predicates have outstanding advice, or have
+advice checking enabled.  When a predicate currently has advice
+associated with it, it has the property `has_advice'.  If advice is
+being checked for that predicate, it has the property `checking_advice'.
+These properties are independent of each other, and are independent of
+whether the advised predicate is currently defined or not.  For example:
+
+     | ?- check_advice(foo/0).
+     * You have no clauses for user:foo/0
+     % Advice checking enabled on user:foo/0
+     
+     yes
+     | ?- predicate_property(foo, P).
+     
+     P = checking_advice ;
+     
+     no
+     | ?- add_advice(foo, call, (write(hi),nl)).
+     % Advice placed on user:foo/0
+     
+     yes
+     | ?- predicate_property(foo, P).
+     
+     P = has_advice ;
+     
+     P = checking_advice ;
+     
+     no
+
+
+File: quintus.info,  Node: dbg-adv-prf,  Next: dbg-adv-sum,  Prev: dbg-adv-uad,  Up: dbg-adv
+
+Performance
+-----------
+
+   There is no performance penalty associated with advice that is not
+being checked.  When checking advice, there is no loss of performance
+for predicates that do not have advice associated with them or whose
+advice is not currently being checked.  The cost in space of advice is
+roughly equivalent to the cost of an asserted fact the size of the
+`add_advice/3' call.  The memory cost for checking advice on a
+predicate is the same as that of putting a spypoint on it.
+
+   For details see the reference pages for the predicates listed below.
+
+
+File: quintus.info,  Node: dbg-adv-sum,  Prev: dbg-adv-prf,  Up: dbg-adv
+
+Summary of Predicates
+---------------------
+
+   * `add_advice/3'
+
+   * `check_advice/0'
+
+   * `check_advice/1'
+
+   * `current_advice/3'
+
+   * `nocheck_advice/0'
+
+   * `nocheck_advice/1'
+
+   * `remove_advice/3'
+
+
+File: quintus.info,  Node: dbg-pro,  Next: dbg-sld,  Prev: dbg-bas,  Up: dbg
+
+The Profiler
+============
+
+* Menu:
+
+* dbg-pro-upr::                         Use of the Profiler
+* dbg-pro-cou::                         Customized Output
+* dbg-pro-prf::                         Performance
+* dbg-pro-sum::                         Summary of Predicates
+
+   The profiling facility makes it possible to analyse the execution of
+a program and determine where most time was spent, possibly revealing
+sources of inefficiently. As well as time spent, the profiler maintains
+information on number of calls, choice points and redos for each
+predicate.  It also records the callers of each predicate, thus
+building an extensive execution profile.
+
+   Note that the profiler shares some low level internal resources with
+the debugger in the development system and therefore debugging is
+disallowed when profiling and vice versa.
+
+   The profiler is not available under Windows.
+
+
+File: quintus.info,  Node: dbg-pro-upr,  Next: dbg-pro-cou,  Up: dbg-pro
+
+Use of the Profiler
+-------------------
+
+   The execution of a goal can be profiled using `profile/1', which
+takes the goal as its argument. This will turn on the profiler,
+recording for each invoked predicate the number of calls, choice points
+created, redos tried and the predicate's callers. Counts accumulated
+from any previous executions of the profiler will be reset.  The goal
+is then executed with timing information additionally monitored.
+
+   Once the goal has completed execution, the results of the execution
+profile can be seen by calling the `show_profile_results/2' builtin
+predicate. The first argument to `show_profile_results/2' is the
+_display mode_ and is one of the atoms: `by_time', `by_calls',
+`by_choice_points' or `by_redos'. This determines how the output is
+sorted and what the percent figure that is printed relates to. For
+example, if the argument is `by_time' then the results are sorted
+according to the time spent in the predicates (in descending order) and
+the percentage figure is the proporation of total execution time spent
+executing that predicate.
+
+   The second argument gives the number of procedures to show
+information about, thus a value of 10 means that the top ten predicates
+are printed.  The predicate `show_profile_results/1' is equivalent to
+`show_profile_results/2' with second argument given a value of 10 and
+similarly `show_profile_results/0' is equivalent to
+`show_profile_results/1' with the argument `by_time'.
+
+   The following example illustrates the output of
+`show_profile_results/2':
+
+     | ?- [chat].
+     % loading file /opt/quintus/generic/q3.5/demo/chat/chat.qof
+     % chat.qof loaded in module user, 0.620 sec 1,520 bytes
+     
+     yes
+     | ?- profile(hi(questions)).
+     % The profiler is switched on
+     
+     ...
+     
+     yes
+     [profile]
+     | ?- show_profile_results(by_time, 3).
+     Proc             Calls ChPts Redos Time  % Caller(proc,cl#,cll#,%)
+     user:setof/3     227   0     0     2.04  34.0
+                                        user:satisfy/1,6,1 152 61.0
+                                        user:seto/3,1,1 48 20.0
+                                        user:satisfy/1,7,1 27 17.0
+     user:satisfy/1   35738 36782 14112 0.32  5.3
+                                        user:satisfy/1,1,2 13857 43.0
+                                        user:satisfy/1,2,1 12137 31.0
+                                        user:satisfy/1,1,1 7315 18.0
+                                        user:satisfy/1,3,1 1155 6.0
+     user:inv_map_l/5 4732  4732  3115  0.20  3.3
+                                        user:inv_map_l/5,2,1 3115 60.0
+                                        user:inv_map/4,5,1 1617 40.0
+     
+     yes
+     [profile]
+     | ?- show_profile_results(by_calls, 3).
+     Proc             Calls ChPts Redos Time  % Caller(proc,cl#,cll#,%)
+     user:satisfy/1   35738 36782 14112 0.32  15.3
+                                        user:satisfy/1,1,2 13857 43.0
+                                        user:satisfy/1,2,1 12137 31.0
+                                        user:satisfy/1,1,1 7315 18.0
+                                        user:satisfy/1,3,1 1155 6.0
+                                        user:satisfy/1,4,1 1044 0.0
+                                        user:holds/2,1,1 3 0.0
+     user:database/1      13616 0     0     0.06  5.8
+                                        user:satisfy/1,14,1 13616 100.0
+
+   The output lists the predicate name, the number of calls to that
+predicate, number of times a choice point was created, the number of
+the times the predicate was retried on backtracking and the time (in
+seconds) spent executing that predicate.  The percentage figure depends
+on the display mode.  In the example above 15.3% of the goal calls were
+to `satisfy/1', but only 5.3% of the execution time was spent in
+`satisfy/1'.
+
+   Then follows the list of callers, showing for each caller the
+predicate name and arity, the clause number and the call number within
+that clause of the call (see *Note mpg-ref-add_spypoint::), followed by
+the number of calls made by this caller and the percentage of execution
+time attributed to this caller.
+
+   Notice in the example that more callers are shown for `satisfy/1'
+when the profile results are listed `by_calls' than `by_time'. Callers
+that do not register any time are not listed in the output when
+displayed `by_time'.  Callers are omitted in a similar way for other
+display modes when the relevant count is zero.
+
+   The profiler can be turned off with the `noprofile/0' predicate.
+
+
+File: quintus.info,  Node: dbg-pro-cou,  Next: dbg-pro-prf,  Prev: dbg-pro-upr,  Up: dbg-pro
+
+Customized Output
+-----------------
+
+   The predicate `get_profile_results/4' returns the profiling
+information as a list of terms, to enable the customized display of
+profiling results.  The first two arguments of `get_profile_results/4'
+are the same as for `show_profile_results/2', the third argument
+returns a list of `proc/6' terms described below and the final argument
+returns a total that depends on the display mode given by the first
+argument -- for example, if the display mode is `by_time' then this is
+the total execution time.
+
+   The `proc/6' term `proc(NAME,NCALLS,NCHPTS,NREDOS,TIME,CALLERS)'
+gives profiling information about one profiled predicate, where NAME
+gives the module, name and arity of the predicate; NCALLS, NCHPTS,
+NREDOS, TIME give call, choice point and redo counts and the execution
+time in milliseconds. The `Callers' argument is a list of `calledby/5'
+terms of the form `calledby(TIME,CALLS,NAME,CLAUSENO,CALLNO)' where
+TIME is the percentage of time attributed to this caller, CALLS is the
+number of calls made by this caller and NAME, CLAUSENO, CALLNO identify
+the actual caller. For example:
+
+     | ?- get_profile_results(by_time,3,List,Total).
+     
+     List = [proc(user:setof/3,227,0,0,1980,
+                             [calledby(61,152,user:satisfy/1,6,1),
+                              calledby(20,27,user:satisfy/1,7,1),
+                              calledby(18,48,user:seto/3,1,1)]),
+             proc(user:satisfy/1,35738,36782,14112,260,
+                             [calledby(69,13857,user:satisfy/1,1,2),
+                              calledby(15,12137,user:satisfy/1,2,1)]),
+             proc(user:write/1,2814,0,0,240,
+                             [calledby(33,481,user:reply/1,3,1),
+                              calledby(25,608,user:replies/1,3,1),
+                              calledby(16,562,user:out/1,2,1),
+                              calledby(8,203,user:reply/1,2,5),
+                              calledby(8,34,user:replies/1,2,3)])],
+     Total = 6040
+     
+     [profile]
+     | ?-
+
+
+File: quintus.info,  Node: dbg-pro-prf,  Next: dbg-pro-sum,  Prev: dbg-pro-cou,  Up: dbg-pro
+
+Performance
+-----------
+
+   There is a performance penalty of about 20% associated with running
+a program in profile mode. Data structures needed to maintain profiling
+information are created on demand the first time a profiled goal is
+called, so this may affect first-run statistics if the run is
+relatively short. In this case you may wish to profile the same goal at
+least a second time to verify the results.
+
+
+File: quintus.info,  Node: dbg-pro-sum,  Prev: dbg-pro-prf,  Up: dbg-pro
+
+Summary of Predicates
+---------------------
+
+   * `profile/0'
+
+   * `profile/1'
+
+   * `noprofile/0'
+
+   * `show_profile_results/0'
+
+   * `show_profile_results/1'
+
+   * `show_profile_results/2'
+
+   * `get_profile_results/4'
+
+
+File: quintus.info,  Node: glo,  Next: ref,  Prev: dbg,  Up: Top
+
+Glossary
+********
+
+* Menu:
+
+* glo-glo::                             Glossary
+

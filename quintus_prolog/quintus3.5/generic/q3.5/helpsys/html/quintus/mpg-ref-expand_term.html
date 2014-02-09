@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>expand_term/2</code> <dfn>hookable</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>expand_term(</code><var>+Term1</var><code>, </code><var>-Term2</var><code>)</code>
+
+   <p>Transforms grammar rules into Prolog clauses before they are compiled. 
+Normally called by the compiler, but can be called directly. The transform
+can be customized by defining the hook <code>term_expansion/2</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Term1</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>Term2</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Usually called by the built-in Load Predicates and not directly by
+user programs.
+
+   <p>Normally used to translate grammar rules, written with <code>--&gt;/2</code>,
+into ordinary Prolog clauses, written with <code>:-/2</code>.  If
+<var>Term1</var> is a grammar rule, then <var>Term2</var> is the
+corresponding clause.  Otherwise <var>Term2</var> is simply
+<var>Term1</var> unchanged.
+
+   <p>If <var>Term1</var> is not of the proper form, or if <var>Term2</var> does not
+unify with its clausal form, <code>expand_term/2</code> simply fails.
+
+   <p>Calls <code>term_expansion/2</code>.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Prints messages for exceptions
+raised by <code>term_expansion/2</code>.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>See examples in <a href="ref-gru-tra.html#ref-gru-tra">ref-gru-tra</a>.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>term_expansion/2</code>, <code>phrase/[2,3]</code>,
+<code>'C'/3</code>, <code>--&gt;/2</code>
+<a href="ref-gru.html#ref-gru">ref-gru</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-extern.html#mpg-ref-extern">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-qua.html#mpg-ref-qua">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Send Methods</h5>
+
+   <p>Messages that do something more than fetch or store slot values are
+usually defined as send messages. While the choice of message
+operators is (usually) up to the programmer, choosing them carefully
+enhances the readability of a program.
+
+   <p>For example, print methods might be defined for the point and rational
+number classes, respectively, as
+
+<pre class="example">     Self &lt;- print(Stream) :-
+             Self &gt;&gt; x(X),
+             Self &gt;&gt; y(Y),
+             format(Stream, "(~w,~w)", [X, Y]).
+     </pre>
+
+   <p>and
+
+<pre class="example">     Self &lt;- print(Stream) :-
+             fetch_slot(num, N),
+             fetch_slot(denom, D),
+             format(Stream, "~w/~w", [N, D]).
+     </pre>
+
+   <p>These methods are used to access slot values. But, the fact that the
+values are printed to an output stream makes it more reasonable to
+define them as send messages than get messages.
+
+   <p>Frequently send methods modify slot values. For example, the point
+class might have methods that flip points around the x and y axes,
+respectively:
+
+<pre class="example">     Self &lt;- flip_x :-
+             Self &gt;&gt; y(Y0),
+             Y1 is -1 * Y0,
+             Self &lt;&lt; y(Y1).
+     
+     Self &lt;- flip_y :-
+             Self &gt;&gt; x(X0),
+             X1 is -1 * X0,
+             Self &lt;&lt; x(X1).
+     </pre>
+
+   <p>And, the rational number class might have a method that swaps the
+numerator and denominator of a rational number object. It fails if the
+numerator is 0.
+
+<pre class="example">     Self &lt;- invert :-
+             fetch_slot(num, N)
+             N =\= 0,
+             fetch_slot(denom, D)
+             store_slot(num, D),
+             store_slot(denom, N).
+     </pre>
+
+   <p>These methods modify slot values, but they do not simply store values
+that are given in the message. Hence, it is more reasonable to use the
+send operator.
+
+   <p>It is possible for a method to produce more than one answer. For
+example, the class whose definition begins with
+
+<pre class="example">     :- class interval =
+             [public lower:integer,
+              public upper:integer].
+     </pre>
+
+   <p>might define a send method
+
+<pre class="example">     Self &lt;- in_interval(X) :-
+             Self &gt;&gt; lower(L),
+             Self &gt;&gt; upper(U),
+             between(L, U, X).
+     </pre>
+
+   <p>which uses the <code>between/3</code> predicate from <code>library(between)</code>. The
+<code>in_interval</code> message will bind <code>X</code> to each integer, one at a time,
+between the lower and upper slots, inclusive. It fails if asked for
+too many answers.
+
+   <p>The rest of this section describes particular kinds of send messages.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-scl-meth-credes.html#obj-scl-meth-credes">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-scl-meth-dir.html#obj-scl-meth-dir">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-scl-meth.html#obj-scl-meth">Up</a>
+</ul>
+</div>
+   </body></html>
+

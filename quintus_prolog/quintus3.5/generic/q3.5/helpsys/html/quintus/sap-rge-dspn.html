@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Predicates not supported by the Runtime Kernel</h4>
+
+   <p>The predicates listed below are not supported by the Runtime Kernel, since their
+purpose is to aid the development process rather than to be used in application
+programs.  <code>qld</code> or <code>qcon</code> will print <code>Undefined</code> warning
+messages if you try to build a runtime system with calls to any of
+these predicates. At run time, these calls will raise existence
+errors in a runtime system.
+
+     <dl>
+
+     <br><dt>debugger:
+     <dd><code>debug/0</code>, <code>nodebug/0</code>, <code>trace/0</code>, <code>notrace/0</code>,
+<code>spy/1</code>, <code>nospy/1</code>, <code>nospyall/0</code>, <code>debugging/0</code>,
+<code>leash/1</code>, <code>add_spypoint/1</code>, <code>current_spypoint/1</code>,
+<code>remove_spypoint/1</code>,
+
+     <br><dt>help system:
+     <dd><code>help/[0,1]</code>, <code>manual/[0,1]</code>
+
+     <br><dt>advice:
+     <dd><code>add_advice/3</code>, <code>check_advice/[0,1]</code>,
+<code>current_advice/3</code>, <code>nocheck_advice/[0,1]</code>,
+<code>remove_advice/3</code>,
+
+     <br><dt>program development:
+     <dd><code>break/0</code>
+
+   </dl>
+
+   <p>If you call any of these predicates from compile-time code, such as from an
+embedded command or in a definition of <code>term_expansion/2</code>, the call will
+raise existence errors when using <code>qpc</code>.
+
+   <p>Any use of these predicates should be eliminated from both your
+run-time and your compile-time code, unless you can be sure that they
+won't be called or you don't mind them raising existence errors.
+
+   <p>In addition, the predicates
+<code>load_foreign_files/2</code> and <code>load_foreign_executable/1</code> are
+not available in the Runtime Kernel but may
+be used in embedded commands.  That is, you can use them at compile
+time, in order to link foreign code into your program, but you cannot
+use them when the runtime system is running.
+
+   <p>Since the compiler is not included in a runtime system, the effect of
+the load predicates is altered in a runtime system.  Whenever one of
+these predicates would normally compile a file into memory, it instead
+loads that file into memory as dynamic.  This is equivalent to
+
+<pre class="example">     <code>load_files(file, all_dynamic(true)</code>).
+     </pre>
+
+   <p>This should not
+normally make any significant difference, except that loading the file
+is faster and running it is slower.
+
+   <p>The predicate <code>multifile_assertz/1</code> cannot be used on compiled (static)
+predicates in a runtime system.  This restriction does not apply to
+predicates that are loaded by <code>compile(</code><var>File</var><code>)</code> at run time, since
+such predicates are really loaded as dynamic.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-rge-pro.html#sap-rge-pro">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-rge-bas.html#sap-rge-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-rge.html#sap-rge">Up</a>
+</ul>
+</div>
+   </body></html>
+

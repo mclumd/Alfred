@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_action()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_action(action)
+     int action;
+     </pre>
+
+   <p>Called to request certain actions of Prolog.
+
+<h4 class="subheading">Arguments</h4>
+
+   <p><code>action</code> is one of:
+     <dl>
+
+     <br><dt><code>QP_ABORT</code>
+     <dd>*Abort to the current break level
+<br><dt><code>QP_REALLY_ABORT</code>
+     <dd>*Abort to top level
+<br><dt><code>QP_STOP</code>
+     <dd>Stop (suspend) process
+<br><dt><code>QP_IGNORE</code>
+     <dd>Do nothing
+<br><dt><code>QP_EXIT</code>
+     <dd>Exit Prolog immediately
+<br><dt><code>QP_MENU</code>
+     <dd>Present action menu
+<br><dt><code>QP_TRACE</code>
+     <dd>Turn on trace mode
+<br><dt><code>QP_DEBUG</code>
+     <dd>Turn on debugging
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>This function allows the user to make Prolog abort, exit,
+suspend execution, turn on debugging, or prompt for the desired action.
+
+   <p>Calls to <code>QP_action()</code> from an interrupt handler must be viewed as
+<var>requests</var>.  They are requests that will definitely be honored, but
+not always at the time of the call to <code>QP_action()</code>. If Prolog
+is in a critical region the action might be delayed to when
+it has exitted the critical region.
+
+<h4 class="subheading">Return Value</h4>
+
+     <dl>
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>
+<br><dt><code>QP_SUCCESS</code>
+     <dd>
+</dl>
+
+<h4 class="subheading">Errors</h4>
+
+     <dl>
+
+     <p>For systems that do not have a toplevel, the actions marked with an
+asterisk (*) will have no effect other than to make <code>QP_action()</code>
+return <code>QP_ERROR</code>. 
+</dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>For a full discussion of <code>QP_action()</code> and examples of its use, see <a href="ref-iex-iha.html#ref-iex-iha">ref-iex-iha</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-add.html#cfu-ref-add">Next</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

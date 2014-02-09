@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Renaming and Deleting Files</h4>
+
+   <p><code>library(files)</code> defines four predicates pertaining to deleting and
+renaming files.  <code>rename/2</code> and <code>dec10_rename/2</code> are
+identical replacements for the DEC-10 Prolog/C-Prolog <code>rename/2</code>
+command. 
+They should only be used to convert old code to Quintus Prolog. 
+New programs should use <code>delete_file/1</code> and <code>rename_file/2</code>.
+
+     <dl>
+
+     <br><dt><code>delete_file(</code><var>+FileName</var><code>)</code>
+     <dd>
+<var>FileName</var> should be an atom naming a file that currently exists
+and can be deleted.  If so, the file it names is deleted, and
+the command succeeds.  If not, an error exception is raised. 
+and the command fails.  Examples:
+     <pre class="example">          | ?- <kbd>delete_file('ask.otl').</kbd>
+          
+          yes
+          
+          | ?- <kbd>delete_file('does_not_exist').</kbd>
+          ! Existence error in delete_file/1
+          ! file nosuch does not exist
+          ! O/S error : No such file or directory
+          ! goal:  delete_file(does_not_exist)
+          </pre>
+
+     <pre class="example">          | ?- <kbd>unix(system('cat &lt;/dev/null &gt;search.d/tmp')),
+               unix(system('chmod a-w search.d')),
+               delete_file('search.d/tmp').</kbd>
+          ! O/S error : Permission denied
+          ! goal:  delete_file('search.d/tmp')
+          </pre>
+
+     <pre class="example">          | ?- <kbd>delete_file("tmp").</kbd>
+          ! Type error in argument 1 of delete_file/1
+          ! symbol expected, but [116,109,112] found
+          ! goal:  delete_file([116,109,112])
+          
+          | ?- <kbd>unix(system('rm tmp')).</kbd>
+          rm: override protection 444 for tmp? <kbd>n</kbd>
+          yes             % did NOT delete the file
+          
+          | ?- <kbd>delete_file(tmp).</kbd>
+          
+          yes             % **DID** delete the file
+          </pre>
+
+     <p>This last example is important:  the <code>rm</code> command (see <code>rm(1)</code>)
+checks the permission bits of the file
+(see <code>chmod(1)</code>) and asks you whether you
+really want to delete a file that you do not have write
+permission for, even if you have permission to delete it. 
+<code>delete_file/1</code> does not do this.
+
+     <br><dt><code>rename_file(</code><var>+OldName</var><code>, </code><var>+NewName</var><code>)</code>
+     <dd>
+<var>OldName</var> should be an atom naming a file that currently
+exists and can be renamed, and <var>NewName</var> should be a valid
+filename to which the file can be renamed.  If so, the file
+will be renamed, and the command will succeed.  If not, an
+error exception will be raised. 
+Examples:
+     <pre class="example">          | ?- <kbd>rename_file(does_not_exist, imaginary).</kbd>
+          ! Existence error in rename_file/2
+          ! file does_not_exist does not exist
+          ! O/S error : No such file or directory
+          ! goal:  rename_file(does_not_exist,imaginary)
+          </pre>
+
+     <p><code>rename_file/2</code> and <code>delete_file/1</code> have no effect on currently
+open streams, whether opened by <code>open/3</code>, <code>see/1</code>, or <code>tell/1</code>.
+
+     <p>What will happen if you continue to use streams that used to be
+connected to files affected by these commands is system-dependent. 
+Under UNIX, input will continue to
+come from a file as if it had not been renamed, and output will continue to
+go to a file as if it had not been renamed.  For example:
+
+     <pre class="example">          % <kbd>prolog</kbd>
+          | ?- <kbd>compile(library(files)).</kbd>
+          &lt;output of compile/1&gt;
+          yes
+          
+          | ?- <kbd>open(fred, write, OutputStream),
+               open(fred, read,  InputStream ),
+               delete_file(fred),
+               format(OutputStream, 'foo.~n', []),
+               flush_output(OutputStream),
+               read(InputStream, Term),
+               close(OutputStream),
+               close(InputStream).</kbd>
+          
+          OutputStream = '$stream'(10,3),
+          InputStream = '$stream'(11,4),
+          Term = foo
+          </pre>
+
+     <br><dt><code>rename(</code><var>+OldName</var><code>, </code><var>+NewName</var><code>)</code>
+     <dd>
+This command is identical to <code>dec10_rename/2</code> below.
+
+     <br><dt><code>dec10_rename(</code><var>+OldName</var><code>, </code><var>+NewName</var><code>)</code>
+     <dd>
+This predicate is similar, but not identical, to the DEC-10 Prolog/C-Prolog
+command <code>rename/2</code>, and is provided solely for the sake of
+compatibility.  If you are converting existing DEC-10 Prolog or C-Prolog code
+to Quintus Prolog, the fact that <code>rename/2</code> does close the
+file and is sensitive to the <code>fileerrors</code> flag should be useful. 
+In new programs we recommend the use of <code>rename_file/2</code> and <code>delete_file/1</code>. 
+<var>OldName</var> and
+<var>NewName</var> must be atoms, otherwise an error is reported and
+the command fails (this is not affected by the setting of
+the <code>fileerrors</code> flag).  If <var>NewName</var> is <code>[]</code>, the file named by
+<var>OldName</var> is deleted, otherwise it is renamed to
+<var>NewName</var>.  If the rename cannot be performed, what happens
+next depends on the setting of the <code>fileerrors</code> flag (see
+the reference page for <code>prolog_flag/3</code>). 
+If <code>fileerrors</code> is <code>on</code>, an error exception is raised.  If <code>fileerrors</code> is <code>off</code>, the
+command fails quietly.  Examples:
+     <pre class="example">          | ?- <kbd>prolog_flag(fileerrors, Setting).</kbd>
+          
+          Setting = on
+          
+          | ?- <kbd>dec10_rename(2, 1).</kbd>
+          ! Type error in argument 1 of dec10_rename/2
+          ! symbol expected, but 2 found
+          ! goal:  dec10_rename(2,1)
+          </pre>
+
+     <pre class="example">          | ?- <kbd>dec10_rename(does_not_exist, []).</kbd>
+          ! Existence error in dec10_rename/2
+          ! file does_not_exist does not exist
+          ! O/S error : No such file or directory
+          ! goal:  dec10_rename(does_not_exist,[])
+          
+          | ?- <kbd>prolog_flag(fileerrors, _, off).</kbd>
+          
+          yes
+          </pre>
+
+     <pre class="example">          | ?- <kbd>dec10_rename("old", "new").</kbd>
+          ! Type error in argument 1 of dec10_rename/2
+          ! symbol expected, but [111,108,100] found
+          ! goal:  dec10_rename([111,108,100],[110,101,119])
+          
+          | ?- <kbd>dec10_rename(does_not_exist, []).</kbd>
+          
+          no
+          </pre>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-ofi-cfe.html#lib-ofi-cfe">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-ofi-bfi.html#lib-ofi-bfi">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-ofi.html#lib-ofi">Up</a>
+</ul>
+</div>
+   </body></html>
+

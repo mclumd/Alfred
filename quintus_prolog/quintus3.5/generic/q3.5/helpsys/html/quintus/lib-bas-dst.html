@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Directory Structure</h4>
+
+   <p>The Quintus Prolog Library directory (part of the installation directory
+described in <a href="int-man.html#int-man">int-man</a>) contain files written in
+Prolog and C, which supplement the Quintus Prolog kernel. 
+The structure of the Library Directory differs slightly between UNIX
+and Windows, as shown in the following figures.
+
+<br><p>
+   <img src="images/lib-dir.png" alt="images/lib-dir.png">
+
+<div align="center">The Quintus Prolog Library Directory under UNIX, <code>qplib3.5</code></div>
+
+<br><p>
+   <img src="images/lib-wdir.png" alt="images/lib-wdir.png">
+
+<div align="center">The Quintus Prolog Library Directory under Windows, <code>src</code></div>
+
+     <dl>
+
+     <br><dt><code>library</code>
+     <dd>contains a large
+number of predicates that can be regarded as extensions to the set of
+predicates that are built into the Prolog system.  Both source and
+QOF versions are provided.
+
+     <br><dt><code>tools</code>
+     <dd>source files for Quintus-supplied development tools,
+independent programs that perform various functions such as
+determinancy checking and cross-referencing.  They can be used to
+analyze your programs statically (that is, without running them) and
+possibly locate bugs.
+
+     <br><dt><code>structs</code>
+     <dd>contains the Structs Package, which allows access
+to C data structures from Prolog.  The directory includes demos.
+
+     <br><dt><code>objects</code>
+     <dd>contains the Objects Package, which enables programmers to
+write object-oriented programs in Quintus Prolog.  It can be regarded
+as a high-level alternative to the Structs Package.
+
+     <br><dt><code>prologbeans</code>
+     <dd>contains the PrologBeans Package, which provides an interface from Java
+to Prolog.
+
+     <br><dt><code>vbqp</code>
+     <dd>An interface from Visual Basic to Prolog. 
+Only available under Windows.
+
+     <br><dt><code>IPC</code>
+     <dd>two inter-process communication packages: Remote Predicate
+Call (RPC, not available under Windows) and Transmission Control
+Protocol (TCP).
+
+     <br><dt><code>include</code>
+     <dd>Contains <code>&lt;quintus/quintus.h&gt;</code>, a header file containing
+#defines, typedefs, struct definitions, etc., which are needed to
+compile C code that needs to call API functions or use
+Quintus data structures.  Under Windows, the <code>include</code> directory is
+placed directly under <var>quintus-directory</var>.
+
+     <br><dt><code>embed</code>
+     <dd>contains modules for user customization of the message handler
+(see <a href="ref-msg.html#ref-msg">ref-msg</a>) and source code for the Embedding Layer. 
+</dl>
+
+   <p>The predicate <code>library_directory/1</code> has predefined clauses for the
+<code>library</code> and <code>tools</code> directories.  These depend on the
+<code>file_search_path/2</code> definition of <code>qplib</code>.  You can see these clauses
+by typing <kbd>listing.</kbd>  or <kbd>listing(library_directory).</kbd> after starting
+up Prolog.  This definition of <code>library_directory/1</code> means that you
+can refer, from within Prolog, to any file in any of these areas using
+the form <code>library(</code><var>File</var><code>)</code>.  For example either (A) or (B) would load
+the file <code>lists.qof</code> from the <code>library</code> directory.
+<pre class="example">     | ?- <kbd>[library(lists)].</kbd> (A)
+     
+     | ?- <kbd>load_files(library(lists)).</kbd> (B)
+     </pre>
+
+   <p>Library packages are typically loaded by doing (C) if the
+package is not a module-file or if it is a module and you want all the
+exported predicates.
+<pre class="example">     | ?- <kbd>ensure_loaded(library(addportray)).</kbd> (C)
+     </pre>
+
+   <p>See the descriptions of <code>ensure_loaded/1</code> and
+<code>use_module/[1,2,3]</code>.
+
+   <p>In addition to the loadable QOF files, source files (<code>.pl</code> or <code>.c</code>) are
+provided for each package.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-bas-sta.html#lib-bas-sta">Next</a>
+<li><a rel="up" accesskey="u" href="lib-bas.html#lib-bas">Up</a>
+</ul>
+</div>
+   </body></html>
+

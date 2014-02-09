@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>keysort/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>keysort(</code><var>+List1, -List2</var><code>)</code>
+
+   <p>Sorts the elements of the list <var>List1</var> into ascending
+standard order (see <a href="ref-lte-cte-sot.html#ref-lte-cte-sot">ref-lte-cte-sot</a> with respect to the key of
+the pair structure.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>List1</var> <dfn>list of pair</dfn>
+     <dd>
+
+     <br><dt><var>List2</var> <dfn>list of pair</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The list <var>List1</var> must consist of
+terms of the form <var>Key</var>-<var>Value</var>.  Multiple occurrences of
+any term are not removed.
+
+   <p>(The time taken to do this is at worst order (<var>N</var> log <var>N</var>) where
+<var>N</var> is the length of the list.)
+
+   <p>Note that the elements of <var>List1</var> are sorted <em>only</em> according
+to the value of <var>Key</var>, <em>not</em> according to the value of
+<var>Value</var>.
+
+   <p><code>keysort</code> is stable in the sense that the relative position of
+elements with the same key maintained.
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     | ?- <kbd>keysort([3-a,1-b,2-c,1-a,1-b], X).</kbd>
+     
+     X = [1-b,1-a,1-b,2-c,3-a]
+     </pre>
+
+<pre class="example">     |?- <kbd>keysort([2-1, 1-2], [1-2, 2-1]).</kbd>
+     
+     yes
+     </pre>
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+If <var>List1</var> is not properly instantiated
+
+     <br><dt><code>type_error</code>
+     <dd>
+If <var>List1</var> is not a list of key-value pair.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>library(samsort)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-leash.html#mpg-ref-leash">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-is.html#mpg-ref-is">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

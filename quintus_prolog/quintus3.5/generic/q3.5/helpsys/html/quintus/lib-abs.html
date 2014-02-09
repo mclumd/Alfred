@@ -1,0 +1,823 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Abstracts</h3>
+
+   <p>The following abstracts are meant to describe the functionality of
+each package, not to serve as documentation.  Whatever documentation
+exists is included in comments within each package.  Refer to
+<a href="lib-bas-dlp-acc.html#lib-bas-dlp-acc">lib-bas-dlp-acc</a> to find out how to locate the source files if
+you wish to read the code comments.  All the files abstracted in the
+following pages are found in the library directory.
+
+     <dl>
+
+     <br><dt><code>library(aggregate)</code>
+     <dd>defines <code>aggregate/3</code>, an operation
+similar to <code>bagof/3</code>, which lets you calculate sums.  For example,
+given a table <code>pupil(Name, Class, Age)</code>, to calculate the average
+age of the pupils in each class, one would write
+     <pre class="example">          | ?- <kbd>aggregate( sum(Age)/sum(1),
+                          Name^pupil(Class, Name, Age),
+                          Expr),
+               call(Average_Age is Expr).</kbd>
+          </pre>
+
+     <br><dt><code>library(antiunify)</code>
+     <dd>
+Anti-unification is the mathematical dual of unification:  given two
+    terms <var>T1</var> and <var>T2</var> it returns the most specific term that generalizes
+    them, <var>T</var>.  <var>T</var> is the most specific term that unifies with both <var>T1</var> and
+    <var>T2</var>.  A common use for this is in learning; the idea of using it that
+    way comes from Gordon Plotkin.
+
+     <p>The code here is based on a routine called <code>generalise/5</code> written by
+    Fernando Pereira.  The name was changed because there are other ways
+    of generalizing things, but there is only one dual of unification.
+
+          <dl>
+
+          <br><dt><code>anti_unify(</code><var>+Term1</var><code>, </code><var>+Term2</var><code>, </code><var>-Term</var><code>)</code>
+          <dd>binds <var>Term</var> to a most specific
+generalization of <var>Term1</var> and <var>Term2</var>.  When you call it, <var>Term</var> should be a
+variable.
+
+          <br><dt><code>anti_unify(</code><var>+Term1</var><code>, </code><var>+Term2</var><code>, </code><var>-Subst1</var><code>, </code><var>-Subst2</var><code>, </code><var>-Term</var><code>)</code>
+          <dd>binds
+<var>Term</var> to a most specific generalization of <var>Term1</var> and <var>Term2</var>, and <var>Subst1</var>
+and <var>Subst2</var> to substitutions such that
+          <pre class="example">                      Subst1(Term) = Term1
+                      Subst2(Term) = Term2
+               </pre>
+
+          <p>Substitutions are represented as lists of <var>Var=Term</var> pairs, where
+   <var>Var</var> is a Prolog variable, and <var>Term</var> is the term to substitute for <var>Var</var>. 
+   When you call <code>anti_unify/5</code>, <var>Subst1</var>, <var>Subst2</var>, and <var>Term</var> should be variables.
+
+     </dl>
+
+     <br><dt><code>library(arity)</code>
+     <dd>Provides support for Arity code translated by <code>arity2quintus</code>.
+
+     <br><dt><code>library(aritystring)</code>
+     <dd>provides support for Arity's string operations.
+
+     <br><dt><code>library(aropen)</code>
+     <dd>lets you open a member of a UNIX
+archive file (see UNIX <code>ar(1)</code>) without having to
+extract the member.  You cannot compile or consult such a file,
+but you can read from it.  This may be useful as an example of
+defining Prolog streams from C. 
+Not available under Windows.
+
+     <br><dt><code>library(arrays)</code>
+     <dd>provides constant-time access and
+update to arrays.  It involves a fairly unpleasant hack.  You
+would be better off using <code>library(logarr)</code> or <code>library(trees)</code>.
+
+     <br><dt><code>library(assoc)</code>
+     <dd>A binary tree implementation of "association lists".
+
+     <br><dt><code>library(avl)</code>
+     <dd>AVL trees in Prolog.
+
+     <br><dt><code>library(bags)</code>
+     <dd>provides support for the data type <dfn>bag</dfn>.
+
+     <br><dt><code>library(benchmark)</code>
+     <dd>Users can easily obtain information about the
+performance of goals:  time and memory requirements.
+
+     <br><dt><code>library(between)</code>
+     <dd>provides routines for generating integers on
+backtracking.
+
+     <br><dt><code>library(big_text)</code>
+     <dd>Defines a <dfn>big_text</dfn> data type and several operations
+on it.  The point of this module is that when writing an interactive
+program you often want to display to (or acquire from) the user large
+amounts of text.  It would be inadvisable (though possible) to store
+the text in Prolog's database.  With this package you can store text
+in a file, copy text to a stream, acquire new text from a stream,
+and/or have Emacs edit a big text file.  See the file <code>big_text.txt</code> in
+the library area for more details.
+
+     <br><dt><code>library(bitsets)</code>
+     <dd>Operations on sets of integers (<dfn>bitsets</dfn>).  Contains
+analogs for most operations in <code>library(ordsets)</code>.
+
+     <br><dt><code>library(break)</code>
+     <dd>Prints an error message and enters a break level (if
+possible), avoiding the problem of <code>break/0</code> in QPC.
+
+     <br><dt><code>library(call)</code>
+     <dd>provides a number of predicates that are useful in
+programs that pass goals as arguments.
+
+     <br><dt><code>library(caseconv)</code>
+     <dd>is mainly intended as an example of the use
+        of <code>library(ctypes)</code>.  Here you'll find
+        predicates to test whether text is in all lowercase, all
+        uppercase, or mixed-case, and to convert from one case to
+        another.
+
+     <br><dt><code>library(charsio)</code>
+     <dd>lets you open a list of character
+codes for input as a Prolog stream and, having written to a Prolog
+stream, collect the output as a list of character codes.  There are
+three things you can do with <code>library(charsio)</code>:
+          <ol type=1 start=1>
+
+          <li>You can open an input stream reading from a (ground) list of characters. 
+This is the predicate <code>chars_to_stream</code>. 
+<li>You can run a particular goal with input coming from a (ground) list
+of characters.  The predicates <code>with_input_from_chars/[2,3]</code> do this. 
+<li>You can run a particular goal with output going to a list of characters
+(the unification is done after the goal has finished). 
+The <code>with_output_to_chars/[2,3]</code> predicates do this.
+          </ol>
+
+     <br><dt><code>library(clump)</code>
+     <dd>Group adjacent related elements of lists.
+
+     <br><dt><code>library(count)</code>
+     <dd>The purpose is to count predicate calls.  Instead of loading
+a program by calling <code>compile/1</code>, use <code>count/1</code>.  The program will do
+what it always used to, except that it may run twice as slowly.  The
+output of <code>library(count)</code> is a file that contains a record of predicate
+calls, and is suitable for processing by <code>awk(1)</code> or similar
+utilities.
+
+     <br><dt><code>library(critical)</code>
+     <dd>provides a critical-region facility.
+
+     <br><dt><code>library(crypt)</code>
+     <dd>
+ defines two operations similar to <code>open/3</code>:
+
+     <p><code>crypt_open(</code><var>+FileName</var><code>[, </code><var>+Password</var><code></code>, <var>+Mode</var>, <var>-Stream</var>)]
+
+     <p>If you do not supply a <var>Password</var>, <code>crypt_open/3</code> will prompt
+        you for it.  Note that the password <em>will</em> be echoed.  If
+        there is demand, this can be changed.  The <var>Stream</var> will
+        be clear text as far as Prolog is concerned, yet
+        encrypted as far as the file system is concerned.
+
+     <p><code>encrypt.c</code> is a stand-alone program (which is designed to
+        have its object code linked to <em>three</em> names:  <code>encrypt</code>,
+        <code>decrypt</code>, and <code>recrypt</code>), and can be used to read and write
+        files using this encryption method.
+
+     <p>This encryption method was designed, and the code was
+        published, in Edinburgh, so it is available outside the USA.
+
+     <br><dt><code>library(decons)</code>
+     <dd>provides a set of routines for recognizing
+        and building Prolog control structures.  The
+        only predicate that is likely to be useful
+        is <code>prolog_clause(</code><var>Clause</var><code>, </code><var>Head</var><code>, </code><var>Body</var><code>)</code>.
+
+     <br><dt><code>library(demo)</code>
+     <dd>Defines the <code>demo</code> <code>file_search_path</code>.
+
+     <br><dt><code>library(det)</code>
+     <dd>Aids in determinacy checking by locating places where cuts are
+really necessary.
+
+     <br><dt><code>library(environ)</code>
+     <dd>provides access to the operating system's
+<dfn>environment variables</dfn>. 
+<code>environ(</code><var>?Varname</var><code>, </code><var>?Value</var><code>)</code> is a genuine relation.  Note
+that if you include this file in a saved state, the values of
+environment variables are those current when the saved state was run,
+not when it was saved.  There is also an <code>argv/1</code> in this file, which is superseded by <code>unix(argv(_))</code>.
+
+     <br><dt><code>library(environment)</code>
+     <dd>Portability aid for UNIX (BSD, System V), Windows,
+VMS, VM/SP (CMS), MVS, MS-DOS, Macintosh.
+
+     <br><dt><code>library(expansion)</code>
+     <dd>This library "takes over" <code>term_expansion/2</code> and provides more powerful hooks
+that enable multiple, "simultaneously active" and recursive program
+transformations to be achieved in an effcient manner.
+
+     <br><dt><code>library(fft)</code>
+     <dd>Performs a fast fourier transform in Prolog. This file was
+written to demonstrate that a FFT could be written in Prolog with the
+same <var>O(N*</var>log<var>(N))</var> <em>asymptotic</em> cost as in Fortran.  There are several
+easy things that could be done to make it faster, but you would be
+better off for numerical calculations like this using <code>library(vectors)</code>
+to call a Fortran subroutine.
+
+     <br><dt><code>library(filename)</code>
+     <dd>Portable filename manipulation. 
+Documentation on <code>filename.txt</code>.
+
+     <br><dt><code>library(flatten)</code>
+     <dd>provides predicates for flattening binary
+trees into lists.
+
+     <br><dt><code>library(foreach)</code>
+     <dd>
+ defines two iteration forms.
+
+     <pre class="example">          forall(<var>Generator, Test</var>)
+          foreach(<var>Generator</var>, <var>Test</var>)
+          </pre>
+
+     <p><code>forall/2</code> is the standard double-negation "there is no proof of
+            <var>Generator</var> for which <var>Test</var> is not provable", coded as
+            <code>\+ (</code><var>Generator</var><code>, \+ </code><var>Test</var><code>)</code>.
+
+     <p><code>foreach/2</code> works in three phases:  first each provable instance of
+            <var>Generator</var> is found, then each corresponding instance
+            of <var>Test</var> is collected in a conjunction, and finally
+            the conjunction is executed.
+
+     <p>If, by the time a <var>Test</var> is called, it is always ground
+        -- apart from explicitly existentially quantified variables --
+        the two forms of iteration are equivalent, and <code>forall/2</code> is
+        cheaper.  But if you want <var>Test</var> to bind some variables,
+        you must use <code>foreach/2</code>.
+
+     <br><dt><code>library(freevars)</code>
+     <dd>This is an internal support package. 
+Users will probably have no direct use for it.
+
+     <br><dt><code>library(fromonto)</code>
+     <dd>
+ defines some "pretty" operators
+for input/output redirection.  Examples:
+     <pre class="example">          | ?- <kbd>(repeat, read(X), process(X))
+               from_file 'fred.dat'.</kbd>
+          
+          | ?- <kbd>read(X) from_chars "example. ".</kbd>
+          
+          X = example
+          
+          | ?- <kbd>write(273.4000) onto_chars X.</kbd>
+          
+          X = "273.4"
+          </pre>
+
+     <br><dt><code>library(gauss)</code>
+     <dd>Gaussian elimination.
+
+     <br><dt><code>library(getfile)</code>
+     <dd>defines <code>get_file(</code><var>+FileName</var><code>, </code><var>-ListOfLines</var><code>)</code>, which reads an
+entire file into memory in one go.
+
+     <br><dt><code>library(graphs)</code>
+     <dd>
+a collection of utilities for manipulating
+mathematical graphs.  The collection is incomplete.  Please
+let us know which operations in this collection are most useful to you,
+and which operations that you would find useful have not been included.
+
+     <p>The P-representation of a graph is a list of (from-to) vertex
+pairs, where the pairs can be in an arbitrary order.  This form is
+convenient for input and output.
+
+     <p>The S-representation of a graph is a list of (vertex-neighbors)
+pairs, where the pairs are in standard order (as produced by
+<code>keysort/2</code>) and the neighbors of each vertex are also in standard
+order (as produced by <code>sort/2</code>).  This form is convenient for many
+calculations.
+
+     <p>See also <code>library(mst)</code> (<a href="lib-abs.html#lib-abs">lib-abs</a>),
+which is soon to be merged into <code>library(graphs)</code>.
+
+     <br><dt><code>library(heaps)</code>
+     <dd>provides support for the data type <dfn>heap</dfn> (heaps are
+also known as priority queues).
+
+     <br><dt><code>library(knuth_b_1)</code>
+     <dd>is a table of constants taken
+from Appendix B1 of D.E. Knuth's <cite>The Art of Computer Programming</cite>,
+Volume 1.  The point is not to provide the constants -- you
+could have calculated them yourselves easily enough -- but
+to illustrate the recommended way of building such constants into
+your programs.
+
+     <br><dt><code>library(listparts)</code>
+     <dd>exists to establish a common
+vocabulary for names of parts of lists among Prolog programmers.
+
+     <br><dt><code>library(lpa)</code>
+     <dd>Compatibility library for LPA Prologs.  See also <code>quintus.mac</code>, <code>quintus.dec</code>.
+
+     <br><dt><code>library(logarr)</code>
+     <dd>is an implementation of "arrays"
+as 4-way trees.  See also <code>library(trees)</code>.
+
+     <br><dt><code>library(long)</code>
+     <dd>
+ This is a rational arithmetic package.
+
+     <p><code>rational(</code><var>N</var><code>)</code> recognizes arbitrary-precision rational numbers:
+        this includes integers, <code>infinity</code>, <code>neginfinity</code>, &amp; <code>undefined</code>. 
+        <code>whole(</code><var>N</var><code>)</code> recognizes arbitrary precision integers. 
+        <code>eval(</code><var>Expr</var><code>, </code><var>Result</var><code>)</code> evaluates an expression using arbitrary
+        precision rational arithmetic; it does <em>not</em> accept floats at all. 
+        <code>{eq,ge,gt,le,lt,ne}/2</code> are infix predicates like <code>&lt;/2</code> that compare
+        rationals (or integers, <em>not</em> expressions). 
+        <code>succ/2</code>, <code>plus/3</code>, and <code>times/3</code> are relational forms of arithmetic,
+        which work on rational numbers (<em>not</em> floats). 
+        To have rational numbers printed nicely, put the command
+     <pre class="example">          :- assert((portray(X) :- portray_number(X)))
+          </pre>
+
+     <p>in your code.  See <code>long.doc</code> and the comments in <code>long.pl</code>.
+
+     <br><dt><code>library(mapand)</code>
+     <dd>provides mapping routines over &amp;-trees.  See also <code>maplist.pl</code>.
+
+     <br><dt><code>library(maplist)</code>
+     <dd>is built on top of <code>library(call)</code>, and provides
+a collection of meta-predicates for applying predicates to elements of lists.
+
+     <br><dt><code>library(maps)</code>
+     <dd>implements functions over finite domains, which
+functions are represented by an explicit data structure.
+
+     <br><dt><code>library(menu)</code>
+     <dd>
+
+     <p>illustrates how to drive the Emacs interface from
+Prolog.  The sample application involves choosing items from a menu. 
+See also the <code>menu_example.pl</code> program in the demo directory. 
+Not available under Windows.
+
+     <br><dt><code>library(mst)</code>
+     <dd>
+ is a preliminary version of a minimal spanning tree
+package, that will eventually be merged into <code>library(graphs)</code>.
+
+     <p><code>library(mst)</code> currently provides two predicates:
+          <dl>
+
+          <br><dt><code>first_mst(</code><var>+Nodes</var><code>, </code><var>+Cost</var><code>, </code><var>-Root</var><code>, </code><var>-MST</var><code>)</code>
+          <dd>
+
+          <br><dt><code>mst(</code><var>+Nodes</var><code>, </code><var>+Cost</var><code>, </code><var>-Root</var><code>, </code><var>-MST</var><code>)</code>
+          <dd>
+               <ul>
+
+               <li><var>Nodes</var> is a list of nodes. 
+<li><var>Cost</var> is a predicate that takes three extra arguments.  A predicate from
+<code>library(call)</code>, <code>call(</code><var>Cost</var><code>, </code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Dist</var><code>)</code> calculates
+the distance <var>Dist</var> between nodes <var>X</var> and <var>Y</var>. 
+<li><var>Root</var> is the root of a minimal spanning tree and <var>MST</var> is a list
+of the arcs in that minimal spanning tree. 
+</ul>
+
+     </dl>
+
+     <blockquote>
+
+          <p><strong>Please note:</strong>  <code>mst/4</code> has been carefully written so that it
+will find all the minimal spanning trees of a graph. 
+<code>mst/4</code> finds many trees, especially as it is blind to redundant
+representations of isomorphic trees.  If you will be satisfied
+with any MST at all, use <code>first_mst/4</code> instead. 
+<code>first_mst/4</code> will try to keep the arcs in the same order as the
+nodes if at all possible. 
+</blockquote>
+
+     <br><dt><code>library(multil)</code>
+     <dd>provides multiple-list routines.
+
+     <br><dt><code>library(newqueues)</code>
+     <dd>provides support for the <dfn>queue</dfn> data type. 
+The <code>library(newqueues)</code> package replaces <code>library(queues)</code>, and should be
+used in new programs.
+
+     <br><dt><code>library(nlist)</code>
+     <dd>Interface to the UNIX library function <code>nlist(3)</code>. 
+Not available under Windows.
+
+     <br><dt><code>library(note)</code>
+     <dd>The built-in predicates and commands pertaining to the
+"recorded" (or "internal") database have an argument called the
+"key".  All that matters about this key is its principal functor. 
+That is, <code>fred(a, b)</code> and <code>fred(97, 46)</code> are regarded as the same key.
+
+     <p><code>library(note)</code> defines a complete set of storing, fetching, and
+deleting commands where the "key" is a ground term <em>all</em> of
+which is significant, using the existing recorded database. 
+Note that this package is no better indexed than the existing
+recorded database.
+
+     <br><dt><code>library(order)</code>
+     <dd> The
+usual convention for Prolog operations is INPUTS before OUTPUTS.  The
+built-in predicate <code>compare/3</code> violates this.  This package provides an
+additional interface to provide comparison predicates with the usual order. 
+The package contains predicates to compare numbers, terms, sets and ordered
+lists.
+
+     <br><dt><code>library(ordered)</code>
+     <dd>is a collection of predicates for doing things
+with a list and an ordering predicate.  See also
+<code>library(ordsets)</code> (<a href="lib-lis-ordsets.html#lib-lis-ordsets">lib-lis-ordsets</a>), <code>library(ordprefix)</code> below, and <code>library(samsort)</code> (<a href="lib-abs.html#lib-abs">lib-abs</a>).
+
+     <br><dt><code>library(ordprefix)</code>
+     <dd>is for extracting initial
+runs from lists, perhaps with a user-supplied ordering predicate. 
+See also <code>library(ordered)</code> above.
+
+     <br><dt><code>quintus.mac</code>
+     <dd>version of <code>lpa.pl</code> to be used on Mac.
+
+     <br><dt><code>quintus.dec</code>
+     <dd>version of <code>lpa.pl</code> to be used on DEC.
+
+     <br><dt><code>library(pipe)</code>
+     <dd>
+ Quintus streams may be connected to pipes using <code>library(pipe)</code>, which
+provides a single predicate:
+
+          <dl>
+
+          <br><dt><code>popen(</code><var>+Command</var><code>, </code><var>+Mode</var><code>, </code><var>-Stream</var><code>)</code>
+          <dd>
+<var>Mode</var> may be either:
+               <dl>
+
+               <br><dt><code>read</code>
+               <dd><var>Stream</var> will be bound to a new input stream, connected to
+the standard output of the <var>Command</var>.  The standard input stream of
+the <var>Command</var> is left the same as the standard input stream of
+Prolog.  So we have
+               <pre class="example">                    user_input -&gt; <var>Command</var> -&gt; <var>Stream</var>
+                    </pre>
+
+               <br><dt><code>write</code>
+               <dd><var>Stream</var> will be bound to a new output stream, connected
+to the standard input of the <var>Command</var>.  The standard output stream
+of the <var>Command</var> is left the same as the standard output stream of
+Prolog.  So we have
+               <pre class="example">                    <var>Stream</var> -&gt; <var>Command</var> -&gt; user_output
+                    </pre>
+
+          </dl>
+
+     </dl>
+
+     <p>The behavior of <code>popen/3</code> is defined by the system function <code>popen(3S)</code>. 
+There is no special
+<code>pclose/1</code> command: the existing <code>close/1</code> will call
+<code>pclose(3S)</code>.  Commands are executed by <code>sh(1)</code> under UNIX
+and by the default command interpreter under Windows,
+e.g. <code>cmd.exe</code> under Windows XP.  Under Windows, the underlying
+<code>popen()</code> C library function, and therefore also <code>popen/3</code>,
+only works in console applications, e.g. in <code>prolog</code> but not
+in <code>qpwin</code>.
+
+     <br><dt><code>library(plot)</code>
+     <dd>This package generates UNIX <code>plot(5)</code> files.
+
+     <br><dt><code>library(pptree)</code>
+     <dd>
+ This file defines pretty-printers for (parse) trees represented in the form
+     <pre class="example">          &lt;tree&gt; --&gt; &lt;node label&gt;/[&lt;son&gt;,...&lt;son&gt;]
+                  |  &lt;leaf label&gt;         -- anything else
+          </pre>
+
+     <p>Two forms of output are provided:  a human-readable form and
+        a Prolog term form for reading back into Prolog.
+          <dl>
+
+          <br><dt><code>pp_tree(</code><var>+Tree</var><code>)</code>
+          <dd>prints the version intended for human consumption, and
+
+          <br><dt><code>pp_term(</code><var>+Tree</var><code>)</code>
+          <dd>prints the Prolog-readable version. 
+</dl>
+
+     <p>There is a new command <code>ps_tree/1</code>, which prints trees
+represented in the form
+     <pre class="example">          &lt;tree&gt; --&gt; &lt;node label&gt;(&lt;son&gt;,...,&lt;son&gt;)
+                  |  &lt;leaf&gt;               -- constants
+          </pre>
+
+     <p>The output of <code>ps_tree/1</code> is readable by Prolog and people both. 
+You may find it useful for things other than parse trees.
+
+     <br><dt><code>library(printchars)</code>
+     <dd>extends <code>portray/1</code> (using <code>library(addportray)</code>) so
+that lists of character codes are written by <code>print/1</code>, by the top
+level, and by the debugger, between double quotes.
+     <pre class="example">          
+          | ?- <kbd>X = "fred".</kbd>
+          
+          X = [102,114,101,100]
+          
+          | ?- <kbd>use_module(library(printchars)),
+               X = "fred".</kbd>
+          
+          X = "fred"
+          </pre>
+
+     <br><dt><code>library(printlength)</code>
+     <dd>provides predicates for determining
+how wide a term would be if written.
+
+     <br><dt><code>library(putfile)</code>
+     <dd>Uses C stream functions to copy the contents of a file to
+the the current output stream.  This is the fastest known method for
+copying the contents of a file to the current output
+stream.
+
+     <br><dt><code>library(qerrno)</code>
+     <dd>Defines error codes specific to Quintus Prolog, which do not
+have any standard errno assignment.
+
+     <br><dt><code>library(qsort)</code>
+     <dd>provides a stable version of quicksort. 
+        Note that quicksort is <em>not</em> a good sorting method for
+        a language like Prolog.  If you want a good sorting method,
+        see <code>library(samsort)</code> below.
+
+     <br><dt><code>library(queues)</code>
+     <dd>provides support for the <dfn>queue</dfn> data type. 
+This library has been made obsolete in release 3 by the introduction
+of <code>library(newqueues)</code>.  It is retained for backward compatibility, but
+should not be used in new programs.
+
+     <br><dt><code>library(random)</code>
+     <dd>provides a random number generator
+and several handy interface routines.  The random number
+generators supplied by various operating systems are
+all different.  It is useful to have a random number generator that
+will give the same results in all versions of Quintus Prolog, and this
+is the one.
+
+     <br><dt><code>library(ranstk)</code>
+     <dd>This is a Prolog implementation of the algorithms in Eugene
+W. Myers' <var>An Applicative Random-Access Stack</var>.
+
+     <br><dt><code>library(read)</code>
+     <dd>
+ This code was originally written at the University of Edinburgh. 
+David H. D. Warren wrote the first version of the parser.  Richard A. 
+O'Keefe extracted it from the Dec-10 Prolog system and made it use
+only user-visible operations.  He also added the feature whereby
+<code>P(X,Y,Z)</code> is read as <code>call(P,X,Y,Z)</code>.  Alan Mycroft reorganized the code
+to regularize the functor modes.  This is easier to understand (there
+are no more <code>?</code>s), and it also fixes bugs concerning the curious
+interaction of cut with the state of parameter instantiation.  O'Keefe
+then took it over again and made a number of other changes.
+
+     <p>There are three intentional differences between this library and the
+Dec-10 Prolog parser:
+
+          <ul>
+
+          <li>        "Predicate variables" serve as syntactic saccharine for <code>call/N</code>. 
+<li>        When there is a syntax error, DEC-10 Prolog will backtrack
+        internally and read the next term.  This fails.  If you
+        call <code>portable_read/1</code> with an uninstantiated argument,
+        failure means a syntax error.  You can rely on it. 
+<li>        <code>, ..</code> is not accepted in place of <code>|</code>.  This was always a
+        parser feature, not a tokeniser feature:  any amount of
+        layout and commentary was allowed between the <code>,</code> and the
+        <code>..</code>.  It wouldn't be hard to allow this again. 
+</ul>
+
+     <br><dt><code>library(retract)</code>
+     <dd>This file adds more predicates for accessing dynamic clauses and
+the recorded database. 
+The built-in predicate <code>retract/1</code> will backtrack
+through a predicate, expunging each matching clause until the caller
+is satisfied.  <em>This is not a bug.</em>  That is the way <code>retract/1</code>
+is <em>supposed</em> to work.  But it is also useful to have a version that
+does not backtrack.
+
+     <p><code>library(retract)</code> defines, among many other commands,
+<code>retract_first/1</code>, which is identical to <code>retract/1</code> except that it
+expunges only the first matching clause, and fails if asked for another
+solution.
+
+     <br><dt><code>library(samsort)</code>
+     <dd>provides a stable sorting routine,
+which exploits existing order, both ascending and descending. 
+(It is a generalization of the natural merge.)  <code>samsort(</code><var>Raw</var><code>, </code><var>Sorted</var><code>)</code>
+is like <code>sort(</code><var>Raw</var><code>, </code><var>Sorted</var><code>)</code> except that it does not discard
+duplicate elements.  <code>samsort(</code><var>Order</var><code>, </code><var>Raw</var><code>, </code><var>Sorted</var><code>)</code> lets you specify
+your own comparison predicate, which the built-in sorting predicates
+<code>sort/2</code> and <code>keysort/2</code> do not.  This file also exports
+two predicates for merging already-sorted lists:  <code>merge/3</code> and <code>merge/4</code>. 
+See also <code>library(ordered)</code> and <code>library(qsort)</code>.
+
+     <br><dt><code>library(setof)</code>
+     <dd>provides additional predicates related to the
+built-in predicate <code>setof/3</code>. 
+Note that the built-in predicates <code>bagof/3</code> and <code>setof/3</code>
+are much more efficient than the
+predicates in this file.  See also <code>library(findall)</code>.
+
+     <br><dt><code>library(show)</code>
+     <dd>The built-in command <code>listing/1</code> displays dynamic predicates. 
+But there is no built-in command for displaying the terms recorded under
+a given key.  <code>library(show)</code> defines two predicates:  <code>show(</code><var>Key</var><code>)</code> displays
+all the terms recorded under the given <var>Key</var>, and <code>show/0</code> displays all
+the <var>Keys</var> and terms in the recorded database.
+
+     <br><dt><code>library(showmodule)</code>
+     <dd>
+ provides a command for displaying
+information about a loaded module.  <code>show_module(</code><var>Module</var><code>)</code> prints a
+description of the <var>Module</var>, what it exports, and what it imports. 
+The command
+     <pre class="example">          | ?- <kbd>show_module(_), fail ; true.</kbd>
+          </pre>
+
+     <p>will print a description of every loaded module. 
+To backtrack through all current modules and print
+information about the predicates they define, import, and export, use
+     <pre class="example">          | ?- <kbd>ensure_loaded(library(showmodule)),
+               show_module(Module).</kbd>
+          </pre>
+
+     <p>To print information about a particular module <var>m</var>, use
+     <pre class="example">          | ?- <kbd>show_module(</kbd><var>m</var><kbd>)</kbd>.
+          </pre>
+
+     <br><dt><code>library(statistics)</code>
+     <dd>
+ The <code>full_statistics/[0,2]</code> predicates are exactly like the built-in
+<code>statistics/[0,2]</code> predicates except that
+          <ul>
+
+          <li>Integers are written out with commas every three digits. 
+<li>The number of page faults is reported (if known). 
+</ul>
+
+     <br><dt><code>library(stchk)</code>
+     <dd>
+ This package allows local style-check modifications in a file. 
+This module provides an alternative interface to the
+    style check flags.  The idea is that a file that uses it
+    will look like
+
+     <pre class="example">              &lt;usual heading&gt;
+          
+              :- push_style.
+              :- set_style(StyleFlag, Value).
+              ...
+          
+              &lt;clauses&gt;
+          
+              :- pop_style.
+          </pre>
+
+     <p>Some combination of this with the existing style check
+    interface will be safe:  no matter what style check
+    changes are made, the original values will be restored.
+
+     <p>The initial state (assumed) is that all checks are ON.
+
+     <br><dt><code>library(terms)</code>
+     <dd>
+ The foreign code interface provides means of
+passing constants between Prolog and C, FORTRAN, Pascal, etc.
+
+     <p><code>library(terms)</code> lets you pass copies of terms
+from Prolog to C, and receive copies of terms from C.  For example, the
+new built-in predicate <code>copy_term/2</code> could have been defined this
+way:
+     <pre class="example">          'copy term'(Term, Copy) :-
+                  prolog_to_c(Term, Pointer_to_C_version),
+                  c_to_prolog(Pointer_to_C_version, Temp),
+                  erase_c_term(Pointer_to_C_version),
+                  Copy = Temp.
+          </pre>
+
+     <p>The C code in <code>terms.c</code> is just as much a part of this package as the
+Prolog code.  In particular, the comments in that file describe the
+representation used on the C side of the interface and there are
+routines and macros (see <code>terms.h</code>) for accessing terms-in-C.
+
+     <br><dt><code>library(termdepth)</code>
+     <dd>Many resolution-based theorem provers impose a depth bound
+on the terms they create -- not least to prevent infinite loops. 
+<code>library(termdepth)</code> provides predicates that find the depth, length and size
+of a term, which can even be used on cyclic terms.
+
+     <br><dt><code>library(tokens)</code>
+     <dd>
+ This package is a public-domain tokeniser in reasonably standard Prolog.  It is meant to complement the library READ routine. 
+    It recognizes Dec-10 Prolog with the following exceptions:
+          <ul>
+
+          <li>        <code>%(</code> is not accepted as an alternative to <code>{</code>
+<li>        <code>%)</code> is not accepted as an alternative to <code>}</code>
+<li>        <code>,..</code> is not accepted as an alternative to <code>|</code>
+<li>        large integers are not read in as <code>xwd(</code><var>Top18Bits</var><code>,</code><var>Bottom18Bits</var><code>)</code>
+<li>After a comma, <code>(</code> is read as <code> (</code> rather than <code>(</code>.  This does the
+parser no harm at all, and the Dec-10 tokeniser guarantees never to
+return <code>(</code> except immediately after an atom, yielding <code> (</code> everywhere
+else. 
+</ul>
+
+     <p><em>BEWARE</em>: this file does not recognize floating-point numbers.
+
+     <br><dt><code>library(trees)</code>
+     <dd>is an implementation of arrays as
+binary trees.
+
+     <br><dt><code>library(types)</code>
+     <dd>This file is support for the rest of the library, and is
+not really meant for general use.  The type tests it defines are
+almost certain to remain in the library or to migrate to the
+system.  The error checking and reporting code is certain to change. 
+The library predicates <code>must_be_compound/3</code>, <code>must_be_proper_list/3</code>,
+<code>must_be_var/3</code>, and
+<code>proper_list/1</code> are new in this release.
+
+     <br><dt><code>library(update)</code>
+     <dd>provides utilities for updating "database"
+relations.
+
+     <br><dt><code>library(vectors)</code>
+     <dd>
+The Quintus Prolog foreign code interface provides means of
+        passing scalars between Prolog and C, FORTRAN, Pascal, etc.
+
+     <p><code>library(vectors)</code> provides routines
+        you can use to pass one-dimensional numeric arrays between
+        Prolog and C, Pascal, or FORTRAN. 
+        See the comments in the code.  Briefly,
+          <dl>
+
+          <br><dt><code>list_to_vector(</code><var>+ListOfNumbers</var><code>, </code><var>+Type</var><code>, </code><var>-Vector</var><code>)</code>
+          <dd>
+    creates a vector, which you can pass to C.  C will
+    declare the argument as <var>Type*</var>, and Prolog will
+    declare the argument as <code>+address(</code><var>Type</var><code>)</code>. 
+    FORTRAN will declare the argument as an array of <var>Type</var>.
+
+          <br><dt><code>make_vector(</code><var>+Size</var><code>, </code><var>+Type</var><code>, </code><var>-Vector</var><code>)</code>
+          <dd>
+    creates a vector, which the foreign routine is to fill
+    in.  C will declare the argument as <var>Type*</var>, and Prolog will
+    declare the argument as <code>+address(</code><var>Type</var><code>)</code>. 
+    FORTRAN will declare the argument as an array of <var>Type</var>.
+
+          <br><dt><code>vector_to_list(</code><var>+Vector</var><code>, </code><var>?List</var><code>)</code>
+          <dd>
+    extracts the elements of the <var>Vector</var> as a list of
+    numbers; if the <var>Vector</var> contains chars or ints, the
+    <var>List</var> will contain integers, otherwise it will contain
+    floating-point numbers.
+
+          <br><dt><code>kill_vector(</code><var>+Vector</var><code>)</code>
+          <dd>
+    frees a vector.  Don't forget to do this!  You can still
+    call <code>vector_to_list/2</code> on a dead vector, until the next time
+    memory is allocated.  All that you can really rely on is
+    that it is safe to create some vectors, call a C routine,
+    kill all the vectors, and then extract the contents of
+    the interesting ones before doing anything else. 
+</dl>
+
+     <br><dt><code>library(writetokens)</code>
+     <dd>This package converts a term to a list of tokens. 
+This is essentially the same as the public-domain <code>write.pl</code>, except that
+instead of writing characters to the current output stream, it returns
+a list of tokens.  There are three kinds of tokens: punctuation marks,
+constants, and atoms.  There is nothing to indicate spacing; the point
+of this package is to let the caller do such formatting.
+
+     <br><dt><code>library(xml)</code>
+     <dd>is a package for parsing XML with Prolog, which
+provides Prolog applications with a simple "Document Value Model"
+interface to XML documents. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-too.html#lib-too">Previous</a>
+<li><a rel="up" accesskey="u" href="lib.html#lib">Up</a>
+</ul>
+</div>
+   </body></html>
+

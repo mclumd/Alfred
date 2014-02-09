@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Passing Pointers</h4>
+
+   <p>Pointers should be passed through the foreign interface using the
+specification
+<pre class="example">     address(<var>typename</var>)
+     </pre>
+     They could also be
+passed as integers, but there are two added advantages for using the
+address specification. 
+The first is that a stand-alone tool
+ could
+check for consistency between the foreign declarations and the foreign code. 
+The second advantage is for possible optimizations on platforms
+whose pointers require more than 29 bits.
+
+   <p>The <var>typename</var>
+is there so that a stand-alone tool could know
+ what kind of argument to pass or what
+kind of result to demand and  <var>typename</var> should be the name used
+in the foreign language to identify the type of object named by the pointer. 
+It is sufficiently important  to be able to check the
+<code>foreign/3</code> declarations that Prolog will issue a warning if the
+<var>typename</var> is not an atom, but it makes no other use of the <var>typename</var>. 
+The <var>typename</var> can even be omitted entirely,
+using <code>address</code> as an argument specification.
+
+   <p>is the argument type desired.]
+
+   <p>Note that programs should not rely
+on numeric relations between foreign language pointers being true of the
+Prolog integers to which they are converted.
+
+   <p>See <a href="fli-p2f-fex-poi.html#fli-p2f-fex-poi">fli-p2f-fex-poi</a> for an example of passing pointers
+through the foreign interface.  For further examples, see <code>library(charsio)</code> and
+<code>library(vectors)</code>.
+
+<pre class="example">     Prolog:  +address(<var>typename</var>)
+     C:       <var>typename</var> *x
+     Pascal:  type ptr = ^typename;
+              x: ptr
+     FORTRAN: typename x(*)
+     </pre>
+
+   <p>The argument must be instantiated to an integer, otherwise the call
+   fails.  If the argument is 0, the foreign function will receive the NULL
+   pointer. 
+   Otherwise the argument will be converted to a pointer.  The coding
+   is system-dependent.  All you can rely on is that NULL and "<code>malloc()</code>
+   pointers" can be passed from the foreign language to Prolog and that Prolog
+   can then pass the same pointers back to the foreign language.
+
+   <p>FORTRAN programmers will note that <code>+address(integer)</code> and <code>+address(float)</code>
+   parameters are useful for passing arrays to FORTRAN, but since
+   FORTRAN has no pointer data type (and no equivalent of <code>malloc(3)</code>), address
+   results are not possible.  Therefore arrays cannot be constructed in
+   FORTRAN and then passed to Prolog;  they must be constructed in C or
+   Pascal.  <a href="fli-p2f-fex-poi.html#fli-p2f-fex-poi">fli-p2f-fex-poi</a> gives an example where arrays are
+   constructed in C and later passed to a FORTRAN routine.
+
+   <p>The <var>typename</var> must be an atom, but is otherwise ignored by Prolog. 
+   It is present for the benefit of stand-alone tools, which could check
+
+   <p>that your Prolog
+   <code>foreign/3</code> facts are compatible with your C source files.
+
+<pre class="example">     Prolog:  -address(<var>typename</var>)
+     C:       <var>typename</var> **x;
+              *x = ...
+     Pascal:  type ptr = ^typename;
+              var x: ptr;
+              x = ...
+     FORTRAN: Not supported
+     </pre>
+
+   <p>A pointer to a pointer is passed to the foreign function.  It is assumed
+   that the function will overwrite this variable with the result it wishes to
+   return.  This result should be either the NULL pointer or a <code>malloc()</code>
+   pointer.  When the function returns, the
+   result is converted to a Prolog integer, which is then
+   unified with the corresponding argument of the Prolog call.  The
+   argument can be of any type; if it cannot be unified with the
+   returned integer, the call fails.  If the foreign function does
+   not set the result, the result is undefined.
+
+   <p>The <var>typename</var> must be an atom, but is otherwise ignored by Prolog. 
+   It is present for the benefit of stand-alone tools, which could check
+
+   <p>that your Prolog
+   <code>foreign/3</code> facts are compatible with your C source files.
+
+<pre class="example">     Prolog:  [-address(<var>typename</var>)]
+     C:       <var>typename</var> *f(...)
+                {
+                   <var>typename</var> *x;
+                   return x;
+                }
+     Pascal:  type ptr = ^typename;
+              function f(...): ptr;
+                var x: ptr;
+                begin
+                  f := x;
+                end
+     FORTRAN: Not supported
+     </pre>
+
+   <p>No argument is passed to the foreign function. 
+   The return value from the foreign function is
+   assumed to be a pointer to an object of the type indicated by
+   <var>typename</var>.  This pointer should be either NULL or a <code>malloc()</code> pointer. 
+   It is converted to a Prolog integer, which
+   is then unified with the corresponding argument of the Prolog
+   call.  The argument can be of any type; if it cannot be unified with
+   the returned integer, the call fails.
+
+   <p>The <var>typename</var> must be an atom, but is otherwise ignored by Prolog. 
+   It is present for the benefit of stand-alone tools, which could check
+
+   <p>that your Prolog
+   <code>foreign/3</code> facts are compatible with your C source files.
+
+<pre class="example">     Prolog:  +address
+     C:       char *x
+     Pascal:  type charp = ^char;
+              x: charp
+     FORTRAN: Not supported
+     </pre>
+
+   <p>This is equivalent to <code>+address(char)</code> (see
+<code>+address(</code><var>typename</var><code>)</code> above).  Note that <code>+address(char)</code> is not
+useful in FORTRAN because FORTRAN will not accept a pointer to a
+character array as representing that array.  Therefore <code>+address</code> is not
+allowed in FORTRAN.  To pass a character array to FORTRAN use the
+<code>+string(</code><var>N</var><code>)</code> argument type as described in
+<a href="fli-p2f-atm-spf.html#fli-p2f-atm-spf">fli-p2f-atm-spf</a>.
+
+<pre class="example">     Prolog:  -address
+     C:       char **x
+              *x = ...
+     Pascal:  type charp = ^char;
+              var x: charp;
+              x = ...
+     FORTRAN: Not supported
+     </pre>
+
+   <p>This is equivalent to <code>-address(char)</code> (see <code>-address(</code><var>typename</var><code>)</code> above).
+
+<pre class="example">     Prolog:  [-address]
+     C:       char *f(...)
+                {
+                  char *x;
+                  return x;
+                }
+     Pascal:  type charp = ^char;
+              function f(...): charp;
+                var x: charp;
+                begin
+                  f := x;
+                end
+     FORTRAN: Not supported
+     </pre>
+
+   <p>This is equivalent to <code>[-address(char)]</code> (see
+   <code>[-address(</code><var>typename</var><code>)]</code> above).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-pas.html#fli-p2f-pas">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-trm.html#fli-p2f-trm">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f.html#fli-p2f">Up</a>
+</ul>
+</div>
+   </body></html>
+

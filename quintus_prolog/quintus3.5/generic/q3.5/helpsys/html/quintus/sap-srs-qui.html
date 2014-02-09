@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Linking with QUI</h4>
+
+   <p>During development of applications involving both Prolog and foreign
+code, it can be very useful to build a stand-alone program that
+includes QUI.  This way, you can use the QUI debugger for stepping
+through the Prolog code and a standard debugger such as <code>gdb(1)</code>
+for stepping through the foreign code.
+
+   <p>A good way to do this is to create a file <code>qui.pl</code> containing just the one
+line:
+<pre class="example">     :- ensure_loaded(library(qui)).
+     </pre>
+
+   <p>This should then be compiled to QOF in the normal way and linked into your
+application.  For example:
+<pre class="example">     % <kbd>qpc -D &lt;application files&gt; qui.pl</kbd>
+     </pre>
+
+   <p>Then start up the resulting executable file using a command such as
+<pre class="example">     % <kbd>gdb a.out</kbd>
+     </pre>
+
+   <p>See <a href="fli-p2f-fcr.html#fli-p2f-fcr">fli-p2f-fcr</a> for information about using a standard debugger in
+conjunction with a Prolog executable file.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> The reason for putting the <code>ensure_loaded</code> command in a file by
+itself, rather than including it in your application code, is that it
+will not work if executed in an ordinary <code>prolog</code> system that does not
+include QUI; it is not possible to load QUI dynamically. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-dfi.html#sap-srs-dfi">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs.html#sap-srs">Up</a>
+</ul>
+</div>
+   </body></html>
+

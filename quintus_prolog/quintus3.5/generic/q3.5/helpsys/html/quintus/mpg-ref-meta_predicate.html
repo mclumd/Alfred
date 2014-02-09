@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>meta_predicate/1</code> <dfn>declaration</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- meta_predicate </code><var>+MetaSpec</var><code></code>
+
+   <p>Provides for module name expansion of arguments in calls to the
+predicate given by <var>MetaSpec</var>. All <code>meta_predicate/1</code> declarations
+must be at the beginning of a module.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>MetaSpec</var> <dfn>callable</dfn>
+     <dd>Goal template or list of goal templates, of the form:
+     <pre class="example">          functor(<var>Arg1</var>, <var>Arg2</var>,...)
+          </pre>
+
+     <p>Each <var>Argn</var> is one of:
+
+          <dl>
+
+          <br><dt><code>:</code>
+          <dd>requires module name expansion
+
+          <br><dt>integer &gt;=0
+          <dd>same as <code>:</code>
+
+          <br><dt><code>+</code>, <code>-</code>, <code>?</code>, <code>*</code>
+          <dd>ignored
+</dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>All <code>meta_predicate</code>
+declarations must be at the beginning of a module, immediately after
+the module declaration, because the <code>meta_predicate</code> declarations need to be
+known at the time other modules are loaded if those modules use the
+meta-predicates.
+
+   <p>The reason for allowing a non-negative integer as an alternative to
+<code>:</code> is that this may be used in the future to supply additional
+information to the cross-referencer (<code>library(xref)</code>) and to the Prolog
+compiler.  An integer <var>n</var> is intended to mean that that that argument is
+a term, which will be supplied <var>n</var> additional arguments.
+
+   <p>Represents DEC-10 Prolog-style "mode" declaration. 
+Provides for module name expansion of arguments in <var>MetaSpec</var>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>context_error</code>
+     <dd>
+Declaration appears in query. 
+</dl>
+
+<h4 class="subheading">Caveat</h4>
+
+   <p>When a <code>meta_predicate</code> declaration is added,
+removed or changed, the file containing it, as well as all the modules
+that import the predicate given by <var>MetaSpec</var>, must be reloaded.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>Consider a sort routine,
+<code>mysort/3</code>, to which the name of the comparison predicate is passed as
+an argument:
+<pre class="example">     mysort(<var>+CompareProc, +InputList, -OutputList</var>)
+     </pre>
+
+   <p>If <var>CompareProc</var> is module sensitive, an appropriate <code>meta_predicate</code>
+declaration for <code>mysort/3</code> is:
+<pre class="example">     :- meta_predicate mysort(:, +, -).
+     </pre>
+
+   <p>This means that whenever a goal <code>mysort(</code><var>A</var><code>, </code><var>B</var><code>, </code><var>C</var><code>)</code> appears in a
+clause, it will be transformed at load time into <code>mysort(</code><var>M</var><code>:</code><var>A</var><code>, </code><var>B</var><code>,
+</code><var>C</var><code>)</code>, where <var>M</var> is the source module.  The transformation will happen
+unless
+     <ol type=1 start=1>
+
+     <li> <var>A</var> is of the form <var>MetaSpec</var>. 
+<li><var>A</var> is a variable and the same variable appears in
+the head of the clause in a module-name-expansion position.
+        </ol>
+
+   <p>Many examples in library, e.g. <code>library(samsort)</code>.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>module/2</code>
+
+   <a href="ref-mod-met.html#ref-mod-met">ref-mod-met</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-mode.html#mpg-ref-mode">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-message_hook.html#mpg-ref-message_hook">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

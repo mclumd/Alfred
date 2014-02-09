@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_input_stream(</code><var>?Socket</var><code>, </code><var>-Stream</var><code>)</code></h5>
+
+   <p>Returns the input stream <var>Stream</var> from the socket file descriptor
+<var>Socket</var>.  You can read from the stream using the regular stream
+input predicates.
+
+   <p>If you attempt to read from a broken socket, the "Connection reset by
+peer" exception is raised:
+<pre class="example">     existence_error(_,_,_,_,errno(54))
+     </pre>
+
+   <p>When using <code>tcp_select/[1,2]</code>, this exception is caught and
+interpreted as an <code>end_of_file</code>, and the connection is shut down.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-ups-output_stream2.html#ipc-tcp-ups-output_stream2">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-ups-select_from2.html#ipc-tcp-ups-select_from2">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-ups.html#ipc-tcp-ups">Up</a>
+</ul>
+</div>
+   </body></html>
+

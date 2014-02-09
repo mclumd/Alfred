@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>motion_notify</code> Event</h5>
+
+   <p>The fields that can be unified in <code>motion_notify</code> events
+are:
+     <ol type=1 start=1>
+
+     <li><code>type(</code><var>T</var><code>)</code> unifies <var>T</var> with <code>motion_notify</code>. 
+<li><code>serial(</code><var>S</var><code>)</code> unifies <var>S</var> with the serial number of the last request
+processed by the server. 
+<li><code>send_event(</code><var>B</var><code>)</code> unifies <var>B</var>, a boolean value, with one of
+          <dl>
+
+          <br><dt><code>true</code>
+          <dd>If the event was sent by another client.
+
+          <br><dt><code>false</code>
+          <dd>If the event was sent by the server. 
+</dl>
+
+     <li><code>display(</code><var>D</var><code>)</code> unifies <var>D</var> with the ProXL Display the event was
+read from. 
+<li><code>window(</code><var>W</var><code>)</code> unifies <var>W</var> with the ProXL Window that receives
+the event. 
+<li><code>root(</code><var>R</var><code>)</code> unifies <var>R</var> with the root Window that the event
+occurred under. 
+<li><code>subwindow(</code><var>S</var><code>)</code> unifies <var>S</var> with the child ProXL window where
+the event occurred or <code>none</code> if the event occurred in the window itself. 
+<li><code>time(</code><var>T</var><code>)</code> unifies <var>T</var> with the server time, in milliseconds, when
+the event occurred. 
+<li><code>x(</code><var>X</var><code>)</code> unifies <var>X</var> with the x pointer coordinate, relative
+to the window origin, if the receiving window is on the same screen as
+the root window. Otherwise it is 0. 
+<li><code>y(</code><var>Y</var><code>)</code> unifies <var>Y</var> with the y pointer coordinate, relative to
+the window origin, if the receiving window is on the same screen as
+the root window. Otherwise it is 0. 
+<li><code>position(</code><var>X</var><code>, </code><var>Y</var><code>)</code> unifies <var>X</var> and <var>Y</var> with the x and y pointer
+coordinates, respectively, relative to the window origin,
+if the receiving window is on the same screen as the root window. 
+Otherwise they are 0. 
+<li><code>x_root(</code><var>X</var><code>)</code> unifies <var>X</var> with the x pointer coordinate, relative to the
+root window origin, if the receiving window is on the same screen as the
+root window, otherwise with 0. 
+<li><code>y_root(</code><var>Y</var><code>)</code> unifies <var>Y</var> with the y pointer coordinate, relative to the
+root window origin, if the receiving window is on the same screen as the
+root window, otherwise with 0. 
+<li><code>root_position(</code><var>X</var><code>, </code><var>Y</var><code>)</code> unifies <var>X</var> and <var>Y</var> with the pointer
+x and y coordinates, respectively, relative to the root window origin,
+if the receiving window is on the same screen as the root window. 
+Otherwise they are both 0. 
+<li><code>state(</code><var>Buttons</var><code>, </code><var>Modifiers</var><code>)</code> unifies <var>Buttons</var> with a term of
+the form:
+     <pre class="example">          
+          buttons(<var>B1</var>, <var>B2</var>, <var>B3</var>, <var>B4</var>, <var>B5</var>)
+          </pre>
+
+     <p>where each argument of the term is unified with the state of the
+corresponding pointer button just before the event, and has the value <code>up</code>
+or <code>down</code>.
+
+     <p>Unifies <var>Modifiers</var> with a term of the form:
+     <pre class="example">          
+          modifiers(<var>Shift</var>, <var>Control</var>, <var>Lock</var>,
+                    <var>Mod1</var>, <var>Mod2</var>, <var>Mod3</var>, <var>Mod4</var>, <var>Mod5</var>)
+          </pre>
+
+     <p>where each argument of the term is unified with the state of the
+corresponding modifier key just before the event, and has the value
+<code>up</code> or <code>down</code>. 
+</p><li><code>is_hint(</code><var>H</var><code>)</code> unifies <var>H</var> with one of
+          <dl>
+
+          <br><dt><code>normal</code>
+          <dd>If the event is a normal <code>motion_notify</code> event.
+
+          <br><dt><code>hint</code>
+          <dd>If the event is a hint that the mouse pointer moved. 
+This will always be the case if the event selected is
+<code>motion_notify_hint</code>. 
+</dl>
+
+     <li><code>same_screen(</code><var>B</var><code>)</code> unifies <var>B</var>, a boolean value, with one of
+          <dl>
+
+          <br><dt><code>true</code>
+          <dd>If the mouse pointer is currently on the same screen as the
+window receiving the event.
+
+          <br><dt><code>false</code>
+          <dd>If the the mouse pointer and the window are on different
+screens. 
+</dl>
+
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-ev-fld-propnot.html#pxl-ev-fld-propnot">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-ev-fld-mapreq.html#pxl-ev-fld-mapreq">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-ev-fld.html#pxl-ev-fld">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Highlights</h4>
+
+   <p>There are a number of changes from the previous version of ProXT that was
+released with Quintus Prolog 3.1. These changes are summarized as follows:
+
+     <ul>
+
+     <li>Predicates and attributes that used to take a <b>CharPtr</b> type now take
+a <b>String</b> type, which is represented as a Prolog atom. This means that
+the predicates <code>proxtCharPtrToString/2</code> and <code>proxtStringToCharPtr/2</code> are
+obsolete. 
+<li>The predicate <code>proxtGetDefaultCharset/1</code> is obsolete. In Motif2.1, most
+functions that used to take a <var>Charset</var> parameter now take a <var>FontListTag</var>
+parameter and the atom <code>xmDEFAULT_FONTLIST_TAG</code> can be used as a <var>FonListTag</var>. 
+<li>All predicates that correspond to Boolean functions in Motif now succeed or
+fail according to whether the Motif function returns <code>true</code> or <code>false</code>. 
+This means that some predicates that used to include a <var>Results</var> parameter
+have been replaced by predicates with that argument removed. 
+<li>The <var>Calldata</var> argument returned by widget callbacks is now a handle, rather than
+a list of field, that can be inspected (and modified) by three new proxt
+predicates: the callback reason can be extracted by the predicate
+<code>proxtGetCallbackReason/2</code>; a list of all fields is returned by
+<code>proxtGetCallbackFields/2</code> (the contents of this list varies depending on
+the type of callback); and finally a list of fields to be modified can be
+specified in <code>proxtSetCallbackFields/2</code>. 
+<li>ProXT will now backtrack through callback predicates if they return
+nondeterminately. 
+<li>The client data argument in the <b>Action</b> datatype has been dropped and
+similarly the client data argument to action callbacks has been dropped. 
+Instead parameters specified in the translation table are now passed into the
+action callback as a list of items of type <b>String</b> in the third argument. 
+The second argument to the action callback is now the Event. 
+<li>Attributes that used to be of type <b>CallbackList</b> are now of type <b>CallbackTerm</b>,
+that is, they take a single callback as value, not a list of callbacks.
+
+     <p>The format of datatype <b>XRectangle</b> has changed. This is now a term
+of the form <code>rectangle(</code><var>X</var><code>,</code><var>Y</var><code>,</code><var>Width</var><code>,</code><var>Height</var><code>)</code>. 
+</p><li>The format of datatype <b>XmClipboardPendingList</b> has changed. This is now a
+list of terms of the form <code>clipboardpending(</code><var>DataId</var><code>,</code><var>PrivateId</var><code>)</code>. 
+<li>The return value of <code>xtPending/1</code> has changed, returning an <b>XEventMask</b>
+type rather than a <code>mask/1</code> structure. 
+<li>The predicate <code>proxtGetDefaultGC/2</code> is obsolete. The
+predicate <code>xCreateGC/4</code> should be used to define a GC graphics context. 
+<li>The predicate <code>proxtFree/1</code> has been renamed <code>xtFree/1</code>. 
+<li>The values returned as datatype <b>ClipboardStatus</b> have been renamed
+from <code>clipboard*</code> to <code>xmClipboard*</code> in line with the change made in Motif2.1. 
+<li>Some values included in the datatype <b>XmDialogType</b> have changed. 
+<li>The predicate <code>xtOpenDisplay</code> now has an additional argument specifying
+the <var>AppName</var>. 
+</ul>
+
+   <p>One of the main changes to ProXT 3.5 concerns the
+ability to extend ProXT with new widget classes and resources.  The
+file <code>demo(proxrt.pl)</code> demonstrates how a graph widget can be
+incorporated into ProXT.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxt-chg-bwd.html#pxt-chg-bwd">Next</a>
+<li><a rel="up" accesskey="u" href="pxt-chg.html#pxt-chg">Up</a>
+</ul>
+</div>
+   </body></html>
+

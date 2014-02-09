@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Passing Addresses</h5>
+
+   <p>Previous releases of Quintus Prolog had the restriction that integers
+of greater than 29 bits could not be represented as Prolog integers. 
+Certain platforms, however, have pointers that use some of the four
+most significant bits; for these machines, pointers could not be
+represented as Prolog integers.  This problem motivated the <code>address</code>,
+which could be treated specially, as a distinct data type that can be
+passed through the foreign interface.
+
+   <p>With release 3 the restriction of integers to 29 bits has been
+lifted; however, the internal representation of integers of more than
+29 bits is more bulky and somewhat slower to manipulate than that of
+smaller integers.  While this is not a problem in normal programs, it
+could penalize programs that manipulate pointers in Prolog on certain
+platforms whose pointers require more than 29 bits.  We have
+chosen to retain the address data type in release 3 so that such
+penalties can be avoided where possible, as well as for backward
+compatibility.  Addresses can be passed both to and from Prolog from
+foreign functions, and to and from foreign functions from Prolog. 
+(See <a href="fli-p2f-poi.html#fli-p2f-poi">fli-p2f-poi</a>.)
+
+   <p>As when calling foreign code from Prolog, pointers should be passed
+through the interface using the type specification
+
+<pre class="example">     address(<var>typename</var>)
+     </pre>
+
+   <p>as described in more detail below.  <var>typename</var> should be the name
+used in the foreign language to identify the type of object named by
+the pointer.
+
+<pre class="example">     Prolog:  +address(<var>typename</var>)
+     C:       <var>typename</var> *x;
+     </pre>
+
+   <p>The C pointer is converted to a 32-bit Prolog integer, which is passed
+   to the Prolog call.  If the C pointer contains garbage when it is
+   passed, Prolog will receive that garbage as an integer.
+
+<pre class="example">     Prolog:  -address(<var>typename</var>)
+     C:       <var>typename</var> **x;
+     </pre>
+
+   <p>A pointer to a C pointer is passed to the foreign interface. 
+   When Prolog returns a solution, a Prolog integer is expected in the
+   corresponding argument of the call.  If the argument is 0, the
+   foreign function writes the NULL pointer at the location supplied. 
+   Otherwise, the foreign interface converts the integer into a C pointer
+   and writes it at the location. 
+   The previous contents of the location will be destroyed.  If the
+   Prolog call does not return an integer in the appropriate position,
+   a type error is signaled and the contents of the location is undefined.
+
+<pre class="example">     Prolog:  +address
+     C:       char *x
+     </pre>
+
+   <p>This is equivalent to <code>+address(char)</code>.
+
+<pre class="example">     Prolog:  -address
+     C:       char **x
+     </pre>
+
+   <p>This is equivalent to <code>-address(char)</code>.
+
+   <p>Using <code>+address</code> in place of <code>+address(</code><var>typename</var><code>)</code>, or <code>-address</code> in place of
+<code>-address(</code><var>typename</var><code>)</code>, has no effect on the execution of the program;
+however, doing so can reduce the readability of the program and
+compromise program checking tools.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-a2s-trm.html#fli-ffp-a2s-trm">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-a2s.html#fli-ffp-a2s">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Examples of Using the Message Facility</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ref-msg-umf-adm.html#ref-msg-umf-adm">ref-msg-umf-adm</a>:                      Adding messages
+<li><a accesskey="2" href="ref-msg-umf-cmt.html#ref-msg-umf-cmt">ref-msg-umf-cmt</a>:                      Changing message text
+<li><a accesskey="3" href="ref-msg-umf-ipm.html#ref-msg-umf-ipm">ref-msg-umf-ipm</a>:                      Intercepting the printing of a message
+<li><a accesskey="4" href="ref-msg-umf-int.html#ref-msg-umf-int">ref-msg-umf-int</a>:                      Interaction
+</ul>
+
+   <p>In the Overview we discussed several likely ways this facility might
+be used.  The ways to accomplish such goals are discussed in the
+following sections.  To sum up, here are some motivations for
+customizing messages, with an indication of which procedures should be used:
+
+     <ol type=1 start=1>
+
+     <li>Add a few new types of messages to the ones supplied; for example, a
+new exception type.  (Define user:<code>generate_message_hook/3</code>)
+<li>Change the text of a few existing messages.  (Define user:<code>generate_message_hook/3</code>)
+<li>Customize default ways of printing existing message text, e.g. 
+changing the default prefixes; (use <code>message_hook/3</code> to override the
+defaults given by <code>print_message_lines/3</code>). 
+<li> "you_name_it" as in Figure <a href="ref-sem-typ-rpr.html#ref-sem-typ-rpr">ref-sem-typ-rpr</a>.
+
+     <p>You can specify an action
+to replace or augment the default action by defining clauses for
+user:<code>message_hook/3</code>.  Examples:
+
+          <ul>
+
+          <li>For <code>warning</code> messages, blink a light. 
+<li>In a graphical user interface, let <code>warning</code> messages cause a window
+of a certain design to pop up and display the message.
+
+          <li>Turn off all <code>informational</code> messages. 
+<li>Send all error messages to a certain file. 
+</ul>
+
+     <li>Control how the system asks for and interprets responses from users. 
+(<code>query_hook/6</code>)
+<li>Translate all the existing messages, with or without customizations,
+to another language.  This includes queries and user responses. 
+(redefine <code>generate_message/3</code>; see <a href="ref-msg-ime.html#ref-msg-ime">ref-msg-ime</a>)
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-msg-ime.html#ref-msg-ime">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-msg-tbm.html#ref-msg-tbm">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-msg.html#ref-msg">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>user_help/0</code> <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile user_help/0.</code>
+
+   <p><code>user_help</code>
+
+   <p>A hook for users to add more information when <code>help/0</code> is called.
+
+<h4 class="subheading">Description</h4>
+
+   <p>Useful when you want a standard way to tell
+users something, like how to run a demo.
+
+   <p><code>help/0</code> always calls <code>user_help/0</code> in module <code>user</code>. 
+Therefore, to be visible to <code>help/0</code>, <code>user_help/0</code> must either
+be defined in or imported into module <code>user</code>.
+
+<h4 class="subheading">Example</h4>
+
+   <p>The common test harness for many Quintus
+test suites includes the clause:
+
+<pre class="example">     user_help :-
+       suite_type(_,Type), suite_host(Host),
+       write('You have loaded the Quintus test suite for '),
+       write(Type), write(' on '), write(Host), nl, nl,
+       write('You can invoke the suite as follows:'), nl, nl,
+       write(' ?- quiet.               % run suite, concise output'), nl,
+       write(' ?- verbose.             % run suite, verbose output'), nl,
+       write(' ?- quiet(+Pred).        % run suite, concise output for'), nl,
+       write('                         % tests of predicate Pred'), nl,
+       write(' ?- quiet(+Pred, +N).    % similar to above, but runs the'),nl,
+       write('                         %  test specified by N'), nl,
+       write(' ?- verbose(+Pred).      % run suite, verbose output for'), nl,
+       write('                         %  tests of predicate Pred'), nl,
+       write('                         %  (Pred a name, NOT name/arity!'),nl,
+       write(' ?- verbose(+Pred, +N).  % similar to above, but runs the'),nl,
+       write('                         %  test specified by N'), nl,
+       write(' ?- help.                % to get this message'), nl.
+     </pre>
+
+   <p>So if you compile the Prolog, C, Pascal or FORTRAN suites, you have a
+consistent help message telling you how to run the suites:
+
+<pre class="example">          &lt;run prolog&gt;
+     
+          &lt;compile /ptg/suite/plsuite.pl&gt;
+     
+          | ?- <kbd>help.</kbd>
+     </pre>
+
+   <p>If you have loaded the Quintus test suite for Prolog on Sun ??? you
+can invoke the suite as follows:
+
+<pre class="example">        ?- quiet.               % run suite, concise output
+        ?- verbose.             % run suite, verbose output
+        ?- quiet(+Pred).        % run suite, concise output for
+                                % tests of predicate Pred
+        ?- quiet(+Pred, +N).    % similar to above, but runs the
+                                %  test specified by N
+        ?- verbose(+Pred).      % run suite, verbose output for
+                                %  tests of predicate Pred
+                                %  (Pred a name, NOT name/arity!
+        ?- verbose(+Pred, +N).  % similar to above, but runs the
+                                %  test specified by N
+        ?- help.                % to get this message
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>help/1</code>
+<a href="ref-olh.html#ref-olh">ref-olh</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-var.html#mpg-ref-var">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-use_module.html#mpg-ref-use_module">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

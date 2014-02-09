@@ -1,0 +1,1892 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: mpg-ref-save_program,  Next: mpg-ref-see,  Prev: mpg-ref-save_predicates,  Up: mpg-ref
+
+`save_program/[1,2]'
+--------------------
+
+Synopsis
+--------
+
+   `save_program(+FILE)'
+
+   `save_program(+FILE, +GOAL)'
+
+   Saves the state of the current execution in QOF format to FILE. A
+goal, GOAL, to be called upon execution/restoring of the saved state,
+may be specified.
+
+Arguments
+---------
+
+FILE "file_spec"
+     An atom representing a filename.
+
+GOAL "callable" [MOD]
+     A goal.
+
+Description
+-----------
+
+   `save_program/[1,2]' creates a QOF representation of all predicates
+in all modules existing in the system.  However, it does not save the
+user's pre-linked code.  It also saves such states of the system as
+operator definitions, prolog_flags, debugging and advice state, and
+initializations.  Object files dynamically loaded into the system are
+saved in the qof file as object dependencies.
+
+   The resulting file is executable, and can be started up as a command,
+or can be restored using `restore/1'.
+
+   `save_program/[1,2]' saves module import/export information, which
+gets reinstated when FILE is loaded.  No new module-importation will be
+done when FILE is loaded, because it is assumed that it was done before
+`save_program/[1,2]' was called.  Thus if your program consists of one
+or more modules, and you save it with `save_program/[1,2]', loading the
+resulting FILE into some new module will not import any of your
+predicates into that module.  If you want to save out a module such
+that it will be imported automatically into any module from which it is
+loaded, then use `save_modules/2'.
+
+Exceptions
+----------
+
+`instantiation_error'
+     FILE or GOAL is not bound.
+
+`type_error'
+     FILE is not a valid file specification, or GOAL is not a valid
+     goal.
+
+`permission_error'
+     FILE is not writable.
+
+See Also
+--------
+
+   `load_files/[1,2]', `restore/1', `save_modules/2',
+`save_predicates/2', `volatile/1'
+
+   *Note ref-sls::
+
+
+File: quintus.info,  Node: mpg-ref-see,  Next: mpg-ref-seeing,  Prev: mpg-ref-save_program,  Up: mpg-ref
+
+`see/1'
+-------
+
+Synopsis
+--------
+
+   `see(+FILEORSTREAM)'
+
+   Makes file FILEORSTREAM the current input stream.
+
+Arguments
+---------
+
+FILEORSTREAM "file_spec" or "stream_object"
+     File specification or stream object.
+
+Description
+-----------
+
+   If there is an open input stream associated with FILEORSTREAM, and
+that stream was opened by `see/1', then it is made the current input
+stream;
+
+   Otherwise, the specified file is opened for input and made the
+current input stream.  If it is not possible to open the file, `see/1'
+raises an exception.
+
+   Different file names (that is, names that do not unify) represent
+different streams (even if they correspond to the same file).
+Therefore, assuming `food' and `./food' represent the same file, the
+following sequence will open two streams, both connected to the same
+file.
+     see(food)
+     ...
+     see('./food')
+
+   It is important to remember to close streams when you have finished
+with them.  Use `seen/0' or `close/1'.
+
+Exceptions
+----------
+
+`instantiation_error'
+     FILEORSTREAM is not instantiated enough.
+
+`existence_error'
+     FILEORSTREAM not currently open for input, and
+     `fileerrors' flag is `on'.
+
+`domain_error'
+     FILEORSTREAM is neither a filename nor a stream.
+
+See Also
+--------
+
+   `seen/0', `close/1', `abort/0', `seeing/1'
+
+   *Note ref-iou-sfh-opn::
+
+
+File: quintus.info,  Node: mpg-ref-seeing,  Next: mpg-ref-seek,  Prev: mpg-ref-see,  Up: mpg-ref
+
+`seeing/1'
+----------
+
+Synopsis
+--------
+
+   `seeing(-FILEORSTREAM)'
+
+   Unifies FILEORSTREAM with the current input stream or file.
+
+Arguments
+---------
+
+FILEORSTREAM "file_spec" or "stream_object"
+Description
+-----------
+
+   Exactly the same as `current_input(FILEORSTREAM)', except that
+FILEORSTREAM will be unified with a filename if the current input
+stream was opened by `see/1' (*Note ref-iou-sfh-opn::).
+
+   Can be used to verify that `FileNameOrStream' is still the current
+input stream as follows:
+     /* nonvar(FileNameOrStream), */
+     see(FileNameOrStream),
+     ...
+     seeing(FileNameOrStream)
+
+   If the current input stream has not been changed (or if changed, then
+restored), the above sequence will succeed for all file names and all
+stream objects opened by `open/[3,4]'.  However, it will fail for all
+stream objects opened by `see/1' (since only filename access to streams
+opened by `see/1' is supported).  This includes the stream object
+`user_input' (since the standard input stream is assumed to be opened
+by `see/1', and so `seeing/1' would return `user' in this case).
+
+   If FILEORSTREAM is instantiated to a value that is not the
+identifier of the current input stream, `seeing'(FILEORSTREAM) simply
+fails.
+
+   Can be followed by `see/1' to ensure that a section of code leaves
+the current input unchanged:
+     /* var(OldFileNameOrStream), */
+     seeing(OldFileNameOrStream),
+     ...
+     see(OldFileNameOrStream)
+
+   The above is analogous to its stream-object-based counterpart,
+     /* var(OldStream), */
+     current_input(OldStream),
+     ...
+     set_input(OldStream)
+
+   Both of these sequences will always succeed regardless of whether
+the current input stream was opened by `see/1' or `open/3' (*Note
+ref-iou-sfh-opn::).
+
+See Also
+--------
+
+   `see/1', `open/[3,4]', `current_input/1'
+
+
+File: quintus.info,  Node: mpg-ref-seek,  Next: mpg-ref-seen,  Prev: mpg-ref-seeing,  Up: mpg-ref
+
+`seek/4'
+--------
+
+Synopsis
+--------
+
+   `seek(+STREAM, +OFFSET, +METHOD, -NEWLOCATION)'
+
+   Seeks to an arbitrary byte position in STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog stream
+
+OFFSET "integer"
+     the offset in bytes to seek relative to METHOD specified.
+
+METHOD "one of `[bof,current,eof]'"
+     specifies where to start seeking.  It is one of the following.
+
+    `bof'
+          Seek from beginning of the file stream.
+
+    `current'
+          Seek from current position of the file stream.
+
+    `eof'
+          Seek from end of the file stream.
+
+NEWLOCATION "integer"
+     The byte offset from beginning of the file after seeking operation.
+
+Description
+-----------
+
+   Sets the current position of the file stream STREAM to a new
+position according to OFFSET and METHOD.  If METHOD is
+`bof'
+     the new position is set to OFFSET bytes from beginning of the file
+     stream.
+
+`current'
+     the new position is OFFSET bytes plus the current position of
+     STREAM.
+
+`eof'
+     the new position is OFFSET bytes, a negative integer, plus the
+     size of the file.
+
+   If OFFSET is 0, `seek/4' returns the current position from the
+beginning of STREAM and sets the position to the same location.
+
+   If STREAM is an output stream permitting flushing output, the
+characters in the buffer of the stream are flushed before seek is
+performed.  If the output stream STREAM does not permit flushing output
+and there are characters remaining in the buffer, then a permission
+error is raised.
+
+   If STREAM is an input stream, the characters in the input buffer of
+the stream are discarded before seek is performed.  The input buffer is
+empty when the `seek/4' call returns.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`domain_error'
+     METHOD is not one of `bof', `current' or `eof'.
+
+     OFFSET is a negative value and METHOD is `bof'.
+
+     OFFSET is a positive value and METHOD is `eof'.
+
+`instantiation_error'
+     OFFSET or METHOD is not instantiated.
+
+`type_error'
+     STREAM is not a stream object.
+
+     OFFSET is not an integer type.
+
+     METHOD is not an atom type.
+
+`permission_error'
+     STREAM names an open stream but the stream is not open with
+     `seek(byte)' permission.
+
+     An error occurred while seeking in the file stream.
+
+     Flushing attempted but not permitted.
+
+See Also
+--------
+
+   `stream_position/[2,3]', `open/4', `character_count/2',
+`line_count/2', `line_position/2'.
+
+   *Note ref-iou::
+
+
+File: quintus.info,  Node: mpg-ref-seen,  Next: mpg-ref-set_input,  Prev: mpg-ref-seek,  Up: mpg-ref
+
+`seen/0'
+--------
+
+Synopsis
+--------
+
+   `seen'
+
+   Closes the current input stream.
+
+Description
+-----------
+
+   Current input stream is set to be `user_input'; that is, the user's
+terminal.
+
+   Always succeeds
+
+See Also
+--------
+
+   `close/1'
+
+
+File: quintus.info,  Node: mpg-ref-set_input,  Next: mpg-ref-set_output,  Prev: mpg-ref-seen,  Up: mpg-ref
+
+`set_input/1'
+-------------
+
+Synopsis
+--------
+
+   `set_input(+STREAM)'
+
+   makes STREAM the current input stream.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid input stream
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`instantiation_error'
+
+`type_error'
+See Also
+--------
+
+   `read/1', `get/1'
+
+
+File: quintus.info,  Node: mpg-ref-set_output,  Next: mpg-ref-setof,  Prev: mpg-ref-set_input,  Up: mpg-ref
+
+`set_output/1'
+--------------
+
+Synopsis
+--------
+
+   `set_output(+STREAM)'
+
+   makes STREAM the current output stream.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid output stream
+
+Description
+-----------
+
+   Subsequent output predicates such as `write/1' and `put/1' will use
+this stream.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`instantiation_error'
+
+`type_error'
+See Also:
+---------
+
+   `write/1', `put/[1,2]'
+
+
+File: quintus.info,  Node: mpg-ref-setof,  Next: mpg-ref-show_profile_results,  Prev: mpg-ref-set_output,  Up: mpg-ref
+
+`setof/3'
+---------
+
+Synopsis
+--------
+
+   `setof(+TEMPLATE, +*GENERATOR, *SET)'
+
+   Returns the set SET of all instances of TEMPLATE such that GENERATOR
+is provable.
+
+Arguments
+---------
+
+TEMPLATE "term"
+
+GENERATOR "callable" [MOD]
+     a goal to be proved as if by `call/1'.
+
+SET "list of term"
+     non-empty set
+
+Description
+-----------
+
+   SET is a set of terms represented as a list of those terms, without
+duplicates,  in the standard order for terms (see *Note ref-lte-cte::).
+If there are no instances of TEMPLATE such that GENERATOR is satisfied,
+then `setof/3' simply fails.
+
+   Obviously, the set to be enumerated should be finite, and should be
+enumerable by Prolog in finite time.  It is possible for the provable
+instances to contain variables, but in this case SET will only provide
+an imperfect representation of what is in reality an infinite set.
+
+   If GENERATOR is instantiated, but contains uninstantiated variables
+that do not also appear in TEMPLATE, then `setof/3' can succeed
+nondeterminately, generating alternative values for SET corresponding
+to different instantiations of the free variables of GENERATOR.  (It is
+to allow for such usage that SET is constrained to be non-empty.)
+
+   If Generator is of the form A^B then all the variables in A are
+treated as being existentially quantified.
+
+Examples
+--------
+
+   See `findall/3' for examples that illustrate the differences among
+`findall/3', `setof/3', and `bagof/3'.
+
+Exceptions
+----------
+
+   As for `call/1', and additionally:
+`resource_error'
+     TEMPLATE contains too many free variables.
+
+See Also
+--------
+
+   `bagof/3', `^/2'
+
+   *Note ref-all::
+
+
+File: quintus.info,  Node: mpg-ref-show_profile_results,  Next: mpg-ref-simple,  Prev: mpg-ref-setof,  Up: mpg-ref
+
+`show_profile_results/[0,1,2]' "development"
+--------------------------------------------
+
+Synopsis
+--------
+
+   `show_profile_results'
+
+   `show_profile_results(+BY)'
+
+   `show_profile_results(+BY,+NUM)'
+
+   Displays the results of the last profiled execution.
+
+Arguments
+---------
+
+BY "one of `[by_time,by_choice_points,by_calls,by_redos]'"
+
+NUM "integer"
+Description
+-----------
+
+   Displays profiling information accumulated from the last call to
+`profile/1'.  The BY argument specifies the "display mode", which
+determines how the list is sorted and what the percentage figure
+included in the output refers to.  The NUM argument determines the
+maximum number of predicates displayed.  This list is always sorted in
+descending order so that the top NUM predicates are displayed for a
+give display mode.
+
+   The output lists the predicate name, number of calls, choice points
+and redos for the predicate, then the time in milliseconds and a
+percentage figure that depends on the display mode. For example, if the
+display mode is `by_calls' then this is the percentage of the total
+calls during profiling made to this predicate.
+
+   Then the callers are listed, showing for each caller the predicate
+name, clause number and call number within that clause of the call,
+followed by the number of calls made from here and the percentage of
+time spent in the predicate attributed to this caller.
+
+   `show_profile_results/1' displays up to a maximum of 10 predicates.
+
+   `show_profile_results/0' displays up to a maximum of 10 predicates
+using the `by_time' display mode.
+
+   This predicate is not supported in runtime systems.
+
+Example
+-------
+
+     | ?- show_profile_results(by_time, 3).
+     Proc             Calls ChPts Redos Time  %
+                                   Caller(proc,cl#,cll#,%)
+     user:setof/3     227   0     0     2.04  34.0
+                                   user:satisfy/1,6,1 152 61.0
+                                   user:seto/3,1,1 48 20.0
+                                   user:satisfy/1,7,1 27 17.0
+     user:satisfy/1   35738 36782 14112 0.32  5.3
+                                   user:satisfy/1,1,2 13857 43.0
+                                   user:satisfy/1,2,1 12137 31.0
+                                   user:satisfy/1,1,1 7315 18.0
+                                   user:satisfy/1,3,1 1155 6.0
+     user:inv_map_l/5 4732  4732  3115  0.20  3.3
+                                   user:inv_map_l/5,2,1 3115 60.0
+                                   user:inv_map/4,5,1 1617 40.0
+
+See Also
+--------
+
+   `profile/[0,1,2,3]', `get_profile_results/4', `noprofile/0'
+
+
+File: quintus.info,  Node: mpg-ref-simple,  Next: mpg-ref-skip,  Prev: mpg-ref-show_profile_results,  Up: mpg-ref
+
+`simple/1' "meta-logical"
+-------------------------
+
+Synopsis
+--------
+
+   `simple(+TERM)'
+
+   TERM is currently instantiated to either an atom, a number, a
+database or a variable.
+
+Arguments
+---------
+
+TERM "term"
+Examples
+--------
+
+     | ?- simple(9).
+     
+     yes
+     | ?- simple(_X).
+     
+     _X = _2487
+     | ?- simple("a").
+     
+     no
+
+See Also
+--------
+
+   `atom/1', `number/1', `var/1', `compound/1', `callable/1', `nonvar/1'
+
+
+File: quintus.info,  Node: mpg-ref-skip,  Next: mpg-ref-skip_line,  Prev: mpg-ref-simple,  Up: mpg-ref
+
+`skip/[1,2]'
+------------
+
+Synopsis
+--------
+
+   `skip(+CHAR)'
+
+   `skip(+STREAM, +CHAR)'
+
+   Skips over characters from the current input stream, or STREAM,
+through the first character whith an ASCII code that match the lower
+8-bits of the value of the integer expression CHAR.
+
+Arguments
+---------
+
+STREAM "stream_object"
+
+CHAR "expr"
+     an integer expression.
+
+Description
+-----------
+
+   CHAR may be an integer expression.  The most useful form of integer
+expression in this context is the zero-quote notation, for example,
+`0'a', which evaluates to 97, the ASCII code for the letter `a', so that
+     | ?- skip(0'a).
+
+   skips over (ignores) all input until the next occurrence of the
+letter `a'.
+
+   If CHAR does appear, `skip/1' will consume CHAR, so that `get0/1'
+will read the following character.
+
+   To skip to the end of the current input stream:
+     | ?- repeat, get0(-1), !.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`instantiation_error'
+
+`type_error'
+
+`domain_error'
+     CHAR evaluates to a float, or an                 integer outside
+     the range 0..25.
+
+`existence_error'
+     If CHAR does not appear on the current input stream,
+      an error message is given for reading beyond the end of
+           the stream, and the computation is aborted.
+
+     The portion of the input following CHAR is not a valid
+        Prolog term.
+
+See Also
+--------
+
+   `tab/1'
+
+
+File: quintus.info,  Node: mpg-ref-skip_line,  Next: mpg-ref-sort,  Prev: mpg-ref-skip,  Up: mpg-ref
+
+`skip_line/[0,1]'
+-----------------
+
+Synopsis
+--------
+
+   `skip_line'
+
+   `skip_line(+STREAM)'
+
+   Skip the remaining input characters on the current line on the
+current input stream, or on STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog input stream
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`existence_error'
+     Trying to read beyond end of STREAM.
+
+Comments
+--------
+
+   Coding with `skip_line/[0,1]' and `at_end_of_line/[0,1]' to handle
+line input is more portable among different operating systems than
+checking end of line by the input character code.
+
+See Also
+--------
+
+   `get0/[1,2]', `at_end_of_line/[0,1]', `at_end_of_file/[0,1]'.
+
+
+File: quintus.info,  Node: mpg-ref-sort,  Next: mpg-ref-source_file,  Prev: mpg-ref-skip_line,  Up: mpg-ref
+
+`sort/2'
+--------
+
+Synopsis
+--------
+
+   `sort(+LIST1, -LIST2)'
+
+   Sorts the elements of the list LIST1 into the ascending standard
+order, and removes any multiple occurrences of an element.  The
+resulting sorted list is unified with the list LIST2.
+
+Arguments
+---------
+
+LIST1 "list of term"
+
+LIST2 "list of term"
+Examples
+--------
+
+     | ?- sort([a,X,1,a(x),a,a(X)], L).
+     L = [X,1,a,a(X),a(x)]
+
+   (The time taken to do this is at worst order (N log N) where N is
+the length of the list.)
+
+Exceptions
+----------
+
+`instatiation error'
+     LIST1 is not properly instantiated
+
+`type_error'
+     LIST1 is not a proper list
+
+See Also
+--------
+
+   `keysort/2' *Note ref-lte-cte-sor::
+
+
+File: quintus.info,  Node: mpg-ref-source_file,  Next: mpg-ref-spy,  Prev: mpg-ref-sort,  Up: mpg-ref
+
+`source_file/[1,2,3]'
+---------------------
+
+Synopsis
+--------
+
+   `source_file(+ABSFILE)'
+
+   `source_file(*ABSFILE)'
+
+   `source_file(*PRED, *ABSFILE)'
+
+   `source_file(*PRED, *CLAUSENUMBER, *ABSFILE)'
+
+   ABSFILE is the absolute name of a loaded file, and CLAUSENUMBER is
+the number of a clause for PRED in that file.
+
+Arguments
+---------
+
+PRED "callable"  [MOD]
+     selected predicate specification.
+
+CLAUSENUMBER "integer"
+     integer representing clause number
+
+ABSFILE "atom"
+     absolute filename
+
+Description
+-----------
+
+   Loaded files include compiled, QOF loaded and pre-linked files.
+
+   If ABSFILE is not the name of a loaded file, then
+`source_file(ABSFILE)' simply fails.  If ABSFILE is bound to an illegal
+filename, `source_file/1' fails.
+
+   If PRED is not a loaded predicate, then `source_file/2' simply
+fails.  If bound to an illegal predicate specification, it fails. PRED
+is assumed to refer to the source module. Thus, to find _any_
+predicates defined in a given file, use the form:
+     source_file(M:P, File)
+
+   `source_file/3' is true if clause number CLAUSENUMBER of predicate
+PRED comes from file ABSFILE.  `source_file/3' is useful for handling
+multifile predicates, but it works for predicates defined completely in
+one file, as well.
+
+   Any combination of bound and unbound arguments is possible, and
+`source_file/3' will generate the others.
+
+Backtracking
+------------
+
+   If ABSFILE is unbound, it is successively unified with the absolute
+names of all currently loaded files.  Files loaded through the foreign
+function interface are not reported by `source_file/1'.
+
+   If PRED is instantiated to the skeletal specification of a loaded
+predicate, then ABSFILE will be successively unified with the absolute
+names of the files in which the PRED was defined.
+
+   If ABSFILE is instantiated to the absolute name of a loaded file,
+then PRED will be successively unified with the skeletal specifications
+of all predicates defined in ABSFILE.
+
+See Also
+--------
+
+   `absolute_file_name/[2,3]', `multifile/1'
+
+
+File: quintus.info,  Node: mpg-ref-spy,  Next: mpg-ref-tcm,  Prev: mpg-ref-source_file,  Up: mpg-ref
+
+`spy/1' "development"
+---------------------
+
+Synopsis
+--------
+
+   `spy +PREDSPECS'
+
+   Sets spypoints on all the predicates represented by PREDSPECS
+
+Arguments
+---------
+
+PREDSPECS "gen_pred_spec_tree"
+     Single predicate specification of form: NAME, or NAME/ARITY, or a
+     list of such.  [MOD]
+
+Description
+-----------
+
+   Turns debugger on in debug mode, so that it will stop as soon as it
+reaches a spypoint.  Turning off the debugger does not remove
+spypoints.  Use `nospy/1' or `nospyall/0') to explicitly remove them.
+
+   Note that since `spy' is a built-in operator, the parentheses, which
+usually surround the arguments to a predicate, are not necessary
+(although they can be used if desired).
+
+   If you use the predicate specification form NAME but there are no
+clauses for NAME (of any arity), then a warning message will be
+displayed and no spypoint will be set.
+     | ?- spy test.
+     % The debugger will first leap -- showing spypoints (debug)
+     * There are no predicates with the name test in module user
+     
+     yes
+     [debug]
+
+   To place a spypoint on a currently undefined procedure, use the full
+form NAME/ARITY; you will still get a warning message, but the spypoint
+will be set .
+     | ?- spy test/1.
+     * You have no clauses for user:test/1
+     % Spypoint placed on user:test/1
+     
+     yes
+     [debug]
+     | ?-
+
+   If `spy/1' is given any invalid argument it prints a warning.
+
+   This predicate is not supported in runtime systems.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if the argument is not ground.
+
+`type_error'
+     if a NAME is not an atom or an ARITY not an integer.
+
+`domain_error'
+     if a PREDSPEC is not a valid procedure specification, or if an
+     ARITY is specified as an integer outside the range 0-255.
+
+`permission_error'
+     if a specified procedure is built-in or imported into the source
+     module.
+
+See Also
+--------
+
+   `nospy/1', `nospyall/0', `debug/0', `current_spypoint/1',
+`add_spypoint/1', `remove_spypoint/1'
+
+
+File: quintus.info,  Node: mpg-ref-statistics,  Next: mpg-ref-stream_code,  Prev: mpg-ref-tcm,  Up: mpg-ref
+
+`statistics/[0,2]'
+------------------
+
+Synopsis
+--------
+
+   `statistics'
+
+   Displays statistics relating to memory usage and execution time.
+
+   `statistics(+KEYWORD, -LIST)'
+
+   `statistics(*KEYWORD, *LIST)'
+
+   Obtains individual statistics.
+
+Arguments
+---------
+
+KEYWORD "atom"
+     keyword such as `runtime'
+
+LIST "list of integer"
+     list of statistics (see following table)
+
+   Times are given in milliseconds and sizes are given in bytes.
+
+`runtime'
+     [cpu time used by Prolog, cpu time since last call to
+     `statistics/[0,2]']
+
+`system_time'
+     [cpu time used by the operating system, cpu time used by the
+     system since the last call to `statistics/[0,2]']
+
+`real_time'
+     [wall clock time since 00:00 GMT 1/1/1970, wall clock time since
+     the last call to `statistics/[0,2]']
+
+`memory'
+     [total virtual memory in use, total virtual memory free]
+
+`stacks'
+     [total global stack memory, total local stack memory]
+
+`program'
+     [program space, 0]
+
+`global_stack'
+     [global stack in use, global stack free]
+
+`local_stack'
+     [local stack in use, local stack free]
+
+`trail'
+     [size of trail, 0]
+
+`garbage_collection'
+     [number of GCs, freed bytes, time spent]
+
+`stack_shifts'
+     [number of global stack area shifts, number of local stack area
+     shifts, time spent shifting]
+
+`atoms'
+     [number of atoms, atom space in use, atom space free]
+
+`atom_garbage_collection'
+     [number of AGCs, freed bytes, time spent]
+
+`core'
+     (same as memory)
+
+`heap'
+     (same as program)
+
+Description
+-----------
+
+   `statistics/0' displays various statistics relating to memory usage,
+runtime and garbage collection, including information about which areas
+of memory have overflowed and how much time has been spent expanding
+them.
+
+   Garbage collection statistics are initialized to zero when a Prolog
+session starts (this includes sessions started from saved-states
+created by `save_program/[1,2]', and includes re-starts caused when
+`restore/1' is used).  The statistics increase until the session is
+over.
+
+   `statistics/2' is usually used with KEYWORD instantiated to a
+keyword such as `runtime' and LIST unbound.  The predicate then binds
+LIST to a list of statistics related to the keyword.  It can be used in
+programs that depend on current runtime statistical information for
+their control strategy, and in programs that choose to format and write
+out their own statistical summaries.
+
+   If keyword is `garbage_collection' the list returned contains three
+elements:
+   * the number of garbage collections performed since the beginning of
+     the Prolog session.
+
+   * the number of bytes of heap space freed by those garbage
+     collections.
+
+   * the number of milliseconds spent performing those garbage
+     collections.
+
+Examples
+--------
+
+   The output from `statistics/0' looks like this:
+     memory (total)     377000 bytes: 350636 in use,  26364 free
+        program space   219572 bytes
+           atom space    (2804 atoms)  61024 in use,  43104 free
+        global space     65532 bytes:   9088 in use,  56444 free
+           global stack   6984 bytes
+           trail                          16 bytes
+           system                       2088 bytes
+        local stack      65532 bytes:    356 in use,  65176 free
+           local stack                   332 bytes
+           system                         24 bytes
+     
+      0.000 sec. for 0 global and 0 local space shifts
+      0.000 sec. for 0 garbage collections
+                       which collected 0 bytes
+      0.000 sec. for 0 atom garbage collections
+                       which collected 0 bytes
+      0.233 sec. runtime
+
+   To report information on the runtime of a predicate `p/0', add the
+following to your program:
+     :- statistics(runtime, [T0|_]),
+        p,
+        statistics(runtime, [T1|_]),
+        T is T1 - T0,
+        format('p/0 took ~3d sec.~n', [T]).
+
+See Also
+--------
+
+   *Note ref-mgc-ove-sta::
+
+
+File: quintus.info,  Node: mpg-ref-stream_code,  Next: mpg-ref-stream_position,  Prev: mpg-ref-statistics,  Up: mpg-ref
+
+`stream_code/2'
+---------------
+
+Synopsis
+--------
+
+   `stream_code(-STREAM, +CSTREAM)'
+
+   `stream_code(+STREAM, -CSTREAM)'
+
+   Converts between Prolog representation, STREAM, and C
+representation, CSTREAM, of a stream.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a variable or a valid Prolog stream
+
+CSTREAM "integer"
+     a variable or a valid C stream
+
+Description
+-----------
+
+   `stream_code/2' is used when there are input/output related
+operations performed on the same stream in both Prolog code and foreign
+code.
+
+   STREAM argument is a valid type if it is "user", "user_input",
+"user_output", "user_error", a variable, or a value obtained through
+`open/[3,4]' or previous `stream_code/2' call.  Such a valid STREAM
+value can be used as the stream argument to any of the Prolog built-in
+I/O predicates taking a stream argument.
+
+   CSTREAM argument is a valid type if it is a variable, a value
+obtained through previous `stream_code/2' call, a value obtained through
+`QP_fopen()', `QP_fdopen()', or a value of pointer to `QP_stream'
+structure obtained through foreign function call.  Such a valid CSTREAM
+value can be used as the stream argument to any of the QP foreign
+function taking stream as an argument.
+
+Exceptions
+----------
+
+`instantiation_error'
+     STREAM argument or CSTREAM argument is not ground.
+
+`type_error'
+     STREAM or CSTREAM is not a stream type or    CSTREAM is not an
+     integer type.
+
+`existence_error'
+     STREAM is syntactically valid but does not name an open stream or
+     CSTREAM is of integer type but does not name a pointer to a stream.
+
+Comments
+--------
+
+   The most frequent use of `stream_code/2' is to get a stream value to
+be used in Prolog code for a stream created in foreign code.  This is
+necessary when a desired stream can not be obtained through
+`open/[3,4]'; e.g. a stream referring to a socket or an encrypted file.
+
+See Also:
+---------
+
+   `open/[3,4]', `QP_fopen()', `QP_fdopen()'
+
+
+File: quintus.info,  Node: mpg-ref-stream_position,  Next: mpg-ref-style_check,  Prev: mpg-ref-stream_code,  Up: mpg-ref
+
+`stream_position/[2,3]'
+-----------------------
+
+Synopsis
+--------
+
+   `stream_position(+STREAM, -CURRENT)'
+
+   True when CURRENT represents the current position of STREAM.
+
+   `stream_position(+STREAM, -CURRENT, +NEW)'
+
+   Unifies the current position of the read/write pointer for STREAM
+with CURRENT, then sets the position to NEW.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     an open stream
+
+CURRENT "term"
+     stream position object representing the current position of STREAM.
+
+NEW "term"
+     stream position object
+
+Caution
+-------
+
+   A stream position object is represented by a special Prolog term.
+The only safe way of obtaining such an object is via
+`stream_position/3' or `stream_position/2'.  You should not try to
+construct, change, or rely on the form of this object.  It may vary
+under different operating systems and/or change in subsequent versions
+of Quintus Prolog.  On some systems, a stream position object currently
+has the form:
+     '$stream_position'(CharCount, LineCount, LinePos, Magic1, Magic2)
+
+Description
+-----------
+
+   Character count, line count and line position determine the position
+of the pointer in the stream.  Such information is found by using
+`character_count/2', `line_count/2' and `line_position/2'.
+
+   `stream_position/2' may be used on any stream at all:  streams that
+are connected to disk files, streams that are connected to sockets,
+streams that are connected to the terminal (including the standard
+streams `user_input', `user_output', `user_error'), and even streams
+defined using `QP_make_stream()'.
+
+   `stream_position/3' may only be used on streams that are connected
+to disk files.
+
+   Standard term comparison of two stream position objects for the same
+stream will work as one expects.  When SP1 and SP2 refer to positions
+in the same stream, `SP1 @< SP2' if and only if SP1 is before SP2 in
+the stream.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`type_error'
+     CURRENT, NEW are not valid stream position objects.
+
+`instantiation_error'
+Example
+-------
+
+   To find the current position of a stream without changing it, one
+can ask
+     | ?- stream_position(Stream, Current).
+
+See Also
+--------
+
+   `seek/4', `open/[3,4]', `character_count/2', `line_count/2',
+`line_position/2'.  *Note ref-iou::
+
+
+File: quintus.info,  Node: mpg-ref-style_check,  Next: mpg-ref-subsumes_chk,  Prev: mpg-ref-stream_position,  Up: mpg-ref
+
+`style_check/1'
+---------------
+
+Synopsis
+--------
+
+   `style_check(+TYPE)'
+
+   Turns on the specified TYPE of compile-time style checking.
+
+Arguments
+---------
+
+TYPE "atom"
+     is one of the following atoms:
+    `all'
+          Turn on all style checking.
+
+    `single_var'
+          Turn on checking for clauses containing a single
+               instance of a named variable, where variables that
+                       start with a `_' are not considered named.
+
+    `discontiguous'
+          Turn on checking for procedures whose clauses
+             are not all adjacent to one another in the file.
+
+    `multiple'
+          Turn on checking for multiple definitions of the same
+          procedure in different files.
+
+Description
+-----------
+
+   Since all style checking is on by default, this predicate is only
+used to put back style checking after it has been turned off by
+`no_style_check/1'.
+
+Exceptions
+----------
+
+     `instantiation_error' TYPE is not bound.
+
+     `type_error' TYPE is not an atom.
+
+     `domain_error' TYPE is not a valid type of style checking.
+
+See Also
+--------
+
+   `no_style_check/1'.
+
+
+File: quintus.info,  Node: mpg-ref-subsumes_chk,  Next: mpg-ref-tab,  Prev: mpg-ref-style_check,  Up: mpg-ref
+
+`subsumes_chk/2' "meta-logical"
+-------------------------------
+
+Synopsis
+--------
+
+   `subsumes_chk(+GENERAL, +SPECIFIC)'
+
+   True when GENERAL subsumes SPECIFIC; that is, when SPECIFIC is an
+instance of GENERAL.
+
+Arguments
+---------
+
+GENERAL "term"
+
+SPECIFIC "term"
+Description
+-----------
+
+   In previous releases, `subsumes_chk/2' was available as a library
+predicate.  In release 2.5, it was made part of the system because it
+was found to be useful in applications such as writing theorem provers.
+The built-in predicate behaves identically to the original version of
+`subsumes_chk/2' but is much more efficient.
+
+   Term subsumption is a sort of one-way unification.  Term S and T
+unify if they have a common instance, and unification in Prolog
+instantiates both terms to that common instance.  S subsumes T if T is
+already an instance of S.  For our purposes, T is an "instance" of S if
+there is a substitution that leaves T unchanged and makes S identical
+to T.
+
+Comments
+--------
+
+   There are two other related predicates defined in
+`library(subsumes)', `subsumes/2' and `variant/2'.  These predicates are
+defined in terms of `subsumes_chk/2', and they are still available in
+that library package.
+
+See Also
+--------
+
+   `library(subsumes)', `library(occurs)'
+
+
+File: quintus.info,  Node: mpg-ref-tab,  Next: mpg-ref-tell,  Prev: mpg-ref-subsumes_chk,  Up: mpg-ref
+
+`tab/[1,2]'
+-----------
+
+Synopsis
+--------
+
+   `tab(+INTEGER)'
+
+   `tab(+STREAM, +INTEGER)'
+
+   Writes INTEGER spaces to the current output stream, or STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+
+INTEGER "expr"
+     an integer expression.
+
+Description
+-----------
+
+   If INTEGER evaluates to a negative integer, `tab/1' simply succeeds
+without doing anything.
+
+   If the current output device is the user's terminal, the spaces are
+not necessarily printed immediately; see `ttyflush/0'.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`instantiation_error'
+`type_error'
+     N is not an integer.
+
+`permission_error'
+     There is an error in the bottom layer of write function
+         of the stream.
+
+See Also
+--------
+
+   `ttyflush/0'
+
+
+File: quintus.info,  Node: mpg-ref-tell,  Next: mpg-ref-telling,  Prev: mpg-ref-tab,  Up: mpg-ref
+
+`tell/1'
+--------
+
+Synopsis
+--------
+
+   `tell(+FILEORSTREAM)'
+
+   makes FILEORSTREAM the current output stream.
+
+Arguments
+---------
+
+FILEORSTREAM "file_spec" or "stream_object"
+     file specification or stream object.
+
+Description
+-----------
+
+   If there is an open output stream currently associated with the
+filename, and that stream was opened by `tell/1', then it is made the
+current output stream;
+
+   Otherwise, the specified file is opened for output and made the
+current output stream.  If the file does not exist, it is created.  If
+it is not possible to open the file (because of protections, for
+example), `tell/1' raises an exception.
+
+   Different file names (names that do not unify) represent different
+streams (even if they correspond to the same file). Therefore, assuming
+`food' and `./food' represent the same file, the following sequence
+will open two streams, both connected to the same file:
+     tell(food)
+     ...
+     tell('./food')
+
+   It is important to remember to close streams when you have finished
+with them.  Use `told/0' (*Note ref-iou-sfh-cst::) or `close/1' (*Note
+ref-iou-sfh-cst::).
+
+Exceptions
+----------
+
+`instantiation_error'
+     FILEORSTREAM is not instantiated enough.
+
+`domain_error'
+     FILEORSTREAM is neither a filename nor a stream.
+
+`permission_error'
+     FILEORSTREAM exists but cannot be opened.
+
+`existence_error'
+     FILEORSTREAM not currently open for input, and
+     `fileerrors' flag is `on'.
+
+See Also
+--------
+
+   `told/0', `telling/1'
+
+
+File: quintus.info,  Node: mpg-ref-telling,  Next: mpg-ref-teq,  Prev: mpg-ref-tell,  Up: mpg-ref
+
+`telling/1'
+-----------
+
+Synopsis
+--------
+
+   `telling(-FILEORSTREAM)'
+
+   Unifies FILEORSTREAM with the current output stream.
+
+Arguments
+---------
+
+FILEORSTREAM "file_spec" or "stream_object"
+Description
+-----------
+
+   Exactly the same as `current_output(FILEORSTREAM)' *Note
+ref-iou-sfh-cos::), except that FILEORSTREAM will be unified with a
+filename if the current output stream was opened by `tell/1'.
+
+   If FILEORSTREAM is not a filename or stream object corresponding to
+an open output stream, `telling'(FILEORSTREAM) simply fails.
+
+   A common usage of `telling/1' is
+     tell('Some File Name')
+     ...
+     telling('Some File Name')
+
+   Should succeed if the current input stream was not changed (or if
+changed, restored).  It succeeds for any filename (including `user')
+and any stream object opened by `open/3' (*Note ref-iou-sfh-opn::), but
+fails for `user_output' and any stream object opened by `tell/1' (*Note
+ref-iou-sfh-opn::).  Passing file names to `tell/1' is the only DEC-10
+Prolog usage of `telling/1', so Quintus Prolog is compatible with this
+usage.
+
+Examples
+--------
+
+   WARNING: The following sequence will fail if the current output
+stream was opened by `tell/1'.
+     telling(File),
+     ...
+     set_output(File),
+
+   The only sequences that are guaranteed to succeed are
+     telling(FileOrStream),
+     ...
+     tell(FileOrStream)
+
+   and
+     current_output(Stream),
+     ...
+     set_output(Stream)
+
+See Also
+--------
+
+   `tell/1', `open/[3,4]', `current_output/1'
+
+
+File: quintus.info,  Node: mpg-ref-term_expansion,  Next: mpg-ref-told,  Prev: mpg-ref-teq,  Up: mpg-ref
+
+`term_expansion/2' "hook"
+-------------------------
+
+Synopsis
+--------
+
+   `:- multifile term_expansion/2.'
+
+   `term_expansion(+TERM1, -TERM2)'
+
+   The user may override the standard transformations to be done by
+`expand_term/2' by defining clauses for `term_expansion/2'.
+
+Arguments
+---------
+
+TERM1 "term"
+
+TERM2 "term"
+Description
+-----------
+
+   `expand_term/2' calls `term_expansion/2' first; if it succeeds, the
+standard grammar rule expansion is not tried.
+
+   `expand_term/2' always calls `term_expansion/2' in module `user'.
+Therefore, to be visible to `expand_term/2', `term_expansion/2' must
+either be defined in or imported into module `user'.  Alternatively,
+you may define it in any module by using module prefixing; refer to
+*Note ref-mod-vis::.
+
+   This hook predicate may now return a list of terms rather than a
+single term.  Each of the terms in the list is then treated as a
+separate clause.
+
+Tip
+---
+
+See Also
+--------
+
+   `expand_term/2', `-->/2', `phrase/[2,3]', `'C'',
+`prolog_load_context/2'.  *Note ref-gru::
+
+
+File: quintus.info,  Node: mpg-ref-told,  Next: mpg-ref-trace,  Prev: mpg-ref-term_expansion,  Up: mpg-ref
+
+`told/0'
+--------
+
+Synopsis
+--------
+
+   `told'
+
+   Closes the current output stream.
+
+Description
+-----------
+
+   Current output stream is set to be `user_output'; that is, the user's
+terminal.
+
+   Always succeeds without error.
+
+
+File: quintus.info,  Node: mpg-ref-trace,  Next: mpg-ref-trimcore,  Prev: mpg-ref-told,  Up: mpg-ref
+
+`trace/0' "development"
+-----------------------
+
+Synopsis
+--------
+
+   `trace'
+
+   Turns the debugger on and starts it creeping; that is, it sets the
+debugger to trace mode.
+
+Description
+-----------
+
+   The debugger will start showing goals as soon as the first call is
+reached, and it will stop to allow you to interact as soon as it
+reaches a leashed port (see `leash/1', *Note mpg-ref-leash::).  Setting
+the debugger to trace mode means that every time you type a query, the
+debugger will start by creeping.
+
+   The effect of this predicate can also be achieved by typing the
+letter `t' after a `^c' interrupt (see *Note ref-iex-int::).
+
+   This predicate is not supported in runtime systems.
+
+See Also
+--------
+
+   `debug/0', `notrace/0'
+
+
+File: quintus.info,  Node: mpg-ref-trimcore,  Next: mpg-ref-true,  Prev: mpg-ref-trace,  Up: mpg-ref
+
+`trimcore/0'
+------------
+
+Synopsis
+--------
+
+   `trimcore'
+
+   Force reclamation of memory in all of Prolog's data areas.
+
+Description
+-----------
+
+   Reduces the free space in all the data areas as much as possible,
+and gives the space no longer needed back to the operating system.
+
+Exceptions
+----------
+
+   Automatically called after each directive at the top level.
+
+See Also
+--------
+
+   *Note ref-mgc-ove-rsp::
+
+
+File: quintus.info,  Node: mpg-ref-true,  Next: mpg-ref-tty,  Prev: mpg-ref-trimcore,  Up: mpg-ref
+
+`true/0'
+--------
+
+Synopsis
+--------
+
+   `true'
+
+   Always succeeds.  This could have been trivially defined in Prolog
+by the single clause:
+     true.
+
+
+File: quintus.info,  Node: mpg-ref-tty,  Next: mpg-ref-unv,  Prev: mpg-ref-true,  Up: mpg-ref
+
+`ttyflush/0', `ttyget/1', `ttyget0/1', `ttynl/0', `ttyput/1', `ttyskip/1', `ttytab/1'
+-------------------------------------------------------------------------------------
+
+Synopsis
+--------
+
+   `ttyflush' Equivalent to `flush_output(user)'.
+
+   `ttyget(-CHAR)' Equivalent to `get(user, CHAR)'.
+
+   `ttyget0(-CHAR)' Equivalent to `get0(user, CHAR)'.
+
+   `ttynl' Equivalent to `nl(user)'.
+
+   `ttyput(+CHAR)' Equivalent to `put(user, CHAR)'.
+
+   `ttyskip(+CHAR)' Equivalent to `skip(user, CHAR)'.
+
+   `ttytab(+INTEGER)' Equivalent to `tab(user, INTEGER)'.
+
+Arguments
+---------
+
+CHAR "char"
+
+INTEGER "expr"
+Description
+-----------
+
+   For compatibility with DEC-10 Character I/O a set of predicates are
+provided, which are similar to the primary ones except that they always
+use the standard input and output streams, which normally refer to the
+user's terminal rather than to the current input stream or current
+output stream.  They are easily recognizable as they all begin with
+"tty".
+
+   Given stream-based input/output, these predicates are actually
+redundant.  For example, you could write `get0(user, C)' instead of
+`ttyget0(C)'.
+
+
+File: quintus.info,  Node: mpg-ref-unix,  Next: mpg-ref-unknown,  Prev: mpg-ref-unv,  Up: mpg-ref
+
+`unix/1'
+--------
+
+Synopsis
+--------
+
+   `unix(shell(+COMMAND))' Spawns a command interpreter and executes
+COMMAND.  Note that, despite the name, `unix/1' works on both UNIX and
+Windows.
+
+   `unix(system(+COMMAND))' Spawns a shell process and executes COMMAND.
+
+   `unix(system(+COMMAND, -STATUS))' Spawns a shell process and
+executes COMMAND. The exit status of the executed command is returned
+in STATUS.
+
+   `unix(cd(+PATH))' Changes working directory to PATH.
+
+   `unix(argv(-ARGLIST))' Returns in ARGLIST the list of commandline
+arguments as Prolog objects.
+
+   `unix(args(-ARGLIST))' Returns in ARGLIST the list of commandline
+arguments as a list of atoms.
+
+Arguments
+---------
+
+COMMAND "term"
+     atom corresponding to a command (or null)
+
+STATUS "integer"
+     exit status of the command executed
+
+PATH "atom"
+     atom corresponding to a legal directory (or null)
+
+ARGLIST "list of term"
+     list of arguments used to start up current session.
+
+Description
+-----------
+
+   `unix(cd)' changes the working directory of Prolog (and of Emacs if
+running under the editor interface) to your home directory.  Note that
+the `<ESC> x cd' command under Emacs has the same effect as this,
+except that Emacs also provides filename completion.
+
+   If the return status of COMMAND is 0, `unix(system(COMMAND))'
+succeeds, otherwise it fails.
+
+   `unix(system(COMMAND, STATUS))' returns the status of the executed
+command, similar to the function `system(3)'. The low-order 8 bits of
+the STATUS is the value returned by the system call `wait(2V)' and the
+next 8-bits higher up in the STATUS has the shell exit status if the
+shell was not interrupted by a signal. An exit status of 127 indicates
+that the shell could not be executed.
+
+   To start up an interactive shell, type `unix(shell)'.
+
+   If ARGLIST is instantiated to a term that does not unify with the
+result returned, `unix(argv(ARGLIST))' or `unix(args(ARGLIST))' will
+simply fail.
+
+Exceptions
+----------
+
+`instantiation_error'
+     Argument to `unix/1' is not sufficiently instantiated.
+
+`domain_error'
+     Argument to `unix/1' is invalid.
+
+`type_error'
+     PATH is not an atom.
+
+`existence_error'
+     PATH is a nonexistent directory.
+
+Examples
+--------
+
+   To list the QOF files in the current working directory:
+
+     | ?- unix(shell('ls -l *.qof')).
+     -rw-rw-r--  1 joe   9152 Oct 20  1990 table.qof
+     -rw-rw-r--  1 joe    576 Oct 25  1990 test.qof
+     
+     yes
+
+   Alternatively, enter a command interpreter, execute commands, and
+type `exit' to return to prolog:
+     | ?- unix(shell).
+     % ls -l *.qof
+     -rw-rw-r--  1 joe   9152 Oct 20  1990 table.qof
+     -rw-rw-r--  1 joe    576 Oct 25  1990 test.qof
+     % exit
+     
+     yes
+     | ?-
+
+   If Prolog was invoked using the command (A), the command line
+arguments can be retrieved as in (B):
+     % prolog screaming yellow + yellow.pl (A)
+         .
+         .
+         .
+     
+     | ?- unix(argv(ArgList)). (B)
+     
+     ArgList = [screaming, yellow]
+
+See Also
+--------
+
+   `QP_initialize()', `QP_toplevel()', `system/1' -- from
+`library(strings)'
+
+   *Note ref-aos::
+
+
+File: quintus.info,  Node: mpg-ref-unknown,  Next: mpg-ref-unknown_predicate_handler,  Prev: mpg-ref-unix,  Up: mpg-ref
+
+`unknown/2'
+-----------
+
+Synopsis
+--------
+
+   `unknown(-OLDACTION, +NEWACTION)'
+
+   Unifies OLDACTION with the current action on unknown procedures, and
+then sets the current action to NEWACTION.
+
+Arguments
+---------
+
+OLDACTION "one of `[error,fail]'"
+
+NEWACTION "one of `[error,fail]'"
+Description
+-----------
+
+   This action determines what happens when an undefined predicate is
+called:
+`error'
+     Undefined procedures will raise an exception
+
+`fail'
+     Undefined procedures will simply fail
+
+   The default action is `error'.  `trace' is accepted as a synonym for
+`error' for backword compatibility.  Note that
+     | ?- unknown(ACTION, ACTION).
+
+   just returns ACTION without changing it.
+
+   Procedures that are known to be dynamic just fail when there are no
+clauses for them.  Their behavior is not affected by `unknown/2'. For
+more information on dynamic procedures, see *Note ref-mdb-dsp::.
+
+See Also
+--------
+
+   `unknown_predicate_handler/3'
+
+
+File: quintus.info,  Node: mpg-ref-unknown_predicate_handler,  Next: mpg-ref-use_module,  Prev: mpg-ref-unknown,  Up: mpg-ref
+
+`unknown_predicate_handler/3' "hook"
+------------------------------------
+
+Synopsis
+--------
+
+   `:- multifile unknown_predicate_handler/3.'
+
+   `unknown_predicate_handler(+GOAL, +MODULE, -NEWGOAL)'
+
+   User definable hook to trap calls to unknown predicates
+
+Arguments
+---------
+
+GOAL "callable"
+     Any Prolog term
+
+MODULE "atom"
+     Any atom that is a current module
+
+NEWGOAL "callable"
+     Any callable Prolog term
+
+Description
+-----------
+
+   When Prolog comes across a call to an unknown predicate and the
+`unknown' flag is set to `error', Prolog makes a call to
+`unknown_predicate_handler/3' in module `user' with the first two
+arguments bound. GOAL is bound to the call to the undefined predicate
+and MODULE is the module in which that predicate is supposed to be
+defined. If the call to `unknown_predicate_handler/3' succeeds then
+Prolog replaces the call to the undefined predicate with the call to
+NEWGOAL.  By default NEWGOAL is called in module `user'.  This can be
+overridden by making NEWGOAL have the form MODULE:SOMEGOAL.
+
+Examples
+--------
+
+   The following clause gives the same behaviour as setting
+`unknown(_,fail)'.
+     unknown_predicate_handler(_, _, fail).
+
+   The following clause causes calls to undefined predicates whose names
+begin with `xyz_' in module `m' to be trapped to `my_handler/1' in
+module `n'.  Predicates with names not beginning with this character
+sequence are not affected.
+     unknown_predicate_handler(G, m, n:my_handler(G)) :-
+         functor(G,N,_),
+         atom_chars(N,Chars),
+         append("xyz_" _, Chars).
+
+Tips
+----
+
+See Also
+--------
+
+   `unknown/2', `prolog_flag/3'
+

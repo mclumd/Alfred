@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>writeq/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>writeq(</code><var>+Term</var><code>)</code>
+
+   <p><code>writeq(</code><var>+Stream, +Term</var><code>)</code>
+
+   <p>Writes the term <var>Term</var> to <var>Stream</var> or the current output
+stream.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>a valid Prolog stream, which is open for output
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>the term to be written
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Equivalent to <code>write_term/[2,3]</code> with the options:
+<pre class="example">     [quoted(true),ignore_ops(false),numbervars(true)]
+     </pre>
+
+   <p>Does not terminate its output with a full-stop.  Therefore, if you
+want this term to be input to <code>read/[1,2]</code>, you must explicitly
+write a full-stop to mark the end of the term.
+
+<h4 class="subheading">Comments</h4>
+
+   <p>Depending upon whether character
+escaping is on or off, <code>writeq/[1,2]</code> and
+<code>write_canonical/[1,2]</code> behave differently when writing quoted
+atoms.  If character escaping is on:
+     <ul>
+
+     <li>The characters with ASCII
+codes 9 (horizontal tab), 32 (space), and 33 through 126 (non-layout
+characters) are written as themselves. 
+<li>The characters with ASCII codes 8, 10, 11, 12, 13, 27, and 127 are
+written in their <code>\</code><var>lowercase letter</var><code></code> form (see above for the
+corresponding letter). 
+<li>The character with ASCII code 39 (single quote) is written as two
+consecutive single quotes. 
+<li>The character with ASCII code 92 (back slash) is written as two
+consecutive back slashes. 
+<li>All other characters are written in their <code>\^</code><var>control char</var><code></code> form. 
+</ul>
+
+   <p>If character escaping is off:
+     <ul>
+
+     <li>The character with ASCII code 39 (single quote) is written as two
+consecutive single quotes. 
+<li>All other characters are written as themselves. 
+</ul>
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>)
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>write_term/[2,3]</code>, <code>write/[1,2]</code>,
+<code>write_canonical/[1,2]</code>
+
+   <a href="ref-syn-ces.html#ref-syn-ces">ref-syn-ces</a> for information about character escaping.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-write_term.html#mpg-ref-write_term">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

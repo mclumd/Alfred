@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Simple Term Classes</h4>
+
+   <p>The simplest sort of term class declaration has the following form:
+<pre class="example">     :- class <var>ClassName</var> = term(<var>Term</var>).
+     </pre>
+
+   <p>This declares that any term that unifies with <var>Term</var> is an instance
+of class <var>ClassName</var>.  For example, you might declare:
+<pre class="example">     :- class rgb_color = term(color(_Red,_Green,_Blue)).
+     
+     color(R,_G,_B) &gt;&gt; red(R).
+     color(_R,G,_B) &gt;&gt; green(G).
+     color(_R,_G,B) &gt;&gt; blue(B).
+     
+     :- end_class rgb_color.
+     </pre>
+
+   <p>This would declare any term whose principal functor is <code>color</code> and
+arity is three to be an object of class <code>rgb_color</code>.  Given this
+declaration, entering the goal
+<pre class="example">     color(0.5, 0.1, 0.6) &gt;&gt; blue(B)
+     </pre>
+
+   <p>would bind <code>B</code> to 0.6.
+
+   <p>Note that you cannot use <code>create/2</code> to create a term class
+instance.  Since they are just ordinary terms, you can create them the
+same way you'd create any ordinary Prolog term.  Similarly, you cannot
+modify an existing term class instance.
+
+   <p>You may specify a term class as the type of a slot of an ordinary
+class.  This is effectively the same as specifing the type to be
+<code>term</code>.  In particular, fetching and storing term class slots is not
+very efficient.  Also, the default value for slots of term class type
+is <code>''</code>; this is because not enough is known about a simple term
+class to determine a better default. 
+For an explanation of how to avoid these pitfalls, see <a href="obj-tcl-tce.html#obj-tcl-tce">obj-tcl-tce</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-tcl-rtrm.html#obj-tcl-rtrm">Next</a>
+<li><a rel="up" accesskey="u" href="obj-tcl.html#obj-tcl">Up</a>
+</ul>
+</div>
+   </body></html>
+

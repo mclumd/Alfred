@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Closing a Stream</h5>
+
+     <ul>
+
+     <li> <code>close(</code><var>X</var><code>)</code> closes the stream corresponding to <var>X</var>.
+
+     <p>If <var>X</var> is a stream object, then if the corresponding stream is open,
+it will
+be closed; otherwise, <code>close/1</code> succeeds immediately, taking no action.
+
+     <p>If <var>X</var> is a file specification, the corresponding
+stream will be closed.  It is only closed if the file was opened by
+<code>see/1</code> or <code>tell/1</code>.  In the example
+     <pre class="example">          see(foo),
+          ...
+          close(foo)
+          </pre>
+
+     <p><code>foo</code> will be closed.  However, in the example
+     <pre class="example">          open(foo, read, S),
+          ...
+          close(foo)
+          </pre>
+
+     <p>an exception will be raised and <code>foo</code> will not be closed. 
+</p><li><code>told/0</code> closes the current output stream.  The current output stream is
+then set to be <code>user_output</code>; that is, the user's terminal.
+
+     <li><code>seen/0</code> closes the current input stream.  The current input stream is
+then set to be <code>user_input</code>; that is, the user's terminal.
+
+   </ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iou-sfh-flu.html#ref-iou-sfh-flu">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-iou-sfh-bos.html#ref-iou-sfh-bos">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-iou-sfh.html#ref-iou-sfh">Up</a>
+</ul>
+</div>
+   </body></html>
+

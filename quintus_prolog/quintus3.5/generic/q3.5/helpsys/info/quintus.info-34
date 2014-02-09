@@ -1,0 +1,1100 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxl-bas-txt,  Next: pxl-bas-pix,  Prev: pxl-bas-lin,  Up: pxl-bas
+
+Drawing text
+------------
+
+   Drawing text in ProXL is like drawing lines or shapes.  This means
+that every command to draw text must supply a position at which the
+text is to be drawn.  ProXL does not maintain a "current" drawing
+position in a window, so you cannot use the standard Prolog primitives
+such as `write/[1,2]', or `format/[2,3]'(1) for putting text into an X
+window.
+
+   Furthermore, note that the position in a drawable at which text is
+to be drawn is given in pixel coordinates, not character coordinates.
+There are three reasons for this:
+
+   * Using pixel coordinates gives you much greater flexibility in
+     positioning and spacing of text.
+
+   * The font in which you are printing may not be fixed width (see
+     *Note pxl-bas-graf-font::), so you cannot reliably determine where
+     to print by multiplying the width of a character by the number of
+     characters.
+
+   * X provides for fonts that write from right to left, so it is not
+     always sufficient to add the pixel width of a string to its origin
+     position to determine its right side.  In this case, the origin
+     point is at the right end of the string.
+
+   ProXL provides primitives for determining how large a string will be
+when it is displayed, including a primitive that will determine how
+many pixels left, right, above, and below the origin point a text
+string will occupy.
+
+   ---------- Footnotes ----------
+
+   (1) Of course, the Prolog text output primitives will continue to
+work in the window you are running Prolog in.  This is usually a
+terminal emulator window maintained by a program such as xterm; X does
+not automatically do this.
+
+
+File: quintus.info,  Node: pxl-bas-pix,  Next: pxl-bas-graf,  Prev: pxl-bas-txt,  Up: pxl-bas
+
+Drawing Pixmaps and drawing into Pixmaps
+----------------------------------------
+
+   Apart from drawing shapes or text into a window, we often wish to
+import complex pictures from an inventory.  In ProXL these are stored
+in "pixmaps".
+
+   A "pixmap" is a rectangular area that can be drawn into, but cannot
+be seen.  It may be copied into a window to be seen.  It is common to
+draw frequently used complicated drawings into a pixmap, and then to
+copy the pixmap to a window whenever it is needed.  Pixmaps are also
+used for representing textures, in which case they are "tiled", that
+is, copied repeatedly like floor tiles, when they are displayed.
+
+   Pixmaps, like windows, are "drawables", that is, something that you
+can draw into, not, as you might expect, something that is drawn.  Most
+drawing primitives take a drawable as their destination argument as
+they can draw into either windows or pixmaps.
+
+
+File: quintus.info,  Node: pxl-bas-graf,  Next: pxl-bas-crs,  Prev: pxl-bas-pix,  Up: pxl-bas
+
+Graphics attributes of drawables
+--------------------------------
+
+* Menu:
+
+* pxl-bas-graf-font::                   Fonts
+* pxl-bas-graf-color::                  Color and colormaps
+* pxl-bas-graf-gc::                     Graphics contexts (GCs)
+
+   Certain parameters are needed often when drawing, for example, the
+color in which to draw, the width of lines, the texture with which to
+fill areas.  These are examples of what we call "graphics attributes".
+In X, graphics attributes are associated with drawing procedures.
+Rather than mention the same attributes over and over again, ProXL
+applications handle these graphics parameters by associating a set of
+graphics attributes with each drawable, and changing them at any time.
+So if you want to draw a line of width 2, then another of width 5, your
+program would have to change the line width graphics attribute of the
+drawable.  In fact, this is not necessary, as we show in *Note
+pxl-bas-graf-gc::.
+
+
+File: quintus.info,  Node: pxl-bas-graf-font,  Next: pxl-bas-graf-color,  Up: pxl-bas-graf
+
+Fonts
+.....
+
+   Fonts determine what characters will look like in a window.  A "font"
+is a graphics attribute of a drawable.  It is a mapping from a
+character code to a bit pattern to be drawn in a drawable.  Fonts may
+be "fixed width" (each character is the same width, like a typewriter
+or conventional computer terminal) or "proportionally spaced" (each
+character takes only the space needed for that character, like a normal
+typeset book).  Fonts come in many sizes, shapes, and styles.  They can
+even write from right to left!  But X does not provide for rotated
+fonts, or fonts that write vertically.
+
+
+File: quintus.info,  Node: pxl-bas-graf-color,  Next: pxl-bas-graf-gc,  Prev: pxl-bas-graf-font,  Up: pxl-bas-graf
+
+Color and colormaps
+...................
+
+   A color is a triple of Red, Green, Blue values.  Each "pixel", or
+point, in a window or pixmap may be a different color.  On each hardware
+platforms, there will be a restriction on the number of colors that may
+be displayed in a window at a time, and also a limitation on the number
+of different colors that are possible at all.  For example, many screens
+are capable of showing approximately 16 million colors (256 different
+shades each of red, green, and blue), but can only show 256 colors at
+one time.  This means that "pixel values", the numbers assigned to each
+pixel, will be between 0 and 255.  Each window, therefore, must have a
+way to know what color is associated with each pixel value.  This is
+what a "colormap" does:  it maps from pixel values to actual colors.
+
+   Notice that a colormap is associated with each window, but not with
+pixmaps.  The pixel values in a pixmap are uninterpreted until the
+pixmap is copied to a window.  So a pixmap copied into two different
+windows may appear in different colors if those windows have different
+colormaps.
+
+
+File: quintus.info,  Node: pxl-bas-graf-gc,  Prev: pxl-bas-graf-color,  Up: pxl-bas-graf
+
+Graphics contexts (GCs)
+.......................
+
+   As we have seen in *Note pxl-bas-graf::, the look of drawings is
+determined by attaching graphics attributes to a drawable.  It is often
+desirable to have various drawables use the same list of attributes.
+ProXL provides a data structure called "graphics context" (GC) to
+handle this situation.
+
+   To determine a figure's properties, an application can attach a list
+of attributes to each drawable.  Alternatively, the application can
+create a GC, and specify the desired parameters there.  Accordingly,
+there are two versions of each drawing primitive:
+   * one that uses the destination drawable's graphics attributes
+
+   * one that takes a GC as an argument.
+
+   These two approaches can be freely intermixed, and used with great
+power and flexibility, as explained in *Note pxl-graf-cre-use::.
+
+
+File: quintus.info,  Node: pxl-bas-crs,  Next: pxl-bas-inf,  Prev: pxl-bas-graf,  Up: pxl-bas
+
+Cursors
+-------
+
+   A "cursor" is the visual representation on the screen of the pointer
+device (mouse).  A cursor is _not_ the visual representation of the
+type-in position; X does not have a name for that.  Each X window may
+specify what shape the cursor will take when the cursor is in that
+window.  If a window doesn't specify a cursor in its attribute list, it
+uses the same one as its parent window.
+
+
+File: quintus.info,  Node: pxl-bas-inf,  Next: pxl-bas-attr,  Prev: pxl-bas-crs,  Up: pxl-bas
+
+Inferring arguments
+-------------------
+
+   In X, a "drawable" is an object into which you can draw, either a
+window or pixmap.  ProXL drawing procedures take an argument of type
+"Drawable".  Therefore, you can pass either a window or a pixmap to
+these drawing procedures.
+
+   ProXL extends this concept to include "displayables", "screenables",
+"windowables", "colormapables", "gcables", and "fontables".  If, for
+example, a ProXL procedure requires a screen as an argument, you can
+pass either a screen or any other object which uniquely determines a
+screen.  One object can uniquely determine another in two ways, either
+directly or via a default.  For example, a window is directly
+associated with only one screen.  Therefore, anywhere a screen is
+required any window associated with that screen can be specified.  On
+the other hand, a display may have more than one screen associated with
+it, but it has only one default screen.  Therefore, anywhere a screen
+is required the screen's display can be specified, if the display's
+default screen is the screen in question.
+
+   Following is a complete listing of the "-ables" supported by ProXL.
+The parenthesized associations below indicate that unique determination
+is made via a default value.
+Object required
+     Objects fulfilling the requirement
+
+"displayable"
+     display, screen, window, pixmap, colormap, gc, font, cursor
+
+"screenable"
+     display (default screen), screen, window, pixmap, colormap, gc
+
+"windowable"
+     display (root window of default screen), screen (root window),
+     window
+
+"colormapable"
+     display (default colormap of default screen), screen (default
+     colormap), window, colormap
+
+"gcable"
+     window, pixmap, gc
+
+"fontable"
+     window, pixmap, gc, font
+
+   Therefore, subsequent sections in this manual may describe an
+argument of a ProXL procedures as, for example, a GCable.  In this case
+you can specify either a window, pixmap or GC as the argument.
+
+
+File: quintus.info,  Node: pxl-bas-attr,  Next: pxl-bas-tyi,  Prev: pxl-bas-inf,  Up: pxl-bas
+
+Attributes:  Specifying properties of ProXL objects
+---------------------------------------------------
+
+   ProXL makes heavy use of what we call "attributes".  Graphics
+attributes, discussed above, are an example.  An attribute is one aspect
+of the current state of a ProXL object.  Formally, it is a Prolog term
+whose functor determines which attribute it is, and whose arguments
+determine the current state of that aspect of the object.
+
+   Attributes are used to
+
+   * specify the initial state of a newly created object
+
+   * change an object
+
+   * inquire about the current state of an object.
+
+   All procedures that use attributes accept a list, so many independent
+aspects of the state of an object may be examined or changed in a
+single operation.  Some examples of attributes are `size(WIDTH,HEIGHT)'
+for windows, pixmaps, and screens, and `line_width(WIDTH)' for GCs,
+windows and pixmaps, `mapped(STATE)' for windows.
+
+
+File: quintus.info,  Node: pxl-bas-tyi,  Next: pxl-bas-dis,  Prev: pxl-bas-attr,  Up: pxl-bas
+
+Handling keyboard and mouse input
+---------------------------------
+
+* Menu:
+
+* pxl-bas-tyi-cbk::                     Callbacks
+* pxl-bas-tyi-rfr::                     Refreshing windows
+* pxl-bas-tyi-err::                     Errors
+
+   X is "asynchronous": X commands will be executed in the order they
+are specified, but may be executed some time later.  Commands are
+queued up, and only transmitted to the X server when the buffer fills
+up or when the buffer is flushed.  This affects programming style in
+various ways:  It has consequences for error handling, callbacks, and
+window refreshing.  It sometimes necessitates "flushing", though ProXL
+always flushes all ProXL displays whenever it is going to wait for user
+input, including input to the Prolog prompt.  This greatly cuts down on
+the need to explicitly flush a display.
+
+
+File: quintus.info,  Node: pxl-bas-tyi-cbk,  Next: pxl-bas-tyi-rfr,  Up: pxl-bas-tyi
+
+Callbacks
+.........
+
+   ProXL allows the user to register "callbacks" for each window, that
+is, Prolog routines that are called when certain "events" occur.  These
+routines may be passed any arguments, including information particular
+to that event.  For example, you may register a callback on a window for
+mouse button press events, and have your routine receive the position in
+the window of the mouse at the time the button was pressed.
+
+   Callbacks are the usual mechanism for ProXL programs to listen to and
+handle events, although ProXL programs may get and handle events
+directly if they wish.
+
+
+File: quintus.info,  Node: pxl-bas-tyi-rfr,  Next: pxl-bas-tyi-err,  Prev: pxl-bas-tyi-cbk,  Up: pxl-bas-tyi
+
+Refreshing windows
+..................
+
+   People might expect lines or other shapes they have put on the
+screen to stay put.  In X they do not.  Another way to look at this is
+that the X window system does not automatically refresh windows when
+they become "damaged"; that is, when a window that was occluding
+another window is moved or unmapped, it leaves the occluded window with
+the wrong contents.  It is _always_ the responsibility of each
+application to keep its window up to date.
+
+   This is a case where procedural drawing (see *Note pxl-bas-lin::)
+determines programming style in ProXL.  You start by writing one setup
+call, which determines all aspects of a window, creates that window,
+attaches callbacks, and maps the window.  Then when the window is
+damaged, your callback will be executed to refresh the window.  The
+tutorial ends with a simple example of such a program.
+
+   Also note that attempts to draw into a window before it is mapped
+will quietly be ignored.  So if you write a program that creates a
+window, maps it, and then starts drawing in it, you'll often be
+surprised to find that there's nothing drawn in the window.  It is
+essential to wait for the window to become mapped.  The easiest way to
+do this is to do the drawing in a callback, which will automatically be
+executed as soon as the window becomes visible (as well as every time
+it is damaged).
+
+
+File: quintus.info,  Node: pxl-bas-tyi-err,  Prev: pxl-bas-tyi-rfr,  Up: pxl-bas-tyi
+
+Errors
+......
+
+   Because of asynchronicity, you may have executed many commands when
+you discover that a previous command has caused an error.  A ProXL
+feature described in *Note pxl-eh-eho-synchronize:: enables you to get
+around this problem during debugging.
+
+   There are two types of errors in X, "fatal errors" and "recoverable
+errors".  "Fatal errors" are handled by the server and terminate
+program execution.  "Recoverable errors" are handled by the ProXL error
+handler, or a user-specified error handler.
+
+
+File: quintus.info,  Node: pxl-bas-dis,  Prev: pxl-bas-tyi,  Up: pxl-bas
+
+Displays and Screens
+--------------------
+
+   A ProXL "screen" is what it sounds like: a physical screen on a
+monitor.  Normally each CPU has one screen associated with it.
+However, there can be more; for instance, you might have both a color
+and a monochrome screen.  ProXL allows programs to use all available
+screens.
+
+   X is "network transparent", meaning that a program may open windows
+on any screen that is accessible through a network.  This is possible
+because commands to X are sent via interprocess communication (IPC) to
+a separate "X server" process, which actually does the work.  A ProXL
+"display" is essentially a connection between your Prolog program and
+the X server.  Think of a "display" as one CPU on a network.  Each
+display has a fixed number of "screens", one of which is opened by
+default upon opening X.  Also, given a display, you can enumerate its
+screens, as well as find its default screen.
+
+   Unless network transparency is being exploited, a ProXL programmer
+will not normally have to deal with displays explicitly.  Screens are
+almost always handled by a default mechanism.  Consult an Xlib manual
+for an overview of how screens and displays are used and why they exist.
+
+
+File: quintus.info,  Node: pxl-tut,  Next: pxl-util,  Prev: pxl-bas,  Up: pxl
+
+Tutorial
+========
+
+* Menu:
+
+* pxl-tut-dwin::                        Displaying a Window on the Screen
+* pxl-tut-dtxt::                        Displaying Text in the Window
+* pxl-tut-siz::                         Making the Window the Right Size
+* pxl-tut-dbg::                         Drawing a Textured Background
+* pxl-tut-dshd::                        Drawing a Drop Shadow
+* pxl-tut-tit::                         Specifying a Title for the Window
+* pxl-tut-col::                         Color
+* pxl-tut-crs::                         Specifying a Cursor for the Window
+* pxl-tut-cbk::                         Specifying a Callback Procedure for a Window Event
+* pxl-tut-hello::                       The 'hello.pl' Program
+
+   This section briefly introduces each of the major aspects of Quintus
+ProXL through an interactive session.  Starting from a primitive
+version, we will add features until the session covers the breadth of
+Quintus ProXL.
+
+   This session shows how ProXL programs can be developed interactively
+using Quintus Prolog.  This is one of the great advantages of ProXL
+over most other approaches to X Window system application development.
+We encourage you to bring up a ProXL system and actually type in the
+following session.
+
+   In *Note pxl-tut-hello:: we present a ProXL program whose results
+are the same as the interactive session.  This session and program are
+not themselves useful, but they should give you enough of an idea of
+how ProXL works so that you can begin to write your own programs.
+
+   In order to understand the session, we assume that you know how to
+use Quintus Prolog and your X window manager and, in order to run the
+session and program, we assume that you have already installed both the
+X window system and Quintus ProXL.
+
+   ProXL refers to an object by means of a handle.  An example of a
+handle is, `window(1787368)'.  The functor `window/1' denotes the type
+of the object and the integer 1787368 is a unique identifier for the
+particular object.  Your ProXL program should not depend upon the form
+of either the type or the identifier.  Rather it should simply treat
+the handle as an opaque Prolog term (just like a Prolog stream or
+database reference).  The unique object identifiers generated by ProXL
+will change from session to session, therefore, when you run your
+session the object identifiers returned by ProXL may be different than
+the ones printed here.
+
+
+File: quintus.info,  Node: pxl-tut-dwin,  Next: pxl-tut-dtxt,  Up: pxl-tut
+
+Displaying a Window on the Screen
+---------------------------------
+
+   First, let's put up a window.  Type the command, 'prolog', into a
+shell window running under the X window system, and load the ProXL
+library:
+
+     % prolog
+     
+     Quintus Prolog Release 3.5 (Sun 4, SunOS 5.5)
+     
+     | ?- [library(proxl)].
+
+   You will be greeted with many messages about files being loaded, and
+finally will get another Prolog prompt.  Now let's create a window:
+
+     | ?- create_window(Window, [mapped(true)]),
+          retractall(win(_)),
+          assert(win(Window)).
+     
+     Window = window(2376568)
+
+   After a few moments, a window should appear on your screen.  Some
+window managers may require you to choose a position for the window.
+
+   That's all there is to putting a window on the screen.  You will
+notice that we didn't specify very much.  We didn't say how big to make
+the window, nor where on the screen to put it, nor what color to make
+it, etc.  All these parameters, and many more, are defaulted for us by
+ProXL.  The only thing we did specify was `mapped(true)'. In X,
+"mapping" a window makes it visible if its parent window is visible.
+Since we didn't specify a parent window for the window we're creating,
+the root window of the default screen is its parent, and the root window
+is always mapped.  So by specifying the attribute `mapped(true)', we
+make the new window visible.
+
+   The second argument of `create_window/2' is a list; this is called an
+"attribute" list.  We could have put many different attributes in this
+list, to specify any of the attributes of the window mentioned above as
+having been defaulted.  A complete list of the attributes supported by
+windows can be found in *Note pxl-win::, but for this example we won't
+need to use very many of them.
+
+   We use `assert/1' to remember the window we've created so that we can
+use it later.  This is a good idea while you are experimenting with
+ProXL, but isn't usually necessary in actual programs.  Using
+`retractall/1' to initialize the table first is just standard Prolog
+wisdom, avoiding any problems if this tutorial is run more than once.
+
+   Notice that this window is quite small; the default window size is
+100 by 100 pixels.  If we're going to display a message in this window,
+we'll need it to be bigger.
+
+     | ?- win(Window),
+          put_window_attributes(Window, [size(250,100)]).
+     
+     Window = window(2376568)
+
+   This makes the window 250 by 100 pixels, more than big enough for our
+purposes.  The call to `win/1' gets back the window we just created, and
+`put_window_attributes/2' changes the window's size.
+
+   `put_window_attributes/2' is much like `create_window/2', except
+that it allows you to specify new attributes for an existing window,
+and `create_window/2' lets you specify attributes for a window to be
+newly created.  We could have specified `size(250,100)' in the call to
+`create_window/2', if we had thought of it then.
+
+   If you try this, one of two things may happen:  the window may be
+changed to the right size, or it may not.  The reason is that X allows
+the window manager to have control over top level window sizes and
+positions.  An application can try to change these things, but the
+window manager decides whether to allow it or not.  The theory behind
+this is that the _user_ should be in control of his windows, and the
+window manager is his tool in implementing his wishes.  If this last
+goal didn't work for you, don't worry.  Try to get your window manager
+to give the test window enough space for the message, and ignore the
+fact that the message isn't centered.  The final version of this
+program will center the message.
+
+
+File: quintus.info,  Node: pxl-tut-dtxt,  Next: pxl-tut-siz,  Prev: pxl-tut-dwin,  Up: pxl-tut
+
+Displaying Text in the Window
+-----------------------------
+
+   Now let's load a big font and write a message in the window.
+
+     | ?- load_font('*-times-bold-i-normal--24-*', Font),
+          win(Window),
+          put_graphics_attributes(Window, [font(Font)]),
+          draw_string(Window, 10, 50, 'Hello, world!!').
+     
+     Font = font(1787304),
+     Window = window(2376568)
+
+   `load_font/2' does just what it sounds like.  The atom,
+`'*-times-bold-i-*-240-*'' is the specification of a font that is known
+to the X11 server.(1)  To see all of the fonts known to your X11
+server, use the shell command `xlsfonts'.
+
+   `put_graphics_attributes/2' will change graphics attributes of its
+first argument (aspects you might expect to specify when drawing).  In
+this case, we're specifying that we want to use the font we just loaded
+when we draw text in this window.  Then we call `draw_string/4' to
+write the message `Hello, world!!' into the window starting at the
+pixel position (10,50).
+
+   Notice that we didn't use `put_window_attributes/2' to specify the
+font for the window, but instead used `put_graphics_attributes/2'.  The
+difference is important.  ProXL has many `put_SOMETHING_attributes/2'
+procedures, and in all cases the SOMETHING refers to the attributes,
+not to the object being changed.  In this case,
+`put_window_attributes/2' changes "window" attributes of the window you
+pass it.  But `put_graphics_attributes/2' changes "graphics" attributes
+of the argument you pass it.  Here that argument is a window; in *Note
+pxl-tut-dbg:: we will use `put_graphics_attributes/2' to change a
+pixmap.
+
+   The text is positioned at the coordinates (10,50).  This means that
+the "origin point" for the first character is at that position, but
+what is the origin point?  Actually, each type of font has its own way
+of positioning text relative to the origin point.  For the typical
+latin fonts (fonts for the ASCII character set), however, all of a
+character is usually printed to the right of the origin point, and only
+descenders go below the origin point.  So you can usually think of the
+origin as the left end of the baseline for the text being drawn.
+
+   ---------- Footnotes ----------
+
+   (1) If you are using X11 Release 2, then use the font name
+`'vbg-25''.  The way to specify fonts changed from Release 2 to Release
+3.
+
+
+File: quintus.info,  Node: pxl-tut-siz,  Next: pxl-tut-dbg,  Prev: pxl-tut-dtxt,  Up: pxl-tut
+
+Making the Window the Right Size
+--------------------------------
+
+   Make the window the right size for the message:
+
+     | ?- win(Window),
+             text_extents(Window, 'Hello, world!!', L, R, W,
+                     Ascent, Descent),
+             Width is W+4,
+             Height is Ascent+Descent+4,
+             put_window_attributes(Window, [size(Width,Height)]),
+             TextLeft is L+2,
+             TextBase is Ascent+2.
+     
+     Window = window(2376568),
+     L = 0,
+     R = 145,
+     W = 146,
+     Ascent = 17,
+     Descent = 3,
+     Width = 150,
+     Height = 24,
+     TextLeft = 2,
+     TextBase = 19
+
+   First we retrieve our window.  The second line, the call to
+`text_extents/7', computes how big the message is when printed in the
+window.  The first argument to `text_extents/7' is a specification of
+the font we are using.  Here, since we've already specified the font to
+use for drawing into this window, the window uniquely determines the
+font.  So ProXL accepts the window in place of the font argument.
+
+   This unique determination of argument types is an important concept.
+ProXL tries to infer the right object from the object you give it.  In
+this case, it wants a font, but it accepts a window.  Previously, we
+associated a font with this window, so ProXL knows which font we mean.
+The table in *Note pxl-bas-inf:: spells out which entities are
+predictable.
+
+   Returning to our example, the remaining arguments to
+`text_extents/7' are:
+
+MSG
+     the string whose size we're trying to find
+
+L
+     left bearing: the number of pixels this string will occupy left of
+     the origin
+
+R
+     right bearing: the number of pixels this string will occupy right
+     of the origin
+
+W
+     total width
+
+ASCENT
+     the number of pixels above the origin
+
+DESCENT
+     the number of pixels below the origin
+
+   The next two goals compute the width and height of the window.  We
+allow 2 pixels of blank space all around the string, yielding the 4
+pixels we add in to determine both width and height.  Note that the
+height of a string is its ascent plus it descent.
+
+   In the fifth line, we specify the new size for the window as we did
+before, only now with a more precise size.
+
+   The last two lines compute the origin point for drawing into the
+window.  TEXTLEFT allows 2 pixels to the left of the string, and
+TEXTBASE leaves 2 pixels above.  For this tutorial, we'll just remember
+these results and use them when needed.  In an actual program, we would
+pass them as arguments to the program doing the drawing.
+
+   Notice that resizing the window erases our `Hello, world!!' message.
+This points up an important aspect of X:  it is _always_ the
+responsibility of the application to refresh its windows.  Later we'll
+worry about making that work automatically; for now, just manually
+refresh the window:
+
+     | ?- win(Window),
+          draw_string(Window, 2, 19, 'Hello, world!!').
+     
+     Window = window(2376568)
+
+   There shouldn't be any surprises here.  The position (2,19) simply
+the TextLeft and TextBase we computed earlier.
+
+
+File: quintus.info,  Node: pxl-tut-dbg,  Next: pxl-tut-dshd,  Prev: pxl-tut-siz,  Up: pxl-tut
+
+Drawing a Textured Background
+-----------------------------
+
+   The window would look more interesting with a textured background.
+We decide that a 4x4 pixmap with two lines between opposite corners
+forming an X would make an interesting background texture.
+
+     | ?- create_pixmap(Pix, [size(4,4)]),
+             draw_segments(Pix, [segment(0,0,3,3), segment(0,3,3,0)]),
+             win(Window),
+             put_window_attributes(Window, [background(Pix)]).
+     
+     Pix = pixmap(2383840),
+     Window = window(2376568)
+
+   The first line is as simple as it looks: it creates a 4x4 pixel
+pixmap.  The second line draws the X.  Note that coordinates are given
+with (0,0) as the northwest corner pixel, so (3,3) is the southeast
+corner.  Then the third line installs the new pixmap as the background
+pattern.
+
+   You might be wondering why the window didn't change.  The reason is
+simple:  the background is used to fill parts of the window that have
+been cleared.  The easiest way to get the new background displayed is
+to use your window manager to either iconify and then uniconify the
+window, or to push it behind another window and then pull it back to
+the front.  You could also do it by calling
+     | ?- win(Window),
+          clear_window(Window).
+     
+     Window = window(2376568)
+
+   Again we need to refresh the window:
+
+     | ?- win(Window),
+          draw_string(Window, 2, 19, 'Hello, world!!').
+     
+     Window = window(2376568)
+
+   That doesn't look terribly interesting.  Try drawing the string in
+white instead of black.
+
+     | ?- win(Window),
+          get_screen_attributes([white_pixel(Pix)]),
+          put_graphics_attributes(Window, [foreground(Pix)]),
+          draw_string(Window, 2, 19, 'Hello, world!!').
+     
+     Window = window(2376568),
+     Pix = 0
+
+   The second line determines the pixel value for white on our screen.
+X does not establish a standard pixel value for black and white, so you
+must determine it explicitly.  In fact, X doesn't even guarantee that
+the `black_pixel/1' and `white_pixel/1' attributes will yield black and
+white, but they are "logical" black and white.
+
+   The third line sets the foreground color, the color to draw in, to
+white.  Finally, we draw our message.  The default drawing color in
+ProXL is `black_pixel'; this is why you didn't have to specify it
+earlier.  But now that we've specified white, all drawing will be done
+in white until we change it again.
+
+
+File: quintus.info,  Node: pxl-tut-dshd,  Next: pxl-tut-tit,  Prev: pxl-tut-dbg,  Up: pxl-tut
+
+Drawing a Drop Shadow
+---------------------
+
+   The white text also needs highlighting, so let's try a drop shadow.
+Drop shadows are done by printing the text in black first, and then
+again in white, offset a little bit horizontally and vertically.
+
+   Since the window is just big enough for the message, you should use
+the window manager to make it a bit bigger so it can accommodate both
+the message and its shadow.  Then go ahead and draw the drop shadow.
+
+     | ?- win(Window),
+          clear_window(Window),
+          get_screen_attributes([black_pixel(Black),
+                                 white_pixel(White)]),
+          put_graphics_attributes(Window, [foreground(Black)]),
+          draw_string(Window, 7, 27, 'Hello, world!!'),
+          put_graphics_attributes(Window, [foreground(White)]),
+          draw_string(Window, 2, 19, 'Hello, world!!').
+     
+     Window = window(2376568),
+     Black = 1,
+     White = 0
+
+   Note that we've determined both `black_pixel/1' and `white_pixel/1'
+of the screen at the same time here.  You can put as many attributes in
+this list, and in fact in any attribute list, as you like.  Other than
+that, this example is pretty straightforward.  We drew the message
+first in black, then again in white five pixels to the left and eight
+pixels above the shadow.
+
+   The resulting displacement for the shadow seems a bit too much, at
+least vertically.  The displacement should probably be relative to the
+size of the characters in the font, so let's find out how big the
+characters in the font are.
+
+     | ?- win(Window),
+          get_font_attributes(Window, [height(H), max_width(W)]).
+     
+     Window = window(2376568),
+     H = 25,
+     W = 23
+
+   The attribute `height/1' is the nominal height of the font, that is,
+its "declared" height.  Individual characters can be taller than this,
+but they usually are not.  The attribute `max_width/1' represents the
+width of the widest character in this font.  Remember, different
+characters can have different widths.  Notice that we've asked for the
+font attributes of a window.  Once again, we take advantage of ProXL's
+ability to infer a font from a window.
+
+   Given these numbers, let's say that one fifth of the font's
+`max_width' and `height' are about the right horizontal and vertical
+offset for the drop shadow.  So now recalculate the size of the window:
+
+     | ?- win(Window),
+          get_font_attributes(Window, [height(Fh), max_width(Fw)]),
+          Xdisplacement is Fw//5,
+          Ydisplacement is Fh//5,
+          text_extents(Window, 'Hello, world!!', L, R, W, A, D),
+          Width is W+Xdisplacement+4,
+          Height is A+D+Ydisplacement+4,
+          put_window_attributes(Window, [size(Width,Height)]).
+     
+     Window = window(2376568),
+     Fh = 25,
+     Fw = 23,
+     Xdisplacement = 4,
+     Ydisplacement = 5,
+     L = 0,
+     R = 145,
+     W = 146,
+     A = 17,
+     D = 3,
+     Width = 154,
+     Height = 29
+
+   This looks a bit complicated, but is actually just a combination of
+things we've done before.  First we find the font's `max_width' and
+`height', as above, and compute the X and Y displacement to be one
+fifth of those values.  Then we find the size of the string, as before.
+The width and height of the window should be just as before, with the
+X and Y displacement added in.  Finally, we resize the window.  Not
+surprisingly, we lose the message again; let's put it back.
+
+     | ?- win(Window),
+          Xdisplacement = 4,
+          Ydisplacement = 5,
+          A = 20,
+          get_screen_attributes([black_pixel(Black),
+                     white_pixel(White)]),
+          X0 is 2+Xdisplacement,
+          Y0 is 2+A+Ydisplacement,
+          put_graphics_attributes(Window, [foreground(Black)]),
+          draw_string(Window, X0, Y0, 'Hello, world!!'),
+          X1 is 2,
+          Y1 is 2+A,
+          put_graphics_attributes(Window, [foreground(White)]),
+          draw_string(Window, X1, Y1, 'Hello, world!!').
+     
+     Window = window(2376568),
+     Xdisplacement = 4,
+     Ydisplacement = 5,
+     A = 20,
+     Black = 1,
+     White = 0,
+     X0 = 6,
+     Y0 = 27,
+     X1 = 2,
+     Y1 = 22
+
+   XDISPLACEMENT, YDISPLACEMENT, and A come from previous goals, so we
+don't have to recompute them.  We're also assuming the the left bearing
+of our message is 0.  So the X position of our message is just 2, and
+the Y position is 2 plus the ascent of the message (A).  And the X and Y
+position of the shadow message is offset from this by the X and Y
+displacement.  The rest of this example is just like what we've seen
+before.
+
+
+File: quintus.info,  Node: pxl-tut-tit,  Next: pxl-tut-col,  Prev: pxl-tut-dshd,  Up: pxl-tut
+
+Specifying a Title for the Window
+---------------------------------
+
+   If you use a window manager that displays window titles, you probably
+would like to be able to give the window a title.  In ProXL, this is
+done with the `property/2' window attribute.
+
+     | ?- win(Window),
+          put_window_attributes(Window,
+                  [property('WM_NAME', hello)]).
+     
+     Window = window(2376568)
+
+   This puts the string `hello' as the value of the WM_NAME property of
+our window.  This property is watched by window managers that display
+window titles, and when it changes, the window manager updates the
+title.  There are many other properties that are significant to window
+managers, all discussed in *Note pxl-win-wmi::.
+
+   Some window managers do not display window titles, for example,
+`uwm'.  If your window is like this, don't worry, the properties will
+not do any harm.    And setting this property will make your programs
+friendlier for users with other window managers.
+
+
+File: quintus.info,  Node: pxl-tut-col,  Next: pxl-tut-crs,  Prev: pxl-tut-tit,  Up: pxl-tut
+
+Color
+-----
+
+   Now let's add color.  If you don't have a color machine, this will
+still work.  Of course, you won't be able to see the colors, so if you
+can find a color display to run this example on, that would be best.
+
+     | ?- alloc_color(goldenrod, Pixel1),
+          alloc_color(forestgreen, Pixel2),
+          alloc_color(cyan, Pixel3),
+          alloc_color(black, Pixel4),
+          retractall(colors(_,_,_,_)),
+          assert(colors(Pixel1,Pixel2,Pixel3,Pixel4)).
+     
+     Pixel1 = 6,
+     Pixel2 = 7,
+     Pixel3 = 8,
+     Pixel4 = 1
+
+   Each line here allocates a color in the default colormap of the
+default screen.  When you give `alloc_color/2' a valid color, it always
+returns a pixel value, even for black and white screens.  If it can't
+allocate the color you ask for, it will give you the closest one it
+can.  In this case, we have chosen the colors so that on a monochrome
+system the two background colors (PIXEL1 and PIXEL2) will be different,
+and likewise the two foreground colors (PIXEL3 and PIXEL4), so that the
+window will look reasonable.  It wouldn't do if all the colors were the
+same.
+
+   If you're following along typing in these examples, you probably
+didn't get the same pixel values as we did here.  That's why we assert
+the values:  so we can get the right pixel values later when we need
+them.
+
+   Now let's construct a new background that uses these colors.
+
+     | ?- colors(Pixel1, Pixel2, _, _),
+          create_pixmap(Pix, [size(4,4)]),
+          put_graphics_attributes(Pix, [foreground(Pixel1)]),
+          fill_rectangle(Pix, 0, 0, 3, 3),
+          put_graphics_attributes(Pix, [foreground(Pixel2)]),
+          draw_segments(Pix, [segment(0,0,3,3), segment(0,3,3,0)]),
+          win(Window),
+          put_window_attributes(Window,[background(Pix)]).
+     
+     Pixel1 = 6,
+     Pixel2 = 7,
+     Pix = pixmap(586904)
+
+   The only thing here that's new is the call to `fill_rectangle/5'.  We
+call it here to fill the pixmap with the appropriate background color.
+The rest of this has been discussed before in *Note pxl-tut-dbg::.
+
+   Finally, let's put the message back, only in color.
+
+     | ?- win(Window),
+          colors(_, _, Pixel3, Pixel4),
+          put_graphics_attributes(Window, [foreground(Pixel4)]),
+          draw_string(Window, 6, 24, 'Hello, world!!'),
+          put_graphics_attributes(Window, [foreground(Pixel3)]),
+          draw_string(Window, 2, 19, 'Hello, world!!').
+     
+     Window = window(2376568),
+     Pixel3 = 8,
+     Pixel4 = 1,
+
+   This is exactly what we did before, only now we specify
+`foreground/1' for the message, and the shadow, to take on the newly
+allocated colors.
+
+
+File: quintus.info,  Node: pxl-tut-crs,  Next: pxl-tut-cbk,  Prev: pxl-tut-col,  Up: pxl-tut
+
+Specifying a Cursor for the Window
+----------------------------------
+
+   The last complication we want to add to this example is a special
+cursor.  Let's arrange for the cursor to look like gumby when it is in
+our window.
+
+     | ?- create_cursor(gumby, Cursor),
+          put_window_attributes(window(1787368), [cursor(Cursor)]).
+     
+     Cursor = cursor(1787472)
+
+   This is pretty much what one would expect.  X predefines many
+cursors; *Note pxl-crs:: lists them.  Gumby just happens to be one of
+them.  We could custom design a cursor if we wished, but gumby should
+be fine for this example.
+
+   Try moving your mouse cursor into the hello window, and you will see
+that it becomes Gumby (or a reasonable facsimile).
+
+
+File: quintus.info,  Node: pxl-tut-cbk,  Next: pxl-tut-hello,  Prev: pxl-tut-crs,  Up: pxl-tut
+
+Specifying a Callback Procedure for a Window Event
+--------------------------------------------------
+
+* Menu:
+
+* pxl-tut-cbk-redraw::                  Redrawing a window using a callback procedure
+* pxl-tut-cbk-term::                    handle_events and Terminating a Dispatch Loop
+
+   A callback is a Prolog procedure that is invoked when a particular
+window system event occurs.  Examples of window system events are key
+presses, mouse clicks, mouse motion and window exposure.
+
+   A common ProXL application will create and map all of its windows and
+register a callback with each event to which the application must
+respond.  Whenever Prolog is waiting for input, it watches for ProXL
+events and executes the registered callbacks.
+
+
+File: quintus.info,  Node: pxl-tut-cbk-redraw,  Next: pxl-tut-cbk-term,  Up: pxl-tut-cbk
+
+Redrawing a window using a callback procedure
+.............................................
+
+   In our tutorial so far, every time our window has been damaged we
+have had to manually redraw it.  The application program is always
+responsible for redrawing its windows when they have been damaged.
+This can be accomplished by associating a callback with the window
+telling ProXL what to do when the window needs to be redrawn.
+
+   The steps required to automatically redraw our window are:
+   * Define a callback procedure that draws the current contents of the
+     window(1)
+
+   * Register that callback with the `expose' event of the window, so
+     that the callback is invoked when the window needs to be redrawn
+
+   First, we must define the callback procedure to redraw our window:
+     | ?- compile(user).
+     | redraw(Window, Pixel3, Pixel4) :-
+             Xdisplacement = 4,
+             Ydisplacement = 5,
+             A = 20,
+             X0 is 2+Xdisplacement,
+             Y0 is 2+A+Ydisplacement,
+             X1 is 2,
+             Y1 is 2+A,
+             put_graphics_attributes(Window, [foreground(Pixel4)]),
+             draw_string(Window, X0, Y0, 'Hello, world!!'),
+             put_graphics_attributes(Window, [foreground(Pixel3)]),
+             draw_string(Window, X1, Y1, 'Hello, world!!').
+     | ^D
+     % user compiled, 0.383 sec 380 bytes
+     
+     yes
+
+   Next we must register the callback for `expose' events sent to our
+window:
+
+     | ?- win(Window),
+          colors(_, _, Pixel3, Pixel4),
+          put_window_attributes(Window,
+                 [callback(expose,
+                         [count(0)],
+                         redraw(Window,Pixel3,Pixel4))]).
+     
+     Window = window(2376568),
+     Pixel3 = 8,
+     Pixel4 = 1
+
+   Here we have told ProXL that when the X server determines that it is
+necessary to redraw the window, by sending `expose' events, the
+procedure `redraw/3' should be called.  The X server may send several
+`expose' events, each specifying a different part of the window to be
+redrawn.  Since this is a simple example, we don't bother to redraw the
+window part by part.  We just redraw the entire window whenever any
+part of it needs to be redrawn.  The second argument, `count(0)',
+accomplishes this by telling ProXL that it should call `redraw/3' only
+if this is the last `expose' message in the group.(2)
+
+   Now if you do something to force X to redraw our window, like
+iconifying and then uniconifying it, or hiding it behind another window
+and then exposing it, you will find that the window is automatically
+refreshed.  Try it.
+
+   ---------- Footnotes ----------
+
+   (1) Since an `expose' event is sent to a window when it is first
+mapped (appears on the screen), it is not necessary to write separate
+code that initially draws the window and subsequently redraws the
+window.
+
+   (2) If we had wanted to do more precise redrawing, we would have put
+`[position(X,Y),size(W,H)]' as the second argument in our callback
+specification, in place of `[count(0)]', and passed X, Y, W, and H to
+the callback procedure.  The callback procedure would then only redraw
+the area of the window thus specified.
+
+
+File: quintus.info,  Node: pxl-tut-cbk-term,  Prev: pxl-tut-cbk-redraw,  Up: pxl-tut-cbk
+
+`handle_events' and Terminating a Dispatch Loop
+...............................................
+
+   The last thing we need to learn to complete the example is how to
+wait for a ProXL condition.  The example we have so far will keep our
+window refreshed indefinitely, but to make this a stand-alone demo we
+need to wait, handling refresh events, until the user indicates he is
+finished with this demo.  Let's say when you click a mouse button in
+the window, we destroy the window and exit.
+
+   This is the role of the `handle_events/[0,1,2]' predicates.  The
+simplest, `handle_events/0', will wait, handling all ProXL events,
+until all windows with callbacks are destroyed.  `handle_events/[1,2]'
+may be made to return before all windows have been destroyed, may be
+used to get information back from callbacks, and to pass context
+information to a callback (so it can behave differently in different
+contexts).  But for this simple example, `handle_events/0' is perfectly
+adequate.
+
+   So all we need to do is arrange for our window to be destroyed when a
+mouse button is pressed in it:
+
+     | ?- win(Window),
+          put_window_attributes(Window,
+                  [callback(button_press,
+                         [],
+                         destroy_window(Win))]).
+     
+     Window = window(2376568)
+
+   Upon receiving a `button_press' event, the ProXL procedure
+`destroy_window/1' is invoked, destroying our window.  At this point,
+`handle_events/0' will return.
+
+   Let's try it out:
+
+     | ?- handle_events.
+
+   Now press a mouse button while the cursor is in our window.  The
+window should go away and `handle_events/0' should return.
+

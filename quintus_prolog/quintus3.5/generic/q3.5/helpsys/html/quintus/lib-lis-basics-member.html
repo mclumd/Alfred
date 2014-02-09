@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>member(</code><var>?Element</var><code>, </code><var>?List</var><code>)</code></h5>
+
+   <p><code>member(</code><var>?Element</var><code>, </code><var>?List</var><code>)</code>
+is true when <var>List</var> is a (possibly partial) list, and <var>Element</var> is one of
+its elements.  It may be used to check whether a particular element
+occurs in a given list, or to enumerate all of the elements of a list
+by backtracking.  <code>member/2</code> may also be used to generate a list.
+
+<pre class="example">     | ?- <kbd>member(a, [b,e,a,r]).</kbd>
+     
+     yes
+     
+     | ?- <kbd>member(e, [s,e,e,n]).</kbd>
+     
+     yes   /* this will succeed <em>twice</em> */
+     
+     | ?- <kbd>member(e, [t,o,l,d]).</kbd>
+     
+     no
+     
+     | ?- <kbd>member(X-Y, [light-dark,near-far,wet-dry]).</kbd>
+     
+     X = light,
+     Y = dark <kbd>;</kbd>
+     
+     X = near,
+     Y = far <kbd>;</kbd>
+     
+     X = wet,
+     Y = dry
+     
+     | ?- <kbd>member(a-X, [b-2,Y-3,X-Y]).</kbd>
+     
+     X = 3,
+     Y = a <kbd>;</kbd>
+     
+     X = a,
+     Y = a
+     
+     | ?- <kbd>member(a, L), member(b, L), member(c, L),</kbd>
+     |    <kbd>length(L, N).</kbd>
+     
+     L = [a,b,c],
+     N = 3
+     </pre>
+
+   <p>The last example will generate
+lists of increasing length whose first three members are <code>a</code>, <code>b</code>, and <code>c</code>.
+
+   <p>If <var>L</var> is a proper list of length <var>n</var>, <code>member(</code><var>X</var><code>,
+</code><var>L</var><code>)</code> has at most <var>n</var> solutions, whatever <var>X</var> is.  But if
+<var>L</var> is a partial list, <code>member/2</code> will backtrack indefinitely,
+trying to place <var>X</var> ever farther to the right.  For example,
+<pre class="example">     | ?- <kbd>member(a, L).</kbd>
+     
+     L = [a|_879] <kbd>;</kbd>
+     
+     L = [_878,a|_881] <kbd>;</kbd>
+     
+     L = [_878,_880,a|_883] <kbd>;</kbd>
+        .
+        .
+        .
+     </pre>
+
+   <p>until you stop it.
+
+   <p>In general, you should only use <code>member/2</code> when the second argument
+is a proper list.  This list need not be ground; however, it must not
+end with a variable.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-lis-basics-memberchk.html#lib-lis-basics-memberchk">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-lis-basics-rel.html#lib-lis-basics-rel">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-lis-basics.html#lib-lis-basics">Up</a>
+</ul>
+</div>
+   </body></html>
+

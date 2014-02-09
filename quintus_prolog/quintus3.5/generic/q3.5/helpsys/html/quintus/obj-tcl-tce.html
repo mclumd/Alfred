@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Specifying a Term Class Essence</h4>
+
+   <p>As mentioned above, it is possible to specify a term class as the type of a slot of some
+other object.  For example, we might declare
+
+<pre class="example">     :- class colored_rectangle = [
+             public origin:point,
+             public size:size,
+             public color:rgb_color].
+     </pre>
+
+   <p>This will store an <code>rgb_color</code> object (i.e., a <code>color/3</code> term) in
+the <code>color</code> slot of each <code>colored_rectangle</code> object. 
+Unfortunately, though, Quintus Objects cannot tell what is the best
+way to store a term object, and therefore it stores it the same way it
+stores a slot declared to be of <code>term</code> type: using the Prolog
+database.  This has all the efficiency disadvantages of <code>term</code>
+slots.  In this
+case, however, we know that all that really needs to be saved in order
+to save an <code>rgb_color</code> object is the three arguments.  We also know
+that each of these arguments is a floating point number, and because
+precision isn't terribly critical in representating colors, each of
+these numbers can be stored as a <code>float</code>, rather than a <code>double</code>. 
+In effect, we know that the <em>essence</em> of a <code>rgb_color</code> object is
+these three numbers; if we have them, we can easily construct the
+<code>color/3</code> term.  If we provide this information in the declaration
+of the <code>rgb_color</code> class, then Quintus Objects can store instances of
+the <code>rgb_color</code> class as 3 separate floats, rather than as a term,
+significantly improving the performance of creating or destroying a
+<code>colored_rectangle</code> object, as well as accessing or modifying its
+<code>color</code> slot.
+
+   <p>The essence of a term class is specified with the following form of
+<code>class</code> declaration:
+<pre class="example">     :- class <var>ClassName</var> = term(<var>Term</var>, <var>Constraint</var>, <var>Essence</var>).
+     </pre>
+
+   <p>where <var>Essence</var> is of the form
+<pre class="example">     [<var>Name1</var>:<var>Type1</var>=i[Variable1], <var>Name2</var>:<var>Type2</var>=i[Variable2], ...]
+     </pre>
+
+   <p>and each <var>Name</var> is a distinct atom naming a slot, each
+<var>Type</var> is a slot type as specified in <a href="obj-scl-slt-typ.html#obj-scl-slt-typ">obj-scl-slt-typ</a>, and each
+<var>Variable</var> is an unbound variable appering in <var>Term</var>. 
+Providing a term essence not only makes storage of terms in ordinary
+object slots more efficient, it also gives a name to each
+"essential" slot of the term class.  This allows you to use
+<code>fetch_slot</code> to fetch the slots of this class.
+
+   <p>To extend our <code>rgb_color</code> example, we might introduce the <code>rgb_color</code>
+class with this declaration:
+<pre class="example">     :- class rgb_color =
+              term(color(Red,Green,Blue),
+                   (float(Red),   Red &gt;= 0.0,   Red =&lt; 1.0,
+                    float(Green), Green &gt;= 0.0, Green =&lt; 1.0,
+                    float(Blue),  Blue &gt;= 0.0,  Blue =&lt; 1.0),
+                   [red:float=Red, green:float=Green, blue:float=Blue]).
+     </pre>
+
+   <p>This declaration defines the <code>rgb_color</code> class exactly as the
+example declaration of the previous section: every <code>color/3</code> term
+whose arguments are all floating point numbers between 0.0 and 1.0
+inclusive are instances of <code>rgb_color</code>.  The difference is that with
+this declaration, ordinary classes that have slots of type
+<code>rgb_color</code>, such as the <code>colored_rectangle</code> example above,
+will be stored more efficiently, and their <code>rgb_color</code>
+slots will be accessed and modified much more efficiently. 
+Also, it will be possible to use <code>fetch_slot(red, Red)</code> in the
+methods of the <code>rgb_color</code> class to fetch to red component of the
+message recipient, and similarly for <code>green</code> and <code>blue</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="obj-tcl-rtrm.html#obj-tcl-rtrm">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-tcl.html#obj-tcl">Up</a>
+</ul>
+</div>
+   </body></html>
+

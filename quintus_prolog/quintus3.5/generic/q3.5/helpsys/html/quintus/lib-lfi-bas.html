@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Introduction -- <code>library(directory)</code></h4>
+
+   <p>For the most part, Prolog programs have little need to examine
+directories or to inquire about file properties.  However, the
+need does occasionally arise.  For example, an expert-system
+shell might offer the option of either loading a single file
+into its knowledge base, or of loading all the files in a
+directory having a particular extension.  The Quintus Prolog
+library file <code>library(directory)</code> provides the tools you need
+to do this.  For example, we might define
+<pre class="example">     kb_load(File) :-
+         (  directory_property(File, searchable) -&gt;
+               forall(file_member_of_directory(File,'*.kb',_,Full),
+                        kb_load(Full))
+         ;  file_property(File, readable) -&gt;
+               kb_load_file(File)
+         ;  format(user_error, '~N! cannot read ~w.~n', [File]),
+            fail
+         ).
+     </pre>
+
+   <p>The routines in this package were designed to be a complete toolkit
+for safely wandering around a UNIX-like file system.  Although there
+are quite a few of them, they do actually fit together in a coherent
+group.  For information on operations relating to individual files rather
+than to directories, see <code>library(files)</code> (<a href="lib-ofi.html#lib-ofi">lib-ofi</a>).
+
+   <p>The following principles have been observed:
+
+     <ul>
+
+     <li>An absolute distinction is drawn between files and directories. 
+The set of operations
+one can usefully perform on a directory is different from the set
+one can perform on a file:  for example, having
+write permission to a directory allows the user to create new files in
+it, not to rewrite the entire directory!  If any routine in this package
+tells you that a "file" exists, you can be sure that it means a
+"regular" file. 
+<li>The directory scanning routines do not actually open the files they
+find.  Thus finer discriminations, such as that between
+source and object code, are not made. 
+<li>The predicate names
+are made up of complete English words in lowercase, separated
+by underscores, with no abbreviations. 
+<li>Every predicate acts like a genuine logical relation insofar as it
+possibly can. 
+<li>Like those in the <code>library(unix)</code> package, if anything goes wrong, the
+predicates in <code>library(directory)</code>
+raise an error exception.  Any time that a predicate
+fails quietly, it should mean "this question is meaningful, but the
+answer is no"; any exception to this should be regarded as a bug. 
+<li>The directory scanning routines insist that the directory argument
+name a searchable directory.  But the "property" routines
+are to be read as "there exists a thing of such a type with such
+a property", and quietly fail if there is no such file or
+directory. 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-lfi-fdi.html#lib-lfi-fdi">Next</a>
+<li><a rel="up" accesskey="u" href="lib-lfi.html#lib-lfi">Up</a>
+</ul>
+</div>
+   </body></html>
+

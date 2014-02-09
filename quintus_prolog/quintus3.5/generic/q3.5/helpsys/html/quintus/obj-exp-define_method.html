@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>define_method/3</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>define_method(</code><var>+Obj</var><code>, </code><var>+Message</var><code>, </code><var>+Body</var><code>)</code>
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Obj</var>
+     <dd><dfn>object</dfn>
+
+     <br><dt><var>Message</var>
+     <dd><dfn>term</dfn>
+
+     <br><dt><var>Body</var>
+     <dd><dfn>callable</dfn>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Install <var>Body</var> as the method for <var>Message</var>
+in the instance <var>Obj</var>.  Following the execution of this goal,
+sending <var>Message</var> to <var>Obj</var> will execute <var>Body</var>, rather than the
+default method or a method previously defined with
+<code>define_method/3</code>.
+
+   <p><var>Message</var> must have been declared to be an instance method for
+the class of <var>Obj</var>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+any argument is unbound.
+
+     <br><dt><code>type_error</code>
+     <dd>
+<var>Obj</var> is not a compound term, or <var>Message</var> or <var>Body</var> is not
+<dfn>callable</dfn>.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>Message</var> does not specify an instance method for the class of
+<var>Obj</var>, or <var>Body</var> include a goal to fetch or store a non-existent
+slot. 
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>instance_method/1</code>, <code>undefine_method/3</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-exp-descendant_of.html#obj-exp-descendant_of">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-exp-debug_message.html#obj-exp-debug_message">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-exp.html#obj-exp">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Opening a Stream</h5>
+
+   <p>Before I/O operations can take place on a stream, the stream must be
+opened, and it must be set to be current input or current output.  As
+illustrated in the figure "Categorization of Stream Handling Predicates", the operations
+of opening and setting
+are separate with respect to the stream predicates, and combined in the File
+Specification Predicates.
+
+     <ul>
+
+     <li><code>open(</code><var>+File</var><code>, </code><var>+Mode</var><code>, </code><var>-Stream</var><code>)</code> attempts to open the file
+<var>File</var> in the mode specified (read,write or append).  If the
+<code>open/3</code> request is successful, a stream object, which can be
+subsequently used for input or output to the given file, is unified
+with <var>Stream</var>.
+
+     <p>The <code>read</code> mode is used for input.  The <code>write</code> and
+<code>append</code> modes are used for output.  The <code>write</code> option causes
+a new file to be created for output.  If the file already exists, then
+it is set to empty and its previous contents are lost.  The
+<code>append</code> option opens an already-existing file and adds output to
+the end of it.  The <code>append</code> option will create the file if it does
+not already exist.
+
+     <p>Options can be specified by calling <code>open/4</code>. 
+</p><li><code>set_input(</code><var>Stream</var><code>)</code> makes <var>Stream</var> the current input stream. 
+Subsequent input predicates
+such as <code>read/1</code> and <code>get0/1</code> will henceforth use this stream.
+
+     <li><code>set_output(</code><var>Stream</var><code>)</code> makes <var>Stream</var> the current output stream. 
+Subsequent output
+predicates such as <code>write/1</code> and <code>put/1</code> will henceforth use this
+stream.
+
+   </ul>
+
+   <p>Opening a stream and making it current are combined in <code>see</code> and <code>tell</code>:
+
+     <ul>
+
+     <li><code>see(</code><var>S</var><code>)</code> makes file <var>S</var> the current input stream. 
+If <var>S</var> is an atom, it is taken to be a file specification, and
+          <ul>
+
+          <li>if there is an open input stream associated with the filename, and that
+stream was opened by <code>see/1</code>, then it is made the current input stream;
+
+          <li>Otherwise, the specified
+file is opened for input and made the current input stream.  If it is not
+possible to open the file, <code>see/1</code> fails.  In addition, if the
+<code>fileerrors</code> flag is set (as it is by default), <code>see/1</code> sends
+an error message to the standard
+error stream and calls <code>abort/0</code>, returning to the top level. 
+</ul>
+
+     <li><code>tell(</code><var>S</var><code>)</code> makes <var>S</var> the current output stream.
+          <ul>
+
+          <li>if there is an open output stream currently associated with the filename,
+and that stream was opened by <code>tell/1</code>, then it is made the current output
+stream;
+
+          <li>Otherwise, the specified file
+is opened for output and made the current output stream.  If the file
+does not exist, it is created.  If it is not
+possible to open the file (because of protections, for example), <code>tell/1</code> fails.  In addition, if the
+<code>fileerrors</code> flag is set (which it is by default), <code>tell/1</code> sends
+an error message to the standard
+error stream and calls <code>abort/0</code>, returning to the top level. 
+</ul>
+
+   </ul>
+
+   <p>It is important to remember to close streams when you have finished with
+them. Use <code>seen/0</code> or <code>close/1</code> for input files, and
+<code>told/0</code> or <code>close/1</code> for output files.
+
+     <ul>
+
+     <li><code>open_null_stream(</code><var>Stream</var><code>)</code> opens an output stream that is not
+connected to any file and unifies its stream object with <var>Stream</var>. 
+Characters or terms that are sent to this stream are thrown away. 
+This predicate is useful because various pieces of local state are
+kept for null streams: the predicates <code>character_count/2</code>,
+<code>line_count/2</code>, and <code>line_position/2</code> can be used on these
+streams (see <a href="ref-iou-sos.html#ref-iou-sos">ref-iou-sos</a>).
+
+   </ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iou-sfh-cis.html#ref-iou-sfh-cis">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-iou-sfh-sem.html#ref-iou-sfh-sem">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-iou-sfh.html#ref-iou-sfh">Up</a>
+</ul>
+</div>
+   </body></html>
+

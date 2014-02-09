@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>close/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>close(</code><var>+Stream</var><code>)</code>
+
+   <p>closes the stream corresponding to <var>Stream</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>stream or file specification
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>If <var>Stream</var> is a stream object, then if the corresponding stream is
+open, it will be closed; otherwise, <code>close/1</code> succeeds immediately,
+taking no action.
+
+   <p>If <var>Stream</var> is a file specification, the corresponding
+stream will be closed, provided that the file was opened by
+<code>see/1</code> or <code>tell/1</code>.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>),
+plus:
+     <dl>
+
+     <br><dt><code>permission_error</code>
+     <dd>
+                File not opened by <code>see/1</code> or <code>tell/1</code>.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>Stream</var> is neither a filename nor a stream.
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>In this example, <code>foo</code> will be closed:
+<pre class="example">     see(foo),
+     ...
+     close(foo)
+     </pre>
+
+   <p>However, in this example, a permission error will be raised and <code>foo</code>
+will not be closed:
+<pre class="example">     open(foo, read, S),
+     ...
+     close(foo)
+     </pre>
+
+   <p>Here, <code>close(S)</code> should have been used.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>see/1</code>, <code>tell/1</code>, <code>open/[3,4]</code>,
+<code>write_canonical/[1,2]</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-compare.html#mpg-ref-compare">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-clause.html#mpg-ref-clause">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

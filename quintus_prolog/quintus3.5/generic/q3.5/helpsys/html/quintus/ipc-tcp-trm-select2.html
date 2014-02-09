@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_select(</code><var>+Timeout</var><code>, </code><var>-Term</var><code>)</code></h5>
+
+   <p>This is the same as <code>tcp_select/1</code> (see <a href="ipc-tcp-trm-select1.html#ipc-tcp-trm-select1">ipc-tcp-trm-select1</a>), except
+<code>tcp_select/2</code> will return the atom <code>timeout</code> if the timeout
+interval expires before input is available or before a timer alarm is
+delivered (from <code>tcp_schedule_wakeup/2</code>, see <a href="ipc-tcp-tim-schedule_wakeup2.html#ipc-tcp-tim-schedule_wakeup2">ipc-tcp-tim-schedule_wakeup2</a>).
+
+   <p><var>Timeout</var> is a floating point number indicating seconds.
+
+   <p>The <code>tcp_select</code> predicates must deal with three events:
+
+     <ol type=1 start=1>
+
+     <li>Timer alarms -- are dealt with first.  These are scheduled with
+<code>tcp_schedule_wakeup/2</code> (see <a href="ipc-tcp-tim-schedule_wakeup2.html#ipc-tcp-tim-schedule_wakeup2">ipc-tcp-tim-schedule_wakeup2</a>). 
+<li>ready input -- are dealt with when (1) doesn't apply, that is, if no timer
+alarm is delivered; <code>tcp_select/2</code> will sleep until there is input
+available from some connected process. 
+<li>timeout -- when neither (1) or (2) apply, and the timeout interval
+specified has expired, then the atom <code>timeout</code> is returned.
+        </ol>
+
+   <p>A poll is effected by specifying 0 for <var>Timeout</var>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-trm-send2.html#ipc-tcp-trm-send2">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-trm-select1.html#ipc-tcp-trm-select1">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-trm.html#ipc-tcp-trm">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Nested Prolog Queries</h5>
+
+   <p>This example demonstrates how you can have nested queries to Prolog
+from C. For brevity sake, we don't check the statuses returned by all
+the calls to <code>QP_next_solution()</code> for error values. This
+is not advised in real applications. This example also shows the use of
+<code>QP_cut_query()</code>.
+
+<pre class="example">
+                                   <div align="right"><em>books.pl</em>
+     </div>
+     
+     foreign(print_books, c, print_books).
+     foreign_file(books, [print_books]).
+     :- load_foreign_files(books, []),
+             abolish([foreign/3, foreign_file/2]).
+     
+     :- extern(author(-atom)).
+     :- extern(book(+atom,-atom)).
+     
+     author(hesse).
+     author(kafka).
+     author(dostoyevski).
+     
+     book(dostoyevski, idiot).
+     book(dostoyevski, gambler).
+     book(hesse,  steppenwolf).
+     book(hesse,  sidhdhartha).
+     book(hesse,  demian).
+     book(kafka,  america).
+     book(kafka,  trial).
+     book(kafka,  castle).
+     book(kafka,  metamorphosis).
+     </pre>
+
+<pre class="example">
+                                    <div align="right"><em>books.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     #define MAX_BOOKS 3
+     
+     void print_books()
+         {
+             QP_pred_ref author, book;
+             QP_qid      q1, q2;
+             QP_atom     a, b;
+             int         count;
+     
+             if (!(lookup_predicate("author", 1, "user", &amp;author)))
+               return;
+     
+             if (!(lookup_predicate("book", 2, "user", &amp;book)))
+               return;
+     
+             if ((q1 = QP_open_query(author, &amp;a)) == QP_BAD_QID) {
+                 printf("Cant open outer query\n");
+                 return;
+             }
+     
+             while (QP_next_solution(q1) ==  QP_SUCCESS) {
+                 /* For each solution returned by author(X) do */
+                 if ((q2 = QP_open_query(book, a, &amp;b)) == QP_BAD_QID) {
+                     printf("Cant open inner query\n");
+                     break;
+                 }
+                 printf("Books by %s:\n", QP_string_from_atom(a));
+     
+                 count = 0;
+                 while ((count &lt; MAX_BOOKS) &amp;&amp;
+                        (QP_next_solution(q2) == QP_SUCCESS)) {
+                     /* Find atmost MAX_BOOKS solns for books(X,Y) */
+                     printf("\t\t%s\n",QP_string_from_atom(b));
+                     count++;
+                 }
+                 QP_close_query(q2);
+             }
+             QP_close_query(q1);
+         }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-exa-ndp.html#fli-ffp-exa-ndp">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-exa.html#fli-ffp-exa">Up</a>
+</ul>
+</div>
+   </body></html>
+

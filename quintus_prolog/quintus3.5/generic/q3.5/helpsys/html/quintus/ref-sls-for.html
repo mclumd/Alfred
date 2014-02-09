@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Foreign Code</h4>
+
+   <p>Prolog QOF files do <em>not</em> contain any foreign code or foreign data
+structures.  As discussed in the previous section, this is different
+from saved-states in previous releases of Quintus Prolog.
+
+   <p>However, QOF files can have dependencies on object files that will be
+automatically loaded when the QOF file is loaded. These dependencies
+can arise because:
+
+     <ol type=1 start=1>
+
+     <li>The QOF file was compiled with the stand-alone compiler <code>qpc</code>
+(see <a href="sap-srs-qpc.html#sap-srs-qpc">sap-srs-qpc</a>) and its source file contained calls to
+<code>load_foreign_files/2</code>, which will have been turned into object file
+dependencies in the QOF file. 
+<li>The QOF file was saved from a Prolog session, using <code>save_program/[1,2]</code>
+or <code>save_modules/2</code>, in which foreign code had been previously loaded. 
+The object files loaded will be recorded as object file dependencies in
+the QOF file.
+        </ol>
+
+   <p>The <code>qnm</code> utility can be used (from the command prompt)
+to see the list of dependencies in a QOF file:
+
+<pre class="example">     % qnm -D file.qof
+     </pre>
+
+   <p>It is slower to start up a QOF file with object file dependencies
+because the object files must be re-linked and re-loaded.  This
+re-linking and re-loading will occur every time the QOF file is loaded
+and the necessary object files are not yet loaded into the system.  If
+this start-up time becomes a problem then this can be tackled by
+statically linking your foreign code into the Prolog system.  This is
+described in <a href="sap-srs.html#sap-srs">sap-srs</a>.  This will make the foreign code
+become part of the Prolog executable so there is no run-time linking
+required at all.  In addition, on most systems, this Prolog code
+will now be demand-paged from the executable, which will improve
+start-up time and reduce paging (as compared with dynamic linking). We
+recommend switching over to using static linking for programs with a
+lot of foreign code. The dynamic foreign language interface can be
+used for loading code while testing, but once your foreign code is
+stable it is better to have it statically linked.  Furthermore,
+dynamically loaded foreign code cannot be debugged with a
+debugger such as <code>gdb(1)</code>, so you will also need to
+statically link the foreign code so that the debugger can be used on
+the resulting executable.  This contradicts the fact that foreign code
+should be dynamically loaded while testing.
+
+   <p>All foreign code is either linked into the Prolog executable, or is
+re-loaded when a QOF file is loaded.  This means that when a program is
+started the foreign code will always be in an uninitialized state. This is
+exactly the same as any other program. However, this is
+a change from saved-states in previous releases of Quintus Prolog that
+saved the initialized foreign state. The new semantics is much cleaner,
+is consistent with standard practice, and avoids previous problems with
+invalid initializations that were not valid in the new process. This latter
+problem was particularly problematic for libraries (such as Curses, X
+Windows, and database interfaces) since the user did not usually have source
+code for the libraries and how they initialized and what they depended
+upon could not be easily understood. In Quintus Prolog Release 3,
+foreign code linked with Prolog, or loaded into Prolog, will work
+just the same as if it were a separate program independent of Prolog.
+
+   <p>It is possible that some of your previous programs relied on the saving of
+foreign state into saved-states. If you have such programs then they will
+need to be changed. Usually the change will involve making sure that the
+foreign code is explicitly initialized each time the application is run. 
+The initialization facilities described below, see <a href="ref-sls-igs.html#ref-sls-igs">ref-sls-igs</a>,
+may be useful for this.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sls-sst.html#ref-sls-sst">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-sls-csr.html#ref-sls-csr">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sls.html#ref-sls">Up</a>
+</ul>
+</div>
+   </body></html>
+

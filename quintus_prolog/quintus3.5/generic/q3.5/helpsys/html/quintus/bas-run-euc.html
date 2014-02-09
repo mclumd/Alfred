@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Executing Commands from Prolog</h4>
+
+   <p>The built-in predicate <code>unix/1</code> enables you to execute system
+commands from within the Prolog environment. 
+With some limitations it works also under Windows.
+
+   <p>Under UNIX only, to access a shell (an interactive command interpreter) from
+within Prolog, call
+<pre class="example">     | ?- <kbd>unix(shell).</kbd>
+     </pre>
+
+   <p>This command puts you within a command interpreter, from which you can
+execute any commands you would normally type at a command prompt.  To
+return to Prolog, either type your end-of-file character (default:
+<kbd>^d</kbd>), or else type <kbd>exit</kbd>.
+
+   <p>Alternatively, on both UNIX and Windows,
+you can access the shell and execute
+a command all at once:
+<pre class="example">     | ?- <kbd>unix(shell(</kbd><var>Command</var><kbd>)).</kbd>
+     </pre>
+
+   <p>where <var>Command</var> is a Prolog atom representing the command you want
+to execute.  For example, to obtain a listing of the files in your
+UNIX working directory:
+<pre class="example">     | ?- <kbd>unix(shell(ls)).</kbd>
+     </pre>
+
+   <p>The same example under Windows would be
+<pre class="example">     | ?- <kbd>unix(shell(dir)).</kbd>
+     </pre>
+
+   <p>Under UNIX,
+<code>unix(shell).</code> and <code>unix(shell(</code><var>Command</var><code>)).</code>
+use the command interpreter defined in your <code>SHELL</code>
+environment variable.  If you want <code>sh(1)</code> instead,
+use <code>unix(system)</code> or <code>unix(system(</code><var>Command</var><code>)).</code>
+
+   <p>A special case is made for the common command to change your working
+directory. To do so, call <code>unix(cd(</code><var>Directory</var><code>))</code>, where
+<var>Directory</var> is a Prolog atom naming the directory to change to.  For
+example, to change to a directory named <code>/ufs/albert</code>, you could type:
+<pre class="example">     | ?- <kbd>unix(cd('/ufs/albert')).</kbd>
+     </pre>
+
+   <p><strong>Notes:</strong>
+     <ol type=1 start=1>
+
+     <li>The Prolog atom for the directory name <code>/ufs/albert</code> is surrounded by single quotes because it contains non-alphanumeric characters. 
+<li>Under Windows, you can use either backward <code>\</code> or forward slash <code>/</code>. 
+<li>This command only affects the current directory while in Prolog;
+after exiting Prolog, you will be in the directory from which Prolog was
+invoked.
+        </ol>
+
+   <p>The command <code>unix(cd)</code>} changes to your home directory.
+
+   <p>For further information see <a href="ref-aos.html#ref-aos">ref-aos</a> and the reference page for
+<code>unix/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-run-dpr.html#bas-run-dpr">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-run-und.html#bas-run-und">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-run.html#bas-run">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>get/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>get(</code><var>-Char</var><code>)</code>
+
+   <p><code>get(</code><var>+Stream, -Char</var><code>)</code>
+
+   <p>unifies <var>Char</var> with the ASCII code of the next non-layout
+character from Stream or the current input stream.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Char</var> <dfn>char</dfn>
+     <dd>integer; legal ASCII code
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>valid Prolog input stream
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Layout characters are all outside the inclusive range 33..126; this
+includes space, tab, linefeed, delete, and all control characters.
+
+   <p>If there are no more non-layout characters in the stream, <var>Char</var> is
+unified with -1.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>), plus:
+     <dl>
+
+     <br><dt><code>existence_error</code>
+     <dd>
+                Trying to read beyond end of <var>Stream</var>
+
+   </dl>
+
+<h4 class="subheading">Comment</h4>
+
+   <p>If the stream is tty, trying to read beyond the
+end of the stream results in resetting the input stream and trying to
+read the next character.  By using the <code>eof_action</code> option of
+<code>open/[3,4]</code>, it is possible to specify that it should not be an
+error to run off the end of a stream.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>get0/[1,2]</code>, <code>ttyget/1</code>, <code>prompt/[2,3]</code>,
+<code>open/[3,4]</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-get0.html#mpg-ref-get0">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-generate_message_hook.html#mpg-ref-generate_message_hook">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

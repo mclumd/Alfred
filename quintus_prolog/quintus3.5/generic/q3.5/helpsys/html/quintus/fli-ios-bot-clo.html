@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Bottom Layer Close Function</h5>
+
+<pre class="example">     int <var>&lt;close function&gt;</var>(qpstream)
+             QP_stream   *qpstream;
+     
+     Return Value:   QP_SUCCESS
+                     QP_ERROR
+     </pre>
+
+   <p>The bottom layer close function performs the specific close operation of a
+user-defined stream and deallocates the memory space for the stream. 
+It returns <code>QP_ERROR</code> and assigns an appropriate error code
+to the <code>errno</code> field of <code>QP_stream</code> if an error occurs in the function. 
+In our example, we use <code>QP_free()</code> to deallocate memory space since the
+memory is allocated by <code>QP_malloc()</code>.
+
+<pre class="example">     static int
+     bin_close(qpstream)
+         QP_stream   *qpstream;
+         {
+             BinStream *stream = CoerceBinStream(qpstream);
+             int fd = stream-&gt;fd;
+     
+             if (close(fd) &lt; 0) {
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+             (void) QP_free(qpstream);
+             return QP_SUCCESS;
+         }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-bot-see.html#fli-ios-bot-see">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-bot.html#fli-ios-bot">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>restore/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>restore(</code><var>+FileSpec</var><code>)</code>
+
+   <p>Restores a saved-state.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>FileSpec</var> <dfn>file_spec</dfn>
+     <dd>The name of a QOF file. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>restore(</code><var>file</var><code>)</code> terminates the currently running executable
+and restarts it with the command line arguments <code>+L </code><var>file</var><code> </code><var>old args</var><code></code>
+where <var>old args</var> are the arguments specified when the executable
+was started.    <var>file</var> is normally a file previously created by
+a call to save_program, but it can be any QOF file.  The <code>+L</code> option
+causes  <var>file</var> to be loaded into the executable as it starts up.
+
+   <p>If <var>file</var> was created by <code>save_program/[1,2]</code>, then it includes
+information about operator declarations, debugging and advice
+information, Prolog flags, and <code>file_search_path</code> and
+<code>library_directory</code> tables, as well as the Prolog code that was
+saved.  Thus restoring <var>file</var> will create the   same Prolog state and
+database that existed at the time the <code>save_program</code>      was done
+(assuming that the same executable that was used for the <code>save_program</code>
+is used for the <code>restore</code>).
+
+   <p>It is also possible to give any QOF file to <code>restore/1</code>.  In this case,
+the running executable is reinitialized, and then the QOF file is reloaded
+into the system.  As such QOF files store no state information, the state
+is the same as in a freshly started Prolog system.
+
+   <p>It is not normally useful to use <code>restore/1</code> in a runtime
+system.   In a runtime system, command-line arguments are not
+interpreted by the system, so   the re-started runtime system will
+just begin again at <code>runtime_entry(start)</code> and will not load the
+specified <var>file</var> automatically.  An application could, if the programmer
+so chose, pick up the arguments with <code>unix(argv(L))</code>, and then take
+some appropriate action.  For example:
+<pre class="example">     runtime_entry(start) :-
+         unix(argv(['+L',File|_])),
+         !,
+         load_files(File),
+         start_after_restore.
+     runtime_entry(start) :-
+         normal_start.
+     </pre>
+
+   <p>See <a href="ref-pro-arg.html#ref-pro-arg">ref-pro-arg</a> and <a href="too-too-prolog.html#too-too-prolog">too-too-prolog</a> for a
+description of the <code>+L</code> option.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>FileSpec</var> is not bound.
+
+     <br><dt><code>type_error</code>
+     <dd>
+<var>FileSpec</var> is not a valid file specification.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>FileSpec</var> is not a QOF file.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+<var>FileSpec</var> is not readable
+
+   </dl>
+
+<h4 class="subheading">Windows Caveat</h4>
+
+   <p>Under Windows, it is not possible to replace a running executable with
+another. 
+Under Windows, <code>restore/1</code> will instead start a new
+sub-process and then terminate the running process. For more details see
+the Microsoft documentation for <code>execv()</code>.
+
+   <p>In a Windows command prompt window, the command interpreter does not wait
+when a process executes an <code>execv()</code> library call. Thus after
+<code>restore/1</code>, the program gives the appearance of running in the
+background.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>load_files/[1,2]</code>,
+<code>save_modules/2</code>,
+<code>save_predicates/2</code>,
+<code>save_program/[1,2]</code>
+
+   <a href="ref-sls.html#ref-sls">ref-sls</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-retract.html#mpg-ref-retract">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-repeat.html#mpg-ref-repeat">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

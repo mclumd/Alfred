@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Pascal-like Input -- <code>library(readconstant)</code></h4>
+
+   <p><code>library(readconst)</code> provides a set of Pascal-like input commands. 
+The commands are
+     <ul>
+
+     <li><code>read_constant(X)</code>
+<li><code>read_constant(Stream,X)</code>
+<li><code>read_constants([X1,...,Xn])</code>
+<li><code>read_constants(Stream,[X1..Xn])</code>
+<li><code>prompted_constant(Prompt, X)</code>
+<li><code>prompted_constants(Prompt, [X1,...,Xn])</code>
+<li><code>skip_constant</code>
+<li><code>skip_constant(Stream)</code>
+<li><code>skip_constants(N)</code>
+<li><code>skip_constants(Stream,N)</code>
+</ul>
+
+   <p>The idea is that these commands consume some number of "tokens"
+from the input stream (for <code>read_constant/1</code>, <code>skip_constant/0</code>,
+<code>read_constants/1</code>, and <code>skip_constants/1</code> this is the current input
+stream; for <code>read_constant/2</code>, <code>skip_constant/1</code>, <code>read_constants/2</code>,
+and <code>skip_constants/2</code> it is the <var>Stream</var> argument; for <code>prompted_constant/2</code>
+and <code>prompted_constants/2</code> it is the <code>user_input</code> stream). 
+<code>prompted_constant/1</code> and <code>prompted_constants/2</code> resemble Pascal's
+<code>readln</code> command; the others resemble Pascal's <code>read</code> command.
+
+   <p>These commands skip initial layout (spaces and control characters). 
+There are two kinds of tokens:  quoted tokens and unquoted tokens.
+
+   <p>A <dfn>quoted token</dfn> starts with a single quote (<code>'</code>) or a double quote (<code>"</code>). 
+It ends with the same character that it starts with.  To include a
+quote in such a token, write the quote twice.  This is the same as
+Prolog with the <code>character_escapes</code> flag off.  (There is currently
+no way of making <code>read_constant/1</code> use C-style character escapes.) 
+A token that starts with a single quote will be returned as a Prolog
+atom, even if it looks like a number.  Again, this is the same as
+Prolog.  For example, <code>5</code> will be returned as the atom <code>5</code>, not
+the integer 5.  A token that starts with a double quote will be
+returned as a list of character codes.  For example, <code>""""</code> (four double quotes)
+will be
+returned as the list [34].  Both <code>''</code> (two single quotes) and <code>""</code> (two double
+quotes) are acceptable tokens,
+meaning the atom with no characters in its name (<code>''</code>) and the
+empty list (<code>[]</code>) respectively.
+
+   <p>The character following the closing quote of a quoted token is always
+discarded.  This character is normally a space, tab, newline, or
+comma.
+
+   <p>An unquoted token is anything else.  Characters are read until a
+layout character or a comma is found.  The comma or layout character
+that terminates the token is discarded.  The other characters are
+given to the built-in predicate <code>name/2</code>, so the token will be
+returned as a number if it looks like a number; otherwise it will be
+returned as an atom. 
+The syntax of numbers is perforce identical to the syntax of numbers
+in Quintus Prolog.
+
+   <p>In both cases, we have leading layout, which is skipped, the token
+proper, and a terminating character, which is discarded.  If, for
+example, the input looks like
+<pre class="example">     fred, 1.2 ' ', last&lt;LFD&gt;
+     </pre>
+
+   <p>and we call <code>read_constants([A,B,C,D])</code>, the bindings will be
+<code>A=fred, B=1.2, C=' ', D=last</code>, and the entire line will have been
+consumed.  But if the input looks like
+<pre class="example">     fred, 1.2 ' ', last&lt;SPC&gt;&lt;SPC&gt;&lt;LFD&gt;
+     </pre>
+
+   <p>the last &lt;SPC&gt; and &lt;LFD&gt; will be left in the input stream.
+
+   <p>The input stream can contain end-of-line comments, which begin
+with a percent sign (<code>%</code>) just as they do in Prolog.  A comment
+will terminate an unquoted token, and will be skipped.  Suppose
+you want a data file that contains a number and a filename. 
+The file could look like this:
+<pre class="example">     % This is the data file.
+     137 % is the number
+     foobaz/other-file % is the filename
+     </pre>
+
+   <p>You could read it by calling
+<pre class="example">     | ?- <kbd>see('the-file'), read_constants([Nbr,File]), seen.</kbd>
+     </pre>
+
+   <p>The following predicates are defined in <code>library(readconst)</code>:
+
+     <dl>
+
+     <br><dt><code>read_constant(</code><var>-Constant</var><code>)</code>
+     <dd>
+reads a single constant from the current input stream,
+then unifies <var>Constant</var> with the result.
+
+     <br><dt><code>read_constant(</code><var>+Stream</var><code>, </code><var>-Constant</var><code>)</code>
+     <dd>
+reads a single constant from <var>Stream</var>, then
+unifies <var>Constant</var> with the result.
+
+     <br><dt><code>read_constants(</code><var>-[X1,<small class="dots">...</small>,XN]</var><code>)</code>
+     <dd>
+The argument must be a proper list.  <var>N</var> constants are read from
+the current input stream, then <var>[X1,<small class="dots">...</small>,XN]</var> is unified with a list
+of the results.
+
+     <br><dt><code>read_constants(</code><var>+Stream</var><code>, </code><var>-[X1,<small class="dots">...</small>,XN]</var><code>)</code>
+     <dd>
+The second argument must be a proper list.  <var>N</var> constants are
+read from <var>Stream</var>, then <var>[X1,<small class="dots">...</small>,XN]</var> is unified with a list
+of the results.
+
+     <br><dt><code>skip_constant</code>
+     <dd>reads a single constant from the current input stream, then
+throws it away.  This produces the same effect as calling
+<code>read_constant(_)</code>, but is more efficient, as it doesn't convert
+the constant from character form to Prolog form before discarding it.
+
+     <br><dt><code>skip_constant(</code><var>+Stream</var><code>)</code>
+     <dd>
+reads a single constant from <var>Stream</var> and discards it.  This produces
+the same effect as calling <code>read_constant(Stream, _)</code> but is more
+efficient.
+
+     <br><dt><code>skip_constants(</code><var>+N</var><code>)</code>
+     <dd>
+reads <var>N</var> constants from the current input stream and discards them. 
+<var>N</var> must be a non-negative integer.
+
+     <br><dt><code>skip_constants(</code><var>+Stream</var><code>, </code><var>+N</var><code>)</code>
+     <dd>
+reads <var>N</var> constants from <var>Stream</var> and discards them. 
+<var>N</var> must be a non-negative integer.
+
+     <br><dt><code>prompted_constant(</code><var>+Prompt</var><code>, </code><var>-Constant</var><code>)</code>
+     <dd>
+writes <var>Prompt</var> to the terminal (to <code>user_output</code>) and reads one
+constant from it (from <code>user_input</code>) in response, then unifies
+<var>Constant</var> with the result.  This command will flush the rest of the
+input line after it has read <var>Constant</var>, just like the commands in
+<code>library(ask)</code>.  Here is an example:
+     <pre class="example">          | ?- <kbd>prompted_constant('Guess the magic number: ', X),</kbd>
+          |    <kbd>integer(X).</kbd>
+          Guess the magic number: <kbd>27 is my guess</kbd>
+          
+          X = 27
+          </pre>
+
+     <p>The words <code>is my guess</code> and the new-line are discarded.
+
+     <br><dt><code>prompted_constants(</code><var>+Prompt</var><code>, </code><var>-[X1,<small class="dots">...</small>,XN]</var><code>)</code>
+     <dd>
+writes a prompt to the terminal (to <code>user_output</code>) and reads <var>N</var>
+constants from it (from <code>user_input</code>) in response, then unifies
+<var>[X1,<small class="dots">...</small>,XN]</var> with a list of the results.  This command will
+flush the rest of the input line after it has read <var>[X1,<small class="dots">...</small>,XN]</var>,
+just like the commands in <code>library(ask)</code>. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-uin-prompt.html#lib-uin-prompt">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-uin.html#lib-uin">Up</a>
+</ul>
+</div>
+   </body></html>
+

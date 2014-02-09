@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Placement of Cuts</h5>
+
+   <p>Programs can often be made more readable by the placing of cuts as early as
+possible in clauses.  For example, consider the predicate <code>p/0</code> defined by
+<pre class="example">     p :- a, b, !, c, d.
+     p :- e, f.
+     </pre>
+
+   <p>Suppose that <code>b/0</code> is a test that determines which
+clause of <code>p/0</code> applies; <code>a/0</code> may or may not be a test, but <code>c/0</code> and <code>d/0</code> are
+not supposed to fail under any circumstances.  A cut is most appropriately
+placed after the call to <code>b/0</code>.  If in fact <code>a/0</code> is
+the test and <code>b/0</code> is not supposed to fail, then it would be much clearer
+to move the cut before the call to <code>b/0</code>.
+
+   <p>A tool to aid in determinacy checking is included in the <code>tools</code>
+directory.  It is described in depth in <a href="bas-eff-det.html#bas-eff-det">bas-eff-det</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-cut-tbl.html#bas-eff-cut-tbl">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-cut-mpd.html#bas-eff-cut-mpd">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-cut.html#bas-eff-cut">Up</a>
+</ul>
+</div>
+   </body></html>
+

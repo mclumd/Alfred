@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>save_modules/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>save_modules(</code><var>+Modules</var><code>, </code><var>+File</var><code>)</code>
+
+   <p>Saves all predicates in <var>Modules</var> in QOF format to <var>File</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Modules</var> <dfn>atom</dfn> or <dfn>list of atom</dfn>
+     <dd>An atom
+representing a current module, or a list of such atoms representing a
+list of modules.
+
+     <br><dt><var>File</var> <dfn>file_spec</dfn>
+     <dd>An atom representing a filename
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>save_modules/2</code> saves the current definitions of all predicates
+in a module, or list of modules, in QOF format into a file. The modules
+imported by the saved
+modules are recorded as dependencies in the QOF file. 
+The foreign files loaded into that module are also recorded as
+foreign dependencies in the QOF file. 
+The QOF file produced can be loaded into a development system
+(using <code>load_files/1</code>) or it can be linked using <code>qld</code>.
+
+   <p>When multiple modules are saved into a file, loading that file will
+import only the first of those modules into the module in which the
+load occurred.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>Modules</var> or <var>File</var> is not bound.
+
+     <br><dt><code>type_error</code>
+     <dd>
+<var>Modules</var> is not a valid list of module names, or a single module name,
+or <var>File</var> is not a valid file specification
+
+     <br><dt><code>permission_error</code>
+     <dd>
+<var>File</var> is not writable
+
+     <br><dt><code>existence_error</code>
+     <dd>
+A given module is not a current module.
+
+   </dl>
+
+<h4 class="subheading">See Also:</h4>
+
+   <p><code>load_files/1</code>, <code>save_predicates/2</code>, <code>save_program/1</code>, <code>volatile/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-save_predicates.html#mpg-ref-save_predicates">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-runtime_entry.html#mpg-ref-runtime_entry">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

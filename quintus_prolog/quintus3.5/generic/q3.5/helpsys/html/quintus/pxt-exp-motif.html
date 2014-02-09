@@ -1,0 +1,2092 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Motif Predicates</h4>
+
+<pre class="example">     xmActivateProtocol(<var>+Shell</var>,<var>+Property</var>,<var>+Protocol</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Property</var>:   <b>XAtom</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     </pre>
+
+<pre class="example">     xmActivateWMProtocol(<var>+Shell</var>,<var>+Protocol</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     </pre>
+
+<pre class="example">     xmAddProtocolCallback(<var>+Shell</var>,<var>+Property</var>,<var>+Protocol</var>,<var>+Callback</var>,<var>+ClientData</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Property</var>:   <b>XAtom</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     <var>Callback</var>:   <b>CallbackProc</b>
+     <var>ClientData</var>: <b>AnyTerm</b>
+     </pre>
+
+<pre class="example">     xmAddProtocols(<var>+Shell</var>,<var>+Property</var>,<var>+Protocols</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Property</var>:   <b>XAtom</b>
+     <var>Protocols</var>:  <b>XAtomList</b>
+     </pre>
+
+<pre class="example">     xmAddTabGroup(<var>+TabGroup</var>)
+     <var>TabGroup</var>:   <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmAddWMProtocolCallback(<var>+Shell</var>,<var>+Protocol</var>,<var>+Callback</var>,<var>+ClientData</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     <var>Callback</var>:   <b>CallbackProc</b>
+     <var>ClientData</var>: <b>AnyTerm</b>
+     </pre>
+
+<pre class="example">     xmAddWMProtocols(<var>+Shell</var>,<var>+Protocols</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Protocol</var>:   <b>XAtomList</b>
+     </pre>
+
+<pre class="example">     xmCascadeButtonGadgetHighlight(<var>+CascadeButtonGadget</var>, <var>+Highlight</var>)
+     <var>CascadeButtonGadget</var>:        <b>Widget</b>
+     <var>Highlight</var>:  <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmCascadeButtonHighlight(<var>+CascadeButton</var>, <var>+Highlight</var>)
+     <var>CascadeButton</var>:      <b>Widget</b>
+     <var>Highlight</var>:  <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmChangeColor(<var>+Widget</var>, <var>+Background</var>)
+     <var>CascadeButton</var>:      <b>Widget</b>
+     <var>Background</var>: <b>Pixel</b>
+     </pre>
+
+<pre class="example">     xmClipboardCancelCopy(<var>+Display</var>,<var>+Window</var>,<var>+ItemId</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>ItemId</var>:     <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmClipboardCopy(<var>+Display</var>,<var>+Window</var>,<var>+ItemId</var>,<var>+FormatName</var>,<var>+Buffer</var>,<var>+Length</var>,
+               <var>+PrivateId</var>,<var>+DataId</var>, <var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>ItemId</var>:     <b>Integer</b>
+     <var>FormatName</var>: <b>String</b>
+     <var>Buffer</var>:     <b>String</b>
+     <var>Length</var>:     <b>Integer</b>
+     <var>PrivateId</var>:  <b>Integer</b>
+     <var>DataId</var>:     <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardCopyByName(<var>+Display</var>,<var>+Window</var>,<var>+DataId</var>,<var>+Buffer</var>,<var>+Length</var>,<var>+PrivateId</var>,
+              <var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>DataId</var>:     <b>Integer</b>
+     <var>Buffer</var>:     <b>String</b>
+     <var>Length</var>:     <b>Integer</b>
+     <var>PrivateId</var>:  <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardEndCopy(<var>+Display</var>,<var>+Window</var>,<var>+ItemId</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>ItemId</var>:     <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardEndRetrieve(<var>+Display</var>,<var>+Window</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardInquireCount(<var>+Display</var>,<var>+Window</var>,<var>-Count</var>,<var>-MaxFormatLen</var>,
+              <var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>Count</var>:      <b>Integer</b>
+     <var>MaxFormatLen</var>:       <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardInquireFormat(<var>+Display</var>,<var>+Window</var>,<var>+Index</var>,<var>-Format</var>,
+              <var>+BufferLen</var>,<var>-CopiedLen</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>Index</var>:      <b>Integer</b>
+     <var>Format</var>:     <b>String</b>
+     <var>BufferLen</var>:  <b>Integer</b>
+     <var>CopiedLen</var>:  <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardInquireLength(<var>+Display</var>,<var>+Window</var>,<var>+Format</var>,<var>-Length</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>Format</var>:     <b>String</b>
+     <var>Length</var>:     <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardInquirePendingItems(<var>+Display</var>,<var>+Window</var>,<var>+Format</var>,<var>-ItemList</var>,<var>-Count</var>,
+              <var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>Format</var>:     <b>String</b>
+     <var>ItemList</var>:   <b>XmClipboardPendingList</b>
+     <var>Count</var>:      <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardLock(<var>+Display</var>,<var>+Window</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardRegisterFormat(<var>+Display</var>,<var>+Format</var>,<var>+FormatLength</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Format</var>:     <b>String</b>
+     <var>FormatLength</var>:       <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardRetrieve(<var>+Display</var>,<var>+Window</var>,<var>+Format</var>,<var>-Buffer</var>,
+              <var>+Length</var>,<var>-NumBytes</var>,<var>-PrivateId</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>Format</var>:     <b>String</b>
+     <var>Buffer</var>:     <b>String</b> or <b>XtPointer</b>
+     <var>Length</var>:     <b>Integer</b>
+     <var>NumBytes</var>:   <b>Integer</b>
+     <var>PrivateId</var>:  <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardStartCopy(<var>+Display</var>,<var>+Window</var>,<var>+ClipLabel</var>,<var>+TimeStamp</var>,
+              <var>+Widget</var>,<var>+Callback</var>,<var>-ItemId</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>ClipLabel</var>:  <b>XmString</b>
+     <var>TimeStamp</var>:  <b>Time</b>
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Callback</var>:   <b>CallbackProc</b>
+     <var>ItemId</var>:     <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardStartRetrieve(<var>+Display</var>,<var>+Window</var>,<var>+TimeStamp</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>TimeStamp</var>:  <b>Time</b>
+     </pre>
+
+<pre class="example">     xmClipboardUndoCopy(<var>+Display</var>,<var>+Window</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardUnlock(<var>+Display</var>,<var>+Window</var>,<var>+RemoveAllLocks</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>RemoveAllLocks</var>:     <b>Boolean</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmClipboardWithdrawFormat(<var>+Display</var>,<var>+Window</var>,<var>+DataId</var>,<var>-ReturnValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>DataId</var>:     <b>Integer</b>
+     <var>ReturnValue</var>:        <b>ClipboardStatus</b>
+     </pre>
+
+<pre class="example">     xmCommandAppendValue(<var>+Widget</var>, <var>+Command</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Command</var>:    <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmCommandError(<var>+Widget</var>, <var>+Error</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Error</var>:      <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmCommandGetChild(<var>+Widget</var>, <var>+ChildType</var>, <var>-Child</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>ChildType</var>:  <b>XmChildType</b>
+     <var>Child</var>:      <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCommandSetValue(<var>+Widget</var>, <var>+Command</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Command</var>:    <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmConvertUnits(<var>+Widget</var>,<var>+Orientation</var>,<var>+FromUnitType</var>,<var>+FromValue</var>,
+              <var>+ToUnitType</var>,<var>-ToValue</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Orientation</var>:        <b>XmOrientation</b>
+     <var>FromUnitType</var>:       <b>XmUnitType</b>
+     <var>FromValue</var>:  <b>Integer</b>
+     <var>ToUnitType</var>: <b>XmUnitType</b>
+     <var>ToValue</var>:    <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmCreateArrowButton(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateArrowButtonGadget(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateBulletinBoard(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateBulletinBoardDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateCascadeButton(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateCascadeButtonGadget(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateCommand(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateDialogShell(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateDragIcon(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateDrawingArea(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateDrawnButton(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateErrorDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateFileSelectionBox(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateFileSelectionDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateForm(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateFormDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateFrame(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateInformationDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateLabel(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateLabelGadget(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateList(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateMainWindow(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateMenuBar(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateMenuShell(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateMessageBox(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateMessageDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateOptionMenu(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreatePanedWindow(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreatePopupMenu(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreatePromptDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreatePulldownMenu(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreatePushButton(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreatePushButtonGadget(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateQuestionDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateRadioBox(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateRowColumn(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateScale(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateScrollBar(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateScrolledList(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateScrolledText(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateScrolledWindow(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSelectionBox(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSelectionDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSeparator(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSeparatorGadget(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSimpleCheckBox(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSimpleMenuBar(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSimpleOptionMenu(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSimplePopupMenu(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSimplePulldownMenu(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateSimpleRadioBox(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateTemplateDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateText(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateTextField(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateToggleButton(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateToggleButtonGadget(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateWarningDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateWorkArea(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCreateWorkingDialog(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCvtCTToXmString(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmCvtXmStringToCT(<var>+Parent</var>,<var>+Name</var>,<var>+Attributes</var>,<var>-Widget</var>)
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Name</var>:       <b>String</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmDeactivateProtocol(<var>+Shell</var>,<var>+Property</var>,<var>+Protocol</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Property</var>:   <b>XAtom</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     </pre>
+
+<pre class="example">     xmDeactivateWMProtocol(<var>+Shell</var>,<var>+Protocol</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     </pre>
+
+<pre class="example">     xmDestroyPixmap(<var>+Screen</var>, <var>+Pixmap</var>)
+     <var>Screen</var>:     <b>Screen</b>
+     <var>Pixmap</var>:     <b>Pixmap</b>
+     </pre>
+
+<pre class="example">     xmDragCancel(<var>+DragContext</var>)
+     <var>DragContext</var>:        <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmDragStart(<var>+Widget</var>,<var>+Event</var>,<var>+Attributes</var>,<var>-DragContext</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Event</var>:      <b>XEvent</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>DragContext</var>:        <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmDropSiteConfigureStackingOrder(<var>+Widget</var>,<var>+Sibling</var>,<var>+StackMode</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Sibling</var>:    <b>Widget</b>
+     <var>StackMode</var>:  <b>XmStackMode</b>
+     </pre>
+
+<pre class="example">     xmDropSiteEndUpdate(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmDropSiteQueryStackingOrder(<var>+Widget</var>,<var>-Parent</var>,<var>-Children</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Parent</var>:     <b>Widget</b>
+     <var>Children</var>:   <b>WidgetList</b>
+     </pre>
+
+<pre class="example">     xmDropSiteRegister(<var>[+Widget],+Attributes</var>
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     </pre>
+
+<pre class="example">     xmDropSiteRetrieve(<var>+Widget</var>,<var>+Attributes</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     </pre>
+
+<pre class="example">     xmDropSiteStartUpdate(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmDropSiteUnregister(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmDropSiteUpdate(<var>+Widget</var>,<var>+Attributes</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     </pre>
+
+<pre class="example">     xmDropTransferAdd(<var>+DropTransfer</var>,<var>+Transfers</var>)
+     <var>DropTransfer</var>:       <b>Widget</b>
+     <var>Transfers</var>:  <b>XmDropTransfers</b>
+     </pre>
+
+<pre class="example">     xmDropTransferStart(<var>+Widget</var>,<var>+Attributes</var>,<var>-DropWidget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Attributes</var>: <b>AttributeList</b>
+     <var>DropWidget</var>: <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmFileSelectionBoxGetChild(<var>+Widget</var>, <var>+ChildType</var>, <var>-Child</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>ChildType</var>:  <b>XmChildType</b>
+     <var>Child</var>:      <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmFileSelectionDoSearch(<var>+Widget</var>, <var>+DirMask</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>DirMask</var>:    <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmFontListAdd(<var>+OldList</var>,<var>+NewFont</var>,<var>+Charset</var>,<var>-NewList</var>)
+     <var>OldList</var>:    <b>XmFontList</b>
+     <var>NewFont</var>:    <b>XFont</b>
+     <var>Charset</var>:    <b>XmStringCharSet</b>
+     <var>NewList</var>:    <b>XmFontList</b>
+     </pre>
+
+<pre class="example">     xmFontListAppendEntry(<var>+OldList</var>,<var>+Entry</var>,<var>-NewList</var>)
+     <var>OldList</var>:    <b>XmFontList</b>
+     <var>Entry</var>:      <b>XmFontListEntry</b>
+     <var>NewList</var>:    <b>XmFontList</b>
+     </pre>
+
+<pre class="example">     xmFontListCopy(<var>+FontList</var>,<var>-NewFontList</var>)
+     <var>FontList</var>:   <b>XmFontList</b>
+     <var>NewFontList</var>:        <b>XmFontList</b>
+     </pre>
+
+<pre class="example">     xmFontListCreate(<var>+Font</var>,<var>+Charset</var>,<var>-FontList</var>)
+     <var>Font</var>:       <b>XFont</b>
+     <var>Charset</var>:    <b>XmStringCharSet</b>
+     <var>FontList</var>:   <b>XmFontList</b>
+     </pre>
+
+<pre class="example">     xmFontListEntryCreate(<var>+Tag</var>,<var>+Type</var>,<var>+Font</var>,<var>-Entry</var>)
+     <var>Tag</var>:        <b>XmFontListTag</b>
+     <var>Type</var>:       <b>XmFontType</b>
+     <var>Font</var>:       <b>XFont</b> or <b>XFontSet</b>
+     <var>Entry</var>:      <b>XmFontListEntry</b>
+     </pre>
+
+<pre class="example">     xmFontListEntryFree(<var>+Entry</var>)
+     <var>Entry</var>:      <b>XmFontListEntry</b>
+     </pre>
+
+<pre class="example">     xmFontListEntryGetFont(<var>+Entry</var>,<var>-Type</var>,<var>-Font</var>)
+     <var>Entry</var>:      <b>XmFontListEntry</b>
+     <var>Type</var>:       <b>XmFontType</b>
+     <var>Font</var>:       <b>XFont</b> or <b>XFontSet</b>
+     </pre>
+
+<pre class="example">     xmFontListEntryGetTag(<var>+Entry</var>,<var>-Tag</var>)
+     <var>Entry</var>:      <b>XmFontListEntry</b>
+     <var>Tag</var>:        <b>XmFontListTag</b>
+     </pre>
+
+<pre class="example">     xmFontListEntryLoad(<var>+Display</var>,<var>+FontName</var>,<var>+Type</var>,<var>+Tag</var>,<var>-Entry</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>FontName</var>:   <b>String</b>
+     <var>Type</var>:       <b>XmFontType</b>
+     <var>Tag</var>:        <b>XmFontListTag</b>
+     <var>Entry</var>:      <b>XmFontListEntry</b>
+     </pre>
+
+<pre class="example">     xmFontListFree(<var>+FontList</var>)
+     <var>FontList</var>:   <b>XmFontList</b>
+     </pre>
+
+<pre class="example">     xmFontListFreeFontContext(<var>+Context</var>)
+     <var>Context</var>:    <b>XmFontContext</b>
+     </pre>
+
+<pre class="example">     xmFontListGetNextFont(<var>+Context</var>,<var>-Charset</var>,<var>-Font</var>)
+     <var>Context</var>:    <b>XmFontContext</b>
+     <var>Charset</var>:    <b>XmStringCharSet</b>
+     <var>Font</var>:       <b>XFont</b>
+     </pre>
+
+<pre class="example">     xmFontListInitFontContext(<var>-Context</var>,<var>+FontList</var>)
+     <var>Context</var>:    <b>XmFontContext</b>
+     <var>FontList</var>:   <b>XmFontList</b>
+     </pre>
+
+<pre class="example">     xmFontListNextEntry(<var>+Context</var>,<var>-Entry</var>)
+     <var>Context</var>:    <b>XmFontContext</b>
+     <var>Entry</var>:      <b>XmFontListEntry</b>
+     </pre>
+
+<pre class="example">     xmFontListRemoveEntry(<var>+OldList</var>,<var>+Entry</var>,<var>-NewList</var>)
+     <var>OldList</var>:    <b>XmFontList</b>
+     <var>Entry</var>:      <b>XmFontListEntry</b>
+     <var>NewList</var>:    <b>XmFontList</b>
+     </pre>
+
+<pre class="example">     xmGetAtomName(<var>+Display</var>,<var>+Atom</var>,<var>-AtomName</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Atom</var>:       <b>XAtom</b>
+     <var>AtomName</var>:   <b>String</b>
+     </pre>
+
+<pre class="example">     xmGetColorCalculation(<var>-ColorProc</var>)
+     <var>ColorProc</var>:  <b>CallbackProc</b>
+     </pre>
+
+<pre class="example">     xmGetColors(<var>+Screen</var>,<var>+Colormap</var>,<var>+Background</var>,
+                     <var>-Foreground</var>,<var>-TopShadow</var>,<var>-BottomShadow</var>,<var>-Select</var>)
+     <var>Screen</var>:     <b>Screen</b>
+     <var>Colormap</var>:   <b>Colormap</b>
+     <var>Background</var>: <b>Pixel</b>
+     <var>Foreground</var>: <b>Pixel</b>
+     <var>TopShadow</var>:  <b>Pixel</b>
+     <var>BottomShadow</var>:       <b>Pixel</b>
+     <var>Select</var>:     <b>Pixel</b>
+     </pre>
+
+<pre class="example">     xmGetDestination(<var>+Display</var>, <var>-Widget</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmGetDragContext(<var>+RefWidget</var>, <var>+TimeStamp</var>, <var>-Widget</var>)
+     <var>RefWidget</var>:  <b>Widget</b>
+     <var>TimeStamp</var>:  <b>Time</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmGetFocusWidget(<var>+Widget</var>, <var>-FocusWidget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>FocusWidget</var>:        <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmGetMenuCursor(<var>+Display</var>, <var>-Cursor</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Cursor</var>:     <b>Cursor</b>
+     </pre>
+
+<pre class="example">     xmGetPixmap(<var>+Screen</var>,<var>+ImageName</var>,<var>+ForeG</var>,<var>+BackG</var>,<var>-Pixmap</var>)
+     <var>Screen</var>:     <b>Screen</b>
+     <var>ImageName</var>:  <b>String</b>
+     <var>ForeG</var>:      <b>Pixel</b>
+     <var>BackG</var>:      <b>Pixel</b>
+     <var>Pixmap</var>:     <b>Pixmap</b>
+     </pre>
+
+<pre class="example">     xmGetPixmapByDepth(<var>+Screen</var>,<var>+ImageName</var>,<var>+ForeG</var>,<var>+BackG</var>,<var>+Depth</var>,<var>-Pixmap</var>)
+     <var>Screen</var>:     <b>Screen</b>
+     <var>ImageName</var>:  <b>String</b>
+     <var>ForeG</var>:      <b>Pixel</b>
+     <var>BackG</var>:      <b>Pixel</b>
+     <var>Depth</var>:      <b>Integer</b>
+     <var>Pixmap</var>:     <b>Pixmap</b>
+     </pre>
+
+<pre class="example">     xmGetPostedFromWidget(<var>+Menu</var>,<var>-Widget</var>)
+     <var>Menu</var>:       <b>Widget</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmGetTabGroup(<var>+Widget</var>,<var>-TabGroup</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>TabGroup</var>:   <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmGetTearOffControl(<var>+Menu</var>,<var>-Widget</var>)
+     <var>Menu</var>:       <b>Widget</b>
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmGetVisibility(<var>+Widget</var>,<var>-Visibility</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Visibility</var>: <b>XmVisibility</b>
+     </pre>
+
+<pre class="example">     xmGetXmDisplay(<var>+Widget</var>,<var>-DisplayObject</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>DisplayObject</var>:      <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmGetXmScreen(<var>+Widget</var>,<var>-ScreenObject</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>ScreenObject</var>:       <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmInstallImage(<var>+Image</var>, <var>+Name</var>)
+     <var>Image</var>:      <b>XImage</b>
+     <var>Name</var>:       <b>String</b>
+     </pre>
+
+<pre class="example">     xmInternAtom(<var>+Display</var>,<var>+AtomName</var>,<var>+OnlyIfExists</var>,<var>-Atom</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>AtomName</var>:   <b>String</b>
+     <var>OnlyIfExists</var>:       <b>Boolean</b>
+     <var>Atom</var>:       <b>XAtom</b>
+     </pre>
+
+<pre class="example">     xmIsMotifWMRunning(<var>+Shell</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmIsTraversable(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmListAddItem(<var>+Widget</var>, <var>+Item</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListAddItemUnselected(<var>+Widget</var>, <var>+Item</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListAddItems(<var>+Widget</var>, <var>+ItemList</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>ItemList</var>:   <b>XmStringTable</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListAddItemsUnselected(<var>+Widget</var>, <var>+ItemList</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>ItemList</var>:   <b>XmStringTable</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListDeleteAllItems(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmListDeleteItem(<var>+Widget</var>, <var>+Item</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmListDeleteItems(<var>+Widget</var>, <var>+ItemList</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>ItemList</var>:   <b>XmStringTable</b>
+     </pre>
+
+<pre class="example">     xmListDeleteItemsPos(<var>+Widget</var>, <var>+ItemCount</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>ItemCount</var>:  <b>Integer</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListDeletePos(<var>+Widget</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListDeletePositions(<var>+Widget</var>, <var>+PositionList</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>PositionList</var>:       <b>IntegerList</b>
+     </pre>
+
+<pre class="example">     xmListDeselectAllItems(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmListDeselectItem(<var>+Widget</var>, <var>+Item</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmListDeselectPos(<var>+Widget</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListGetKbdItemPos(<var>+Widget</var>, <var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListGetMatchPos(<var>+Widget</var>, <var>+Item</var>, <var>-PositionList</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     <var>PositionList</var>:       <b>IntegerList</b>
+     </pre>
+
+<pre class="example">     xmListGetSelectedPos(<var>+Widget</var>, <var>-PositionList</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>PositionList</var>:       <b>IntegerList</b>
+     </pre>
+
+<pre class="example">     xmListItemExists(<var>+Widget</var>, <var>+Item</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmListItemPos(<var>+Widget</var>, <var>+Item</var>, <var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListPosSelected(<var>+Widget</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListPosToBounds(<var>+Widget</var>, <var>+Position</var>, <var>-X</var>, <var>-Y</var>, <var>-Width</var>, <var>-Height</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     <var>X</var>:  <b>Integer</b>
+     <var>Y</var>:  <b>Integer</b>
+     <var>Width</var>:      <b>Integer</b>
+     <var>Height</var>:     <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListReplaceItems(<var>+Widget</var>, <var>+OldItems</var>, <var>+NewItems</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>OldItems</var>:   <b>XmStringTable</b>
+     <var>NewItems</var>:   <b>XmStringTable</b>
+     </pre>
+
+<pre class="example">     xmListReplaceItemsPos(<var>+Widget</var>, <var>+NewItems</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>NewItems</var>:   <b>XmStringTable</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListReplaceItemsPosUnselected(<var>+Widget</var>, <var>+NewItems</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>NewItems</var>:   <b>XmStringTable</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListReplaceItemsUnselected(<var>+Widget</var>, <var>+OldItems</var>, <var>+NewItems</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>OldItems</var>:   <b>XmStringTable</b>
+     <var>NewItems</var>:   <b>XmStringTable</b>
+     </pre>
+
+<pre class="example">     xmListReplacePositions(<var>+Widget</var>, <var>+PosList</var>, <var>+NewItems</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>PosList</var>:    <b>IntegerList</b>
+     <var>NewItems</var>:   <b>XmStringTable</b>
+     </pre>
+
+<pre class="example">     xmListSelectItem(<var>+Widget</var>, <var>+Item</var>, <var>+Notify</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     <var>Notify</var>:     <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmListSelectPos(<var>+Widget</var>, <var>+Position</var>, <var>+Notify</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     <var>Notify</var>:     <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmListSetAddMode(<var>+Widget</var>, <var>+State</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>State</var>:      <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmListSetBottomItem(<var>+Widget</var>, <var>+Item</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmListSetBottomPos(<var>+Widget</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListSetHorizPos(<var>+Widget</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListSetItem(<var>+Widget</var>, <var>+Item</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Item</var>:       <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmListSetKbdItemPos(<var>+Widget</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListSetPos(<var>+Widget</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmListUpdateSelectedList(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmListYToPos(<var>+Widget</var>, <var>+Y</var>, <var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Y</var>:  <b>Position</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmMainWindowSep1(<var>+MainWindow</var>, <var>-Separator1</var>)
+     <var>MainWindow</var>: <b>Widget</b>
+     <var>Separator1</var>: <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmMainWindowSep2(<var>+MainWindow</var>, <var>-Separator2</var>)
+     <var>MainWindow</var>: <b>Widget</b>
+     <var>Separator2</var>: <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmMainWindowSep3(<var>+MainWindow</var>, <var>-Separator3</var>)
+     <var>MainWindow</var>: <b>Widget</b>
+     <var>Separator3</var>: <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmMainWindowSetAreas(<var>+MainWindow</var>, <var>+MenuBar</var>, <var>+CommandWindow</var>,
+              <var>+HorizontalScrollbar</var>, <var>+VerticalScrollbar</var>, <var>+WorkRegion</var>)
+     <var>MainWindow</var>: <b>Widget</b>
+     <var>MenuBar</var>:    <b>Widget</b>
+     <var>CommandWindow</var>:      <b>Widget</b>
+     <var>HorizontalScrollbar</var>:        <b>Widget</b>
+     <var>VerticalScrollbar</var>:  <b>Widget</b>
+     <var>WorkRegion</var>: <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmMapSegmentEncoding(<var>+FontListTag</var>,<var>-Encoding</var>)
+     <var>FontListTag</var>:        <b>XmFontListTag</b>
+     <var>Encoding</var>:   <b>String</b>
+     </pre>
+
+<pre class="example">     xmMenuPosition(<var>+Menu</var>, <var>+Event</var>)
+     <var>Menu</var>:       <b>Widget</b>
+     <var>Event</var>:      <b>XEvent</b>
+     </pre>
+
+<pre class="example">     xmMessageBoxGetChild(<var>+MessageBox</var>, <var>+ChildType</var>, <var>-Child</var>)
+     <var>MessageBox</var>: <b>Widget</b>
+     <var>ChildType</var>:  <b>XmChildType</b>
+     <var>Child</var>:      <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmOptionButtonGadget(<var>+OptionMenu</var>, <var>-ButtonGadget</var>)
+     <var>OptionMenu</var>: <b>Widget</b>
+     <var>ButtonGadget</var>:       <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmOptionLabelGadget(<var>+OptionMenu</var>, <var>-LabelGadget</var>)
+     <var>OptionMenu</var>: <b>Widget</b>
+     <var>LabelGadget</var>:        <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmProcessTraversal(<var>+Widget</var>,<var>+Direction</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Direction</var>:  <b>XmTraversalDirection</b>
+     </pre>
+
+<pre class="example">     xmRegisterSegmentEncoding(<var>+FontListTag</var>,<var>+Encoding</var>,<var>-NewTag</var>)
+     <var>FontListTag</var>:        <b>XmFontListTag</b>
+     <var>Encoding</var>:   <b>String</b>
+     <var>NewTag</var>:     <b>XmFontListTag</b>
+     </pre>
+
+<pre class="example">     xmRemoveProtocolCallback(<var>+Shell</var>,<var>+Property</var>,<var>+Protocol</var>,<var>+Callback</var>,<var>+ClientData</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Property</var>:   <b>XAtom</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     <var>Callback</var>:   <b>CallbackProc</b>
+     <var>ClientData</var>: <b>AnyTerm</b>
+     </pre>
+
+<pre class="example">     xmRemoveProtocols(<var>+Shell</var>,<var>+Property</var>,<var>+Protocols</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Property</var>:   <b>XAtom</b>
+     <var>Protocols</var>:  <b>XAtomList</b>
+     </pre>
+
+<pre class="example">     xmRemoveTabGroup(<var>+TabGroup</var>)
+     <var>TabGroup</var>:   <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmRemoveWMProtocolCallback(<var>+Shell</var>,<var>+Protocol</var>,<var>+Callback</var>,<var>+ClientData</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     <var>Callback</var>:   <b>CallbackProc</b>
+     <var>ClientData</var>: <b>AnyTerm</b>
+     </pre>
+
+<pre class="example">     xmRemoveWMProtocols(<var>+Shell</var>,<var>+Protocols</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Protocols</var>:  <b>XAtomList</b>
+     </pre>
+
+<pre class="example">     xmRepTypeAddReverse(<var>+RepTypeId</var>)
+     <var>RepTypeId</var>:  <b>XmRepTypeId</b>
+     </pre>
+
+<pre class="example">     xmRepTypeGetId(<var>+RepType</var>, <var>-RepTypeId</var>)
+     <var>RepType</var>:    <b>String</b>
+     <var>RepTypeId</var>:  <b>XmRepTypeId</b>
+     </pre>
+
+<pre class="example">     xmRepTypeGetNameList(<var>+RepTypeId</var>, <var>UseUC</var>, <var>-NameList</var>)
+     <var>RepTypeId</var>:  <b>XmRepTypeId</b>
+     <var>UseUC</var>:      <b>Boolean</b>
+     <var>NameList</var>:   <b>StringTable</b>
+     </pre>
+
+<pre class="example">     xmRepTypeGetRecord(<var>+RepTypeId</var>, <var>-RepTypeRecord</var>)
+     <var>RepTypeId</var>:  <b>XmRepTypeId</b>
+     <var>RepTypeRecord</var>:      <b>XmRepTypeEntry</b>
+     </pre>
+
+<pre class="example">     xmRepTypeGetRegistered(<var>-RepTypeList</var>)
+     <var>RepTypeList</var>:        <b>XmRepTypeList</b>
+     </pre>
+
+<pre class="example">     xmRepTypeInstallTearOffModelConverter
+     </pre>
+
+<pre class="example">     xmRepTypeRegister(<var>+RepType</var>, <var>+ValueNames</var>, <var>-RepTypeId</var>)
+     <var>RepType</var>:    <b>String</b>
+     <var>ValueNames</var>: <b>StringTable</b>
+     <var>RepTypeId</var>:  <b>XmRepTypeId</b>
+     </pre>
+
+<pre class="example">     xmRepTypeValidValue(<var>+RepTypeId</var>, <var>+TestValue</var>, <var>+EnableWarning</var>)
+     <var>RepTypeId</var>:  <b>XmRepTypeId</b>
+     <var>TestValue</var>:  <b>Integer</b>
+     <var>EnableWarning</var>:      <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmScaleGetValue(<var>+Widget</var>, <var>-Value</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Value</var>:      <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmScaleSetValue(<var>+Widget</var>, <var>+Value</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Value</var>:      <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmScrollBarGetValues(<var>+Widget</var>, <var>-Value</var>, <var>-SliderSize</var>, <var>-Increment</var>,
+              <var>-PageIncrement</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Value</var>:      <b>Integer</b>
+     <var>SliderSize</var>: <b>Integer</b>
+     <var>Increment</var>:  <b>Integer</b>
+     <var>PageIncrement</var>:      <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmScrollBarSetValues(<var>+Widget</var>, <var>-Value</var>, <var>-SliderSize</var>, <var>-Increment</var>,
+              <var>-PageIncrement</var>,<var>-Notify</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Value</var>:      <b>Integer</b>
+     <var>SliderSize</var>: <b>Integer</b>
+     <var>Increment</var>:  <b>Integer</b>
+     <var>PageIncrement</var>:      <b>Integer</b>
+     <var>Notify</var>:     <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmScrollVisible(<var>+ScrollWidget</var>,<var>+Widget</var>,<var>+LRMargin</var>,<var>+TopBtmMargin</var>)
+     <var>ScrollWidget</var>:       <b>Widget</b>
+     <var>Widget</var>:     <b>Widget</b>
+     <var>LRMargin</var>:   <b>Dimension</b>
+     <var>TopBtmMargin</var>:       <b>Dimension</b>
+     </pre>
+
+<pre class="example">     xmScrolledWindowSetAreas(<var>+Widget</var>,<var>+MenuBar</var>,<var>+HorizontalScrollbar</var>,
+              <var>+VerticalScrollbar</var>,<var>+WorkRegion</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>HorizontalScrollbar</var>:        <b>Widget</b>
+     <var>VerticalScrollbar</var>:  <b>Widget</b>
+     <var>WorkRegion</var>: <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmSelectionBoxGetChild(<var>+Widget</var>,<var>+ChildType</var>,<var>-Child</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>ChildType</var>:  <b>XmChildType</b>
+     <var>Child</var>:      <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmSetColorCalculation(<var>+ColorProc</var>, <var>-PrevProc</var>)
+     <var>ColorProc</var>:  <b>CallbackProc</b>
+     <var>PrevProc</var>:   <b>CallbackProc</b>
+     </pre>
+
+<pre class="example">     xmSetFontUnit(<var>+Display</var>, <var>+FontUnitValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>FontUnitValue</var>:      <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmSetFontUnits(<var>+Display</var>, <var>+HValue</var>, <var>+VValue</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>HValue</var>:     <b>Integer</b>
+     <var>VValue</var>:     <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmSetMenuCursor(<var>+Display</var>, <var>+Cursor</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>CursorId</var>    <b>Cursor</b>
+     </pre>
+
+<pre class="example">     xmSetProtocolHooks(<var>+Shell</var>,<var>+Property</var>,<var>+Protocol</var>,<var>+PreHook</var>,
+                  <var>+PreHookData</var>,<var>+PostHook</var>,<var>+PostHookData</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Property</var>:   <b>XAtom</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     <var>PreHook</var>:    <b>CallbackProc</b>
+     <var>PreHookData</var>:        <b>AnyTerm</b>
+     <var>PostHook</var>:   <b>CallbackProc</b>
+     <var>PostHookData</var>:       <b>AnyTerm</b>
+     </pre>
+
+<pre class="example">     xmSetWMProtocolHooks(<var>+Shell</var>,<var>+Protocol</var>,<var>+PreHook</var>,
+                  <var>+PreHookData</var>,<var>+PostHook</var>,<var>+PostHookData</var>)
+     <var>Shell</var>:      <b>Widget</b>
+     <var>Protocol</var>:   <b>XAtom</b>
+     <var>PreHook</var>:    <b>CallbackProc</b>
+     <var>PreHookData</var>:        <b>AnyTerm</b>
+     <var>PostHook</var>:   <b>CallbackProc</b>
+     <var>PostHookData</var>:       <b>AnyTerm</b>
+     </pre>
+
+<pre class="example">     xmStringBaseline(<var>+Fontlist</var>, <var>+String</var>, <var>-Baseline</var>)
+     <var>Fontlist</var>:   <b>XmFontList</b>
+     <var>String</var>:     <b>XmString</b>
+     <var>Baseline</var>:   <b>Dimension</b>
+     </pre>
+
+<pre class="example">     xmStringByteCompare(<var>+String1</var>, <var>+String2</var>)
+     <var>String1</var>:    <b>XmString</b>
+     <var>String2</var>:    <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringCompare(<var>+String1</var>, <var>+String2</var>)
+     <var>String1</var>:    <b>XmString</b>
+     <var>String2</var>:    <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringConcat(<var>+String1</var>, <var>+String2</var>, <var>-ResultString</var>)
+     <var>String1</var>:    <b>XmString</b>
+     <var>String2</var>:    <b>XmString</b>
+     <var>ResultString</var>:       <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringCopy(<var>+String</var>, <var>-ResultString</var>)
+     <var>String</var>:     <b>XmString</b>
+     <var>ResultString</var>:       <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringCreate(<var>+Text</var>, <var>+Tag</var>, <var>-String</var>)
+     <var>Text</var>:       <b>String</b>
+     <var>Tag</var>:        <b>XmFontListTag</b>
+     <var>String</var>:     <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringCreateLocalized(<var>+Text</var>, <var>-String</var>)
+     <var>Text</var>:       <b>String</b>
+     <var>String</var>:     <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringCreateLtoR(<var>+Text</var>, <var>+Tag</var>, <var>-String</var>)
+     <var>Text</var>:       <b>String</b>
+     <var>Tag</var>:        <b>XmFontListTag</b>
+     <var>String</var>:     <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringCreateSimple(<var>+Text</var>, <var>-String</var>)
+     <var>Text</var>:       <b>String</b>
+     <var>String</var>:     <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringDirectionCreate(<var>+Direction</var>, <var>-String</var>)
+     <var>Direction</var>:  <b>XmStringDirection</b>
+     <var>String</var>:     <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringDraw(<var>+Display</var>,<var>+Window</var>,<var>+FontList</var>,<var>+String</var>,<var>+GC</var>,
+              <var>+X</var>,<var>+Y</var>,<var>+Width</var>,<var>+Alignment</var>,<var>+LayoutDirection</var>,<var>+Clip</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>FontList</var>:   <b>XmFontList</b>
+     <var>String</var>:     <b>XmString</b>
+     <var>GC</var>: <b>XGC</b>
+     <var>X</var>:  <b>Position</b>
+     <var>Y</var>:  <b>Position</b>
+     <var>Width</var>:      <b>Dimension</b>
+     <var>Alignment</var>:  <b>XmAlignment</b>
+     <var>LayoutDirection</var>:    <b>XmStringDirection</b>
+     <var>Clip</var>:       <b>XRectangle</b>
+     </pre>
+
+<pre class="example">     xmStringDrawImage(<var>+Display</var>,<var>+Window</var>,<var>+FontList</var>,<var>+String</var>,<var>+GC</var>,
+              <var>+X</var>,<var>+Y</var>,<var>+Width</var>,<var>+Alignment</var>,<var>+LayoutDirection</var>,<var>+Clip</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>FontList</var>:   <b>XmFontList</b>
+     <var>String</var>:     <b>XmString</b>
+     <var>GC</var>: <b>XGC</b>
+     <var>X</var>:  <b>Position</b>
+     <var>Y</var>:  <b>Position</b>
+     <var>Width</var>:      <b>Dimension</b>
+     <var>Alignment</var>:  <b>XmAlignment</b>
+     <var>LayoutDirection</var>:    <b>XmStringDirection</b>
+     <var>Clip</var>:       <b>XRectangle</b>
+     </pre>
+
+<pre class="example">     xmStringDrawUnderline(<var>+Display</var>,<var>+Window</var>,<var>+FontList</var>,<var>+String</var>,<var>+GC</var>,
+              <var>+X</var>,<var>+Y</var>,<var>+Width</var>,<var>+Alignment</var>,<var>+LayoutDirection</var>,<var>+Clip</var>,<var>+Underline</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>Window</var>:     <b>Window</b>
+     <var>FontList</var>:   <b>XmFontList</b>
+     <var>String</var>:     <b>XmString</b>
+     <var>GC</var>: <b>XGC</b>
+     <var>X</var>:  <b>Position</b>
+     <var>Y</var>:  <b>Position</b>
+     <var>Width</var>:      <b>Dimension</b>
+     <var>Alignment</var>:  <b>XmAlignment</b>
+     <var>LayoutDirection</var>:    <b>XmStringDirection</b>
+     <var>Clip</var>:       <b>XRectangle</b>
+     <var>Underline</var>:  <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringEmpty(<var>+String</var>)
+     <var>String</var>:     <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringExtent(<var>+FontList</var>, <var>+String</var>, <var>+Width</var>, <var>+Height</var>)
+     <var>FontList</var>:   <b>XmFontList</b>
+     <var>String</var>:     <b>XmString</b>
+     <var>Width</var>:      <b>Dimension</b>
+     <var>Height</var>:     <b>Dimension</b>
+     </pre>
+
+<pre class="example">     xmStringFree(<var>+String</var>)
+     <var>String</var>:     <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringFreeContext(<var>+Context</var>)
+     <var>Context</var>:    <b>XmStringContext</b>
+     </pre>
+
+<pre class="example">     xmStringGetLtoR(<var>+String</var>, <var>+Tag</var>, <var>-Text</var>)
+     <var>String</var>:     <b>XmString</b>
+     <var>Tag</var>:        <b>XmFontListTag</b>
+     <var>Text</var>:       <b>String</b>
+     </pre>
+
+<pre class="example">     xmStringGetNextComponent(<var>+Context</var>, <var>-Text</var>, <var>-Tag</var>,
+              <var>-Direction</var>, <var>-UnknownTag</var>, <var>-UnknownLength</var>, <var>-UnknownValue</var>, <var>-Result</var>)
+     <var>Context</var>:    <b>XmStringContext</b>
+     <var>Text</var>:       <b>String</b>
+     <var>Tag</var>:        <b>XmFontListTag</b>
+     <var>Direction</var>:  <b>XmStringDirection</b>
+     <var>UnknownTag</var>: <b>XmStringComponentType</b>
+     <var>UnknownLength</var>       <b>Integer</b>
+     <var>UnknownValue</var>:       <b>String</b>
+     <var>Result</var>:     <b>XmStringComponentType</b>
+     </pre>
+
+<pre class="example">     xmStringGetNextSegment(<var>+Context</var>, <var>-Text</var>, <var>-Tag</var>,
+              <var>-Direction</var>, <var>-Separator</var>)
+     <var>Context</var>:    <b>XmStringContext</b>
+     <var>Text</var>:       <b>String</b>
+     <var>Tag</var>:        <b>XmFontListTag</b>
+     <var>Direction</var>:  <b>XmStringDirection</b>
+     <var>Separator</var>:  <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmStringHasSubstring(<var>+String</var>, <var>+SubString</var>)
+     <var>String</var>:     <b>XmString</b>
+     <var>SubString</var>:  <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringHeight(<var>+FontList</var>, <var>+String</var>, <var>-Height</var>)
+     <var>FontList</var>:   <b>XmFontList</b>
+     <var>String</var>:     <b>XmString</b>
+     <var>Height</var>::    <b>Dimension</b>
+     </pre>
+
+<pre class="example">     xmStringInitContext(<var>-Context</var>, <var>+String</var>)
+     <var>Context</var>:    <b>XmStringContext</b>
+     <var>String</var>:     <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringLength(<var>+String</var>, <var>-Length</var>)
+     <var>String</var>:     <b>XmString</b>
+     <var>Length</var>:     <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmStringLineCount(<var>+String</var>, <var>-Lines</var>)
+     <var>String</var>:     <b>XmString</b>
+     <var>Lines</var>:      <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmStringNConcat(<var>+String1</var>, <var>+String2</var>, <var>-NumBytes</var>, <var>-ResultString</var>)
+     <var>String1</var>:    <b>XmString</b>
+     <var>String2</var>:    <b>XmString</b>
+     <var>NumBytes</var>:   <b>Integer</b>
+     <var>ResultString</var>:       <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringNCopy(<var>+String</var>,<var>+NumBytes</var>, <var>-ResultString</var>)
+     <var>String</var>:     <b>XmString</b>
+     <var>NumBytes</var>:   <b>Integer</b>
+     <var>ResultString</var>:       <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringPeekNextComponent(<var>+StringContext</var>, <var>-Component</var>)
+     <var>StringContext</var>:      <b>XmStringContext</b>
+     <var>Component</var>:  <b>XmStringComponentType</b>
+     </pre>
+
+<pre class="example">     xmStringSegmentCreate(<var>+Text</var>, <var>+Tag</var>, <var>+Direction</var>, <var>+Separator</var>, <var>-String</var>)
+     <var>Text</var>:       <b>String</b>
+     <var>Tag</var>:        <b>XmFontListTag</b>
+     <var>Direction</var>:  <b>XmStringDirection</b>
+     <var>Separator</var>:  <b>Boolean</b>
+     <var>String</var>:     <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringSeparatorCreate(<var>-Separator</var>)
+     <var>Separator</var>:  <b>XmString</b>
+     </pre>
+
+<pre class="example">     xmStringWidth(<var>+FontList</var>, <var>+String</var>, <var>-Width</var>)
+     <var>FontList</var>:   <b>XmFontList</b>
+     <var>String</var>:     <b>XmString</b>
+     <var>Width</var>:      <b>Dimension</b>
+     </pre>
+
+<pre class="example">     xmTargetsAreCompatible(<var>+Display</var>,<var>+ExportTargets</var>,<var>+ImportTargets</var>)
+     <var>Display</var>:    <b>Display</b>
+     <var>ExportTargets</var>:      <b>XAtomList</b>
+     <var>ImportTargets</var>:      <b>XAtomList</b>
+     </pre>
+
+<pre class="example">     xmTextClearSelection(<var>+Widget</var>, <var>+Time</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Time</var>:       <b>Time</b>
+     </pre>
+
+<pre class="example">     xmTextCopy(<var>+Widget</var>,<var>+Time</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Time</var>:       <b>Time</b>
+     </pre>
+
+<pre class="example">     xmTextCut(<var>+Widget</var>,<var>+Time</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Time</var>:       <b>Time</b>
+     </pre>
+
+<pre class="example">     xmTextDisableRedisplay(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTextEnableRedisplay(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTextFieldClearSelection(<var>+Widget</var>,<var>+Time</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Time</var>:       <b>Time</b>
+     </pre>
+
+<pre class="example">     xmTextFieldCopy(<var>+Widget</var>,<var>+Time</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Time</var>:       <b>Time</b>
+     </pre>
+
+<pre class="example">     xmTextFieldCut(<var>+Widget</var>,<var>+Time</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Time</var>:       <b>Time</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetBaseline(<var>+Widget</var>,<var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetCursorPosition(<var>+Widget</var>,<var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetEditable(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetInsertionPosition(<var>+Widget</var>,<var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetLastPosition(<var>+Widget</var>,<var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetMaxLength(<var>+Widget</var>,<var>-Length</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Length</var>:     <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetSelection(<var>+Widget</var>,<var>-Selection</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Selection</var>:  <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetSelectionPosition(<var>+Widget</var>,<var>-Left</var>,<var>-Right</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Left</var>:       <b>XmTextPosition</b>
+     <var>Right</var>:      <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetSelectionWcs(<var>+Widget</var>,<var>-Selection</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Selection</var>:  <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetString(<var>+Widget</var>,<var>-Text</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Text</var>:       <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetStringWcs(<var>+Widget</var>,<var>-Text</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Text</var>:       <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetSubstring(<var>+Widget</var>,<var>+Start</var>,<var>+Length</var>,<var>-Text</var>,<var>-Status</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Start</var>:      <b>XmTextPosition</b>
+     <var>Length</var>:     <b>Integer</b>
+     <var>Text</var>:       <b>String</b>
+     <var>Status</var>:     <b>CopyStatus</b>
+     </pre>
+
+<pre class="example">     xmTextFieldGetSubstringWcs(<var>+Widget</var>,<var>+Start</var>,<var>+Length</var>,<var>-Text</var>,<var>-Status</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Start</var>:      <b>XmTextPosition</b>
+     <var>Length</var>:     <b>Integer</b>
+     <var>Text</var>:       <b>XmValueWcs</b>
+     <var>Status</var>:     <b>CopyStatus</b>
+     </pre>
+
+<pre class="example">     xmTextFieldInsert(<var>+Widget</var>,<var>+Position</var>,<var>+Value</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     <var>Value</var>:      <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextFieldInsertWcs(<var>+Widget</var>,<var>+Position</var>,<var>+Value</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     <var>Value</var>:      <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextFieldPaste(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTextFieldPosToXY(<var>+Widget</var>,<var>+Position</var>,<var>-X</var>,<var>-Y</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     <var>X</var>:  <b>Position</b>
+     <var>Y</var>:  <b>Position</b>
+     </pre>
+
+<pre class="example">     xmTextFieldRemove(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTextFieldReplace(<var>+Widget</var>,<var>+FromPos</var>,<var>+ToPos</var>,<var>+Text</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>FromPos</var>:    <b>XmTextPosition</b>
+     <var>ToPos</var>:      <b>XmTextPosition</b>
+     <var>Text</var>:       <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextFieldReplaceWcs(<var>+Widget</var>,<var>+FromPos</var>,<var>+ToPos</var>,<var>+Text</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>FromPos</var>:    <b>XmTextPosition</b>
+     <var>ToPos</var>:      <b>XmTextPosition</b>
+     <var>Text</var>:       <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextFieldSetAddMode(<var>+Widget</var>,<var>+State</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>State</var>:      <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmTextFieldSetCursorPosition(<var>+Widget</var>,<var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextFieldSetEditable(<var>+Widget</var>,<var>+Editable</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Editable</var>:   <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmTextFieldSetHighlight(<var>+Widget</var>,<var>+Left</var>,<var>+Right</var>,<var>+Mode</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Left</var>:       <b>XmTextPosition</b>
+     <var>Right</var>:      <b>XmTextPosition</b>
+     <var>Mode</var>:       <b>XmHighlightMode</b>
+     </pre>
+
+<pre class="example">     xmTextFieldSetInsertionPosition(<var>+Widget</var>,<var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextFieldSetMaxLength(<var>+Widget</var>,<var>+MaxLength</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>MaxLength</var>:  <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmTextFieldSetSelection(<var>+Widget</var>,<var>+First</var>,<var>+Last</var>,<var>+Time</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>First</var>:      <b>XmTextPosition</b>
+     <var>Last</var>:       <b>XmTextPosition</b>
+     <var>Time</var>:       <b>Time</b>
+     </pre>
+
+<pre class="example">     xmTextFieldSetString(<var>+Widget</var>,<var>+String</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>String</var>:     <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextFieldSetStringWcs(<var>+Widget</var>,<var>+String</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>String</var>:     <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextFieldShowPosition(<var>+Widget</var>,<var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextFieldXYToPos(<var>+Widget</var>,<var>+X</var>,<var>+Y</var>,<var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>X</var>:  <b>Position</b>
+     <var>Y</var>:  <b>Position</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextFindString(<var>+Widget</var>,<var>+Start</var>,<var>+String</var>,<var>+Direction</var>,<var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Start</var>:      <b>XmTextPosition</b>
+     <var>String</var>:     <b>String</b>
+     <var>Direction</var>:  <b>XmTextDirection</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextFindStringWcs(<var>+Widget</var>,<var>+Start</var>,<var>+String</var>,<var>+Direction</var>,<var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Start</var>:      <b>XmTextPosition</b>
+     <var>String</var>:     <b>XmValueWcs</b>
+     <var>Direction</var>:  <b>XmTextDirection</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextGetBaseline(<var>+Widget</var>,<var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmTextGetCursorPosition(<var>+Widget</var>,<var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextGetEditable(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTextGetInsertionPosition(<var>+Widget</var>, <var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextGetLastPosition(<var>+Widget</var>, <var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>LastPosition</var>:       <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextGetMaxLength(<var>+Widget</var>, <var>-Length</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Length</var>:     <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmTextGetSelection(<var>+Widget</var>, <var>-Selection</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Selection</var>:  <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextGetSelectionPosition(<var>+Widget</var>, <var>-Left</var>, <var>-Right</var>, <var>-Success</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Left</var>:       <b>XmTextPosition</b>
+     <var>Right</var>:      <b>XmTextPosition</b>
+     <var>Success</var>:    <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmTextGetSelectionWcs(<var>+Widget</var>,<var>-Selection</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Selection</var>:  <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextGetSource(<var>+Widget</var>,<var>-Source</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Source</var>:     <b>XmTextSource</b>
+     </pre>
+
+<pre class="example">     xmTextGetString(<var>+Widget</var>,<var>-Text</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Text</var>:       <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextGetStringWcs(<var>+Widget</var>,<var>-Text</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Text</var>:       <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextGetSubstring(<var>+Widget</var>,<var>+Start</var>,<var>+Length</var>,<var>-Text</var>,<var>-Status</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Start</var>:      <b>XmTextPosition</b>
+     <var>Length</var>:     <b>Integer</b>
+     <var>Text</var>:       <b>String</b>
+     <var>Status</var>:     <b>CopyStatus</b>
+     </pre>
+
+<pre class="example">     xmTextGetSubstringWcs(<var>+Widget</var>,<var>+Start</var>,<var>+Length</var>,<var>-Text</var>,<var>-Status</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Start</var>:      <b>XmTextPosition</b>
+     <var>Length</var>:     <b>Integer</b>
+     <var>Text</var>:       <b>XmValueWcs</b>
+     <var>Status</var>:     <b>CopyStatus</b>
+     </pre>
+
+<pre class="example">     xmTextGetTopCharacter(<var>+Widget</var>, <var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextInsert(<var>+Widget</var>,<var>+Position</var>,<var>+Value</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     <var>Value</var>:      <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextInsertWcs(<var>+Widget</var>,<var>+Position</var>,<var>+Value</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     <var>Value</var>:      <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextPaste(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTextPosToXY(<var>+Widget</var>, <var>+Position</var>, <var>-X</var>, <var>-Y</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     <var>X</var>:  <b>Position</b>
+     <var>Y</var>:  <b>Position</b>
+     </pre>
+
+<pre class="example">     xmTextRemove(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTextReplace(<var>+Widget</var>,<var>+FromPos</var>,<var>+ToPos</var>,<var>+Text</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>FromPos</var>:    <b>XmTextPosition</b>
+     <var>ToPos</var>:      <b>XmTextPosition</b>
+     <var>Text</var>:       <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextReplaceWcs(<var>+Widget</var>,<var>+FromPos</var>,<var>+ToPos</var>,<var>+Text</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>FromPos</var>:    <b>XmTextPosition</b>
+     <var>ToPos</var>:      <b>XmTextPosition</b>
+     <var>Text</var>:       <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextScroll(<var>+Widget</var>, <var>+Lines</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Lines</var>:      <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmTextSetAddMode(<var>+Widget</var>,<var>+State</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>State</var>:      <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmTextSetCursorPosition(<var>+Widget</var>,<var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextSetEditable(<var>+Widget</var>, <var>+Editable</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Editable</var>:   <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmTextSetHighlight(<var>+Widget</var>,<var>+Left</var>,<var>+Right</var>,<var>+Mode</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Left</var>:       <b>XmTextPosition</b>
+     <var>Right</var>:      <b>XmTextPosition</b>
+     <var>Mode</var>:       <b>XmHighlightMode</b>
+     </pre>
+
+<pre class="example">     xmTextSetInsertionPosition(<var>+Widget</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextSetMaxLength(<var>+Widget</var>, <var>+MaxLength</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>MaxLength</var>:  <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmTextSetSelection(<var>+Widget</var>, <var>+First</var>, <var>+Last</var>, <var>+Time</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>First</var>:      <b>XmTextPosition</b>
+     <var>Last</var>:       <b>XmTextPosition</b>
+     <var>Time</var>:       <b>Time</b>
+     </pre>
+
+<pre class="example">     xmTextSetSource(<var>+Widget</var>, <var>+Source</var>, <var>+TopChar</var>, <var>+CursorPos</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Source</var>:     <b>XmTextSource</b>
+     <var>TopChar</var>:    <b>XmTextPosition</b>
+     <var>CursorPos</var>:  <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextSetString(<var>+Widget</var>, <var>+String</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>String</var>:     <b>String</b>
+     </pre>
+
+<pre class="example">     xmTextSetStringWcs(<var>+Widget</var>, <var>+String</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>String</var>:     <b>XmValueWcs</b>
+     </pre>
+
+<pre class="example">     xmTextSetTopCharacter(<var>+Widget</var>, <var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextShowPosition(<var>+Widget</var>,<var>+Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmTextXYToPos(<var>+Widget</var>, <var>+X</var>, <var>+Y</var>, <var>-Position</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>X</var>:  <b>Position</b>
+     <var>Y</var>:  <b>Position</b>
+     <var>Position</var>:   <b>XmTextPosition</b>
+     </pre>
+
+<pre class="example">     xmToggleButtonGadgetGetState(<var>+Gadget</var>)
+     <var>Gadget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmToggleButtonGadgetSetState(<var>+Gadget</var>,<var>+State</var>,<var>+Notify</var>)
+     <var>Gadget</var>:     <b>Widget</b>
+     <var>State</var>:      <b>Boolean</b>
+     <var>Notify</var>:     <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmToggleButtonGetState(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmToggleButtonSetState(<var>+Widget</var>, <var>+State</var>, <var>+Notify</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>State</var>:      <b>Boolean</b>
+     <var>Notify</var>:     <b>Boolean</b>
+     </pre>
+
+<pre class="example">     xmTrackingEvent(<var>+Widget</var>, <var>+Cursor</var>, <var>+ConfineTo</var>, <var>-Event</var>, <var>-Result</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Cursor</var>:     <b>Cursor</b>
+     <var>ConfineTo</var>:  <b>Boolean</b>
+     <var>Event</var>:      <b>XEvent</b>
+     <var>Result</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTrackingLocate(<var>+Widget</var>, <var>+Cursor</var>, <var>+ConfineTo</var>, <var>-Event</var>, <var>-Result</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Cursor</var>:     <b>Cursor</b>
+     <var>ConfineTo</var>:  <b>Boolean</b>
+     <var>Result</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmTranslateKey(<var>+Display</var>,<var>+KeyCode</var>,<var>+Modifiers</var>, <var>-ModifiersRtn</var>,<var>-KeySym</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>KeyCode</var>:    <b>Integer</b>
+     <var>Modifiers</var>:  <b>Integer</b>
+     <var>ModifiersRtn</var>:       <b>Integer</b>
+     <var>KeySym</var>:     <b>KeySym</b>
+     </pre>
+
+<pre class="example">     xmUninstallImage(<var>+Image</var>)
+     <var>Image</var>:      <b>XImage</b>
+     </pre>
+
+<pre class="example">     xmUpdateDisplay(<var>+Widget</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     </pre>
+
+<pre class="example">     xmWidgetGetBaselines(<var>+Widget</var>, <var>-BaseLines</var>, <var>-LineCount</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>BaseLines</var>:  <b>IntegerList</b>
+     <var>LineCount</var>:  <b>Integer</b>
+     </pre>
+
+<pre class="example">     xmWidgetGetDisplayRect(<var>+Widget</var>, <var>-Rectangle</var>)
+     <var>Widget</var>:     <b>Widget</b>
+     <var>Rectangle</var>:  <b>XRectangle</b>
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxt-exp-px.html#pxt-exp-px">Next</a>
+<li><a rel="up" accesskey="u" href="pxt-exp.html#pxt-exp">Up</a>
+</ul>
+</div>
+   </body></html>
+

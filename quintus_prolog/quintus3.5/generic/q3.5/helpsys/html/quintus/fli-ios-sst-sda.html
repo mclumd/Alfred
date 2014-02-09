@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">System-Dependent Address In A File Stream</h5>
+
+<pre class="example">     QP_stream:      union QP_cookie magic;
+     </pre>
+
+   <p>The system-dependent address of the current position in a stream is
+stored in the <code>magic</code> field of the stream structure.  It is only
+used when there is any kind of seek to be performed on the stream. 
+This field is a C type <code>union cookie</code>, which is defined in
+<code>&lt;quintus/quintus.h&gt;</code> as follows:
+
+<pre class="example">                     union QP_cookie {
+                           struct RFA {
+                                  int  BlockNumber;
+                                  short Offset;
+                           } vms_rfa;
+                           int mvs_rrn;
+                           int  cms_recno;
+                           off_t byteno;
+                           int user_defined[2];
+                     } magic;
+     </pre>
+
+   <p>Depending on the host operating system,
+different field names of <code>union cookie</code> are used to store
+the position address of the stream depending on the host operating
+system.  Under UNIX, <code>magic.byteno</code> is used to record the current location
+of the file pointer as an absolute byte offset from the beginning of the
+stream;
+<code>magic.vms_rfa</code> is used on VMS;
+<code>magic.mvs_rrn</code> is used on MVS; <code>magic.cms_recno</code> is used on CMS. 
+<code>magic.user_defined</code> is used for a user's specific method of recording
+the current location of a stream.  These values must be maintained in
+the bottom layer functions of a stream with seek permission.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-sst-bot.html#fli-ios-sst-bot">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-sst-sec.html#fli-ios-sst-sec">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-sst.html#fli-ios-sst">Up</a>
+</ul>
+</div>
+   </body></html>
+

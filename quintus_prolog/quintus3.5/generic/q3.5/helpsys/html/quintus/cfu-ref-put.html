@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_put_*(</code>)</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p>These C functions can be used to create new Prolog terms from C.
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     void QP_put_variable(term)
+     QP_term_ref     term;
+     </pre>
+
+<pre class="example">     void QP_put_atom(term, atom)
+     QP_term_ref     term;
+     QP_atom         atom;
+     </pre>
+
+<pre class="example">     void QP_put_integer(term, integer)
+     QP_term_ref     term;
+     long int        integer;
+     </pre>
+
+<pre class="example">     void QP_put_float(term, float)
+     QP_term_ref     term;
+     double          float;
+     </pre>
+
+<pre class="example">     void QP_put_functor(term, name, arity)
+     QP_term_ref     term;
+     QP_atom         name;
+     int             arity;
+     </pre>
+
+<pre class="example">     void QP_put_list(term)
+     QP_term_ref     term;
+     </pre>
+
+<pre class="example">     void QP_put_nil(term)
+     QP_term_ref     term;
+     </pre>
+
+<pre class="example">     void QP_put_term(term1, term2)
+     QP_term_ref     term1;
+     QP_term_ref     term2;
+     </pre>
+
+<pre class="example">     void QP_put_db_reference(term, ref)
+     QP_term_ref     term1;
+     QP_db_reference ref;
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+     <dl>
+
+     <br><dt><code>QP_put_variable()</code>
+     <dd>assigns to <var>term</var> a reference to a new unbound
+Prolog variable.
+
+     <br><dt><code>QP_put_atom()</code>
+     <dd>assigns to <var>term</var> a reference to the atom
+represented by <var>atom</var>. <var>atom</var> is assumed to be the canonical
+representation of a Prolog atom, either obtained from Prolog or returned
+by <code>QP_atom_from_string(</code>).
+
+     <br><dt><code>QP_put_integer()</code>
+     <dd>assigns to <var>term</var> a reference to <var>integer</var>
+tagged as a Prolog term.
+
+     <br><dt><code>QP_put_float()</code>
+     <dd>assigns to <var>term</var> a reference to the floating
+point number <var>float</var> tagged as a Prolog term.
+
+     <br><dt><code>QP_put_functor()</code>
+     <dd>assigns to <var>term</var> a reference to a new compound term
+whose functor is the atom represented by <var>name</var> and whose arity is
+<var>arity</var>. All the args of the compound term are unbound. 
+This is similar to the Prolog builtin <code>functor/3</code> with its first argument
+unbound and its second and third argument bound.
+
+     <br><dt><code>QP_put_list()</code>
+     <dd>assigns to <var>term</var> a reference to a new list whose
+head and tail are both unbound.
+
+     <br><dt><code>QP_put_nil()</code>
+     <dd>assigns to <var>term</var> a reference to the atom <code>[]</code>.
+
+     <br><dt><code>QP_put_term()</code>
+     <dd>assigns to <var>term1</var> a reference to the term that
+<var>term2</var> references. Any reference to another term that
+<var>term1</var> contained is lost.
+
+     <br><dt><code>QP_put_db_reference()</code>
+     <dd>assigns to <var>term</var> a reference to the
+Prolog db_reference represented by <var>ref</var>. 
+<var>ref</var> must have been a reference obtained
+through <code>QP_get_db_reference()</code>. Any reference to another term that
+<var>term1</var> contained is lost.
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>flt_to_chars()</code> is a C function that converts a floating point number to
+a list of characters. Note the use of <code>QP_put_integer()</code>.
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(flt_to_chars, flt_to_chars(+float, -term)).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     void flt_to_chars(flt, chars)
+     double flt;
+     QP_term_ref chars;
+     {
+        char buffer[28], *p;
+        int len;
+        QP_term_ref term_char = QP_new_term_ref();
+     
+        QP_put_nil(chars);
+        sprintf( buffer , "%.17e" , flt );
+     
+        /* move to end of buffer */
+        for (p=buffer, len=0; *p; p++, len++);
+     
+        while ( len-- )  {
+           QP_put_integer(term_char, *--p);
+           QP_cons_list(chars, term_char, chars);
+        }
+     }
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_term_type()</code>, <code>QP_get_*()</code>,
+<code>QP_new_term_ref()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-putc.html#cfu-ref-putc">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-printf.html#cfu-ref-printf">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

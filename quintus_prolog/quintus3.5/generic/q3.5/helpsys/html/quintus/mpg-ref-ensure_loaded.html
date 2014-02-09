@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>ensure_loaded/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>ensure_loaded(</code><var>+Files</var><code>)</code>
+
+   <p>Load the specified Prolog source and/or QOF file(s) into memory, if
+not already loaded and up to date.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Files</var> <dfn>file_spec</dfn> or <dfn>list of file_spec</dfn> [MOD]
+     <dd>a file
+specification or a list of file specifications; a <code>.pl</code> or <code>.qof</code>
+extension may be omitted in a file specification. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Loads each of the specified files except for files that
+have previously been loaded and that have not been changed since they were
+last loaded.
+
+   <p>In the case of non-module-files, a file is not considered to have been
+previously loaded if it was loaded into a different module.  For
+restrictions on non-module QOF-files, and how they can be loaded, see
+<code>load_files/[1,2]</code>.  In this case the file is loaded again and a warning
+message is printed to let you know that two copies of the file have
+been loaded (into two different modules).  If you <em>want</em> two copies
+of the file, you can avoid the warning message by changing the
+<code>ensure_loaded/1</code> command to a <code>compile/1</code> command.  If you do
+not want multiple copies of the file, make the file a module-file.
+
+   <p>When <code>ensure_loaded/1</code> is called from an embedded command in a file being
+compiled by <code>qpc</code>, each specified file is compiled from source into QOF unless
+there is already a QOF file that is more recent than the source.
+
+   <p>When <code>ensure_loaded/1</code> is called in a runtime system, all predicates will be
+loaded as dynamic predicates and therefore this code will run slower.  The reason for this is that the compiler is not
+available in runtime systems.
+
+   <p>This predicate is defined as:
+<pre class="example">     ensure_loaded(Files) :-
+             load_files(Files, [if(changed),
+                        load_type(latest)]).
+     </pre>
+
+   <p>For further details on loading files, see <a href="ref-lod.html#ref-lod">ref-lod</a>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>M</var> or <var>Files</var> is not ground.
+
+     <br><dt><code>type_error</code>
+     <dd>
+In <var>M</var> or in <var>Files</var>.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+A specified file does not exist.  If the <code>fileerrors</code> flag is <code>off</code>, the
+predicate fails instead of raising this exception.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+A specified file is protected.  If the <code>fileerrors</code> flag is <code>off</code>, the
+predicate fails instead of raising this exception.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>compile/1</code>, <code>load_files/[1,2]</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-erase.html#mpg-ref-erase">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-dynamic.html#mpg-ref-dynamic">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

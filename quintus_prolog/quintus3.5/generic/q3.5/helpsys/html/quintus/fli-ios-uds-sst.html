@@ -1,0 +1,310 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Creating A Stream Based On C Standard I/O Library</h5>
+
+   <p>This example demonstrates creating a stream based on standard I/O
+library package.  The stream is created as unbuffered for the Prolog
+I/O system (It is still buffered in the standard I/O package). 
+By making the stream unbuffered, mixed I/O operations between Prolog
+code and C code using standard I/O library functions will work appropriately. 
+In this case, line counts and character counts will be maintained
+for Prolog I/O predicates and QP functions only.
+
+<pre class="example">
+                                   <div align="right"><em>stdio.pl</em>
+     </div>
+     
+     foreign(open_stdio, c, open_stdio(+string, +string, -integer,
+                                       [-address])).
+     foreign_file('stdio', [open_stdio]).
+     
+     :- load_foreign_files(['stdio'],['-lc']).
+     
+     open_stdio_file(FileName, ModeName, Stream) :-
+             valid_open_mode(ModeName, Mode),
+             open_stdio(FileName, Mode, ErrorNum, CStream),
+             ( CStream =:= 0 -&gt;
+                     raise_exception(existence_error(
+                         open_stdio_file(FileName, ModeName, Stream),
+                         1, file, FileName, errno(ErrorNum)))
+             ; stream_code(Stream, CStream)
+             ).
+     
+     valid_open_mode(read,   r).
+     valid_open_mode(write,  w).
+     valid_open_mode(append, a).
+     </pre>
+
+<pre class="example">
+                                    <div align="right"><em>stdio.c</em>
+     </div>
+     
+     #include &lt;stdio.h&gt;
+     #include &lt;quintus/quintus.h&gt;
+     
+     /* Create a stream based on UNIX standard I/O library.
+        This stream is created as an unbuffered stream so that
+        mixed calls of Quintus Prolog I/O predicates (functions)
+        and standard I/O on the stream will read/write the same
+        sequence of bytes of the stream */
+     
+     typedef struct
+         {
+             QP_stream       qpinfo;
+             FILE            *fp;
+             unsigned char   buffer[4];
+         } StdioStream;
+     
+     #define CoerceStdioStream(stream)       ((StdioStream *) stream)
+     
+     extern int      errno;
+     
+     static int
+     stdio_read(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             StdioStream     *stream = CoerceStdioStream(qpstream);
+             register int    c;
+     
+             if ((c = getc(stream-&gt;fp)) &lt; 0)
+                 return QP_EOF;
+             stream-&gt;buffer[0] = (unsigned char) c;
+             *bufptr = stream-&gt;buffer;
+             *sizeptr = 1;
+             /* '-1' because the magic field stores the beginning
+                     address of the returned buffer */
+             qpstream-&gt;magic.byteno = ftell(stream-&gt;fp)-1;
+             return (c == '\n') ? QP_FULL : QP_PART;
+         }
+     </pre>
+
+<pre class="example">
+                                    <div align="right"><em>stdio.c</em>
+     </div>
+     
+     static int
+     stdio_write(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             StdioStream *stream = CoerceStdioStream(qpstream);
+     
+             if (*sizeptr == 0) {
+                 *bufptr = stream-&gt;buffer;
+                 *sizeptr = 0;
+                 return QP_SUCCESS;
+             }
+             errno = 0;
+             if (putc((char) stream-&gt;buffer[0], stream-&gt;fp) &lt; 0) {
+                 qpstream-&gt;errno = (errno) ? errno : QP_E_CANT_WRITE;
+                 return QP_ERROR;
+             }
+             qpstream-&gt;magic.byteno = ftell(stream-&gt;fp);
+             *bufptr = stream-&gt;buffer;
+             *sizeptr = 0;            /* use 0 for unbuffered write */
+             return QP_SUCCESS;
+         }
+     
+     static int
+     stdio_flush(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             StdioStream *stream = CoerceStdioStream(qpstream);
+     
+             /* The stream is unbuffered so that there is no character
+                in the buffer of stream-&gt;buffer */
+             errno = 0;
+             if (fflush(stream-&gt;fp) &lt; 0) {
+                 qpstream-&gt;errno = (errno) ? errno : QP_E_CANT_FLUSH;
+                 return QP_ERROR;
+             }
+             qpstream-&gt;magic.byteno = ftell(stream-&gt;fp);
+             *bufptr = stream-&gt;buffer;
+             *sizeptr = 0;
+             return QP_SUCCESS;
+         }
+     </pre>
+
+<pre class="example">
+                                    <div align="right"><em>stdio.c</em>
+     </div>
+     
+     static int
+     stdio_seek(qpstream, qpmagic, whence, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         union QP_cookie     *qpmagic;
+         int                 whence;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             StdioStream *stream = CoerceStdioStream(qpstream);
+             int     rtn;
+     
+             errno = 0;
+             /* fseek() should normally flush out the buffered input
+                for stream-&gt;fp.  Use fflush() just to be safe */
+             if (qpstream-&gt;mode != QP_READ)
+                 (void) fflush(stream-&gt;fp);
+             switch (whence) {
+             case QP_BEGINNING:
+                 rtn = fseek(stream-&gt;fp, qpmagic-&gt;byteno, 0);
+                 break;
+             case QP_CURRENT:
+                 rtn = fseek(stream-&gt;fp,  qpmagic-&gt;byteno, 1);
+                 break;
+             case QP_END:
+                 rtn = fseek(stream-&gt;fp, qpmagic-&gt;byteno, 2);
+                 break;
+             default:
+                 qpstream-&gt;errno = QP_E_INVAL;
+                 return QP_ERROR;
+             }
+             if (rtn == -1) {
+                 qpstream-&gt;errno = (errno) ? errno : QP_E_CANT_SEEK;
+                 return QP_ERROR;
+             }
+             qpstream-&gt;magic.byteno = ftell(stream-&gt;fp);
+             *bufptr  = stream-&gt;buffer;
+             *sizeptr = (qpstream-&gt;mode == QP_READ) ? 0
+                                        : qpstream-&gt;max_reclen;
+             return QP_SUCCESS;
+         }
+     </pre>
+
+<pre class="example">
+                                    <div align="right"><em>stdio.c</em>
+     </div>
+     
+     static int
+     stdio_close(qpstream)
+         QP_stream   *qpstream;
+         {
+             StdioStream *stream = CoerceStdioStream(qpstream);
+     
+             /* characters in fp buffer is flushed by fclose() */
+             if (fclose(stream-&gt;fp) &lt; 0) {
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+             QP_free((char *) stream);
+             return QP_SUCCESS;
+         }
+     </pre>
+
+<pre class="example">
+                                    <div align="right"><em>stdio.c</em>
+     </div>
+     
+     /* open_stdio() creates an instance of standard input/output
+        based stream.  The function creates a file stream based
+        on the 'filename' and 'modename' parameter.
+        It returns the pointer to the created QP_stream structure
+        upon success.  It returns QP_NULL_STREAM and sets
+        error code in 'error_num' upon failure.
+     */
+     QP_stream *
+     open_stdio(filename, modename, error_num)
+         char        *filename, *modename;
+         int         *error_num;
+         {
+             QP_stream    *option;
+             FILE         *fp;
+             StdioStream  *stream;
+             int          mode, stdio_read(), stdio_write(),
+                          stdio_flush(), stdio_seek(), stdio_close();
+     
+             switch (*modename) {
+             case 'r':       mode = QP_READ;         break;
+             case 'w':       mode = QP_WRITE;        break;
+             case 'a':       mode = QP_APPEND;       break;
+             default:        *error_num = QP_E_BAD_MODE;
+                             return QP_NULL_STREAM;
+             }
+             if ((fp = fopen(filename, modename)) == NULL) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+     
+                     /* allocate space for the stream */
+             stream = (StdioStream *) QP_malloc(sizeof(*stream));
+                     /* set values in the stream */
+             stream-&gt;fp = fp;
+     
+             /* obtain default values in QP_stream structure */
+             /*     and modified fields for this stream */
+             option = &amp;stream-&gt;qpinfo;
+             QU_stream_param(filename, mode, QP_DELIM_LF, option);
+             if (isatty(fileno(fp))) {
+                 option-&gt;format = QP_DELIM_TTY;
+                 option-&gt;seek_type = QP_SEEK_ERROR;
+             } else {
+                 option-&gt;seek_type  = QP_SEEK_BYTE;
+             }
+             option-&gt;max_reclen = (mode == QP_READ) ? 1 : 0;
+     </pre>
+
+<pre class="example">
+                                    <div align="right"><em>stdio.c</em>
+     </div>
+     
+             if (mode != QP_READ) {
+                 option-&gt;write = stdio_write;
+                 option-&gt;flush = stdio_flush;
+             } else {
+                 option-&gt;read = stdio_read;
+                 option-&gt;peof_act   = QP_PASTEOF_EOFCODE;
+             }
+             option-&gt;seek  = stdio_seek;
+             option-&gt;close = stdio_close;
+                     /* sets correct value in magic field */
+             if (option-&gt;mode != QP_APPEND)
+                 option-&gt;magic.byteno = 0;
+             else
+                 option-&gt;magic.byteno = ftell(fp);
+     
+                     /* set internal fields and register stream */
+             QP_prepare_stream(&amp;stream-&gt;qpinfo, stream-&gt;buffer);
+             if (QP_register_stream(&amp;stream-&gt;qpinfo) == QP_ERROR) {
+                 (void) stream-&gt;qpinfo.close(&amp;stream-&gt;qpinfo);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+     
+                     /* register tty stream to its group */
+             if (option-&gt;format == QP_DELIM_TTY)
+                 (void) QP_add_tty(&amp;stream-&gt;qpinfo, filename);
+             return (QP_stream *) stream;
+         }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-uds-est.html#fli-ios-uds-est">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-uds.html#fli-ios-uds">Up</a>
+</ul>
+</div>
+   </body></html>
+

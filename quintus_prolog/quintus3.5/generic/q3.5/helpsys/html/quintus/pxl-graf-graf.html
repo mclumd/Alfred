@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Graphics Attributes</h4>
+
+   <p>Much of the behavior of the drawing commands described in
+<a href="pxl-prim.html#pxl-prim">pxl-prim</a> is determined by the graphics attributes of
+the destination drawable (or of the gc, if one is supplied as
+argument).  Following is a list of the graphics attributes and their
+meaning.
+
+     <dl>
+
+     <br><dt><code>function</code><var>(V)</var><code></code>
+     <dd>How source and destination are combined. 
+Possible values are <code>clear</code>, <code>and</code>,
+<code>and_reverse</code>, <code>copy</code>, <code>and_inverted</code>,
+<code>noop</code>, <code>xor</code>, <code>or</code>, <code>nor</code>,
+<code>equiv</code>, <code>invert</code>, <code>or_reverse</code>,
+<code>copy_inverted</code>, <code>or_inverted</code>,
+<code>nand</code>, and <code>set</code>. Default is <code>copy</code>.
+
+     <br><dt><code>plane_mask</code><var>(V)</var><code></code>
+     <dd>A bitmask specifying which planes of
+destination are affected by operations. 
+Default is all planes (i.e., -1).
+
+     <br><dt><code>foreground</code><var>(V)</var><code></code>
+     <dd>Foreground pixel value.  Default is the
+pixel value for black.
+
+     <br><dt><code>background</code><var>(V)</var><code></code>
+     <dd>Background pixel value.  Default is the
+pixel value for white.
+
+     <br><dt><code>line_width</code><var>(V)</var><code></code>
+     <dd>Width of drawn lines, in pixels.  A value of
+0 means <dfn>thin</dfn> lines.  These may be
+drawn somewhat faster than width 1 lines. 
+Default is 0.
+
+     <br><dt><code>line_style</code><var>(V)</var><code></code>
+     <dd>How (and if) lines are to be dashed. 
+Possible values are <code>solid</code>,
+<code>double_dash</code>, or <code>on_off_dash</code>. 
+Default is <code>solid</code>.
+
+     <br><dt><code>cap_style</code><var>(V)</var><code></code>
+     <dd>How wide lines are to be capped.  Possible
+values are <code>not_last</code>, <code>butt</code>,
+<code>round</code>, and <code>projecting</code>.  Default is
+<code>butt</code>.
+
+     <br><dt><code>join_style</code><var>(V)</var><code></code>
+     <dd>How wide connecting lines are to be joined. 
+Possible values are <code>miter</code>,
+<code>round</code>, and <code>bevel</code>.  Default is
+<code>miter</code>.
+
+     <br><dt><code>fill_style</code><var>(V)</var><code></code>
+     <dd>How filling is to be done.  Possible values
+are <code>solid</code>, <code>tiled</code>,
+<code>opaque_stippled</code>, and <code>stippled</code>. 
+Default is <code>solid</code>.
+
+     <br><dt><code>fill_rule</code><var>(V)</var><code></code>
+     <dd>How to decide which parts of a figure are to
+be filled when the lines specifying the
+figure cross.  Possible values are
+<code>odd_even_rule</code> or <code>winding_rule</code>. 
+Default is <code>odd_even_rule</code>.
+
+     <br><dt><code>arc_mode</code><var>(V)</var><code></code>
+     <dd>How arcs are to be filled.  Possible values
+are <code>pie_slice</code> or <code>chord</code>.  Default is
+<code>pie_slice</code>.
+
+     <br><dt><code>tile</code><var>(V)</var><code></code>
+     <dd>The pixmap for tiling operations.  This is
+only used if <code>file_style(tiled)</code> is selected. 
+Default is a pixmap of unspecified size
+filled with the foreground color.
+
+     <br><dt><code>stipple</code><var>(V)</var><code></code>
+     <dd>A 1 plane pixmap (a bitmap) for stipple
+operations.  This is only used if
+<code>file_style(opaque_stippled)</code> or
+<code>file_style(stippled)</code> is selected.  The
+default is a bitmap of unspecified size
+filled with 0.
+
+     <br><dt><code>ts_x_origin</code><var>(V)</var><code></code>
+     <dd>X offset for tile and stipple operations. 
+Default is 0.
+
+     <br><dt><code>ts_y_origin</code><var>(V)</var><code></code>
+     <dd>Y offset for tile and stipple operations. 
+Default is 0.
+
+     <br><dt><code>ts_origin</code><var>(X, Y)</var><code></code>
+     <dd>Same as <code>ts_x_origin(</code><var>X</var><code>), ts_y_origin(</code><var>Y</var><code>)</code>.
+
+     <br><dt><code>font</code><var>(V)</var><code></code>
+     <dd>The font used for text display.  The default
+is implementation dependent.
+
+     <br><dt><code>subwindow_mode</code><var>(V)</var><code></code>
+     <dd>Should drawing operations affect mapped
+subwindows of a windows being drawn into? 
+Possible values are <code>clip_by_children</code> and
+<code>include_inferiors</code>.  Default is
+<code>clip_by_children</code>.
+
+     <br><dt><code>graphics_exposures</code><var>(V)</var><code></code>
+     <dd>Should graphics exposure events be
+generated when copying from a window?  Possible
+values are <code>true</code> and <code>false</code>. 
+Default is <code>true</code>.
+
+     <br><dt><code>clip_x_origin</code><var>(V)</var><code></code>
+     <dd>X origin for clipping.  Default is 0.
+
+     <br><dt><code>clip_y_origin</code><var>(V)</var><code></code>
+     <dd>Y origin for clipping.  Default is 0.
+
+     <br><dt><code>clip_origin</code><var>(X, Y)</var><code></code>
+     <dd>Same as <code>clip_x_origin(</code><var>X</var><code>), clip_y_origin(</code><var>Y</var><code>)</code>.
+
+     <br><dt><code>clip</code><var>(V)</var><code></code>
+     <dd>Specifies how to restrict drawing
+operations to the destination.  V may be
+<code>none</code>, a bitmap, or a list of
+<code>rectangle(X, Y, Width, Height)</code> terms. 
+If it is a bitmap, only pixels in the
+destination corresponding to 1 bits in
+the bitmap will be affected by drawing. 
+If a list of <code>rectangle/4</code> terms, only
+pixels in the destination that fall
+within one of the rectangles will be
+affected.  Default is <code>none</code>.
+
+     <br><dt><code>clip</code><var>(List, Order)</var><code></code>
+     <dd>same as <code>clip(List)</code>, except that
+<var>List</var> must be
+a list of <code>rectangle(X, Y, Width, Height)</code> terms, and
+further, <var>Order</var> describes the order of
+the terms in the list.  Possible values
+are <code>unsorted</code>, <code>y_sorted</code>,
+<code>y_x_sorted</code>, and <code>y_x_banded</code>. The
+default is that this attribute doesn't
+apply, since by default there is no
+clipping.
+
+     <br><dt><code>dashes</code><var>(V)</var><code></code>
+     <dd>A list of alternating integer on and off
+lengths for dashed lines.  This attribute is
+only used when <code>line_style(double_dash)</code> or
+<code>line_style(on_off_dash)</code> are selected. 
+Default value is <code>[4, 4]</code> (which is the same as
+<code>[4]</code> since the list is used cyclically).
+
+     <br><dt><code>dash_offset</code><var>(V)</var><code></code>
+     <dd>An integer specifying where in the
+<code>dashes(</code><var>V</var><code>)</code>
+list to begin drawing.  Default is 0.
+
+   </dl>
+
+   <p>For more detailed information on particular attributes, see any good
+book on programming the X Window System.  There are several good
+references on Xlib, the C interface to the X Window System.
+
+   <p>If you are still confused about graphics attributes, the easiest, and
+often most effective, way to understand them is to experiment.  ProXL
+makes this very easy.  Simply open a window and use the drawing
+commands to draw into it.  Then experiment with changing graphics
+attributes until you get the effect you want.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-graf-find.html#pxl-graf-find">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-graf.html#pxl-graf">Up</a>
+</ul>
+</div>
+   </body></html>
+

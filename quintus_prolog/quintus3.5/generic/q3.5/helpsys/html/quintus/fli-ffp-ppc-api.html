@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Specifying the Argument Passing Interface: <code>extern/1</code></h5>
+
+   <p>An <code>extern/1</code> declaration has the form
+<pre class="example">     :- extern(<var>+CallSpecification</var>)
+     </pre>
+
+   <p><var>CallSpecification</var> is a Prolog term specifying how calls from C
+will pass arguments to and receive arguments from the Prolog
+predicate.  Handling arguments passed from other languages is
+discussed in <a href="fli-ffp-ppl.html#fli-ffp-ppl">fli-ffp-ppl</a>.
+
+   <p><var>CallSpecification</var> is of the form:
+<pre class="example">     <var>PredicateName(ArgSpec, ArgSpec, <small class="dots">...</small>)</var>
+     </pre>
+
+   <p>where <var>PredicateName</var> is the name of the Prolog predicate and each
+<var>ArgSpec</var> is an argument specification for the corresponding argument
+of the predicate.  <var>ArgSpec</var> must be one of the following list
+<pre class="example">     +integer +float +single +double +atom +string +term +address(<var>T</var>)
+     -integer -float -single -double -atom -string -term -address(<var>T</var>)
+     </pre>
+
+   <p>where <var>T</var> is a foreign type name.  The
+argument type <code>address</code> can always be used instead of <code>address(</code><var>T</var><code>)</code>.
+
+   <p>Argument specifications used when declaring Prolog predicates callable
+from C are equivalent to those used when specifying an interface for
+C functions that are to be callable from Prolog.
+
+   <p>Here are some example <code>extern/1</code> declarations:
+
+   <p>Examples:
+<pre class="example">     :- extern(write(+integer)).
+     :- extern(call(+term)).
+     :- extern(my_proc(+atom,+integer,-term,-integer)).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-ppc.html#fli-ffp-ppc">Up</a>
+</ul>
+</div>
+   </body></html>
+

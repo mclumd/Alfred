@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Resource Errors</h5>
+
+   <p>A resource error occurs when some resource runs out.  For example, you can run
+out of virtual memory, or you can exceed the operating system limit on the
+number of simultaneously open files.
+
+   <p>Often a resource error arises because of a programming mistake:  for
+example, you may exceed the maximum number of open files because your program
+doesn't close files when it has finished with them.  Or, you may run out of
+virtual memory because you have a non-terminating recursion in your program.
+
+   <p>The exception code for a resource error is
+<pre class="example">     resource_error(<var>Goal, Resource, Message</var>)
+     </pre>
+
+     <dl>
+
+     <br><dt><var>Goal</var>
+     <dd>A copy of the goal, or <code>0</code> if no goal was responsible; for example
+there is no particular goal to blame if you run out of virtual memory.
+
+     <br><dt><var>Resource</var>
+     <dd>identifies the resource that was exhausted.
+
+     <p>Some <var>Resource</var>s recognized by the system include:
+          <ul>
+
+          <li><code>0</code> -- No resource specified
+<li><code>memory</code> -- out of memory
+<li><code>'too many open files'</code>
+</ul>
+
+     <br><dt><var>Message</var>
+     <dd>an operating-system-specific message.  Usually it will be
+<code>errno</code><var>(ErrNo)</var><code></code>.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-err-sys.html#ref-ere-err-sys">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-err-syn.html#ref-ere-err-syn">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere-err.html#ref-ere-err">Up</a>
+</ul>
+</div>
+   </body></html>
+

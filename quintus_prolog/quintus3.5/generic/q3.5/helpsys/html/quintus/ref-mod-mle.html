@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Modules and Loading through the Editor Interface</h4>
+
+   <p>When you (re)load some Prolog code through the editor interface, the module
+into which the code is to be loaded is selected as follows.
+     <ul>
+
+     <li>if the code begins with a module declaration, this is exactly the same as
+loading that text from a file using the Load Predicates;
+<li>otherwise, if the file containing the code has previously been associated
+with some module other than <code>user</code>, the code is reloaded into that
+module;
+<li>otherwise, if the type-in module is <code>user</code>, the code is
+loaded into <code>user</code>;
+<li>otherwise, you are prompted to confirm that you wish to load the code into
+the type-in module -- if not, the load is abandoned. 
+</ul>
+
+   <p>Note that when a fragment of code has been loaded into a particular module
+other than <code>user</code>, the editor will subsequently insist that that
+code belongs to that module.  In order to change this,
+the entire module must be reloaded.
+
+   <p>When a module declaration is processed, the module is reinitialized; all
+predicates previously imported into that module are forgotten.  Therefore,
+when only <em>part</em> of a module-file is reloaded through the editor
+interface, that part should generally <em>not</em> include the module declaration.
+
+   <p>Loading an entire module through the editor interface is like loading
+the module via the Load Predicates in that all the public
+predicates in the module are imported into the type-in module.  The
+only difference is that in the case in which you load the module
+through the editor interface you will be prompted for confirmation
+before the importation takes place.  This is because there are
+situations in which you might want to reload a module via the editor
+interface without importing it into the type-in module; that is,
+situations in which you would not want to allow the importation to
+happen.  For example, suppose that the type-in module is the default
+<code>user</code>, and that you have been modifying a module <code>m1</code> from which
+another module <code>m2</code> imports predicates, but from which <code>user</code> does
+not import anything.  In this case, you may want to reload <code>m1</code>, using
+the editor interface, without importing it into <code>user</code>.
+
+   <p>When a file that is not a module-file is loaded into several different
+modules, reloading all or part of it through the editor interface affects
+only the module into which it was most recently loaded.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-ncl.html#ref-mod-ncl">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-cim.html#ref-mod-cim">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

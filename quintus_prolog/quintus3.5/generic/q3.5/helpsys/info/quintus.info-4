@@ -1,0 +1,1199 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: qui-hlp-hwm-his,  Next: qui-hlp-hwm-mis,  Prev: qui-hlp-hwm-gto,  Up: qui-hlp-hwm
+
+History Pulldown
+................
+
+   This pulldown contains a dynamic list of buttons, which represent the
+menus and text that have already been displayed in the help window.
+Initially this history list is empty.  As each new section is
+displayed, the section that it replaces is placed at the top of this
+list.  If a section that is already in the history list is redisplayed,
+it is not added to the list a second time.  The list contains 10
+buttons by default.  The number of buttons it contains can be modified
+through the resource file (see *Note qui-ciq::).  When more than 10 (or
+whatever other number of buttons you have specified in the resource
+file) sections have been viewed, the oldest section is removed from the
+history list.  Each history entry that refers to a menu generated from
+index entry matches is indicated as such so that there is no ambiguity
+between it and a section entry with the same name.  When you select an
+element from the history list, that section is displayed and the
+history list is not changed.  When you quit the help window, the
+history list is cleared.
+
+
+File: quintus.info,  Node: qui-hlp-hwm-mis,  Prev: qui-hlp-hwm-his,  Up: qui-hlp-hwm
+
+Misc Pulldown -- Search
+.......................
+
+   Currently the only item in this menu is Search.  This button is
+available when the Help Window contains text rather than a menu.  It
+brings up a dialog that enables you to search the text for a selected
+string.
+
+Selection
+     Type in the search string.
+
+Forward
+     to find the next occurrence of the string. (Or type <RET>.)
+
+Backward
+     to search to the beginning of the file.
+
+Wraparound
+     activates wraparound search.
+
+Cancel
+     The Search dialog remains on display, preserving its state, until
+     you select Cancel.  While it is on display selecting Search from
+     the Misc pulldown will bring the dialog to the foreground.
+
+   When a match is found, the matching text is highlighted.  A beep
+indicates that there are no (more) occurences of the string to be found
+by one search -- forward or back according to which type of search you
+selected -- of the frame.  If Wraparound is on, a beep will be sounded
+only if there are no occurences of the string in the frame.
+
+   Where does it start searching?
+   * If a word or pattern is highlighted then the searching starts from
+     that point.
+
+   * Otherwise the search begins from the beginning of the text.
+
+   Customization is discussed in *Note qui-ciq-cqr-hsr::.
+
+
+File: quintus.info,  Node: qui-ciq,  Prev: qui-hlp,  Up: qui
+
+Customizing and Interfacing with QUI
+====================================
+
+* Menu:
+
+* qui-ciq-qrf::                         The QUI Resource File
+* qui-ciq-cqr::                         Customizing QUI Resources
+* qui-ciq-dpq::                         Restrictions on developing programs under QUI
+
+   The resource file and how it is used in customizing QUI is discussed
+in *Note qui-ciq-qrf:: and *Note qui-ciq-cqr::.
+
+   Restrictions on developing programs under QUI are the topic of *Note
+qui-ciq-dpq::.
+
+
+File: quintus.info,  Node: qui-ciq-qrf,  Next: qui-ciq-cqr,  Up: qui-ciq
+
+The QUI Resource File
+---------------------
+
+   By convention, applications developed for the X11 Window System
+maintain a database of RESOURCES. This database is built at run time
+from application defaults and user preferences.
+
+   A resource, in the context of X11, is any customizable data that
+controls the behaviour and appearance of the application. This includes
+just about everything: colors, fonts, images, text, titles, sizes,
+positions, flags, etc.
+
+   Quintus ships QUI with a default resource file that defines the
+"standard" QUI look. This file is located in the directory
+`QUINTUS-DIRECTORY/qui3.5'.  This file _must_ exist for correct
+operation of QUI.
+
+   We only document some of the resources that QUI uses.  The X resource
+database provides no mechanism for distinguishing between those
+resources that can be customized and those that can not.  Some QUI
+resources can be customized while modifying others will break QUI.
+Therefore, if you modify any QUI resource you run the risk of breaking
+QUI.  We suggest that you only change QUI resources for minor
+enhancements.  We reserve the right to change the format and structure
+of the resource file in future releases.
+
+   If you still want to change resources, do _not_ modify the default
+QUI resource file itself.  Rather, create the file `$HOME/Qui3.5', and
+add the QUI resources you want to modify to it. Alternatively, you can
+add QUI resources to your existing X defaults file `$HOME/.Xdefaults'.
+
+   Adding resources to either of these files will override the
+resources specified in the default QUI resource file.
+
+   See your Motif, Xt and Xlib documentation for more information on
+the X resource database format and use.
+
+
+File: quintus.info,  Node: qui-ciq-cqr,  Next: qui-ciq-dpq,  Prev: qui-ciq-qrf,  Up: qui-ciq
+
+Customizing QUI Resources
+-------------------------
+
+* Menu:
+
+* qui-ciq-cqr-gre::                     Global Resources
+* qui-ciq-cqr-lme::                     Labels and Messages
+* qui-ciq-cqr-men::                     Menu Entries
+* qui-ciq-cqr-key::                     Key Bindings
+* qui-ciq-cqr-edr::                     Editor Resources
+* qui-ciq-cqr-res::                     Debugger Resources
+* qui-ciq-cqr-hsr::                     Help System Resources
+
+   The easiest way to find the name of the resource you want to change
+is to look in the default QUI resource file. Once you know the full
+name of the resource, you can put a line with the same name and a new
+value in your personal QUI defaults file in your home directory. Note
+that case is significant in naming a resource and comment lines start
+with a `!' character.
+
+   This section offers a few guidelines on how to identify the QUI
+resources you may wish to customize.
+
+
+File: quintus.info,  Node: qui-ciq-cqr-gre,  Next: qui-ciq-cqr-lme,  Up: qui-ciq-cqr
+
+Global Resources
+................
+
+`qui.loadOnlyAtTopLevel: True'
+     If set to False, file loading by QUI menus will be disabled only
+     while Prolog code is running.
+
+`qui*main*dialogTitle: Quintus User Interface'
+     The main title displayed by QUI on its startup window.
+
+`qui*background:  wheat'
+     The background color used in QUI windows.
+
+`qui*foreground:  black'
+     The foreground color used in QUI windows.
+
+`qui*fontList:  fixed'
+     The font used in most QUI windows, except for the help system (1).
+
+`qui*qui_window.iconName:  Qui'
+     The icon name for QUI
+
+   ---------- Footnotes ----------
+
+   (1) See *Note qui-ciq-cqr-hsr:: if you want to change the font used
+by the QUI help system
+
+
+File: quintus.info,  Node: qui-ciq-cqr-lme,  Next: qui-ciq-cqr-men,  Prev: qui-ciq-cqr-gre,  Up: qui-ciq-cqr
+
+Labels and Messages
+...................
+
+   The text that QUI displays in all of its buttons, menus and dialogs
+can be customized by changing the appropriate resources.
+
+   To change a button or menu label, look for the `labelString'
+resources.  For example:
+`qui*main*commands*interrupt.labelString: Interrupt'
+     Sets the text displayed by the Interrupt button.
+
+`qui*main*menuBar*load.labelString: Load...'
+     Sets the text displayed by the Load entry in the File menu of the
+     main QUI Window (1).
+
+`qui*qui_window*yesNoProceed*okLabelString: Yes'
+     Sets the text displayed by the OK button in the Yes/No
+     confirmation popup dialog.
+
+   To change the text of a message, look for the `messageString'
+resources. For example:
+`qui*main*exitWarning*messageString: Do you really want to exit Prolog?'
+     Sets the message displayed by the Exit Warning popup dialog.
+
+   ---------- Footnotes ----------
+
+   (1) But see *Note qui-ciq-cqr-men:: before changing QUI menus
+
+
+File: quintus.info,  Node: qui-ciq-cqr-men,  Next: qui-ciq-cqr-key,  Prev: qui-ciq-cqr-lme,  Up: qui-ciq-cqr
+
+Menu Entries
+............
+
+   To customize a QUI menu entry there are potentially four resources
+that have to be changed. These are:
+   * The `labelString' resource that defines the text shown.
+
+   * The `mnemonic' resource that defines the single character
+     abbreviation and underlining for the menu entry.
+
+   * The `accelerator' resource that binds a key combination to the
+     entry.
+
+   * The `acceleratorText' resource that sets the displayed characters
+     to show the accelerator.
+
+   For example, the Frame Up entry in the debugger Travel menu is
+defined by the following resources
+`qui*debugger*frame_up.labelString:  Frame Up'
+     Sets the text of the Frame Up menu entry in the QUI debugger
+
+`qui*debugger*travelmenu*frame_up.mnemonic:  U'
+     Sets the single character `U' as the mnemonic for the Frame Up
+     menu entry in the QUI debugger. This character will be shown
+     underlined in the menu.
+
+`qui*debugger*travelmenu*frame_up.accelerator: Ctrl<Key>U'
+     Binds the `^U' character to the Frame Up menu entry action in the
+     QUI debugger. Typing a `^U' character will be equivalent to use
+     the mouse to select the Frame Up menu entry.
+
+`qui*debugger*travelmenu*frame_up.acceleratorText: Ctrl + U'
+     Sets the text to be displayed next to the Frame Up menu entry to
+     show the user the accelerator keys for the command.
+
+
+File: quintus.info,  Node: qui-ciq-cqr-key,  Next: qui-ciq-cqr-edr,  Prev: qui-ciq-cqr-men,  Up: qui-ciq-cqr
+
+Key Bindings
+............
+
+   All of the QUI text widgets have a set of default key bindings to
+perform certain operations. These are all `translations' resources.
+
+   The value of a translation resource is a set of lines with an escaped
+new line character at the end of each line, except the last one. Each
+line associates a mouse/keyboard event with an internal action. For
+example:
+
+     qui*prolog*translations: #override\n\
+             Ctrl<Key>C:  qpinterrupt() \n\
+             Ctrl<Key>D:  qpeof() delete-next-character()\n\
+             Ctrl<Key>U:  kill-to-prompt()\n\
+             <Key>Delete: delete-previous-character()\n\
+             Ctrl<Key>K:  kill-to-end-of-line()\n\
+             Ctrl<Key>W:  kill-previous-word()\n\
+             Ctrl<Key>P:  previous-line()\n\
+             Ctrl<Key>N:  next-line()\n\
+             Ctrl<Key>A:  beginning-of-line()\n\
+             Ctrl<Key>E:  end-of-line()\n\
+             Ctrl<Key>B:  backward-character()\n\
+             Ctrl<Key>F:  forward-character()
+
+   The above sets the default key bindings for the QUI prolog query
+interpreter window.
+
+
+File: quintus.info,  Node: qui-ciq-cqr-edr,  Next: qui-ciq-cqr-res,  Prev: qui-ciq-cqr-key,  Up: qui-ciq-cqr
+
+Editor Resources
+................
+
+   All the QUI editor resources have names that starts with
+`qui*editor'.  Resources specific to the QUI editor include
+`qui*editor.generateBackup:  True'
+     To prevent the QUI editor from generating backup files set the
+     value to False.
+
+`qui*editor.backupSuffix:  .Bak'
+     Sets the suffix that the QUI editor uses to generate backup files.
+
+   Many of the editor text messages have a resource name that ends in
+`Msg', for example
+
+`qui*editor.qofFileMsg: File is a Quintus Object Format file'
+     Sets the message to be displayed when attempting to load a QOF
+     file into the editor.
+
+
+File: quintus.info,  Node: qui-ciq-cqr-res,  Next: qui-ciq-cqr-hsr,  Prev: qui-ciq-cqr-edr,  Up: qui-ciq-cqr
+
+Debugger Resources
+..................
+
+   All the QUI debugger resources have names that start with
+`qui*debugger'. Resources specific to the QUI debugger include
+`qui*debugger*debugger_main_window.title: Quintus Debugger'
+     The title at the top of the QUI debugger window.
+
+`qui*debugger*debugger_main_window.geometry: 583x600'
+     Sets the default window size for the QUI debugger.
+
+
+File: quintus.info,  Node: qui-ciq-cqr-hsr,  Prev: qui-ciq-cqr-res,  Up: qui-ciq-cqr
+
+Help System Resources
+.....................
+
+   All the QUI help system resources have names that start with
+`qui*help_window'. Resources specific to the QUI help system include
+`qui*help_window*helpSystem*fontList:'
+     -*-courier-bold-r-normal-14-*
+
+     Sets the default font for the QUI help system windows.
+
+`qui*help_window*helpSystem*maxHistory:  10'
+     Sets the maximum number of items to be kept in the history pulldown
+     menu  of the QUI help window.
+
+`qui*help_window*helpSearDialog.wrapAround:       False'
+     Sets the default value of Wraparound in the Search dialog to on.
+
+
+File: quintus.info,  Node: qui-ciq-dpq,  Prev: qui-ciq-cqr,  Up: qui-ciq
+
+Restrictions on developing programs under QUI
+---------------------------------------------
+
+* Menu:
+
+* qui-ciq-dpq-hok::                     Hook Predicates
+* qui-ciq-dpq-ecf::                     Embeddable C Function
+* qui-ciq-dpq-sig::                     UNIX Signal Handling
+
+
+File: quintus.info,  Node: qui-ciq-dpq-hok,  Next: qui-ciq-dpq-ecf,  Up: qui-ciq-dpq
+
+Hook Predicates
+...............
+
+   `message_hook/3': If this predicate is defined in your program, it
+must be defined as a multifile predicate.
+
+   Also, there are restrictions on how you can use `message_hook/3'
+under QUI.  In particular, error messages (terms with severity `error')
+may not be seen by your `message_hook/3' clauses.  QUI catches these
+messages and displays an error dialog.
+
+   Since it may be unpredictable whether user-supplied clauses for
+`message_hook/3' come before or after QUI's `message_hook/3' clauses,
+it is also recommended that any `message_hook/3' clauses you do supply
+should fail.  See *Note ref-msg-umf-ipm::, as well as the reference
+page for `message_hook/3', for more information.
+
+
+File: quintus.info,  Node: qui-ciq-dpq-ecf,  Next: qui-ciq-dpq-sig,  Prev: qui-ciq-dpq-hok,  Up: qui-ciq-dpq
+
+Embeddable C Function
+.....................
+
+   `QU_initio()': QUI has already defined this Prolog embedding I/O
+initialization function.  Users' programs linked with QUI cannot
+redefine the function.
+
+
+File: quintus.info,  Node: qui-ciq-dpq-sig,  Prev: qui-ciq-dpq-ecf,  Up: qui-ciq-dpq
+
+UNIX Signal Handling
+....................
+
+   UNIX `SIGIO' signal: This signal is used in QUI.  No programs
+developed under QUI should catch this signal.
+
+   UNIX `SIGPIPE' signal: The signal handler of this signal is set to
+`SIG_IGN' in QUI. Resetting the signal handler to `SIG_DEL' may cause
+QUI to exit unexpectedly.
+
+
+File: quintus.info,  Node: ema,  Next: vb,  Prev: qui,  Up: Top
+
+The Emacs Interface
+*******************
+
+* Menu:
+
+* ema-emi::                             The GNU Emacs Interface
+* ema-ove::                             Overview
+
+
+File: quintus.info,  Node: ema-ove,  Prev: ema-emi,  Up: ema
+
+Overview
+========
+
+* Menu:
+
+* ema-ove-ove::                         Overview
+* ema-ove-eva::                         Environment Variables
+* ema-ove-upe::                         Using Prolog with the Emacs Editor
+* ema-ove-sld::                         The Source Linked Debugger
+* ema-ove-aol::                         Accessing the On-line Manual
+* ema-ove-lod::                         Loading Programs
+* ema-ove-rep::                         Repeating a Query
+* ema-ove-pin::                         Displaying Previous Input
+* ema-ove-loc::                         Locating Procedures
+
+
+File: quintus.info,  Node: ema-ove-ove,  Next: ema-ove-eva,  Up: ema-ove
+
+Overview
+--------
+
+   This section describes the Emacs/Quintus Prolog interface and
+presupposes some knowledge of the Emacs editor.  The interface supports
+GNU Emacs and XEmacs.  For information on obtaining these editors, see
+`http://www.gnu.org' and `http://www.xemacs.org'.
+
+   There are three different ways to run Prolog interfaced to Emacs:
+  1. From the command prompt, invoke a Prolog executable file or saved
+     state with the argument `+'.  This starts up Emacs and causes it
+     to run Prolog in an Emacs buffer.  See *Note ema-ove-upe-epe:: for
+     details.
+
+  2. From QUI start an Emacs session.  In this case the Prolog top-level
+     interaction is not done in an Emacs buffer because the QUI main
+     window is being used for that purpose.  This uses the Emacs Server
+     feature of GNU Emacs and is described in *Note qui-ied-ige::.
+
+  3. From a running Emacs session, cause a Prolog to be started in a
+     buffer.  To do this, the Emacs interface code must first be loaded
+     into Emacs--this could be done in an Emacs initialization file.
+     This is described in `QUINTUS-DIRECTORY/editor3.5/gnu/README'.
+
+
+File: quintus.info,  Node: ema-ove-eva,  Next: ema-ove-upe,  Prev: ema-ove-ove,  Up: ema-ove
+
+Environment Variables
+---------------------
+
+   This section lists the environment variables that can be used to
+customize your Prolog/Emacs environment.  There are up to three
+environment variables that need to be set before either the Emacs
+interface can be invoked.  They are:
+
+`QUINTUS_EDITOR_PATH'
+     the name of the Emacs executable.  If this is unset Quintus Prolog
+     will try to invoke `emacs', which then must be in your path.
+
+`QUINTUS_LISP_PATH'
+     the full name of the Emacs-Lisp directories. These directories
+     contain the Lisp code for the GNU Emacs interface, which is
+     supplied with your Quintus Prolog distribution.  If using `prolog
+     +' or QUI, the `QUINTUS_LISP_PATH' environment variable need be
+     set only if you choose to use a different version of the interface
+     or if the interface has been moved to a different location at your
+     site.
+
+`QUINTUS_PROLOG_PATH'
+     the full name of the Quintus Prolog executable. You need to set
+     this variable only when you want to start Quintus Prolog from
+     within GNU Emacs.
+
+     It is set automatically if you load qp-setup.el into emacs.
+
+   We recommend that you set these environment variables in your shell
+initialization file (`.cshrc' if you use the C shell `csh(1)').
+
+
+File: quintus.info,  Node: ema-ove-upe,  Next: ema-ove-sld,  Prev: ema-ove-eva,  Up: ema-ove
+
+Using Prolog with the Emacs Editor
+----------------------------------
+
+* Menu:
+
+* ema-ove-upe-ove::                     Overview
+* ema-ove-upe-tos::                     Terminal and Operating System Requirements
+* ema-ove-upe-epe::                     Entering Prolog and Emacs
+* ema-ove-upe-exi::                     Exiting Emacs
+* ema-ove-upe-ses::                     Suspending an Emacs Session
+
+
+File: quintus.info,  Node: ema-ove-upe-ove,  Next: ema-ove-upe-tos,  Up: ema-ove-upe
+
+Overview
+........
+
+   The Emacs/Prolog interface is designed to enable you to create a
+Prolog program in a file outside the Prolog environment and then to
+move back and forth easily between that file and the Prolog
+environment.  Both the Prolog program and your interaction with Prolog
+are preserved in edit buffers, which can easily be reviewed and
+modified. The Emacs process is primary, and Prolog runs as a buffer
+within it.
+
+   In the Prolog window, Prolog programs can be run, and Emacs commands
+can be used to edit and resubmit previously-entered Prolog commands.
+In a text window, single procedures, groups of procedures, and entire
+programs can be edited and quickly reloaded into Prolog without
+suspending the Prolog process.  Additionally, any number of Prolog
+source files can be loaded into Prolog at once; then, if desired, Emacs
+can be used to locate a specific procedure in any one of those files.
+(For more information, see *Note ema-ove-loc::.)
+
+
+File: quintus.info,  Node: ema-ove-upe-tos,  Next: ema-ove-upe-epe,  Prev: ema-ove-upe-ove,  Up: ema-ove-upe
+
+Terminal and Operating System Requirements
+..........................................
+
+   Under UNIX, if the `DISPLAY' environment variable is set then GNU
+emacs will create a window to run in. Otherwise it will run as if on a
+terminal, in which case it will need to be told what type of terminal
+it is.  This is normally done automatically, at login time, but if it
+is not you must describe the terminal in a terminal capability database
+such as `terminfo' or `TERMCAP'.  Refer to your UNIX documentation for
+a description of this facility.
+
+
+File: quintus.info,  Node: ema-ove-upe-epe,  Next: ema-ove-upe-exi,  Prev: ema-ove-upe-tos,  Up: ema-ove-upe
+
+Entering Prolog and Emacs
+.........................
+
+   To run Prolog under the Emacs interface, type a command such as
+     % prolog +
+     
+     % prolog + COMMAND-LINE-ARGUMENTS
+
+   at the operating system prompt.  GNU Emacs processes command line
+arguments in two lots, described in two tables in the `GNU Emacs
+Manual'.  Under the Quintus Prolog GNU Emacs interface, only switches
+from the first table can be used, and the most commonly used one is
+FILE-TO-BE-EDITED.  (See *Note ref-pro:: for full details of starting
+up Prolog.)  Note however that the prolog buffer will not be displayed
+if the COMMAND-LINE-ARGUMENTS includes files to be edited. In this case
+the last file specified on the command line is the one displayed. You
+can however switch to the prolog buffer by invoking the key binding to
+switch buffers (usually `^x b') and specifying the prolog buffer name
+`*prolog*'.
+
+   Another way to start up the interface is from a QUI menu.  See *Note
+qui-ied-ige:: for how to do this.
+
+   A third alternative is to start up Quintus Prolog from within GNU
+Emacs by typing `<ESC> x run-prolog' (see *Note ema-ove-eva:: for a
+description of how to set the environment variable
+`QUINTUS_PROLOG_PATH', which should be set to the filename of a Prolog
+executable before you invoke this command. In addition you must specify
+the directories where the Emacs lisp files in the interface live and
+load them.  Refer to `QUINTUS-DIRECTORY/editor3.5/gnu/README' for
+details.)  This should load in a specific set of `.el' or `.elc' files.
+These `.elc' files are part of the `editor' subdirectory of the
+Quintus distribution.  (*Note int-dir:: explains the structure of the
+Quintus directory.)
+
+
+File: quintus.info,  Node: ema-ove-upe-exi,  Next: ema-ove-upe-ses,  Prev: ema-ove-upe-epe,  Up: ema-ove-upe
+
+Exiting Emacs
+.............
+
+   You can exit from the editor in either of two ways:  you can stop
+the current editor job and exit irreversibly, or you can temporarily
+suspend the current editor job.  If you are finished with your session,
+you will probably want to exit irreversibly, as described in this
+section.  If you want to temporarily halt your session, return to the
+command prompt, and later be able to resume your session, you should
+exit as described in the next section.
+
+   _To exit from the editor irreversibly_, type the following:
+     ^x ^c
+
+   If you try to exit while you have a Prolog session running, the
+system displays the following message at the bottom of the screen:
+
+     Active processes exist; kill them and exit anyway? (yes or no)
+
+   To end the Prolog session, type `y' or `yes', and press <RET>.  If
+you don't want to end the Prolog session, type `n' or `no' and press
+<RET> to abort the exit.  Prolog will continue running.
+
+   If you try to exit and you have files that have been modified but not
+saved, you will receive a message at the bottom of the screen to prompt
+you to save each modified file.
+
+   If you want to save the files before you exit, type `n' and press
+<RET> to abort the exit.  Move the cursor to the text window (if it's
+not already there), and use the `^x ^s' command to save the information
+from the window into a file.  If you want to exit without saving the
+modified information, type `y' and press <RET>, and you will be
+returned to the main operating system prompt.
+
+
+File: quintus.info,  Node: ema-ove-upe-ses,  Prev: ema-ove-upe-exi,  Up: ema-ove-upe
+
+Suspending an Emacs Session
+...........................
+
+   To exit from the editor by suspending the current editor session,
+type:
+     ^x ^z
+
+   The system displays the message `Stopped' at the bottom of the
+screen and returns you to the command prompt.  However, the
+Emacs/Prolog job is only suspended (that is, in the background) and you
+can resume it at any time.  To resume your Emacs/Prolog session, type
+`fg' (for "foreground") at the command prompt.
+
+
+File: quintus.info,  Node: ema-ove-sld,  Next: ema-ove-aol,  Prev: ema-ove-upe,  Up: ema-ove
+
+The Source Linked Debugger
+--------------------------
+
+   The Emacs-based source linked debugger for Quintus Prolog works very
+much like the QUI debugger (see *Note dbg-sld::), with a few
+significant differences.  This document describes the differences.
+
+   In order to enable the Emacs-based debugger, execute the Emacs
+command `<ESC> x enable-prolog-source-debugger'; to disable it, type
+`<ESC> x disable-prolog-source-debugger'.  If you would like always to
+use the source-linked debugger when debugging Quintus Prolog code under
+Emacs, put the following in your `.emacs' file:
+
+     (add-hook 'comint-prolog-hook 'enable-prolog-source-debugger)
+
+   Alternatively, under Prolog you may load `library(emacsdebug)' and
+then execute the Prolog goal `emacs_debugger(_,on)' to enable
+source-linked debugging, `emacs_debugger(_,off)' to disable it, and
+`emacs_debugger(STATE,STATE)', to see whether it is enabled or not
+(STATE will be bound to `on' if enabled and `off' if disabled).
+
+   The first obvious difference when running the Emacs-based debugger
+compared to the QUI one is that it doesn't have any buttons or menu to
+control it.  Therefore all commands are keyboard-based.  Where
+possible, the commands are the same as those used in the standard
+debugger, so most of them should be easy to remember.  The most
+important command in the Emacs-based debugger, as in the standard
+debugger is the help command, invoked by a single `h' or `?' character.
+This command displays the following summary:
+
+       c  creep         <RET> creep            <SPC> creep
+       l  leap           +  spy goal/pred     b  break
+       s  skip           -  nospy goal/pred   a  abort
+       z  zip            [  frame up          ?  help
+       n  nonstop        ]  frame down        h  help
+       q  quasi-skip     |  frame back        =  debugging
+       r  retry          f  fail              .  edit definition
+       w  open extra window                   x  close extra window
+
+   The commands in the first column behave exactly as they do in the QUI
+debugger.  The spy and nospy commands place a spypoint on the current
+predicate when at a head port, and on the current goal when at any
+other port.  The frame up/down/back commands do exactly what the
+corresponding QUI debugger commands do, as do break and abort.  The
+debugging command just invokes the standard `debugging/0' built-in
+predicate, showing the current debugging and leashing modes, as well as
+listing the currently active spypoints.
+
+   The open/close extra window commands prompt for a single character
+to select the "extra" window to display, offering the choices
+`b=bindings; s=standard; and a=ancestors'.  The bindings window is
+probably the most useful of the three.
+
+   Finally, the edit definition command opens puts the file being
+debugged in an editor buffer, putting point at the location of the
+current debugger port (where the arrow is).  You may edit and save the
+file, and then recompile it.  It is recommeded that you recompile the
+whole file rather than just the part you have changed, because the
+debugger keeps track of the times files are written and compiled,
+disabling source linking when the file on disk is newer than the code
+loaded into Prolog.
+
+   The graphical arrows of the QUI debugger are simulated by a
+two-character sequence in the Emacs-based debugger.  The Call, Done and
+determinate Head ports are signified by `->'.  Exit and nondeterminate
+Head ports are signified by `=>'.  Redo and Fail are shown as `<-'.
+The Exception port is indicated by `<#'.  Finally, where the QUI
+debugger shows a "hollow" arrow to signify that the currently shown
+port is not actually the active port but an ancestor of it, the
+Emacs-based debugger shows `^>'.
+
+   The Emacs-based debugger currently offers no way to change the
+leashing; you can do that using the usual Prolog `leash/1' built-in
+predicate.   Similarly, it offers no way to set a spyoint except when
+debugging a call to the predicate or goal to be spied.  Again, the
+usual `spy/1' and `add_spypoint/1' built-in predicates can accomplish
+this.  Finally, the Emacs-based debugger offers no direct way to set
+the print format.  To change this you must use the `window_format/3'
+command exported from the `emacs_debug' module:
+
+     window_format(+WINDOW, -OLDFORMAT, +NEWFORMAT)
+
+   where WINDOW is one of: `source', `bindings', `ancestors', or
+`standard', and NEWFORMAT is a list of valid options for the last
+argument to `write_term/[2,3]'.  The default format for all windows is
+
+     [quoted(true), portrayed(true), max_depth(5)]
+
+
+File: quintus.info,  Node: ema-ove-aol,  Next: ema-ove-lod,  Prev: ema-ove-sld,  Up: ema-ove
+
+Accessing the On-line Manual
+----------------------------
+
+   The help system is largely based on the Info file format, which GNU
+Emacs uses for on-line documentation.  If you are running Prolog under
+Emacs, type `manual.' at the main Prolog prompt to gain access to the
+on-line help system.  Emacs should then locate the Quintus Prolog Info
+node.  If it can't find that node, it will display the information in a
+special help buffer.  See *Note ref-olh-hfi:: for details.
+
+
+File: quintus.info,  Node: ema-ove-lod,  Next: ema-ove-rep,  Prev: ema-ove-aol,  Up: ema-ove
+
+Loading Programs
+----------------
+
+* Menu:
+
+* ema-ove-lod-bin::                     Basic Information
+* ema-ove-lod-buf::                     Loading an Entire Buffer
+* ema-ove-lod-reg::                     Loading a Region in a Buffer
+* ema-ove-lod-pro::                     Loading a Single Procedure
+
+
+File: quintus.info,  Node: ema-ove-lod-bin,  Next: ema-ove-lod-buf,  Up: ema-ove-lod
+
+Basic Information
+.................
+
+   To load a program from Emacs into Prolog, start up the Emacs/Prolog
+interface by typing `prolog +' at the main operating system prompt.
+When the Emacs/Prolog screen appears, type `^x ^f' (for `find-file')
+followed by the name of the file that contains your program.
+(Alternatively, you can type `prolog +' followed by the name of the
+file that contains your program.)  After you enter the Emacs/Prolog
+environment, activate the window containing your file.
+
+   At this point, you have three options:  you can load
+
+   * the entire buffer containing your file (`<ESC> k b')
+
+   * a portion of the program that you have marked (`<ESC> k r')
+
+   * or a single procedure (`<ESC> k p')
+
+   Being able to load a designated portion of your program is very
+convenient if you are running a program and discover that you need to
+make a few changes to improve the program.  You can make your changes
+and then reload just the changed portions, without reloading the entire
+program.  If you are just beginning a Prolog session, however, you will
+probably want to load the entire buffer containing your program using
+`<ESC> k b'.
+
+   When you type `<ESC> k', Emacs displays the following prompt line at
+the bottom of the screen:
+     compile prolog ... enter p for procedure, r for region or b for buffer
+
+   In response, you can type `b' to load the entire buffer: or you can
+type `r' to load a region, or `p' to load a procedure, as described
+below.
+
+   After you indicate how much of your program to load, the cursor
+moves to the Prolog window, and Prolog displays a message that tells
+you it is loading the program.  As it proceeds, Prolog displays
+messages to let you know which procedures are being loaded.  For
+example, if your program consisted of procedures for `parts_of/2',
+`assembly/2', and `inventory/2', Prolog would display the messages:
+
+     % compiling procedure parts_of/2 in module user
+     % compiling procedure assembly/2 in module user
+     % compiling procedure inventory/2 in module user
+
+   After Prolog has finished loading, it displays a message such as:
+     % compilation completed, 0.083 sec 448 bytes
+     | ?-
+
+   At this point, you can begin to run your program (see *Note
+bas-run::).
+
+   *Please notes:*
+  1. When you load procedures into Prolog, Prolog first removes any
+     previous versions of those procedures from its database, excepting
+     those procedures that have been declared multifile.  A multifile
+     declaration indicates that a particular procedure is defined by
+     clauses in more than one file.  (For more information on multifile
+     procedures, see *Note sap-rge-dspn::.)  This is why the entirety
+     of a procedure must be loaded at once; otherwise, loading the
+     definition of the second part would wipe out the definition of the
+     first part.
+
+  2. The `<ESC> k' commands can also be issued from the debugger
+     prompt, as described in *Note dbg-bas-bas:: .
+
+
+File: quintus.info,  Node: ema-ove-lod-buf,  Next: ema-ove-lod-reg,  Prev: ema-ove-lod-bin,  Up: ema-ove-lod
+
+Loading an Entire Buffer
+........................
+
+   To load the entire buffer, type `<ESC> k b' (for `buffer').  Note
+that both the `k' and the `b' must be lower case.
+
+
+File: quintus.info,  Node: ema-ove-lod-reg,  Next: ema-ove-lod-pro,  Prev: ema-ove-lod-buf,  Up: ema-ove-lod
+
+Loading a Region in a Buffer
+............................
+
+   To load a portion of your program, mark the region you want to load.
+To do this, move the cursor to the beginning of the first line you
+want to load and type `^<SPC>' (or `^@' on many terminals).  Emacs
+displays the message
+     Mark set
+
+   at the bottom of the screen.  Move the cursor to the end of the
+portion of the program you want to load.  Then type `<ESC> k r' (for
+`region').
+
+     *Please note:*  When you mark the region to be loaded by the
+     `<ESC> k r' command, be sure to include _all_ the clauses for any
+     procedures you are loading.
+
+
+File: quintus.info,  Node: ema-ove-lod-pro,  Prev: ema-ove-lod-reg,  Up: ema-ove-lod
+
+Loading a Single Procedure
+..........................
+
+   To load a single procedure, move the cursor to any portion of any
+line of the procedure.  Then type `<ESC> k p' (for `procedure').
+
+   The `<ESC> k p' facility requires that you use certain syntactic and
+structural conventions, which are described in *Note ema-emi-lay::.  If
+you are not sure that your procedures adhere to these conventions, you
+should use the `<ESC> k r' facility instead, making sure your marked
+region surrounds all the clauses of the procedures you want to load.
+
+     *Please note:* `<ESC> i' is retained for backward compatibility.
+     Its effect is the same as `<ESC> k'.
+
+
+File: quintus.info,  Node: ema-ove-rep,  Next: ema-ove-pin,  Prev: ema-ove-lod,  Up: ema-ove
+
+Repeating a Query
+-----------------
+
+* Menu:
+
+* ema-ove-rep-rep::                     Repeating Queries under Gnu Emacs
+
+   Often during your Prolog sessions you might find it useful to submit
+a query, edit it slightly, then resubmit it.  For example, if you make
+a typing error in a query, you generally want to correct the error and
+resubmit the query, instead of retyping the entire query.
+
+   Everything you type during a Prolog session goes into an Emacs
+buffer, so it is easy to retrieve and copy lines you've already typed.
+Prolog then redisplays the query.
+
+
+File: quintus.info,  Node: ema-ove-rep-rep,  Up: ema-ove-rep
+
+Repeating Queries under Gnu Emacs
+.................................
+
+   For example, suppose you made a typing error, as shown below.  If
+you typed `^x ^e', Prolog would duplicate the line. You could then
+correct the typing error using Emacs editing commands and resubmit the
+query.
+     | ?- parts_of(transmission, X).
+     no
+     | ?- ^x^e
+
+   When you type `^x ^e', the last input string you typed is displayed
+in the mini-buffer:
+      | ?- parts_of(transmission, X).
+
+   At this point you have two options. You can edit the query in the
+mini-buffer and place it in the prolog window by hitting <RET>; hitting
+<RET> again submits the query to prolog.  Alternatively, you can step
+through the queries submitted to Prolog by typing `<ESC> p' (`<ESC> n'
+moves you down this list). (1)
+
+   Under GNU Emacs it is also possible to search through the goal
+history for a goal matching a regular expression. To do so, type `^x
+^y' and you will be prompted for a regular expression. On entering a
+regular expression and hitting <RET>, the most recently submitted goal
+matching the regular expression will be displayed in the mini-buffer.
+You can choose to submit this query to prolog (after editing it in the
+mini-buffer if you choose to) or locate the next most recent goal
+matching the pattern.
+
+   Alternatively, you can redisplay an earlier input string by moving
+the cursor to the line you want to copy and then type `^x ^e'.
+
+   ---------- Footnotes ----------
+
+   (1) You can move around a multi-line query using the `^n' and `^p'
+keys.
+
+
+File: quintus.info,  Node: ema-ove-pin,  Next: ema-ove-loc,  Prev: ema-ove-rep,  Up: ema-ove
+
+Displaying Previous Input
+-------------------------
+
+   If you are running Prolog under the Emacs interface, you can scroll
+backward through your Prolog session to see previous input by using the
+Emacs scrolling commands.  Similarly, you can use Emacs scrolling
+commands to scroll forward to the current step in your Prolog session.
+
+
+File: quintus.info,  Node: ema-ove-loc,  Prev: ema-ove-pin,  Up: ema-ove
+
+Locating Procedures
+-------------------
+
+   The Emacs/Prolog interface provides a facility that enables you to
+quickly locate procedures in source files once the procedures have been
+loaded.  If you have loaded several files into Prolog at once, it can be
+helpful to be able to locate a procedure directly without having to
+search through several files.
+
+   While inspecting the definition of `foo/1',
+     foo(X) :- bar(X).
+
+   in some Prolog source window, you may want to see the definition of
+the predicate `bar/1'.  To do so put the cursor anywhere on the name
+`bar' and type `<ESC> .' and respond to the Emacs message line,
+
+     Find: (default bar/1)
+
+   by pressing <RET>.  Prolog will then visit the file that defined
+`bar/1' (this may be the same file that defined `foo/1') and put the
+cursor on the first clause of `bar/1' in that file.
+
+   While inspecting a previously submitted Prolog query,
+     | ?- bar(X).
+
+   in the Prolog execution window, you may want to see the definition of
+the predicate `bar/1'.  This is done exactly in the same manner as
+above.
+
+   Alternatively, you can type `<ESC> .' at the main Prolog prompt.
+The cursor moves to the bottom of the screen, and the system displays
+the message
+     Find:
+
+   Type the name of the predicate whose procedure you want to locate
+followed by a slash and the arity of the predicate; then press <RET>.
+(Recall that the arity is the number of arguments the predicate has.)
+For example, to locate the procedure for `employee(smith, harold)', you
+would type `employee/2', as shown below.
+     Find: employee/2 <RET>
+
+     *Please note:*  You can type the predicate name without typing the
+     arity, and the system will still locate the predicate.  If the
+     predicate is defined for more than one arity, the system will
+     simply locate one of the definitions of the predicate.  You can
+     then type `<ESC> ,' to successively locate the other definition(s).
+
+     This will also search other files for additional clauses for a
+     multifile predicate, or will search for a predicate of the same
+     name and arity in a different module.
+
+   If Prolog cannot find a procedure of the specified name and arity,
+it displays a message telling you the procedure is undefined:
+     foo/2 is undefined
+
+   If the specified predicate is a built-in predicate, Prolog displays
+a message to that effect:
+     nl/0 is a built-in predicate
+
+
+File: quintus.info,  Node: ema-emi,  Next: ema-ove,  Up: ema
+
+The GNU Emacs Interface
+=======================
+
+* Menu:
+
+* ema-emi-ove::                         Overview
+* ema-emi-key::                         Key Bindings
+* ema-emi-mod::                         Prolog Mode
+* ema-emi-lay::                         Prolog Source Code Layout Restrictions
+* ema-emi-keb::                         Rebinding Keys in Your Initialization File
+* ema-emi-pge::                         Programming the Prolog/GNU Emacs Interface
+
+
+File: quintus.info,  Node: ema-emi-ove,  Next: ema-emi-key,  Up: ema-emi
+
+Overview
+--------
+
+   This section presupposes some knowledge of the GNU Emacs editor.  The
+next two sections summarize the features that have been added to GNU
+Emacs specifically to support Quintus Prolog. It should be noted that
+these features are not available with the standard GNU Emacs
+distribution.  The Quintus Prolog distribution contains Emacs-Lisp code
+that constitutes the interface. Users are free to modify this interface
+in any way, provided they adhere to the copying policies of the Free
+Software Foundation. Read the file `COPYING' in the GNU Emacs
+distribution for further details.
+
+   With GNU Emacs, you can talk to Prolog very much as you would without
+the GNU Emacs interface.  The only difference with GNU Emacs is that
+control characters issued to Prolog generally have their GNU Emacs
+meaning rather than any meaning they might have outside of GNU Emacs.
+The reason for this is that the Prolog window is still an edit buffer,
+and you are free to move up and down in it and modify its contents
+using the full range of editing commands.  Thus `^d' deletes a
+character, `^u' may be used to specify an argument for the next
+command, and so on.
+
+   The general philosophy of the Prolog/GNU Emacs interface is that you
+should not be able to lose your Prolog prompt(by deleting a line, for
+example).  For this reason, a few commands have been slightly modified.
+There are also a number of additional key bindings, which are
+described below.
+
+   GNU Emacs is a customizable editor.  You can use a language called
+Emacs-Lisp to extend or alter the way it behaves, and in fact this is
+the way that the Prolog/GNU Emacs interface has been built.  If you
+want to make your own extensions, you may need to know something about
+the way this interface works; notes to assist you are provided later in
+this section.
+
+     WARNING: The Prolog/GNU Emacs interface uses the control character
+     `^]' for its communication. If this character has been made
+     special by the UNIX command `stty(1)', the Prolog/GNU Emacs
+     interface will not work. If there is a problem with the interface,
+     you can use `stty all' to see all the special character settings
+     and see if `^]' is shown.  None of this is a problem under Windows
+     or when using GNU Emacs via X Windows under UNIX.
+
+
+File: quintus.info,  Node: ema-emi-key,  Next: ema-emi-mod,  Prev: ema-emi-ove,  Up: ema-emi
+
+Key Bindings
+------------
+
+   This section describes the key bindings associated with the
+Prolog/GNU Emacs interface.  For a complete listing of all the key
+bindings applicable in a particular window, type `<ESC> x
+describe-bindings' or `^h b'.
+
+   The following key bindings apply only in the Prolog window, not in
+the text window(s):
+`^c ^d'
+     Sends an end-of-file to Prolog.  This can be used to exit from a
+     break level or to exit from Prolog altogether (see *Note
+     ref-iex-int:: for more information on `break/0').  Having exited
+     from Prolog using this command, the only way of start up a new
+     Prolog is by typing `<ESC> x run-prolog'.
+
+`^x ^z'
+     Suspends Prolog and GNU Emacs.
+
+`^x ^e'
+     Allows you to edit a query you previously typed to the Prolog
+     prompt and resubmit it.  Effectively, it grabs the last query and
+     brings it down to the mini-buffer.  There you can edit it if
+     necessary, then move your cursor to the last line of the query and
+     type <RET>.  This places the query in the prolog window, where you
+     can edit it further, if necessary, and type <RET> to submit the
+     query to Prolog.  You can also grab queries other than the most
+     recent one by specifying a prefix argument to this command (using
+     `<ESC>', or `^u'): 2 to get the second last, 3 to get the third
+     last, and so on.  Another way to do this is to move the cursor
+     back to the query you want to copy and type `^x ^e'. This last
+     alternative does not place the query in the mini-buffer but places
+     it directly in the prolog window. In the cases where a query is
+     placed in the mini-buffer, you can step up a list of previously
+     executed queries by typing in `<ESC> p' or down the list by typing
+     in `<ESC> n'. Since the mini-buffer is only one line, a multi-line
+     query can be stepped around by using the conventional `^p', `^n'
+     key strokes. To obtain the set of bindings that are active within
+     the mini-buffer when you execute the yank-query key sequence type
+     in `^h b'. This method of stepping through a goal history is
+     similar to GNU Emacs method of stepping through a command history.
+
+`^x ^y'
+     Allows you to edit the most recent query matching a regular
+     expression. You are first prompted for a regular expression; on
+     entering a regular expression and hitting <RET>, the most recently
+     submitted goal matching the regular expression is displayed in the
+     mini-buffer. You can choose to submit this query to prolog (after
+     editing it in the minibuffer, if necessary) or locate the next
+     most recent goal matching the given regular expression.
+
+`^c ^c'
+     Sends an interrupt to the Prolog process (exactly as if you were
+     not running under GNU Emacs).
+
+   *Please note:*  to send a numeric argument to a GNU Emacs command,
+type `<ESC>' followed by the desired number (for example, `<ESC> 1' or
+`<ESC> 12'); then type the command.  `^u' also works as an argument
+prefix, as in "standard" GNU Emacs.
+
+   The following key bindings apply in any window:
+`^x ^c'
+     Causes an irreversible exit from GNU Emacs and Prolog.  You will
+     be prompted to make sure that (1) the Prolog and all other
+     subprocesses should indeed be killed, and (2) any unsaved buffers
+     should indeed be discarded.
+
+`^x ^z'
+     If you are running GNU Emacs from a UNIX terminal window, this
+     suspends (pauses) the GNU Emacs process and returns you to the
+     operating system prompt.  If a Prolog program is running, it will
+     continue to run, but you will not see any output from it.  You can
+     get your GNU Emacs/Prolog session back by typing `fg'.  (This
+     pause facility is only available if you are running `csh'; it does
+     not work under `sh'.)
+
+`<ESC> .'
+     Finds the source code for a particular procedure.  If the cursor
+     is positioned on or before the predicate name part of a goal, you
+     can simply press <RET> to find the clauses for its procedure.
+     Otherwise, in response to the prompt `Find: ', you should type the
+     name of the predicate, optionally followed by a `/' and its arity.
+     The file containing the procedure for the specified predicate is
+     then visited, and the cursor is positioned at the beginning of the
+     procedure.  There are some layout conventions, which must be
+     followed for this facility to work: see *Note ema-emi-lay::.  The
+     facility is also available via the `.'  debugger option (see *Note
+     dbg::).  In QUI, find-definition must be invoked within the GNU
+     Emacs process, not the QUI main window.
+
+`<ESC> ,'
+     This command can only be used after `<ESC> .'.  It successively
+     locates other procedure definition(s) for a predicate.  `<ESC> ,'
+     will search other files for additional clauses for a multifile
+     predicate, will search for a predicate of the same name and arity
+     in a different module, or will search for predicates with the same
+     name and different arities (in the case where the arity was not
+     specified).
+
+`<ESC> x prolog-mode'
+     Changes the current buffer to Prolog mode.  See *Note
+     ema-emi-mod::.
+
+`<ESC> x library'
+     Prompts for a file and locates it in the Quintus Prolog Library
+     directories.
+
+`<ESC> x cd'
+     Prompts for a directory and changes the directory of the Prolog
+     window and of the Prolog process.
+
+`<ESC> x enable-prolog-source-debugger'
+     Enables the source linked debugger.
+
+`<ESC> x disable-prolog-source-debugger'
+     Disables the source linked debugger.
+
+   The following key bindings apply in any edit window except the Prolog
+window:
+`<ESC> k'
+     (for "kompile") is used to load procedures from the edit buffer.
+     You are then prompted to choose one of three options; you can
+     compile
+       1. the procedure in which the cursor is currently positioned (see
+          *Note ema-emi-lay::, for restrictions on program layout
+          necessary for this to work);
+
+       2. the region between the cursor and the mark; or
+
+       3. the whole buffer.
+
+`<ESC> i'
+     (for interpret) is synonymous to `<ESC> k'; and is there for
+     backward compatibility.
+

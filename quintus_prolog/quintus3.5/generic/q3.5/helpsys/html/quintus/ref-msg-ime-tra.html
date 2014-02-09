@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Translating the Messages</h5>
+
+   <p>Each grammar rule in <code>QU_messages.pl</code> defines the generation of a
+message term from an internal form.  For example, in (A) the text that
+needs to be translated is the quoted text inside the list <code>[]</code> brackets:
+<code>Type error</code>.  The rest of the rule does not need to be changed.
+
+<pre class="example">     generate_message(type_error(Goal,ArgNo,TypeName,Culprit)) --&gt; (A)
+         ['Type error'-[]],
+         head(Goal,ArgNo),
+         type(TypeName,Culprit),
+         goal(Goal).
+     </pre>
+
+   <p>The general form of text components in a list is (B), where
+<var>control-string</var> and <var>arg-list</var> are valid for a call such as (C) to the
+built-in predicate <code>format/2</code> as exemplified in (D).
+
+<pre class="example">     <var>control-string</var>-<var>arg list</var> (B)
+     </pre>
+
+<pre class="example">     | ?- <kbd>format(</kbd><var>control-string</var><kbd>, </kbd><var>arg-list</var><kbd>).</kbd> (C)
+     </pre>
+
+<pre class="example">     | ?- <kbd>format('Type error', []).</kbd> (D)
+     Type error
+     yes
+     </pre>
+
+   <p>In example (E), when the message is printed, the List
+will be inserted in place of the ~q.  The ~q means that the List will
+be printed as if by the built-in predicate <code>writeq/1</code>.  See the
+documentation of <code>format/[2,3]</code> for full details of what a
+control-string can do.
+<pre class="example">     typename(one_of(List)) --&gt; ['a member of the set ~q'-[List]]. (E)
+     </pre>
+
+   <p>In addition to text components of the form (F), it is also possible to
+have text components of the form (G), which cause a newline to be
+output.
+<pre class="example">     <var>control-string</var>-<var>arg list</var>  (F)
+     
+     nl   (G)
+     </pre>
+
+   <p>The format option <code>~n</code> should not be used in control
+strings: any required newlines should be specified with the <code>nl</code> text
+components.  For example, the list in (H) contains two text
+components; in general, a number of text components can be collected
+into a single list like this, or they can appear in separate lists, as
+in (I):
+
+<pre class="example">     advice(invalid_argument,Type,X) --&gt;    (H)
+             ['Invalid argument to ~w, ~q was ignored.'-[Type,X],nl].
+     
+     advice(invalid_argument,Type,X) --&gt;   (I)
+         ['Invalid argument to ~w, ~q was ignored.'-[Type,X]], [nl].
+     </pre>
+
+   <p>All (complete) messages must end with an <code>nl</code>.
+
+   <p>In addition to translating messages, it is also possible to change the
+characters that Prolog will accept when it requires input from the
+user.  This is done by modifying the definition of
+<code>query_abbreviation/2</code> at the end of <code>QU_messages.pl</code>.  For example, (J)
+means that when the Prolog system wants a yes-or-no answer it expects
+the first character typed to be a <code>y</code> or a <code>n</code> and the case does not
+matter.  Since "yes" in French is "oui" a French translator might
+change this to (K).
+
+<pre class="example">      query_abbreviation(yes_or_no,[yes-"yY",no-"nN"]).  (J)
+     
+     query_abbreviation(yes_or_no,[yes-"oO",no-"nN"]).   (K)
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-msg-ime-tit.html#ref-msg-ime-tit">Next</a>
+<li><a rel="up" accesskey="u" href="ref-msg-ime.html#ref-msg-ime">Up</a>
+</ul>
+</div>
+   </body></html>
+

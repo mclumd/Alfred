@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>assert/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p>These predicates add a dynamic clause,
+<var>Clause</var>, to the Prolog database.  They optionally return a database
+reference in <var>Ref</var>:
+
+   <p><code>assert(</code><var>+Clause</var><code>)</code>
+
+   <p><code>assert(</code><var>+Clause, -Ref</var><code>)</code>
+
+   <p>Undefined whether <var>Clause</var> will precede or follow the
+clauses already in the database.
+
+   <p><code>asserta(</code><var>+Clause</var><code>)</code>
+
+   <p><code>asserta(</code><var>+Clause, -Ref</var><code>)</code>
+
+   <p><var>Clause</var> will precede all existing clauses in the database.
+
+   <p><code>assertz(</code><var>+Clause</var><code>)</code>
+
+   <p><code>assertz(</code><var>+Clause, -Ref</var><code>)</code>
+
+   <p><var>Clause</var> will follow all existing clauses in the database.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Clause</var> <dfn>callable</dfn> [MOD]
+     <dd>A valid dynamic Prolog clause.
+
+     <br><dt><var>Ref</var> <dfn>db_reference</dfn>
+     <dd>a database reference, which uniquely identifies the newly asserted <var>Clause</var>.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>Clause</var> must be of the form:
+<pre class="example">            <var>Head</var>
+     or     <var>Head</var> :- <var>Body</var>
+     or     <var>M</var>:<var>Clause</var>
+     </pre>
+
+   <p>where <var>Head</var> is of type callable and <var>Body</var> is a valid clause body. 
+If specified, <var>M</var> must be an atom.
+
+   <p><code>assert(</code><var>Head</var><code>)</code> means assert the unit-clause <var>Head</var>.  The exact
+same effect can be achieved by <code>assert((</code><var>Head</var><code> :- true))</code>.
+
+   <p>If <var>Body</var> is uninstantiated it is taken to mean <code>call(</code><var>Body</var><code>)</code>. 
+For example, (A) is equivalent to (B):
+<pre class="example">     | ?- <kbd>assert((p(X) :- X)).</kbd>            (A)
+     | ?- <kbd>assert((p(X) :- call(X))).</kbd>      (B)
+     </pre>
+
+   <p><var>Ref</var> should be uninstantiated; a range exception is signalled if
+<var>Ref</var>
+does not unify with its return value.  This exception is signalled after the
+assert has been completed.
+
+   <p>The procedure for <var>Clause</var> must be dynamic or undefined.  If it is
+undefined, it is set to be dynamic.
+
+   <p>If you want to write a term of the form <code></code><var>Head</var><code> :-
+</code><var>Body</var><code></code> as the argument to <code>assert/1</code>, you must put it in
+parentheses, because the operator precedence of the <code>:-/2</code> functor
+is greater than 1000 (see <a href="ref-syn-ops-res.html#ref-syn-ops-res">ref-syn-ops-res</a>).  For example,
+(C) will cause a syntax error; instead you should type (D):
+<pre class="example">     | ?- <kbd>assert(foo:-bar).</kbd>                 (C)
+     
+     | ?- <kbd>assert((foo:-bar)).</kbd>               (D)
+     </pre>
+
+   <p>When an assert takes place, the new clause is immediately seen by any
+subsequent call to the procedure.  However, if there is a currently active
+call of the procedure at the time the clause is asserted, the new clause
+is not encountered on backtracking by that call.  See <a href="ref-mdb-exa.html#ref-mdb-exa">ref-mdb-exa</a>
+for further explanation of what happens when currently running code is
+modified.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+if <var>Head</var> (in <var>Clause</var>) or <var>M</var> is uninstantiated.
+
+     <br><dt><code>type_error</code>
+     <dd>
+if <var>Head</var> is not of type callable, or if <var>M</var> is
+not an atom, or if <var>Body</var> is not a valid clause body.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+if the procedure corresponding to <var>Head</var>
+is built-in or has a static definition.
+
+     <br><dt><code>context_error</code>
+     <dd>
+if a cut appears in the if-part of an if-then-else.
+
+     <br><dt><code>range_error</code>
+     <dd>
+if <var>Ref</var> does not unify with the returned database reference.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>abolish/[1,2]</code>,
+<code>dynamic/1</code>,
+<code>erase/1</code>,
+<code>multifile_assertz/1</code>
+<code>retract/1</code>,
+<code>retractall/1</code>,
+<code>clause/[2,3]</code>.
+
+   <a href="ref-mdb-dre.html#ref-mdb-dre">ref-mdb-dre</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-assign.html#mpg-ref-assign">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-acm.html#mpg-ref-acm">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

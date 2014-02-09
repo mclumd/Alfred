@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Compile-time code vs. Runtime code</h5>
+
+   <p>A Prolog program has up to three types of code in it:
+     <ol type=1 start=1>
+
+     <li>code that implements the application;
+<li>code that helps compile the application, and that is not used during the
+execution of the application;
+<li>code that is necessary to both the execution of the application and its
+compilation.
+        </ol>
+ The first type of code is the normal case and may be
+referred to as <dfn>runtime code</dfn>, since it is intended to be executed
+when the application is run.  The second type of code is called
+<dfn>compile-time code</dfn>.  Any predicates that are to be called from
+embedded commands are examples of compile-time code.  The other main
+use of compile-time code is in the definition of <code>term_expansion/2</code>,
+which allows you to specify arbitrary transformations to be done by
+the compiler as it reads in clauses.  See the reference page for more
+information on <code>term_expansion/2</code>.
+
+   <p>When using the built-in compiler in the Development System, no
+distinction has to be made between the three types of code.  They can
+coexist in one file.  Before using <code>qpc</code> on a program,
+however, compile-time code must be separated out into its own file (or
+files).  Then, to each file that needs this new file or files at
+compile time, add the goal (A) near the top of the file.  This tells
+<code>qpc</code> to load <var>NewFile</var> directly into <code>qpc</code>
+before further compiling the current file.  It does <em>not</em> include
+<var>NewFile</var> as a runtime dependency of the file.  If you need
+<var>NewFile</var> to be loaded at compile time and also at runtime, use
+the goal (B) instead.  This approach will work in the Development
+System as well as <code>qpc</code>.
+<pre class="example">     :- load_files(NewFile, [when(compile_time)]).   (A)
+     :- load_files(NewFile, [when(both)]).           (B)
+     </pre>
+
+   <p>Alternatively, you may omit the use of <code>load_files/2</code>, instead
+specifying files to be loaded into <code>qpc</code> with the
+<code>-i</code> option.  In this case, when you want to compile this
+file into the Development System, remember to first load the file(s) needed at
+compile time.
+
+   <p>It is good programming style to use <code>initialization/1</code> for goals to
+be activated at runtime.  Note that predicates called as <code>:- Goal.</code>
+need to be available at compile time, whereas predicates called as
+<code>:- initialization(Goal).</code> only need to be available at runtime.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-eci-inf.html#sap-srs-eci-inf">Next</a>
+<li><a rel="up" accesskey="u" href="sap-srs-eci.html#sap-srs-eci">Up</a>
+</ul>
+</div>
+   </body></html>
+

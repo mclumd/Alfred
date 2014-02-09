@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Submitting Prolog Queries from GNU Emacs</h5>
+
+   <p>GNU Emacs talks to Prolog by writing an Emacs-Lisp string in the form of
+a Prolog query (of any kind), terminated by a full-stop and prefixed
+by a special character code, to Prolog's standard input stream.  When
+Prolog detects one of these prefixed queries in its term input stream,
+it executes the query as if it had been typed by the user at the top
+level.  The query prefix character is ASCII 29.
+
+   <p>As an example, define the function
+<pre class="example">     (defun to-prolog ()
+         (process-send-string "prolog"
+                   "\035nl,write(hello),nl.\n")
+     )
+     </pre>
+
+   <p>Upon invoking this function from GNU Emacs, the results of the query
+are displayed in the Prolog execution buffer.  Notice that the Prolog
+process is called <code>prolog</code>, the query prefix character (ASCII 29) is
+denoted in an Emacs-Lisp string by the
+<em>octal</em>
+escape sequence <code>\035</code>, and the full-stop at the end of
+the query must be a period followed by a newline character (denoted in
+an Emacs-Lisp string by the escape sequence <code>\n</code>).
+
+   <p>To make things simpler, the interface defines a function called
+<code>send-prolog</code>, which, given a query string as its one
+argument, sends that query
+to the Prolog process, prefixed by the query prefix character and followed
+by a full-stop.  So the above function can be more clearly written as
+<pre class="example">     (defun to-prolog ()
+         (send-prolog "nl,write(hello),nl")
+     )
+     </pre>
+
+   <blockquote>
+
+        <p>WARNING: GNU Emacs should only send a prefixed query to Prolog when
+Prolog is waiting for the user to type a term at the terminal.  Note
+that this occurs not only when the user explicitly calls
+<code>read/[1,2]</code> but also when Prolog is at the top-level prompt. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ema-emi-pge-lfp.html#ema-emi-pge-lfp">Next</a>
+<li><a rel="up" accesskey="u" href="ema-emi-pge.html#ema-emi-pge">Up</a>
+</ul>
+</div>
+   </body></html>
+

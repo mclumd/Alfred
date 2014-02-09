@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Definite Clause Grammars</h4>
+
+   <p>Prolog's grammar rules provide a convenient notation for
+expressing definite clause grammars, which are useful for the
+analysis of both artificial and natural languages.
+
+   <p>The usual way one attempts to make precise the definition of a
+language, whether it is a natural language or a programming lanaguage,
+is through a collection of rules called a "grammar".  The rules of a
+grammar define which strings of words or symbols are valid sentences
+of the language.  In addition, the grammar generally analyzes the
+sentence into a structure that makes its meaning more explicit.
+
+   <p>A fundamental class of grammar is the context-free grammar (CFG),
+familiar to the computing community in the notation of "BNF"
+(Backus-Naur form). In CFGs, the words, or basic symbols, of the
+language are identified by "terminal symbols", while categories of
+phrases of the language are identified by non-terminal symbols.  Each
+rule of a CFG expresses a possible form for a non-terminal, as a
+sequence of terminals and non-terminals.  The analysis of a string
+according to a CFG is a parse tree, showing the constitutent phrases
+of the string and their hierarchical relationships.
+
+   <p>Context-free grammars (CFGs) consist of a series of rules of the form:
+<pre class="example">     <var>nt</var> --&gt; <var>body</var>.
+     </pre>
+
+   <p>where <var>nt</var> is a non-terminal symbol and body is a sequence of one or
+more items separated by commas.  Each item is either a non-terminal
+symbol or a sequence of terminal symbols.  The meaning of the rule is
+that <var>body</var> is a possible form for a phrase of type <var>nt</var>. A
+non-terminal symbol is written as a Prolog atom, while a sequence of
+terminals is written as a Prolog list, whereas a terminal may be any
+Prolog term.
+
+   <p>Definite clause grammars (DCGs) are a generalization of context-free grammars
+and rules corresponding to DCGs are referred to as "Grammar Rules". 
+A grammar rule in Prolog takes the general form
+<pre class="example">     <var>head</var> --&gt; <var>body</var>.
+     </pre>
+
+   <p>meaning "a possible form for  <var>head</var>  is  <var>body</var>". 
+Both  <var>body</var>  and  <var>head</var>  are
+sequences  of  one  or  more  items  linked  by  the  standard  Prolog
+conjunction operator <code>,</code> (comma).
+
+   <p>Definite clause grammars  extend  context-free  grammars  in  the
+following ways:
+
+     <ul>
+
+     <li>A non-terminal symbol  may  be  any  Prolog  term  (other  than  a
+variable or integer). 
+<li>A  terminal  symbol  may  be  any  Prolog  term.   To  distinguish
+terminals  from  non-terminals,  a  sequence  of  one or more terminal
+symbols is written within a grammar rule as a Prolog list.   An  empty
+sequence  is  written  as the empty list <code>[]</code>. If the terminal symbols
+are ASCII character codes, such lists can be written (as elsewhere) as
+strings.  An empty sequence is written as the empty list (<code>[]</code> or
+<code>""</code>).
+
+     <li>Extra conditions, in the form of Prolog procedure  calls,  may  be
+included  in  the  right-hand  side of a grammar rule. 
+These extra conditions allow the explicit use of procedure calls in the
+body of a rule to restrict the constitutents accepted.  Such procedure
+calls are written enclosed in curly brackets (<code>{</code> and <code>}</code>). 
+<li>The left-hand side of a grammar rule consists of  a  non-terminal,
+optionally  followed  by  a  sequence of terminals (again written as a
+Prolog list). 
+<li>Alternatives may be stated explicitly in the right-hand side of  a
+grammar rule, using the disjunction operator <code>;</code> (semicolon)
+as in Prolog.  (The disjunction operator can also be written as <code>|</code>
+(vertical-bar).) 
+<li>The cut symbol <code>!</code> (exclamation point) may be included in the
+right-hand side of a grammar
+rule,  as  in  a  Prolog  clause.   The cut symbol does not need to be
+enclosed in curly brackets.  The conditional arrow <code>-&gt;</code> can also be used
+in grammar rules, without the curly brackets.  However, all other control
+predicates, <code>repeat/0</code> for example, can only be used within curly
+brackets.  If you use the goal <code>repeat/0</code> without the brackets it will be
+taken to be a non-terminal symbol.
+
+     <li>The extra arguments of non-terminals provide the means of building structure
+(such as parse trees) in grammar rules.  As non-terminals are "expanded" by
+matching against grammar rules, structures are progressively built up in the course of the unification
+process. 
+<li>The extra arguments of non-terminals can also provide a general treatment
+of context dependency by carrying test and contextual information. 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-gru-gru.html#ref-gru-gru">Next</a>
+<li><a rel="up" accesskey="u" href="ref-gru.html#ref-gru">Up</a>
+</ul>
+</div>
+   </body></html>
+

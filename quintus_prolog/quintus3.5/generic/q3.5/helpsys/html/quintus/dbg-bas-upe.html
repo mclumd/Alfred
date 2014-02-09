@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Understanding Prolog Execution Using The Debugger</h4>
+
+   <p>The Quintus Prolog debugger extends the procedure box control flow model to add
+extra information about the details of the execution of a goal,
+allowing you to better understand how your code behaves, and its
+efficiency.
+
+   <p>Prolog incorporates a <dfn>backtracking</dfn> mechanism as
+a basic feature, which allows Prolog programs to efficiently search for
+multiple solutions to a problem.  A goal is <dfn>determinate</dfn>
+
+   <p>if it has only one solution (or
+none).  Often, this is what is desired.  When a goal is not determinate,
+Prolog must keep around information to allow it to backtrack to look for
+alternate solutions.  This extra information is called a
+<dfn>choice point</dfn>
+.
+
+   <p>When a goal is intended to be nondeterminate, it may be expected to
+leave a choice point.  However, when a goal that is expected to be
+determinate leaves a choice point, this may indicate an error in the
+program.  In this case, the goal might succeed with the correct
+answer, but on backtracking produce wrong answers or not terminate. 
+At the very least, an unnecessary choice point means that memory is
+being wasted.  Quintus Prolog detects many kinds of determinate goals, and either
+does not allocate a choice point at all, or deallocates it as soon as
+possible, saving time and memory (see <a href="bas-eff-cut-ove.html#bas-eff-cut-ove">bas-eff-cut-ove</a>). 
+Sometimes, however, you must help Prolog out by putting a cut
+
+   <p>(see <a href="bas-eff-cut-mpd.html#bas-eff-cut-mpd">bas-eff-cut-mpd</a>) in your program, or by using an if-then-else (see
+<a href="ref-sem-con.html#ref-sem-con">ref-sem-con</a>) construct.  The Quintus
+Prolog debugger helps you find such cases.
+
+   <p>Quintus Prolog <dfn>index</dfn><b>es</b><dfn></dfn>
+ on the first argument of a
+predicate.  This means that if the first arguments in the clauses of a
+predicate are not variables, and the first argument in a call to that
+predicate is non-variable, then Prolog will go directly to the clause that
+matches, without even considering those that don't. Note that in order
+for this indexing to be very efficient, it only looks at the principal
+functor of a compound term.  This means that if the first argument of
+one clause is a(a) and the first argument of the next clause is a(b),
+indexing will not be able to distinguish these clauses, so both will
+need to be tried.
+
+   <p>Actually, indexing is more complicated than this.  Any clause whose head
+has a variable as first argument will match any call, so indexing cannot
+be applied to this clause.  Therefore, a predicate can be divided into
+alternating groups of adjacent indexable and nonindexable clauses.  When
+the first argument of a call is non-variable, Quintus Prolog will skip over any clauses
+that don't match that argument, within a group of adjacent indexable
+clauses.  Quintus Prolog will then try every clause in a group of adjacent
+nonindexable clauses, and then again skip nonmatching clause in an
+indexable group, and so on.
+
+   <p>Even more important than time saved by indexing is its effect on
+determinacy.  In effect, indexing makes it possible to ignore clauses
+<em>following</em> the clause being tried, as well as clauses preceding
+it.  If it is possible to ignore all the clauses following the clause
+being tried, then Prolog will not create a choice point, or if a
+choice point has already been allocated for the call, Prolog will
+de-allocate it.  Careful use of indexing can save a great deal time and
+memory running your program.
+
+   <p>The Quintus Prolog debugger helps you understand these efficiency concerns, and
+also Quintus Prolog's exception handling, by extending the box model with three
+extra ports.  These ports are described below.
+
+     <dl>
+
+     <br><dt>Done
+     <dd>This is just like the Exit port,
+but signifies a determinate exit.  This will help you to find goals that
+are nondeterminate and shouldn't be.
+
+     <br><dt>Head
+     <dd>This port shows the clauses' heads that will be tried for unification. 
+At the Head port, you will see which clause is about to be tried, and
+which clause will be tried next if this clause fails.  Note that the
+Head port is shown <em>after</em> indexing is done, so it helps you
+understand how indexing is working for you.  And since it shows what
+clause will be tried next, it also helps you understand how unexpected
+nondeterminacy may be creeping into your program.
+
+     <br><dt>Exception
+     <dd>The Exception port
+signifies an exception being raised while executing a goal.
+
+   </dl>
+
+   <p>Here's a more complete picture of the invocation box, including the
+extended ports.
+
+<pre class="example">              +---------+------------------------------+
+        Call  |         |                              |  Exit
+     --------&gt;|  ------&gt;| descendant(X, Y) :-          |-------&gt;
+              |   Head  |          offspring(X, Y).    |
+              |         |                              |  Done
+     &lt;--------|         |                              |-------&gt;
+        Fail  |  ------&gt;| descendant(X, Z) :-          |
+              |   Head  |          offspring(X, Y),    |
+     &lt;--------|         |          descendant(Y, Z).   |&lt;-------
+     Exception|         |                              |  Redo
+              +---------+------------------------------+
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-bas-tra.html#dbg-bas-tra">Next</a>
+<li><a rel="previous" accesskey="p" href="dbg-bas-pbx.html#dbg-bas-pbx">Previous</a>
+<li><a rel="up" accesskey="u" href="dbg-bas.html#dbg-bas">Up</a>
+</ul>
+</div>
+   </body></html>
+

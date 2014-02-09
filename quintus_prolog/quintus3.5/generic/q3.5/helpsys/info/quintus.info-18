@@ -1,0 +1,1139 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: fli-emb-how-mem,  Next: fli-emb-how-iou,  Prev: fli-emb-how-mai,  Up: fli-emb-how
+
+The Embedding Functions for Memory Management
+.............................................
+
+   Release 3 of Quintus Prolog makes it possible to run Prolog as an
+embedded system.  In terms of memory management this means that Prolog
+does not assume full control of the address space or that all its
+memory is going to be contiguous.  This makes it possible to share the
+same address space between Prolog and other applications. The memory
+used by Prolog can be interspersed with the memory used by the
+application into which Prolog is embedded.
+
+   With Release 3 all of Prolog's sophisticated memory management can
+be built on top of a primitive layer, which users can replace with
+their own functions.  Such replacement is only required when the
+application in which the Prolog code is embedded demands full control
+of the address space and memory allocation.  In general it is not
+necessary or even advantageous to do this.
+
+   The embedding layer of memory management comprises three primitive
+functions: `QU_alloc_init_mem()', `QU_alloc_mem()' and `QU_free_mem()'.
+The system has a default implementation of these functions based on
+`sbrk(2)' for UNIX and `VirtualAlloc()' for Windows.  If Prolog is to
+become part of an embedded package that would like to provide its own
+memory management routines then the user can redefine these functions
+and statically link it with the Prolog system. (Static linking is
+discussed in *Note sap-srs::.)  If the user does not provide these
+functions, the API functions (in e.g. `libqp.a' or `libqps.lib') will
+be used by default.
+
+   This layer is responsible for allocating memory to Prolog and freeing
+memory back to the Operating System. Prolog calls the functions
+`QU_alloc_mem()' and `QU_free_mem()' for these purposes.
+`QU_init_mem()' is called the first time Prolog makes a call to
+allocate memory. If the user redefines these functions the redefinition
+should meet the specifications for these functions mentioned in the
+reference pages.  An example of defining your own memory management
+routines is given in the reference page for `QU_alloc_mem()'.
+
+   This layer is also responsible for the environment variables
+`PROLOGINCSIZE' and `PROLOGMAXSIZE', which are available for customizing
+the default memory management routines.  The user can set
+`PROLOGINCSIZE' to set the least amount by which Prolog should expand
+each time.  The user can set `PROLOGMAXSIZE' to limit the maximum
+memory used by Prolog.  See *Note ref-mgc-osi::.
+
+   The Prolog system top level supplied by Quintus automatically cleans
+up Prolog memory each time it returns to top level.  However, when
+Prolog is called directly from a foreign function the Quintus top level
+(or a user-defined equivalent) need not be used.  If nothing else is
+done (such as calling `trimcore/0' in the Prolog code), when a Prolog
+query returns, the memory allocated to Prolog will stay expanded to
+whatever was required to compute the previous solutions.
+
+   In the case where it is more convenient to call a C function than a
+Prolog built-in, `QP_trimcore()' is provided to explicitly clean up
+Prolog memory.  It has the same effect as `trimcore/0'.  Like
+`trimcore/0' it should be used judiciously, as overuse can result in
+unnecessary time being spent in memory expansion and contraction.
+However, when Prolog is to be dormant for a period, or as much free
+memory as possible is desired, `QP_trimcore()' can be quite useful.
+
+
+File: quintus.info,  Node: fli-emb-how-iou,  Prev: fli-emb-how-mem,  Up: fli-emb-how
+
+The Embedding Functions For Input/Output
+........................................
+
+   Prolog streams are designed by default to be channels for I/O
+operations to a file or a terminal.  User defined streams enable these
+operations to be performed on other types of object: notably, windows
+or a network channel.
+
+   The embedding input/output functions create the default Prolog
+streams and provide the user with the default parameters for creating a
+user-defined stream.  It is possible to change these defaults.
+However, in general it is not necessary or even advantageous to do this.
+
+   Such replacement is only required when the application in which the
+Prolog code is embedded demands full control of the I/O system and does
+not want Prolog to make direct calls to the operating systen to perform
+I/O.  One instance of such usage is to embed a Prolog program within an
+application that uses a graphical window-oriented user interface.
+
+   The embedding layer for input/output contains four functions:
+`QU_stream_param()'
+     sets up default field values in a `QP_stream' structure.
+
+`QU_initio()'
+     creates three Prolog initial streams: "user_input" stream,
+     "user_output" stream and "user_error" stream.
+
+`QU_open()'
+     creates streams opened by `open/[3,4]' and `QP_fopen()'.
+
+`QU_fdopen()'
+     creates streams that were already opened by the system function
+     `open(2)'.
+
+   Details of each function can be found in the individual reference
+pages.  Any of these functions can be supplied in linking a Prolog
+system through `qld'.  If any function is not supplied, the default
+version of that function is linked in.
+
+   A number of C macros and functions are provided in
+`<quintus/quintus.h>' and e.g. `libqp.a' to access and manipulate
+Prolog streams where it is more convenient to access them from C rather
+than calling a Prolog builtin.  For example, `QP_getc()' will get a
+character from a Prolog stream in the same way as `get0/2'. These
+macros and functions are listed in *Note fli-ios-bio::.
+
+
+File: quintus.info,  Node: fli-emb-sum,  Prev: fli-emb-how,  Up: fli-emb
+
+Summary of Functions
+--------------------
+
+   Detailed information is found in the reference pages for the
+following:
+
+   * `QP_initialize()'
+
+   * `QP_toplevel()'
+
+   * `QU_alloc_init_mem()'
+
+   * `QU_alloc_mem()'
+
+   * `QU_fdopen()'
+
+   * `QU_free_mem()'
+
+   * `QU_init_mem()'
+
+   * `QU_initio()'
+
+   * `QU_open()'
+
+   * `QU_stream_param()'
+
+
+File: quintus.info,  Node: fli-p2f,  Prev: fli-ove,  Up: fli
+
+Prolog Calling Foreign Code
+===========================
+
+* Menu:
+
+* fli-p2f-bas::                         Introduction
+* fli-p2f-uso::                         Using Shared Object Files and Archive Files
+* fli-p2f-lnk::                         Linking Foreign Functions to Prolog Procedures
+* fli-p2f-api::                         Specifying the Argument Passing Interface
+* fli-p2f-int::                         Passing Integers
+* fli-p2f-flo::                         Passing Floats
+* fli-p2f-atm::                         Passing Atoms
+* fli-p2f-trm::                         Passing Prolog Terms
+* fli-p2f-poi::                         Passing Pointers
+* fli-p2f-pas::                         Important Prolog Assumptions
+* fli-p2f-fcr::                         Debugging Foreign Code Routines
+* fli-p2f-lfe::                         Implementation of load_foreign_executable/1
+* fli-p2f-lff::                         Implementation of load_foreign_files/2
+* fli-p2f-lsf::                         Library support for linking foreign code
+* fli-p2f-fex::                         Foreign Code Examples:  UNIX
+* fli-p2f-sum::                         Summary of Predicates and Functions
+* fli-p2f-lib::                         Library Support
+
+
+File: quintus.info,  Node: fli-p2f-bas,  Next: fli-p2f-uso,  Up: fli-p2f
+
+Introduction
+------------
+
+* Menu:
+
+* fli-p2f-bas-sum::                     Summary of steps
+
+   This section describes how to load and call programs written in C,
+Pascal, FORTRAN, or Assembly language.  This may be desirable in order
+to:
+   * combine Prolog with existing programs and libraries, thereby
+     forming composite systems;
+
+   * interface with the operating system or other system level programs;
+
+   * speed up certain critical operations.
+
+   Examples showing the correct use of the foreign interface are found
+in the library directory.  Examples of incrementally loading C, Pascal
+and FORTRAN code can be found in *Note fli-p2f-fex::.
+
+   Foreign functions are loaded directly into the Prolog system by
+using one of the built-in predicates `load_foreign_executable/1' or
+`load_foreign_files/2'. These predicates load executable images or
+object files into the address space of the running Prolog.
+
+   Before calling these predicates, you must prepare facts in the
+database that describe which functions may be called by Prolog, the
+native language of each function, and the argument types of each
+function.  This information is used to link Prolog predicates and
+foreign functions when loading the foreign code.
+
+   The foreign language interface supports the direct exchange of
+Prolog's atomic data types (atoms, integers and floating-point
+numbers).  The data is automatically converted between Prolog's
+internal representation and the internal representation of the foreign
+language.
+
+   The foreign language interface also supports passing any Prolog term
+to C and receiving any Prolog term from C.  A set of C functions is
+provided to type test and access terms passed to C and to create new
+Prolog terms in C.  For information on these functions see *Note cfu::.
+
+   Prolog procedures that are attached to foreign functions are
+determinate, in that they succeed at most once for a given call and are
+not re-entered on backtracking.  This imposes no serious limitation,
+since it is always possible to divide  a foreign function  into the
+part to be done on the first call and the part to be redone on
+backtracking.  Backtracking can then take place at the Prolog level
+where it is naturally expressed.
+
+
+File: quintus.info,  Node: fli-p2f-bas-sum,  Up: fli-p2f-bas
+
+Summary of steps
+................
+
+   Following is a summary of the steps that enable you to call foreign
+code from a Prolog predicate:
+
+   In the Prolog code:
+  1. Declare the relevant object file(s), and the names of the
+     functions defined in them, by defining clauses for
+     `foreign_file/2' (see *Note fli-p2f-lnk::).
+
+  2. Specify the argument passing interface for each function by
+     defining clauses for `foreign/3' (see *Note fli-p2f-api::).
+
+  3. Load the foreign files into Prolog by calling
+     `load_foreign_executable/1' or `load_foreign_files/2' (see *Note
+     fli-p2f-uso::).
+
+
+File: quintus.info,  Node: fli-p2f-uso,  Next: fli-p2f-lnk,  Prev: fli-p2f-bas,  Up: fli-p2f
+
+Using Shared Object Files and Archive Files
+-------------------------------------------
+
+* Menu:
+
+* fli-p2f-uso-fex::                     Loading Foreign Executables
+* fli-p2f-uso-ffi::                     Loading Foreign Files
+
+   By default, foreign code must be packaged as shared object files for
+use with `load_foreign_executable/1'.  Archive files are used for
+statically linking foreign code to executables (see *Note sap-srs::).
+
+   A shared object file is constructed from a list of object files (and
+libraries) using the system linker.  An archive file is constructed
+from a list of object files using special tools.  In both cases, the
+object files are generated using the foreign language compiler.
+
+   Linkers require special options to construct a shared object file,
+and may require that the object files used to generate the shared object
+files be compiled with "position independent code" or other special
+compiler options.  Under Windows, Quintus Prolog also requires a
+special compiler option for inclusion into archive files.
+
+   Let CC denote the compiler command, let SFLAGS denote the compiler
+options for shared object files, let AFLAGS denote the compiler options
+for archive files, and let LFLAGS denote the linker options.  The
+following table gives these options for the supported Quintus Prolog
+platforms.
+
+PlatformCC      AFLAGS         SFLAGS         LFLAGS
+
+`linux' `gcc'   (none)         `-fPIC'        `-shared'
+
+`alpha' `cc'    (none)         (none)         `-taso -shared
+                                              -expect_unresolved 'Q?_*''
+
+`hppa'  `cc'    `+DAportable'  `+Z            `-b'
+                               +DAportable'   
+
+`hppa'  `gcc'   (none)         `-fPIC'        `-shared'
+
+`sgi'   `cc'    `-n32'         `-n32'         `-n32 -shared'
+
+`sgi'   `gcc'   `-mabi=n32'    `-mabi=n32     `-mabi=n32 -shared'
+                               -fPIC'         
+
+`sun4-5'`cc'    (none)         `-K pic'       `-G'
+
+`sun4-5'`gcc'   (none)         `-fPIC'        `-shared'
+
+`rs6000'`cc'    (none)         (none)         `-bI:RUNTIME-DIRECTORY/prolog.exp
+                                              -e QP_entry glue.o'
+
+Windows `cl'    `/MD'          `/MD'          `/dll'
+
+   To build a shared object file, say `mylib.so', under UNIX, issue the
+following:
+     % CC SFLAGS -c SOURCE1
+     % ...
+     % CC SFLAGS -c SOURCEN
+     % ld -o mylib.so LFLAGS OBJECTS
+
+   When you build a shared object file, say `mylib.dll', under Windows,
+a corresponding import library will normally also be built.  Consult
+the Windows documentation for details.  Issue the following:
+
+     C:\> cl SFLAGS /c SOURCE1
+     C:\> ...
+     C:\> cl SFLAGS /c SOURCEN
+     C:\> link /dll /out:mylib.dll OBJECTS
+
+   To build a archive file, say `mylib.a', under UNIX, issue the
+following:
+     % CC AFLAGS -c SOURCE1
+     % ...
+     % CC AFLAGS -c SOURCEN
+     % ar r mylib.a OBJECTS
+     % ranlib mylib.a
+
+   For archive files under Windows, a special naming convention is used:
+an extra `s' is placed before the `.lib' extension, to distinguish
+archive files from import libraries (see *Note sap-rge-sos::).  To
+build an archive file, say `mylibs.lib', issue the following:
+
+     C:\> cl AFLAGS /c SOURCE1
+     C:\> ...
+     C:\> cl AFLAGS /c SOURCEN
+     C:\> link /lib /out:mylibs.lib OBJECTS
+
+     *Platform specific notes:*
+    `alpha'
+          Foreign code must be compiled in native mode, i.e. _not_
+          using the `-xtaso_short' option.
+
+    `rs6000'
+          You must supply the file `glue.o'.  See
+          `QUINTUSDIR/generic/qplib3.5/structs/library/rs6000/structs_lnk.c'
+          for an example.
+
+    Windows
+          If building a DLL that calls any of the Quintus Prolog C API
+          functions exported from the Runtime Kernel DLL (`qpeng.dll')
+          or the Embedding Layer DLL (`libqp.dll') then you must also
+          link in the import libraries for these DLLs, which are named
+          `qpeng.lib' and `libqp.lib' and reside in the directory
+          `QUINTUS-DIRECTORY\lib\ix86'.  This is needed because DLLs
+          must have their external references resolved at link time
+          rather than at load time, in contrast to typical UNIX shared
+          library implementations. Run the `qpvars.bat' file to set-up
+          the environment variables necessary for the C-compiler and
+          linker to fine the needed Quintus files.
+
+          The `makefile.win' file in the Quintus Library directory
+          `QUINTUS-DIRECTORY\src\library' contains an example of how to
+          build a DLL for dynamic loading into Quintus Prolog.
+
+
+   The following two sections describe the use of shared object files in
+Quintus Prolog:
+
+
+File: quintus.info,  Node: fli-p2f-uso-fex,  Next: fli-p2f-uso-ffi,  Up: fli-p2f-uso
+
+Loading Foreign Executables
+...........................
+
+   The built-in Prolog predicate `load_foreign_executable/1' is used to
+load foreign functions directly into Prolog from a shared object file
+and to attach selected functions and routines in the loaded file to
+Prolog predicates.
+
+   The example below demonstrates the use of these predicates to load
+code compiled using the C compiler.
+
+   In the above example, `foreign' (or `foreign.pl') is a file
+containing facts that describe how Prolog is to call the foreign
+functions. If it is given a filename without an extension then it
+automatically appends the appropriate extension; thus in the example
+above, `math' is specified to load `math.so'.
+
+   The loading process may fail if:
+   * the facts in the database (see *Note fli-p2f-lnk::) that describe
+     how to link foreign functions to Prolog procedures are incomplete;
+
+   * the foreign functions specified have already been loaded;
+
+   * the shared object file contains undefined symbols that could not
+     be resolved when loaded.
+
+   If the load does not complete successfully then an exception is
+raised and the call to `load_foreign_executable/1' fails; no change is
+made to the Prolog state.  The load can be retried once the problem has
+been corrected.
+
+   Once a foreign program is loaded, it cannot be unloaded or replaced,
+although you can abolish or redefine any procedure attached to it.
+
+     *Notes:*
+       1.  Any foreign file loaded via a `load_foreign_executable/1'
+          command that is embedded in a file being loaded into Prolog
+          will be sought relative to the directory from which the file
+          is being loaded.  For example, if the file
+          `/usr/fred/test.pl' contains the command
+               :- load_foreign_executable(test).
+
+          then the file to be loaded would be `/usr/fred/test.so'.
+
+       2.  When the linker is given a library such as `-lX11', it will
+          look for a "shared library" version and if one exists record
+          this library as a dependency in the shared object file.
+          `load_foreign_executable/1' will then automatically load this
+          library (if not already loaded) when it loads the shared
+          object file.
+
+          If the linker is given a library for which no shared library
+          exists, then object files from the static library are
+          incorporated into the shared object file as needed.    This
+          means that any routine in a static library that is to be
+          accessed from Prolog must have some reference to it in one of
+          the object files being linked into the shared object file.
+
+       3.  It is better to load one large shared object file than many
+          small ones.  You may have several Prolog files that require
+          routines from one shared object file -- in other words, a
+          shared library.  The shared library is only loaded once, but
+          different functions could be attached to Prolog predicates in
+          different calls to `load_foreign_executable/1'. For example,
+          under UNIX, most of the files in the Prolog Library that load
+          foreign code use the shared library file `libpl.so'.
+
+
+   A description of the internal operation of the
+`load_foreign_executable/1' predicate is given in *Note fli-p2f-lfe::
+to help solve more difficult foreign code loading problems.
+
+
+File: quintus.info,  Node: fli-p2f-uso-ffi,  Prev: fli-p2f-uso-fex,  Up: fli-p2f-uso
+
+Loading Foreign Files
+.....................
+
+   `load_foreign_files/2' is an alternative interface to
+`load_foreign_executable/1', which constructs a shared object file from
+the list of object files and libraries given as its arguments and then
+maps the resulting shared object file into the Prolog address space. In
+general it is recommended that you take the responsibility for the
+construction of a shared object file and then use
+`load_foreign_executable/1' directly.  Using `load_foreign_files/2' is
+slower because it has to invoke the linker to construct the shared
+object file everytime the program is loaded.  A further disadvantage is
+that the linker may not be available at runtime on all systems.
+
+   Example:
+     % cc -c CFLAGS math.c
+     % cc -c CFLAGS other.c
+     % prolog
+     
+     | ?- compile(foreign).
+     | ?- load_foreign_files([math,other],['-lm']).
+
+   Again, the file `foreign' (or `foreign.pl') contains the facts that
+describe how Prolog is to call the foreign functions.  If the
+extensions on filenames given in the first argument to
+`load_foreign_files/2' are omitted, the proper extension is
+automatically appended to them.
+
+
+File: quintus.info,  Node: fli-p2f-lnk,  Next: fli-p2f-api,  Prev: fli-p2f-uso,  Up: fli-p2f
+
+Linking Foreign Functions to Prolog Procedures
+----------------------------------------------
+
+   When `load_foreign_executable/1' or `load_foreign_files/2' is
+called, it calls the hook predicates `foreign_file/2' and `foreign/3'
+in the current source module.  These should have been previously
+defined by clauses of the form:
+
+     foreign_file(FILENAME, [FUNCTION1,FUNCTION2,...,FUNCTIONN]).
+     
+     foreign(FUNCTION1, LANGUAGE, PREDICATESPECIFICATION1).
+     foreign(FUNCTION2, LANGUAGE, PREDICATESPECIFICATION2).
+     ...
+     foreign(FUNCTIONN, LANGUAGE, PREDICATESPECIFICATIONN).
+
+   Example:
+     foreign_file(math, [sin,cos,tan]).
+     
+     foreign(sin, c, sin(+float,[-float])).
+     foreign(cos, c, cos(+float,[-float])).
+     foreign(tan, c, tan(+float,[-float])).
+
+     *Please note:* If a Prolog module includes foreign code, all
+     relevant `foreign/[2,3]' and `foreign_file/2' facts should be
+     loaded into that module and the `load_foreign_executable/1' or
+     `load_foreign_files/2' command should be called from that module.
+
+   A `foreign_file/2' fact lists the functions that will be provided by
+the associated (shared) object file.  When using
+`load_foreign_files/2', a fact of this form must be provided for each
+file specified in the LISTOFFILES argument.  The functions specified
+should be only those that are to be attached to Prolog procedures.
+Supporting functions that will not be called directly from Prolog
+should not be listed.
+
+   Each `foreign/3' fact describes how a foreign function is to be
+attached to a Prolog procedure.  PREDICATESPECIFICATION specifies the
+Prolog procedure and also the argument passing interface (described
+below).  A fact of this form must be provided for each function that is
+to be attached to a Prolog procedure.
+
+   When `load_foreign_executable/1' or `load_foreign_files/2' is called,
+the specified files are loaded into the running Prolog and then all the
+specified Prolog procedures are abolished and redefined to be links to
+the foreign functions.  Calling one of the Prolog procedures now
+results in a call to a foreign function.
+
+   Prolog procedures can be directly linked to library functions.
+Note, however, that some functions shown in the library documentation
+are actually C macros (found in included `.h' files).  In this case,
+the simplest approach is to write a C function that uses the macro and
+then link to that function.
+
+   You may abolish or redefine (using `compile/1') any procedure that
+has been attached to a foreign function.  This severs the link between
+the Prolog predicate and the foreign function.  It is not possible to
+reestablish this link.
+
+   The `foreign_file/2' and `foreign/3' facts must be consistent
+whenever `load_foreign_executable/1' or `load_foreign_files/2' is
+called.  They are, however, not used after this point and may be
+abolished, if desired.(1).
+
+   The `load_foreign_executable/1' and `load_foreign_files/2' commands
+can be used any number of times in a Prolog session to load different
+foreign programs. For example:
+     | ?- compile(f1),
+          load_foreign_executable(f1),
+          abolish([foreign/3, foreign_file/2]).
+     | ?- compile(f2),
+          load_foreign_executable(f2),
+          abolish([foreign/3, foreign_file/2]).
+
+   Each `compile/1' installs a new set of facts describing a set of
+functions to be loaded by `load_foreign_executable/1'.  Unless you
+abolish all `foreign/3' and `foreign_file/2' facts before each
+compilation, Prolog will warn you that `foreign/3' and `foreign_file/2'
+have been previously defined in another file.
+
+   A better way to do this is to insert the call to
+`load_foreign_executable' into the file that defines `foreign_file/2'
+and `foreign/3' as an embedded command.  For example, you could add the
+following command to the end of the file `f1.pl':
+     :-  load_foreign_executable(f1),
+         abolish([foreign/3, foreign_file/2]).
+
+   so that compiling `f1.pl' will automatically load `f1.so'.  This
+embedded command will also work when building a stand-alone program, as
+described in *Note sap-srs::.
+
+   ---------- Footnotes ----------
+
+   (1) See example in the reference page for `foreign/[2,3]'.
+
+
+File: quintus.info,  Node: fli-p2f-api,  Next: fli-p2f-int,  Prev: fli-p2f-lnk,  Up: fli-p2f
+
+Specifying the Argument Passing Interface
+-----------------------------------------
+
+   The argument passing interface is specified by defining facts for
+`foreign/3' of the form:
+     `foreign(+ROUTINE, +LANGUAGE, +PREDICATESPECIFICATION)'
+
+   ROUTINE is an atom that names a foreign code routine and LANGUAGE is
+an atom (either `c', `pascal', or `fortran') that names the language in
+which the routine is written.
+
+     *Please note:* Assembly code can be loaded if it emulates the exact
+     calling conventions of one of C, FORTRAN, or Pascal.  LANGUAGE is
+     then chosen, accordingly, to be one of `c', `fortran', or `pascal'.
+
+
+   PREDICATESPECIFICATION specifies the Prolog name given to the
+foreign code routine and how its arguments will be passed to and from
+the foreign code routine.
+
+   PREDICATESPECIFICATION is of the form:
+     PREDICATENAME(ARGSPEC1, ARGSPEC2, ...ARGSPECN)
+
+   where PREDICATENAME is the name of the Prolog predicate (an atom)
+and each ARGSPEC is an argument specification for each argument of the
+predicate.  An ARGSPEC informs the Prolog system how to pass or receive
+a Prolog term in the corresponding argument position.
+
+   Prolog checks the types of the input arguments; a foreign function
+call will raise an exception if any input argument is not of the right
+type.
+
+   If the argument passed is an atomic object then the interface
+automatically converts between Prolog's representation of the data and
+the representation expected by the foreign function.  Thus the external
+function does not need to know how Prolog represents atoms, integers,
+or floats in order to communicate with Prolog.  This feature simplifies
+the integration of foreign code with Prolog; in particular, it makes it
+easier to interface directly with already-written functions in
+libraries and other programs.  It also allows for compatibility with
+later versions of Quintus Prolog and with versions of Quintus Prolog
+running on other hardware.
+
+     *Please note:* The only atomic object that cannot be passed
+     directly through the foreign interface is a db_reference.
+     db_references can be passed to foreign code using the general term
+     passing mechanism using `+term' and `-term'. You can take apart
+     and build db_references in foreign language using the
+     `QP_get_db_reference()' and `QP_put_db_reference()' functions.
+
+   On the other hand, generic Prolog terms passed to a foreign function
+(using `+term') are not converted to any representation in the foreign
+language.  Instead the foreign function gets a reference to a Prolog
+term.  A set of functions/macros is provided to type test, access and
+create Prolog terms through these references (see *Note cfu::).
+Similarly when a generic term is returned (using `-term' or `[-term]')
+from a foreign function there is no conversion of any data structures
+in the foreign language into an equivalent Prolog representation. The
+foreign function has to return a reference to a Prolog term, which it
+originally got from Prolog or from one of the functions/macros provided
+to manipulate Prolog terms (the `QP_put*' and `QP_cons*' families of
+functions) Further details in *Note fli-p2f-trm::.
+
+   Arguments are passed to foreign functions in the same order as they
+appear in the Prolog call, except for the return value.  At most one
+"return value" argument can be specified; that is, there can be only
+one `[-integer]', `[-float]', `[-atom]', `[-string]', `[-string(N)]',
+or `[-address(TYPENAME)]' specification.  There need not be any "return
+value" argument, in which case the value returned by the function is
+ignored.  Both input and output specifications cause data to be passed
+to the foreign function (except of course for the "return value"
+argument, if present).  Each input argument is appropriately converted
+and passed, by reference or by value, depending on the language's
+calling convention, and each output argument is passed as a pointer
+through which the foreign function will send back the result.  Note
+that for C, input arguments are always passed by value.
+
+   Prolog assumes that a foreign function will return output arguments
+of the specified types; if it does not, the result is unpredictable.
+Normally, unbound variables will be supplied in the Prolog goal for all
+the output argument positions.  However, any value may be supplied for
+an output argument; when the foreign function has been completed, its
+outputs are unified with the values supplied and a failure to unify
+results in the failure of the Prolog goal.
+
+   Detailed information about passing particular data types through the
+foreign interface can be found in *Note fli-p2f-int:: through *Note
+fli-p2f-poi::.  Examples showing the correct use of the foreign
+interface are presented in *Note fli-p2f-fex::.
+
+
+File: quintus.info,  Node: fli-p2f-int,  Next: fli-p2f-flo,  Prev: fli-p2f-api,  Up: fli-p2f
+
+Passing Integers
+----------------
+
+* Menu:
+
+* fli-p2f-int-pas::                     Passing an Integer to a Foreign Function
+* fli-p2f-int-ret::                     Returning an Integer from a Foreign Function
+* fli-p2f-int-ifr::                     An Integer Function Return Value
+
+   In previous releases of Quintus Prolog, integers were represented
+with 29 bits.  Since most languages represent integers using 32 bits,
+errors could occur when passing very large positive or negative numbers
+between Prolog and foreign functions.  In release 3 and later releases
+of Quintus Prolog the precision of integers has been raised to 32 bits;
+hence, these errors no longer occur.
+
+     *Please note:* Quintus Prolog Release 3 uses 32 bit integers and
+     pointers internally.  On 64 bit platforms, long integers and
+     pointers are truncated to 32 bits when they are passed to Prolog,
+     and sign-extended when passed in the other direction.
+
+
+File: quintus.info,  Node: fli-p2f-int-pas,  Next: fli-p2f-int-ret,  Up: fli-p2f-int
+
+Passing an Integer to a Foreign Function
+........................................
+
+     Prolog:  +integer
+     C:       long int x
+     Pascal:  x: integer
+     FORTRAN: integer x
+
+   The argument must be instantiated to an integer, otherwise the call
+ will raise an exception.  The Prolog integer is    converted to a
+long integer and passed to the foreign function.
+
+
+File: quintus.info,  Node: fli-p2f-int-ret,  Next: fli-p2f-int-ifr,  Prev: fli-p2f-int-pas,  Up: fli-p2f-int
+
+Returning an Integer from a Foreign Function
+............................................
+
+     Prolog:  -integer
+     C:       long int *x;
+              *x = ...
+     Pascal:  var x: integer
+              x := ...
+     FORTRAN: integer x
+              x = ...
+
+   A pointer to a long integer is passed to the function.  It is assumed
+  that  the function will overwrite this integer with its result.
+When  the foreign function returns, the integer    being pointed to
+is converted to a Prolog    integer and unified with the
+corresponding argument of the Prolog call.     The argument can be of
+any    type; if it cannot be unified with the    returned integer, the
+call fails.     If the foreign function does not    overwrite the
+integer,    the result is undefined.
+
+
+File: quintus.info,  Node: fli-p2f-int-ifr,  Prev: fli-p2f-int-ret,  Up: fli-p2f-int
+
+An Integer Function Return Value
+................................
+
+     Prolog:  [-integer]
+     C:       long int f(...)
+                {
+                  long int x;
+                  return x;
+                }
+     Pascal:  function f(...): integer;
+                var x: integer;
+                begin
+                  f := x;
+                end
+     FORTRAN: integer function f(...)
+                integer x
+                f = x
+              end
+
+   No argument is passed to the foreign function.  The return value
+from the    function is    assumed to be a long integer.  It is
+converted to a Prolog    integer and    unified with the corresponding
+argument of the Prolog    call.   The    argument can be of any type;
+if it cannot be unified with    the returned    integer, the call fails.
+
+
+File: quintus.info,  Node: fli-p2f-flo,  Next: fli-p2f-atm,  Prev: fli-p2f-int,  Up: fli-p2f
+
+Passing Floats
+--------------
+
+* Menu:
+
+* fli-p2f-flo-pas::                     Passing a Float to a Foreign Function
+* fli-p2f-flo-ret::                     Returning a Float from a Foreign Function
+* fli-p2f-flo-fpf::                     A Floating-point Function Return Value
+
+   In previous releases of Quintus Prolog, floating-point numbers had
+less precision than single-precision floats in other languages.  The
+result was a loss of precision when floats were passed between Prolog
+and foreign functions. In release 3 and later releases of Quintus Prolog
+the precision of floating-point numbers has been raised to 64 bits
+(double precision); hence, these errors no longer occur.
+
+   Quintus Prolog release 3 also supports the passing of floating point
+numbers explicitly as doubles or singles.
+
+
+File: quintus.info,  Node: fli-p2f-flo-pas,  Next: fli-p2f-flo-ret,  Up: fli-p2f-flo
+
+Passing a Float to a Foreign Function
+.....................................
+
+     Prolog:  +float
+     C:       double x;
+     Pascal:  x: real
+     FORTRAN: real x
+
+   The argument must be instantiated to an integer or a float; otherwise
+  the call will raise an exception.  The Prolog number is converted to
+a 32-bit    single-precision (FORTRAN) or a 64-bit double-precision (C
+or Pascal),    float and passed to the foreign function.  Many C
+compilers will allow    the parameter declaration to be `float' instead
+of `double'    because they always convert single-precision
+floating-point arguments to    double-precision.  However, C compilers
+conforming to the new ANSI    standard will not do this, so it is
+recommended that `double' be    used.
+
+     Prolog:  +single
+     ANSI C:  float x;
+     FORTRAN: real x
+
+   The argument must be instantiated to an integer or a float; otherwise
+  the call will raise an exception.  The Prolog number is converted to
+a 32-bit    single-precision float and passed to the foreign function.
+  `+single' can also be used to interface Prolog to any foreign
+function    where you know that the value passed is going to be picked
+up as a    32-bit float.
+
+     Prolog:  +double
+     C:       double x;
+     Pascal:  real x
+
+   The argument must be instantiated to an integer or a float; otherwise
+  the call will raise an exception.  The Prolog number is converted to
+a    64-bit double-precision (C or Pascal) float and passed to the
+foreign    function. `+double' can also be used to interface Prolog to
+any    foreign function where you know that the value passed is going
+to be    picked up as a 64-bit float.
+
+
+File: quintus.info,  Node: fli-p2f-flo-ret,  Next: fli-p2f-flo-fpf,  Prev: fli-p2f-flo-pas,  Up: fli-p2f-flo
+
+Returning a Float from a Foreign Function
+.........................................
+
+     Prolog:  -float
+     C:       float *x;
+              *x = ...
+     Pascal:  var x: real
+              x := ...
+     FORTRAN: real x
+              x = ...
+
+   A pointer to a single-precision float is passed to the function.  It
+is    assumed that the function will overwrite this float with its
+result.     When the foreign function returns, the float is
+converted to a Prolog float and unified with the corresponding
+argument of the Prolog call.   The argument can be of any type; if it
+cannot be unified  with the returned float, the call fails.  If    the
+foreign function does not overwrite the float, the result is
+undefined.
+
+     Prolog:  -single
+     C:       float *x;
+              *x = ...
+     Pascal:  var x: real
+              x := ...
+     FORTRAN: real x
+              x = ...
+
+   A pointer to a single-precision float is passed to the function.  It
+is    assumed that the function will overwrite this float with its
+result.     When the foreign function returns, the float is
+converted to a Prolog float and unified with the corresponding
+argument of the Prolog call.   The argument can be of any type; if it
+cannot be unified  with the returned float, the call fails.  If    the
+foreign function does not overwrite the float, the result is
+undefined.
+
+     Prolog:  -double
+     C:       double *x;
+              *x = ...
+     Pascal:  var x: real
+              x := ...
+
+   A pointer to a double-precision float is passed to the function.  It
+is    assumed that the function will overwrite this float with its
+result.     When the foreign function returns, the float is
+converted to a Prolog float and unified with the corresponding
+argument of the Prolog call.   The argument can be of any type; if it
+cannot be unified  with the returned float, the call fails.  If    the
+foreign function does not overwrite the float, the result is
+undefined.
+
+
+File: quintus.info,  Node: fli-p2f-flo-fpf,  Prev: fli-p2f-flo-ret,  Up: fli-p2f-flo
+
+A Floating-point Function Return Value
+......................................
+
+     Prolog:  [-float]
+     C:       double f(...)
+                {
+                  double x;
+                  return x;
+                }
+     Pascal:  function f(...): real;
+                var x: real;
+                begin
+                  f := x;
+                end
+     FORTRAN: real function f(...)
+                real x
+                f = x
+              end
+
+   No argument is passed to the foreign function.  The return value from
+  the function is assumed to be a single-precision (FORTRAN) or
+double-precision (C and Pascal) floating point number.  It is converted
+  to a Prolog float and unified with the corresponding argument of the
+  Prolog call.  The argument can be of any type; if it cannot be
+unified    with the returned float, the call fails.
+
+   Many C compilers will allow the function return value to be `float'
+ instead of `double' because they always convert single-precision
+floating-point arguments to double-precision.  However, C compilers
+conforming to the new ANSI standard will not do this, so it is
+recommended    that `double' be used.
+
+     Prolog:  [-single]
+     ANSI C:  float f(...)
+                {
+                  float x;
+                  return x;
+                }
+     Pascal:  function f(...): real;
+                var x: real;
+                begin
+                  f := x;
+                end
+     FORTRAN: real function f(...)
+                real x
+                f = x
+              end
+
+   No argument is passed to the foreign function.  The return value from
+  the function is assumed to be a single-precision (FORTRAN) or
+double-precision (C and Pascal) floating point number.  It is converted
+  to a Prolog float and unified with the corresponding argument of the
+  Prolog call.  The argument can be of any type; if it cannot be
+unified    with the returned float, the call fails.
+
+     Prolog:  [-double]
+     C:       double f(...)
+                {
+                  double x;
+                  return x;
+                }
+     Pascal:  function f(...): real;
+                var x: real;
+                begin
+                  f := x;
+                end
+     FORTRAN: real function f(...)
+                real x
+                f = x
+              end
+
+   No argument is passed to the foreign function.  The return value from
+  the function is assumed to be a single-precision (FORTRAN) or
+double-precision (C and Pascal) floating point number.  It is converted
+  to a Prolog float and unified with the corresponding argument of the
+  Prolog call.  The argument can be of any type; if it cannot be
+unified    with the returned float, the call fails.
+
+
+File: quintus.info,  Node: fli-p2f-atm,  Next: fli-p2f-trm,  Prev: fli-p2f-flo,  Up: fli-p2f
+
+Passing Atoms
+-------------
+
+* Menu:
+
+* fli-p2f-atm-cat::                     Passing Atoms in Canonical Form
+* fli-p2f-atm-spc::                     Passing Atoms as Strings between Prolog and C
+* fli-p2f-atm-spf::                     Passing Atoms as Strings to/from Pascal or FORTRAN
+* fli-p2f-atm-a2s::                     Converting between Atoms and Strings
+
+   The foreign function interface allows Prolog atoms to be passed to
+functions either in a canonical form as unsigned integers, or as
+pointers to character strings.
+
+   For each Prolog atom there is a single canonical representation.
+Programs can rely on the property that identical atoms have identical
+canonical representations.  Note, however, that the canonical form of
+an atom is not necessarily identical across different invocations of
+the program.  This means that canonical atom representations should not
+be used in files or interprogram communication.  For these purposes
+strings should be used.  Foreign functions can store canonical atoms in
+data structures and pass them around and then back to Prolog, but they
+should not attempt any other operations on them.
+
+   Strings passed from Prolog to foreign functions should not be
+overwritten.  Strings passed back from foreign functions to Prolog are
+automatically copied by Prolog if necessary.  Thus the foreign program
+does not have to retain them and can reuse their storage space as
+desired.
+
+   There are three ways of passing atoms through the foreign interface:
+  1. as canonical integers (to or from any language): see *Note
+     fli-p2f-atm-cat::.
+
+  2. as null-terminated strings (to or from C): see *Note
+     fli-p2f-atm-spc::.
+
+  3. as fixed-length, blank-padded strings (to or from FORTRAN or
+     Pascal): see *Note fli-p2f-atm-spc::.
+
+
+File: quintus.info,  Node: fli-p2f-atm-cat,  Next: fli-p2f-atm-spc,  Up: fli-p2f-atm
+
+Passing Atoms in Canonical Form
+...............................
+
+   This section deals with passing atoms in canonical form, that is, as
+unsigned integers.
+
+     Prolog:  +atom
+     C:       QP_atom x;
+     Pascal:  x: integer
+     FORTRAN: integer x
+
+   The argument must be instantiated to an atom, otherwise the call will
+  signal an error.     An unsigned integer representing the Prolog
+atom is passed to the    foreign function.  Atoms can be converted to
+strings through the    functions `QP_string_from_atom()' or
+`QP_padded_string_from_atom()'    (see *Note fli-p2f-atm-a2s::).
+
+     Prolog:  -atom
+     C:       QP_atom *x
+              *x = ...
+     Pascal:  var x: integer
+              x := ...
+     FORTRAN: integer x
+              x = ...
+
+   A pointer to an unsigned integer is passed to the function.   It is
+ assumed that the function will overwrite this unsigned integer with
+its result.   This result should be a canonical    representation of
+an atom already obtained from Prolog, or one    generated through the
+function `QP_atom_from_string()' or the function
+`QP_atom_from_padded_string()' (see    *Note fli-p2f-atm-a2s::).
+Returning an    arbitrary    integer will have undefined results.
+When the foreign    function    returns, the    atom represented by the
+unsigned integer    being pointed to is unified with the corresponding
+argument of the Prolog    call.    The    argument can be of any
+type; if it cannot be unified    with the returned    atom,  the call
+fails.    If the foreign    function does not overwrite    the unsigned
+integer, the result    is undefined.
+
+     Prolog:  [-atom]
+     C:       QP_atom f(...)
+                {
+                  QP_atom x;
+                  return x;
+                }
+     Pascal:  function f(...): integer;
+                var x: integer;
+                begin
+                  f = x;
+                end
+     FORTRAN: integer function f(...)
+                integer x
+                f = x
+              end
+
+   No argument is passed to the foreign function.   The return value
+from    the function is    assumed to be an unsigned integer, which
+should be a    canonical representation of an atom already obtained
+from Prolog, or one    generated by one of the functions
+`QP_atom_from_string()' or    `QP_atom_from_padded_string()' (see
+*Note fli-p2f-atm-a2s::).   Returning    an    arbitrary integer will
+have undefined results.   The atom represented    by the unsigned
+integer is unified with the corresponding argument of    the Prolog
+call.    The argument can be of any type; if it cannot be    unified
+with the returned atom, the call fails.
+
+
+File: quintus.info,  Node: fli-p2f-atm-spc,  Next: fli-p2f-atm-spf,  Prev: fli-p2f-atm-cat,  Up: fli-p2f-atm
+
+Passing Atoms as Strings between Prolog and C
+.............................................
+
+   This section describes passing atoms as pointers to null-terminated
+character strings.  This is the way to pass atoms as strings between
+Prolog and C.  For FORTRAN and Pascal, the specification of string
+arguments is different than for C; see *Note fli-p2f-atm-spf::.
+
+     Prolog:  +string
+     C:       char *x
+     Pascal:  Not supported
+     FORTRAN: Not supported
+
+   The argument must be instantiated to an atom, otherwise    the call
+will signal an error.     A pointer to a null-terminated string of
+characters    is passed to the C function.  This    string must not be
+overwritten by the C function.
+
+     Prolog:  -string
+     C:       char **x;
+              *x = ...
+     Pascal:  Not supported
+     FORTRAN: Not supported
+
+   A pointer to a character pointer is passed to the C function.  It is
+  assumed that C will overwrite this character pointer with the result
+it    wishes to return.  This result should be a pointer to a
+null-terminated    string of characters.  When the C function returns,
+the atom that has    the printed representation specified by the string
+is unified with the    corresponding argument of the Prolog call.  The
+argument can be of any    type; if it cannot be unified with the
+returned atom, then the call fails.     If the C function does not
+overwrite the character pointer, then    the result is undefined.
+
+   Prolog copies the string if required, so    that it is not necessary
+for the C program to worry about retaining it.     Beware, however,
+that the string must not be an `auto', because in this    case its
+storage may be reclaimed after the foreign function exits but    before
+Prolog has managed to copy it.
+
+     Prolog:  [-string]
+     C        char *f(...)
+                {
+                  char *x;
+                  return x;
+                }
+     Pascal:  Not supported
+     FORTRAN: Not supported
+
+   No argument is passed to C. The return value from the C function is
+ assumed to be a character pointer pointing to a null-terminated string
+  of characters.  The atom that has the printed representation
+specified    by the string is unified with the corresponding argument
+of the Prolog    call.  The argument can be of any type; if it cannot
+be unified with the    returned atom, the call fails.
+
+   Prolog copies the string if required, so    that it is not necessary
+for the C program to worry about retaining it.     Beware, however,
+that the string must not be an `auto', because in this    case its
+storage may be reclaimed after the foreign function exits but    before
+Prolog has managed to copy it.
+

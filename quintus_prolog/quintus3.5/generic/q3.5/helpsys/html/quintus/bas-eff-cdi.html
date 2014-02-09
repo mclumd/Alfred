@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Conditionals and Disjunction</h4>
+
+   <p>There is an efficiency advantage in using conditionals whose test part
+consists only of arithmetic comparisons or type tests.  Consider the
+following alternative definitions of the predicate <code>type_of_character/2</code>. 
+In the first definition, four clauses are used to group characters on
+the basis of arithmetic comparisons.
+
+<pre class="example">     type_of_character(Ch, Type) :-
+             Ch &gt;= "a", Ch =&lt; "z",
+             !,
+             Type = lowercase.
+     type_of_character(Ch, Type) :-
+             Ch &gt;= "A", Ch =&lt; "Z",
+             !,
+             Type = uppercase.
+     type_of_character(Ch, Type) :-
+             Ch &gt;= "0", Ch =&lt; "9",
+             !,
+             Type = digit.
+     type_of_character(_Ch, Type) :-
+             Type = other.
+     </pre>
+
+   <p>In the second definition, a single clause with
+a conditional is used.  The compiler generates optimized code for the
+conditional; the second version of <code>type_of_character/2</code> runs faster than
+the first and uses less memory.
+<pre class="example">     type_of_character(Ch, Type) :-
+             (   Ch &gt;= "a", Ch =&lt; "z" -&gt;
+                     Type = lowercase
+             ;   Ch &gt;= "A", Ch =&lt; "Z" -&gt;
+                     Type = uppercase
+             ;   Ch &gt;= "0", Ch =&lt; "9" -&gt;
+                     Type = digit
+             ;   otherwise -&gt;
+                     Type = other
+             ).
+     </pre>
+
+   <p>Following is a list of builtin predicates that are compiled efficiently
+in conditionals:
+
+     <ul>
+
+     <li><code>atom/1</code>
+<li><code>atomic/1</code>
+<li><code>callable/1</code>
+<li><code>compound/1</code>
+<li><code>db_reference/1</code>
+<li><code>float/1</code>
+<li><code>integer/1</code>
+<li><code>nonvar/1</code>
+<li><code>number/1</code>
+<li><code>simple/1</code>
+<li><code>var/1</code>
+<li><code>&lt;/1</code>
+<li><code>=&lt;/1</code>
+<li><code>=:=/1</code>
+<li><code>=\=/1</code>
+<li><code>&gt;=/1</code>
+<li><code>&gt;/1</code>
+<li><code>@&lt;/1</code>
+<li><code>@=&lt;/1</code>
+<li><code>==/1</code>
+<li><code>\==/1</code>
+<li><code>@&gt;=/1</code>
+<li><code>@&gt;/1</code>
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-xref.html#bas-eff-xref">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-bdm.html#bas-eff-bdm">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff.html#bas-eff">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Showing Your Place In The Source Code</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="dbg-sld-sps-cal.html#dbg-sld-sps-cal">dbg-sld-sps-cal</a>:                      The Call Port
+<li><a accesskey="2" href="dbg-sld-sps-edo.html#dbg-sld-sps-edo">dbg-sld-sps-edo</a>:                      The Exit And Done Ports
+<li><a accesskey="3" href="dbg-sld-sps-red.html#dbg-sld-sps-red">dbg-sld-sps-red</a>:                      The Redo Port
+<li><a accesskey="4" href="dbg-sld-sps-fai.html#dbg-sld-sps-fai">dbg-sld-sps-fai</a>:                      The Fail Port
+<li><a accesskey="5" href="dbg-sld-sps-hea.html#dbg-sld-sps-hea">dbg-sld-sps-hea</a>:                      The Head Port
+<li><a accesskey="6" href="dbg-sld-sps-exc.html#dbg-sld-sps-exc">dbg-sld-sps-exc</a>:                      The Exception Port
+</ul>
+
+   <p>The source linked debugger shows your place in your source code by
+positioning an arrow near the goal being executed or clause to be
+tried.  The position of the arrow and the direction in which it points
+reflect which debugger port you are at (see <a href="dbg-bas-pbx.html#dbg-bas-pbx">dbg-bas-pbx</a>).
+
+   <p>To help you visualize how this works, we repeat the picture of the
+procedure box from <a href="dbg-bas-upe.html#dbg-bas-upe">dbg-bas-upe</a>:
+
+<pre class="example">              +---------+------------------------------+
+        Call  |         |                              |  Exit
+     --------&gt;|  ------&gt;| descendant(X, Y) :-          |-------&gt;
+              |   Head  |          offspring(X, Y).    |
+              |         |                              |  Done
+     &lt;--------|         |                              |-------&gt;
+        Fail  |  ------&gt;| descendant(X, Z) :-          |
+              |   Head  |         offspring(X, Y),     |
+     &lt;--------|         |          descendant(Y, Z).   |&lt;-------
+     Exception|         |                              |  Redo
+              +---------+------------------------------+
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-sld-whe.html#dbg-sld-whe">Next</a>
+<li><a rel="previous" accesskey="p" href="dbg-sld-bas.html#dbg-sld-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="dbg-sld.html#dbg-sld">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

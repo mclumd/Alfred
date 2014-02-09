@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Volatile Predicates</h5>
+
+   <p>A predicate should be declared as volatile if it refers to data that
+cannot or should not be saved in a QOF file.  In most cases a
+volatile predicate will be dynamic, and it will be used to keep facts
+about streams or references to C-structures.  When a state or a module
+is saved at run-time, the clauses of all volatile predicates defined
+in the context will be left unsaved. The predicate definitions will be
+saved though, which means that the predicates will keep all
+properties, that is volatile and maybe dynamic or multifile, when the
+saved state is restored.
+
+   <p>For example, if a Prolog application connects to an external database
+at start up, establishing a connection by an assertion like (A), a
+volatile declaration would prevent each particular connection from
+getting saved in the QOF file, as illustrated in the following figure. 
+A code example is found in the reference page for
+<code>initialization/1</code>.
+
+<pre class="example">     assert(db_connection(Connection)) (A)
+     </pre>
+
+<br><p>
+   <img src="images/ref-volatile.png" alt="images/ref-volatile.png">
+
+<div align="center">Using the Volatile Property</div>
+
+   <p>When used as a compile-time directive, the volatile declaration of a
+predicate must appear before all clauses of that predicate.  The
+predicate is reinitialized.  When used as a callable goal, the only
+effect on the predicate is that it is set to be volatile.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sls-igs-fto.html#ref-sls-igs-fto">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-sls-igs-ind.html#ref-sls-igs-ind">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sls-igs.html#ref-sls-igs">Up</a>
+</ul>
+</div>
+   </body></html>
+

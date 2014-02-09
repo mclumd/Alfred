@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Glossary</h3>
+
+     <dl>
+
+     <br><dt><dfn>abstract class</dfn>
+     <dd>A class that cannot have instances. Abstract classes
+are helpful in designing a class hierarchy, to contain the common parts
+of several concrete classes.
+
+     <br><dt><dfn>ancestor</dfn>
+     <dd>One of a class's superclasses, one of its superclasses's
+superclasses, etc. Sometimes, for convenience, ancestor includes the
+class itself, along with its proper ancestors.
+
+     <br><dt><dfn>child</dfn>
+     <dd>A synonym for subclass.
+
+     <br><dt><dfn>class</dfn>
+     <dd>A class is defined by a description of the information its
+instances contain and the messages they respond to. 
+Every object is an instance of one and only one class.
+
+     <br><dt><dfn>concrete class</dfn>
+     <dd>A class that can have instances. Most classes are concrete.
+
+     <br><dt><dfn>create method</dfn>
+     <dd>Specifies what actions should be taken when an instance
+of a class is created. A create method frequently
+provides initial slot values or specifies an action to be
+performed by the new object. A create message is sent to
+each new object by the <code>create/2</code> predicate. A create
+message is a kind of send message.
+
+     <br><dt><dfn>descendant</dfn>
+     <dd>One of a class's subclasses, one of its subclasses's
+subclasses, etc. Sometimes the word descendant
+includes the class itself, along with its proper descendants.
+
+     <br><dt><dfn>destroy method</dfn>
+     <dd>Specifies what actions should be taken when an instance
+of a class is destroyed. A destroy message is sent to an
+object by the <code>destroy/1</code> predicate. A destroy message
+is a kind of send message.
+
+     <br><dt><dfn>direct slot access</dfn>
+     <dd>Fetching or storing a slot value without sending a
+message to the object. This should be used with care!
+
+     <p>Quintus Objects allows direct access to a class's slots
+only within its method definitions, via the
+<code>fetch_slot/2</code> and <code>store_slot/2</code> predicates.
+
+     <br><dt><dfn>get message</dfn>
+     <dd>A message that inquires about some aspect of an object. 
+Typically used to fetch slot values. Get methods are
+automatically generated for public slots. Get messages
+are written with the <code>&gt;&gt;</code> operator.
+
+     <br><dt><dfn>inheritance</dfn>
+     <dd>The process by which a class's slots and methods are
+determined from an ancestor.
+
+     <br><dt><dfn>initial value</dfn>
+     <dd>The value a slot is initialized to when an object is
+created. Every slot has a default initial value, which
+depends upon its type. You may specify different initial
+values in a class definition.
+
+     <br><dt><dfn>instance</dfn>
+     <dd>Another word for object. The word instance draws
+attention to the class of which the object is an instance.
+
+     <br><dt><dfn>instance method</dfn>
+     <dd>A method that may be defined differently for each
+instance of a class. The class may have a default method
+for this message, which is overridden by installing an
+instance method for a particular object.
+
+     <br><dt><dfn>message</dfn>
+     <dd>A command to an object to perform an operation or to
+modify itself, or an inquiry into some aspect of the object. 
+In Quintus Objects, a message is either a get message, a
+put message or a send message. The syntax for sending
+a message to an object is
+
+     <pre class="example">          <var>Object</var> <var>Operator</var> <var>Message</var>
+          </pre>
+     <br><dt>
+     <dd>
+where <var>Operator</var> is one of the following:
+
+          <dl>
+
+          <br><dt><code>&gt;&gt;</code>
+          <dd>get message
+
+          <br><dt><code>&lt;&lt;</code>
+          <dd>put message
+
+          <br><dt><code>&lt;-</code>
+          <dd>send message
+</dl>
+
+     <br><dt><dfn>method</dfn>
+     <dd>A class's implementation of a particular message. You
+send messages to an object, but you define methods for
+a class.
+
+     <br><dt><dfn>method clause</dfn>
+     <dd>A Prolog clause used to define a method for a class. A
+method clause has one of <code>&lt;-/2</code>, <code>&lt;&lt;/2</code> or <code>&gt;&gt;/2</code> as the
+principal functor of its head, and it can only appear
+within the scope of its class's definition. A method's
+definition may contain more than one message clause.
+
+     <br><dt><dfn>mixin class</dfn>
+     <dd>A class that is intended to be combined (mixed in) with
+other classes, via multiple inheritance, to define new subclasses.
+
+     <br><dt><dfn>multiple inheritance</dfn>
+     <dd>When a class names more than one superclass. 
+Typically, it inherits slots and methods from each. 
+In Quintus Objects, two different superclasses should
+not use the same slot name. And, if a message is defined
+by more than one superclass, the class definition must
+specify which method to inherit.
+
+     <br><dt><dfn>object</dfn>
+     <dd>A modifiable data item that holds information and
+responds to messages. Another word for instance.
+
+     <br><dt><dfn>parent class</dfn>
+     <dd>A synonym for superclass.
+
+     <br><dt><dfn>private slot</dfn>
+     <dd>A private slot is, by default, only accessible within
+methods of the class itself.  Not even the descendants of the class
+may access its private slots, except through the class's methods. Get and
+put methods are not automatically generated for a
+private slot, so it is only accessed via the methods you
+define. If the visibility of a slot is not specified, it is private,
+rather than public or protected.
+
+     <br><dt><dfn>protected slot</dfn>
+     <dd>A protected slot is, by default, only accessible within
+methods of the class itself and its descendants. Get and
+put methods are not automatically generated for a
+protected slot, so it is only accessed via the methods you
+define. If the visibility of a slot is not specified, it is private,
+rather than public or protected. 
+<br><dt>
+     <dd>
+Quintus Objects <code>protected</code> is similar to <code>protected</code> in C++.
+
+     <br><dt><dfn>public slot</dfn>
+     <dd>A public slot is accessible via its own get
+and put methods, which are generated for it
+automatically. If no visibility is specified, a slot is
+private, rather than public or protected.
+
+     <br><dt><dfn>put message</dfn>
+     <dd>A message that modifies some aspect of an object. 
+Typically used to store slot values. Put methods are
+automatically generated for public slots. Put messages
+are written with the <code>&lt;&lt;</code> operator.
+
+     <br><dt><dfn>send message</dfn>
+     <dd>The most common sort of message. Used for performing
+an operation on an object or for performing an action
+that depends upon an object. Send messages are written
+with the <code>&lt;-</code> operator.
+
+     <br><dt><dfn>send super</dfn>
+     <dd>When a method for a class executes a shadowed
+superclass's method. This allows a class to put a
+"wrapper" around its superclass's method, making it
+unnecessary to duplicate the method just to make a small extension to it.
+
+     <br><dt><dfn>shadow</dfn>
+     <dd>When a class defines its own method for a message
+defined by one of its ancestors, the new method hides or
+"shadows" the ancestor's method. The new class's
+descendants will inherit its method for that message,
+rather than its ancestors. That is, a class always inherits
+the "closer" of two methods for a message.
+
+     <br><dt><dfn>slot</dfn>
+     <dd>A part of an instance that holds an individual datum. 
+Like a member of a C struct or a field of a Pascal record.
+
+     <br><dt><dfn>subclass</dfn>
+     <dd>A class that is a more specific case of a particular class. 
+This is the opposite of superclass. A class does not name
+its subclasses; they are inferred.
+
+     <br><dt><dfn>superclass</dfn>
+     <dd>A class that is a more general case of a particular class. 
+Each class lists its superclasses.
+
+     <br><dt><dfn>term class</dfn>
+     <dd>A class whose instances are represented as ordinary Prolog
+terms.  The functor of these objects need not be the name of the
+class, and the arity need not be one.
+
+     <br><dt><dfn>term slot</dfn>
+     <dd>A slot that can hold any Prolog term.
+
+     <br><dt><dfn>uninherit</dfn>
+     <dd>Specify that a method from a superclass should not be
+inherited. This is similar to shadowing the superclass's
+method, but does not specify a replacement for it.
+
+     <br><dt><dfn>visibility</dfn>
+     <dd>A slot may be defined to be either <code>public</code>,
+<code>protected</code>, or <code>private</code>.  By default, if no visibility is
+specified, a slot is private.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-bas.html#obj-bas">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-exp.html#obj-exp">Previous</a>
+<li><a rel="up" accesskey="u" href="obj.html#obj">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Unification and Subsumption</h5>
+
+   <p>To unify two items simply use <code>=/2</code>, which is defined as if by
+the clause
+<pre class="example">     =(X, X).
+     </pre>
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> Do not confuse this predicate with <code>=:=/2</code> (arithmetic
+comparison) or <code>==/2</code> (term identity). 
+</blockquote>
+
+   <p><dfn>Term subsumption</dfn> is a sort of one-way unification.  Term <var>S</var> and <var>T</var> unify
+if they have a common instance, and unification in Prolog instantiates
+both terms to that common instance.  <var>S</var> <dfn>subsumes</dfn> <var>T</var> if <var>T</var> is already an
+instance of <var>S</var>.  For our purposes, <var>T</var> is an <dfn>instance</dfn> of <var>S</var> if there
+is a substitution that leaves <var>T</var> unchanged and makes <var>S</var> identical to <var>T</var>.
+
+   <p>Subsumption is checked by <code>subsumes_chk/2</code>.  It is especially
+useful in applications such as theorem provers.  The built-in
+predicate behaves identically to the original library version but is
+much more efficient.
+
+   <p>Related predicates are defined in <code>library(subsumes)</code> and
+<code>library(occurs)</code>.  (For information on these packages see
+<a href="lib.html#lib">lib</a>).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ref-lte-met-typ.html#ref-lte-met-typ">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-lte-met.html#ref-lte-met">Up</a>
+</ul>
+</div>
+   </body></html>
+

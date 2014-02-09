@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Making Prolog Procedures Callable by Foreign Functions</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-ffp-ppc-api.html#fli-ffp-ppc-api">fli-ffp-ppc-api</a>:                      Specifying the Argument Passing Interface: extern/1
+</ul>
+
+   <p>Any Prolog predicate can be made callable from foreign functions using
+the declaration <code>extern/1</code>.  This includes built-in predicates, as
+well as predicates that are currently undefined and dynamic predicates
+that currently have no clauses.
+
+   <p>An <code>extern/1</code> declaration not only makes the predicate known to
+foreign languages, but also specifies how arguments will be passed to
+and from it.  When a predicate is declared callable using
+<code>extern/1</code> declaration, it becomes available to foreign functions
+as soon as the declaration is loaded.  This is equally true of
+<code>extern/1</code> declarations occurring in files that are loaded from
+source form, pre-compiled QOF files whose source files contained
+<code>extern/1</code> declarations, and certain QOF files (e.g.  those created
+using <code>save_program/1</code>) that retain callability information (see
+<a href="ref-sls-sst.html#ref-sls-sst">ref-sls-sst</a>).
+
+   <p>A Prolog predicate that has been made callable from foreign functions
+is not otherwise changed in any way.  It can still be abolished or
+redefined just like any other predicate.  There is no performance
+penalty associated with making a predicate callable from foreign
+functions.  A predicate can be redeclared by loading a new or modified
+<code>extern/1</code> declaration.
+
+   <p>When a predicate is made callable from foreign code, a new and closely
+related Prolog predicate called an <dfn>interface predicate</dfn> is created
+in the module in which <code>extern/1</code> was declared.  The interface
+predicate has the same arity as the callable predicate, and its name
+is the name of the declared predicate with an underscore prepended to
+it.  The interface predicate provides the link between foreign
+languages and its Prolog predicate.  It can be abolished or saved just
+as any other predicate, but because they can only be created using an
+<code>extern/1</code> declaration, valid interface predicates cannot be made
+dynamic or multifile.
+
+   <p>The purpose of the interface predicate is to supply an entry point
+into Prolog for foreign functions, and a handle on the property of
+callability of Prolog procedures for manipulation in Prolog.  It is
+possible to call an interface predicate from Prolog, but the call will
+simply fail.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-dat.html#fli-ffp-dat">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-bas.html#fli-ffp-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp.html#fli-ffp">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>qui</code> -- Quintus User Interface</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p>qui [ +f ] [ +l file ] [ +L file ]
+<pre class="example">         [ +p [path-name] ] [ +P [path-name] ]
+               [ X-window arguments ]
+               [ +z users arguments ]
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The Quintus User Interface (QUI) is a Motif-based window interface to the
+Quintus Prolog Development System. It includes a query interpreter window
+with history menu, a source linked debugger, a help window for accessing
+the on-line manuals and an edit window as well as an interface to the
+GNU Emacs editor.
+
+<h4 class="subheading">Options</h4>
+
+   <p>Any argument that does not match options
+described in this section and does not start with a <code>+</code> is regarded as a
+user's argument.  The user's arguments may be obtained using the
+prolog command unix(argv(ListOfArgs)).  If a user's argument needs to
+begin with a <code>+</code>, it should be issued as <code>++</code> instead or given after the
+<code>+z</code> option.  Double pluses will be translated into a single plus, so the
+user's code will not see the <code>++</code>. 
+Arguments beginning with <code>+</code> are reserved for Prolog, and
+an unrecognized argument starting with a <code>+</code> is treated as an error.
+
+     <dl>
+
+     <br><dt><code>+f</code>
+     <dd>Fast start.  The initialization file <code>prolog.ini</code> will
+not be read upon startup.
+
+     <br><dt><code>+l </code><var>file</var><code></code>
+     <dd>Load the specified file upon startup.  <var>file</var> can be a
+Prolog or a QOF file, and it may be specified either as a string
+(e.g.  <code>file</code>, <code>~/prolog/file.pl</code>) or as a file search path specification
+(e.g. <code>library(file)</code>, <code>home(language(file))</code>).  Note, however, that the
+latter needs to be quoted to escape
+the shell interpretation of the parentheses.  Giving the extension is not
+necessary; if both source (<code>.pl</code>) and QOF (<code>.qof</code>) files exist, the
+more recent of the two will be loaded.
+
+     <br><dt><code>+L </code><var>file</var><code></code>
+     <dd>Similar to <code>+l</code> but the user's
+environment variable <code>PATH</code> will be searched for the specified <var>file</var>.
+
+     <br><dt><code>+p [</code><var>path-name</var><code>]</code>
+     <dd>Print the Prolog file search path definitions
+that begin with the string <var>path-name</var> (e.g. <code>library</code> if
+<code>+p lib</code> is specified); <var>path-name</var> is optional, and if not given,
+all file search path definitions are printed; QUI exits
+after producing the required output to <code>stdout</code>.
+
+     <br><dt><code>+P [</code><var>path-name</var><code>]</code>
+     <dd>Similar to <code>+p</code>, but the absolutized versions of
+the file search path definitions are printed.
+
+     <br><dt><var>X-Window arguments</var>
+     <dd>Any arguments recognized as standard X options
+are passed to the X-Window system. Examples of these include
+<code>-display </code><var>displayname</var><code></code>, <code>-fg </code><var>color</var><code></code>, <code>-bg </code><var>color</var><code></code>.
+
+     <br><dt><code>+z </code><var>user's-arguments</var><code></code>
+     <dd>Any arguments following <code>+z</code> are taken as
+user's arguments.  User's arguments can then be obtained through
+<code>unix(argv(ListOfArgs))</code>. 
+</dl>
+
+<h4 class="subheading">Environment</h4>
+
+     <dl>
+
+     <br><dt><code>QUINTUS_EDITOR_PATH</code>
+     <dd>Name of the GNU Emacs command. 
+If set, this is invoked as the editor rather than the standard text editor
+built in to QUI.
+
+     <br><dt><code>QUINTUS_LISP_PATH</code>
+     <dd>Absolute filename for the Emacs-Lisp
+directories.  The default is:
+<code></code><var>quintus-directory</var><code>/editor3.5/gnu</code>.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>prolog(1)</code>
+
+   <a href="qui-qui.html#qui-qui">qui-qui</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-raise_exception.html#mpg-ref-raise_exception">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-query_hook.html#mpg-ref-query_hook">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

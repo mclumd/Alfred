@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Event Fields</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="pxl-ev-fld-but.html#pxl-ev-fld-but">pxl-ev-fld-but</a>:                       button_press and button_release Events
+<li><a accesskey="2" href="pxl-ev-fld-cnot.html#pxl-ev-fld-cnot">pxl-ev-fld-cnot</a>:                      circulate_notify Event
+<li><a accesskey="3" href="pxl-ev-fld-creq.html#pxl-ev-fld-creq">pxl-ev-fld-creq</a>:                      circulate_request Event
+<li><a accesskey="4" href="pxl-ev-fld-cm.html#pxl-ev-fld-cm">pxl-ev-fld-cm</a>:                        client_message Event
+<li><a accesskey="5" href="pxl-ev-fld-cmnot.html#pxl-ev-fld-cmnot">pxl-ev-fld-cmnot</a>:                     colormap_notify Event
+<li><a accesskey="6" href="pxl-ev-fld-cnfnot.html#pxl-ev-fld-cnfnot">pxl-ev-fld-cnfnot</a>:                    configure_notify Event
+<li><a accesskey="7" href="pxl-ev-fld-cnfreq.html#pxl-ev-fld-cnfreq">pxl-ev-fld-cnfreq</a>:                    configure_request Event
+<li><a accesskey="8" href="pxl-ev-fld-crenot.html#pxl-ev-fld-crenot">pxl-ev-fld-crenot</a>:                    create_notify Event
+<li><a accesskey="9" href="pxl-ev-fld-desnot.html#pxl-ev-fld-desnot">pxl-ev-fld-desnot</a>:                    destroy_notify Event
+<li><a href="pxl-ev-fld-elnot.html#pxl-ev-fld-elnot">pxl-ev-fld-elnot</a>:                     enter_notify and leave_notify Events
+<li><a href="pxl-ev-fld-exp.html#pxl-ev-fld-exp">pxl-ev-fld-exp</a>:                       expose Event
+<li><a href="pxl-ev-fld-foc.html#pxl-ev-fld-foc">pxl-ev-fld-foc</a>:                       focus_in and focus_out Events
+<li><a href="pxl-ev-fld-grexp.html#pxl-ev-fld-grexp">pxl-ev-fld-grexp</a>:                     graphics_expose Event
+<li><a href="pxl-ev-fld-noexp.html#pxl-ev-fld-noexp">pxl-ev-fld-noexp</a>:                     no_expose Event
+<li><a href="pxl-ev-fld-grav.html#pxl-ev-fld-grav">pxl-ev-fld-grav</a>:                      gravity_notify Event
+<li><a href="pxl-ev-fld-keynot.html#pxl-ev-fld-keynot">pxl-ev-fld-keynot</a>:                    keymap_notify Event
+<li><a href="pxl-ev-fld-key.html#pxl-ev-fld-key">pxl-ev-fld-key</a>:                       key_press and key_release Events
+<li><a href="pxl-ev-fld-mapnot.html#pxl-ev-fld-mapnot">pxl-ev-fld-mapnot</a>:                    map_notify Event
+<li><a href="pxl-ev-fld-unmapnot.html#pxl-ev-fld-unmapnot">pxl-ev-fld-unmapnot</a>:                  unmap_notify Event
+<li><a href="pxl-ev-fld-mapgnot.html#pxl-ev-fld-mapgnot">pxl-ev-fld-mapgnot</a>:                   mapping_notify Event
+<li><a href="pxl-ev-fld-mapreq.html#pxl-ev-fld-mapreq">pxl-ev-fld-mapreq</a>:                    map_request Event
+<li><a href="pxl-ev-fld-motnot.html#pxl-ev-fld-motnot">pxl-ev-fld-motnot</a>:                    motion_notify Event
+<li><a href="pxl-ev-fld-propnot.html#pxl-ev-fld-propnot">pxl-ev-fld-propnot</a>:                   property_notify Event
+<li><a href="pxl-ev-fld-repnot.html#pxl-ev-fld-repnot">pxl-ev-fld-repnot</a>:                    reparent_notify Event
+<li><a href="pxl-ev-fld-reszreq.html#pxl-ev-fld-reszreq">pxl-ev-fld-reszreq</a>:                   resize_request Event
+<li><a href="pxl-ev-fld-selclr.html#pxl-ev-fld-selclr">pxl-ev-fld-selclr</a>:                    selection_clear Event
+<li><a href="pxl-ev-fld-selnot.html#pxl-ev-fld-selnot">pxl-ev-fld-selnot</a>:                    selection_notify Event
+<li><a href="pxl-ev-fld-selreq.html#pxl-ev-fld-selreq">pxl-ev-fld-selreq</a>:                    selection_request Event
+<li><a href="pxl-ev-fld-visnot.html#pxl-ev-fld-visnot">pxl-ev-fld-visnot</a>:                    visibility_notify Event
+<li><a href="pxl-ev-fld-def.html#pxl-ev-fld-def">pxl-ev-fld-def</a>:                       default Event
+</ul>
+
+   <p>Callbacks can optionally specify a list of field values that are to
+be unified with the contents of the X11 event record, and/or used
+as arguments to the callback goal. ProXL handles all the conversion
+between the C objects and data structures that the X server delivers,
+and the Prolog objects and data structures that your callback is
+given. Thus, your application is given symbolic atoms instead of numbers
+whenever possible, and furthermore,
+it is safe for your application to assert these objects
+in the data base.
+
+   <p>This section describes the field specifications that
+can be used for each event and the possible values that these
+values can take. See the X11 documentation for more details
+on what individual values mean.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-ev-act.html#pxl-ev-act">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-ev-spec.html#pxl-ev-spec">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-ev.html#pxl-ev">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

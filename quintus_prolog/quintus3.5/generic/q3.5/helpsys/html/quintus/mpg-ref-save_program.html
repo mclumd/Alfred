@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>save_program/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>save_program(</code><var>+File</var><code>)</code>
+
+   <p><code>save_program(</code><var>+File</var><code>, </code><var>+Goal</var><code>)</code>
+
+   <p>Saves the state of the current execution in QOF format to
+<var>File</var>. A goal, <var>Goal</var>, to be called upon
+execution/restoring of the saved state, may be specified.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>File</var> <dfn>file_spec</dfn>
+     <dd>An atom representing a filename.
+
+     <br><dt><var>Goal</var> <dfn>callable</dfn> [MOD]
+     <dd>A goal. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>save_program/[1,2]</code> creates a QOF representation of all predicates in
+all modules existing in the system.  However, it does not save the user's
+pre-linked code. 
+It also saves such states of the system as operator definitions, prolog_flags,
+debugging and advice state, and initializations.  Object files dynamically
+loaded into the system are saved in the qof file as object dependencies.
+
+   <p>The resulting file is executable, and can be started up as a command,
+or can be restored using <code>restore/1</code>.
+
+   <p><code>save_program/[1,2]</code> saves module import/export information, which gets
+reinstated when <var>File</var> is loaded.  No new module-importation will be
+done when <var>File</var> is loaded, because it is assumed that it was done
+before <code>save_program/[1,2]</code> was called.  Thus if your program consists of one
+or more modules, and you save it with <code>save_program/[1,2]</code>, loading the
+resulting <var>File</var> into some new module will not import any of your
+predicates into that module.  If you want to save out a module such
+that it will be imported automatically into any module from which it
+is loaded, then use <code>save_modules/2</code>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>File</var> or <var>Goal</var> is not bound.
+
+     <br><dt><code>type_error</code>
+     <dd>
+<var>File</var> is not a valid file specification, or <var>Goal</var> is not a valid
+goal.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+<var>File</var> is not writable.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>load_files/[1,2]</code>,
+<code>restore/1</code>,
+<code>save_modules/2</code>,
+<code>save_predicates/2</code>, <code>volatile/1</code>
+
+   <a href="ref-sls.html#ref-sls">ref-sls</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-see.html#mpg-ref-see">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-save_predicates.html#mpg-ref-save_predicates">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

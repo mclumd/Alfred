@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>portray_clause/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>portray_clause(</code><var>+Clause</var><code>)</code>
+
+   <p>Writes <var>Clause</var> to the current output stream. Used by
+<code>listing/[0,1]</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Clause</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The operation used by <code>listing/0</code> and <code>listing/1</code>. 
+<var>Clause</var> is written to the current output stream in exactly the
+format in which <code>listing/1</code> would have written it, including a terminating
+full-stop.
+
+   <p>If you want to print a clause, this is almost certainly the
+command you want.  By design, none of the other term output
+commands puts a full-stop after the written term. 
+If you are writing a file of facts to be loaded by
+the Load Predicates, use <code>portray_clause/1</code>, which attempts
+to ensure that the clauses it writes out can be read in again as clauses.
+
+   <p>The output format used by <code>portray_clause/1</code> and <code>listing/1</code> has
+been carefully designed to be clear.  We recommend that you use a
+similar style.  In particular, never put a semicolon
+(disjunction symbol) at the end of a line in Prolog.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Always succeeds without error.
+
+<h4 class="subheading">Example</h4>
+
+<pre class="example">     | ?- <kbd>portray_clause((X:- a -&gt; b ; c)).</kbd>
+     A :-
+             (   a -&gt;
+                 b
+             ;   c
+             ).
+     
+     X = _3185
+     </pre>
+
+<pre class="example">     | ?- <kbd>portray_clause((X:- a -&gt; (b -&gt; c ; d ; e); f)).</kbd>
+     A :-
+             (   a -&gt;
+                 (   b -&gt;
+                     c
+                 ;   d
+                 ;   e
+                 )
+             ;   f
+             ).
+     
+     X = _3295
+     </pre>
+
+<pre class="example">     | ?- <kbd>portray_clause((a:-b)).</kbd>
+     a :-
+             b.
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>portray_clause((a:-b,c)).</kbd>
+     a :-
+             b,
+             c.
+     
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>portray_clause((a:-(b,!,c))).</kbd>
+     a :-
+             b,
+             !,
+             c.
+     
+     yes
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>listing/[0,1]</code>, <code>read/[1,2]</code>
+
+   <a href="ref-iou-tou-pcl.html#ref-iou-tou-pcl">ref-iou-tou-pcl</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-predicate_property.html#mpg-ref-predicate_property">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-portray.html#mpg-ref-portray">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

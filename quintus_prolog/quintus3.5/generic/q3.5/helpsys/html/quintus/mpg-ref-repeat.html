@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>repeat/0</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>repeat</code>
+
+   <p>Succeeds immediately when called and whenever reentered by
+backtracking.
+
+<h4 class="subheading">Description</h4>
+
+   <p>Generally used to simulate the looping constructs
+found in traditional procedural languages.  The general form of a
+repeat loop is as follows:
+<pre class="example">     repeat,
+        <var>action1</var>,
+        <var>action2</var>,
+        ...,
+        <var>actionn</var>,
+        test,
+     !,
+      ... rest of clause body ...
+     </pre>
+
+   <p>The effect of this is to execute <var>action1</var> through <var>actionn</var> in sequence. 
+The test is then executed.  If it succeeds, the loop is (effectively)
+terminated by the cut (<code>!</code>) (which cuts away
+any alternatives in the clause,
+including the one created by <code>repeat/0</code>).  A failure of the test will
+cause backtracking that will be caught by <code>repeat/0</code>, which will
+succeed again and re-execute the <var>actions</var>.
+
+   <p>The easiest way to understand the effect of <code>repeat/0</code> is to think of
+failures as "bouncing" back off them causing re-execution of the later
+goals.
+
+   <p>Repeat loops are not often needed; usually recursive procedure calls will
+lead to code that is easier to understand as well as more efficient. 
+There are certain circumstances, however, in which <code>repeat/0</code> will lead to
+greater efficiency.  An important property of Quintus Prolog
+is that all run-time data is stored in stacks so that any
+storage that has been allocated during a proof of a goal is recovered
+immediately on
+backtracking through that goal.  Thus, in the above example, any space
+allocated by any of the <var>actions</var> is very efficiently reclaimed. 
+When an iterative construct is implemented using recursion, storage
+reclamation will only be done by the garbage collector.
+
+<h4 class="subheading">Tips</h4>
+
+   <p>In the most common use of repeat loops, each of the calls succeeds
+determinately. 
+It can be confusing if calls sometimes fail, so that
+backtracking starts before the test is reached, or if calls are
+nondeterminate, so that backtracking does not always go right back to
+<code>repeat/0</code>.
+
+   <p>Note that the repeat loop can only be useful if one or more of the
+<var>actions</var> involves a side-effect -- either a change to the data
+base (such as an assertion) or an I/O operation.  Otherwise you would do
+the same thing each time around the loop (which would never terminate).
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>repeat/0</code> could have been written in Prolog as follows:
+<pre class="example">     repeat.
+     repeat :- repeat.
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-restore.html#mpg-ref-restore">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-remove_spypoint.html#mpg-ref-remove_spypoint">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Redrawing a window using a callback procedure</h5>
+
+   <p>In our tutorial so far, every time our window has been damaged we have
+had to manually redraw it.  The application program is always
+responsible for redrawing its windows when they have been damaged. 
+This can be accomplished by associating a callback with the window
+telling ProXL what to do when the window needs to be redrawn.
+
+   <p>The steps required to automatically redraw our window are:
+     <ul>
+
+     <li>Define a callback procedure that draws the current contents of the
+window<a rel="footnote" href="#fn-1"><sup>1</sup></a>
+<li>Register that callback with the <code>expose</code> event of the window, so
+that the callback is invoked when the window needs to be redrawn
+</ul>
+
+   <p>First, we must define the callback procedure to redraw our window:
+<pre class="example">     | ?- <kbd>compile(user).</kbd>
+     | <kbd>redraw(Window, Pixel3, Pixel4) :-
+             Xdisplacement = 4,
+             Ydisplacement = 5,
+             A = 20,
+             X0 is 2+Xdisplacement,
+             Y0 is 2+A+Ydisplacement,
+             X1 is 2,
+             Y1 is 2+A,
+             put_graphics_attributes(Window, [foreground(Pixel4)]),
+             draw_string(Window, X0, Y0, 'Hello, world!!'),
+             put_graphics_attributes(Window, [foreground(Pixel3)]),
+             draw_string(Window, X1, Y1, 'Hello, world!!').</kbd>
+     | <kbd>^D</kbd>
+     % user compiled, 0.383 sec 380 bytes
+     
+     yes
+     </pre>
+
+   <p>Next we must register the callback for <code>expose</code> events sent to our
+window:
+
+<pre class="example">     | ?- <kbd>win(Window),
+          colors(_, _, Pixel3, Pixel4),
+          put_window_attributes(Window,
+                 [callback(expose,
+                         [count(0)],
+                         redraw(Window,Pixel3,Pixel4))]).</kbd>
+     
+     Window = window(2376568),
+     Pixel3 = 8,
+     Pixel4 = 1
+     </pre>
+
+   <p>Here we have told ProXL that when the X server determines that it is
+necessary to redraw the window, by sending <code>expose</code> events, the
+procedure <code>redraw/3</code> should be called.  The X server may send several
+<code>expose</code> events, each specifying a different part of the window
+to be redrawn.  Since this is a simple example, we don't bother to
+redraw the window part by part.  We just redraw the entire window
+whenever any part of it needs to be redrawn.  The second argument,
+<code>count(0)</code>, accomplishes this by telling ProXL that it should call
+<code>redraw/3</code> only if this is the last <code>expose</code> message in the
+group.<a rel="footnote" href="#fn-2"><sup>2</sup></a>
+
+   <p>Now if you do something to force X to redraw our window, like iconifying
+and then uniconifying it, or hiding it behind another window and then
+exposing it, you will find that the window is automatically refreshed. 
+Try it.
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>Since an <code>expose</code> event is sent to a window when it is
+first mapped (appears on the screen), it is not necessary to write
+separate code that initially draws the window and subsequently redraws
+the window.</p>
+
+   <li><a name="fn-2"></a>
+<p>If we had wanted to do more precise redrawing, we would
+have put <code>[position(</code><var>X</var><code>,</code><var>Y</var><code>),size(</code><var>W</var><code>,</code><var>H</var><code>)]</code> as the second argument in our
+callback specification, in place of <code>[count(0)]</code>, and passed <var>X</var>, <var>Y</var>,
+<var>W</var>, and <var>H</var> to the callback procedure.  The callback procedure would then
+only redraw the area of the window thus specified.</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-tut-cbk-term.html#pxl-tut-cbk-term">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-tut-cbk.html#pxl-tut-cbk">Up</a>
+</ul>
+</div>
+   </body></html>
+

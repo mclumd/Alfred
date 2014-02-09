@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_connect()</code></h5>
+
+   <p>The C function <code>tcp_connect()</code> is used by C clients to connect to some
+server running on machine <dfn>host</dfn> at some <dfn>port</dfn>.  It returns the newly
+created socket.  The following program fragment demonstrates the use of the C
+function <code>tcp_connect()</code> along with its companion C function
+<code>tcp_address_from_file()</code>:
+
+<pre class="example">     #include "tcp.h"
+     
+     int c,port;
+     char *host;
+     
+     if(tcp_address_from_file(serverfile, &amp;port, &amp;host) != 0)
+         ... an error occurred.
+     c = tcp_connect(host, port);
+     if (c == -1)  ... an error occurred.
+     </pre>
+
+   <p>A fuller example of the above can be found in the demonstration program <code>cs.c</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-cfu-accept.html#ipc-tcp-cfu-accept">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-cfu-address_from_shell.html#ipc-tcp-cfu-address_from_shell">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-cfu.html#ipc-tcp-cfu">Up</a>
+</ul>
+</div>
+   </body></html>
+

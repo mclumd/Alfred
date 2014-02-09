@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>load_foreign_executable/1</code> <dfn>hookable</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>load_foreign_executable(</code><var>+Executable</var><code>)</code>
+
+   <p>Load the foreign executable (shared object file) <var>Executable</var>
+into Prolog. 
+Relies on the hook predicates <code>foreign_file/2</code> and
+<code>foreign/[2,3]</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Executable</var> <dfn>file_spec</dfn> [MOD]
+     <dd>The shared object file to be loaded. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>load_foreign_executable/1</code> takes a shared object file and loads it
+into Prolog. If the file contains dependencies on other
+shared objects/libraries, then these are loaded automatically. 
+For details on how these are loaded see <a href="fli-p2f-lfe.html#fli-p2f-lfe">fli-p2f-lfe</a>.
+
+   <p>The extension can be omitted from the filename given
+in the <var>Executable</var> argument.
+
+   <p>Uses the <code>foreign/3</code> and <code>foreign_file/2</code> facts defined by the
+user to make the connection between a Prolog procedure and the foreign
+function. When loading the shared object file, it looks for a
+<code>foreign_file/2</code> fact for that file and for each symbol in
+the <code>foreign_file/2</code> fact it looks for a <code>foreign/3</code> fact that
+gives the name of the Prolog procedure associated with the foreign
+symbol and the argument specification.
+
+   <p>Looks for <code>foreign/3</code> and <code>foreign_file/2</code> facts defined in
+its source module only.
+
+   <p>Before calling this predicate, generate the shared object file from
+object files (and libraries); see <a href="fli-p2f-uso.html#fli-p2f-uso">fli-p2f-uso</a>.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Errors in the specification of
+<code>foreign/3</code> will all be reported when
+<code>load_foreign_executable/1</code> is called.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>See example under <code>foreign/[2,3]</code>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>foreign_file/2</code>, <code>foreign/[2,3]</code>,
+<code>load_foreign_files/2</code>
+
+   <a href="fli-p2f.html#fli-p2f">fli-p2f</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-load_foreign_files.html#mpg-ref-load_foreign_files">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-load_files.html#mpg-ref-load_files">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

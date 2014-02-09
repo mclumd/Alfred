@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Invoking <code>qpc</code>, the Prolog-to-QOF Compiler</h4>
+
+   <p>There are two main ways to invoke <code>qpc</code>:
+<pre class="example">     % <kbd>qpc -c P1.pl,...,Pn.pl  (A)</kbd>
+     
+     % <kbd>qpc [-D] [-o </kbd><var>output-file</var><kbd>] P1.pl,...,Pn.pl   (B)</kbd>
+     </pre>
+
+   <p><b>(A).</b>  Invoking <code>qpc</code> with the <code>-c</code> option,
+means "compile to QOF and stop"; it simply produces a QOF file for
+each source file, as shown in the above figure.
+
+   <p><b>(B).</b>  Invoking <code>qpc</code> without specifying <code>-c</code>
+compiles all the sources to QOF and then calls <code>qld</code> to
+build an executable file corresponding to those sources. 
+<code>-D</code> tells <code>qld</code> that the program is to be linked with
+the Development Kernel rather than the Runtime Kernel.  <code>-o</code>
+specifies a name for the executable file to be built by
+<code>qld</code>.  Defaults to <code>a.out</code>.  The <code>-D</code> and
+<code>-o </code><var>output-file</var><code></code> options are
+passed on to <code>qld</code> if they were specified in the
+<code>qpc</code> command line.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> <code>.pl</code> extensions may be omitted in the
+<code>qpc</code> command line (provided that there is not another file
+with the same name and no extension.)  Also, the Prolog files need not
+have <code>.pl</code> extensions.  If a Prolog file does not have one, the name
+of the corresponding object format file is simply the name of the
+Prolog source file extended with <code>.qof</code>.  Otherwise, the name of the
+corresponding object format file is the name of the Prolog source file
+with the <code>.pl</code> extension replaced by <code>.qof</code>.  Source files may
+be specified as absolute or relative filenames; each QOF file goes in
+the same directory as its source. 
+</blockquote>
+
+   <p>Further options allow you to run <code>qpc</code> in a verbose mode, to specify
+initialization files or add-ons, to customize the library search path,
+or make certain predicates invisible to the debugger.
+
+   <p>For a summary of all the options to <code>qpc</code>, see <a href="too-too-qpc.html#too-too-qpc">too-too-qpc</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-qld.html#sap-srs-qld">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-bas.html#sap-srs-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs.html#sap-srs">Up</a>
+</ul>
+</div>
+   </body></html>
+

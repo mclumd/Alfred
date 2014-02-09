@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Occur Check</h4>
+
+   <p>Prolog's unification does not have an <dfn>occur check</dfn>; that is, when
+unifying a variable  against  a  term, the system does not check to see if the
+variable occurs in the term.  When the variable occurs in  the  term,
+unification should  fail,  but  the  absence of the check means that the
+unification succeeds, producing a <code>circular term</code>.  Trying to print a
+circular  term, or  trying  to unify  circular terms, will cause a loop. 
+(You can always get out of a loop by typing ^c followed by an
+<kbd>a</kbd> for abort.)
+
+   <p>The absence of the occur check is not a bug or a design oversight, but
+a conscious design decision.  The reason for this decision is that
+unification with the occur check is at best linear on the sum of the
+sizes of the terms being unified, whereas unification without the
+occur check is linear on the size of the smallest of the terms being
+unified.  For any programming language to be practical, basic
+operations should take constant time.  Unification against a variable
+may be thought of as the basic operation of Prolog, and this can take
+constant time only if the occur check is omitted.  Thus the absence of
+an occur check is essential to Prolog's practicality as a programming
+language.  The inconvenience caused by this restriction is, in
+practice, very slight.  Furthermore, the functionality is available as
+<code>library(occurs)</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sem-con.html#ref-sem-con">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-sem-cut.html#ref-sem-cut">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sem.html#ref-sem">Up</a>
+</ul>
+</div>
+   </body></html>
+

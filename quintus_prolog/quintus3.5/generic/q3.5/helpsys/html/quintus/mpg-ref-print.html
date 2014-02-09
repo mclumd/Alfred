@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>print/1</code> <dfn>hookable</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>print(</code><var>+Term</var><code>)</code>
+
+   <p><code>print(</code><var>+Stream, +Term</var><code>)</code>
+
+   <p>Writes <var>Term</var> to the current output stream, or <var>Stream</var>. 
+Can be redefined with the hook <code>portray/1</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>By default, the effect of this predicate is the same as that of
+<code>write/1</code>, but you can change its effect by providing clauses for
+the predicate <code>portray/1</code>.
+
+   <p>If <var>Term</var> is a variable, then it is printed using
+<code>write(</code><var>Term</var><code>)</code>.
+
+   <p>Otherwise the user-definable procedure
+<code>portray(</code><var>Term</var><code>)</code> is called.  If this succeeds, then it is assumed
+that <var>Term</var> has been printed and <code>print/1</code> exits (succeeds). 
+Note that <code>print/1</code> always calls <code>portray/1</code> in module <code>user</code>. 
+Therefore, to be visible to <code>print/1</code>, <code>portray/1</code> must either be
+defined in or imported into module <code>user</code>.
+
+   <p>If the call to <code>portray/1</code> fails, and if <var>Term</var> is a compound term, then
+<code>write/1</code> is used to write the principal functor of <var>Term</var> and
+<code>print/1</code> is called recursively on its arguments.  If <var>Term</var>
+is atomic, it is written using <code>write/1</code>.
+
+   <p>When <code>print/1</code> has to print a list, say [<var>Term1</var>,<var>Term2</var>,<small class="dots">...</small>,<var>TermN</var>], it passes
+the whole list to <code>portray/1</code>.  As usual, if <code>portray/1</code> succeeds,
+it is assumed to have printed the entire list, and <code>print/1</code> does
+nothing further with this term.  Otherwise <code>print/1</code> writes the
+list using bracket notation, calling <code>print/1</code> on each element of the
+list in turn.
+
+   <p>Since [<var>Term1</var>,<var>Term2</var>,<small class="dots">...</small>,<var>TermN</var>] is simply a different way of
+writing .(<var>Term1</var>,[<var>Term2</var>,<small class="dots">...</small>,<var>TermN</var>]), one might expect <code>print/1</code> to be called
+recursively on the two arguments <var>Term1</var> and [<var>Term2</var>,<small class="dots">...</small>,<var>TermN</var>], giving <code>portray/1</code>
+a second
+chance at [<var>Term2</var>,<small class="dots">...</small>,<var>TermN</var>].  This does <em>not</em> happen; lists are a
+special case in which <code>print/1</code> is called separately for each of
+<var>Term1</var>,<var>Term2</var>,<small class="dots">...</small><var>TermN</var>.
+
+   <p>If you would like lists of character codes printed
+        by <code>print/1</code> using double-quote notation, you should
+        include <code>library(printchars)</code> (see <a href="lib-abs.html#lib-abs">lib-abs</a>)
+        as part of your version of <code>portray/1</code>.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Succeeds without error, except for any errors
+that may occur in the execution of <code>portray/1</code>.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>portray/1</code>, <code>library(printchars)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-print_message.html#mpg-ref-print_message">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-predicate_property.html#mpg-ref-predicate_property">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Accumulating Parameters</h5>
+
+   <p>To take best advantage of this feature, make sure that goals in recursive
+predicates are determinate, and whenever possible put the recursive call at
+the end of the predicate.
+
+   <p>This isn't always possible, but often can be done through the use of
+<dfn>accumulating parameters</dfn>.  An accumulating parameter is an added
+argument to a predicate that builds up the result as computation
+proceeds.  For example, in our factorial example (see
+<a href="bas-eff-cut-mpd.html#bas-eff-cut-mpd">bas-eff-cut-mpd</a>), the last goal in the body of the recursive case is
+<code>is/2</code>, not the recursive call to <code>fac/2</code>.
+
+<pre class="example">     fac(N, X) :-
+         (   N &gt; 0 -&gt;
+                 N1 is N - 1,
+                 fac(N1, Y),
+                 X is N * Y
+         ;   N =:= 0 -&gt;
+                 X = 1
+         ).
+     </pre>
+
+   <p>This can be corrected by adding another argument to <code>fac/2</code> to accumulate
+the factorial.
+
+<pre class="example">     fac(N, X) :- fac(N, 1, X).
+     
+     %  fac(+N, +M, -X)
+     %  X is M * the factorial of N.
+     
+     fac(N, M, X) :-
+         (   N &gt; 0 -&gt;
+                 N1 is N - 1,
+                 M1 is N * M,
+                 fac(N1, M1, X)
+         ;   N =:= 0 -&gt;
+                 X = M
+         ).
+     </pre>
+
+   <p>Here we do the multiplication before calling <code>fac/3</code> recursively.  Note
+that we supply the base case, 1, at the start of the computation, and
+that we are multiplying by decreasing numbers.  In the earlier
+version, <code>fac/2</code>, we multiply after the recursive call, and so we multiply by
+increasing numbers.  Effectively, the new version builds the result
+backwards.  This is correct because multiplication is associative.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-lco-acl.html#bas-eff-lco-acl">Next</a>
+<li><a rel="up" accesskey="u" href="bas-eff-lco.html#bas-eff-lco">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Basic Information</h5>
+
+   <p>To load a program from Emacs into Prolog, start up the Emacs/Prolog
+interface by typing <kbd>prolog +</kbd> at the main operating system prompt. 
+When the Emacs/Prolog screen appears, type <kbd>^x ^f</kbd> (for
+<code>find-file</code>) followed by the name of the file that contains your
+program.  (Alternatively, you can type <kbd>prolog +</kbd> followed by the
+name of the file that contains your program.)  After you enter the
+Emacs/Prolog environment, activate the window containing your file.
+
+   <p>At this point, you have three options:  you can load
+
+     <ul>
+
+     <li>the entire buffer containing your file (<kbd>&lt;ESC&gt; k b</kbd>)
+<li>a portion of the program that you have marked (<kbd>&lt;ESC&gt; k r</kbd>)
+<li>or a single procedure (<kbd>&lt;ESC&gt; k p</kbd>)
+</ul>
+
+   <p>Being able to load a designated portion of your program is very
+convenient if you are running a program and discover that you
+need to make a few changes to improve the program.  You
+can make your changes and then reload just the changed portions, without reloading the entire program.  If you
+are just beginning a Prolog session, however, you will probably
+want to load the entire buffer containing your program using <kbd>&lt;ESC&gt; k b</kbd>.
+
+   <p>When you type <kbd>&lt;ESC&gt; k</kbd>, Emacs displays the following prompt line
+at the bottom of the screen:
+<pre class="example">     compile prolog ... enter p for procedure, r for region or b for buffer
+     </pre>
+
+   <p>In response, you can type <kbd>b</kbd> to load the entire buffer:
+or you can type <kbd>r</kbd> to load a region, or <kbd>p</kbd> to load a
+procedure, as described below.
+
+   <p>After you indicate how much of your program to load, the
+cursor moves to the Prolog window, and
+Prolog displays a message that tells you it is loading the program. 
+As it proceeds, Prolog displays messages to let you know which
+procedures are being loaded.  For example, if your
+program consisted of procedures for <code>parts_of/2</code>, <code>assembly/2</code>, and
+<code>inventory/2</code>, Prolog would display the messages:
+
+<pre class="example">     % compiling procedure parts_of/2 in module user
+     % compiling procedure assembly/2 in module user
+     % compiling procedure inventory/2 in module user
+     </pre>
+
+   <p>After Prolog has finished loading, it displays a message such as:
+<pre class="example">     % compilation completed, 0.083 sec 448 bytes
+     | ?-
+     </pre>
+
+   <p>At this point, you can begin to run your program (see
+<a href="bas-run.html#bas-run">bas-run</a>).
+
+   <p><strong>Please notes:</strong>
+     <ol type=1 start=1>
+
+     <li>When you load procedures into Prolog, Prolog first removes any
+previous versions of those procedures from its database, excepting
+those procedures that have been declared multifile.  A multifile
+declaration indicates that a particular procedure is defined by
+clauses in more than one file.  (For more information on multifile
+procedures, see <a href="sap-rge-dspn.html#sap-rge-dspn">sap-rge-dspn</a>.)  This is why the entirety
+of a procedure must be loaded at once; otherwise, loading the
+definition of the second part would wipe out the definition of the
+first part. 
+<li>The <kbd>&lt;ESC&gt; k</kbd> commands can also be issued from the debugger prompt, as
+described in <a href="dbg-bas-bas.html#dbg-bas-bas">dbg-bas-bas</a>
+.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ema-ove-lod-buf.html#ema-ove-lod-buf">Next</a>
+<li><a rel="up" accesskey="u" href="ema-ove-lod.html#ema-ove-lod">Up</a>
+</ul>
+</div>
+   </body></html>
+

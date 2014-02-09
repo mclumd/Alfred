@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Example</h5>
+
+<pre class="example">
+                                    <div align="right"><em>file.pl</em>
+     </div>
+     
+     :- ensure_loaded(library(basics)).
+     :- ensure_loaded(file1).
+     :- ensure_loaded(file2).
+     
+     runtime_entry(start) :- go.
+     </pre>
+
+<pre class="example">
+                                   <div align="right"><em>file1.pl</em>
+     </div>
+     
+     &lt; some <code>foreign/[2,3]</code> facts &gt;
+     &lt; some <code>foreign_file/2</code> facts &gt;
+     
+     :- load_foreign_files([system(foreign)],[]).
+     </pre>
+
+<pre class="example">     % <kbd>qpc file</kbd>    (A)
+     </pre>
+
+   <p>Given the above files, the command (A) will have these results:
+
+     <ul>
+
+     <li>Compile <code>file.pl</code> into !sq'file.qof'
+<li>Cause each of the QOF files in (B) to be produced unless it already
+exists and is more recent than its source:
+     <pre class="example">          <var>library-directory</var>/basics.qof file1.qof file2.qof  (B)
+          </pre>
+
+     <li>Records the dependency of <code>file.qof</code> on the three QOF files in (B) and
+records the dependency of <code>file1.qof</code> on <code>foreign.o</code> in
+<code>file1.qof</code>, so that when <code>qpc</code> then calls (C) an executable
+file is built for the entire program.
+     <pre class="example">          % <kbd>qld -d file.qof</kbd>   (C)
+          </pre>
+
+   </ul>
+
+   <p>If for some reason you didn't want to use the <code>-d</code> option to
+<code>qld</code>, you could achieve the same effect as <code>qpc file</code>
+by the following sequence of commands:
+<pre class="example">     % <kbd>qpc -c file file1 file2</kbd>
+     % <kbd>qld file.qof </kbd><var>library-directory</var><kbd>/basics.qof file1.qof file2.qof foreign.o</kbd>
+     </pre>
+
+   <p>Alternatively, these commands would work:
+<pre class="example">     % <kbd>qpc -c file file1 file2</kbd>
+     % <kbd>qld file.qof "library(basics)" file1.qof file2.qof foreign.o</kbd>
+     </pre>
+
+   <p>Note that moving a QOF file from one directory to another may render
+its dependencies incorrect, so that the <code>-d</code> option
+cannot be used when loading that file.  If relative filenames are
+used, a set of mutually dependent files <em>can</em> safely be moved
+around the directory hierarchy, or to another machine, provided that
+they retain the same positions relative to one another.  In
+particular, a set of files that are all in the same directory can
+safely be moved.  Using file search path specifications (see
+<a href="sap-srs-fsp.html#sap-srs-fsp">sap-srs-fsp</a> and <a href="ref-lod.html#ref-lod">ref-lod</a>) enables you to
+create alterable paths.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-dep-mak.html#sap-srs-dep-mak">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-dep-qfd.html#sap-srs-dep-qfd">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs-dep.html#sap-srs-dep">Up</a>
+</ul>
+</div>
+   </body></html>
+

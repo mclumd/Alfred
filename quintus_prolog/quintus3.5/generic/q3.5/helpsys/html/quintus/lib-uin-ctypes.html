@@ -1,0 +1,314 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Classifying Characters -- <code>library(ctypes)</code></h4>
+
+   <p>One of the problems facing anyone who uses Prolog on more than one system
+is that different operating systems use different characters to signal the
+end of a line or the end of a file.  We have
+<pre class="example">     Dialect         DEC-10 Prolog   SICStus Prolog  Quintus Prolog
+     OS              (TOPS-10)       (UNIX,Windows)  (UNIX,Windows)
+     
+     end-of-line     31 (^_)         10 (LF, ^J)     10 (LF, ^J)
+     end-of-file     26 (^Z)         -1              -1
+     </pre>
+
+   <blockquote>
+
+        <p><strong>Windows note:</strong> From an application program's point of view, each line
+in the file is terminated with a single &lt;LFD&gt;.  However, what's
+actually stored in the file is the sequence &lt;RET&gt;&lt;LFD&gt;. 
+</blockquote>
+
+   <p>A prudent Prolog programmer will try to avoid writing these
+constants into his program.  Indeed, a prudent Prolog programmer
+will try to avoid relying too much on the fact that Prolog uses
+the ASCII character set.
+
+   <p>Quintus Prolog addresses these problems by imitating the programming language
+C.  The package <code>library(ctypes)</code>
+defines predicates that recognize or
+enumerate certain types of characters.  Where possible, the names and
+the character sets
+have been borrowed from C.
+
+   <p>Except as indicated, all of the predicates in <code>library(ctypes)</code> check the
+type of a given character,
+or backtrack over all the characters of the appropriate type if
+given a variable.
+
+     <dl>
+
+     <br><dt><code>is_endfile(</code><var>-Char</var><code>)</code>
+     <dd>
+<var>Char</var> is the end-of-file character.  There is only one such character. 
+If <code>get0/1</code> returns it,
+the end of the input file has been reached, and the file should not be
+read further.  No special significance is attached to this
+character on output; it might not be a valid output character at all (as
+in Quintus Prolog) or it might simply be written out along with other text.
+
+     <p>The need for this predicate is largely obviated by the built-in predicate
+<code>at_end_of_file/[0,1]</code> in Release 3.
+
+     <br><dt><code>is_newline(</code><var>-Char</var><code>)</code>
+     <dd>
+<var>Char</var> is the end-of-line character.  There is only one such character. 
+You can rely on it not being space, tab, or any printing character. 
+It is returned by <code>get0/1</code> at the end of an input line. 
+The end-of-line character is a valid output character, and when
+written to a file ends the current output line.  It should not be used to
+<em>start</em> lines, only to <em>end</em> them.
+
+     <p>The need for this predicate is largely obviated by the built-in predicate
+<code>skip_line/[0,1]</code> in Release 3.
+
+     <br><dt><code>is_newpage(</code><var>-Char</var><code>)</code>
+     <dd>
+<var>Char</var> is the end-of-page character.  There is at most one such character,
+and when it is defined at all it is the ASCII "formfeed" character.  On
+some systems there may be no end-of-page character.  This character
+is returned
+by <code>get0/1</code> at the end of an input page.  It is a valid output
+character,
+and when written to a file ends the current output page.  It should not be
+used to <em>start</em> pages, only to <em>end</em> them.
+
+     <br><dt><code>is_endline(</code><var>+Char</var><code>)</code>
+     <dd>Some systems permit more than one end-of-line character for terminal
+input; one of them is always C's "newline" character, another is the
+end-of-file character (<kbd>^D</kbd> or <kbd>^Z</kbd>) if typed anywhere but as the first
+character of a line, and the last is the "eol" character, which the user
+can set with the <code>stty(1)</code> command.
+
+     <p><code>is_endline/1</code> accepts most ASCII control characters, but not space, tab,
+or delete, which covers all the line terminators likely to arise in
+practice.  It should only be used to recognize line terminators; if
+passed a variable, it will raise an error exception.
+
+     <p>The need for this predicate is largely obviated by the built-in predicate
+<code>at_end_of_line/[0,1]</code> in Release 3.
+
+     <br><dt><code>is_alnum(</code><var>?Char</var><code>)</code>
+     <dd>
+is true when <var>Char</var> is the ASCII code of a letter or digit.  It may be used
+to recognize alphanumerics or to enumerate them.  Underscore <code>_</code> is
+<em>not</em> an alphanumeric character.  (See <code>is_csym/1</code> below.)
+
+     <br><dt><code>is_alpha(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is the ASCII code of a letter. 
+It may be used to
+recognize letters or to enumerate them.  Underscore <code>_</code> is <em>not</em>
+a letter.  (See <code>is_csymf/1</code> below.)
+
+     <br><dt><code>is_ascii(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is in the range 0..127. 
+If <var>Char</var> is a variable, <code>is_ascii/1</code>
+(like most of the predicates in this section) will try to bind it to
+each of the acceptable values in turn (that is, it will enumerate them). 
+Whether the end-of-file character satisfies <code>is_ascii/1</code> or not is
+system-dependent.
+
+     <br><dt><code>is_char(?Char)</code>
+     <dd>is true when Char is a character code in whatever the
+range happens to be.  (In this version: ISO 8859/1.)
+
+     <br><dt><code>is_cntrl(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is an ASCII control character;
+that is, when <var>Char</var>
+is the code for DEL (127) or else is in the range 0..31. 
+Space is <em>not</em> a control character.
+
+     <br><dt><code>is_csym(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is the code for a character that
+can appear in an
+identifier.  C identifiers are identical to Prolog identifiers that start
+with a letter.  Put another way, <var>Char</var> is a letter, digit, or underscore. 
+There are C compilers that allow other characters in identifiers, such
+as <code>$</code>.  In such a system, C's version of <code>iscsym/1</code> will accept those
+additional characters, but Prolog's will not.
+
+     <br><dt><code>is_csymf(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is the code for a character
+that can appear as the first
+character of a C or Prolog identifier.  Put another way, <var>Char</var> is a letter
+or an underscore.
+
+     <br><dt><code>is_digit(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is the code for a decimal digit;
+that is, a character in the range 0..9.
+
+     <br><dt><code>is_digit(</code><var>?Char</var><code>, </code><var>?Weight</var><code>)</code>
+     <dd>is true when <var>Char</var> is the
+character code of a decimal digit, and <var>Weight</var> is its decimal
+value.
+
+     <br><dt><code>is_digit(</code><var>?Char</var><code>, </code><var>?Base</var><code>, </code><var>?Weight</var><code>)</code>
+     <dd>
+is true when <var>Char</var> is the code for a digit in the given <var>Base</var>. 
+<var>Base</var>
+should be an integer in the range 2..36.  The digits (that is, the possible
+values of <var>Char</var>) are 0..9, A..Z, and
+a..z, where the case of a letter is ignored.  <var>Weight</var> is the value of
+<var>Char</var> considered as a digit in that base, given as a decimal number. 
+For example,
+     <pre class="example">          is_digit(97 /* a */, 16, 10)
+          is_digit(52 /* 4 */, 10,  4)
+          is_digit(70 /* F */, 16, 15)
+          </pre>
+
+     <p>This is a genuine relation; it may be used all possible ways.  You can
+even use it to enumerate all the triples that satisfy the relation.  Each
+argument must be either a variable or an integer.
+
+     <br><dt><code>is_graph(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is the code for a "graphic"
+character, that is, for any
+printing character other than space.  The graphic characters are the
+letters and digits, plus
+     <pre class="example">          !  "  #  $  %  &amp;  '  (  )  *  ;  &lt;  =  &gt;  ?  @
+          [  \  ]  ^  _  `  {  |  }  ~  +  ,  -  .  /  :
+          </pre>
+
+     <br><dt><code>is_lower(</code><var>+Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is the code for a lowercase
+letter, a..z.
+
+     <br><dt><code>is_paren(</code><var>?Left</var><code>, </code><var>?Right</var><code>)</code>
+     <dd>
+is true when <var>Left</var> and <var>Right</var> together form one of the delimiter pairs
+<code>(</code> and <code>)</code>, <code>[</code> and <code>]</code>, or <code>{</code> and <code>}</code>.
+
+     <br><dt><code>is_period(</code><var>?Char</var><code>)</code>
+     <dd>
+<code>is_period/1</code> recognizes each of the three punctuation marks that
+can end an English sentence.  That is, <code>is_period(</code><var>Char</var><code>)</code> is true when
+<var>Char</var> is an exclamation point (<code>!</code>), a question mark (<code>?</code>), or a
+period (<code>.</code>).  Note that if you want to test specifically for a period
+character, you should use the goal
+     <pre class="example">          Char is "."
+          </pre>
+
+     <br><dt><code>is_print(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is any of the
+ASCII "printing" characters, that is, anything
+except a control character.  All the "graphic" characters are "printing"
+characters, and so is the space character. 
+When written to ordinary terminals, each
+printing character takes exactly one column, and Prolog code for lining up
+output in nice columns is entitled to rely on this.  The width of a tab, and
+the depiction of other control characters than tab or newline, is not
+defined.
+
+     <br><dt><code>is_punct(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is the code for a non-alphanumeric
+printing character;
+that is, <var>Char</var> is a space or one of the characters listed explicitly under
+<code>is_graph/1</code>.  Note that underscore is a "punct" and so is the space character. 
+The reason for this is that C defines it that way, and this package
+eschews innovation for innovation's sake.
+
+     <br><dt><code>is_quote(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is one of the quotation
+marks <code>`</code> (back-quote), <code>'</code> (single-quote), or <code>"</code> (double-quote).
+
+     <br><dt><code>is_space(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is the code for a white space
+character.  This includes
+tab (9, ^I), linefeed (10, ^J), vertical tab (11, ^K), formfeed
+(12, ^L), carriage return (13, ^M), and space (32).  These constitute the C
+definition of white space. 
+For compatibility with DEC-10 Prolog, <code>is_space/1</code> also accepts
+the (31, ^_) character.
+
+     <br><dt><code>is_upper(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is the code for an uppercase
+letter, A..Z.
+
+     <br><dt><code>is_white(</code><var>?Char</var><code>)</code>
+     <dd>is true when <var>Char</var> is a space or a tab.  The reason
+for distinguishing
+between this and <code>is_space/1</code> is that if you skip over characters satisfying
+<code>is_space/1</code> you will also be skipping over the ends of lines and pages
+(though at least you will not run off the end of the file), while if you
+skip over characters satisfying <code>is_white/1</code> you will stop at the
+end of the current line.
+
+     <br><dt><code>to_lower(</code><var>?Char</var><code>, </code><var>?Lower</var><code>)</code>
+     <dd>
+is true when <var>Char</var> is any ASCII character code, and <var>Lower</var> is the
+lowercase equivalent of <var>Char</var>.  The lowercase equivalent of an uppercase
+letter is the corresponding lowercase letter.  The lowercase
+equivalent of any other character is the same character.  If you have
+a string (list of character codes) <var>X</var>, you can obtain a version of <var>X</var>
+with uppercase letters mapped to lowercase letters and other characters
+left alone by calling the library routine
+     <pre class="example">          maplist(to_lower, X, LowerCasedX)
+          </pre>
+
+     <p>In normal use of <code>to_lower/2</code>, <var>Char</var> is bound.  If <var>Char</var> is
+uninstantiated, <code>to_lower/2</code>
+will still work correctly, but will be less efficient.  If you
+want to convert a lowercase letter <var>Kl</var> to its uppercase version <var>Ku</var>,
+<em>do not</em> use <code>to_lower/2</code>; <code>to_lower(Ku, 97)</code> has two solutions:
+65 (A) and 97 (a).  Use <code>to_upper/2</code> instead.
+
+     <br><dt><code>to_upper(</code><var>?Char</var><code>, </code><var>?Upper</var><code>)</code>
+     <dd>
+is true when <var>Char</var> is any ASCII character code, and <var>Upper</var> is the
+uppercase equivalent of <var>Char</var>.  The uppercase equivalent of a lowercase
+letter is the corresponding uppercase letter.  The uppercase
+equivalent of any other character is the same character.  If you
+have a string (list of character codes) <var>X</var>, you can obtain a version of
+<var>X</var> with lowercase letters mapped to uppercase and other characters
+left alone by calling the library routine
+     <pre class="example">          maplist(X, to_upper, UpperCasedX)
+          </pre>
+
+   </dl>
+
+   <p>The System V macro <code>isxdigit()</code> is not represented in this package because
+<code>isdigit/3</code> subsumes it.  The System V macros <code>_tolower()</code> and <code>_toupper()</code> are
+not represented because <code>to_lower/2</code> and <code>to_upper/2</code> subsume them.
+
+   <p>The predicates needed for portability between operating systems are
+
+     <ul>
+
+     <li><code>is_endfile/1</code>
+<li><code>is_endline/1</code>
+<li><code>is_newline/1</code>
+<li><code>is_newpage/1</code>
+</ul>
+
+   <p>Remember:  <code>is_endfile/1</code> and <code>is_endline/1</code> are for recognizing the end of an
+input file or the end of an input line, while <code>is_newline/1</code> and <code>is_newpage/1</code>
+return the character that you should
+give to <code>put/1</code> to end a line or page of output.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-uin-lineio.html#lib-uin-lineio">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-uin-bas.html#lib-uin-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-uin.html#lib-uin">Up</a>
+</ul>
+</div>
+   </body></html>
+

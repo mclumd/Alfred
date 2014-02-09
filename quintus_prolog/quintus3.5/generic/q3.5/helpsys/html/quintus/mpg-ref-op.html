@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>op/3</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>op(</code><var>+Precedence</var><code>, </code><var>+Type</var><code>, </code><var>+Name</var><code>)</code>
+
+   <p>declares <var>Name</var> to be an operator of the stated
+<var>Type</var> and <var>Precedence</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Precedence</var> <dfn>integer</dfn>
+     <dd>integer in the range 1-1200
+
+     <br><dt><var>Type</var> <dfn>one of </dfn><code>[xfx,xfy,yfx,fx,fy,xf,yf]</code><dfn></dfn>
+     <dd>
+<br><dt><var>Name</var> <dfn>atom</dfn>
+     <dd>atom or a list of atoms. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Operators are a notational convenience
+to read and write Prolog terms. You can define new operators using
+<code>op/3</code>.
+
+   <p>The <var>Precedence</var> of an operator is used to disambiguate the way
+terms are parsed. The general rule is that the operator with the
+highest precedence is the principal functor.
+
+   <p>The <var>Type</var> of an operator decides the position of an operator
+and its associativity. In the atom that represents the type
+the character <code>f</code> represents the position of the operator. 
+For example, a type <code>fx</code> says that the operator is a prefix operator. 
+The character <code>y</code> indicates that the operator is associative
+in that direction. For example, an operator of type
+<code>xfy</code> is a right-associative, infix operator.
+
+   <p>To cancel the operator properties of <var>Name</var>
+(if any) set <var>Precedence</var> to 0.
+
+   <p>For more details, see <a href="ref-syn-ops.html#ref-syn-ops">ref-syn-ops</a>
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+        <var>Precedence</var>, <var>Type</var> or <var>Name</var> is a variable
+
+     <br><dt><code>type_error</code>
+     <dd>
+        <var>Precedence</var> is not an integer or <var>Type</var> is not an integer
+        or <var>Name</var> is not an atom
+
+     <br><dt><code>domain_error</code>
+     <dd>
+                <var>Precedence</var> is not in the range 1-1200
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>current_op/3</code>
+
+   <a href="ref-syn-ops.html#ref-syn-ops">ref-syn-ops</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-open.html#mpg-ref-open">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-on_exception.html#mpg-ref-on_exception">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

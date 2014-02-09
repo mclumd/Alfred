@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_is_*()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_is_variable(term)
+     QP_term_ref term;
+     </pre>
+
+<pre class="example">     int QP_is_atom(term)
+     QP_term_ref term;
+     </pre>
+
+<pre class="example">     int QP_is_integer(term)
+     QP_term_ref term;
+     </pre>
+
+<pre class="example">     int QP_is_float(term)
+     QP_term_ref term;
+     </pre>
+
+<pre class="example">     int QP_is_compound(term)
+     QP_term_ref term;
+     </pre>
+
+<pre class="example">     int QP_is_list(term)
+     QP_term_ref term;
+     </pre>
+
+<pre class="example">     int QP_is_db_reference(term)
+     QP_term_ref term;
+     </pre>
+
+<pre class="example">     int QP_is_atomic(term)
+     QP_term_ref term;
+     </pre>
+
+<pre class="example">     int QP_is_number(term)
+     QP_term_ref term;
+     </pre>
+
+   <p>These C functions and macros can be used to test the type of the
+Prolog terms passed to C through the foreign interface.
+
+<h4 class="subheading">Description</h4>
+
+     <dl>
+
+     <br><dt><code>QP_is_variable()</code>
+     <dd>(macro) returns a nonzero value if its
+argument is a Prolog variable; zero otherwise.
+
+     <br><dt><code>QP_is_atom()</code>
+     <dd>(macro) returns a nonzero value if its
+argument is an atom; zero otherwise.
+
+     <br><dt><code>QP_is_integer()</code>
+     <dd>(macro) returns a nonzero value if its
+argument is a Prolog integer; zero otherwise.
+
+     <br><dt><code>QP_is_float()</code>
+     <dd>(macro) returns a nonzero value if its
+argument is a float; zero otherwise.
+
+     <br><dt><code>QP_is_compound()</code>
+     <dd>(macro) returns a nonzero value if its
+argument is a compound Prolog term; zero otherwise.
+
+     <br><dt><code>QP_is_list()</code>
+     <dd>(function) returns a nonzero value if its
+argument is a Prolog list; zero otherwise.
+
+     <br><dt><code>QP_is_db_reference()</code>
+     <dd>(macro) returns a nonzero value if its argument is a
+database reference; zero otherwise.
+
+     <br><dt><code>QP_is_atomic()</code>
+     <dd>(function) returns a nonzero value if its
+argument is an atomic Prolog object; zero otherwise.
+
+     <br><dt><code>QP_is_number()</code>
+     <dd>(function) returns a nonzero value if its
+argument is a Prolog integer or float; zero otherwise.
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>print_type()</code> is a C function that prints the type of
+the Prolog term passed to it.
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(print_type, c, print_type(+term)).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     void print_type(term)
+     QP_term_ref term;
+     {
+         if (QP_is_atom(term)) {
+             QP_printf("Term is an atom\n");
+         } else if (QP_is_integer(term)) {
+             QP_printf("Term is an integer\n");
+         } else if (QP_is_float(term)) {
+             QP_printf("Term is a float\n");
+         } else if (QP_is_variable(term)) {
+             QP_printf("Term is a variable\n");
+         } else if (QP_is_db_reference(term)) {
+             QP_printf("Term is a database reference\n");
+         } else if (QP_is_compound(term)) {
+             if (QP_is_list(term)) {
+                 QP_printf("Term is a list\n");
+             } else {
+                 QP_printf("Term is a compound term\n");
+             }
+         } else {
+             QP_printf("Unrecognized term\n");
+         }
+     }
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_get_*()</code>, <code>QP_put_*()</code>, <code>QP_new_term_ref()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-line_count.html#cfu-ref-line_count">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-initialize.html#cfu-ref-initialize">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

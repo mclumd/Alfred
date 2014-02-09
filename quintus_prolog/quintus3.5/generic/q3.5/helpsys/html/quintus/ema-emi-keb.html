@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Rebinding Keys in Your Initialization File</h4>
+
+   <p>You can customize GNU Emacs by defining key bindings and/or Emacs-Lisp
+functions in a special GNU Emacs initialization file called <code>.emacs</code>,
+which must be kept in your home directory. 
+To locate it, do <kbd>^x ^f</kbd> and type <code>~/.emacs</code> as the
+filename. (Windows users: the <code>~</code> character is a abbreviation,
+inherited from UNIX, for your home directory.)
+
+   <p>When GNU Emacs is started, it loads your GNU Emacs initialization
+file, if you have one, before loading the Emacs-Lisp files defining the
+editor interface.  This means that any key bindings that you make in
+this file may be overridden by the editor interface package.  However,
+you can tailor the interface, if you wish, by defining one or both of
+the following "hook functions":
+     <dl>
+
+     <br><dt><code>prolog-startup-hook</code>
+     <dd>If a function by this name is defined, it will be
+called after all the initializations done on invoking Prolog through the
+editor interface are completed, and before the screen is displayed.
+
+     <br><dt><code>prolog-mode-hook</code>
+     <dd>If a function by this name is defined, it will be called
+every time Prolog mode is entered.  Prolog mode is entered every time you
+edit a file with a <code>.pl</code> extension, and can also be entered by using the
+command <kbd>&lt;ESC&gt; x prolog-mode</kbd>. 
+</dl>
+
+   <p>For example, if you don't like incremental search, and you prefer to
+use <kbd>&lt;ESC&gt; e</kbd> for moving to the end of a sentence, rather than for
+enlarging the current window, then you should add the following
+function definition to your initialization file:
+<pre class="example">     (defun
+          prolog-startup-hook ()
+             (global-set-key  "\C-s" 'search-forward)
+             (global-set-key  "\C-r" 'search-reverse)
+             (global-set-key  "\ee"  'forward-sentence)
+             (global-set-key  "\e\e"
+                              'enlarge-window))
+     </pre>
+
+   <p>Note that the command strings could be written as : <code>"\C-s"</code> (Backslash
+<code>C-s</code>) for example.  This version of <code>prolog-startup-hook</code> also binds
+the useful <code>enlarge-window</code> command, which is normally on
+<kbd>&lt;ESC&gt; e</kbd> in this interface, to <kbd>&lt;ESC&gt; &lt;ESC&gt;</kbd>.
+
+   <p>If you wish to change key bindings in Prolog mode, you should use
+<code>local-set-key</code> rather than <code>global-set-key</code>, because the effect of Prolog
+mode is local to a particular window.  For example, if you don't like the
+way &lt;LFD&gt; works in Prolog mode, you can define
+<pre class="example">     (defun
+          prolog-mode-hook ()
+             (local-set-key  "\C-j" 'newline-and-indent))
+     </pre>
+
+   <p>This restores the default binding of &lt;LFD&gt;.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ema-emi-pge.html#ema-emi-pge">Next</a>
+<li><a rel="previous" accesskey="p" href="ema-emi-lay.html#ema-emi-lay">Previous</a>
+<li><a rel="up" accesskey="u" href="ema-emi.html#ema-emi">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Unification -- <code>library(unify)</code></h4>
+
+   <p>This file defines only one predicate.
+
+     <dl>
+
+     <br><dt><code>unify(</code><var>?Term1</var><code>, </code><var>?Term2</var><code>)</code>
+     <dd>
+is true when <var>Term1</var> unifies with <var>Term2</var>.  The only difference between
+this predicate and the built-in predicate <code></code><var>Term1</var><code> = </code><var>Term2</var><code></code> is
+that <code>unify/2</code>
+applies the "occur check" and the built-in predicate <code>=/2</code>
+does not.  This means that according to ordinary logic,
+a variable <var>X</var> should <em>not</em> unify with a term containing <var>X</var>.  <code>unify/2</code>
+does this correctly and <code>=/2</code> does not.  Thus
+
+     <pre class="example">          | ?- <kbd>unify(X, [X]).</kbd>
+          
+          no
+          
+          | ?- <kbd>X = [X].</kbd>
+          
+          X = [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[...
+          </pre>
+
+     <p>Whenever <code>unify(X, Y)</code> succeeds, <code>X = Y</code> would have succeeded and
+made the same variable bindings. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-tma-termdepth.html#lib-tma-termdepth">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-tma-subsumes.html#lib-tma-subsumes">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-tma.html#lib-tma">Up</a>
+</ul>
+</div>
+   </body></html>
+

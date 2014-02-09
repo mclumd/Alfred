@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>current_window/[1,2]</code></h5>
+
+<pre class="example">     current_window(?<var>Window</var>)
+     current_window(?<var>Window</var>, ?<var>Display</var>)
+     </pre>
+
+   <p>Tells whether <var>Window</var> is a window that is known to ProXL.  If
+<var>Display</var> is specified, <var>Window</var> is on that display.  If
+<var>Window</var> is not bound, <code>current_window</code> backtracks through all
+windows.
+
+   <p>A window is <dfn>known to ProXL</dfn> if it was created by ProXL, or if it was
+passed to ProXL by the X server or a foreign X procedure.  For
+example, if you call <code>current_window/1</code> in a fresh ProXL session, few
+windows will be returned.  If you call <code>window_children/1</code> before
+calling <code>current_window/1</code>, many more windows will be returned, because the
+call to <code>window_children/1</code> asks ProXL to find all the top level windows
+on the default screen, most of which ProXL won't have seen before.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxl-win-misc-window_children.html#pxl-win-misc-window_children">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-win-misc.html#pxl-win-misc">Up</a>
+</ul>
+</div>
+   </body></html>
+

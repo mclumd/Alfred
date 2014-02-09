@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Suggesting Icon, Initial State, and Other Features</h5>
+
+   <p>To specify whether your window expects to get focus (keyboard ownership)
+from the window manager, how your window should appear initially, an
+picture to use in an icon, the icon's position, and what window group
+your window is in, specify the attribute
+<pre class="example">     property('WM_HINTS',<var>Hints</var>)
+     </pre>
+
+   <p><var>Hints</var> should be a term of the form
+<pre class="example">     wm_hints(<var>Input</var>,<var>Initial</var>,<var>Icon_pix</var>,<var>Icon_win</var>,<var>Icon_pos</var>,<var>Icon_mask</var>,<var>Window_group</var>)
+     </pre>
+
+   <p>The meaning of the arguments of the <code>wm_hints/7</code> term is as follows:
+
+     <dl>
+
+     <br><dt><b>Argument</b>
+     <dd><b>Meaning</b>
+
+     <br><dt><var>Input</var>
+     <dd>Specifies whether your window expects to get focus
+(keyboard ownership) from the window manager.  Possible
+values are:
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>No hint is being made
+about your about your application's input needs.
+
+          <br><dt><code>true</code>
+          <dd>Your application expects the window manager to
+give it focus.
+
+          <br><dt><code>false</code>
+          <dd>The application will grab the focus when it wants it, or
+that it never needs focus. 
+</dl>
+
+     <br><dt><var>Initial</var>
+     <dd>Specifies the desired initial state of your window. 
+Possible values are:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>No hint is
+being made about the initial state of  your application.
+
+          <br><dt><code>dont_care</code>
+          <dd>The application does not
+care how it starts up.
+
+          <br><dt><code>normal</code>
+          <dd>The window wants to come up in <dfn>normal</dfn> state, using
+its normal hints.
+
+          <br><dt><code>zoom</code>
+          <dd>The  window would like
+to start out <dfn>zoomed</dfn>.
+
+          <br><dt><code>iconic</code>
+          <dd>The
+window would like to start out iconified.
+
+          <br><dt><code>inactive</code>
+          <dd>The  application is not often
+used, so your window manager may want to put it in a
+special <dfn>inactive</dfn> menu. 
+</dl>
+
+     <br><dt><var>Icon_pix</var>
+     <dd>Specifies the image you'd like to have used in your
+window's icon.  It may be either:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>You are not specifying an icon mask.
+
+          <br><dt>a one plane pixmap
+          <dd>
+</dl>
+
+     <p>See <a href="pxl-win-wmi-isz.html#pxl-win-wmi-isz">pxl-win-wmi-isz</a> below for
+information about how to find out how big to make your
+pixmap.
+
+     <br><dt><var>Icon_win</var>
+     <dd>Specifies a window you'd like to have used as your
+window's icon.  It may be either:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>You are not specifying an icon window.
+
+          <br><dt>a window
+          <dd>
+</dl>
+
+     <br><dt><var>Icon_pos</var>
+     <dd>Specifies your suggested initial icon position.  It may
+be either:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>You are not specifying an icon position.
+
+          <br><dt><code>position</code><var>(X,Y)</var><code></code>
+          <dd>
+</dl>
+
+     <br><dt><var>Icon_mask</var>
+     <dd>Specifies a suggested mask to use in conjunction with <var>Icon_pix</var> to
+determine the icon's image.  This allows for non-rectangular icons on window
+managers that support them.  It may be either:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>You are not specifying an
+icon image.
+
+          <br><dt>a one plane pixmap
+          <dd>
+
+     </dl>
+
+     <br><dt><var>Window_group</var>
+     <dd>Specifies a group of windows that should be iconified
+together.  It may be either:
+
+          <dl>
+
+          <br><dt><code>none</code>
+          <dd>You are not specifying a window group.
+
+          <br><dt>a window
+          <dd>
+</dl>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-win-wmi-trn.html#pxl-win-wmi-trn">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-win-wmi-wsiz.html#pxl-win-wmi-wsiz">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-win-wmi.html#pxl-win-wmi">Up</a>
+</ul>
+</div>
+   </body></html>
+

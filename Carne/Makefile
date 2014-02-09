@@ -1,2 +1,2 @@
 all:	carne.pl
-	/home/emily/Desktop/ALFRED/quintus_prolog/quintus3.5/bin3.5/linux/qpc -o carne carne.pl
+	~/Alfred/quintus_prolog/quintus3.5/bin3.5/linux/qpc -o carne carne.pl

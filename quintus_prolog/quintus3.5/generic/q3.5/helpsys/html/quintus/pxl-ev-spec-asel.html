@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Events that are always selected</h5>
+
+   <p>This category includes all the events that X11 will send to your
+application, regardless of whatever you want them or not. Well behaved
+programs must be able to handle them appropriately.
+
+   <p><b>Mapping Notify Event.</b>
+The server generates a <code>mapping_notify</code> event when any of the
+following are changed by another client:
+     <ul>
+
+     <li>The mapping between keyboard <dfn>keycodes</dfn> and <dfn>keysyms</dfn>. 
+<li>The mapping between physical modifier keys and logical modifiers. 
+<li>The mapping between physical mouse buttons and logical buttons. 
+</ul>
+
+   <p>ProXL handles the necessary adjustments to your environment automatically,
+but you should be aware that it has changed. Specify with:
+<pre class="example">     mapping_notify
+     </pre>
+
+   <p><b>Client Message Event.</b>
+A <code>client_message</code> event is generated when clients use
+<code>send_event</code>, to communicate with your application. 
+Specify with:
+<pre class="example">     client_message
+     </pre>
+
+   <p><b>Selection Clear Event.</b>
+The server generates a <code>selection_clear</code> event when a new owner is
+defined
+for a property. The current owner of the selection gets this event. 
+Specify with:
+<pre class="example">     selection_clear
+     </pre>
+
+   <p><b>Selection Notify Event.</b>
+A <code>selection_notify</code> event is sent by a client, not the server. The
+owner of a selection sends it to a requester to announce that the
+selection has been converted to the appropriate format and stored as
+a property, or that the conversion could not be performed.
+
+   <p>Specify with:
+<pre class="example">     selection_notify
+     </pre>
+
+   <p><b>Selection Request Event.</b>
+A <code>selection_request</code> event is generated when another client
+requests the selection owned by the window.
+
+   <p>Specify with:
+<pre class="example">     selection_request
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxl-ev-spec-sev2.html#pxl-ev-spec-sev2">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-ev-spec.html#pxl-ev-spec">Up</a>
+</ul>
+</div>
+   </body></html>
+

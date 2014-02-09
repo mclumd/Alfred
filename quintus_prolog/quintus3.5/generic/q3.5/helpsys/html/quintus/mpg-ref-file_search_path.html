@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>file_search_path/2</code> <dfn>extendable</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile file_search_path/2.</code>
+
+   <p><code>file_search_path(</code><var>*PathAlias, *DirSpec</var><code>)</code>
+
+   <p>Defines a symbolic name for a directory or a path.  Used by
+predicates taking <dfn>file_spec</dfn> as input argument.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>PathAlias</var> <dfn>atom</dfn>
+     <dd>A string that represents the path given by
+<var>DirSpec</var>.
+
+     <br><dt><var>DirSpec</var> <dfn>file_spec</dfn>
+     <dd>Either a string giving the path to
+a file or directory, or <var>PathAlias(DirSpec)</var>, where <var>PathAlias</var> is
+defined by another <code>file_search_path/2</code> rule.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>file_search_path/2</code> is a dynamic, multifile predicate. It resides
+in module <code>user</code>.
+
+   <p>The <code>file_search_path</code> mechanism provides an extensible way of
+specifying a sequence of directories to search to locate a file.  For
+instance, if a filename is given as a structure term,
+<code>library(basics)</code>.  The principle functor of the term, <code>library</code>,
+is taken to be another <code>file_search_path/2</code> definition of the form
+<pre class="example">     file_search_path(library, LibPath)
+     </pre>
+
+   <p>and file <code>basics</code> is assumed to be relative to the path given by
+<var>LibPath</var>. 
+<var>LibPath</var> may also be another structure term, in which case another
+<code>file_search_path/2</code> fact gives its definition.  The search continues
+until the path is resolved to an atom.
+
+   <p>There may also be several definitions for the same <var>PathAlias</var>.  Certain
+predicates, such as <code>load_files/[1,2]</code> and <code>absolute_file_name/[2,3]</code>,
+search all these definitions until the path resolves to an existing file.
+
+   <p>There are several system defined search paths, such as <code>quintus</code>,
+<code>runtime</code>, <code>library</code>, <code>system</code>, <code>helpsys</code>.  These are
+initialized at system startup, and used by some of the system
+predicates, but they may be redefined by the user.  Furthermore, the
+user may create extra <code>file_search_path</code>s to define certain paths,
+and these may be used exactly as the predefined system paths.  See
+<a href="ref-fdi.html#ref-fdi">ref-fdi</a> for more detail.
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     | ?- <kbd>assert(file_search_path(home, '/usr/joe_bob')).</kbd>
+     
+     yes
+     | ?- <kbd>assert(file_search_path(review, home('movie/review'))).</kbd>
+     
+     yes
+     | ?- <kbd>compile(review(blob)).</kbd>
+     % compiling /usr/joe_bob/movie/review/blob.pl
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>absolute_file_name/[2,3]</code>,
+<code>assert/[1,2]</code>,
+<code>dynamic/1</code>,
+<code>library_directory/1</code>,
+<code>listing/1</code>,
+<code>load_files/[1,2]</code>,
+
+   <a href="ref-fdi.html#ref-fdi">ref-fdi</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-fileerrors.html#mpg-ref-fileerrors">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-false.html#mpg-ref-false">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

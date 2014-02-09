@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>instance/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>instance(</code><var>+Ref</var><code>, </code><var>-Term</var><code>)</code>
+
+   <p>Unifies <var>Term</var> with the
+most general instance of the dynamic clause or recorded term indicated by
+the database reference <var>Ref</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Ref</var> <dfn>db_reference</dfn>
+     <dd>
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>Ref</var> must be instantiated to a database
+reference to an existing clause or recorded term.  <code>instance/2</code> is
+not sensitive to the source module and can be used to access any
+clause, regardless of its module.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+                if <var>Ref</var> is not instantiated
+
+     <br><dt><code>type_error</code>
+     <dd>
+                if <var>Ref</var> is not a syntactically valid database reference
+
+     <br><dt><code>existence_error</code>
+     <dd>
+                if <var>Ref</var> is a syntactically valid database reference
+                but does not refer to an existing clause or recorded term. 
+</dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p><code>instance/2</code> ignores the module of a clause. 
+Because of this, accessing a clause with via <code>instance/2</code> is
+different from accessing it via <code>clause/3</code> with a given <var>Ref</var>.
+
+   <p>If the reference is to a unit-clause <var>C</var>, then
+<var>Term</var> is unified with <code></code><var>C</var><code> :- true</code>.
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     | ?- <kbd>assert(foo:bar,R).</kbd>
+     
+     R = '$ref'(771292,1)
+     
+     | ?- <kbd>instance('$ref'(771292,1),T).</kbd>
+     
+     T = (bar:-true)
+     
+     | ?- <kbd>clause(H,B,'$ref'(771292,1)).</kbd>
+     
+     no
+     | ?- <kbd>clause(foo:H,B,'$ref'(771292,1)).</kbd>
+     
+     H = bar,
+     B = true
+     
+     | ?-
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>clause/3</code>, <code>asserta/2</code>, <code>assertz/2</code>
+
+   <a href="ref-mdb-bas.html#ref-mdb-bas">ref-mdb-bas</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-integer.html#mpg-ref-integer">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-initialization.html#mpg-ref-initialization">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

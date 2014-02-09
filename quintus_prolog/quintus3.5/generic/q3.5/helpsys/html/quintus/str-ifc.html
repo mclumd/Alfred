@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Interfacing with Foreign Code</h3>
+
+   <p>Foreign terms may be passed between Prolog and other languages
+through the foreign interface.
+
+   <p>To use this, all foreign types to be passed between Prolog and another
+language must be declared with <code>foreign_type/2</code> before the <code>foreign/[2,3]</code>
+clauses specifying the foreign functions.
+
+   <p>The <code>structs</code> package extends the foreign type specifications recognized
+by the foreign interface.  In addition to the types already recognized
+by the foreign interface, any atomic type recognized by the <code>structs</code>
+package is understood, as well as a pointer to any named <code>structs</code> type.
+
+   <p>For example, if you have a function
+
+<pre class="example">             char nth_char(string, n)
+                 char *string;
+                 int n;
+                 {
+                     return string[n];
+                 }
+     </pre>
+
+   <p>You might use it from Prolog as follows:
+<pre class="example">     :- foreign_type cstring = array(char).
+     
+     foreign(nth_char, c, nth_char(+pointer(cstring), +integer,
+             [-char])).
+     </pre>
+
+   <p>This allows the predicate <code>nth_char/3</code> to be called from Prolog to
+determine the nth character of a C string.
+
+   <p>Note that all existing foreign interface type specifications are
+uneffected, in particular <code>address/[0,1]</code> continue to pass addresses to
+and from Prolog as plain integers.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="str-etr.html#str-etr">Next</a>
+<li><a rel="previous" accesskey="p" href="str-nul.html#str-nul">Previous</a>
+<li><a rel="up" accesskey="u" href="str.html#str">Up</a>
+</ul>
+</div>
+   </body></html>
+

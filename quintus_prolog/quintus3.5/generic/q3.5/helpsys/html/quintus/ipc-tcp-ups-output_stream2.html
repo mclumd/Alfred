@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_output_stream(</code><var>?Socket</var><code>, </code><var>-Stream</var><code>)</code></h5>
+
+   <p>Returns the output stream <var>Stream</var> from the socket file descriptor
+term <var>Socket</var>.  You can write to the stream using the regular
+stream output predicates.
+
+   <p>Output on socket streams are buffered.  If you want to send characters one at
+a time, you must follow each write with a flush, as in
+
+<pre class="example">     tcp_output_stream(Socket, Stream),
+     put(Stream, Character),
+     flush_output(Stream)
+     </pre>
+
+   <p>If you try to write to a broken socket, the "Broken pipe" exception is
+raised:
+<pre class="example">     existence_error(_,_,_,_,errno(32))
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-ups-input_stream2.html#ipc-tcp-ups-input_stream2">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-ups.html#ipc-tcp-ups">Up</a>
+</ul>
+</div>
+   </body></html>
+

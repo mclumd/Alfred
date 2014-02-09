@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_select(</code><var>-Term</var><code>)</code></h5>
+
+   <p>The purpose of <code>tcp_select/1</code> is to process connection requests, return
+terms related to timing, and return in a round-robin fashion terms read from
+connected processes.  <var>Term</var> is one of:
+
+     <dl>
+
+     <br><dt><code>connected(</code><var>Socket</var><code>)</code>
+     <dd>is returned when the server has accepted a
+connection request from <var>Socket</var>.  <var>Socket</var> is small integer.  It is a
+socket file descriptor (a small integer).
+
+     <br><dt><code>wakeup(</code><var>Term</var><code>)</code>
+     <dd>is returned when the timer alarm specified in
+<code>tcp_schedule_wakeup/2</code> was delivered (see
+<a href="ipc-tcp-tim-schedule_wakeup2.html#ipc-tcp-tim-schedule_wakeup2">ipc-tcp-tim-schedule_wakeup2</a>).
+
+     <br><dt><code>user_input</code>
+     <dd>is returned whenever there is input available on <code>stdin</code>
+and <code>tcp_watch_user(_,on)</code> has been called.  See
+<code>tcp_watch_user/2</code>, <a href="ipc-tcp-utc-watch_user2.html#ipc-tcp-utc-watch_user2">ipc-tcp-utc-watch_user2</a>.
+
+     <br><dt><code>term(</code><var>Socket</var><code>,</code><var>Term</var><code>)</code>
+     <dd>is returned when some process whose
+socket file descriptor is <var>Socket</var> has called <code>tcp_send/2</code>
+(see <a href="ipc-tcp-trm-send2.html#ipc-tcp-trm-send2">ipc-tcp-trm-send2</a>).  This is the result of a read from the socket.
+
+     <br><dt><code>end_of_file(</code><var>Socket</var><code>)</code>
+     <dd>is returned when the connection is lost
+to the process whose socket file descriptor is <var>Socket</var>.  This is
+the result a read from the socket.  The connection is shut down.
+
+   </dl>
+
+   <blockquote>
+
+        <p><strong>Windows caveats:</strong>
+          <ul>
+
+          <li><code>tcp_select/[1,2]</code> is not interruptible by <kbd>^C</kbd>. For
+this reason, calling <code>tcp_select/2</code> with infinite timeout is probably a
+bad idea. If called with infinite timeout and if there are no open
+sockets, then <code>tcp_select/2</code> will return immediately, indicating a timeout. 
+<li>
+
+        </ul>
+
+   </blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-trm-select2.html#ipc-tcp-trm-select2">Next</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-trm.html#ipc-tcp-trm">Up</a>
+</ul>
+</div>
+   </body></html>
+

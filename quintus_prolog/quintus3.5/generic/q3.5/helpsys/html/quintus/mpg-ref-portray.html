@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>portray/1</code> <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile portray/1.</code>
+
+   <p><code>portray(</code><var>+Term</var><code>)</code>
+
+   <p>A way for the user to over-ride the default behavior of <code>print/1</code>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Note that <code>print/1</code> always calls
+<code>portray</code> in module <code>user</code>. Therefore, to be visible to
+<code>print/1</code>, <code>portray</code> must either be defined in or imported
+into module <code>user</code>. See the reference page for <code>print/1</code> for
+information on what happens if <code>portray/1</code> fails.
+
+   <p>If you would like lists of character codes printed by <code>print/1</code>
+using double-quote notation, you should include <code>library(printchars)</code>
+(see <a href="lib-abs.html#lib-abs">lib-abs</a>) as part of your version of <code>portray/1</code>.
+
+   <p>If <code>portray/1</code> is defined, it is called from:
+     <ol type=1 start=1>
+
+     <li><code>print/1</code> (default is <code>write/1</code>)
+<li>to print the variable bindings after a question has succeeded (default is
+<code>writeq/1</code>. see <code>QU_messages</code> for full details)
+<li>to print a goal during debugging (default is <code>writeq/1</code>. See <code>QU_messages</code>
+for full details)
+        </ol>
+
+<h4 class="subheading">Tips</h4>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>print/1</code>
+<a href="ref-iou-tou-por.html#ref-iou-tou-por">ref-iou-tou-por</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-portray_clause.html#mpg-ref-portray_clause">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-phrase.html#mpg-ref-phrase">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

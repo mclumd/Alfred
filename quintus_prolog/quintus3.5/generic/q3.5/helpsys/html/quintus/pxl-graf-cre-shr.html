@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Sharing and Cloning of Gcs</h5>
+
+   <p>Internally, each drawable has a gc.  All of the drawing primitives that
+allow an optional gc will use this gc when no gc is specified. 
+By setting a drawable's gc, it is possible to have several drawables
+share a common gc.  Then, by changing this gc, you have changed the
+drawing behavior (when no gc is specified in the drawing command) of all
+the drawables that share this gc.
+
+   <p>It is important, however, to understand the difference between changing
+the graphics attributes of a drawable and changing the graphics
+attributes of a gc.  When you change the graphics attributes of a
+drawable, if any other drawable shares that gc, then the gc is cloned
+before modifying it.  This means that changing the graphics attributes
+of a drawable <em>cannot</em> change the graphics attributes of any other
+drawable.  However, changing the graphics attributes of a gc <em>will</em>
+change the graphics attributes of any drawable that uses that gc.
+
+   <p>In fact, when you create a drawable but don't specify any graphics
+attributes, that drawable shares a gc with any other drawables that that
+haven't specified any graphics attributes.  But the first time you
+specify graphics attributes for that drawable, its gc will be cloned. 
+From then on, unless you explicitly give it a gc, its gc will not be
+shared, so any changes you make to its graphics attributes will be
+entirely private to that drawable.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxl-graf-cre-use.html#pxl-graf-cre-use">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-graf-cre.html#pxl-graf-cre">Up</a>
+</ul>
+</div>
+   </body></html>
+

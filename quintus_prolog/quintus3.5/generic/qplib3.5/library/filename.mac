@@ -1,0 +1,125 @@
+%   Subfile: filename.mac
+%   Author : Richard A. O'Keefe
+%   Updated: 29 Aug 1989
+%   Purpose: Macintosh file name parsing and unparsing.
+
+%   Copyright (C) 1989, Quintus Computer Systems, Inc.  All rights reserved.
+
+
+%-----------------------------------------------------------------------+
+%	Parsing Macintosh HFS file names				|
+%-----------------------------------------------------------------------%
+
+
+%hars_to_file_word(host, _) --> { fail }.	% No 'host' component.
+chars_to_file_word(device, Name) -->
+	mac_word(Chars),			% should check length bound
+chars_to_file_word(name, Name) -->
+	mac_word(Chars),			% should check length bound
+	{ atom_chars(Chars, Name) }.
+	{ atom_chars(Chars, Name) }.
+%hars_to_file_word('type', _) --> { fail }.	% No 'type' component.
+
+
+chars_to_file_site(file_name(-1,Device,AbsRel,Directories,-1,-1,'')) -->
+	(   ":" ->
+	    { Device = -1 },
+	    colons(0, N),
+	    rest_mac_site(N, AbsRel, [], Directories)
+	;   mac_word(Chars), ":" ->
+	    colons(0, 0),
+	    rest_mac_site(-2, AbsRel, [], Directories)
+	;   mac_word(Chars),
+	    { atom_chars(Device, Chars) },
+	    { AbsRel = -2, Directories = [] }
+	).
+
+
+chars_to_file_name(file_name(-1,Device,AbsRel,Directories,Name,-1,'')) -->
+	(   ":" ->
+	    { Device = -1 },
+	    colons(0, N),
+	    rest_mac_file_name(N, AbsRel, [], Directories, Name)
+	;   mac_word(Chars), ":" ->
+	    colons(0, 0),
+	    rest_mac_file_name(-2, AbsRel, [], Directories, Name),
+	    { atom_chars(Device, Chars) }
+	;   { Device = -1, AbsRel = -1, Directories = [] },
+	    mac_word(Chars),
+	    { atom_chars(Name, Chars) }
+	).
+
+
+colons(N0, N) --> ":", !, { N1 is N0+1 }, colons(N1, N).
+colons(N, N) --> "".
+
+mac_word([C|Cs]) --> [C], { C =\= ":" }, !, mac_word(Cs).
+mac_word([]) --> "".
+
+rest_mac_file_site(Depth0, Depth, Dirs0, Dirs) -->
+	mac_word(Chars),	
+	(   ":" ->
+	    colons(0, N),
+	    (   { N =:= 0 } ->
+		{ atom_chars(Dir, Chars) },
+		rest_mac_file_site(Depth0, Depth, [Dir|Dirs0], Dirs)
+	    ;   { pop(N, Dirs0, Dirs1, Depth0, Depth1) },
+		rest_mac_file_site(Depth1, Depth, Dirs1, Dirs)
+	    )
+	;   {   Chars = "" ->
+		reverse(Dirs0, Dirs)
+	    ;   atom_chars(Dir, Chars),
+		reverse([Dir|Dirs0], Dirs)
+	    },
+	    { Depth = Depth0 }
+	).
+
+rest_mac_file_name(Depth0, Depth, Dirs0, Dirs, Name) -->
+	mac_word(Chars),	
+	(   ":" ->
+	    colons(0, N),
+	    (   { N =:= 0 } ->
+		{ atom_chars(Dir, Chars) },
+		rest_mac_file_name(Depth0, Depth, [Dir|Dirs0], Dirs, Name)
+	    ;   { pop(N, Dirs0, Dirs1, Depth0, Depth1) },
+		rest_mac_file_name(Depth1, Depth, Dirs1, Dirs, Name)
+	    )
+	;   { Chars = "" -> Name = -1 ; atom_chars(Name, Chars) },
+	    { Depth = Depth0 },
+	    { reverse(Dirs0, Dirs) }
+	).
+
+pop(1, Dirs, Dirs, Depth, Depth) :- !.
+pop(N, [_|Dirs0], Dirs, Depth0, Depth) :- !,
+	M is N-1,
+	pop(M, Dirs0, Dirs, Depth0, Depth).
+pop(N, [], [], Depth0, Depth) :-
+	Depth0 >= 0,
+	Depth is Depth0+N-1.
+
+/*  The Macintosh file system ignores case when looking for a file,
+    but preserves it when creating.  Accordingly, we must preserve
+    case at all times in our file name records.
+*/
+normalise_subdirs(X, X).
+
+
+file_name_to_chars(file_name(_,Device,AbsRel,Directories,Name,_,_)) -->
+	(   { atom(Device) } -> explode(Device)
+	;   { integer(Device) } -> ""
+	),
+	(   { AbsRel  >=  0 } -> { N is AbsRel+1 }, colons(N),
+				 mac_directories(Directories)
+	;   { AbsRel =:= -2 } -> ":",
+				 mac_directories(Directories)
+	;   { AbsRel =:= -1 } -> ""
+	),
+	(   { atom(Name) } -> explode(Name)
+	;   { integer(Name) } -> ""
+	).
+
+colons(N) --> ( { N > 0 } -> ":", { M is N-1 }, colons(M) ; "" ).
+
+mac_directories([]) --> "".
+mac_directories([Dir|Dirs]) --> explode(Dir), ":", mac_directories(Dirs).
+

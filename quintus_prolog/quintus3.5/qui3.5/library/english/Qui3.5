@@ -1,0 +1,650 @@
+!   SCCS   : @(#)Qui	75.1 03/31/95
+!   File   : Qui
+!   Authors: Window Technology Group
+!   Purpose: X Resources for QUI
+!   Origin : May 1990
+!
+!       +--------------------------------------------------------+
+!       |                                                        |
+!       |  Copyright (C) 1990                                    |
+!       |  Quintus Computer Systems Inc.  All rights reserved.   |
+!       |  An Intergraph Company                                 |
+!       |                                                        |
+!       +--------------------------------------------------------+
+
+!
+! Unilateral decisions
+!
+qui.loadOnlyAtTopLevel:				True
+qui.goalHistoryNoDup:				True
+
+qui*background:                 		wheat
+qui*font:					fixed
+qui*fontList:					fixed
+qui*traversalOn:				True
+! qui*XmText.translations:  #override\n\
+!                           Ctrl<Btn2Up>: nop() \n\
+!                           <Btn2Up>: copy-to()
+!
+
+!
+! Key binding for Text Widget, (file selection box, dialogs)
+!
+qui*XmText.translations: #override\n\
+		<Key>osfDelete: delete-previous-character()\n\
+		Ctrl<Key>D:     delete-next-character()\n\
+		Ctrl<Key>U:     kill-to-start-of-line()\n\
+		Ctrl<Key>K:     kill-to-end-of-line()\n\
+		Ctrl<Key>W:     kill-previous-word()\n\
+		Ctrl<Key>F:     forward-character()\n\
+		Ctrl<Key>B:     backward-character()
+!
+! Qui Main Window Resources
+!
+qui*qui_window.iconName:			Qui
+qui*qui_window.x:				14
+qui*qui_window.y:				148
+qui*qui_window*main.width:			530
+qui*qui_window*main.height:			600
+qui*qui_window*history.height: 38
+
+qui*main*dialogTitle: 				Quintus User Interface
+
+qui*main*commands.borderWidth:			1
+qui*main*commands.resizable:			True
+
+qui*main*commands*interrupt.labelString:    	Interrupt
+qui*main*commands*interrupt.borderWidth:        2
+qui*main*commands*interrupt.topAttachment:  	attach_form
+qui*main*commands*interrupt.bottomAttachment:  	attach_form
+qui*main*commands*interrupt.leftAttachment:     attach_position
+qui*main*commands*interrupt.leftPosition:       1
+qui*main*commands*interrupt.rightAttachment:    attach_position
+qui*main*commands*interrupt.rightPosition:      14
+
+qui*main*commands.interrupt.topOffset:      	5
+qui*main*commands.interrupt.bottomOffset:   	5
+
+qui*main*commands*separator.orientation:        vertical
+qui*main*commands*separator.width:              4
+qui*main*commands*separator.topAttachment:  	attach_form
+qui*main*commands*separator.bottomAttachment:   attach_form
+qui*main*commands*separator.leftAttachment:     attach_position
+qui*main*commands*separator.leftPosition:       15
+qui*main*commands*separator.rightAttachment:    attach_position
+qui*main*commands*separator.rightPosition:      19
+
+qui*main*commands*next.labelString:		Next Answer
+qui*main*commands*next.topAttachment:	 	attach_form
+qui*main*commands*next.leftAttachment:   	attach_position
+qui*main*commands*next.leftPosition:     	20
+qui*main*commands*next.rightAttachment:  	attach_position
+qui*main*commands*next.rightPosition:    	45
+qui*main*commands.next.topOffset:   		7
+
+qui*main*commands*enough.labelString:	 	No More Answers
+qui*main*commands*enough.topAttachment:	 	attach_form
+qui*main*commands*enough.leftAttachment:  	attach_position
+qui*main*commands*enough.leftPosition:    	47
+qui*main*commands*enough.rightAttachment: 	attach_position
+qui*main*commands*enough.rightPosition:   	72
+qui*main*commands*enough.topOffset:   		7
+
+qui*main*commands*remaining.labelString:     	Remaining Answers
+qui*main*commands*remaining.topAttachment:	attach_form
+qui*main*commands*remaining.leftAttachment:  	attach_position
+qui*main*commands*remaining.leftPosition:    	74
+qui*main*commands*remaining.rightAttachment: 	attach_position
+qui*main*commands*remaining.rightPosition:   	99
+qui*main*commands.remaining.topOffset:   	7
+
+! Qui main window cascade buttons and pulldown menu buttons
+qui*main*menuBar*file.labelString:		File
+qui*main*menuBar*file.mnemonic:			F
+qui*main*menuBar*help.labelString:		Help
+qui*main*menuBar*help.mnemonic:			H
+
+qui*main*menuBar*edit.labelString:		Edit...
+qui*main*menuBar*edit.mnemonic:			E
+qui*main*menuBar*load.labelString:		Load...
+qui*main*menuBar*load.mnemonic:			L
+qui*main*menuBar*log.labelString:		Log
+qui*main*menuBar*log.mnemonic:			g
+qui*main*menuBar*logSession.labelString:	Entire Session...
+!Qui*main*menuBar*logSession.mnemonic:
+qui*main*menuBar*logSelection.labelString:	From Selection...
+!Qui*main*menuBar*logSelection.mnemonic:
+
+qui*main*menuBar*quit.labelString:		Quit...
+qui*main*menuBar*quit.mnemonic:			Q
+
+
+qui*main*menuBar*debug.labelString:		Debug
+qui*main*menuBar*debug.mnemonic:		D
+qui*main*menuBar*creep.labelString:		Trace (Creep Initially)
+qui*main*menuBar*creep.mnemonic:		T
+qui*main*menuBar*leap.labelString:		Debug (Leap Initially)
+qui*main*menuBar*leap.mnemonic:			D
+qui*main*menuBar*zip.labelString:		Zip (Zip Initially)
+qui*main*menuBar*zip.mnemonic:			Z
+qui*main*menuBar*off.labelString:		Nodebug
+qui*main*menuBar*off.mnemonic:			N
+
+qui*main*menuBar*helpButton1.labelString:	On Prolog
+qui*main*menuBar*helpButton1.mnemonic:		P
+qui*main*menuBar*helpButton2.labelString:	On Qui
+qui*main*menuBar*helpButton2.mnemonic:		Q
+qui*main*menuBar*helpButton3.labelString:	On This Window
+qui*main*menuBar*helpButton3.mnemonic:		T
+qui*main*menuBar*helpButton3.accelerator:	<Key>F1
+
+qui*main*loadFile.dialogTitle:			Load File
+qui*main*loadFile.okLabelString:		Load
+
+! Exit Warning Dialogs
+qui*main*exitWarning*dialogTitle: 		Exit Confirmation
+qui*main*exitWarning*messageString: 	Do you really want to exit Prolog ?
+qui*main*exitWarning*okLabelString:		Exit
+qui*main*exitWarning*cancelLabelString:		Cancel
+
+! Enter Log File Dialog
+qui*main*getLogFile*dialogTitle: Enter The Log Filename
+qui*main*getLogFile*selectionLabelString: Enter the filename to record the Prolog session:
+qui*main*getLogFile.textString: qui.log
+! Error message Dialog For Logging
+qui*main*logErrorDialog.dialogTitle: Save Log File Error Message
+qui*main*logErrorDialog.messageString: Cannot save to the file
+qui*main*logErrorDialog.cancelLabelString: Ok
+! Interrrupt Dialog
+qui*main*interruptDialog*dialogTitle: 			Prolog Interrupt
+qui*main*interruptDialog*messageString: 		Choose an option to resume execution.
+qui*main*interruptDialog*continue.labelString:		Continue
+qui*main*interruptDialog*continue.showAsDefault:	1
+qui*main*interruptDialog*abort.labelString:		Abort
+qui*main*interruptDialog*debug.labelString:		Trace
+qui*main*interruptDialog*exit.labelString:		Exit
+
+! Qui confirmation dialogs
+qui*qui_window*yesNoProceed*dialogTitle:	Redefined Predicate
+qui*qui_window*yesNoProceed*okLabelString:			Yes
+qui*qui_window*yesNoProceed*cancelLabelString:			No
+qui*qui_window*yesNoProceed*helpLabelString:			Proceed
+
+qui*qui_window*yesNo.dialogTitle:		Yes / No Question
+qui*qui_window*yesNo.okLabelString:				Yes
+qui*qui_window*yesNo*cancelLabelString:				No
+qui*qui_window*yesNo.helpLabelString:				Abort
+
+qui*prolog*translations: #override\n\
+	       	Button2<PtrMoved>: nop() \n\
+                Ctrl<Btn2Up>: 	nop() \n\
+	        <Btn2Up>: 	copy-to() \n\
+		Ctrl<Key>C:     qpinterrupt() \n\
+		Ctrl<Key>D:     qpeof() \
+			        delete-next-character()\n\
+		Ctrl<Key>U:     kill-to-prompt()\n\
+		<Key>osfDelete: delete-previous-character()\n\
+		Ctrl<Key>K:     kill-to-end-of-line()\n\
+		Ctrl<Key>W:     kill-previous-word()\n\
+		Ctrl<Key>P:     previous-line()\n\
+		Ctrl<Key>N:     next-line()\n\
+		Ctrl<Key>A:     beginning-of-line()\n\
+		Ctrl<Key>E:     end-of-line()\n\
+		Ctrl<Key>B:     backward-character()\n\
+		Ctrl<Key>F:     forward-character()
+
+!
+! Qui Editor Resources
+!
+! general error message and set up
+qui*editor_window.x:		10
+qui*editor_window.y:		10
+qui*editor.asciiOnly:					TRUE
+qui*editor.generateBackup:				TRUE
+qui*editor.backupSuffix:				.Bak
+qui*editor.iconNamePrefix:				QuiEdit
+qui*editor.readOnlyString:				Read Only
+qui*editor.blockFileMsg:	File is a block special file
+qui*editor.charFileMsg:		File is a character special file
+qui*editor.dirFileMsg:		File is a directory
+qui*editor.nonAsciiFileMsg:	File is not an ascii file
+qui*editor.qofFileMsg:		File is a Quintus Object Format file
+qui*editor.objFileMsg:		File is a binary object file
+qui*editor.noBackupMsg:		No backup file generated
+qui*editor.saveFailMsg:		Cannot save the file
+qui*editor.openFailMsg:		Cannot open the file
+qui*editor.noLineMsg:		No such line number in the file
+qui*editor.badLineMsg:		Invalid line number
+!
+qui*editor*newFile.messageString:                 	New File?
+qui*editor*newFile.okLabelString:			Yes
+qui*editor*newFile.cancelLabelString:			No
+qui*editor*newFile.dialogTitle:			New File Confirmation
+
+qui*editor*openFile.mustMatch:				True
+qui*editor*openFile.dialogTitle:			Edit File Selection
+
+qui*editor*savePrevious.messageString:			Save Previous File?
+qui*editor*savePrevious.dialogTitle:
+qui*editor*savePrevious.okLabelString:			Yes
+qui*editor*savePrevious.cancelLabelString:		No
+
+qui*editor*open.labelString:				Edit...
+qui*editor*open.mnemonic:				E
+
+qui*editor*insertFile.mustMatch:			True
+qui*editor*insertFile.dialogTitle:			Insert File Selection
+
+qui*editor*insert.labelString:				Insert...
+qui*editor*insert.mnemonic:				I
+
+qui*editor*save.labelString:				Save
+qui*editor*save.mnemonic:				S
+
+qui*editor*saveAsFile.selectionLabelString:		Save As
+qui*editor*saveAsFile.dialogTitle:	Save To A File
+
+qui*editor*saveAs.labelString:				Save As...
+qui*editor*saveAs.mnemonic:				A
+
+qui*editor*saveChanges.messageString:			Save Changes?
+qui*editor*saveChanges.okLabelString:			Yes
+qui*editor*saveChanges.cancelLabelString:		Cancel
+qui*editor*saveChanges.helpLabelString:			No
+qui*editor*saveChanges.dialogTitle:		Save Changes Confirmation
+
+qui*editor*load.labelString:				Compile
+qui*editor*load.mnemonic:				C
+
+qui*editor*quit.labelString:				Quit
+qui*editor*quit.mnemonic:				Q
+
+qui*editor*file.labelString:				File
+qui*editor*file.mnemonic:				F
+
+qui*editor*findReplaceForm.dialogTitle:			Find & Replace
+qui*editor*findReplace*packing:				PACK_COLUMN
+qui*editor*findReplace*numColumns:			3
+qui*editor*findReplace*orientation:			HORIZONTAL
+
+qui*editor*find.labelString:				Find
+qui*editor*find.mnemonic:				F
+
+qui*editor*replace.labelString:				Replace
+qui*editor*replace.mnemonic:				R
+
+qui*editor*replaceAll.labelString:			Replace All
+qui*editor*replaceAll.mnemonic:				A
+
+qui*editor*cancel.labelString:				Quit
+qui*editor*cancel.mnemonic:				Q
+
+qui*editor*findText.columns:				15
+
+qui*editor*replaceText.columns:				15
+
+qui*editor*findReplaceButton.labelString:		Find & Replace
+qui*editor*findReplaceButton.mnemonic:			R
+
+qui*editor*gotoALine.labelString:			Goto A Line
+qui*editor*gotoALine.mnemonic:				G
+
+qui*editor*enterLineNum.dialogTitle:			Goto A Line
+qui*editor*enterLineNum.selectionLabelString:	Enter the line number to go to
+
+! This should be deleted, it's only for 3.0b
+qui*editor*showLineNum.labelString:			Show Line Numbers:OFF
+qui*editor*showLineNum.mnemonic:			S
+
+qui*editor*writeProtected.dialogTitle:		Write Protection Warning
+qui*editor*writeProtected.messageString:		File - READ ONLY!
+qui*editor*writeProtected.cancelLabelString:		Ok
+
+qui*editor*loadIncomplete.dialogTitle:	Load File Incomplete Warning
+qui*editor*loadIncomplete.messageString:                Cannot save file. Loading not completed!
+qui*editor*loadIncomplete.cancelLabelString:		Ok
+
+qui*editor*generalError.dialogTitle:			Qui Editor Error
+qui*editor*generalError.cancelLabelString:		Ok
+
+qui*editor*misc.labelString:				Misc
+qui*editor*misc.mnemonic:				M
+
+qui*editor*help.labelString:				Help
+qui*editor*help.mnemonic:				H
+
+qui*editor*helpButton.labelString:			On This Window
+qui*editor*helpButton.mnemonic:				T
+qui*editor*helpButton.accelerator:			<Key>F1
+
+qui*editor*text.rows:					40
+qui*editor*text.columns:				80
+qui*editor*text.editMode:				MULTI_LINE_EDIT
+qui*editor*text.translations: #override \n\
+	                  <Btn2Up>: copy-to() \n\
+                          	Ctrl<Key>F:      forward-character()\n\
+                             	Ctrl<Key>B:      backward-character()\n\
+                             	Ctrl<Key>P:      previous-line() \n\
+                             	Ctrl<Key>N:      next-line()\n\
+                             	Ctrl<Key>A:      beginning-of-line()\n\
+                             	Ctrl<Key>E:      end-of-line()\n\
+                            	Ctrl<Key>V:      next-page() grab-focus() \n\
+                             	Ctrl<Key>U:      previous-page() grab-focus()\n\
+                             	Ctrl<Key>W:      kill-selection()\n\
+                             	Ctrl<Key>K:      kill-to-end-of-line()\n\
+                             	Ctrl<Key>Y:      unkill()\n\
+                             	Ctrl<Key>L:      redraw-display()\n\
+                             	Ctrl<Key>D:      delete-next-character()\n\
+                             	Ctrl<Key>H:      delete-previous-character()\n\
+                             	Ctrl<Key>J:      newline-and-indent()\n\
+                             	Ctrl<Key>M:      newline()\n\
+                             	Ctrl<Key>O:      newline-and-backup()\n\
+                             	Ctrl<Key>T:      beginning-of-file()\n\
+                             	Ctrl<Key>X:      end-of-file()\n\
+                                <Key>osfDelete:  delete-previous-character()
+
+
+!
+! Qui Help System Resources
+!
+!Qui.help_window.x:		400
+!Qui.help_window.y:		0
+qui.help_window.height:					500
+qui.help_window.width:					750
+qui*help_window*helpSystem*fontList:			-*-courier-bold-r-normal--14-*
+qui*help_window.iconName:				Qui HELP
+qui*help_window*helpSystem*maxHistory:			10
+qui*help_window*helpSystem*historyLength:		50
+qui*help_window*helpSystem*indexTag:			index
+qui*help_window*helpSystem*noOpenMsg:		Cannot open the help file
+qui*help_window*helpSystem*badHelpFileMsg:	Bad help file format
+
+!Qui*help_window*helpManual.selectionPolicy:		single_select
+qui*help_window*helpSystem*listMarginHeight:		20
+qui*help_window*helpSystem*listMarginWidth:		20
+qui*help_window*helpSystem*helpSecDialog.width:	300
+qui*help_window*helpSystem*helpSecDialog.height:	200
+qui*help_window*helpSystem*helpSecDialog*dialogTitle:	QUI Help Select Section
+qui*help_window*helpSystem*helpSecDialog*selectionLabelString: Enter the cross reference of the desired section
+qui*help_window*helpSystem*helpIndDialog*dialogTitle:	QUI Help Topic Index
+qui*help_window*helpSystem*helpIndDialog*selectionLabelString: Enter the topic to look up
+qui*help_window*helpSystem*helpErrDialog*dialogTitle:	QUI Help Error Message
+qui*help_window*helpSystem*helpErrDialog*cancelLabelString:	Ok
+qui*help_window*helpSearDialog*dialogTitle:		QUI Help Text Search
+qui*help_window*helpSearDialog*selectionLabelString:	 Enter the string to search for
+qui*help_window*helpSearDialog.wrapAround:	 False
+qui*help_window*helpSearDialog*okLabelString:	 Forward
+qui*help_window*helpSearDialog*cancelLabelString:	 Backward
+qui*help_window*helpSearDialog*helpLabelString:	 Cancel
+qui*help_window*helpSearDialog*wrapAround.labelString: Wraparound
+qui*help_window*helpSearDialog*onToggle.labelString:   on
+qui*help_window*helpSearDialog*offToggle.labelString:  off
+
+qui*help_window*helpSystem*fileCasBtn.labelString:	File 
+qui*help_window*helpSystem*fileCasBtn.mnemonic:		F
+qui*help_window*helpSystem*closeHelpBtn.labelString:	Quit
+qui*help_window*helpSystem*closeHelpBtn.mnemonic:	Q
+qui*help_window*helpSystem*gotoCasBtn.labelString:	Goto
+qui*help_window*helpSystem*gotoCasBtn.mnemonic:		G
+qui*helpSystem*nextSecBtn.labelString:			Next Section
+qui*helpSystem*nextSecBtn.mnemonic:			N
+qui*helpSystem*nextSecBtn.accelerator:			Ctrl<Key>N
+qui*helpSystem*nextSecBtn.acceleratorText:		Ctrl + N
+qui*helpSystem*lastSecBtn.labelString:			Previous Section
+qui*helpSystem*lastSecBtn.mnemonic:			P
+qui*helpSystem*lastSecBtn.accelerator:			Ctrl<Key>P
+qui*helpSystem*lastSecBtn.acceleratorText:		Ctrl + P
+qui*help_window*helpSystem*parentBtn.labelString:	Parent
+qui*help_window*helpSystem*parentBtn.mnemonic:		a
+qui*help_window*helpSystem*parentBtn.accelerator:	Ctrl<Key>U
+qui*help_window*helpSystem*parentBtn.acceleratorText:	Ctrl + U
+qui*help_window*helpSystem*toTopBtn.labelString:	Top
+qui*help_window*helpSystem*toTopBtn.mnemonic:		T
+qui*help_window*helpSystem*toTopBtn.accelerator:	Ctrl<Key>T
+qui*help_window*helpSystem*toTopBtn.acceleratorText:	Ctrl + T
+qui*help_window*helpSystem*sectionBtn.labelString:	Reference...
+qui*help_window*helpSystem*sectionBtn.mnemonic:		R
+qui*help_window*helpSystem*sectionBtn.accelerator:	Ctrl<Key>R
+qui*help_window*helpSystem*sectionBtn.acceleratorText:	Ctrl + R
+qui*help_window*helpSystem*indexBtn.labelString:	Index...
+qui*help_window*helpSystem*indexBtn.mnemonic:		I
+qui*help_window*helpSystem*indexBtn.accelerator:	Ctrl<Key>I
+qui*help_window*helpSystem*indexBtn.acceleratorText:	Ctrl + I
+qui*help_window*helpSystem*historyCasBtn.labelString:	History
+qui*help_window*helpSystem*historyCasBtn.mnemonic:	i
+qui*help_window*helpSystem*historyBtn0.accelerator:	Ctrl<Key>0
+qui*help_window*helpSystem*historyBtn0.acceleratorText:	Ctrl + 0
+qui*help_window*helpSystem*historyBtn1.accelerator:	Ctrl<Key>1
+qui*help_window*helpSystem*historyBtn1.acceleratorText:	Ctrl + 1
+qui*help_window*helpSystem*historyBtn2.accelerator:	Ctrl<Key>2
+qui*help_window*helpSystem*historyBtn2.acceleratorText:	Ctrl + 2
+qui*help_window*helpSystem*historyBtn3.accelerator:	Ctrl<Key>3
+qui*help_window*helpSystem*historyBtn3.acceleratorText:	Ctrl + 3
+qui*help_window*helpSystem*historyBtn4.accelerator:	Ctrl<Key>4
+qui*help_window*helpSystem*historyBtn4.acceleratorText:	Ctrl + 4
+qui*help_window*helpSystem*historyBtn5.accelerator:	Ctrl<Key>5
+qui*help_window*helpSystem*historyBtn5.acceleratorText:	Ctrl + 5
+qui*help_window*helpSystem*historyBtn6.accelerator:	Ctrl<Key>6
+qui*help_window*helpSystem*historyBtn6.acceleratorText:	Ctrl + 6
+qui*help_window*helpSystem*historyBtn7.accelerator:	Ctrl<Key>7
+qui*help_window*helpSystem*historyBtn7.acceleratorText:	Ctrl + 7
+qui*help_window*helpSystem*miscCasBtn.labelString:	Misc
+qui*help_window*helpSystem*miscCasBtn.mnemonic:		M
+qui*help_window*helpSystem*searchBtn.labelString:	Search...
+qui*help_window*helpSystem*searchBtn.mnemonic:		S
+qui*help_window*helpSystem*searchBtn.accelerator:	Ctrl<Key>S
+qui*help_window*helpSystem*searchBtn.acceleratorText:	Ctrl + S
+qui*help_window*helpSystem*helpCasBtn.labelString:	Help
+qui*help_window*helpSystem*helpCasBtn.mnemonic:		H
+qui*help_window*helpSystem*onHelpBtn.labelString:	On This Window
+qui*help_window*helpSystem*onHelpBtn.mnemonic:		T
+qui*help_window*helpSystem*onHelpBtn.accelerator:	<Key>F1
+qui*help_window*helpSystem*helpMenuFile.marginHeight:	3
+qui*help_window*helpSystem*helpMenuFile.marginWidth:	20
+qui*help_window*helpSystem*helpTextFile.marginHeight:	3
+qui*help_window*helpSystem*helpTextFile.marginWidth:	10
+qui*help_window*helpTextFile.helpTextCore.translations: #override \n\
+				<Btn1Down>: SetSelection()\n\
+				<Btn1Down>,<Btn1Up>: SendSelection()\n\
+				<Btn1Up>: SendSelection()\n\
+				<Btn1Motion>: SwitchSelection()
+
+!
+! QUI Debugger Resources
+!
+qui*debugger*debugger_main_window.title:	Quintus Debugger
+qui*debugger*debugger_main_window.geometry:	583x600
+qui*debugger*debugger_main_window.x:		558
+qui*debugger*debugger_main_window.y:		145
+
+qui*debugger*filebutton.labelString:		File
+qui*debugger*filebutton.mnemonic:		F
+qui*debugger*optionsbutton.labelString:		Options
+qui*debugger*optionsbutton.mnemonic:		O
+qui*debugger*spypointsbutton.labelString:	Spypoints
+qui*debugger*spypointsbutton.mnemonic:		S
+qui*debugger*windowbutton.labelString:		Window
+qui*debugger*windowbutton.mnemonic:		W
+qui*debugger*travelbutton.labelString:		Travel
+qui*debugger*travelbutton.mnemonic:		T
+qui*debugger*helpbutton.labelString:		Help
+qui*debugger*helpbutton.mnemonic:		H
+
+qui*debugger*open.labelString:			Open...
+qui*debugger*open.mnemonic:			O
+qui*debugger*edit_source.labelString:		Edit Source
+qui*debugger*edit_source.mnemonic:		E
+qui*debugger*nonstop.labelString:		Nonstop
+qui*debugger*nonstop.mnemonic:			N
+qui*debugger*abort.labelString:			Abort
+qui*debugger*abort.mnemonic:			A
+qui*debugger*break.labelString:			Break
+qui*debugger*break.mnemonic:			B
+qui*debugger*quit_debugger.labelString:		Quit
+qui*debugger*quit_debugger.mnemonic:		Q
+
+qui*debugger*leashing_window.labelString:	Leashing... 
+qui*debugger*leashing_window.mnemonic:		L
+qui*debugger*spypoints_window.labelString:	Spypoints...
+qui*debugger*spypoints_window.mnemonic:		S
+qui*debugger*top_creep.labelString:		Creep Initially (Trace)
+qui*debugger*top_creep.mnemonic:		T
+qui*debugger*top_leap.labelString:		Leap Initially (Debug)
+qui*debugger*top_leap.mnemonic:			D
+qui*debugger*top_zip.labelString:		Zip Initially
+qui*debugger*top_zip.mnemonic:			Z
+
+qui*debugger*spy_goal.labelString:		Spy Goal
+qui*debugger*spy_goal.mnemonic:			S
+qui*debugger*nospy_goal.labelString:		Nospy Goal
+qui*debugger*nospy_goal.mnemonic:		N
+qui*debugger*spy_predicate.labelString:		Spy Predicate
+qui*debugger*nospy_predicate.labelString:	Nospy Predicate
+
+qui*debugger*debugger_main_window.labelString:	Debugger Window
+qui*debugger*debugger_main_window.mnemonic:	D
+qui*debugger*bindings_window.labelString:	Bindings Window
+qui*debugger*bindings_window.mnemonic:		B
+qui*debugger*standard_debugger_window.labelString: Standard Debugger Window
+qui*debugger*standard_debugger_window.mnemonic:	S
+qui*debugger*ancestors_window.labelString:	Ancestors Window
+qui*debugger*ancestors_window.mnemonic:		A
+qui*debugger*choicepoints_window.labelString:	Choicepoints Window
+qui*debugger*choicepoints_window.mnemonic:	C
+
+qui*debugger*help_on_window.labelString:	On This Window
+qui*debugger*help_on_window.mnemonic:		T
+qui*debugger*help_on_window.accelerator:	<Key>F1
+
+qui*debugger.translations: #augment \n\
+	       		  Button2<PtrMoved>: nop() \n\
+                          Ctrl<Btn2Up>: nop() \n\
+	                  <Btn2Up>: copy-to() \n\
+					<Key>C:	shortcut(creep)\n\
+					<Key>L:	shortcut(leap)\n\
+					<Key>S:	shortcut(skip)\n\
+					<Key>R:	shortcut(retry)\n\
+					<Key>F:	shortcut(fail)\n\
+					<Key>Z:	shortcut(zip)\n\
+					<Key>Q:	shortcut(quasi_skip)\n\
+					<Key>N:	shortcut(nodebug)\n\
+					<Key>A:	shortcut(abort)
+
+qui*debugger*creep.labelString:				Creep
+qui*debugger*travelmenu*creep.mnemonic:			C
+qui*debugger*travelmenu*creep.accelerator:		<Key>C
+qui*debugger*travelmenu*creep.acceleratorText:		C
+qui*debugger*leap.labelString:				Leap
+qui*debugger*travelmenu*leap.mnemonic:			L
+qui*debugger*travelmenu*leap.accelerator:		<Key>L
+qui*debugger*travelmenu*leap.acceleratorText:		L
+qui*debugger*skip.labelString:				Skip
+qui*debugger*travelmenu*skip.mnemonic:			S
+qui*debugger*travelmenu*skip.accelerator:		<Key>S
+qui*debugger*travelmenu*skip.acceleratorText:		S
+qui*debugger*retry.labelString:				Retry
+qui*debugger*travelmenu*retry.mnemonic:			R
+qui*debugger*travelmenu*retry.accelerator:		<Key>R
+qui*debugger*travelmenu*retry.acceleratorText:		R
+qui*debugger*fail.labelString:				Fail
+qui*debugger*travelmenu*fail.mnemonic:			F
+qui*debugger*travelmenu*fail.accelerator:		<Key>F
+qui*debugger*travelmenu*fail.acceleratorText:		F
+qui*debugger*zip.labelString:				Zip
+qui*debugger*travelmenu*zip.mnemonic:			Z
+qui*debugger*travelmenu*zip.accelerator:		<Key>Z
+qui*debugger*travelmenu*zip.acceleratorText:		Z
+qui*debugger*quasi_skip.labelString:			Quasi-skip
+qui*debugger*travelmenu*quasi_skip.mnemonic:		Q
+qui*debugger*travelmenu*quasi_skip.accelerator:		<Key>Q
+qui*debugger*travelmenu*quasi_skip.acceleratorText:	Q
+qui*debugger*travelmenu_separator1.orientation:		horizontal
+qui*debugger*travel_separator1.orientation:		vertical
+qui*debugger*travel_separator1.margin:			1
+qui*debugger*frame_up.labelString:			Frame Up
+qui*debugger*travelmenu*frame_up.accelerator:		Ctrl<Key>U
+qui*debugger*travelmenu*frame_up.acceleratorText:	Ctrl + U
+qui*debugger*frame_down.labelString:			Frame Down
+qui*debugger*travelmenu*frame_down.accelerator:		Ctrl<Key>D
+qui*debugger*travelmenu*frame_down.acceleratorText:	Ctrl + D
+qui*debugger*frame_back.labelString:			Frame Back
+qui*debugger*travelmenu*frame_back.accelerator:		Ctrl<Key>B
+qui*debugger*travelmenu*frame_back.acceleratorText:	Ctrl + B
+
+
+qui*debugger*depthLabel.labelString:		Depth:
+qui*debugger*predicateLabel.labelString:	Predicate:
+
+qui*debugger*leashing_form.dialogTitle:		Leashing 
+qui*debugger*leashing_form.dialogStyle:		dialog_application_modal
+qui*debugger*leashing_options.orientation:	vertical
+qui*debugger*leashing_options.packing:		pack_column
+qui*debugger*leashing_options.numColumns:	2
+qui*debugger*leashing_dismiss.orientation:	horizontal
+qui*debugger*leash_call.labelString:		Call
+qui*debugger*leash_head.labelString:		Head
+qui*debugger*leash_exit.labelString:		Exit
+qui*debugger*leash_done.labelString:		Done
+qui*debugger*leash_redo.labelString:		Redo
+qui*debugger*leash_fail.labelString:		Fail
+qui*debugger*leash_exception.labelString:	Exception
+qui*debugger*leashing_ok.labelString:		Ok
+qui*debugger*leashing_cancel.labelString:	Cancel
+
+qui*debugger*printmode_form.dialogTitle:	Print Format
+qui*debugger*printmode_options.packing:		pack_column
+qui*debugger*printmode_options.numColumns:	2
+qui*debugger*printmode_dismiss.orientation:	horizontal
+qui*debugger*quoted_toggle.labelString:		quoted
+qui*debugger*character_escapes_toggle.labelString: character_escapes
+qui*debugger*ignore_ops_toggle.Labelstring:	ignore_ops
+qui*debugger*portrayed_toggle.labelString:	portrayed
+qui*debugger*number_vars_toggle.labelString:	number_vars
+qui*debugger*printmode_depth_label.labelString:	max_depth
+qui*debugger*printmode_ok.labelString:		Ok
+qui*debugger*printmode_cancel.labelString:	Cancel
+
+qui*debugger*open_selection.dialogTitle:	File to Open
+qui*debugger*open_selection.listVisibleItemCount:	16
+
+qui*debugger*close.labelString:			Close
+qui*debugger*close.mnemonic:			C
+qui*debugger*print_format.labelString:		Print Format...
+qui*debugger*print_format.mnemonic:		P
+
+qui*debugger*text.rows:				24
+qui*debugger*text.columns:			80
+
+qui*debugger*bindings_window*dialogTitle:	Quintus Debugger Variable Bindings
+qui*debugger*bindings_window.geometry:		570x125
+qui*debugger*bindings_window.x:			558
+qui*debugger*bindings_window.y:			0
+qui*debugger*standard_debugger_window*dialogTitle:	Quintus Standard Debugger
+qui*debugger*standard_debugger_window.geometry:	570x125
+!Qui*debugger*standard_debugger_window.x:	60
+!Qui*debugger*standard_debugger_window.y:	60
+qui*debugger*ancestors_window*dialogTitle:	Quintus Debugger Ancestor List
+qui*debugger*ancestors_window.geometry:		570x125
+qui*debugger*ancestors_window.x:		558
+qui*debugger*ancestors_window.y:		751
+qui*debugger*choicepoints_window*dialogTitle:	Quintus Debugger Choicepoint List
+
+!
+! Qui Error Resources
+!
+qui*qui_window*error*dialogTitle:		Prolog Error
+qui*qui_window*error*cancelLabelString:		Abort
+qui*qui_window*error*okLabelString:		Continue
+qui*qui_window*warning*dialogTitle:		Prolog Warning
+qui*qui_window*warning*cancelLabelString:	Abort
+qui*qui_window*warning*okLabelString:		Continue
+qui*qui_window*informational*dialogTitle:	Prolog Information
+qui*qui_window*informational*cancelLabelString:	Abort
+qui*qui_window*informational*okLabelString:	Continue
+qui*qui_window*help*dialogTitle:		Prolog Help
+qui*qui_window*help*cancelLabelString:		Abort
+qui*qui_window*help*okLabelString:		Continue
+!
+! Lock resources, qui.doNotSetThisResource.
+! Do not set the resource any where else.
+qui.doNotSetThisQuiLockResource:		True

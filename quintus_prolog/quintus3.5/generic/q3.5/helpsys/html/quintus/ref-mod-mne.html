@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Module Name Expansion</h4>
+
+   <p>The concept of a source module is explained in
+<a href="ref-mod-som.html#ref-mod-som">ref-mod-som</a>.  For any goal, the applicable source module is
+determined when the goal is compiled rather than when it is
+executed.
+
+   <p>A procedure that needs to refer to the source module has arguments
+designated for module name expansion.  These arguments are expanded at
+compile time by the transformation
+<pre class="example">     X -&gt; M:X
+     </pre>
+
+   <p>where <var>M</var> is the name of the source module.  For example, the goal
+<code>call(X)</code> is expanded into <code>call(M:X)</code> and the goal
+<code>clause(Head, Body)</code> is expanded into <code>clause(M:Head, Body)</code>.
+
+   <p>Module name expansion is avoided if the argument to be expanded is
+already a <code>:/2</code> term.  In this case it is unnecessary since the
+module to be used has already been supplied by the programmer.
+
+   <p>The built-in predicates that use module name expansion, and the
+arguments requiring module name expansion are shown below.  These
+arguments are labeled <code>[MOD]</code> in the Arguments field of the
+reference page for each.
+
+     <ul>
+
+     <li><code>abolish(M:Pred)</code>
+<li><code>abolish(M:Name, Arity)</code>
+<li><code>assert(M:Term)</code>
+<li><code>assert(M:Term, Ref)</code>
+<li><code>asserta(M:Term)</code>
+<li><code>asserta(M:Term, Ref)</code>
+<li><code>assertz(M:Term)</code>
+<li><code>assertz(M:Term, Ref)</code>
+<li><code>bagof(T, M:P, S)</code>
+<li><code>call(M:Goal)</code>
+<li><code>check_advice(M:ListOfPredSpecs)</code>
+<li><code>clause(M:Head, Body)</code>
+<li><code>clause(M:Head, Body, Ref)</code>
+<li><code>compile(M:Files)</code>
+<li><code>consult(M:Files)</code>
+<li><code>current_advice(M1:Goal, Port, M2:Action)</code>
+<li><code>current_predicate(Name, M:Term)</code>
+<li><code>debugger(Current, M:New)</code>
+<li><code>ensure_loaded(M:Files)</code>
+<li><code>findall(T, M:Pred, List)</code>
+<li><code>initialization(M:Goal)</code>
+<li><code>listing(M:List)</code>
+<li><code>load_files(M:Files)</code>
+<li><code>load_files(M:Files, Options)</code>
+<li><code>load_foreign_files(M:Files, Libs)</code>
+<li><code>multifile_assertz(M:Term)</code>
+<li><code>nocheck_advice(M:ListOfPredSpecs)</code>
+<li><code>nospy(M:List)</code>
+<li><code>phrase(M:Phrase, S0)</code>
+<li><code>phrase(M:Phrase, S0, S)</code>
+<li><code>predicate_property(M:Goal, Property)</code>
+<li><code>remove_advice(M:Goal, Port, Action)</code>
+<li><code>retract(M:Term)</code>
+<li><code>retractall(M:Term)</code>
+<li><code>save_predicates(M:PredSpecs,File)</code>
+<li><code>save_program(File,M:Goal)</code>
+<li><code>setof(T, M:P, S)</code>
+<li><code>source_file(M:Term,File)</code>
+<li><code>source_file(M:PredSpec,ClauseNumber,File)</code>
+<li><code>spy(M:List)</code>
+<li><code>use_module(M:Files)</code>
+<li><code>use_module(M:File, IL)</code>
+<li><code>use_module(ExportModule, M:File, IL)</code>
+<li><code>volatile(M:PredSpec)</code>
+<li><code>X^(M:Goal)</code>
+<li><code>[M:File|Rest]</code>
+</ul>
+
+   <p>In all of these predicates, <code>M:</code> can stand for multiple modules.  It
+is the innermost module that is used in this case.  For example,
+<code>call(m1:m2:m3:p)</code> calls <code>m3:p/0</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-met.html#ref-mod-met">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-idp.html#ref-mod-idp">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

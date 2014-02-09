@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Inferring arguments</h4>
+
+   <p>In X, a <dfn>drawable</dfn> is an object into which you can draw, either a
+window or pixmap.  ProXL drawing procedures take an argument of type
+"Drawable".  Therefore, you can pass either a window or a pixmap to
+these drawing procedures.
+
+   <p>ProXL extends this concept to include <dfn>displayables</dfn>,
+<dfn>screenables</dfn>, <dfn>windowables</dfn>, <dfn>colormapables</dfn>, <dfn>gcables</dfn>, and
+<dfn>fontables</dfn>.  If, for example, a ProXL procedure requires a screen as
+an argument, you can pass either a screen or any other object which
+uniquely determines a screen.  One object can uniquely determine
+another in two ways, either directly or via a default.  For example, a
+window is directly associated with only one screen.  Therefore,
+anywhere a screen is required any window associated with that screen
+can be specified.  On the other hand, a display may have more than one
+screen associated with it, but it has only one default screen. 
+Therefore, anywhere a screen is required the screen's display can be
+specified, if the display's default screen is the screen in question.
+
+   <p>Following is a complete listing of the <dfn>-ables</dfn>
+supported by ProXL.  The parenthesized associations below indicate that
+unique determination is made via a default value.
+     <dl>
+
+     <br><dt><b>Object required</b>
+     <dd><b>Objects fulfilling the requirement</b>
+
+     <br><dt><dfn>displayable</dfn>
+     <dd>display, screen, window, pixmap, colormap, gc, font, cursor
+
+     <br><dt><dfn>screenable</dfn>
+     <dd>display (default screen), screen, window, pixmap, colormap, gc
+
+     <br><dt><dfn>windowable</dfn>
+     <dd>display (root window of default screen), screen (root window), window
+
+     <br><dt><dfn>colormapable</dfn>
+     <dd>display (default colormap of default screen), screen (default colormap), window, colormap
+
+     <br><dt><dfn>gcable</dfn>
+     <dd>window, pixmap, gc
+
+     <br><dt><dfn>fontable</dfn>
+     <dd>window, pixmap, gc, font
+</dl>
+
+   <p>Therefore, subsequent sections in this manual may describe an argument
+of a ProXL procedures as, for example, a GCable.  In this case you can
+specify either a window, pixmap or GC as the argument.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-bas-attr.html#pxl-bas-attr">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-bas-crs.html#pxl-bas-crs">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-bas.html#pxl-bas">Up</a>
+</ul>
+</div>
+   </body></html>
+

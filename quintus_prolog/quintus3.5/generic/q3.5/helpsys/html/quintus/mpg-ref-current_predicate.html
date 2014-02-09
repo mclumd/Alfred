@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>current_predicate/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>current_predicate(</code><var>-Name</var><code>, </code><var>+Term</var><code>)</code>
+
+   <p><code>current_predicate(</code><var>*Name</var><code>, </code><var>*Term</var><code>)</code>
+
+   <p>Unifies <var>Name</var> with the name of a user-defined predicate, and <var>Term</var>
+with the most general term corresponding to that predicate.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Name</var> <dfn>atom</dfn>
+     <dd>
+
+     <br><dt><var>Term</var> <dfn>callable</dfn> [MOD]
+     <dd></dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>If you have loaded the predicates <code>foo/1</code> and <code>foo/3</code> into Prolog,
+<code>current_predicate/2</code> would return the following:
+<pre class="example">      | ?- <kbd>current_predicate(foo, T).</kbd>
+     
+     T = foo(_116) <kbd>;</kbd>
+     
+     T = foo(_116,_117,_118) <kbd>;</kbd>
+     
+     no
+     </pre>
+
+<h4 class="subheading">Backtracking</h4>
+
+     <ul>
+
+     <li>The following goal can be used to backtrack
+through every predicate in your program.
+
+     <pre class="example">          
+          | ?- <kbd>current_predicate(Name, Module:Term).</kbd>
+          </pre>
+
+     <li>If a module is specified,
+<code>current_predicate/2</code> only succeeds for those predicates that are
+<em>defined</em> in the module.  It fails for those predicates that are imported
+into a module.
+
+     <pre class="example">          | ?- <kbd>current_predicate(_, m:P).</kbd>
+          </pre>
+
+     <p>will backtrack through all predicates <code>P</code> that are defined in module <code>m</code>. 
+To backtrack through all predicates imported by a module use
+<code>predicate_property/2</code> (see <a href="ref-lps-ove.html#ref-lps-ove">ref-lps-ove</a>). 
+</ul>
+
+<h4 class="subheading">Tip</h4>
+
+   <p>To find out whether a predicate is built-in, use
+<code>predicate_property/2</code>.
+<pre class="example">     % Is there a callable predicate named <code>gc</code>?
+     
+     | ?- <kbd>current_predicate(gc, Term).</kbd>
+     
+     no
+     | ?- <kbd>predicate_property(gc, Prop)</kbd>
+     
+     Prop = built_in
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>predicate_property/2</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-current_spypoint.html#mpg-ref-current_spypoint">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-current_output.html#mpg-ref-current_output">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,107 @@
+Package: big_text
+Author : R.A.O'Keefe
+SCCS   : @(#)88/11/10 big_text.doc	27.1
+Purpose: Routines for manipulating large pieces of text.
+
+
+    A "big_text" is a chunk of text held outside Prolog, in a file.
+Such an object is represented by a Prolog term
+
+	big_text(FileName, Offset, Length)
+
+The text is Length .TAKE Offset .DROP contents(FileName).
+
+    Two big_text objects unify iff they represent the same text
+for all possible states of the file system.  This is inflated
+language for saying that we just unify the terms, and don't even
+require that the files exist yet!
+
+    A very important note is that the manipulation of big_texts
+doesn't have to be entirely on Prolog's side!  A tool can be
+written in any language which scans through a file and writes a
+Prolog source file containing e.g.
+	help_entry(manual-2-a, big_text('/u/getty/manual/2',12345,678)).
+Don't forget the quotes.  In C you might use the statement
+	printf("%s('%s', big_text('%s',%d,%d)).\n",
+		PredicateName, FileName, Offset, Length);
+to write an such an entry.
+
+    Some of the operations we might want to perform on big_texts:
+
+[1] make_big_text(+FileName, +Offset, +Length, -BigText)
+    Offset and Length must be non-negative integers.
+    FileName must identify a readable file containing at
+    least Offset+Length characters.
+
+    make_big_text(+FileName, +Length, -BigText)
+    same as above, but the offset is 0
+
+    make_big_text(+FileName, -BigText)
+    same as above, but offset=0, length=size of file in bytes
+
+[2] is_big_text(+BigText)
+    recognises big_texts.  Does not check that the file exists
+    or is readable or is big enough.
+
+[3] text_to_pipe(+Text, +UnixCommand)
+    opens an output pipe running UnixCommand and writes Text to it.
+    Text can be
+	- an atom
+	- big_text(FileName,Offset,Length)
+	- big_text(FileName,Length)
+	- big_text(FileName)
+	- a non-empty list of character codes
+	- a non-empty list of any of the above
+    UnixCommand must, for now, be an atom, just as the argument of
+    unix(shell(UnixCommand)) must be.
+
+    text_to_file(+Text, +FileName)
+    as above, but writes to FileName.  (In fact, just to get things
+    going fast, text_to_pipe doesn't really use pipes, but this.  A
+    good reason for this hack: we stand a chance of making it work
+    under VMS.)
+
+[4] pipe_to_text(+UnixCommand, +FileName, -BigText)
+    appends the output of UnixCommand to FileName (which need not
+    exist before) and returns a BigText object identifying the new
+    stuff.  (Actually, we don't use pipe(2) or popen(3) here at
+    all, just shell(UnixCommand..">>"..FileName).)
+
+[5] copy_texts(+ListOfTexts, +FileName, -ListOfNewBigTexts)
+    This is a tool for compacting a file of chunks, but can
+    be used for other things.  A new file is opened.
+    Each element of ListOfTexts in turn is written to the new
+    file, and the corresponding element of ListOfNewBigTexts
+    is unified with big_text(FileName,O,L) for suitable O,L.
+    {The new file is NOT at this point called FileName.}
+    When all the output has been written, the new file is
+    closed, then renamed to FileName.  It would be nice to
+    write on top of any existing FileName so that hard links
+    would act like symbolic links, but Stdio can't do it.
+    So the elements of ListOfTexts can safely refer to the old
+    file.  Each element of ListOfTexts is a Text as described
+    in [3].
+
+[6] have_emacs_edit(+FileName, +BufferName)
+    tells emacs to switch to the buffer named by BufferName,
+    clear out any existing contents, and edit FileName there.
+
+    have_emacs_edit(+FileName)
+    as above, but BufferName is everything from the last "/"
+    of FileName to its end.  E.g. '/u/getty/temp.txt' -> 'temp.txt'.
+
+----------------
+That is enough kit to edit texts.
+
+edit_text(Text, FileName, BufferName, NewBigText) :-
+	temporary_file_name(TempFileName),
+	text_to_file(Text, TempFileName),
+	have_emacs_edit(TempFileName, BufferName),
+	copy_texts(big_text(TempFileName), FileName, X),
+	delete_file(TempFileName),
+	NewBigText = X.
+
+It doesn't change the existing text, but gives you a new big_text
+appending to FileName.
+
+

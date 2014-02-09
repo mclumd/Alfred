@@ -1,0 +1,1313 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: obj,  Next: pbn,  Prev: str,  Up: Top
+
+The Quintus Objects Package
+***************************
+
+* Menu:
+
+* obj-exp::                             Exported Predicates
+* obj-glo::                             Glossary
+* obj-bas::                             Introduction
+* obj-scl::                             Simple Classes
+* obj-inh::                             Inheritance
+* obj-tcl::                             Term Classes
+* obj-tech::                            Technical Details
+
+   The Quintus Objects package enables programmers to write
+object-oriented programs in Quintus Prolog. The objects in Quintus
+Objects are modifiable data structures that provide a clean and
+efficient alternative to storing data in the Prolog database.
+
+
+File: quintus.info,  Node: obj-bas,  Next: obj-scl,  Prev: obj-glo,  Up: obj
+
+Introduction
+============
+
+* Menu:
+
+* obj-bas-uobj::                        Using Quintus Objects
+* obj-bas-def::                         Defining Classes
+* obj-bas-ucl::                         Using Classes
+* obj-bas-la::                          Looking Ahead
+
+   The Quintus Objects package enables programmers to write
+object-oriented programs in Quintus Prolog. The objects in Quintus
+Objects are modifiable data structures that provide a clean and
+efficient alternative to storing data in the Prolog database.
+
+   This user's guide is neither an introduction to object-oriented
+programming nor an introduction to Quintus Prolog. A number of small,
+sample programs are described in this manual, and some larger programs
+are in the `demo' directory.
+
+
+File: quintus.info,  Node: obj-bas-uobj,  Next: obj-bas-def,  Up: obj-bas
+
+Using Quintus Objects
+---------------------
+
+   One of the basic ideas of object-oriented programming is the
+encapsulation of data and procedures into objects. Each object belongs
+to exactly one class, and an object is referred to as an instance of
+its class. A class definition determines the following things for its
+objects:
+
+   * slots, where an object holds data
+
+   * messages, the commands that can be sent to an object
+
+   * methods, the procedures the object uses to respond to the messages
+
+   All interaction with an object is by sending it messages. The command
+to send a message to an object has the form
+
+     OBJECT MESSAGEOP MESSAGE
+
+   where OBJECT is an object, MESSAGEOP is one of the message operators
+(`<<', `>>', or `<-') and MESSAGE is a message defined for the object's
+class.  Roughly speaking, the `>>' message operator is used for
+extracting information from an object, `<<' is for storing information
+into an object, and `<-' is for any other sort of operation.
+
+   For example, using the point class defined in the next section, it
+would be possible to give the following command, which demonstrates all
+three message operators.
+
+     | ?- create(point, PointObj),
+          PointObj >> x(InitX),
+          PointObj >> y(InitY),
+          PointObj << x(2.71828),
+          PointObj << y(3.14159),
+          PointObj <- print(user),
+          nl(user).
+     
+     (2.71828,3.14159)
+     PointObj = point(23461854),
+     InitX = 1.0,
+     InitY = 2.0
+
+   First it binds the variable `PointObj' to a newly created `point'
+object. Then, the two get messages (sent with the `>>' operator) fetch
+the initial values of the point's `x' and `y' slots, binding the
+variables `InitX' and `InitY' to these values.  Next, the two put
+messages (sent with the `<<' operator) assign new values to the
+object's `x' and `y' slots. Finally, the send message (sent with the
+`<-' operator) instructs the point object to print itself to the `user'
+stream, followed by a newline.  Following the goal, we see the point
+has been printed in a suitable form.  Following this, the values of
+`PointObj', `InitX', and `InitY' are printed as usual for goals entered
+at the Prolog prompt.
+
+   Because this goal is issued at the Prolog prompt, the values of the
+variables `PointObj', `InitX' and `InitY' are not retained after the
+command is executed and their values are displayed, as with any goal
+issued at the Prolog prompt.  However, the point object still exists,
+and it retains the changes made to its slots. Hence, objects, like
+clauses asserted to the Prolog database, are more persistent than
+Prolog variables.
+
+   Another basic idea of object-oriented programming is the notion of
+inheritance. Rather than defining each class separately, a new class
+can inherit the properties of a more general superclass. Or, it can be
+further specialized by defining a new subclass, which inherits its
+properties. (C++ uses the phrase "base class" where we use
+"superclass." It also uses "derived class" where we use "subclass.")
+
+   Quintus Objects uses term expansion to translate object-oriented
+programs into ordinary Prolog. (This is the same technique that Prolog
+uses for its DCG grammar rules.) As much as possible is done at compile
+time. Class definitions are used to generate Prolog clauses that
+implement the class's methods. Message commands are translated into
+calls to those Prolog clauses.  And, inheritance is resolved at
+translation time.
+
+   Quintus Objects consists of two modules, `obj_decl' and `objects'.
+The `obj_decl' module is used at compile time to translate the
+object-oriented features of Quintus Objects. Any file that defines
+classes or sends messages should include the command
+
+     :- load_files(library(obj_decl),
+                   [when(compile_time), if(changed)]).
+
+   The `objects' module provides runtime support for Quintus Objects
+programs. A file that sends messages or asks questions about what
+classes are defined or to what class an object belongs should include
+the command:
+
+     :- use_module(library(objects)).
+
+   You will probably include both in most files that define and use
+classes.
+
+   You must have a license to use the `obj_decl' module, but you may
+include the `objects' module in programs that you will distribute.
+
+
+File: quintus.info,  Node: obj-bas-def,  Next: obj-bas-ucl,  Prev: obj-bas-uobj,  Up: obj-bas
+
+Defining Classes
+----------------
+
+   A class definition can restrict the values of any slot to a
+particular C-style type. It can specify whether a slot is "private" (the
+default, meaning that it cannot be accessed except by that methods of
+that class), "protected" (like "private", except that the slot can also
+be accessed by subclasses of the class), or "public" (meaning get and
+put methods for the slot are generated automatically), and it can
+specify an initial value. The class definition also may contain method
+clauses, which determine how instances of the class will respond to
+messages.  A class definition may also specify one or more superclasses
+and which methods are to be inherited.
+
+   The point object created in the previous example had two floating
+point slots, named `x' and `y', with initial values of 1.0 and 2.0,
+respectively. As we have seen, the `point' class also defined put and
+get methods for `x' and `y', as well as a send method for printing the
+object.  The put and get methods for `x' and `y' can be automatically
+generated simply by declaring the slots `public', but the `print'
+method must be explicitly written.  In addition, in order to be able to
+create instances of this class, we must define a `create' method, as
+explained in *Note obj-scl-meth-credes::.  We also provide a second
+`create' method, taking two arguments, allowing us to specify an `x'
+and `y' value when we first create a point object.
+
+     :- class point =
+             [public x:float = 1.0,
+              public y:float = 2.0].
+     
+     Self <- create.
+     
+     Self <- create(X, Y) :-
+             Self << x(X),
+             Self << y(Y).
+     
+     Self <- print(Stream) :-
+             Self >> x(X),
+             Self >> y(Y),
+             format(Stream, '(~w,~w)', [X,Y]).
+     
+     :- end_class point.
+
+   The variable name `Self' in these clauses is arbitrary--any variable
+to the left of the message operator in the head of a method clause
+refers to the instance of the class receiving the message.
+
+
+File: quintus.info,  Node: obj-bas-ucl,  Next: obj-bas-la,  Prev: obj-bas-def,  Up: obj-bas
+
+Using Classes
+-------------
+
+   Given this definition, the following command creates an instance of
+the point class, assigning values to its `x' and `y' slots, and prints
+a description of the point.
+
+     | ?- create(point(3,4), PointObj),
+          PointObj <- print(user).
+
+   The print message prints `(3.0,4.0)'. The variable `PointObj' is
+bound to a Prolog term of the form
+
+     `point(ADDRESS)'
+
+   where ADDRESS is essentially a pointer to the object.
+
+   In general, an object belonging to a class CLASSNAME will be
+represented by a Prolog term of the form
+
+     CLASSNAME(ADDRESS)
+
+   The name CLASSNAME must be an atom. This manual refers to such a
+term as if it were the object, not just a pointer to the object.  Users
+are strongly discouraged from attempting to do pointer arithmetic with
+the address.
+
+   After execution of this command, the point object still exists, but
+the variable `PointObj' can no longer be used to access it. So, while
+objects resemble clauses asserted into the Prolog database in their
+persistence, there is no automatic way to search for an object.
+Objects are not automatically destroyed when they are no longer needed.
+And, there is no automatic way to save an object from one Prolog
+session to the next. It is the responsibility of the programmer to keep
+track of objects, perhaps calling the `destroy/1' predicate for
+particular objects that are no longer needed or asserting bookkeeping
+facts into the Prolog database to keep track of important objects.
+
+
+File: quintus.info,  Node: obj-bas-la,  Prev: obj-bas-ucl,  Up: obj-bas
+
+Looking Ahead
+-------------
+
+   The next few sections of this manual describe the Quintus Objects
+package in greater detail.  In particular, they describe how to define
+classes, their methods and their slots, and how to reuse class
+definitions via inheritance. Small sample programs and program
+fragments are provided for most of the features described.
+
+   Experienced Prolog programmers may choose to skip over these sections
+and look at the sample programs in this package's demo directory,
+referring to the reference pages as necessary. Everyone is encouraged
+to experiment with the sample programs before writing their own
+programs.
+
+
+File: quintus.info,  Node: obj-scl,  Next: obj-inh,  Prev: obj-bas,  Up: obj
+
+Simple Classes
+==============
+
+* Menu:
+
+* obj-scl-scp::                         Scope of a Class Definition
+* obj-scl-slt::                         Slots
+* obj-scl-meth::                        Methods
+
+   This section is about simple classes that inherit nothing--neither
+slots nor methods--from more general superclasses. Everything about
+these classes is given directly in their definitions, so they are the
+best starting point for programming with Quintus Objects.
+
+   The use of inheritance in defining classes is described in the next
+section. Classes that inherit properties from superclasses are called
+derived classes in some systems, such as C++. In general, the use of
+inheritance extends the properties of the simple classes in this
+section.
+
+
+File: quintus.info,  Node: obj-scl-scp,  Next: obj-scl-slt,  Up: obj-scl
+
+Scope of a Class Definition
+---------------------------
+
+   A simple class definition begins with a statement of the form
+
+     :- class CLASSNAME = [SLOTDEF, ...].
+
+   The class's slots are described in the list of SLOTDEF terms. It is
+possible, though not often useful, to define a class with no slots, by
+specifying the empty list. In that case the `=' and the list may be
+omitted.
+
+   The class's methods are defined following the `class/1' directive,
+by Prolog clauses. Most of this section is about defining and using
+methods.
+
+   The class definition ends with any of the following:
+
+     :- end_class CLASSNAME.
+
+   or
+
+     :- end_class.
+
+   or the next `class/1' directive or the end of the file. The
+CLASSNAME argument to `end_class/1' must match the class name in the
+corresponding `class/1' directive. It is not possible to nest one class
+definition inside another.
+
+
+File: quintus.info,  Node: obj-scl-slt,  Next: obj-scl-meth,  Prev: obj-scl-scp,  Up: obj-scl
+
+Slots
+-----
+
+* Menu:
+
+* obj-scl-slt-vis::                     Visibility
+* obj-scl-slt-typ::                     Types
+* obj-scl-slt-ini::                     Initial Values
+* obj-scl-slt-null::                    The null object
+
+   A slot description has the form
+
+     VISIBILITY SLOTNAME:SLOTTYPE = INITIALVALUE
+
+   where VISIBILITY and `= INITIALVALUE' are optional. Each slot of a
+class must have a distinct name, given by the atom SLOTNAME. The
+VISIBILITY, SLOTTYPE and INITIALVALUE parts of the slot description are
+described separately.
+
+
+File: quintus.info,  Node: obj-scl-slt-vis,  Next: obj-scl-slt-typ,  Up: obj-scl-slt
+
+Visibility
+..........
+
+   A slot's visibility is either private, protected, or public. If its
+visibility is not specified, the slot is private. The following example
+shows all four possibilities:
+
+     :- class example = [w:integer,
+                         private   x:integer,
+                         protected y:integer,
+                         public    z:integer]
+
+   Slot `z' is public, `y' is protected, and both `x' and `w' are
+private.
+
+   Direct access to private slots is strictly limited to the methods of
+the class.  Any other access to such slots must be accomplished through
+these methods.  Making slots private will allow you later to change how
+you represent your class, adding and removing slots, without having to
+change any code that uses your class.  You need only modify the methods
+of the class to accomodate that change.  This is known as "information
+hiding".
+
+   Protected slots are much like private slots, except that they can
+also be directly accessed by subclasses.  This means that if you wish to
+modify the representation of your class, you will need to examine not
+only the class itself, but also its subclasses.
+
+   Public slots, in contrast, can be accessed from anywhere.  This is
+accomplished through automatically generated get and put methods named
+for the slot and taking one argument.  In the example above, our
+`example' class would automatically support a get and put method named
+`z/1'.  Note, however, that unlike other object oriented programming
+languages that support them, public slots in Quintus Objects do not
+violate information hiding.  This is because you may easily replace a
+public slot with your own get and put methods of the same name.  In
+this sense, a public slot is really only a protected slot with
+automatically generated methods to fetch and store its contents.
+
+   Within a method clause, any of the class's slots can be accessed via
+the `fetch_slot/2' and `store_slot/2' predicates. These are the only
+way to access private and protected slots. They may be used to define
+get and put methods for the class, which provide controlled access to
+the protected slots. But, they can only be used within the method
+clauses for the class, and they can only refer to slots of the current
+class and protected and public slots of superclasses.
+
+   In the slot description, `public', `protected' and `private' are
+used as prefix operators. The `obj_decl' module redefines the prefix
+operator `public', as follows:
+
+     :- op(600, fy, [public]).
+
+   Unless you use the obsolete `public/1' directive in your Prolog
+programs, this should cause no problems.
+
+
+File: quintus.info,  Node: obj-scl-slt-typ,  Next: obj-scl-slt-ini,  Prev: obj-scl-slt-vis,  Up: obj-scl-slt
+
+Types
+.....
+
+   A slot's type restricts the kinds of values it may contain. The slot
+is specified in the slot description by one of the following Prolog
+terms with the corresponding meaning.  Most of these will be familiar,
+but the last four, `address', `term', CLASS and `pointer(TYPE)',
+require some additional explanation:
+
+Type
+     Description
+
+`integer'
+     32-bit signed integer
+
+`short'
+     16-bit signed integer
+
+`char'
+     8-bit signed integer
+
+`unsigned_short'
+     16-bit unsigned integer
+
+`unsigned_char'
+     8-bit unsigned integer
+
+`float'
+     32-bit floating point number
+
+`double'
+     64-bit floating point number
+
+`atom'
+     Prolog atom (32-bit pointer)
+
+`address'
+     32-bit address
+
+     The address type is intended for use with foreign code.  A slot of
+     this type might store an address returned from a foreign function.
+     That address might, in turn, be used in calling another foreign
+     function or with the `assign/2' predicate or with arithmetic
+     operators such as `integer_at'. Hence, most Prolog programmers can
+     safely ignore this type.
+
+`term'
+     Prolog term
+
+     The term type is for general Prolog terms. Such a slot can hold
+     any of the other types. However, if you know a slot will be used
+     to hold only values of a particular type, it is more efficient to
+     specify that type in the class definition.
+
+     Storing a term containing free variables is similar to asserting a
+     clause containing free variables into the Prolog database. The
+     free variables in the term are replaced with new variables in the
+     stored copy. And, when you fetch the term from the slot, you are
+     really fetching a copy of the term, again with new variables.
+
+CLASS
+     where CLASS is the name of a defined class
+
+     The class type is for any object in a class defined with Quintus
+     Objects. Such a slot holds an object of its class or one of that
+     class's descendants, or the `null' object (see *Note
+     obj-scl-slt-null::).
+
+`pointer(TYPE)'
+     where TYPE is an atom
+
+     The pointer type is intended for use with the Structs Package,
+     ProXT or ProXL.  It is similar to the `address' type, except that
+     access to this slot yields, and update to this slot expects, a
+     term of arity 1 whose functor is Type and whose argument is the
+     address. Again, most Prolog programmers can safely ignore this
+     type.
+
+   Please note that there is no `unsigned_int' or `unsigned_long' type,
+because Prolog itself currently cannot represent such a number.  You
+should represent such numbers as type `integer' with care.  Arithmetic
+operations on unsigned integers represented this way will work as
+expected, however comparisons will not!  This is inherent in using
+Prolog to manipulate 32 bit unsigned numbers in general; it is not
+specific to Quintus Objects.
+
+
+File: quintus.info,  Node: obj-scl-slt-ini,  Next: obj-scl-slt-null,  Prev: obj-scl-slt-typ,  Up: obj-scl-slt
+
+Initial Values
+..............
+
+   A slot description may optionally specify an initial value for the
+slot. The initial value is the value of the slot in every instance of
+the class, when the object is first created. The initial value must be
+a constant of the correct type for the slot.
+
+   If an initial value is not specified, a slot is initialized to a
+value that depends on its type. All numbers are initialized to 0, of the
+appropriate type. Atom and term slots are initialized to the empty atom
+(`'''). Addresses and pointers are initialized to null pointers. And,
+objects are initialized to the `null' object (see *Note
+obj-scl-slt-null::).
+
+   More complicated initialization--not the same constant for every
+instance of the class--must be performed by create methods, which are
+described later.
+
+
+File: quintus.info,  Node: obj-scl-slt-null,  Prev: obj-scl-slt-ini,  Up: obj-scl-slt
+
+The `null' object
+.................
+
+   The `null' object is a special object that is not an instance of any
+class, but that can be stored in a slot intended for any class of
+object.  This is very much like the `NULL' pointer in C.  This is
+useful when you do not yet have an object to store in a particular slot.
+
+   In Prolog, the `null' is represented by the atom `null'.
+
+   Note that because the `null' object is not really an object of any
+class, you cannot determine its class with `class_of/2'.  Unless noted
+otherwise, when we write of an "object" in this document, we do not
+include the `null' object.
+
+
+File: quintus.info,  Node: obj-scl-meth,  Prev: obj-scl-slt,  Up: obj-scl
+
+Methods
+-------
+
+* Menu:
+
+* obj-scl-meth-getput::                 Get and Put Methods
+* obj-scl-meth-dir::                    Direct Slot Access
+* obj-scl-meth-send::                   Send Methods
+* obj-scl-meth-credes::                 Create and Destroy Methods
+* obj-scl-meth-ins::                    Instance Methods
+
+   Some methods are defined by method clauses, between the `class/1'
+directive and the end of the class's definition. Others are generated
+automatically. There are three kinds of messages in Quintus Objects,
+distinguished by the message operator they occur with:
+
+`>>'
+     A get message, which is typically used to fetch values from an
+     object's slots.
+
+`<<'
+     A put message, which is typically used to store values in an
+     object's slots.
+
+`<-'
+     A send message, which is used for other operations on or involving
+     an object.
+
+   Quintus Objects automatically generates some get and put methods.
+And, it expects particular message names with the send operator for
+create and destroy methods. For the most part, however, you are free to
+use any message operators and any message names that seem appropriate.
+
+   A method clause has one of these message operators as the principal
+functor of its head. Its first argument, written to the left of the
+message operator, is a variable. By convention, we use the variable
+`Self'. Its second argument, written to the right of the message
+operator, is a term whose functor is the name of the message and whose
+arguments are its arguments.
+
+   For example, in the class whose definition begins as follows, a
+0-argument send message named `increment' is defined. No parentheses are
+needed in the clause head, because the precedence of the `<-' message
+operator is lower than that of the `:-' operator.
+
+     :- class counter = [public count:integer = 0].
+     
+     Self <- increment :-
+             Self >> count (X0),
+             X1 is X0 + 1,
+             Self << count (X1).
+
+   Its definition uses the automatically generated get and put methods
+for the public slot `count'.
+
+   It may look as though this technique is directly adding clauses to
+the `>>/2', `<</2' and `<-/2' predicates, but the method clauses are
+transformed by term expansion, at compile time.  However, the method
+clauses have the effect of extending the definitions of those
+predicates.
+
+   Methods are defined by Prolog clauses, so it is possible for them to
+fail, like Prolog predicates, and it is possible for them to be
+nondeterminate, producing multiple answers, upon backtracking. The rest
+of this section describes different kinds of methods.
+
+
+File: quintus.info,  Node: obj-scl-meth-getput,  Next: obj-scl-meth-dir,  Up: obj-scl-meth
+
+Get and Put Methods
+...................
+
+   Get and put methods are generated automatically for each of a class's
+public slots. These are 1-argument messages, named after the slots.
+
+   In the point class whose definition begins with
+
+     :- class point =
+             [public x:float=0,
+              public y:float=0].
+
+   the get and put methods are automatically generated for the `x' and
+`y' slots. If the class defines a `create/0' method, then the command
+
+     | ?- create(point, PointObj),
+          PointObj >>  x(OldX),
+          PointObj >>  y(OldY),
+          PointObj <<  x(3.14159),
+          PointObj <<  y(2.71828).
+
+   creates a point object and binds both `OldX' and `OldY' to 0.0E+00,
+its initial slot values. Then, it changes the values of the `x' and `y'
+slots to 3.14159 and 2.71828, respectively. The variable `PointObj' is
+bound to the point object.
+
+   It is possible, and sometimes quite useful, to create get and put
+methods for slots that do not exist. For example, it is possible to add
+a polar coordinate interface to the point class by defining get and put
+methods for `r' and `theta', even though there are no `r' and `theta'
+slots. The get methods might be defined as follows:
+
+     Self >> r(R) :-
+             Self >> x(X),
+             Self >> y(Y),
+             R2 is X*X + Y*Y,
+             sqrt(R2, R).
+     
+     Self >> theta(T) :-
+             Self >> x(X),
+             Self >> y(Y),
+             A is Y/X,
+             atan(A, T).
+
+   This assumes that `library(math)', which defines the `sqrt/2' and
+`atan/2' predicates, has been loaded. The put methods are left as an
+exercise.
+
+   In the rational number class whose definition begins with
+
+     :- class rational =
+             [public num:integer,
+              public denom:integer].
+
+   get and put methods are automatically generated for the `num' and
+`denom' slots. It might be reasonable to add a get method for `float',
+which would provide a floating point approximation to the rational in
+response to that get message. This is left as an exercise.
+
+   It is also possible to define get and put methods that take more than
+one argument. For example, it would be useful to have a put method for
+the point class that sets both slots of a point object. Such a method
+could be defined by
+
+     Self << point(X,Y) :-
+             Self << x(X),
+             Self << y(Y).
+
+   Similarly, a 2-argument get method for the rational number class
+might be defined as
+
+     Self >> (N/D) :-
+             Self >> num(N),
+             Self >> denom(D).
+
+   Note that the name of the put message is `(/)/2', and that the
+parentheses are needed because of the relative precedences of the `>>'
+and `/' operators.
+
+   Put messages are used to store values in slots. Get messages,
+however, may be used either to fetch a value from a slot or to test
+whether a particular value is in a slot. For instance, the following
+command tests whether the `do_something/2' predicate sets the point
+object's `x' and `y' slots to 3.14159 and 2.71828, respectively.
+
+     | ?- create(point, PointObj),
+          do_something(PointObj),
+          PointObj >> x(3.14159),
+          PointObj >> y(2.71828).
+
+   The `fetch_slot/2' predicate can similarly be used to test the value
+of a slot.
+
+   The effects of a put message (indeed, of any message) are not undone
+upon backtracking. For example, the following command fails:
+
+     | ?- create(point, PointObj),
+          PointObj << x(3.14159),
+          PointObj << y(2.71828),
+          fail.
+
+   But, it leaves behind a point object with `x' and `y' slots
+containing the values 3.14159 and 2.71828, respectively. In this,
+storing a value in an object's slot resembles storing a term in the
+Prolog database with `assert/1'.
+
+   Some care is required when storing Prolog terms containing unbound
+variables in term slots.  For example, given the class definition that
+begins with
+
+     :- class prolog_term = [public p_term:term].
+     
+     Self <- create.
+
+   the following command would succeed:
+
+     | ?- create(prolog_term, TermObj),
+          TermObj << p_term(foo(X,Y)),
+          X = a,
+          Y = b,
+          TermObj >> p_term(foo(c,d)).
+
+   The reason is that the free variables in `foo(X,Y)' are renamed when
+the term is stored in the `prolog_term' object's `p_term' slot. This is
+similar to what happens when such a term is asserted to the Prolog
+database:
+
+     | ?- retractall(foo(_,_)),
+          assert(foo(X,Y)),
+          X = a,
+          Y = b,
+          foo(c,d).
+
+   However, this goal would fail, because `c' and `d' cannot be unified:
+
+     | ?- create(prolog_term, TermObj),
+          TermObj << p_term(foo(X,X)),
+          TermObj >> p_term(foo(c,d)).
+
+
+File: quintus.info,  Node: obj-scl-meth-dir,  Next: obj-scl-meth-send,  Prev: obj-scl-meth-getput,  Up: obj-scl-meth
+
+Direct Slot Access
+..................
+
+   Get and put methods are not automatically generated for private and
+protected slots. Those slots are accessed by the `fetch_slot/2' and
+`store_slot/2' predicates, which may only appear in the body of a
+method clause and which always operate on the object to which the
+message is sent. It is not possible to access the slots of another
+object with these predicates.
+
+   You may declare a slot to be private or protected in order to limit
+access to it. However, it is still possible, and frequently useful, to
+define get and put methods for such a slot.
+
+   For example, if numerator and denominator slots of the rational
+number class were private rather than public, it would be possible to
+define put methods to ensure that the denominator is never 0 and that
+the numerator and denominator are relatively prime. The get methods
+merely fetch slot values, but they need to be defined explicitly, since
+the slots are private. The new definition of the rational number class
+might start as follows:
+
+     :- class rational =
+             [num:integer=0,
+              denom:integer=1].
+     
+     Self >> num(N) :-
+             fetch_slot(num, N).
+     
+     Self >> denom(D) :-
+             fetch_slot(denom, D).
+     
+     Self >> (N/D) :-
+             Self >> num(N),
+             Self >> denom(D).
+
+   One of the put methods for the class might be
+
+     Self << num(NO) :-
+             fetch_slot(denom, DO)
+             reduce(NO, DO, N, D),
+             store_slot(num, N),
+             store_slot(denom, D).
+
+   where the `reduce/4' predicate would be defined to divide `NO' and
+`DO' by their greatest common divisor, producing `N' and `D',
+respectively.
+
+   The definition of `reduce/4' and the remaining put methods is left
+as an exercise.  The put methods should fail for any message that
+attempts to set the denominator to 0.
+
+
+File: quintus.info,  Node: obj-scl-meth-send,  Next: obj-scl-meth-credes,  Prev: obj-scl-meth-dir,  Up: obj-scl-meth
+
+Send Methods
+............
+
+   Messages that do something more than fetch or store slot values are
+usually defined as send messages. While the choice of message operators
+is (usually) up to the programmer, choosing them carefully enhances the
+readability of a program.
+
+   For example, print methods might be defined for the point and
+rational number classes, respectively, as
+
+     Self <- print(Stream) :-
+             Self >> x(X),
+             Self >> y(Y),
+             format(Stream, "(~w,~w)", [X, Y]).
+
+   and
+
+     Self <- print(Stream) :-
+             fetch_slot(num, N),
+             fetch_slot(denom, D),
+             format(Stream, "~w/~w", [N, D]).
+
+   These methods are used to access slot values. But, the fact that the
+values are printed to an output stream makes it more reasonable to
+define them as send messages than get messages.
+
+   Frequently send methods modify slot values. For example, the point
+class might have methods that flip points around the x and y axes,
+respectively:
+
+     Self <- flip_x :-
+             Self >> y(Y0),
+             Y1 is -1 * Y0,
+             Self << y(Y1).
+     
+     Self <- flip_y :-
+             Self >> x(X0),
+             X1 is -1 * X0,
+             Self << x(X1).
+
+   And, the rational number class might have a method that swaps the
+numerator and denominator of a rational number object. It fails if the
+numerator is 0.
+
+     Self <- invert :-
+             fetch_slot(num, N)
+             N =\= 0,
+             fetch_slot(denom, D)
+             store_slot(num, D),
+             store_slot(denom, N).
+
+   These methods modify slot values, but they do not simply store values
+that are given in the message. Hence, it is more reasonable to use the
+send operator.
+
+   It is possible for a method to produce more than one answer. For
+example, the class whose definition begins with
+
+     :- class interval =
+             [public lower:integer,
+              public upper:integer].
+
+   might define a send method
+
+     Self <- in_interval(X) :-
+             Self >> lower(L),
+             Self >> upper(U),
+             between(L, U, X).
+
+   which uses the `between/3' predicate from `library(between)'. The
+`in_interval' message will bind `X' to each integer, one at a time,
+between the lower and upper slots, inclusive. It fails if asked for too
+many answers.
+
+   The rest of this section describes particular kinds of send messages.
+
+
+File: quintus.info,  Node: obj-scl-meth-credes,  Next: obj-scl-meth-ins,  Prev: obj-scl-meth-send,  Up: obj-scl-meth
+
+Create and Destroy Methods
+..........................
+
+   Objects are created with the `create/2' predicate. When you define a
+class, you must specify all the ways that instances of the class can be
+created. The simplest creation method is defined as
+
+     Self <- create.
+
+   If this method were defined for CLASS, then the command
+
+     | ?- create(CLASS, `Object').
+
+   would create an instance of CLASS and bind the variable `Object' to
+that instance. All slots would receive their (possibly default) initial
+values.
+
+   More generally, if the definition for CLASS contains a create method
+
+     Self <- create(ARGUMENTS) :-
+             BODY.
+
+   then the command
+
+     | ?- create(CLASS(ARGUMENTS), OBJECT).
+
+   will create an instance of CLASS and execute the BODY of the create
+method, using the specified ARGUMENTS. The variable OBJECT is bound to
+the new instance.
+
+   If a simple class definition has no create methods, then it is
+impossible create instances of the class. While the absence of create
+methods may be a programmer error, that is not always the case.
+Abstract classes, which are classes that cannot have instances, are
+often quite useful in defining a class hierarchy.
+
+   Create methods can be used to initialize slots in situations when
+specifying initial slot values will not suffice. (Remember that initial
+values must be specified as constants at compile time).  The simplest
+case uses the arguments of the create message as initial slot values.
+For example, the definition of the point class might contain the
+following create method.
+
+     Self <- create(X,Y) :-
+             Self << x(X),
+             Self << y(Y).
+
+   If used as follows
+
+     | ?- create(point(3.14159, 2.71828), PointObj),
+          PointObj >> x(X),
+          PointObj >> y(Y).
+
+   it would give `X' and `Y' the values of 3.14159 and 2.71828,
+respectively.
+
+   In some cases, the create method might compute the initial values.
+The following (partial) class definition uses the `date/1' predicate
+from `library(date)' to initialize its year, month and day slots.
+
+     :- class date_stamp =
+             [year:integer,
+              month:integer,
+              day:integer].
+     
+     Self <- create :-
+             date(date(Year, Month, Day)),
+             store_slot(year, Year),
+             store_slot(month, Month),
+             store_slot(day, Day).
+
+   All three slots are private, so it will be necessary to define get
+methods in order to retrieve the time information. If no put methods
+are defined, however, the date cannot be modified after the
+`date_stamp' object is created (unless some other method for this class
+invokes `store_slot/2' itself).
+
+   Create methods can do more than initialize slot values. Consider the
+`named_point' class, whose definition begins as follows:
+
+     :- class named_point =
+             [public name:atom,
+              public x:float=1,
+              public y:float=0].
+     
+     Self <- create(Name, X, Y) :-
+             Self << name(Name),
+             Self << x(X),
+             Self << y(Y),
+             assert(name_point(Name, Self)).
+
+   Not only does the `create/3' message initialize the slots of a new
+`named_point' object, but it also adds a `name_point/2' fact to the
+Prolog database, allowing each new object to be found by its name.
+(This create method does not require the `named_point' object to have a
+unique name. Defining a `uniq_named_point' class is left as an
+exercise.)
+
+   An object is destroyed with the `destroy/1' command. Unlike
+`create/2', `destroy/1' does not require that you define a `destroy'
+method for a class. However, `destroy/1' will send a destroy message
+(with no arguments) to an object before it is destroyed, if a `destroy'
+method is defined for the object's class.
+
+   If a `named_point' object is ever destroyed, the address of the
+object stored in this name `point/2' fact is no longer valid. Hence,
+there should be a corresponding destroy method that retracts it.
+
+     Self <- destroy :-
+             Self >> name(Name),
+             retract(name_point(Name, Self)).
+
+   Similar create and destroy methods can be defined for objects that
+allocate their own separate memory or that announce their existence to
+foreign code.
+
+
+File: quintus.info,  Node: obj-scl-meth-ins,  Prev: obj-scl-meth-credes,  Up: obj-scl-meth
+
+Instance Methods
+................
+
+   Instance methods allow each object in a class to have its own method
+for handling a specified message. For example, in a push-button class
+it would be convenient for each instance (each push-button) to have its
+own method for responding to being pressed.
+
+   The declaration
+
+     :- instance_method NAME/ARITY, ....
+
+   inside a class definition states that the message NAME/ARITY
+supports instance methods. If the class definition defines a method for
+this message, it will be treated as a default method for the message.
+
+   The `define_method/3' predicate installs a method for an object of
+the class, and the `undefine_method/3' predicate removes that method.
+
+   Suppose that the `date_stamp' class, defined earlier, declared an
+instance method to print the year of a `date_stamp' instance.
+
+     :- instance_method print_year/1.
+     
+     Self <- print_year(Stream) :-
+             Self >> year(Y0),
+             Y1 is YO + 1970,
+             format(Stream, "~d", [Y1]).
+
+   The arithmetic is necessary because UNIX dates are based on January
+1, 1970.
+
+   If a particular `date_stamp' object's date were to be printed in
+Roman numerals, it could be given a different `print_year' method, using
+the `define_method/3' predicate.
+
+     | ?- create(date_stamp, DateObj),
+          define_method(DateObj,
+     		   print_year(Stream),
+     		   print_roman_year(Stream, DateObj)).
+
+   If this `date_stamp' object is created in 1994, then a `print_year'
+message sent to it would print the current year as
+
+     MCMXCIV
+
+   Defining the predicate `print_roman_year/2' is left as an exercise.
+It must be able to access the `year' slot of a `date_stamp' object.
+Because it is not defined by a method clause within the class
+definition, `print_roman_year/2' cannot use the `get_slot/2' predicate.
+
+   None of `instance_method/1', `define_method/3', `undefine_method/3'
+specify a message operator. Instance methods can only be defined for
+send messages.
+
+
+File: quintus.info,  Node: obj-inh,  Next: obj-tcl,  Prev: obj-scl,  Up: obj
+
+Inheritance
+===========
+
+* Menu:
+
+* obj-inh-sih::                         Single Inheritance
+* obj-inh-mih::                         Multiple Inheritance
+* obj-inh-ask::                         Asking About Classes and Objects
+
+   This section describes the additional features (and the additional
+complexity) of defining classes with inheritance in Quintus Objects.
+Most of what was said about classes in the previous section remains
+true in these examples.
+
+
+File: quintus.info,  Node: obj-inh-sih,  Next: obj-inh-mih,  Up: obj-inh
+
+Single Inheritance
+------------------
+
+* Menu:
+
+* obj-inh-sih-cdef::                    Class Definitions
+* obj-inh-sih-slt::                     Slots
+* obj-inh-sih-meth::                    Methods
+* obj-inh-sih-ssup::                    Send Super
+
+   The simplest case is when a new class inherits some properties (slots
+and methods) from a single superclass. That superclass may, in turn, be
+defined in terms of its superclass, etc. The new class, its superclass,
+its superclass's superclass (if any) and so on are all ancestors of the
+new class.
+
+
+File: quintus.info,  Node: obj-inh-sih-cdef,  Next: obj-inh-sih-slt,  Up: obj-inh-sih
+
+Class Definitions
+.................
+
+   The definition of a class with a single superclass begins with a
+`class/1' directive of the form
+
+     :- class CLASSNAME = [SLOTDEF, ...] +  SUPERCLASS.
+
+   where the list of SLOTDEF descriptions may be empty. In that case,
+the definition can simplified to
+
+     :- class CLASSNAME = SUPERCLASS.
+
+   The class SUPERCLASS must be a defined class when this definition is
+given.
+
+   In Quintus Objects, a subclass inherits all the slots of its
+superclass. And, by default, it inherits all the methods of its
+superclass. The remainder of this section describes what the programmer
+can do to control this inheritance.
+
+
+File: quintus.info,  Node: obj-inh-sih-slt,  Next: obj-inh-sih-meth,  Prev: obj-inh-sih-cdef,  Up: obj-inh-sih
+
+Slots
+.....
+
+   A class's slots are a combination of those explicitly defined in its
+slot description list and the slots it inherits from its superclass. In
+Quintus Objects, a class inherits all the slots of its superclass. It
+follows that a class inherits all the slots of all its ancestors.
+
+   The programmer's control over inheritance of slots is limited. It is
+not possible to rename an inherited slot, nor is it possible to change
+its type, unless it is a class slot. It is possible to change a slot's
+initial value. And, it is possible to effectively change a slot's
+visibility.
+
+   To change the initial value or the type (when allowed) of a slot,
+include a new SLOTDEF in the list of slot descriptions for the class,
+with the same slot name and a new type or initial value. The type of a
+class slot can only be changed to a subclass of the type of the
+superclass's slot. The new initial value must still be a constant of the
+appropriate type.
+
+   The `named_point' class, defined earlier, could have better been
+defined from the point class, which began as follows:
+
+     :- class point =
+             [public x:float=0,
+              public y:float=0].
+
+   The definition of the `named_point' class would then begin with
+
+     :- class named_point =
+             [public name:atom,
+              public x:float=1.0] + point.
+
+   This `named_point' class has public slots named `name', `x' and `y',
+with the same types and initial values as the earlier `named_point'
+definition, which did not use inheritance.  This `named_point' class
+also inherits all the methods of the `point' class, which saves us from
+having to write them again (and maintain them).
+
+   A slot that was private or protected in a superclass may be defined
+as public. This will cause get and put methods to be generated in the
+subclass. A slot that was public in a superclass may be defined as
+protected or private, but this does not prevent it from inheriting the
+get and put methods of the superclass. For that, the `uninherit/1'
+directive, defined below, is needed.
+
+
+File: quintus.info,  Node: obj-inh-sih-meth,  Next: obj-inh-sih-ssup,  Prev: obj-inh-sih-slt,  Up: obj-inh-sih
+
+Methods
+.......
+
+   In Quintus Objects, by default, a class inherits all the methods of
+its superclass. The programmer has more control over the inheritance of
+methods than the inheritance of slots, however. In particular, methods
+can be uninherited and they can be redefined.
+
+   To prevent a method from being inherited, use the `uninherit/1'
+directive. For example, suppose that the class `point' is defined as
+before. That is, its definition begins as follows:
+
+     :- class point =
+             [public x:float=0,
+              public y:float=0].
+
+   Because both slots are public, a put method is automatically
+generated for each, which allows their values to be changed.
+
+   The definition of a new class `fixed_point' might begin as follows:
+
+     :- class fixed_point = point.
+     
+     :- uninherit
+             point << (x/l),
+             point << (y/l).
+     
+     Self <- create(X, Y) :-
+             store_slot(x, X),
+             store_slot(y, Y).
+
+   The parentheses are necessary because of the precedences of the `<<'
+and `/' operators.
+
+   Because the put methods from `point' are not inherited, no instance
+of the `fixed_point' class can change its `x' and `y' values once
+created--unless the class definition contains another method for doing
+so. The get methods are inherited from `point', however.
+
+   To redefine a method, simply include method clauses for its message
+within a class's definition. The new method clauses replace, or shadow,
+the inherited method clauses for this class.
+
+   Another way to prevent the `x' and `y' slots of the `fixed_point'
+class from being modified would be to shadow the put methods. For
+example, they might be redefined as
+
+     Self << x(_) :-
+             format(user_error, "cannot modify x slot value.~n.", []),
+             fail.
+     
+     Self << y(_) :-
+             format(user_error, "cannot modify y slot value.~n", []),
+             fail.
+
+   Now attempts to modify the `x' or `y' values of a fixed point object
+generate a specific error message and fail.  A more complicated version
+would raise an appropriate exception.
+
+
+File: quintus.info,  Node: obj-inh-sih-ssup,  Prev: obj-inh-sih-meth,  Up: obj-inh-sih
+
+Send Super
+..........
+
+   Even when a superclass's method is shadowed or uninherited, it is
+possible to use the superclass's method inside a method clause for the
+new class. This makes it possible to define a "wrapper" for the
+superclass's method, which invokes the superclass's method without
+having to duplicate its code. This technique works with all message
+types.
+
+   Sending a message to a superclass is done with a command of the form
+
+     `super' MESSAGEOP MESSAGE
+
+   where MESSAGEOP is one of the message operators (`<<', `>>' or `<-')
+and MESSAGE is a message defined for the superclass.  A generalization
+of this syntax may be used to specify which superclass to send the
+message to.  This is discussed in *Note obj-inh-mih-meth::.
+
+   Sending a message to a class's superclass can only be done within a
+message clause.
+
+
+File: quintus.info,  Node: obj-inh-mih,  Next: obj-inh-ask,  Prev: obj-inh-sih,  Up: obj-inh
+
+Multiple Inheritance
+--------------------
+
+* Menu:
+
+* obj-inh-mih-cdef::                    Class Definitions
+* obj-inh-mih-slt::                     Slots
+* obj-inh-mih-meth::                    Methods
+* obj-inh-mih-abmix::                   Abstract and Mixin Classes
+
+   It is possible for a class to be defined with more than one
+superclass. Because the class inherits properties from multiple
+superclasses, this is referred to as multiple inheritance.
+
+   Multiple inheritance is a complex and controversial topic. What
+should be done about conflicting slot or method definitions? (This is
+sometimes called a "name clash.") What should be done about slots that
+are inherited from two or more superclasses, but that originate with a
+common ancestor class? (This is sometimes called "repeated
+inheritance".) Different systems take different approaches.
+
+   Quintus Objects supports multiple inheritance in a limited but still
+useful way. It does not allow repeated inheritance, and it places all
+the responsibility for resolving name clashes on the programmer. This
+section describes the multiple inheritance features of Quintus Objects.
+
+
+File: quintus.info,  Node: obj-inh-mih-cdef,  Next: obj-inh-mih-slt,  Up: obj-inh-mih
+
+Class Definitions
+.................
+
+   The definition of a class with multiple superclasses begins with a
+`class/1' directive of the form
+
+     :- class CLASSNAME = [SLOTDEF, ...] + SUPERCLASS + ....
+
+   The list of slot descriptions and the superclasses to the right of
+the `=' can appear in any order, without changing the class being
+defined. In fact, the slot descriptions can be partitioned into more
+than one list, without changing the class. However, it is best to adopt
+a fairly simple style of writing class definition and use it
+consistently.
+
+   Just as the slot names in a list of slot descriptions must be
+distinct, superclass names should not be repeated.
+
+
+File: quintus.info,  Node: obj-inh-mih-slt,  Next: obj-inh-mih-meth,  Prev: obj-inh-mih-cdef,  Up: obj-inh-mih
+
+Slots
+.....
+
+   In Quintus Objects, the programmer has no control over multiple
+inheritance of slots. All slots from all superclasses are inherited.
+And, the superclasses should have no slot names in common.
+
+   As a consequence, in Quintus Objects no superclasses of a class
+should have a common ancestor. The only exception would be the unusual
+case where that common ancestor has no slots.
+

@@ -1,0 +1,1478 @@
+File   : filename.txt
+SCCS   : "@(#)89/08/29 filename.txt    33.1"
+Author : Richard A. O'Keefe
+Purpose: Design document for file name records.
+
+		File name Records
+
+    We want Quintus Prolog programs to be portable between
+
+1)  Unix System V, Unix BSD, POSIX
+
+2)  VMS 4.x, 5.x, and possibly 3.x
+
+3)  CMS releases 4, 5, and 6
+
+4)  MVS and MVS/TSO
+
+5)  MSDOS 3.x
+
+6)  OS/2
+
+7)  Macintosh (with HFS)
+
+    Each of these systems uses different syntax for file names:
+
+1)  /goedel/ok/library.d/filename.pl
+
+2)  SYS$DISK:[USER.OK.LIBRARY]FILENAME.PL;1
+
+3)  FILENAME PROLOG A1			-- on a minidisc
+    FILENAME PROLOG VMSYSU:OK.LIBRARY	-- on a shared file systems
+
+4)  USER.OK.LIBRARY.PROLOG(FILENAME)	-- on MVS
+
+5)  A:\OK\LIBRARY\FILENAME.PL
+
+6)  As MS-DOS
+
+7)  "Quintus 2:O'Keefe:Library:filename"
+
+
+1.  UNIX
+
+    Known to Quintus.  Note that in POSIX,
+	/foo	///foo	////foo	/////foo
+    and so on are all equivalent to /foo, but //foo is different.  I
+    understand that some systems use //host (Newcastle Connection uses
+    /../host but we're not concerned with Unix United).
+
+2.  VMS
+
+    Known to Quintus.
+
+3.  CMS
+
+    You can set a default file pool by using the command
+	SET FILEPOOL filepool:
+    The default userid is always your login name.
+
+    <directory> ::= <pool option> <user option> {'.' <subdir>}1..8
+		 |  <pool option> <user name> '.'
+		 |  <namedef id>
+		 |  <minidisc>
+
+    <pool option> ::= <pool name> ':' | <empty>
+    <user option> ::= <user name>     | <empty>
+
+    <pool name>, <user name>, <subdir> ::= <short id>
+
+    You can attach a directory as if it were a minidisc by using the command
+	ACCESS <directory> <minidisc>
+
+    You can use
+	RENAME <old name> <old type> <directory>
+	       <new name> <new type> <directory>
+    to rename a file within the same directory, but not to move a file
+    between directories.  For that you have to use the command
+	RELOCATE <old name> <old type> <old dir> TO <new dir>
+    To move a file from one minidisc to another, it is necessary to
+    copy it and then delete the original:
+	COPYFILE <old name> <old type> <old disc>
+		 <new name> <new type> <new disc>
+	ERASE    <old name> <old type> <old disc>
+    This can be hidden inside the rename_file/2 command.
+    delete_file/1 corresponds to
+	ERASE <old name> <old type> <directory>
+
+    It is also possible to rename and delete directories, but we
+    currently provide no
+    *	rename_directory/2
+    *	delete_directory/1
+    *	create_directory/1
+    commands.  That should be done eventually.
+
+    To determine what the equivalent of the current working directory
+    is, recall that the current directory is the directory uses when
+    you don't specify any directory explicitly.  In CMS, what you get
+    then is the 'A' minidisc.  So one possibility would be to define
+    the current directory to be 'A'.  But we can do better.  In order
+    to handle "absolute_file_name" we want to map minidisc letters to
+    directory names.  Now, to find out what directory a minidisc $X is
+    attached to, one does
+	QUERY ACCESSED $X (STACK FIFO)
+    The response -- the first line in the stack -- is
+	$X $stat $files $vdev $dir
+    or, if there is nothing assigned to that minidisc letter,
+	Disk $X not found
+    $X is the minidisc letter again
+    $stat is R/W or R/O -- have we permission to write or not?
+    $files is the number of entries in the directory
+    $vdev is DIR if the minidisc is attached to a directory,
+	or the virtual address of the virtual disc otherwise
+    $directory is the directory we want if $vdev is DIR
+	or the label of the virtual disc otherwise.
+    So the idea is that we issue the QUERY ACCESSED command and break
+    the result into its 5 fields, then if the fourth field is DIR we
+    parse the fifth field as a directory name, otherwise we take the
+    letter again.  The equivalent of changing directory is
+	ACCESS $dir A
+    and the equivalent of the Unix "cd" (go home) command is
+	ACCESS
+    with no operands.  For a variety of reasons (such as the fact
+    that detaching one directory in order to move to another will
+    detach all references to that directory), it seems simplest to
+    allow *reading* the current directory but not *changing* it.
+    Reading can be made portable between versions of CMS, changin
+    can't.  So we would have
+
+	os(cms, current_directory(X))
+
+    but not
+
+    *	os(cms, change_directory(X))
+
+    Would you believe it:  you cannot create files in another user's
+    directory.  That's a reasonable default, but the other user CANNOT
+    grant you permission even if he wants to.  He *can* let you write
+    individual files...
+
+    I particularly like the note in the CMS manual that if you do
+    such and such "a subsequent RELEASE command may write the file
+    directory on the wrong minidisc."
+
+    Character set:
+	upper case letter
+	lower case letter
+	$ # @
+	digits
+
+    <file name>, <file type> ::= <name char>*[1..8]
+
+    <name char> ::= A-Z a-z 0-9 $#@+-:_
+
+    <directory> ::= <minidisc>
+		 |  '+' <minidisc> {'.' <subdir>}*[1..8]
+		 |  '-' <minidisc> {'.' <subdir>}*[0..8]
+		 |  [<file pool>:] [<user name>] '.'
+			[<subdir> {'.' <subdir>}*[0..7]]
+
+    <minidisc> ::= <letter> [<digit>]
+    <subdir> ::= <letter> {A-Z a-z 0-9 $#@}*[0..15]
+
+    <file pool>, <user name> ::= <letter> {A-Z a-z 0-9 $#@}*[0..7]
+
+    <file-name> ::= <name-part> [<directory>]
+
+    <name-part> ::= <file name> ' ' <file type>
+		 |  <file name> '.' <file type>
+
+    Correspondence:
+	<file pool>	-->	host
+	<minidisc>	-->	device
+	<user name>...	-->	absolute([user,subdir,...])
+	+<m>{.<s>}...	-->	relative(0,[subdir,...])
+	-<m>{.<s>}...	-->	relative(1,[subdir,...])
+	<file name>	-->	name
+	<file type>	-->	extension
+	<mode number>	-->	version
+
+    If you want to specify a directory in "absolute" form, you have
+    to write
+	[filepool:]username.
+    or	[filepool:]username{.subdir}+
+    If the filepool is omitted, it defaults to the current filepool,
+    which can change.  
+
+4.  MVS
+
+5.  MSDOS
+
+6.  OS/2
+
+7.  HFS
+
+    The Macintosh is rather curious.  There are two separate and
+    distinct file systems, the older (64k ROM) "flat" file system
+    and the newer (128k ROM) "hierarchical" file system.
+	
+    On the older file system, a file name can be 1..255 characters.
+    Well, that's what the file system says.  The Finder and several
+    other things don't actually work with file names longer than
+    63 characters.  So it isn't an _error_ to create files with
+    long names, it just doesn't _work_.  The older file system has
+    version numbers, though there is no syntax for them in file names.
+    Version numbers are integers in the range -128..127.  The trouble
+    is that the Finder and several other things don't actually work if
+    the version number isn't 0.  In the flat file system, folders are
+    just an "illusion" (Apple's own choice of word) maintained by the
+    finder:  to identify a file it is sufficient to identify the disc
+    and the file name.  There are several ways of identifying the disc:
+	-- the file name have have the form "volume name:file name".
+	   "Inside Macintosh" urges you not to do that.  Ironic, really.
+	-- you can supply a "volume reference number".  At any time
+	   there is a set of discs that the Macintosh knows about (that
+	   have icons on the desktop) and each of them is given a
+	   unique number.  Most of the routines take a volume number and
+	   a file name.
+	-- you can supply a drive number.  I'll ignore that.
+
+    On the newer file system, file names can only be 31 bytes (isn't
+    compatibility wonderful?) and version numbers are a thing of the
+    past.  Volume names are still 1..27 characters.  Folders are real;
+    they are directories.  You can cause the Macintosh to assign
+    "working directory reference numbers" to directories; only the
+    directories to which the file system's attention has been explicitly
+    directed are assigned numbers, but making a directory the default is
+    one of the things which makes that happen.  The syntax is
+
+	<file name> ::= [ <directory> ] <simple name>
+
+	<directory> ::= [ <volume> ]{<sub dir>}... ":"
+
+	<sub dir> ::= ":" {":"}.... <simple name>
+
+	<volume> ::= 1 .. 27 characters other than colon
+	<simple name> ::= 1 .. 31 characters other than colon
+	
+    There is something called AppleShare which lets you mount volumes
+    on other machines over the AppleTalk network.  My understanding is
+    that remote volumes appear as volumes on the local machine, rather
+    like NFS.  AppleShare supports both file locking and record locking.
+    The icon for an Appleshare file server is different from that for a
+    disc, but it works just the same.
+
+    Correspondence:
+	no equivalent	for	host
+	<volume>	-->	device
+	<subdirs>	-->	directory
+	<simple name>	--> 	name
+	no equivalent	for	extension
+	no equivalent	for	version
+
+    Actually, this isn't quite right.  When a file is created, two
+    four-byte values are assigned to it:
+
+	<creator>	This code identifies the application (program)
+			which created the file and which is to be activated
+			when the file is double-clicked or to be printed.
+			For example, a file created by LPA MacProlog has
+			creator (signature) 'SIGM'.
+
+	<type>		This code identifies the format of the file; what
+			sort of thing it is.  For example plain text files
+			as created by MacWrite with the 'Text Only' option
+			have type 'TEXT'.
+
+    LPA MacProlog provides "create(File,Creator,Type)" -- I think, the
+    manual isn't handy".  This is a direct image of FSCreate() and makes
+    an empty file with the given name, creator, and type.  LPA MacProlog,
+    when it opens a file, opens it for *both* input and output.  This is
+    not at all necessary:  the Macintosh supports read, write, and
+    read/write access.  Nor is it a good idea: the Macintosh enforces a
+    "one writer/N readers" rule, so that you are allowed to have any
+    number of distinct streams with read-only accesss and up to ONE
+    stream with write access.  It's also a bad idea in the AppleShare
+    context; opening a file for write access can result in being locked
+    out rather longer than you really need to be.  (NOT a good idea when
+    you have 20 students trying to read the same file...)
+
+    Actually, apart from the difference in file name syntax, and all the
+    subroutines having different names, file I/O on the Macintosh isn't
+    radically different from UNIX.
+
+    All Macintoshes have two serial ports, the printer port and the modem
+    port.  Oddly enough, it seems that AppleTalk, if you have it, uses
+    the printer port.  It is not a good idea to try to drive the printer
+    directly; there is a Printer Manager package which can be used.  The
+    newer Macintoshes have extra slots, and users can install their own
+    device drivers.  There doesn't seem to be a convention for accessing
+    device drivers through file names (though there _is_ a convention
+    for naming the device driver object files).  Something along the
+    lines of "Device:.InA", "Device:.OutB" wouldn't be too out of place.
+ 
+    In the Prolog library, we currently have up to six files for any
+    given file name:
+	foobaz.pl		Prolog source code
+	foobaz.qof		Prolog object code
+	foobaz.c		C source code called by Prolog
+	foobaz.o		C object code
+	foobaz.mss		Documentation marked-up file
+	foobaz.doc		Documentation formatted file
+    On the Macintosh, these reduce to three:  the object code for the
+    Prolog file would be kept in the resource fork and the source code
+    in the data fork of one file; the object code for the C file would
+    be kept in the resource fork and the source code in the data fork
+    of one file; and if the documentation was supplied on-line at all
+    it would be as one MacWrite file.  (Note that the toolbox editor
+    is limited to 32kbytes, so clumping files is not an option.)  To
+    keep these apart, we have no choice but to give them different
+    names or put them in different directories.  My preference is to
+    put them in different directories:
+	Quintus:Library:Prolog:foobaz
+	Quintus:Library:C:foobaz
+	Quintus:Library:Documents:foobaz
+    I'll have to find out what other systems do.  Any C code in the
+    library will have to wait for a satisfactory implementation of
+    the "portable foreign interface".
+
+    Note added later:  I have now found out what LPA Mac Prolog really
+    does.  Unlike ALS, they do not currently keep the object code for a
+    file in that file's resource fork.  Instead, if you have a file
+	Quintus:Library:Prolog:foobaz
+    their system, if asked to save an "object code" file, will create
+	Quintus:Library:Prolog:foobaz.OBJ
+    In particular, if you start with
+	listparts.pl
+    you get
+	listparts.pl.OBJ
+    I rang LPA on the telephone.  They had never thought of putting stuff
+    in the resource fork, but now that I have suggested it, they are going
+    to do that.  Probably in release 2.7.
+
+    I note that the Prolog source files alone in the Quintus library
+    come to about 1.3Mbytes.  We should provide _some_ portion of the
+    library for use in "Quintus MacProlog", but it would be a Good
+    Thing if it were to fit on an 800k floppy...  (du -s /usr/ok/library.d
+    says the total is 3.2Mbytes, and that's excluding .qof files.)
+
+Environment enquiries for file names.
+ 
+1.  environment(os(OS))
+ 
+    This returns an atom identifying the file name syntax used by the
+    system.  Possible values include
+ 
+	unix		Unix; V.x, 4.x, or POSIX
+	vms		VMS; 3.x, 4.x, or 5.x
+	cms		CMS; Releases 4, 5, 6
+	mvs		MVS <not yet supported>
+	msdos		MS-DOS; 3.1 or later
+	os2		OS/2 <not yet supported>
+	mac		Mac (HFS) <not yet supported>
+ 
+    Note that some of these systems have versions with differing size
+    limits; Unix System V releases up to V.3.x have 14-character file
+    names and 255 character path names, while BSD systems have a 255-
+    character limit for file names and 1023 for path names, and POSIX
+    lets the limit vary from directory to directory.  Variations like
+    that don't count here; they are handled by other enquiries.
+ 
+2.  environment(file_name(size(SizeInChars)))
+ 
+    The maximum total length of a file name, in bytes.  If you add up
+    the sizes of the other fields, they may exceed this limit.  Whole
+    file names are limited by this limit as well as other limits.  It
+    doesn't mean that you can't construct file name records exceeding
+    this limit; only that you can't open, delete, rename, &c.
+ 
+3.  environment(file_name(host(SizeInChars)))
+ 
+    How long can the "host" component of a file name be?
+    If a file system does not support the notion of "hosts" or
+    "nodes", this enquiry will FAIL.
+ 
+4.  environment(file_name(device(SizeInChars)))
+ 
+    How long can the "device" component of a file name be?
+    If a file system does not support the notion of "devices" or
+    "drives", this enquiry will FAIL.
+ 
+    If a file system permits the use of hosts OR devices but not
+    both, both of these enquiries will succeed.
+ 
+5.  environment(file_name(directory(SizeInChars)))
+ 
+    How long may a single directory component be (a subdirectory
+    name)?  If the file system does not support a notion of
+    directories, this enquiry will FAIL.
+ 
+    It is possible that some operating systems may support directories
+    in some releases, or under some conditions, and not others.  For
+    example, CMS only acquired directories in Release 6, and a site is
+    not obliged to install them.  In that case, this enquiry should
+    FAIL if the Prolog system can detect that it would be necessary to
+    install a new version of the operating system to permit directories.
+    That is, if the current release does not support them at all, or if
+    the current release does but this site would have to reconfigure and
+    reboot, it should fail.  If it would be possible to install directory
+    support without disturbing running processes, it should succeed.
+ 
+6.  environment(file_name(depth(NumberOfSubDirs)))
+ 
+    How many levels of directories may there be in an absolute file
+    name?  This includes any tokens required to identify a user's
+    home directory, even if some more compact form is available which
+    can use fewer tokens.  For example,
+ 
+    TOPS-10:	the Project and Programmer number fields count as
+		TWO directory levels.
+    B6700 MCP:	something like (CCC002S) counts as TWO directory
+		levels because it means /USERCODE/CCC002S
+    UNIX:	~ expansion is not heeded; /usr/ok/library.d has
+		three levels even though it can be written as two.
+ 
+7.  environment(file_name(name(SizeInChars)))
+ 
+    How long may the 'name' part of a file name be, in bytes?
+    In Unix, this is e.g. 14 characters, because an empty type is
+    possible.
+ 
+8.  environment(file_name(type(SizeInChars)))
+ 
+    How long may the 'type' (extension) part of a file name be,
+    in bytes?  In Unix, this might be 12 characters, because the
+    assumption is that a name must be non-empty.
+ 
+    Note that the type doesn't necessarily appear in the surface
+    form of a file name.  On the Macintosh, the 'type' field will
+    be the four-byte resource type, e.g. the type for LPA
+    MacProlog files is 'SIGM'.
+ 
+9.  environment(file_name(base(SizeInChars)))
+ 
+    How long may the name and type be when written together with their
+    joining punctuation mark?  Most of the file systems that have types
+    in file names at all limit the name and the type separately, but
+    Unix limits them together.  On other systems, base=name+type+1; but
+    on Unix base=name.  Strictly speaking, then, it is redundant, but it
+    is useful for computing field widths in listings.
+ 
+10. environment(file_name(version(SizeInChars)))
+ 
+    How long may the version field be?  As always, this excludes
+    required punctuation marks.  Note that in VMS you can have up to
+    five digits and an optional preceding minus sign, so the limit is
+    6.  These limits are mostly useful for formatting output, not for
+    use when putting file names together.
+ 
+    If a file system does not support versions, this enquiry will FAIL.
+    Note that a convention of renaming files by setting the type to
+    'BAK' or appending a tilde or moving the old version to another
+    directory does not count; versions here are numbers which are a
+    special part of file syntax and ensure that files with different
+    names or different types don't interfere with one another's versions.
+ 
+    I have kludged the "mode number" of CMS file names as versions, but
+    this enquiry should FAIL on CMS because CMS does not have versions.
+ 
+Future "portable" directory operations:
+ 
+	create_directory(+Directory)
+	delete_directory(+Directory)
+	rename_directory(+Directory, +NewName)
+ 
+    Each of these may have Device or Host fields.
+ 
+    current_directory(-Directory)
+ 
+	What "directory" would you get if you only specified a
+	file name, optional extension, and optional version?  That
+	is, if no host, no device, and no directory were specified?
+	The result may contain host, device, and/or directory
+	information; it will not contain file name, extension, or
+	version information, even if, as on CMS, such information
+	was used in constructing the relevant directory.
+ 
+	The result is absolute.
+ 
+    current_directory(?Device, ?Directory)
+ 
+	This is true when the system has some notion of devices,
+	Device is one of those devices, and Directory is the
+	directory you would get if you specified a file name,
+	optional extension, optional version, and this particular
+	device, but no host or other directory information.  The
+	Directory will not contain file name, extension, or
+	version information.  It may (MS-DOS, CMS) or may not (CMS)
+	contain the Device.
+ 
+	The result is absolute.
+ 
+ 
+ 
+    1)  Unix
+ 
+	One notion of current directory to worry about.
+	getwd(), chdir().
+ 
+	No devices, so current_directory/2 would fail
+ 
+    2)  VMS
+ 
+	One notion of current directory "SET DEFAULT <directory>"
+	chdir() exists; we already simulate getwd() somehow.
+ 
+	If Device is not instantiated, report an instantiation fault,
+	as this system has arbitrarily many devices.  Something like
+	current_directory('fred', X) would work by trying to translate
+	'fred' as a logical device name: what path is "FRED:"
+	equivalent to?
+ 
+    3)  CMS
+ 
+	Each minidisc may be attached to a virtual disc, in which
+	case we'd say e.g. cwd(0'B) = "B", or to a shared file system
+	directory, in which case we'd say e.g.
+	cwd(0'B) = "VMSYSU:OKEEFERA.QUINTUSPROLOG.LIBRARY".
+ 
+	When you don't specify a minidisc or directory, you get just
+	what minidisc "A" is attached to, so
+		current_directory(D) :- current_directory('A', D).
+ 
+	For each minidisc letter "A".."Z", there are three possibilities:
+	(u) the letter is not attached to anything.
+	    current_directory/2 will not report or accept it.
+	(v) the letter is attached to a virtual disc.
+	    current_directory('X', 'X') in that case.
+	(d) the letter is attached to a directory.
+	    current_directory('X', 'the:directory') in that case.
+ 
+    4)  MVS
+ 
+	SPF wants file names to look like
+		LOGONID.GROUP.TYPE[(MEMBER)]
+	which is vaguely like
+		~logonid/group/member.type
+	in Unix except that (MEMBER) is a member name, or vaguely like
+		~logonid/group.type
+ 
+	There is thus something which is close enough to being a
+	current directory to be useful: the LOGONID.  But you can't
+	change it.  current_directory(X) would thus bind X='LOGONID'
+ 
+	There is a notion of device.  My WORD there is!   But I'll have
+	to read an MVS manual.
+ 
+ 
+ 
+ 
+    There is a generalisation here:  there is a "current directory"
+    for each minidisc letter.  I think (but will have to check) that
+    MS-DOS may keep a "current directory" for each drive.  In that
+    case, we might have
+ 
+	current_directory(X) :-
+		"current device"(Y),
+		current_directory(Y, X).
+ 
+	current_directory(Device, Directory) :-
+		determine the Directory current on Device
+		If the device is real, put it in the directory,
+		if the device is a label, don't.
+ 
+	change_directory(X) :-
+		if there is a device D in X,
+		change the directory on D
+		and if the device is real, make it the current drive.
+ 
+	change_directory(Device, Directory) :-
+		change the Directory current on Device
+		if Directory has a device in it, it must be Device.
+ 
+ 
+Common Lisp Reference Point
+ 
+    The obvious thing to compare the filename package with is the
+Common Lisp "File System Interface", described in chapter 23 of CLtL.
+ 
+	Common Lisp defines a standard interface for dealing with ...
+	a file system.  This interface is designed to be simple and
+	general enough to accomodate the facilities provided by
+	"typical" operating system environments within which Common
+	Lisp is likely to be implemented.  The goal is to make Common
+	Lisp programs that perform only simple operations on files
+	reasonably portable.  To this end, Common Lisp assumes that
+	files are named, that given a file name one can construct a
+	stream connected to the file of that nbame, and that the names
+	can be fitted into a certain canonical, implementation-
+	independent form called a PATHNAME.  Facilities are provided
+	for manipulating pathnames, for creating streams connected to
+	files, and for manipulating the file system through pathnames
+	and streams.
+ 
+	The main difficulty in dealing with names of files is that
+	different file systems have different naming formats for files.
+	For example, here is a table of several file systems and what
+	equivalent file names might look like for each one:
+ 
+	System		File name
+	--------	--------------------------------
+	TOPS-20		<LISPIO>FORMAT.FASL.13
+	TOPS-10		FORMAT.FAS[1,4]
+	ITS		LISPIO;FORMAT FASL
+	MULTICS		>udd>LispIO>format.fasl
+	TENEX		<LISPIO>FORMAT.FASL;13
+	VMS		[LISPIO]FORMAT.FAS;13
+	UNIX		/usr/lispio/format.fasl
+	--------	--------------------------------
+	CMS (old)	FORMAT FASL L1
+	CMS (new)	FORMAL FASL VMSYSU:LISP.LISPIO
+	MVS		LISP.LISPIO.FASL(FORMAT)
+	MS-DOS		\LISPIO\FORMAT.FAS
+	Macintosh	Lisp Disc:LispIO:Format FASL
+ 
+	All file systems dealt with by Common Lisp are forced into a
+	common framework, in which files are named by a Lisp data object
+	of type PATHNAME.  A pathname always has six components,
+	described below.  These components are the common interface
+	that allows programs to work the same way with different file
+	systems; the mapping of the pathname components into the
+	concepts peculiar to each file system is taken care of by the
+	Common Lisp implementation.
+ 
+    HOST	The name of the file system on which the file resides.
+ 
+	|	Internally, the host component is
+	|	a.  An atom, the node name.
+	|	b.  A pair node/access, giving a node name and an
+	|	    access control string (e.g. a logon id and password).
+	|	c.  The integer -1, indicating that no host was specified.
+ 
+	(1) Unix
+	|	In POSIX, a pathname which begins with exactly TWO
+	|	slashes is special (thank you, Apollo).  In the Apollo
+	|	environment, the first component //foo acts rather like
+	|	a node name.  {{ I have no Apollo manuals here to check
+	|	this. }} I have chosen to regard a //x prefix on a
+	|	pathname as specifying the host 'x'.  If a pathname has
+	|	0 initial slashes, it is relative; if 1 or more than 2,
+	|	it is absolute.  /// = //// = ///// = ... = a single /
+ 
+	(2) VMS
+	|	A VMS node name with optional access control string.
+	|	E.g. 'quintus"user passwd"::' would be taken as
+	|	specifying the host 'QUINTUS'/'user passwd'.  No
+	|	logical node name translation is done.
+ 
+	(3) CMS
+	|	Host names are taken to be filepool identifiers.  The
+	|	CMS environment does have a notion of "node names" --
+	|	see the NAMES and SENDFILE commands and read about
+	|	RSCS (read and weep) -- but while CMS comes within
+	|	hailing distance of FTP, it doesn't have remote file
+	|	sharing.  So filepool identifiers are the closest
+	|	analogues.
+ 
+	(4) MVS
+	|	I haven't got the foggiest notion.  Jeff Beard please
+	|	advise.  Note that it is not necessary for every file
+	|	system to support all components; Unix has no version
+	|	numbers, for example.
+ 
+	(5) MS-DOS
+	|	There are no host names.  In a file sharing network, I
+	|	believe remote file systems are mounted as virtual discs.
+ 
+	(6) OS/2
+	|	Notes about OS/2 are place-holders.  It has been assumed
+	|	that OS/2 will not be grossly different from MS-DOS.
+ 
+	(7) Macintosh
+	|	There are no host names.  In a file sharing network, I
+	|	believe remote file systems appear as virtual volumes
+	|	on the local machine.  AppleTalk hosts do exist, and
+	|	there is a name mapping service, but that's of interest
+	|	if you want to set up connections to sockets and such,
+	|	and that's just a wee bit outside our scope here.
+
+    DEVICE	Corresponds to the "device" or "file structure" concept
+		in many host file systems; the name of a (logical or
+		physical device containing files).
+
+	|	Internally, the device component is
+	|	a.  An atom, the device name, or
+	|	b.  The integer -1, when no device was specified.
+
+	(1) UNIX
+	|	There are no device names.
+
+	(2) VMS
+	|	VMS logical and physical device names are accepted.  No
+	|	logical device name translation is done.
+
+	(3) CMS
+	|	A minidisc letter (file mode letter) is regarded as
+	|	specifying a device.  In fact, it DOES specify a
+	|	virtual disc.  It is not possible for a filename to
+	|	contain both a device and a host.  The (virtual)
+	|	card reader and (virtual) card punch, while technically
+	|	devices, are really ftp/mail channels, and are best
+	|	managed using the special commands for them.  The
+	|	(virtual) printer, the keyboard, the screen (and any
+	|	other CMS windows that may be around) should perhaps
+	|	be treated as devices as on MS-DOS, but if the
+	|	operating system won't do it, why should we?
+
+	(4) MVS
+	|	It all depends on whether we are providing access to
+	|	DSNs or just to DDNs.  I suggest that it might be a
+	|	good idea to have DDN: and DSN: as either hosts or
+	|	devices, whichever is appropriate.  We do not have to
+	|	follow exactly what SAS Lattice C does...
+	|	There is a clear notion of a device type and a volume.
+	|	We should regard a device-type/volume-label pair as
+	|	the device; it is also possible to specify a unit number.
+
+	(5) MS-DOS
+	|	There are two kinds of devices: disc drive names are a
+	|	single letter followed by a colon, and are normally
+	|	followed by more information, while other device names
+	|	are extended letters or more than one letter followed
+	|	by a colon and are never followed by more information.
+	|	So A:, B:, C:, AUX:, LST:, CON:, ...
+
+	(6) OS/2
+	|	This is a place-holder.
+
+	(7) Macintosh
+	|	Volume names are a perfect fit for devices.  You may
+	|	even operate different types of file systems on
+	|	different volumes:  "flat" file systems, "hierarchical"
+	|	file systems, and "external" file systems.  There is a
+	|	clear distinction between files, device drivers, and
+	|	windows.  We might want to blur that by providing
+	|	ersatz volumes "Device:" and "Window:", but the Mac
+	|	doesn't do that itself.  User-definable streams might
+	|	be a better approach:  it is possible to drive the
+	|	AppleTalk network and the SCSI bus from C or Pascal,
+	|	but doing it in Prolog would require exposing far too
+	|	much system-dependent stuff.
+
+    DIRECTORY	Corresponds to the "directory" concept in many host
+		file systems; the name of a group of related files
+		(typically those belonging to a single user or project).
+
+	|	Internally, a directory is a pair <AbsRel,Dirs> where
+	|	AbsRel is an integer and Dirs is a list of atoms.
+	|	The possible cases for AbsRel are
+	|	a.  >= 0 : a relative name which starts by going
+	|		   AbsRel steps towards the root (../).
+	|	b.  = -2 : an absolute name which starts at the
+	|		   root of the relevant file system.
+	|	c.  = -3 : an absolute name which starts at the
+	|		   home directory of a specified user.
+	|	d.  = -1 : no directory specified (Dirs = []).
+
+	(1) Unix
+	|	No problem here.  AbsRel = -3 is a bit of a kludge,
+	|	and ~fred/.. is meaningful but not accepted.
+
+	(2) VMS
+	|	No problem here.  VMS has some special wild-card
+	|	stuff for directories, but since we never accept
+	|	filenames with wildcards in them (the set of wild-
+	|	card characters is too system-dependent) that is
+	|	not a problem.  Common Lisp allows ':wild in its
+	|	path names, we don't (yet).
+
+	(3) CMS
+	|	A "directory" can be
+	|	a.  <minidisc>
+	|	b.  +<minidisc>{.<subdir>}...
+	|	c.  -<minidisc>{.<subdir>}...
+	|	d.  [filepool:]username{.<subdir>}...
+	|	We treat a and b as relative (AbsRel=0) and c also as
+	|	relative (AbsRel=1) -- note that CMS has no way of
+	|	expressing "grandparent" -- and d as absolute.  One
+	|	problem is that a <minidisc> may not have any
+	|	subdirectories, but we don't notice that until we try
+	|	the filename with the actual file system
+
+	(4) MVS
+	|	Jeff Beard to advise.  The rule of thumb here is that
+	|	there is a "current directory" which can be omitted from
+	|	a file name; if there is some sort of prefix which can
+	|	be defaulted (LOGONID.PROJECT. ?) in MVS that is the
+	|	directory.
+
+	(5) MS-DOS
+	|	No problem here.
+
+	(6) OS/2
+	|	This is a place-holder.
+
+	(7) Macintosh
+	|	Again, a perfect match.  Strictly speaking, a well-
+	|	formed Macintosh file name, if it contains a volume,
+	|	must be absolute.  The Macintosh maintains a default
+	|	volume and a default directory, but there is only
+	|	one default directory, not one per volume.
+
+	|	There is one little problem.  On the Mac, the longest
+	|	string you can pass to a system subroutine has 255
+	|	characters.  There is no limit on the nesting of
+	|	directories, so there is no limit on the length of an
+	|	absolute file name.  "Inside Macintosh" explicitly
+	|	warns that you may have to reach a file by using some
+	|	of the directories as stepping stones.  They still
+	|	insist that users should not be encouraged to entre
+	|	file names with colons in them.  When the Finder
+	|	passes a file name to a program, it supplies the
+	|	name of the file and the NUMBER of its directory.
+	|	When the SFGetFile() -- "old/Open" dialogue -- or
+	|	SFPutFile() -- "New/Save/Save As" dialogue -- routines
+	|	return a file name, they do so as a simple file name
+	|	and directory NUMBER pair.  This is actually an
+	|	argument in favour of using filename records; atoms in
+	|	LPA MacProlog have a 255 character limit, but filename
+	|	records have no such limit and accessing a file by
+	|	means of one can do whatever stepping along is needed.
+
+    NAME	The name of a group of files that can be thought of as
+		conceptually the "same" file.
+
+	|	Funny notion they have of "same"...
+	|	Internally, this is
+	|	a.  An atom, the name.
+	|	b.  {x}, where x is an atom.  This is used for "remote"
+	|	    names, which do not obey the rules of the local
+	|	    operating system.  Currently only VMS does this.
+	|	c.  The integer -1, if no name was specified.
+
+	(1) Unix
+	|	If a pathname ends with a slash, or with "." or "..",
+	|	there is no name.  Also, //host is taken to involve no
+	|	name if there isn't at least one following slash, and
+	|	so is ~user.  /foo, however, can be an ordinary file,
+	|	so in that case foo is the name.  The name part may
+	|	begin with a dot.
+
+	(2) VMS
+	|	The name part of a VMS file name.  filename.pl currently
+	|	accepts "foreign file spec" if there is a host, but not
+	|	if there is a device.  I have adopted the rule of thumb
+	|	that we don't need to worry too much about tapes, but do
+	|	need to worry about networks.  No logical name translation
+	|	is done.
+
+	(3) CMS
+	|	The "filename" part of a CMS file spec.
+
+	(4) MVS
+	|	In the case of a DDname, I expect that the DDname would
+	|	be the name and would be the whole of the file spec.
+	|	Note that an MVS DSname can be something like
+	|	stuff.stuff.stuff(VERSION)(MEMBER).  Common Lisp path-
+	|	names have no MEMBER component.  We could make use of
+	|	such a component on Unix, VMS, and CMS as well.  In
+	|	VMS we could use "(MEMBER)" for that field in complete
+	|	safety, as "()" cannot otherwise appear in a file name.
+	|	In CMS we could use "(MEMBER)" as "()" cannot appear in
+	|	a file name, and the logical place to put it is just
+	|	after the file type.  In Unix we could probably get
+	|	away with "(MEMBER)" there too, as that's the syntax
+	|	that SCCS uses.  However, that is for the future.
+	|	We could always paper over the problem by ruling that
+	|	MVS has *only* the name component...
+	|	I asked several times on UseNet whether anyone had a
+	|	mapping for MVS names and got no replies.
+
+	(5) MS-DOS
+	|	No problem.
+
+	(6) OS/2
+	|	Place-holder.
+
+	(7) Macintosh
+	|	This is the whole name of the file, excluding any disc
+	|	or folder names.  A Macintosh file is actually a pair
+	|	of files: a "data fork" and a "resource fork".  Many
+	|	compilers take source code in the data fork of a file
+	|	and place linkable (and dynamically loadable) object
+	|	code in the resource fork of the same file.  There is
+	|	no way of naming the forks separately, but Prolog
+	|	character I/O would only affect the data fork anyway.
+	|	There is a question here:  should we impose a limit of
+	|	31 characters, which is what newer file systems want,
+	|	or should we accept 63 or even 255?  My decision is
+	|	that we should accept as many characters as there are,
+	|	and leave it until we try to _use_ the name to see
+	|	whether the operating system likes _this_ name on
+	|	_this_ volume.
+
+    TYPE	Corresponds to the "filetype" or "extension" concept in
+		many file host file systems.  This says what kind of
+		file this is.  Files with the same name but different
+		types are usually related in some specific way, such as
+		one being a source file, another the compiled form of
+		that source, and a third the listing of error messages
+		from the compiler.
+
+	|	Internally, the type is
+	|	a.  An atom, the type or extension, or
+	|	b.  The integer -1, if no type was specified.
+
+	(1) Unix
+	|	This is not an integral part of Unix file name syntax,
+	|	but a convention.  We regard names like "foo", ".cshrc",
+	|	"has-none" and so on as not specifying a type, names
+	|	like "get-dotted." and "end_of_file." as specifying the
+	|	empty type, and names like "foo.c", "a.b.c" as specifying
+	|	the extension 'c'.  Note that Unix places no separate
+	|	limits on name and type, only on the two together.  All
+	|	the other file systems having types limit them separately.
+
+	(2) VMS
+	|	Extensions are an integral part of VMS syntax.  We use
+	|	the same rule as Unix: "foo" specifies no extension at
+	|	all, "foo." specifies the empty extension, and "foo.c"
+	|	specifies 'c'.  Note that ".cshrc" specifies no type
+	|	in Unix, but in VMS it is read as being all extension.
+
+	(3) CMS
+	|	This is the "file type" part of a CMS file name.
+
+	(4) MVS
+	|	Nothing plausible here, because the usual method in MVS
+	|	groups files of the same type into partitioned data sets.
+	|	We could, I suppose, split the last component of a DSname
+	|	off and call that the type.  I doubt that portability
+	|	between VMS and MVS is quite as pressing an issue as
+	|	portability between MVS and CMS, so the important thing
+	|	is to ensure that MVS behaviour can be simulated under
+	|	CMS.
+
+	(5) MS-DOS
+	|	No problem, just like VMS version 3.
+
+	(6) OS/2
+	|	Place-holder
+
+	(7) Macintosh
+	|	This is rather tricky.  Every file in the Macintosh file
+	|	system has a four-character type name, saying what kind
+	|	of file it is.  (E.g. plain files have type 'TEXT',
+	|	picture files are 'PICT'.)
+	|	When you create a file you really do want to say what
+	|	this is.  When you ask the user to select an input file
+	|	it is customary to use this to guide the selection.  But
+	|	it has no representation in the name.  I suggest that
+	|	we should have a type component in a Macintosh filename
+	|	record, but not pick it up from a textual representation
+	|	of a file name and not include it in the name generated
+	|	from one.  With a four-argument open we have no problem:
+	|	open('Some Source file', write, [type('SIGM')], Stream).
+	|	We can also include it in the name, e.g.
+	|	open([name(freddy),type('TEXT')], read, Stream)
+
+    VERSION	Corresponds to the "version number" concept in many host
+		file systems.  Typically, this is a number that is
+		incremented every time the file is modified.
+
+	|	Internally, this is
+	|	a.  An integer, the version number, or
+	|	b.  The atom '', if no version was specified.
+
+	(1) Unix
+	|	No versions.  There are several "backup" conventions
+	|	in use.  These are some I know of:
+	|	a.  Rename to another directory (top)
+	|	b.  Append '.BAK' (emacs)
+	|	c.  Append '%' (SunOS textedit)
+	|	d.  Append '-' (VED)
+	|	e.  Insert 'o' after last dot (Tilbrook utilities)
+	|	f.  Append ~#~  where # is the number (latest has none).
+	|	It might be a nice idea to have an "open-with-backup"
+	|	feature where a string to be appended could be
+	|	specified.  There is no requirement that a system
+	|	support all components, so there's no real problem.
+
+	(2) VMS
+	|	Has version numbers.  (So do Tops-20 and Tenex, and
+	|	so, for some files, does ITS.  But we are concerned
+	|	with none of those systems.)
+
+	(3) CMS
+	|	No versions.  I'm not aware of a backup convention,
+	|	but some programs seem to fiddle with the filetype.
+	|	However, I have abused the version number field to
+	|	hold the mode number.  This is a single digit.
+	|	Digit	Old filesys		Shared filesys
+	|	0	file is private		same as 1
+	|	1	file is visible		normal shareable file
+	|	2	same as 1		same as 1
+	|	3	erase after read	erase after read
+	|	4	simulated OS format	simulated OS format
+	|	5	same as 1		same as 1
+	|	6	update-in-place		same as 1
+	|	7-9	reserved		reserved
+	|	This is a wierd combination of protection and type.
+	|	0: if someone else attaches this minidisc, files with
+	|	mode 0 won't appear in their copy of the directory.
+	|	3: file behaves normally while being written, but when
+	|	the program that next opens it closes it, poof!  Used
+	|	rather like pipes (or one of the MVS DISPs, PASS?).
+	|	4: The records of the CMS file are interpreted as
+	|	tracks of an MVS disc, and their contents are treated
+	|	accordingly.  You can read and write such files with
+	|	the CMS macros, but it doesn't make much sense.  We
+	|	could best handle such files by spotting the 4, then at
+	|	run time creating a suitable FILEDEF, and using the OS
+	|	macros to process the file.
+	|	6: if you update a normal CMS file, it seems that the
+	|	whole file gets copied somewhere else.  With this mode,
+	|	the original records are left where they are.  I guess
+	|	that this will be used for random access files.
+	|
+	|	Curiously enough, there seems to be no official IBM way
+	|	of referring to this digit in the syntax of a name which
+	|	is specified with an absolute directory.  Modes 1, 3, and
+	|	4 do still make sense in that environment.  The DMS*
+	|	functions do take a file mode number, following the
+	|	directory.  Perhaps we should allow
+	|	"filename filetype poolid:userid.subdir 1".
+
+	(4) MVS
+	|	MVS has version numbers, which appear as part of the
+	|	file name.  In fact, it has two kinds of version
+	|	numbers: GENERATION numbers and CYCLE numbers.  (So
+	|	do some other mainframes, e.g. the Burroughs MCP.)
+	|	Both are three digit numbers, so we can pack them
+	|	together in a single integer without loss of information.
+
+	(5) MS-DOS
+	|	No version numbers
+
+	(6) OS/2
+	|	This is a place-holder.  The current system is just
+	|	like MS-DOS, but they may have plans for the future.
+
+	(7) Macintosh
+	|	The older flat file system has version numbers, but
+	|	the rest of the system doesn't know what to do with
+	|	them.  The newer file system hasn't got them.  Let's
+	|	ignore version numbers on the Mac.
+
+    PROTECTION,
+    ACCOUNT	These are components which Interlisp-10 used in TOPS-10.
+	|	Recall that a TOPS-10 file name looked like
+	|	device:name.ext[proj#,prog#,subdir,...]<prot>
+	|	The main reason for mentioning them here is to point out
+	|	that it may be necessary to extend the set given here.
+	|	We have already seen Version being bent for the sake of
+	|	CMS (it would have been better as Protection), and we've
+	|	seen that MEMBER would be useful on several systems.
+
+    For the runnable specification, I have chosen to implement filename
+    records as septuples
+	filename(Host,Device,AbsRel,SubDirs,Name,Type,Version)
+    the arguments of which are described above.  This is not neccesary.
+    The main thing we need to get clear is when two of these things are
+    supposed to be equal.  I propose the following definition:
+
+	Two filename records should be == if and only if they are
+	guaranteed to have the same effect when used to open a file,
+	whatever the state of the file system, or, if both are
+	incomplete, if they would have the same effect however they
+	were completed.
+
+    Note that this means that we want the filename records representing
+    the VMS file names '<foo.baz>ugh.ext.007' and '[Foo.Baz]UGH.EXT;7'
+    to be identical, though neither of them is complete (no host and
+    no device).  This means that missing information cannot be
+    represented by logical variables, as creating a new record would give
+    us new variables.  Note further that 'foo.baz' and '[]foo.baz' are
+    not equivalent: the former has no directory in it, so (a) can be
+    completed with any directory and (b) can be used on a device which
+    does not support directories, while the latter has neither property.
+
+    Note further that in Unix the mapping from user names to home
+    directories can be changed while the program is running, so we must
+    not treat ~ok and /usr/ok as identical, even if they happen to mean
+    the same thing *at the time the name is parsed*.  Similarly, in VMS
+    logical name mappings may change while the program is running, so
+    logical name translation should not be done at this point.  (There
+    should be an operation which says "interpret this thing NOW", but
+    that is a different operation.)  Even CMS has "namedefs" (I do not
+    at all understand how CMS can distinguish between "LONGNAME TYPE"
+    (in fn ft format) and "LONGNAMETYPE" (in namedef format) in calls
+    through the DMS interface, but that's typical).
+
+    Note that this desire that two filename records should unify iff
+    they are functionally equivalent means that if the operating system
+    ignores case, letters should be forced to one case or the other.
+    In the runnable specification I have chosen to map them to upper case
+    because that's what CMS, VMS, and MS-DOS actually show you, and it
+    seemed good to me to make the text displayed by Prolog programs
+    resemble the text displayed by other programs.  So after
+	filename_chars(FileName, "filename.pl")
+    the query
+	filename_atom(base, FileName, Atom)
+    will yield Atom = 'filename.pl' on Unix but Atom = 'FILENAME.PL' on
+    VMSor MS-DOS.  (It will yield "FILENAME PL" on CMS.)
+
+    This case conversion business can be tricky.  Some file systems
+    preserve the case that is supplied when you create a file, and if
+    you list a directory will show you the exact case that was used
+    when the files were created, but ignore case when trying to open
+    an existing file.  Thus 'FooBaz.Pl' and 'foobaz.pl' would have
+    different effects when used to *create* a file on such a system,
+    but would behave the same when used to try to *read* a file.  On
+    such a system, case should be preserved.  The Macintosh is just
+    such a file system.  If you create 'Charles Snark-Hunter', you
+    see three capital letters when you look at its folder.  But if
+    you ask for it under the name 'charles snark-hunter', you'' get
+    it.  (Case is ignored, but diacritical marks are not.)
+
+    It really isn't clear to me what CMS does.  There is fine print in
+    SC24-5284-01 which says that case is preserved in file name and file
+    type but not in file pool, logon id, or subdirectory names.  On the
+    other hand, when I have _used_ CMS I have typed lower-case names to
+    utilities and the names have invariably come back in upper case.
+    This may be a difference between version 4 (which I have used) and
+    version 6 (which I have manuals for), or it may be a difference
+    between the EDF file system (the one which uses 'minidiscs') and the
+    SFS file system (the one which has directories).  Or it may be an
+    error in the manual.  The glossary in SC24-5286-01 says plainly that
+    file names and types may contain [A-Z0-9$#@:+-_]; there is no
+    mention there of [a-z].  I have assumed that CMS ignores case
+    everywhere.  Another fine point is that I have chosen to preserve
+    case in VMS access control strings and foreign file specs, so
+    that	'QUINTUS"ok ItiTePai"::"~ok/TorekQuotation"
+    and		'QUINTUS"OK ITITEPAI"::"~OK/TOREKQUOTATION"
+    would be regarded as distinct.
+
+
+
+OPERATIONS ON FILENAME RECORDS
+
+    The operations provided by Common Lisp are
+
+    (pathname P)
+	; coerces P to a pathname.
+	; string => parse it
+	; atom => parse its print-name
+	; pathname => return it
+	; stream => return the name of the file it is/was connected to.
+
+    (truename P)
+	; interpret P wrt. file system NOW.  At this point the current
+	; directory may be filled in, version number supplied, namedef
+	; or logical name translation done, &c.  More or less our
+	; absolute_file_name/2, but no monkeying with the extension.
+
+    (parse-namestring thing &optional host defaults
+			    &key :start :end :junk-allowed)
+	; the Host and Defaults arguments are provided in case an
+	; implementation supports multiple file systems (e.g. the
+	; Xerox Lisp system) so that it knows which syntax to use.
+	; No defaulting is done.  :start and :end just say how
+	; much of the string to take.  :junk-allowed is another
+	; parsing option.  An empty string is always allowed, and
+	; gives you a filename record with all components missing.
+
+    (merge-pathnames pathname &optional defaults default-version)_
+	; Components missing from pathname are filled in from
+	; defaults.  The rules are rather tricky, particularly
+	; the rule for versions (if pathname has a 'name' in it,
+	; it _won't_ pick up the version, otherwise it will).
+
+    *default-pathname-defaults*
+	; Any function like parse-namestring or merge-pathname
+	; which needs a "defaults" filename record and isn't given
+	; one uses this.
+
+    (pathnamep P)
+	; true iff P is a filename record.
+
+    (make-pathname &key :host :device :directory
+			:name :type :version :defaults)
+
+    (pathname-host P)
+    (pathname-device P)
+    (pathname-directory P)
+    (pathname-name P)
+    (pathname-type P)
+    (pathname-version P)
+	; convert their argument to a filename record using (pathname P),
+	; then return the indicated component.  The type must be a
+	; string or atom.  The version must be a number or atom.
+	; The type of the other components is vague.  It is not clear
+	; what you get back when no component was specified.
+
+    (namestring P)			; H+E+D+N+T+V
+    (file-namestring P)			;       N+T+V
+    (directory-namestring P)		;     D
+    (host-namestring P)			; H
+    (enough-namestring P &optional defaults)
+	; convert their argument to a filename record using (pathname P),
+	; then return the indicated component as a string.  enough-
+	; namestring returns just the parts the differ from the default.
+
+    (user-homedir-pathname &optional host)
+	; returns the current (real) user's "home" directory.  This is
+	; identified as the place where you look for .INI files.
+
+We have to come close to this in power, but I don't think we have to
+match it exactly.  For example, under VMS, I would like something
+that gives me the host, device, and directory together, so that I can
+(a) pass that to a routine which enquires about the directory itself,
+(b) ask whether two files come from the same directory,
+(c) put something in the same directory as another file,
+(d) perform operations on the directory (child, parent, &c).
+Another point is that by asking "what does it mean to ask whether two
+filenames are equal" we found that on case-insensitive systems the
+case _must_ be force to all upper or all lower, while Common Lisp has
+this merely as an option.
+
+    I propose the following set of predicates:
+
+    filename(+FileName)
+	% true when FileName is a filename record
+
+    filename(+Spec, -FileName)
+	% makes a FileName from an atom(, string), list of characters,
+	% or list of pieces, to be described later.
+
+    filename_chars(?FileName, ?Chars)
+	% like atom_chars/2 or number_chars/2: if FileName is a variable,
+	% parses Chars as a file name, if FileName is not a variable,
+	% generates Chars.  (nonvar(F) -> ground(F))  Note that on VMS
+	% we have filename_chars(X, "foo") -> X = {FOO}, then
+	% filename_chars(X, Y) -> Y = "FOO", but number_chars/2 is just
+	% the same (think about leading zeros).  That's why the
+	% arguments are this way around.
+
+    filename_atom(?FileName, ?Atom)
+	% like filename_chars/2, but parses or generates an atom.
+
+    filename_string(?FileName, ?String)
+	% for use on systems which have strings.
+
+The last three predicates are essentially our equivalent of
+(namestring), but are invertible and let you get an atom or list of
+characters.
+
+    filename_chars(?Property, +FileName, ?Chars)
+    filename_chars(?Property, +FileName, ?Chars0, ?Chars)
+	% extracts a component or property of a file name record as
+	% a (difference) list of character codes.
+
+    filename_atom(?Property, +FileName, ?Atom)
+	% extracts a component or property as an atom.
+
+    filename_string(?Property, +FileName, ?String)
+	% extracts a component or property as a string (if they exist).
+
+    filename(?Property, +FileName, ?Component)
+	% extracts a component or property as a filename record.
+
+These correspond to pathname-host ... host-namestring, except that if
+a requested property is not defined in the FileName record, that
+query fails.
+
+    all
+	(*) all		All the available components; this has the
+			same effect as dropping the first argument
+			entirely except that it is not bidirectional.
+
+    host
+	(1) Unix	If the original name began '//host', this is
+			'host', otherwise the query fails.
+	(2) VMS		If the original name began 'host::', this is
+			'HOST', otherwise the query fails.
+	(3) CMS		If the original name had a 'FilePool:' in it,
+			this is 'FILEPOOL', otherwise query fails.
+	(4) MVS		???
+	(5) MS-DOS	The query fails.
+	(6) OS/2	??As MS-DOS??
+	(7) Macintosh	The query fails.
+
+    device
+	(1) Unix	The query fails.
+	(2) VMS		If the original name had 'device:', this is
+			'DEVICE', otherwise the query fails.
+	(3) CMS		If the original name had a file mode letter
+			'm', this is 'M', otherwise query fails.
+	(4) MVS		???
+	(5) MS-DOS	If the original name had a drive letter
+			'p', this is 'P', otherwise query fails.
+	(6) OS/2	??As MS-DOS??
+	(7) Macintosh	If the original name had 'A Volume Name:', this is
+			'A Volume Name', otherwise the query fails.
+
+    directory
+	(1) Unix	If the original name had no slashes in it, no
+			directory was specified and this query fails.
+			Otherwise it is a Unix pathname for the
+			directory itself (no trailing slash).
+	(2) VMS		If the original name had no brackets in it, no
+			directory was specified and this query fails.
+			Otherwise it is the bit that goes _between_
+			the brackets, e.g. 'a:[-.b]c' -> '-.B'
+	(3) CMS		It isn't really possible to separate this bit.
+	(4) MVS		???
+	(5) MS-DOS	As Unix; a pathname (without drive letter) for
+			the directory itself (no trailing backslash).
+	(6) OS/2	??As MS-DOS??
+	(7) Macintosh	You can't really have the directory without
+			the volume name.
+    name
+	(*) all		If the FileName has a name component, that
+			component, otherwise the query fails.
+
+    type
+	(*) all		If the FileName has a type component, that
+			component, otherwise the query fails.  Note
+			that a Macintosh file type may be present,
+			but will not appear in the file string.
+
+    version
+	(1) Unix	The query fails
+	(2) VMS		The version number as a number if present.
+	(3) CMS		The query fails
+	(4) MVS		The generation and cycle numbers together
+			as six digits.
+	(5) MS-DOS	The query fails
+	(6) OS/2	??As MS-DOS??
+	(7) Macintosh	The query fails
+	Note that this component is still returned as a list of
+	character codes, as an atom, or as a string, NOT as a number.
+	To get a number, do
+		filename_chars(version, FileName, Cs),
+		number_chars(Version, Cs)
+
+We noticed some awkwardness above with 'directory'; the directory is
+all scrambled up with the host/device on the Macintosh and under CMS.
+At least on the Macintosh, we can clearly distinguish the parts, but
+there is no syntax with which to express an absolute directory sans
+its volume name.  In any case, when I at any rate want the directory,
+I usually want the host and/or device as well (if they are relevant).
+The notion of "all the information available in this name about the
+directory" is well defined (even on systems that haven't got
+directories!), but the set of Common Lisp components needed to make
+up that information is not.  So I propose these additional queries:
+
+    site
+	(*) all		Everything but name, type/extension, and
+			version, all together in appropriate syntax.
+    base
+	(*) all		Name and type/extension together, i.e. all
+			but site and version, in appropriate syntax.
+
+    stem
+	(*) all		Site and name together, i.e. all but type and
+			version, in appropriate syntax.
+
+Thus, if we have a file name Boojum, and want to determine whether we
+have permission to search the directory containing it, we would ask
+	filename(site, Boojum, Site),
+	directory_property(Site, searchable)
+
+    It is interesting that the Common Lisp interface provides no way
+of manipulating the directory (or rather, site) as anything but text.
+In particular, there are no means of going rootwards or leafwards.
+But it is just such operations we have had to provide internally in
+Quintus Prolog.  Now, we cannot hope to invert this operation, so a
+specification which satisfies me is
+
+    filename_directory(+RootWards, +LeafWards, +FileName, -Site)
+	% RootWards is a non-negative integer.
+	% LeafWards is a possibly empty list of atoms.
+	% FileName is something which can be converted to a file
+	% name record; name, type, and version will be ignored.
+	% Site is the corresponding directory as a filename record.
+
+In this case, if the FileName doesn't specify a directory, './' will be
+assumed for Unix, '[]' for VMS, '- - A1' for CMS, ?? for MVS, '.\' for
+MS-DOS or OS/2, or ':' for the Macintosh.  In fact,
+	filename_directory(0, [], '', X)
+will give you a filename record representing the current directory
+(not what the current directory is _NOW_, but in general);
+this query should be valid in MVS even if no other is.
+
+For example, suppose I want to find the location of the 'tools'
+directory:
+	| ?- absolute_file_name(library(basics), Probe),
+	|    filename_directory(1, [tools], Probe, Path),
+	|    filename_atom(Path, DirectoryName).
+should give me what I want in DirectoryName, whether I'm using Unix,
+VMS, MS-DOS, OS/2, or the Macintosh, and _might_ work in CMS Release 6.
+If the method isn't going to work in 
+
+    There are several things that could go wrong.
+1.  There might not be enough information in the FileName to determine
+    the answer.  That would of course be an error.
+2.  It might be possible to determine that the result is not a possible
+    file specification.  For example, on a Macintosh,
+	filename_directory(1, [], 'Volume:', X)
+    has no answer.  It isn't really possible to check this on VMS:
+	filename_directory(2, [], 'LOGICAL$DEVICE:[DIR]', X)
+    might actually make sense, depending on what LOGICAL$DEVICE translates
+    to.  On the other hand, the result is not really expressible.
+    On CMS, something like
+	filename_directory(2, [], '* * B', X)
+    might make sense, but only if B is accessing a directory.  I think it
+    is permissible to work from the syntax; these operations are NOT
+    supposed to probe the state of the file system.  That is the work of
+    absolute_file_name/2 and the like.  So these things can assume that
+    popping more off an (apparently) absolute path than is patently
+    there is illegal, and that going down another step on a relative
+    path is always legal (except on CVMS where that is _never_ true).
+
+    Suppose we want to specify the parts of a file name record
+individually.  We need an operation which is comparable to
+make-pathname.  In fact my real model for the filename/2 operation
+is PACKFILENAME in Interlisp-D (funny, that...)
+
+    filename(Spec, FileName) ->
+	(   atom(Spec) -> filename_atom(FileName, Spec)
+	;   string(Spec) -> filename_string(FileName, Spec)
+	;   Spec = [C|Cs], integer(C) -> filename_chars(FileName, Spec)
+	;   filename_chars(Initial, ""),
+	    pack_file_name(Spec, Initial, FileName)
+	).
+
+    pack_file_name([]) --> [].
+    pack_file_name([Item|Items]) -->
+	pack_file_item(Item),
+	pack_file_name(Items).
+
+    The idea is that each successive field name over-writes the
+corresponding components of the current state of the file.  The field
+names would include
+
+    host(H)		As above
+    device(E)		As above
+    directory(D)	As above
+    name(N)		As above
+    extension(T)	As above (also called type)
+    version(V)		As above
+    site(S)		As above (first parsed)
+    base(B)		As above (first parsed)
+    stem(M)		As above (first parsed)
+    all(A)		As above (first parsed)
+    no(Field)		makes field unspecified
+    relative(R)		Like site, see below
+
+For example, the equivalent of
+    (merge-pathnames New Default)
+would be
+    filename([all(Default),all(New)], Ans)
+
+The significance of relative(R) is that writing directory(D) or
+site(S) would _replace_ the relevant components of the file name
+being built by those in D or S, but what we often want is to take
+a relative file name and make it absolute.  relative(S) says
+"interpret the file name so far as if it were evaluated when S was
+the current directory".  E.g.
+
+    filename_atom(all, [all('a/b'),site('~ok')], X)
+    => X = '~ok/b'
+
+    filename_atom(all, [all('a/b'),relative('~ok')], X)
+    => X = '~ok/a/b'
+
+I'm not 100% pleased with this, but it looks as though it would at least
+work.  It could initially be provided as a library.  In fact, that's
+what it is now.  One fine point is that this is the only way that you
+would be able to get a type into a filename record on the Macintosh.
+(Well, you'd call
+	prompt_old_file(+Prompt, +TypesOfInterest, -FileName)
+	prompt_new_file(+Prompt, +Type, -FileName)
+and those would those would include the type found or specified in
+their result.  The fact that the type can be used in selecting the
+file is one of the reasons for including it in a filename.  This may
+need to be reconsidered.)
+

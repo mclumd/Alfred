@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Making Predicates Determinate</h5>
+
+   <p>Consider the following predicate, which calculates the factorial of a
+number:
+<pre class="example">     fac(0, 1).
+     fac(N, X) :-
+             N1 is N - 1,
+             fac(N1, Y),
+             X is N * Y.
+     </pre>
+
+   <p>The factorial of 5 can be found by typing
+<pre class="example">     | ?- <kbd>fac(5, X).</kbd>
+     
+     X = 120
+     </pre>
+
+   <p>However,  backtracking into the above predicate by typing a semicolon at
+this point, causes an infinite loop because the system starts attempting
+to satisfy the goals <code>fac(-1, X).</code>, <code>fac(-2, X).</code>, etc.  The
+problem is that
+there are two clauses that match the goal <code>fac(0, F).</code>, but the
+effect of
+the second clause on backtracking has not been taken into account.  There
+are at least three possible ways of fixing this:
+
+     <ol type=1 start=1>
+
+     <li>Efficient solution:  rewrite the first clause as
+
+     <pre class="example">          fac(0,1) :- !.
+          </pre>
+
+     <p>Adding the cut essentially makes the first solution the only one for the
+factorial of 0 and hence solves the immediate problem.  This solution is
+space-efficient because as soon as Prolog encounters the cut, it knows that
+the predicate is determinate. Thus, when it tries the second clause,
+it can throw away the information it
+would otherwise need in order to backtrack to this point. 
+Unfortunately, if this solution is implemented, typing
+<kbd>fac(-1, X)</kbd> still generates an infinite search. 
+</p><li>Robust solution:  rewrite the second clause as
+
+     <pre class="example">          fac(N, X) :-
+                  N &gt; 0,
+                  N1 is N - 1,
+                  fac(N1, Y),
+                  X is N * Y.
+          </pre>
+
+     <p>This also solves the problem, but it is a more robust solution because this
+way it is impossible to get into an infinite loop.
+
+     <p>This solution makes the predicate
+<em>logically</em> determinate  -- there is only one possible clause for
+any input -- but the Prolog system is unable to detect this and must
+waste space for backtracking information. 
+The space-efficiency point is more
+important than it may at first seem;  if <code>fac/2</code> is called from another
+determinate predicate, and if the cut is omitted, Prolog cannot detect the
+fact that <code>fac/2</code> is determinate. Therefore, it will not be able to detect
+the fact that the calling predicate is determinate, and space will be
+wasted for the calling predicate as well as for <code>fac/2</code> itself.  This
+argument applies again if the calling predicate is itself called by a
+determinate predicate, and so on, so that the cost of an omitted cut can be
+very high in certain circumstances. 
+</p><li>Preferred solution:  rewrite the entire predicate as the single clause
+     <pre class="example">          fac(N, X) :-
+              (   N &gt; 0 -&gt;
+                      N1 is N - 1,
+                      fac(N1, Y),
+                      X is N * Y
+              ;   N =:= 0 -&gt;
+                      X = 1
+              ).
+          </pre>
+
+     <p>This solution is as robust as solution 2, and more efficient
+than solution 1, since it exploits conditionals with arithmetic
+tests (see <a href="ref-sem-con.html#ref-sem-con">ref-sem-con</a>, and <a href="bas-eff-cdi.html#bas-eff-cdi">bas-eff-cdi</a>, for more information
+on optimization using conditionals).
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-cut-cut.html#bas-eff-cut-cut">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-cut-ove.html#bas-eff-cut-ove">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-cut.html#bas-eff-cut">Up</a>
+</ul>
+</div>
+   </body></html>
+

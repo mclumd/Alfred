@@ -1,0 +1,290 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>load_files/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>load_files(</code><var>+Files</var><code>)</code>
+
+   <p><code>load_files(</code><var>+Files, +Options</var><code>)</code>
+
+   <p><code>[</code><var>+File</var><code>|</code><var>+Files</var><code>]</code>
+
+   <p><code>[]</code>
+
+   <p>Load the specified Prolog source and/or QOF files into memory.  Subsumes
+all other load predicates.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Files</var> <dfn>file_spec</dfn> or <dfn>list of file_spec</dfn> [MOD]
+     <dd>a file specification or a list of file specifications; a <code>.pl</code> or
+<code>.qof</code> extension may be omitted in a file specification.
+
+     <br><dt><var>Options</var> <dfn>list</dfn>
+     <dd>a list of zero or more options of the form:
+
+          <dl>
+
+          <br><dt><code>if(</code><var>X</var><code>)</code>
+          <dd>
+
+               <dl>
+
+               <br><dt><code></code><var>X</var><code>=true</code>
+               <dd>(default) always load
+
+               <br><dt><code></code><var>X</var><code>=changed</code>
+               <dd>load file if it is not already loaded or
+                         if it has been changed since it was last loaded
+
+          </dl>
+
+          <br><dt><code>when(</code><var>X</var><code>)</code>
+          <dd>
+
+               <dl>
+
+               <br><dt><code></code><var>X</var><code>=run_time</code>
+               <dd>(default) The file does not define
+                any predicates that will be called during compilation of
+                other files.
+
+               <br><dt><code></code><var>X</var><code>=compile_time</code>
+               <dd>the file <em>only</em> defines predicates
+                that wil be called during compilation of other files; it
+                does not define any predicates that will be called when
+                the application is running.
+
+               <br><dt><code></code><var>X</var><code>=both</code>
+               <dd>the file defines some predicates that will
+                be needed during compilation and some that will be needed
+                during execution.
+
+          </dl>
+
+          <br><dt><code>load_type(</code><var>X</var><code>)</code>
+          <dd>
+
+               <dl>
+
+               <br><dt><code></code><var>X</var><code>=compile</code>
+               <dd>compile Prolog source code
+
+               <br><dt><code></code><var>X</var><code>=qof</code>
+               <dd>load QOF code
+
+               <br><dt><code></code><var>X</var><code>=latest</code>
+               <dd>(default) load QOF or compile source,
+                         whichever is newer. The latest option is effective
+                         only if Files are sepcified without extensions.
+
+          </dl>
+
+          <br><dt><code>must_be_module(</code><var>X</var><code>)</code>
+          <dd>
+
+               <dl>
+
+               <br><dt><code></code><var>X</var><code>=true</code>
+               <dd>the files are required to be module-files
+
+               <br><dt><code></code><var>X</var><code>=false</code>
+               <dd>(default) the files need not be module-files
+
+          </dl>
+
+          <br><dt><code>imports(</code><var>X</var><code>)</code>
+          <dd>
+
+               <dl>
+
+               <br><dt><code></code><var>X</var><code>=all</code>
+               <dd>(default) if the file is a module-file, all
+                          exported predicates are imported
+
+               <br><dt><code></code><var>X</var><code>=</code><var>List</var><code></code>
+               <dd>list of predicates to be imported
+
+               <br><dt>
+               <dd>Note that if the option <code>imports</code> is present, the option
+                <code>must_be_module(true)</code> is enforced.
+
+          </dl>
+
+          <br><dt><code>all_dynamic(</code><var>X</var><code>)</code>
+          <dd>
+
+               <dl>
+
+               <br><dt><code></code><var>X</var><code>=true</code>
+               <dd>load all predicates as dynamic
+
+               <br><dt><code></code><var>X</var><code>=false</code>
+               <dd>(default) load predicates as static unless
+                    they are declared dynamic
+
+               <br><dt>
+               <dd>Note that the <code>all_dynamic option</code> has no effect when a
+                QOF file is loaded.  Thus it is not normally useful to use
+                <code>all_dynamic(true)</code> in conjunction with <code>load_type(latest)</code>,
+                since the file will be loaded in dynamic mode only if the
+                source file is more recent than the QOF file.
+
+          </dl>
+
+          <br><dt><code>silent(</code><var>X</var><code>)</code>
+          <dd>
+
+               <dl>
+
+               <br><dt><code></code><var>X</var><code>=true</code>
+               <dd>loading information is printed as silent
+                        messages (see <a href="ref-msg.html#ref-msg">ref-msg</a> for details).
+
+               <br><dt><code></code><var>X</var><code>=false</code>
+               <dd>(default) loading information is printed
+                        as informational message.
+
+          </dl>
+
+     </dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>load_files/2</code> is the most general predicate for loading Prolog files. 
+Special cases of it are provided by the following predicates:
+<pre class="example">     load_files(Files) :-
+             load_files(Files, []).
+     [].
+     [File|Files] :-
+             load_files([File|Files]).
+     compile(Files) :-
+             load_files(Files, [load_type(compile)]).
+     consult(Files) :-     /*consult equivalent to
+                             compile now*/
+             compile(Files).
+     ensure_loaded(Files) :-
+             load_files(Files, [if(changed)]).
+     use_module(Files) :-
+             load_files(Files, [if(changed),
+                          must_be_module(true)]).
+     use_module(File, Imports) :-
+             load_files(File,  [if(changed),
+                          must_be_module(true),
+                          imports(Imports)]).
+     </pre>
+
+   <p><code>load_files/[1,2]</code> reads Prolog clauses, in source or in compiled (QOF)
+form, and adds them to the Prolog database, after first deleting any previous
+versions of the predicates they define.  Clauses for a single predicate must
+all be in the same file unless that predicate is declared to be <code>multifile</code>.
+
+   <p>If the file contains directives, that
+is, terms with principal functor <code>:-/1</code> or <code>?-/1</code>, then
+these are executed as they are encountered.
+
+   <p>Clauses and directives can be transformed as they are read from source
+files (not from QOF), by providing a definition for
+<code>term_expansion/2</code>. This is true in both the development system and
+QPC, but in order for this to work properly in QPC, your definition of
+<code>term_expansion/2</code> (and everything it calls) must be loaded into
+QPC. This is accomplished with the <code>when</code> option to
+<code>load_files/2</code>, or the <code>-i</code> option to QPC.
+
+   <p>A non-module source file can be loaded into any module by <code>load_files/[2,3]</code>,
+but the module of the predicates in a QOF-file is fixed at the time it is
+created (by QPC, <code>save_predicates/2</code> or <code>save_program/[1,2]</code>). It is thus not
+possible to qof save a predicate from say module <code>foo</code>, and reloaded it
+into module <code>bar</code>, or QPC the non-module-file <code>f1.pl</code> into <code>f1.qof</code>, and then
+load <code>f1.qof</code> into module <code>mod</code> (QPC assumes module <code>user</code> when non-module
+files are compiled separately). To avoid mistakes, <code>load_files/[1,2]</code> loads
+the corresponding source file, if such exists, whenever a non-module-file
+is loaded into module other than <code>user</code>. If no corresponding source file
+exists, the QOF file is loaded; care should be taken in this case.
+
+   <p>Initialization goals specified with <code>initialization/1</code> are
+executed after the load.
+
+   <p>When <code>load_files/[1,2]</code> is called from an embedded command in a
+file being compiled by QPC, the <code>load_type</code> and
+<code>if</code> options are ignored. The specfied files are compiled
+from source to QOF, if the source is newer than the corresponding
+QOF file. If the option <code>when(compile_time)</code> is given, the file
+is instead compiled into QPC memory, and no QOF is generated (see above).
+
+   <p>When <code>load_files/[1,2]</code> is called in a runtime system, the
+<code>all_dynamic</code> option will be automatically set to true because
+the compiler is not available in runtime systems.  This means that the
+loaded code will run slower.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>M</var>, <var>Files</var>, or <var>Options</var> is not ground.
+
+     <br><dt><code>type_error</code>
+     <dd>
+In <var>M</var>, in <var>Files</var>, or in <var>Options</var>.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+Illegal option in <var>Options</var>.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+A specified file does not exist.  If the <code>fileerrors</code> flag is <code>off</code>, the
+predicate fails instead of raising this exception.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+A specified file is protected.  If the <code>fileerrors</code> flag is <code>off</code>, the
+predicate fails instead of raising this exception.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>compile/1</code>, <code>consult/1</code>,
+<code>dynamic/1</code>, <code>ensure_loaded/1</code>, <code>fileerrors/0</code>,
+<code>multifile/1</code>, <code>no_style_check/1</code>, <code>nofileerrors/0</code>,
+<code>prolog_load_context/2</code>, <code>source_file/[1,2]</code>,
+<code>style_check/1</code>, <code>term_expansion/2</code>, <code>use_module/[1,2,3]</code>,
+<code>initialization/1</code>, <code>volatile/1</code>.
+
+   <a href="ref-lod.html#ref-lod">ref-lod</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-load_foreign_executable.html#mpg-ref-load_foreign_executable">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-listing.html#mpg-ref-listing">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

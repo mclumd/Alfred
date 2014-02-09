@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Declaring Nondeterminacy</h5>
+
+   <p>Some predicates are intended to be nondeterminate.  By declaring
+intended nondeterminacy, you avoid warnings about predicates you
+intend to be nondeterminate.  Equally importantly, you also inform
+the determinacy checker about nondeterminate predicates.  It uses
+this information to identify unwanted nondeterminacy.
+
+   <p>Nondeterminacy is declared by putting a declaration of the form
+<pre class="example">     :- nondet <var>name/arity</var>.
+     </pre>
+
+   <p>in your source file.  This is similar to a
+dynamic or discontiguous declaration.  You may have multiple <code>nondet</code>
+declarations, and a single declaration may mention several predicates,
+separating them by commas.
+
+   <p>Similarly, a predicate <var>P/N</var> may be classified as
+nondeterminate by the checker, whereas in reality it is
+determinate.  This may happen e.g. if <var>P/N</var> calls a
+dynamic predicate that in reality never has more than one
+clause.  To prevent false alarms asiring from this, you can inform
+the checker about determinate predicates by
+declarations of the form:
+
+<pre class="example">     :- det <var>name/arity</var>.
+     </pre>
+
+   <p>If you wish to include <code>det</code> and <code>nondet</code> declarations in your file and you plan
+to use the stand-alone determinacy checker, you must include the line
+<pre class="example">     :- load_files(library(nondetdecl),
+                   [when(compile_time), if(changed)]).
+     </pre>
+
+   <p>near the top of each file that contains such declarations.  If you
+use the integrated determinacy checker, you do not need (and should
+not have) this line.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-det-cou.html#bas-eff-det-cou">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-det-det.html#bas-eff-det-det">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-det.html#bas-eff-det">Up</a>
+</ul>
+</div>
+   </body></html>
+

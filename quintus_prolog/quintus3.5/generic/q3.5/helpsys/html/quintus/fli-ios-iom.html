@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Input/Output Model</h4>
+
+   <p>There are three layers of input/output operations visible in the Prolog
+system as illustrated in the figure "Input/Output Model".
+
+   <p>The <dfn>top layer</dfn> is character based. 
+It supports reading a character, writing a character
+and testing the state of a Prolog stream.  <code>get0/[1,2]</code> and
+<code>put/[1,2]</code> are examples of the first layer operation.
+
+   <p>The <dfn>middle layer</dfn> is record based.  Its primary function is to keep the
+integrity of a record, through such operations as trimming a record,
+padding a record and handling output overflow.  This layer is not
+visible to the user and cannot be changed by the user.
+
+   <p>The <dfn>bottom layer</dfn> is buffer based.  It performs the actual input from
+or output to the underlying device of a Prolog stream. The bottom layer
+is a collection of five functions associated with a stream:
+read, write, flush, seek and close functions. 
+Typically the read function reads data from the underlying device into
+a buffer that it maintains and then passes this data up to the middle
+layer a record at a time. The write function provides buffer space for
+a record to be received from the middle layer and writes out the buffer
+to the underlying device.
+
+   <p>The embedding open function <code>QU_open()</code> assigns the appropriate
+bottom layer functions for a stream created by <code>open/[3,4]</code>. 
+A user-defined Prolog stream must supply its own bottom layer functions
+for the stream. 
+Bottom layer functions are described in <a href="fli-ios-bot.html#fli-ios-bot">fli-ios-bot</a>.
+
+<br><p>
+   <img src="images/fli-io-model.png" alt="images/fli-io-model.png">
+
+<div align="center">Input/Output Model</div>
+
+   <p>Writing to a <code>QP_DELIM_LF</code> record
+file stream demonstrates how the three layers work together. 
+Each <code>put/2</code> call on the stream simply stores a character
+in the record buffer of the stream. 
+When the top layer predicate, <code>nl/1</code>, is called on the stream, the middle layer output function is
+called. 
+The middle layer function stores a &lt;LFD&gt; in the record buffer
+and updates some counters for the stream.  It then calls the bottom layer
+function of the stream.  The bottom layer writes out the record to the output
+file.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> In addition, the top layer contains predicates and C functions
+to perform seek, flush output and close operations on a stream. 
+There are no middle layer functions for these operations. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-sst.html#fli-ios-sst">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-ove.html#fli-ios-ove">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios.html#fli-ios">Up</a>
+</ul>
+</div>
+   </body></html>
+

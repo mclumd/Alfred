@@ -1,0 +1,125 @@
+File   : long.doc
+Author : Richard A. O'Keefe
+SCCS   : @(#)88/11/10 long.doc	27.1
+Purpose: Describe library(long)
+
+    library(long) provides Quintus Prolog with arbitrary precision
+rational arithmetic.  It is mostly the same as the Dec-10 Prolog
+library file LONG.PL, except that the trig functions have been
+removed, some new predicates have been added, and several bugs
+have been fixed.
+
+    You should read the comments in long.pl.
+
+    There are five kinds of rational numbers:
+
+	- Prolog integers
+
+	- 'infinity' (= 1/0)
+	- 'neginfinity' (= -1/0)
+	- 'undefined' (= 0/0)
+
+	- number(Sign,Num,Den) where Sign is '+' or '-',
+	  and Num,Den are non-empty lists of base-10000 digits.
+
+library(long) ensures that the results it gives you are in standard
+form; that is, they will only be represented in number/3 form if it
+is not possible to represent them in one of the other four forms.
+This means that rational numbers unify only when equal.
+
+The built in predicates are
+
+	X eq Y	X ge Y	X gt Y	X le Y	X lt Y	X ne Y
+	succ(Pred, Succ)
+	plus(A, B, Sum)
+	times(A, B, Product)
+	rational(X)
+	whole(X)
+	portray_number(X)
+	eval(Goal)
+	eval(Expr, Result)
+
+The first six predicates play the role of =:=, >=, >, =<, <, =\=,
+except that by design they do NOT evaluate either of their arguments.
+That is, they are true when their arguments are rational numbers
+(NOT expressions yielding rational numbers) and bear the stated
+relation to each other.  There are equivalents to the usual arithmetic
+relations, but it is better to use these predicates as they are
+declared as operators and produce superior diagnostic messages.
+
+The three predicates succ/2, plus/3, and times/3 are "invertible"
+relations.  Like the comparisons, they demand rational numbers as
+their arguments, not expressions.  Given all but one of their
+arguments, they will calculate the remaining one.  Thus succ/2 may
+be used to add or subtract one, plus/3 may be used for addition or
+subtraction, and times/3 may be used for multiplication or division.
+The relations they state are
+	succ(Pred, Succ) <->
+		whole(Pred) & whole(Succ) & Succ=Pred+1.
+
+	plus(A, B, Sum) <->
+		rational(A) & rational(B) & rational(Sum) & Sum=A+B.
+
+	times(A, B, Prod) <->
+		rational(A) & rational(B) & rational(Prod) & Prod=A*B.
+
+Note that succ/2 demands whole numbers (Prolog integers or bignums),
+while plus/3 and times/3 will work on any sort of rational number.
+For "integer division", use eval/1 or eval/2; see below.
+
+The two predicates whole(X) and rational(X) are type tests.
+rational(X) is true when X is any sort of rational number.
+whole(X) is true when X is a Prolog integer or a bignum.
+If and when rationals are supported directly by Prolog, the
+distinction between integer(X) and whole(X) will disappear.
+
+    It is unfortunately the case that (some) rational numbers are
+represented by compound terms, and that these terms print out in
+a fairly unreadable way.  In order to have rational numbers printed
+clearly, use portray_number(X).  This predicate is true when X is
+a rational number in number/3 form, and prints the number to the
+current output stream.  If you add the clause
+	portray(X) :- portray_number(X).
+to your program, print/1 (and the top level, and the debugger) will
+print rational numbers clearly.  There is, alas, no corresponding
+hook for input.
+
+    eval(Expr, Result) evaluates an expression using rational
+arithmetic.  IT DOES NOT ACCEPT FLOATING POINT NUMBERS AT ALL.
+The operations which are currently supported are
+	X+Y	X-Y	-Y
+	X*Y	X/Y		{rational division!}
+	X div Y	X mod Y	X // Y	{// is a synonym for div}
+	X^Y	log(X,Y)	{^ is raise to power}
+	gcd(X,Y)		{is there any use for lcm?}
+	fix(X)			{convert to integer}
+	abs(X)
+	numer(X) denom(X) sign(X)
+Please recommend any operations you think should be present.
+Bitwise operations have deliberately been left out; they are hard
+to provide in the current implementation as it uses base 10000.
+
+    eval(Goal) takes several ordinary-looking goals and makes them
+use rational arithmetic.  The Goals currently supported are
+	eval(X=:=Y)	eval(X > Y)	eval(X < Y)	eval(even(X))
+	eval(X=\=Y)	eval(X=< Y)	eval(X >=Y)	eval(odd(X))
+	eval(V is Y)	eval(write(Y))	eval(compare(R,X,Y))
+In these goals, X and Y are always evaluated.  V and R are not.
+A rational number is deemed to be "even" if when reduced to lowest
+terms its numerator is even.  Note that eval(write(X)) calls print/1,
+not portray_number/1; you must install portray_number/1 as a case in
+portray/1 if eval(write(X)) is to work.
+
+Here is an example of the use of this package.
+
+factorial(N, X) :-
+	factorial(N, 1, X).
+
+factorial(0, X, X).
+factorial(N, X0, X) :-
+	succ(M, N),		% whole(N), N >= 1, M = N-1,
+	times(N, X0, X1),	% X1 = X0*N
+	factorial(M, X1, X).
+
+The only limit on the size of the factorials you can calculate this
+way is the amount of memory available.

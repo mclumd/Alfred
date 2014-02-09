@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The Type-in Module</h4>
+
+   <p>The <dfn>type-in</dfn> module is the module that is taken as the source
+module for goals typed in by the user.  The name of the default
+type-in module is <code>user</code>.  That is, the predicates that are available
+to be called directly by the user are those that are visible in the
+module <code>user</code>.
+
+   <p>When debugging, it is often useful to call, directly from the top level,
+predicates that are private to a module, or predicates that are public but
+that are not imported into <code>user</code>.  This can be done by prefixing each
+goal with the module name, as described in <a href="ref-mod-vis.html#ref-mod-vis">ref-mod-vis</a>;
+but rather than doing this extensively, it may be more convenient to make this module the
+type-in module.
+
+   <p>The type-in module can be changed using the built-in predicate
+<code>module/1</code> (see <a href="mpg-ref-module1.html#mpg-ref-module1">mpg-ref-module1</a>); for example,
+<pre class="example">     | ?- <kbd>module(mod).</kbd>
+     </pre>
+
+   <p>This command will cause subsequent goals typed at the top level to be
+executed with <code>mod</code> as their source module.
+
+   <p>The name of the type-in module is always displayed, except when it
+is <code>user</code>.  If you are running Prolog under the editor interface,
+the type-in
+module is displayed in the status line of the Prolog window.  If you are
+running Prolog without the editor interface, the type-in module is displayed
+before each top-level prompt.
+
+   <p>For example, if you are running Prolog without the editor:
+<pre class="example">     | ?- <kbd>module(foo).</kbd>
+     
+     yes
+     [foo]
+     | ?-
+     </pre>
+
+   <p>It should be noted that it is unlikely to be useful to change the type-in
+module via a directive embedded in a file to be loaded, because this will
+have no effect on the load -- it will only change the type-in module
+for commands subsequently entered by the user.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-dmo.html#ref-mod-dmo">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-som.html#ref-mod-som">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

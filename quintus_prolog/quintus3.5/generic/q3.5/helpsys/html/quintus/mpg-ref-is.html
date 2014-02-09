@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>is/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><var>-Term</var> <code>is</code> <var>+Expression</var>
+
+   <p>Evaluates <var>Expression</var> as an arithmetic expression (see
+<a href="ref-ari-aex.html#ref-ari-aex">ref-ari-aex</a>), and unifies the resulting number with
+<var>Term</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Expression</var> <dfn>expr</dfn>
+     <dd>an expression made up of:
+          <dl>
+
+          <br><dt>functors representing arithmetic operations
+          <dd>
+
+          <br><dt>numbers
+          <dd>
+
+          <br><dt>variables bound to numbers or arithmetic expressions
+          <dd>
+
+     </dl>
+
+     <br><dt><var>Term</var> <dfn>number</dfn>
+     <dd>a number
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The possible values for <var>Expression</var> are
+spelled out in detail in <a href="ref-ari-aex.html#ref-ari-aex">ref-ari-aex</a>.
+
+   <p>Character codes like <code>"a"</code> are arithmetic expressions.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+<dt><code>instantiation_error</code>
+     <dd>
+
+     <br><dt><code>type_error</code>
+     <dd>
+                <var>Expression</var> is not an arithmetic expression
+
+     <br><dt><code>domain_error</code>
+     <dd>
+                 Attempting to divide by zero.
+
+     <br><dt><code>representation_error</code>
+     <dd>
+                overflow during arithmetic evaluation
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     | ?- <kbd>X is 2 * 3 + 4.</kbd>
+     
+     X = 10
+     
+     | ?- <kbd>Y = 32.1, X is Y * Y.</kbd>
+     
+     Y = 3.21E+01,
+     X = 1.03041E+03
+     
+     | ?- <kbd>Arity is 3 * 8, X is 4 + Arity + (3 * Arity * Arity).</kbd>
+     
+     Arity = 24,
+     X = 1756
+     </pre>
+
+<pre class="example">     | ?- <kbd>X is 6/0.</kbd>
+     ! Domain error in argument 2 of is/2
+     ! non-zero number expected, but 6/0 found
+     ! goal:  _3211 is 6/0
+     </pre>
+
+<pre class="example">     | ?- <kbd>X is 16' 7fffffff + 3.</kbd>
+     ! Syntax error
+     ! between lines 64 and 65
+     ! X is 0
+     ! &lt;&lt;here&gt;&gt;
+     ! 7 fffffff+3
+     
+     | ?- <kbd>X is "a".</kbd>
+     
+     X = 97
+     
+     | ?- <kbd>X is 4 * 5, Y is X * 4.</kbd>
+     
+     X = 20,
+     Y = 80
+     </pre>
+
+   <p>See example under <code>assign/2</code> to see use of <code>is/2</code> to peek at
+random memory addresses.
+
+<h4 class="subheading">Comments</h4>
+
+   <p>If a variable in an arithmetic expression is
+bound to another arithmetic expression (as opposed to a number) at
+runtime then the cost of evaluating that expression is much greater. 
+It is approximately equal to the cost of <code>call/1</code> of an arithmetic
+goal.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>assign/2</code>, <code>&lt;/2</code>, <code>=:=/2</code>, <code>=&lt;/2</code>,
+<code>=\=/2</code>, <code>&gt;/2</code>, <code>&gt;=/2</code>
+<a href="ref-ari.html#ref-ari">ref-ari</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-keysort.html#mpg-ref-keysort">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-integer.html#mpg-ref-integer">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

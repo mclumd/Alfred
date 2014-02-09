@@ -1,0 +1,846 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxl-xlib-shr,  Next: pxl-xlib-mem,  Prev: pxl-xlib-mgc,  Up: pxl-xlib
+
+Sharing and Cloning of GCs
+--------------------------
+
+   When you create a drawable without specifying a GC or any GC
+attributes, the drawable gets the default GC for that depth and screen.
+This default GC has all the default GC attributes, except that
+foreground is black and background is white.  So in fact, you can often
+create a drawable and draw into it without worrying about GCs or
+graphics attributes at all.  You are not permitted to modify the
+default GC.
+
+   When a drawable gets the default GC, it is actually sharing that GC
+with all the other drawables that use the default.  And if you specify
+a GC when creating a drawable, or if you change the GC of a drawable,
+you are sharing that GC with any other drawables that use that GC.  If
+you should modify a shared GC, all the drawables that use that GC will
+feel the effect.  However, if you modify the graphics attributes of a
+drawable, only that drawable will feel the effect.  This is
+accomplished by cloning the shared GC, modifying the new copy as
+specified, and installing the clone as the drawable's GC.
+
+   It helps to think of two different levels of use.  If you never
+create a GC, and only modify graphics attributes of drawables, then you
+can think of the graphics attributes as belonging to drawables directly.
+The graphics attributes of a drawable will only change when you do it
+directly.  However, if you create GCs, install them in drawables, and
+modify them directly, then a drawable's graphics attributes can change
+out from under it.
+
+   This can be very useful.  You can change many drawables' graphics
+attributes all at once by changing their shared GC.  And you can still
+change one of these drawables' graphics attributes directly, without
+changing the others.  However, once you do this, that drawable will no
+longer share GCs with the other, so changes to the shared GC will no
+longer be felt by that drawable.
+
+
+File: quintus.info,  Node: pxl-xlib-mem,  Next: pxl-xlib-mix,  Prev: pxl-xlib-shr,  Up: pxl-xlib
+
+Memory Management
+-----------------
+
+   Memory management is a complex issue for ProXL.  In C, programmers
+are used to having to keep track of their resources; in Prolog, however,
+resource reclamation is done by the Prolog garbage collector.
+
+   Unfortunately, it's not that simple.  The X Window System does not
+make this possible.  For example, there is no way to tell whether or
+not a given colormap is used by any windows, nor is there a way to tell
+the X server that a colormap should be reclaimed when no more windows
+require it.  The only function provided by X actually destroys the
+colormap immediately, and any windows that use that colormap find
+themselves without any colormap.
+
+   Fonts are another matter.  Since the only X resource that can refer
+to a font is a GC, and since ProXL GCs are not shared with other
+languages or other processes, ProXL can be careful about freeing a font
+that is relied on by some GC.
+
+   There is another difficulty, though:  ProXL has no way of knowing
+whether or not the user's Prolog code is holding onto a font
+explicitly.  For example, the user may assert it into the Prolog
+database, or pass it around as an argument throughout his program.  To
+Prolog, this font looks just like any other term; it has no way of
+knowing that it represents a foreign term.  This means that the Prolog
+garbage collector cannot collect foreign terms.
+
+   All this means that ProXL has two different mechanisms for freeing
+resources.  Most resources can only be freed by explicit action, and the
+resource is freed immediately (the next time the output buffer is
+flushed).  GCs and fonts are instead released.  "Releasing" an X
+resource means that (you are proclaiming that) Prolog does not have any
+references to the resource.  When no X resources refer to the released
+resource, it will be freed.  Fonts can only be referred to by GCs.  GCs
+can be referred to by drawables.
+
+
+File: quintus.info,  Node: pxl-xlib-mix,  Prev: pxl-xlib-mem,  Up: pxl-xlib
+
+Mixed Language Programming
+--------------------------
+
+   It may be desirable to write programs in which some X graphics is
+done by Prolog code using ProXL and other parts are done in C or another
+procedural language using Xlib.  ProXL makes this possible by providing
+a way to translate between ProXL and Xlib resources from both C and
+Prolog code.
+
+   On the C side, there is a function to translate each kind of X
+resource into the corresponding ProXL object, and a macro to get the X
+resource from the ProXL object.  From Prolog, there is a predicate to
+translate between X and ProXL displays, another to translate between X
+and ProXL screens, and a third to translate between XIDs and their ProXL
+counterparts.
+
+   ProXL does not permit ProXL GCs to be used in foreign code, nor will
+it allow a foreign GC to be used in ProXL.  Therefore, none of these
+translations are available for GCs.
+
+
+File: quintus.info,  Node: pxt,  Next: mpg,  Prev: pxl,  Up: Top
+
+The ProXT Package
+*****************
+
+* Menu:
+
+* pxt-chg::                             Changes from ProXT 3.1
+* pxt-man::                             Technical Overview and Manual
+* pxt-exp::                             ProXT ReleaseNumber Exported Predicates
+* pxt-wid::                             ProXT ReleaseNumber Widget Resource Data Types
+* pxt-tut::                             Tutorial
+* pxt-typ::                             ProXT ReleaseNumber Data Types
+
+
+File: quintus.info,  Node: pxt-man,  Next: pxt-exp,  Prev: pxt-chg,  Up: pxt
+
+Technical Overview and Manual
+=============================
+
+* Menu:
+
+* pxt-man-bas::                         Introduction
+* pxt-man-use::                         Using ProXT
+* pxt-man-nam::                         Naming Conventions
+* pxt-man-args::                        Predicate Arguments
+* pxt-man-typ::                         Type Matching
+* pxt-man-wres::                        Widget Resources
+* pxt-man-cbk::                         Callbacks
+* pxt-man-upxl::                        Using ProXT with ProXL
+
+
+File: quintus.info,  Node: pxt-man-bas,  Next: pxt-man-use,  Up: pxt-man
+
+Introduction
+------------
+
+   ProXT is a Prolog interface to the Motif widget set and the X Toolkit
+(Xt).  Widgets are ready-made graphical components for building
+user-interfaces, for example, menus, dialog boxes, scroll bars and
+command buttons. The X Toolkit provides routines for creating and using
+such widgets. ProXT provides access from Prolog to all the widgets in
+Motif and to the Xt routines necessary for using the widgets.
+
+   ProXT permits the rapid development of user-interfaces with the Motif
+"look and feel". The interactive development environment of Prolog
+greatly shortens the edit-test-debug cycle.  Individual files can be
+recompiled incrementally, avoiding the need to exit the application and
+re-link it. In addition, ProXT provides the programmer with a more
+logical view of the Motif widget set and reinforces its object-oriented
+nature.
+
+   Almost all of the predicates in ProXT are interfaced directly to
+functions from the underlying C interface. Also, there is a
+straightforward correspondence between the data structures used: for
+example ProXT expects a list where Xt expects an array.  This makes it
+very easy to switch between writing Prolog code for ProXT and C code
+for Xt and Motif. In addition, ProXT can readily be used in conjunction
+with C code written for Motif and Xt.
+
+   ProXT is not available under Windows.
+
+
+File: quintus.info,  Node: pxt-man-use,  Next: pxt-man-nam,  Prev: pxt-man-bas,  Up: pxt-man
+
+Using ProXT
+-----------
+
+   ProXT is very easy to use if you already know Motif and Xt. If you do
+not already know Motif and Xt, experimentation with ProXT is an
+excellent way to learn. There is a wide array of books on the market
+covering X and Motif.  O'Reilly & Associates publish `The Definitive
+Guides to the X Window System', a series of books in the area of the X
+Window System.  For a tutorial on how to use the Motif widget set refer
+to `The X Window System: Programming and Applications with Xt,
+OSF/Motif Edition' (Douglas Young, Prentice-Hall).
+
+   ProXT interfaces to Motif2.1 with the X11 Release 6 libraries.  The
+user is expected to use the Motif and X Toolkit manuals when working
+with ProXT. This document concentrates on providing rules for applying
+that information to ProXT because the original manuals address the C
+interface. *Note pxt-exp:: lists the predicates in ProXT and the types
+of their arguments. *Note pxt-wid:: lists the widget resources and
+their types while *Note pxt-typ:: lists the data types and their Prolog
+representation.
+
+
+File: quintus.info,  Node: pxt-man-nam,  Next: pxt-man-args,  Prev: pxt-man-use,  Up: pxt-man
+
+Naming Conventions
+------------------
+
+   ProXT preserves the original naming conventions used in the X
+Toolkit except that the first letter of each name is converted to lower
+case, since Prolog treats names beginning with an upper case letter as
+variables. Thus all Xt functions start with the prefix `xt', and all
+Motif functions start with `xm'. Motif resource names start with the
+prefix `xmN'.
+
+   There is a set of ProXT predicates that do not correspond directly
+to functions from the underlying C interface. Such predicates start
+with the prefix `proxt'.
+
+
+File: quintus.info,  Node: pxt-man-args,  Next: pxt-man-typ,  Prev: pxt-man-nam,  Up: pxt-man
+
+Predicate Arguments
+-------------------
+
+   The order of the arguments in ProXT predicates is the same as that of
+the functions interfaced to them. The return value of a function, if it
+exists, always appears as the last argument of the predicate.  Motif
+functions that return a Boolean value are mapped to ProXT predicates
+that succeed or fail depending on whether the Motif function returns
+`True' or `False'.
+
+   There is a general class of C functions that take an array and a
+count of the elements in the array as arguments. In ProXT, arrays are
+replaced by Prolog lists and the count argument is dropped.
+
+   The table in *Note pxt-exp:: contains all of the built-in predicates
+in ProXT with their arguments and types.
+
+
+File: quintus.info,  Node: pxt-man-typ,  Next: pxt-man-wres,  Prev: pxt-man-args,  Up: pxt-man
+
+Type Matching
+-------------
+
+   The table in *Note pxt-typ:: lists the types used in ProXT.
+
+   The rule of thumb is that simple types in C are mapped to simple
+types in Prolog.
+
+   In most cases C struct types are represented as handles.  A handle is
+a term whose functor is the type name and whose argument is the address
+of the structure in memory. The address of a C structure would be of
+interest to programmers interfacing to foreign code.
+
+   Character strings are represented by atoms and arrays are
+represented by lists.
+
+
+File: quintus.info,  Node: pxt-man-wres,  Next: pxt-man-cbk,  Prev: pxt-man-typ,  Up: pxt-man
+
+Widget Resources
+----------------
+
+   The table in *Note pxt-wid:: shows the types of the widget resource
+values in ProXT.
+
+   In the ProXT documentation the terms "resource" and "attribute" are
+used interchangeably. A widget attribute is represented as a term whose
+functor is the resource name and whose argument is the value of the
+attribute. This defines the type Attribute.
+
+
+File: quintus.info,  Node: pxt-man-cbk,  Next: pxt-man-upxl,  Prev: pxt-man-wres,  Up: pxt-man
+
+Callbacks
+---------
+
+   In ProXT, callbacks are specified as Prolog goals. The number of
+arguments in a goal is the same as the number of arguments in the
+corresponding type of C callback functions. For example, the widget
+callback goals are of arity 3 with arguments +WIDGET, +CLIENTDATA and
++CALLDATA.
+
+
+File: quintus.info,  Node: pxt-man-upxl,  Prev: pxt-man-cbk,  Up: pxt-man
+
+Using ProXT with ProXL
+----------------------
+
+* Menu:
+
+* pxt-man-upxl-xif_initialize::         xif_initialize/3
+* pxt-man-upxl-widget_window::          widget_window/2
+* pxt-man-upxl-widget_to_screen::       widget_to_screen/2
+* pxt-man-upxl-widget_to_display::      widget_to_display/2
+* pxt-man-upxl-xif_main_loop::          xif_main_loop/[0,1,2,3]
+
+   ProXL is a direct interface to the X Window System.  You may want to
+use ProXL in your ProXT programs in order to do graphics or use some of
+the X Window System's more subtle features not supported directly by
+the X toolkit.
+
+   ProXT provides a library file, `library(xif)', which allows ProXL
+predicates to be used smoothly in your ProXT programs.  In order to use
+any of these predicates, you must load `library(xif)'. Quintus
+distributes the source code for `xif.pl' and users are encouraged to
+look at it for examples of mixed ProXL/ProXT programming.
+
+   If you need to use ProXT and ProXL together, make sure your code has:
+     :- use_module(library(proxt)).
+     :- use_module(library(proxl)).
+     :- use_module(library(xif)).
+
+
+File: quintus.info,  Node: pxt-man-upxl-xif_initialize,  Next: pxt-man-upxl-widget_window,  Up: pxt-man-upxl
+
+`xif_initialize/3'
+..................
+
+     xif_initialize(+NAME, +CLASS, -WIDGET)
+
+   Call this predicate instead of `xtInitialize/3' to initialize Xt when
+you plan to use ProXL.  The arguments and usage are the same as for
+`xtInitialize/3'.
+
+   `xif_initialize/3' sets ProXL's notion of default screen to the same
+screen ProXT is using.  This will ensure that ProXL objects you create
+can be used with your widgets.
+
+
+File: quintus.info,  Node: pxt-man-upxl-widget_window,  Next: pxt-man-upxl-widget_to_screen,  Prev: pxt-man-upxl-xif_initialize,  Up: pxt-man-upxl
+
+`widget_window/2'
+.................
+
+     widget_window(+WIDGET, -WINDOW)
+     widget_window(-WIDGET, +WINDOW)
+
+   Given a ProXT Widget, return the associated ProXL Window, or given a
+ProXL Window that is already associated with a widget, return that
+widget.  Note that every Xt widget has an associated window, so you can
+supply any widget and get its window, but the reverse is not true.
+
+   Once you have a ProXL window, you may use any ProXL drawing or any
+other operation on that window.
+
+
+File: quintus.info,  Node: pxt-man-upxl-widget_to_screen,  Next: pxt-man-upxl-widget_to_display,  Prev: pxt-man-upxl-widget_window,  Up: pxt-man-upxl
+
+`widget_to_screen/2'
+....................
+
+     widget_to_screen(+WIDGET, -SCREEN)
+
+   Given a ProXT WIDGET, return the ProXL SCREEN on which Widget
+resides.
+
+
+File: quintus.info,  Node: pxt-man-upxl-widget_to_display,  Next: pxt-man-upxl-xif_main_loop,  Prev: pxt-man-upxl-widget_to_screen,  Up: pxt-man-upxl
+
+`widget_to_display/2'
+.....................
+
+     widget_to_display(+WIDGET, -DISPLAY)
+
+   Given a ProXT WIDGET, return the ProXL DISPLAY on which Widget
+resides.
+
+
+File: quintus.info,  Node: pxt-man-upxl-xif_main_loop,  Prev: pxt-man-upxl-widget_to_display,  Up: pxt-man-upxl
+
+`xif_main_loop/[0,1,2,3]'
+.........................
+
+     xif_main_loop
+     xif_main_loop(+EXITCOND)
+     xif_main_loop(+EXITCOND, +CONTEXT)
+     xif_main_loop(+DISPLAYABLE, +EXITCOND, +CONTEXT)
+
+   These handle both ProXT and ProXL events.  ProXT and ProXL have their
+own event handling mechanisms. If you combine ProXL and ProXT
+callbacks, you must use one of `xif_main_loop/[0,1,2,3]' instead of
+`xtMainLoop/0'.
+
+   These predicates are direct analogues of the ProXL predicates
+`handle_events/[0,1,2,3]', and are used in exactly the same way.  See
+the ProXL documentation for more detailed information on the arguments,
+and how they tie in with ProXL callbacks.
+
+   If you do not use ProXL callbacks, you do not need these predicates;
+you can just call `xtMainLoop/0'.  You may mix ProXT and ProXL callbacks
+freely.
+
+
+File: quintus.info,  Node: pxt-tut,  Next: pxt-typ,  Prev: pxt-wid,  Up: pxt
+
+Tutorial
+========
+
+* Menu:
+
+* pxt-tut-bas::                         Introduction
+* pxt-tut-model::                       The ProXT programming model
+* pxt-tut-wid::                         The Motif Widget Set
+* pxt-tut-wres::                        Widget Resources
+* pxt-tut-hnd::                         Event Handling
+* pxt-tut-urdb::                        Using The Resource Database
+* pxt-tut-xlib::                        Interaction with Xlib
+
+
+File: quintus.info,  Node: pxt-tut-bas,  Next: pxt-tut-model,  Up: pxt-tut
+
+Introduction
+------------
+
+   This tutorial provides an introduction to the elementary concepts of
+programming with ProXT. It incorporates some instruction on the basic
+ideas behind the X Toolkit (Xt) and the Motif widget set. However, this
+is not a comprehensive tutorial on Motif and Xt programming. For such
+refer to `The X Window System: Programming and Applications with Xt,
+OSF/Motif Edition' (Douglas Young, Prentice-Hall). Programmers who are
+already familiar with Motif will find this tutorial useful in
+translating their knowledge to ProXT. In addition the original Motif
+and Xt naming conventions are preserved to a great extent, which is
+intended to facilitate the transition to ProXT.
+
+
+File: quintus.info,  Node: pxt-tut-model,  Next: pxt-tut-wid,  Prev: pxt-tut-bas,  Up: pxt-tut
+
+The ProXT programming model
+---------------------------
+
+   The ProXT programming model can be summarized best in the following
+program example, which creates a push button, and maps it on the screen.
+
+     create_button :-
+             xtAppInitialize(App,'Demo',[],Shell),
+             xmCreatePushButton(Shell,push_button,
+                                [xmNwidth(100), xmNheight(100)],Button),
+             xtManageChild(Button),
+             xtRealizeWidget(Shell),
+             xtAppMainLoop(App).
+
+   First, the Toolkit must be initialized. The call to
+`xtAppInitialize/4' returns an application context and a shell widget,
+which is the root widget of the application.  The second argument is
+the application class, attributes can be specified in the third
+argument.  Then the push button widget is created as a child of the
+shell widget with the call to `xmCreatePushButton/4'. In order to be
+visible on the screen a widget must be managed. This is accomplished
+with the call to `xtManageChild/1'. Note that the shell widget should
+not be managed.  The next step is to realize every widget. This can be
+achieved by realizing the root widget.  `xtRealizeWidget/1' propagates
+the realization recursively to all of the children. Then the program
+must enter the event loop by calling `xtAppMainLoop/1' where the server
+dispatches events for the widgets in this application context and
+certain actions that occur within the application.
+
+
+File: quintus.info,  Node: pxt-tut-wid,  Next: pxt-tut-wres,  Prev: pxt-tut-model,  Up: pxt-tut
+
+The Motif Widget Set
+--------------------
+
+   Motif has a variety of widgets and gadgets, each designed to
+accomplish a specific set of tasks, either individually or in
+combination with others. Convenience functions create certain widgets
+or sets of widgets for a specific purpose. `xmCreatePushButton/4' in
+the program above is an example of such a procedure.
+
+   The widgets are grouped into several classes, depending on the
+function of the widget. Logically, a widget class consists of the
+procedures and data associated with all widgets belonging to that
+class. These procedures and data can be inherited by subclasses.
+Detailed information on the properties of each widget and the
+procedures associated with it can be found in books on Motif.
+
+
+File: quintus.info,  Node: pxt-tut-wres,  Next: pxt-tut-hnd,  Prev: pxt-tut-wid,  Up: pxt-tut
+
+Widget Resources
+----------------
+
+   The widgets are objects and they have resources, also called
+attributes. These can be set at creation time by passing the list of
+attributes as an argument to the predicate that creates the widget or
+in later time by calling `xtSetValues/2'. In the example above the
+third argument of `xmCreatePushButton/4' is the attribute list and the
+size of the push button is set initially to 100x100 pixels.  If that
+argument was an empty list then no attributes would have been set. Each
+attribute is represented as a term whose functor is its resource name
+and whose argument is its value. In *Note pxt-wid:: all of the
+resources are listed with the types of their values.
+
+   There is a method to inspect the values of the attributes. This can
+be accomplished using the predicate `xtGetValues/2', which is almost the
+same as `xtSetValues/2' except that the argument of the attribute term
+is a variable, which is to be bound as a result of the call with the
+value of the attribute. For example to inspect the size of the push
+button from the previous example call:
+
+     xtGetValues(Button, [xmNwidth(X), xmNheight(Y)]).
+
+   At last, a word of caution. Not all resources can be set at creation
+time or set/get at a later time. To check for that look at the Motif
+and X Toolkit manuals.
+
+
+File: quintus.info,  Node: pxt-tut-hnd,  Next: pxt-tut-urdb,  Prev: pxt-tut-wres,  Up: pxt-tut
+
+Event Handling
+--------------
+
+* Menu:
+
+* pxt-tut-hnd-cbk::                     Widget Callbacks
+* pxt-tut-hnd-trans::                   Translations
+* pxt-tut-hnd-acc::                     Accelerators
+* pxt-tut-hnd-evh::                     Event Handlers
+* pxt-tut-hnd-oevt::                    Other Events Types
+* pxt-tut-hnd-evhl::                    Event Handling Loop
+
+   Handling of events is what enables the application to respond to
+input, i.e. to be alive. The X Toolkit and Motif provide means for
+procedures to be mapped to the occurrence of an event in the
+application. Actually, there are few different types of events within
+the X Toolkit paradigm.
+
+
+File: quintus.info,  Node: pxt-tut-hnd-cbk,  Next: pxt-tut-hnd-trans,  Up: pxt-tut-hnd
+
+Widget Callbacks
+................
+
+   One type of events corresponds to changes in the widget state. They
+are known as widget callbacks and each widget has its own set of them.
+There is a logical connection between the type of the widgets and their
+callbacks.  For example, the push button widget has a callback, which
+is activated when it is pressed.
+
+   There are few alternative ways of registering callback procedures.
+First, the callbacks are widget resources whose values are the
+corresponding procedures, therefore they can be set as such at
+creation. In addition, the X Toolkit provides a way for callbacks to be
+set explicitly.  This can be done with the predicates `xtAddCallback/4'
+and `xtAddCallbacks/3'.
+
+   In `xtAddCallback/4' the first argument is the widget for which the
+callback is registered, the second is the callback name. The third
+argument is the name of the procedure to be called and the last
+argument is some data that the programmer wants to pass to the callback
+procedure. In `xtAddCallbacks/3' the last argument is a list of terms
+of type `callback(PREDICATE,CLIENTDATA)' where PREDICATE is the name of
+the procedure to be called and CLIENTDATA is the data that the
+programmer wants to pass to the callback procedure. If the callback is
+set as a widget resource then the resource value is of the same term as
+used in the `xtAddCallbacks/3' list. For example,
+        xmCreatePushButton(Shell,push_button,
+          [xmNactivateCallback(callback(pressed,'Hello Quintus!'))])
+
+   would add a callback to the push button at creation time.
+
+   The callback procedures must be of arity 3. The first argument is the
+widget for which the callback was registered.  The second argument is
+reserved for data that the programmer may want pass to the procedure
+and the last argument is used by the Motif widgets to pass widget
+specific data to the application.
+
+   Following is an extension of the first example showing how to
+register a widget callback using `xtAddCallbacks/3':
+
+     create_button :-
+             xtAppInitialize(App,'Demo',[],Shell),
+             xmCreatePushButton(Shell,push_button,
+                                [xmNwidth(100), xmNheight(100)],Button),
+             xtManageChild(Button),
+             xtAddCallback(Button,xmNactivateCallback,pressed,
+                           'Hello Quintus!'),
+             xtRealizeWidget(Shell),
+             xtAppMainLoop(App).
+     
+     pressed(Widget, ClientData, CallData) :-
+             write(Widget), nl,
+             write(ClientData), nl,
+             write(CallData), nl.
+
+   To remove callbacks use `xtRemoveCallback', `xtRemoveCallbacks', or
+`xtRemoveAllCallbacks'.
+
+
+File: quintus.info,  Node: pxt-tut-hnd-trans,  Next: pxt-tut-hnd-acc,  Prev: pxt-tut-hnd-cbk,  Up: pxt-tut-hnd
+
+Translations
+............
+
+   The translation mechanism provides the application developers with a
+powerful syntax for specifying sequences of events and means to map
+them to actions. Actually, a level of redirection is introduced at this
+level. The event sequences are mapped into strings, which are mapped to
+executable procedures further in the program. This is intended to allow
+the mapping of events to actions to be specified through the resource
+database.
+
+   To specify translations programmatically the programmer can use one
+of these predicates: `xtAugmentTranslations/2' or
+`xtOverrideTranslations/2'. Both of these predicates register a
+translation table with a particular widget.  `xtAugmentTranslations/2'
+merges the new translation table with the current one while
+`xtOverrideTranslations/2' not only does that but also replaces
+existing translations with entries from the new translation table
+whenever there is a conflict.
+
+   The translation table is a structure that is opaque to the Prolog
+programmer. One can use the predicate `xtParseTranslationTable/2' to
+parse the translations string and generate the translation table. The
+exact syntax of the translations string is explained in the X Toolkit
+documentation.
+
+   The predicate `xtAppAddActions/2' is used to map the action names to
+executable procedures. The first argument is the application context and
+the second argument is a list of terms of type Action. In ProXT the
+translation procedures have three arguments -- the first argument is
+the widget where the event occurred, the second argument is the event
+that invoked the action and the third is a list of parameters specified
+in the action name.
+
+   Following is a reimplementation of the previous example using
+translations for event handling.
+
+     create_button :-
+             xtAppInitialize(App,'Demo',[],Shell),
+             xmCreateLabel(Shell,push_button,
+                           [xmNwidth(100), xmNheight(100)],Button),
+             xtManageChild(Button),
+             xtAppAddActions(App, [action(foo,pressed)]),
+             xtParseTranslationTable('<Btn1Down: foo("Hello Quintus")',
+                                     TranslationTable),
+             xtAugmentTranslations(Button,TranslationTable),
+             xtRealizeWidget(Shell),
+             xtAppMainLoop(App).
+     
+     pressed(Widget, Event, ParamList) :-
+             write(Widget), nl,
+             write(Event), nl,
+             write(ParamList), nl.
+
+   Registering translations through the resource database is covered to
+the section dedicated on the resource database.
+
+
+File: quintus.info,  Node: pxt-tut-hnd-acc,  Next: pxt-tut-hnd-evh,  Prev: pxt-tut-hnd-trans,  Up: pxt-tut-hnd
+
+Accelerators
+............
+
+   Accelerators are like translations but they map sequences of events
+in one widget to actions in another.  This mechanism is needed when
+adding a keyboard interface in the application allowing, for example, a
+menu to pop up as a result of a key stroke.
+
+   Every widget has a xmNAccelerators resource, inherited from the Core
+widget class.  The application must then call `xtInstallAccelerators'
+or `xtInstallAllAccelerators' to specify which widget will be used as
+the source of the actions to be invoked, and which will be the source
+of the events that invoke them.
+
+
+File: quintus.info,  Node: pxt-tut-hnd-evh,  Next: pxt-tut-hnd-oevt,  Prev: pxt-tut-hnd-acc,  Up: pxt-tut-hnd
+
+Event Handlers
+..............
+
+   The X Toolkit allows applications to catch low level X events
+occurring in a window owned by a widget. This can be accomplished with
+a call to `xtAddEventHandler/5'. This predicate is exactly like the
+corresponding X Toolkit function, therefore refer to the Xt manual for
+more information about it. Note that the event mask is represented as a
+list of event names in ProXT. There is also the
+`xtAddRawEventHandler/5' predicate, which is almost the same as
+`xtAddEventHandler/5' except that it does not affect the widget's event
+mask. To remove an event handler use `xtAddRawEventHandler/5' or
+`xtAddRawEventHandler/5' accordingly.
+
+   Following is the first example rewritten in order to utilize event
+handlers.
+
+     create_button :-
+             xtAppInitialize(App,'Demo',[],Shell),
+             xmCreatePushButton(Shell,push_button,
+                                [xmNwidth(100), xmNheight(100)],Button),
+             xtManageChild(Button),
+             xtAddEventHandler(Button,[buttonPressMask],false,
+                               pressed,'Hello Quintus!'),
+             xtRealizeWidget(Shell),
+             xtAppMainLoop(App).
+     
+     pressed(Widget, ClientData, CallData) :-
+             write(Widget), nl,
+             write(ClientData), nl,
+             write(CallData), nl.
+
+
+File: quintus.info,  Node: pxt-tut-hnd-oevt,  Next: pxt-tut-hnd-evhl,  Prev: pxt-tut-hnd-evh,  Up: pxt-tut-hnd
+
+Other Events Types
+..................
+
+   Many X applications require input from sources other than the X event
+queue. The X Toolkit provides a way for registering procedures to be
+invoked when there is input coming from a source such as UNIX file.
+The call to `xtAppAddInput/6' accomplishes that. The first argument in
+`xtAppAddInput/6' is the application context, the UNIX file descriptor
+for the input source is second, the third is the input condition mask
+and the next two arguments are the predicate and client data. An Id is
+returned in the final argument, which can be used to unregister the
+procedure.
+
+   Another useful facility in the X Toolkit allows applications to
+register callback procedures to be invoked when a specified interval
+has elapsed. The call to `xtAppAddTimeOut/5' accomplishes that. The
+time interval is measured in milliseconds and the registered procedure
+must be of arity 2, where the first argument is the client data and the
+second is the interval id. Following is an extension to the first
+example, which sets a timer when the push button is activated. This in
+turn activates a procedure some 2 seconds later.
+
+     timer(_ClientData,_IntervalId) :-
+            write('Button pressed approximately 2 seconds earlier...'),
+            nl.
+     
+     set_timer(Widget,Interval,_CallData) :-
+            xtWidgetToApplicationContext(Widget, App),
+            xtAppAddTimeOut(App,Interval,timer,_,_Id).
+     
+     time :-
+            xtAppInitialize(App,'Test',[],Shell),
+            xmCreatePushButton(Shell,push_button,
+                               [xmNactivateCallback([callback(set_timer,2000)]),
+                                xmNwidth(100),
+                                xmNheight(100)],
+                               Button),
+            xtManageChild(Button),
+            xtRealizeWidget(Shell),
+            xtAppMainLoop(App).
+
+   The X Toolkit includes another type of callback mechanism, known as a
+WorkProc, that provides a limited form of background processing. It
+allows the application to invoke a callback whenever there are no
+events pending.  The application can register WorkProc procedures using
+the call to `xtAppAddWorkProc/4'.
+
+
+File: quintus.info,  Node: pxt-tut-hnd-evhl,  Prev: pxt-tut-hnd-oevt,  Up: pxt-tut-hnd
+
+Event Handling Loop
+...................
+
+   At some point the application must start handling events. The
+procedure for obtaining these events is `xtAppNextEvent/2' and the
+procedure for dispatching them to the widgets is `xtDispatchEvent/1'.
+The call to `xtAppMainLoop/1' starts an endless loop where these two
+procedures are called one after another. Of course, the programmer can
+always write her own event loop, specifying some exit conditions, etc.
+The following example is a slight modification of the first program,
+which exits the event loop when the button is pressed.
+
+     :- dynamic exit_loop/1.
+     
+     exit_loop(no).
+     
+     exit_callback(_Widget,_CLientData,_CallData) :-
+             retract(exit_loop(no)),
+             assert(exit_loop(yes)).
+     
+     create_button :-
+             xtAppInitialize(App,'Test',[],Shell),
+             xmCreatePushButton(Shell,push_button,
+                                [xmNwidth(100), xmNheight(100)],
+                                Button),
+             xtManageChild(Button),
+             xtAddCallback(Button,xmNactivateCallback,exit_callback,_),
+             xtRealizeWidget(Shell),
+             main_loop(App).
+     
+     main_loop(App) :-
+             (   exit_loop(yes)
+             ->  write('Exiting...'), nl
+             ;   xtAppNextEvent(App,Event),
+                 xtDispatchEvent(Event),
+                 main_loop(App)
+             ).
+
+
+File: quintus.info,  Node: pxt-tut-urdb,  Next: pxt-tut-xlib,  Prev: pxt-tut-hnd,  Up: pxt-tut
+
+Using The Resource Database
+---------------------------
+
+   As mentioned earlier, most widget resources can be specified through
+the resource database. According to some authors this is the preferred
+way of resource setting as opposed to hard wiring in the program.
+During the initialization of the application the resource manager loads
+the resource database. Most end-users take advantage of that mechanism
+in customizing their applications without the need to recompile or know
+anything about programming. There are few places where the resource
+information may reside but the usual place is the file `.Xdefaults' in
+the user's home directory. Also, the application may keep a file of the
+application defaults settings in the directory:
+`/usr/lib/X11/app-defaults', and the filename must match the
+application name.
+
+   More on the syntax of specifying resource values can be found in any
+book on the X Toolkit. Following is another reimplementation of the
+first example with the widget resources and translations set through
+the resource database.
+
+     button_pressed(_Widget,_Event,[Param]) :-
+             write(Param), nl.
+     
+     create_button :-
+             xtAppInitialize(App,'Test',[],Shell),
+             xmCreateLabel(Shell,button,[],Button),
+             xtManageChild(Button),
+             xtAppAddActions(App, [action(foo,button_pressed)]),
+             xtRealizeWidget(Shell),
+             xtAppMainLoop(App).
+
+   Entries in the resource file:
+
+     Test.button.translations: #augment <Btn1Down>:foo("Hello Quintus")
+     Test.button.labelString:           "Press Here"
+     Test.button.height:                100
+     Test.button.width:                 100
+
+
+File: quintus.info,  Node: pxt-tut-xlib,  Prev: pxt-tut-urdb,  Up: pxt-tut
+
+Interaction with Xlib
+---------------------
+
+   In many instances the application will need to use functions from the
+Xlib layer for graphics or pure flexibility. Most of the the Xlib
+procedures take as arguments the display, screen, window, or gc
+structures. Therefore proxt provides the predicates `xtDisplay',
+`xtScreen', `xtWindow', `xCreateGC' and `xtWindowToWidget' to
+facilitate the mapping between Xt and Xlib.  Also, the predicate
+`xLoadQueryFont' is provided to supply the font structure needed by
+Motif font predicates such as `xmFontCreateList'.
+

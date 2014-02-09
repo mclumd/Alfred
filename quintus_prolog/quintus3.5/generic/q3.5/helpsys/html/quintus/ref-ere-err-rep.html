@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Representation Errors</h5>
+
+   <p>A representation error occurs when your program calls for the
+computation of some well-defined value that cannot be represented.
+
+   <p>Most representation errors are some sort of overflow:
+<pre class="example">     functor(T, f, 1000)             % maximum arity is 255
+     X is 16'7fffffff, Y is X+1      % 32-bit signed integers
+     atom_chars(X, L)                % if length of L &gt; 1024
+     </pre>
+
+   <p>are all representation errors.  Floating-point overflow is a
+representation error.
+
+   <p>The exception code for a representation error is
+<pre class="example">     representation_error(<var>Goal, ArgNo, Message</var>)
+     </pre>
+
+     <dl>
+
+     <br><dt><var>ArgNo</var>
+     <dd>identifies the argument of the goal that cannot be constructed.
+
+     <br><dt><var>Message</var>
+     <dd>further classifies the problem.  A message of <code>0</code> or
+<code>''</code> provides no further information.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-err-exi.html#ref-ere-err-exi">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-err-ran.html#ref-ere-err-ran">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere-err.html#ref-ere-err">Up</a>
+</ul>
+</div>
+   </body></html>
+

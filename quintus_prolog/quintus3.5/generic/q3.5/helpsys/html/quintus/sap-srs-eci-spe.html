@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Predicates Treated in a Special Way</h5>
+
+   <p>While <code>qpc</code> is compiling Prolog source into QOF, certain
+built-in predicates are treated in a special way.  Their behavior when
+used as embedded commands under <code>qpc</code> is different from
+their normal behavior.  For example, (A) causes the file <code>foo.pl</code> to be
+compiled into <code>.qof</code> format, not, as you would expect from its normal
+meaning, into (<code>qpc</code>'s) memory.
+
+<pre class="example">     
+     :- compile(foo). (A)
+     </pre>
+
+   <p>Similarly, if you define (B) in an initialization file, then the command
+(C) will cause foo to be compiled into QOF format after whatever goals
+you specified have been called.
+
+<pre class="example">     my_compile(File) :- (B)
+         ...{some goals}...,
+         compile(File).
+     </pre>
+
+<pre class="example">     :- my_compile(foo). (C)
+     </pre>
+
+   <p>The <code>load_files/2</code> <code>when</code> option can be used to force a file to
+be loaded into memory at compile-time if so desired.
+
+   <p>Note that the change of meaning of <code>compile/1</code> etc does not apply
+during the loading of an initialization file, only while
+compilation to <code>.qof</code> format is taking place.  Thus, if you put
+<pre class="example">     :- my_compile(foo).
+     </pre>
+
+   <p>in your initialization file (after the definition of <code>my_compile/1</code>), then
+this would mean compile <code>foo.pl</code> into memory.
+
+   <p>The predicates following this behavior are:
+
+     <dl>
+
+     <br><dt><code>compile/1</code>
+     <dd>compile files
+
+     <br><dt><code>consult/1</code>
+     <dd>compile files
+
+     <br><dt><code>load_files/[1,2]</code>
+     <dd>compile files
+
+     <br><dt><code>ensure_loaded/1</code>
+     <dd>compile files
+
+     <br><dt><code>load_foreign_files/2</code>
+     <dd>compile links to foreign code
+
+     <br><dt><code>load_foreign_executable/1</code>
+     <dd>compile links to foreign code"
+
+     <br><dt><code>no_style_check/1</code>
+     <dd>disable style checking
+
+     <br><dt><code>op/3</code>
+     <dd>declare operator(s) (see <a href="sap-srs-ode.html#sap-srs-ode">sap-srs-ode</a>)
+
+     <br><dt><code>reconsult/1</code>
+     <dd>compile files
+
+     <br><dt><code>style_check/1</code>
+     <dd>enable style checking
+
+     <br><dt><code>use_module/[1,2,3]</code>
+     <dd>compile module-files
+
+     <br><dt><code>./2</code>
+     <dd>(usually written [<var>Files</var>]) compile files
+</dl>
+
+   <p>Note that an embedded command of the form
+<pre class="example">     :- compile(user).
+     </pre>
+
+   <p>will cause an error message from <code>qpc</code>.  The same is true
+for specifying <code>user</code> in embedded calls to <code>consult/1</code> and similar
+commands, as well as in the command line of <code>qpc</code>.  The
+reason for this restriction is to avoid possible confusion; under the
+Development System, giving <code>user</code> as the argument to one of these
+predicates allows you to enter clauses directly from the terminal.
+
+   <p>Clauses for the predicates <code>foreign/[2,3]</code> and <code>foreign_file/2</code> are treated
+specially by <code>qpc</code>.  They are always assumed to be compile-time
+predicates, to be used by a subsequent embedded
+<code>load_foreign_executable/1</code> or <code>load_foreign_files/2</code>
+goal.  Therefore they are consulted into <code>qpc</code>'s internal database
+rather than being compiled into QOF.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-eci-ctc.html#sap-srs-eci-ctc">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-eci-mec.html#sap-srs-eci-mec">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs-eci.html#sap-srs-eci">Up</a>
+</ul>
+</div>
+   </body></html>
+

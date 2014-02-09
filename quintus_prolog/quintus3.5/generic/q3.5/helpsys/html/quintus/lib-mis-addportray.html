@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>library(addportray)</code></h4>
+
+   <p><code>library(addportray)</code> makes the use of <code>portray/1</code> more convenient. 
+In DEC-10 Prolog and C Prolog, a program could contain clauses like
+<pre class="example">     portray(X) :-
+             should_be_handled_here(X),
+             print_it_this_way
+     </pre>
+
+   <p>scattered through any number of files.  In Quintus Prolog, this
+does not work, because each file will wipe out every other file's
+clauses for <code>portray/1</code>; in any case, a clause for <code>portray/1</code> in a
+module will do nothing at all, because it is <code>user:portray/1</code> that you
+must define. 
+DEC-10 Prolog and C Prolog had a similar problem in that if you reconsulted a
+file
+containing such clauses, you lost all the other clauses for <code>portray/1</code>.
+
+   <p>Now, in order to add a link to <code>portray/1</code> clauses to your program, you can
+do the following:
+<pre class="example">     :- use_module(library(addportray)).
+     
+     local_portray(X) :-
+             should_be_handled_here(X),
+             print_it_this_way(X).
+     
+     :- add_portray(local_portray).
+     </pre>
+
+   <p>To cancel such a link, you can call
+<pre class="example">     :- del_portray(local_portray).
+     </pre>
+
+   <p>Note that if you use this package, you should not define <code>portray/1</code> in
+any other way; otherwise, these links will be lost.
+
+   <p>You can link to other user-defined predicates (such as <code>term_expansion/2</code>)
+this way too.  Suppose the other
+predicate to be linked to is <code>user:</code><var>Pred</var><code>/</code><var>Arity</var><code></code>.  Then
+<pre class="example">     :- add_linking_clause(<var>Link</var>, <var>Pred</var>, <var>Arity</var>).
+     </pre>
+
+   <p>ensures that there is a clause
+<pre class="example">     <var>Pred</var>(X1,...,X<var>Arity</var>) :- <var>Link</var>(X1,...,X<var>Arity</var>).
+     </pre>
+
+   <p>in module <code>user</code>, where <var>Link</var>/<var>Arity</var> is called
+in the module from which <code>add_linking_clause/3</code> is called, and
+<pre class="example">     :- del_linking_clause(<var>Link</var>, <var>Pred</var>, <var>Arity</var>).
+     </pre>
+
+   <p>ensures that there is no such clause.  For example, you can
+add a case to <code>term_expansion/2</code> by adding the following directive to a
+module:
+<pre class="example">     :- add_linking_clause(local_expander, term_expansion, 2).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-mis-activeread.html#lib-mis-activeread">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-mis.html#lib-mis">Up</a>
+</ul>
+</div>
+   </body></html>
+

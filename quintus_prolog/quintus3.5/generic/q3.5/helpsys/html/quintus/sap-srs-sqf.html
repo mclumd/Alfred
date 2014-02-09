@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Saved-States and QOF files</h4>
+
+   <p>Saved-states may be created from within a stand-alone program or a runtime
+system in the normal way, using <code>save_program/[1,2]</code>.  A saved-state may
+be restored, using the built-in predicate <code>restore/1</code>, or incrementally
+loaded using <code>load_files/[1,2]</code>.  As discussed in <a href="ref-sls.html#ref-sls">ref-sls</a>,
+saved-states are just QOF files, and there is complete flexibility in how
+they can be selectively saved and loaded.  Saved states, and other
+selections of predicates and modules saved into QOF files, can also be
+directly used with <code>qld</code> to build a stand-alone program or runtime
+system.
+
+   <p>Note that the <code>restore/1</code> command is not as useful to load a saved-state
+(or any QOF file) into a runtime system as the <code>load_files/[1,2]</code> command. 
+While a <code>restore/1</code> in a stand-alone program, just as in
+the Development System, restarts the running executable and then loads the
+argument QOF file, a runtime system only restarts
+the executable, and the file, preceded by a <code>+l</code> flag, is passed to
+the application program, which may elect to parse the arguments and then
+load the file.  Similarly, if a saved-state is created from a runtime system
+and then restarted from the command line, the executable will be started,
+but the options list need to be parsed and the file loaded by the
+application program (see <a href="mpg-ref-restore.html#mpg-ref-restore">mpg-ref-restore</a>, and <a href="ref-pro-arg.html#ref-pro-arg">ref-pro-arg</a>
+or <a href="too-too-prolog.html#too-too-prolog">too-too-prolog</a> for a description of the <code>+l</code> option).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-dfi.html#sap-srs-dfi">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-ode.html#sap-srs-ode">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs.html#sap-srs">Up</a>
+</ul>
+</div>
+   </body></html>
+

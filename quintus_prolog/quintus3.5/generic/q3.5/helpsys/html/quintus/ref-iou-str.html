@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">About Streams</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ref-iou-str-not.html#ref-iou-str-not">ref-iou-str-not</a>:                      Programming Note
+<li><a accesskey="2" href="ref-iou-str-sca.html#ref-iou-str-sca">ref-iou-str-sca</a>:                      Stream Categories
+</ul>
+
+   <p>A Prolog stream can refer to a file or to the user's terminal<a rel="footnote" href="#fn-1"><sup>1</sup></a>.  Each stream
+is used either for input or for output, but not for both.  At any one
+time there is a <dfn>current input</dfn> stream and a <dfn>current output</dfn>
+stream.
+
+   <p>Input and output predicates fall into three categories:
+     <ol type=1 start=1>
+
+     <li>those that use the current input or output stream;
+<li>those that take an explicit stream argument;
+<li>those that use the <dfn>standard</dfn> input or output stream -- these
+generally refer to the user's terminal.  Their names begin with <code>tty</code>.
+        </ol>
+
+   <p>Initially, the current input and output streams both refer to the
+user's terminal.  Each input and output built-in predicate refers
+implicitly or explicitly to a stream.  The predicates that perform
+character and term I/O operations come in pairs such that (A) refers
+to the current stream, and (B) specifies a stream.
+
+<pre class="example">          <var>predicate_name</var>/<var>n</var> (A)
+          <var>predicate_name</var>/<var>n+1</var> (B)
+     </pre>
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>At
+the C level, you can define more general streams, e.g. referring to
+pipes or to encrypted files (see <a href="fli-ios-uds-est.html#fli-ios-uds-est">fli-ios-uds-est</a>).</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iou-tin.html#ref-iou-tin">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-iou-bas.html#ref-iou-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-iou.html#ref-iou">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

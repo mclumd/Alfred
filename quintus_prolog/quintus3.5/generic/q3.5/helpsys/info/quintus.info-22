@@ -1,0 +1,1343 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: fli-ios-uds-bst,  Next: fli-ios-uds-est,  Up: fli-ios-uds
+
+Creating A Binary Stream
+........................
+
+   This example creates a binary stream.  All the characters read from
+the stream are exactly the same as the characters stored in the file of
+the stream.  All the characters stored in the file of the stream are
+the same as the characters written to the stream.  The stream permits
+flushing output and random seek to arbitrary byte position in the file.
+By choosing `QP_VAR_LEN' as the format of the stream and using the full
+buffer as a record to communicate between middle layer and bottom layer
+functions, a line is actually a full buffer of the stream.  A newline
+operation does not output a <LFD> either so that the line count of the
+stream is not based on the number of <LFD> characters.
+
+                                                               _bin.pl_
+     
+     foreign(open_bin, c, open_bin(+string, +string, -integer, [-address])).
+     foreign_file('bin', [open_bin]).
+     
+     :- load_foreign_files(['bin'],[]).
+     
+     open_bin_file(FileName, ModeName, Stream) :-
+             open_bin(FileName, ModeName, ErrorNum, CStream),
+             ( CStream =:= 0 ->
+                     raise_exception(existence_error(
+                         open_bin_file(FileName, ModeName, Stream),
+                         1, file, FileName, errno(ErrorNum)))
+             ; stream_code(Stream, CStream)
+             ).
+
+                                                                _bin.c_
+     
+     #include <fcntl.h>
+     #include <errno.h>
+     #include <sys/file.h>           /* for seek */
+     
+     #ifndef L_SET
+     #define L_SET   0
+     #endif
+     #ifndef L_INCR
+     #define L_INCR  1
+     #endif
+     #ifndef L_XTND
+     #define L_XTND  2
+     #endif
+     
+     #include <quintus/quintus.h>
+     
+     extern  char *QP_malloc();
+     
+     /*  The following three functions support UNIX I/O on files
+         without breaking things into records.  All the characters
+         read from or written to the file are kept exactly the same.
+     */
+     
+     #define Buffer_Size             8192
+     
+     typedef struct
+         {
+             QP_stream qpinfo;
+             int fd;                 /* UNIX file descriptor */
+             int last_rdsize;        /* size of last returned line */
+             unsigned char buffer[Buffer_Size];      /* I/O buffer */
+         } BinStream;
+     
+     #define CoerceBinStream(x) ((BinStream *)(x))
+
+                                                                _bin.c_
+     
+     static int
+     bin_read(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             int n;
+             register BinStream *stream = CoerceBinStream(qpstream);
+     
+             qpstream->magic.byteno += stream->last_rdsize;
+             stream->last_rdsize = 0;
+             n = read(stream->fd, (char*)stream->buffer,
+                                  (int)  qpstream->max_reclen);
+             if (n > 0) {
+                 *bufptr  = stream->buffer;
+                 *sizeptr = n;
+                 stream->last_rdsize = n;
+                 return QP_FULL;
+             } else if (n == 0) {
+                 *sizeptr = 0;
+                 return QP_EOF;
+             } else {
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+         }
+     
+     static int
+     bin_write(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             BinStream  *stream = CoerceBinStream(qpstream);
+             int        n, len=(int) *sizeptr;
+             char       *buf = (char *) *bufptr;
+     
+             while ((n = write(stream->fd, buf, len)) > 0 && n < len) {
+                 buf += n;
+                 len -= n;
+             }
+             if (n >= 0) {
+                 qpstream->magic.byteno += *sizeptr;
+                 *sizeptr = qpstream->max_reclen;
+                 *bufptr  = stream->buffer;
+                 return QP_SUCCESS;
+             } else {
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+         }
+
+                                                                _bin.c_
+     
+     static int
+     bin_seek(qpstream, qpmagic, whence, bufptr, sizeptr)
+          QP_stream          *qpstream;
+          union QP_cookie    *qpmagic;
+          int                whence;
+          unsigned char      **bufptr;
+          size_t             *sizeptr;
+          {
+             BinStream *stream = CoerceBinStream(qpstream);
+             off_t           new_offset;
+     
+             switch (whence) {
+             case QP_BEGINNING:
+                 new_offset = lseek(stream->fd,qpmagic->byteno,L_SET);
+                 break;
+             case QP_CURRENT:
+             /* The current location of file pointer is different from
+                what the user thinks it is due to buffering.  The magic
+                field has been brought up to date by the caller of this
+                function, so just seek to that position first. */
+                 if (lseek(stream->fd, qpstream->magic.byteno, L_SET)
+                                               == -1) {
+                     qpstream->errno = errno;
+                     return QP_ERROR;
+                 }
+                 new_offset = lseek(stream->fd,qpmagic->byteno,L_INCR);
+                 break;
+             case QP_END:
+                 new_offset = lseek(stream->fd,qpmagic->byteno,L_XTND);
+                 break;
+             default:
+                 qpstream->errno = QP_E_INVAL;
+                 return QP_ERROR;
+             }
+             if (new_offset == -1) { /* error in seeking */
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+             qpstream->magic.byteno = new_offset;
+             *bufptr  = stream->buffer;
+             *sizeptr = (qpstream->mode == QP_READ) ? 0
+                                   : qpstream->max_reclen;
+             stream->last_rdsize = 0;
+             return QP_SUCCESS;
+          }
+
+                                                                _bin.c_
+     
+     static int
+     bin_close(qpstream)
+         QP_stream   *qpstream;
+         {
+             BinStream *stream = CoerceBinStream(qpstream);
+             int fd = stream->fd;
+     
+             if (close(fd) < 0) {
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+             (void) QP_free(qpstream);
+             return QP_SUCCESS;
+         }
+
+                                                                _bin.c_
+     
+     QP_stream *
+     open_bin(filename, modename, error_num)
+         char   *filename, *modename;
+         int    *error_num;
+         {
+             BinStream       *stream;
+             QP_stream       *option;
+             int             fd, mode;
+     
+             switch (*modename) {
+             case 'r': mode = QP_READ;
+                       fd = open(filename, O_RDONLY, 0000);
+                       break;
+             case 'w': mode = QP_APPEND;
+                       fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC,
+                                           0666);
+                       break;
+             case 'a': mode = QP_APPEND;
+                       fd = open(filename, O_WRONLY|O_CREAT, 0666);
+                       break;
+             default:  *error_num = QP_E_BAD_MODE;
+                       return QP_NULL_STREAM;
+             }
+             if (fd < 0) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+             if ((stream = (BinStream *) QP_malloc(sizeof(*stream)))
+                             == ((BinStream *) 0) ) {
+                 (void) close(fd);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+             stream->fd = fd;
+             stream->last_rdsize = 0;
+
+                                                                _bin.c_
+     
+                     /* obtain default values in QP_stream structure */
+                     /*     and modified fields for this stream */
+             option = &stream->qpinfo;
+             QU_stream_param(filename, mode, QP_VAR_LEN, option);
+             option->max_reclen = Buffer_Size;
+             option->line_border = QP_NOLB;
+             if (isatty(fd)) {
+                 option->format = QP_DELIM_TTY;
+                 option->seek_type = QP_SEEK_ERROR;
+             } else {
+                 option->seek_type = QP_SEEK_BYTE;
+                 option->seek = bin_seek;
+             }
+             if (mode != QP_READ) {
+                 option->write = bin_write;
+                 option->flush = bin_write;
+             } else
+                 option->read = bin_read;
+             if (option->mode == QP_APPEND
+                       && option->format != QP_DELIM_TTY) {
+                 if ((option->magic.byteno=lseek(fd,0L,L_XTND)) < 0) {
+                     (void) close(fd);
+                     *error_num = errno;
+                     return QP_NULL_STREAM;
+                 }
+             }
+             option->close = bin_close;
+     
+             QP_prepare_stream(&stream->qpinfo, stream->buffer);
+             if (QP_register_stream(&stream->qpinfo) == QP_ERROR) {
+                 (void) stream->qpinfo.close(&stream->qpinfo);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+     
+             /* Use filename to register tty stream to its group */
+             if (option->format == QP_DELIM_TTY)
+                 (void) QP_add_tty(&stream->qpinfo, filename);
+     
+             return &stream->qpinfo;
+         }
+
+
+File: quintus.info,  Node: fli-ios-uds-est,  Next: fli-ios-uds-sst,  Prev: fli-ios-uds-bst,  Up: fli-ios-uds
+
+Creating A Stream To Read An Encrypted File
+...........................................
+
+   This example creates an input stream to read from a file encrypted
+using a simple encryption algorithm.  The key is stored in the first
+byte of the file.  A character code stored in the file is the result of
+a logical exclusive-or operation of the output character and the key.
+The decryption of the input file is done in the bottom layer read
+function.
+
+   The input stream created only permits seeking to a previous read
+position.  Notice the bottom layer read function defined
+(`decrypt_read()') buffers more than one record.  By doing this, the
+Prolog input/output system will maintain a correct line count and line
+position based on the new line character (`\n').  There are also two
+user-defined error numbers used in this example (`DECRYPT_NO_KEY' and
+`DECRYPT_TTY_FILE').
+
+                                                           _decrypt.pl_
+     
+     foreign(open_decrypt, c, open_decrypt(+string, -integer,
+                                           [-address])).
+     foreign_file('decrypt', [open_decrypt]).
+     
+     :- load_foreign_files(['decrypt'],['-lc']).
+     
+     open_decrypt_stream(FileName, PrologStream) :-
+             open_decrypt(FileName, ErrorNum, CStream),
+             ( CStream =:= 0 ->
+                     raise_exception(existence_error(
+                         open_decrypt_stream(FileName, PrologStream),
+                         1, file, FileName, errno(ErrorNum)))
+             ; stream_code(PrologStream, CStream)
+             ).
+
+                                                            _decrypt.c_
+     
+     #include <fcntl.h>
+     #include <quintus/quintus.h>
+     extern int errno;
+     
+     #define Buffer_Size             8192
+     
+     typedef unsigned char           Key_Type;
+     
+     typedef struct
+         {
+             QP_stream       qpinfo;
+             int             fd;          /* file descriptor */
+             int             last_rdsize; /* size of last record */
+             int             left_size;   /* char. left unread */
+             unsigned char   *left_ptr;   /* pointer to the unread */
+             unsigned char   buffer[Buffer_Size+3];
+             Key_Type        key;            /* decryption key */
+         } DecryptStream;
+     
+     #define CoerceDecryptStream(qpstream) \
+                                ((DecryptStream *)(qpstream))
+     
+     /* define user-defined error number */
+     #define DECRYPT_NO_KEY          QP_END_ECODE+1
+     #define DECRYPT_TTY_FILE        QP_END_ECODE+2
+
+                                                            _decrypt.c_
+     
+     /*
+          To enable the Prolog system to maintain correct line count
+          and line position, a whole buffer is read but only a line
+          in the buffer is returned every time.
+          The characters in the buffer are decrypted at once.
+     
+          The buffer is maintained as follows:
+     
+                          <- left_size ->
+          +---------------+-------------+--+-------+
+          | has been read | to be read  |\n| empty |
+          +---------------+-------------+--+-------+
+                          ^ left_ptr      ^ <pad '\n' character>
+     */
+     static int
+     decrypt_read(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             register DecryptStream *stream =
+                                    CoerceDecryptStream(qpstream);
+             register int            n;
+             register unsigned char  *s, *s1;
+     
+             /* magic is the beginning byte offset of return record */
+             qpstream->magic.byteno += stream->last_rdsize;
+     
+             if (stream->left_size <= 0) {
+                 register Key_Type   *kp, *kq, key;
+     
+                 /* read a new buffer of input and decrypt characters*/
+                 n = read(stream->fd, (char *) stream->buffer,
+                                       Buffer_Size);
+     
+                 if (n > 0) {
+                     kp=(Key_Type *) stream->buffer;
+                     kq=(Key_Type *) &stream->buffer[n];
+                     for (key = stream->key; kp < kq ; ) /* decrypt */
+                         *kp++ ^= key;
+                     stream->left_size = n;
+                     stream->left_ptr  = stream->buffer;
+                 } else if (n == 0) {
+                     stream->last_rdsize = stream->left_size = 0;
+                     *bufptr = stream->left_ptr = stream->buffer;
+                     *sizeptr = stream->last_rdsize = 0;
+                     return QP_EOF;
+                 } else {
+                     qpstream->errno = errno;
+                     stream->last_rdsize = stream->left_size = 0;
+                     return QP_ERROR;
+                 }
+             }
+
+                                                            _decrypt.c_
+     
+             /*  make next line of data available  */
+             s = stream->left_ptr;
+             se = s + stream->left_size;
+             while (s < se) {
+                 if (*s++ == '\n') {         /* found end of record */
+                     break;
+                 }
+             }
+     
+             *bufptr = stream->left_ptr;
+             *sizeptr = stream->last_rdsize = s - stream->left_ptr;
+             stream->left_ptr   = s;
+             stream->left_size  = se - s;
+             return (*--s == '\n') ? QP_FULL : QP_PART;
+         }
+     
+     /* Only QP_SEEK_PREVIOUS is allowed for the file, so 'whence'
+        specified can only be QP_BEGINNING.  '*sizeptr' should always
+        be set to 0 since there is only input stream.
+     */
+     static int
+     decrypt_seek(qpstream, qpmagic, whence, bufptr, sizeptr)
+          QP_stream          *qpstream;
+          union QP_cookie    *qpmagic;
+          int                whence;
+          unsigned char      **bufptr;
+          size_t             *sizeptr;
+          {
+             DecryptStream *stream = CoerceDecryptStream(qpstream);
+             off_t           offset;
+     
+             switch (whence) {
+             case QP_BEGINNING:
+                 if ((offset = lseek(stream->fd,qpmagic->byteno,L_SET))
+                                                 == -1) {
+                     qpstream->errno = errno;
+                     return QP_ERROR;
+                 }
+                 qpstream->magic.byteno = offset;
+                 *bufptr  = stream->buffer;
+                 *sizeptr = 0;
+                 stream->left_ptr  = stream->buffer;
+                 stream->left_size = stream->last_rdsize = 0;
+                 return QP_SUCCESS;
+             case QP_CURRENT:
+             case QP_END:
+             default:
+                 qpstream->errno = QP_E_INVAL;
+                 return QP_ERROR;
+             }
+          }
+
+                                                            _decrypt.c_
+     
+     static int
+     decrypt_close(qpstream)
+         QP_stream   *qpstream;
+         {
+             DecryptStream *stream = CoerceDecryptStream(qpstream);
+             int fd = stream->fd;
+     
+             QP_free((char *)stream);
+             if (close(fd) < 0) {
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+             return QP_SUCCESS;
+         }
+
+                                                            _decrypt.c_
+     
+     /* open_crypt_stream: open the specified non-tty 'filename' for
+        reading.  The file is a simple crypted file with the first
+        byte as the key.  It is crypted by logical exclusive-or
+        operation of the key with every character in the file.
+        Upon success, the opened stream is returned.
+        Upon failure, QP_NULL_STREAM is returned and the error code
+        is stored in the parameter 'error_num'.
+     */
+     QP_stream *
+     open_decrypt(filename, error_num)
+         char *filename;
+         int  *error_num;
+         {
+             int             fd;
+             Key_Type        key;
+             DecryptStream   *stream;
+             QP_stream       *option;
+     
+             if ((fd = open(filename, O_RDONLY)) < 0) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+             if (isatty(fd)) {        /* tty file is not accepted */
+                 (void) close(fd);
+                 *error_num = DECRYPT_TTY_FILE;
+             }
+     
+             switch (read(fd, (char *) &key, sizeof(key)) ) {
+             case sizeof(key):
+                     break;
+             case 0:
+                     *error_num = DECRYPT_NO_KEY;
+                     (void) close(fd);
+                     return QP_NULL_STREAM;;
+             default:
+                     *error_num = errno;
+                     (void) close(fd);
+                     return QP_NULL_STREAM;
+             }
+
+                                                            _decrypt.c_
+     
+             if (! (stream = (DecryptStream *)
+                             QP_malloc(sizeof(*stream))) ) {
+                 (void) close(fd);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+     
+             stream->fd = fd;
+             stream->last_rdsize = 0;
+             stream->left_size = 0;
+             stream->key = key;
+     
+             option = &stream->qpinfo;
+             QU_stream_param(filename, QP_READ, QP_DELIM_LF, option);
+     
+             option->max_reclen = Buffer_Size;
+                  /* Record the current byte offset in the file */
+             option->magic.byteno = sizeof(key);
+             option->read   = decrypt_read;
+             option->seek   = decrypt_seek;
+             option->close  = decrypt_close;
+     
+             QP_prepare_stream(&stream->qpinfo, stream->buffer);
+             if (QP_register_stream(&stream->qpinfo) == QP_ERROR) {
+                 (void) stream->qpinfo.close(&stream->qpinfo);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+             return (QP_stream *) stream;
+         }
+
+
+File: quintus.info,  Node: fli-ios-uds-sst,  Prev: fli-ios-uds-est,  Up: fli-ios-uds
+
+Creating A Stream Based On C Standard I/O Library
+.................................................
+
+   This example demonstrates creating a stream based on standard I/O
+library package.  The stream is created as unbuffered for the Prolog
+I/O system (It is still buffered in the standard I/O package).  By
+making the stream unbuffered, mixed I/O operations between Prolog code
+and C code using standard I/O library functions will work appropriately.
+In this case, line counts and character counts will be maintained for
+Prolog I/O predicates and QP functions only.
+
+                                                             _stdio.pl_
+     
+     foreign(open_stdio, c, open_stdio(+string, +string, -integer,
+                                       [-address])).
+     foreign_file('stdio', [open_stdio]).
+     
+     :- load_foreign_files(['stdio'],['-lc']).
+     
+     open_stdio_file(FileName, ModeName, Stream) :-
+             valid_open_mode(ModeName, Mode),
+             open_stdio(FileName, Mode, ErrorNum, CStream),
+             ( CStream =:= 0 ->
+                     raise_exception(existence_error(
+                         open_stdio_file(FileName, ModeName, Stream),
+                         1, file, FileName, errno(ErrorNum)))
+             ; stream_code(Stream, CStream)
+             ).
+     
+     valid_open_mode(read,   r).
+     valid_open_mode(write,  w).
+     valid_open_mode(append, a).
+
+                                                              _stdio.c_
+     
+     #include <stdio.h>
+     #include <quintus/quintus.h>
+     
+     /* Create a stream based on UNIX standard I/O library.
+        This stream is created as an unbuffered stream so that
+        mixed calls of Quintus Prolog I/O predicates (functions)
+        and standard I/O on the stream will read/write the same
+        sequence of bytes of the stream */
+     
+     typedef struct
+         {
+             QP_stream       qpinfo;
+             FILE            *fp;
+             unsigned char   buffer[4];
+         } StdioStream;
+     
+     #define CoerceStdioStream(stream)       ((StdioStream *) stream)
+     
+     extern int      errno;
+     
+     static int
+     stdio_read(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             StdioStream     *stream = CoerceStdioStream(qpstream);
+             register int    c;
+     
+             if ((c = getc(stream->fp)) < 0)
+                 return QP_EOF;
+             stream->buffer[0] = (unsigned char) c;
+             *bufptr = stream->buffer;
+             *sizeptr = 1;
+             /* '-1' because the magic field stores the beginning
+                     address of the returned buffer */
+             qpstream->magic.byteno = ftell(stream->fp)-1;
+             return (c == '\n') ? QP_FULL : QP_PART;
+         }
+
+                                                              _stdio.c_
+     
+     static int
+     stdio_write(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             StdioStream *stream = CoerceStdioStream(qpstream);
+     
+             if (*sizeptr == 0) {
+                 *bufptr = stream->buffer;
+                 *sizeptr = 0;
+                 return QP_SUCCESS;
+             }
+             errno = 0;
+             if (putc((char) stream->buffer[0], stream->fp) < 0) {
+                 qpstream->errno = (errno) ? errno : QP_E_CANT_WRITE;
+                 return QP_ERROR;
+             }
+             qpstream->magic.byteno = ftell(stream->fp);
+             *bufptr = stream->buffer;
+             *sizeptr = 0;            /* use 0 for unbuffered write */
+             return QP_SUCCESS;
+         }
+     
+     static int
+     stdio_flush(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             StdioStream *stream = CoerceStdioStream(qpstream);
+     
+             /* The stream is unbuffered so that there is no character
+                in the buffer of stream->buffer */
+             errno = 0;
+             if (fflush(stream->fp) < 0) {
+                 qpstream->errno = (errno) ? errno : QP_E_CANT_FLUSH;
+                 return QP_ERROR;
+             }
+             qpstream->magic.byteno = ftell(stream->fp);
+             *bufptr = stream->buffer;
+             *sizeptr = 0;
+             return QP_SUCCESS;
+         }
+
+                                                              _stdio.c_
+     
+     static int
+     stdio_seek(qpstream, qpmagic, whence, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         union QP_cookie     *qpmagic;
+         int                 whence;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             StdioStream *stream = CoerceStdioStream(qpstream);
+             int     rtn;
+     
+             errno = 0;
+             /* fseek() should normally flush out the buffered input
+                for stream->fp.  Use fflush() just to be safe */
+             if (qpstream->mode != QP_READ)
+                 (void) fflush(stream->fp);
+             switch (whence) {
+             case QP_BEGINNING:
+                 rtn = fseek(stream->fp, qpmagic->byteno, 0);
+                 break;
+             case QP_CURRENT:
+                 rtn = fseek(stream->fp,  qpmagic->byteno, 1);
+                 break;
+             case QP_END:
+                 rtn = fseek(stream->fp, qpmagic->byteno, 2);
+                 break;
+             default:
+                 qpstream->errno = QP_E_INVAL;
+                 return QP_ERROR;
+             }
+             if (rtn == -1) {
+                 qpstream->errno = (errno) ? errno : QP_E_CANT_SEEK;
+                 return QP_ERROR;
+             }
+             qpstream->magic.byteno = ftell(stream->fp);
+             *bufptr  = stream->buffer;
+             *sizeptr = (qpstream->mode == QP_READ) ? 0
+                                        : qpstream->max_reclen;
+             return QP_SUCCESS;
+         }
+
+                                                              _stdio.c_
+     
+     static int
+     stdio_close(qpstream)
+         QP_stream   *qpstream;
+         {
+             StdioStream *stream = CoerceStdioStream(qpstream);
+     
+             /* characters in fp buffer is flushed by fclose() */
+             if (fclose(stream->fp) < 0) {
+                 qpstream->errno = errno;
+                 return QP_ERROR;
+             }
+             QP_free((char *) stream);
+             return QP_SUCCESS;
+         }
+
+                                                              _stdio.c_
+     
+     /* open_stdio() creates an instance of standard input/output
+        based stream.  The function creates a file stream based
+        on the 'filename' and 'modename' parameter.
+        It returns the pointer to the created QP_stream structure
+        upon success.  It returns QP_NULL_STREAM and sets
+        error code in 'error_num' upon failure.
+     */
+     QP_stream *
+     open_stdio(filename, modename, error_num)
+         char        *filename, *modename;
+         int         *error_num;
+         {
+             QP_stream    *option;
+             FILE         *fp;
+             StdioStream  *stream;
+             int          mode, stdio_read(), stdio_write(),
+                          stdio_flush(), stdio_seek(), stdio_close();
+     
+             switch (*modename) {
+             case 'r':       mode = QP_READ;         break;
+             case 'w':       mode = QP_WRITE;        break;
+             case 'a':       mode = QP_APPEND;       break;
+             default:        *error_num = QP_E_BAD_MODE;
+                             return QP_NULL_STREAM;
+             }
+             if ((fp = fopen(filename, modename)) == NULL) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+     
+                     /* allocate space for the stream */
+             stream = (StdioStream *) QP_malloc(sizeof(*stream));
+                     /* set values in the stream */
+             stream->fp = fp;
+     
+             /* obtain default values in QP_stream structure */
+             /*     and modified fields for this stream */
+             option = &stream->qpinfo;
+             QU_stream_param(filename, mode, QP_DELIM_LF, option);
+             if (isatty(fileno(fp))) {
+                 option->format = QP_DELIM_TTY;
+                 option->seek_type = QP_SEEK_ERROR;
+             } else {
+                 option->seek_type  = QP_SEEK_BYTE;
+             }
+             option->max_reclen = (mode == QP_READ) ? 1 : 0;
+
+                                                              _stdio.c_
+     
+             if (mode != QP_READ) {
+                 option->write = stdio_write;
+                 option->flush = stdio_flush;
+             } else {
+                 option->read = stdio_read;
+                 option->peof_act   = QP_PASTEOF_EOFCODE;
+             }
+             option->seek  = stdio_seek;
+             option->close = stdio_close;
+                     /* sets correct value in magic field */
+             if (option->mode != QP_APPEND)
+                 option->magic.byteno = 0;
+             else
+                 option->magic.byteno = ftell(fp);
+     
+                     /* set internal fields and register stream */
+             QP_prepare_stream(&stream->qpinfo, stream->buffer);
+             if (QP_register_stream(&stream->qpinfo) == QP_ERROR) {
+                 (void) stream->qpinfo.close(&stream->qpinfo);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+     
+                     /* register tty stream to its group */
+             if (option->format == QP_DELIM_TTY)
+                 (void) QP_add_tty(&stream->qpinfo, filename);
+             return (QP_stream *) stream;
+         }
+
+
+File: quintus.info,  Node: fli-ios-bio,  Next: fli-ios-bci,  Prev: fli-ios-uds,  Up: fli-ios
+
+Built-in C Functions And Macros For I/O
+---------------------------------------
+
+   Several builtin functions and macros are defined to enable Prolog
+streams to be manipulated in foreign code. This section lists each of
+these functions. In this list, the character `#' is used to denote a C
+macro, which is defined in `<quintus/quintus.h>'.  Full descriptions of
+each of these functions can be found in the individual reference pages.
+
+Open a stream
+     `QP_fopen()': open a text file or a binary file as a Prolog stream.
+
+     `QP_fdopen()': create a text stream or a binary stream from a file
+     descriptor.
+
+Close a stream
+     `QP_close()': close a Prolog stream
+
+     `QP_fclose()': close a Prolog stream, same as `QP_close()'.
+
+Input from a stream
+     `#QP_getchar()': get a character from the Prolog current input
+     stream.
+
+     `#QP_getc()': get a character from a Prolog input stream.
+
+     `QP_fgetc()': get a character from a Prolog input stream.
+
+     `#QP_peekchar()': look a character ahead from the Prolog current
+     input stream.
+
+     `#QP_peekc()': look a character ahead from a Prolog input stream.
+
+     `QP_fpeekc()': look a character ahead from a Prolog input stream.
+
+     `QP_ungetc()': unget the previous read character from a Prolog
+     input input stream.
+
+     `#QP_skipline()': skip the current input record of the Prolog
+     current input stream.
+
+     `#QP_skipln()': skip the current input record of a Prolog input
+     stream.
+
+     `QP_fskipln()': skip the current input record of a Prolog input
+     stream.
+
+     `QP_fgets()': get a string from a Prolog input stream.
+
+     `QP_fread()': read several items of data from a Prolog input
+     stream.
+
+Output to a stream and flush output stream buffer:
+     `#QP_putchar()': put a character on the Prolog current output
+     stream.
+
+     `#QP_putc()': put a character on a Prolog output stream.
+
+     `QP_fputc()': put a character on a Prolog output stream.
+
+     `#QP_newline()': terminates an output record for the Prolog current
+     output stream.
+
+     `#QP_newln()': terminates an output record for a Prolog output
+     stream.
+
+     `QP_fnewln()': terminates an output record for a Prolog output
+     stream.
+
+     `QP_puts()': put a character string on the Prolog current output
+     stream.
+
+     `QP_fputs()': put a character string on a Prolog output stream.
+
+     `QP_fwrite()': write several items of data on a Prolog output
+     stream.
+
+     `QP_tab()': put the specified character the number of times
+     specified on a Prolog output stream.
+
+     `QP_tabto()': put the specified character up to the specified line
+     position on a Prolog output stream.
+
+     `QP_printf()': print formatted output on the Prolog current output
+     stream.
+
+     `QP_fprintf()': print formatted output on a Prolog output stream.
+
+     `QP_vfprintf()': print formatted output of a varargs argument list
+     on a Prolog output stream.
+
+     `QP_flush()': flush output on a Prolog output stream
+
+Get stream position and seek to a new position in a stream:
+     `QP_getpos()': Get the current position for a Prolog stream.
+
+     `QP_setpos()': position a Prolog stream back to a previous
+     read/written position.
+
+     `QP_rewind()': reposition a Prolog stream back to the beginning
+
+     `QP_seek()': seek to a random position in a Prolog stream
+
+Get counts in a stream:
+     `#QP_char_count()': obtain the character count for a Prolog stream.
+
+     `#QP_line_count()': obtain the line count for a Prolog stream.
+
+     `#QP_line_position()': obtain the line position for a Prolog
+     stream.
+
+End of line (record) and End of file test:
+     `#QP_eoln()': test end of record condition for an input stream.
+
+     `#QP_eof()': test end of file condition for an input stream.
+
+Set current stream:
+     `QP_setinput()': set the Prolog current input stream.
+
+     `QP_setoutput()': set the Prolog current output stream.
+
+Error number related functions:
+     `QP_ferror()': test error condition for a Prolog stream.
+
+     `QP_clearerr()': clear the previous error on a Prolog stream.
+
+     `QP_errmsg()': get the corresponding error message from a QP error
+     number.
+
+     `QP_perror()': print an error message based on a QP error number.
+
+   Finally, there are five global stream variables accessible in foreign
+code.  These are streams, not file descriptors.  It makes no sense to
+pass these to system calls that expect file descriptors.  The values in
+these variables should not be changed by an assignment statement.
+These variables are:
+
+`QP_stream *QP_stdin'
+     user input stream, it is referred as `user_input' (or `user') in
+     Prolog.
+
+`QP_stream *QP_stdout'
+     user output stream, it is referred as `user_output' (or `user') in
+     Prolog.
+
+`QP_stream *QP_stderr'
+     user error stream, it is referred as `user_error' in Prolog.
+
+`QP_stream *QP_curin'
+     current input stream
+
+`QP_stream *QP_curout'
+     current output stream
+
+
+File: quintus.info,  Node: fli-ios-bci,  Prev: fli-ios-bio,  Up: fli-ios
+
+Backward Compatibility I/O Issues
+---------------------------------
+
+* Menu:
+
+* fli-ios-bci-def::                     Default Stream
+* fli-ios-bci-usr::                     User_defined Streams
+
+   The Quintus Prolog input/output system is redesigned in release 3.
+C code written for Quintus Prolog application prior to Release 3.0
+should also work on release 3 since the new design also maintains
+backward compatibility.
+
+
+File: quintus.info,  Node: fli-ios-bci-def,  Next: fli-ios-bci-usr,  Up: fli-ios-bci
+
+Default Stream
+..............
+
+   However, while the old Prolog I/O system is based on the C standard
+I/O library, the new Prolog I/O system is not.  If an application
+performs mixed I/O operation in Prolog and foreign code on the three
+default Prolog streams, it might not work appropriately under the new
+I/O due to incompatibilities between the buffering mechanism in the C
+standard I/O stream and the Quintus Prolog stream.
+
+   Let's look at an example of a mixed output operation on a Prolog
+session under UNIX.  Both the C standard output stream and the Prolog
+`user_output' stream write output to the same file descriptor, 1, which
+is a tty.
+     | ?- set_output(user_output), write(first), c_printf('FIRST'),
+          write(second), c_printf('SECOND'), nl, c_nl.
+
+   The predicate `c_printf/1' and `c_nl/0' calls the following C
+functions:
+     void c_printf(atom)
+          char *atom;
+          {    printf("%s", atom); }
+     void c_nl() { putchar('\n'); }
+
+   The query yields the following output as expected prior to Quintus
+Prolog release 3.
+     firstFIRSTsecondSECOND
+
+   However it yields the following output on Quintus Prolog release 3
+since each stream has its own buffer and no characters are actually
+written to the file descriptor 1 until new line operation is called.
+     firstsecond
+     FIRSTSECOND
+
+   This problem can be solved by supplying a different embedding
+`QU_initio()' function at the time of the installation of Quintus
+Prolog (or at the time of creating a statically linked Prolog system)
+to create the three default streams based on C standard I/O streams.
+How to create an unbuffered Prolog stream based on a C standard I/O
+stream has already been shown in the third example of creating
+customized Prolog streams (see *Note fli-ios-uds-sst::)
+
+
+File: quintus.info,  Node: fli-ios-bci-usr,  Prev: fli-ios-bci-def,  Up: fli-ios-bci
+
+User_defined Streams
+....................
+
+   In Quintus Prolog releases prior to 3.0, `QP_make_stream()' was the
+function used to create a user-defined stream.   Quintus Prolog 3.1
+users should use the method described in *Note fli-ios-cps::.
+`QP_make_stream()' creates an unbuffered Prolog stream.  This is not
+very efficient.
+
+   `QP_make_stream()' can still be used in release 3, but may not be
+supported in the future.  Other old QP I/O functions that may not be
+available in future release are:
+
+     QP_sprintf()     QP_getc()       QP_sgetc()
+     QP_putc()        QP_sputc()      QP_sputs()
+
+   The naming convention of these functions does not match well with
+their counterparts on C standard I/O library.  For instance,
+`QP_sprintf()' performs formatted output on a Prolog stream as the same
+operation for `fprintf(3)' on a C standard I/O stream.  It is therefore
+renamed to be `QP_fprintf()' in release 3.  For the same reason,
+`QP_sgetc()' is renamed as `QP_fgetc()'; `QP_sputc()' is renamed as
+`QP_fputc()'.  `QP_getc()' and `QP_putc()' are now actually macros
+defined in `<quintus/quintus.h>'.  However, all these functions are
+still available in release 3.  If a user's foreign code calls either
+`QP_getc()' or `QP_putc()' without including `<quintus/quintus.h>', the
+old version of the function will be called.  If `<quintus/quintus.h>'
+is included, the call is expanded to another function since both
+`QP_getc()' and `QP_putc()' are macros in `<quintus/quintus.h>'.
+
+
+File: quintus.info,  Node: ipc,  Next: lib,  Prev: fli,  Up: Top
+
+Inter-Process Communication
+***************************
+
+* Menu:
+
+* ipc-rpc::                             IPC/RPC: Remote Predicate Calling
+* ipc-tcp::                             tcp: Network Communication Package
+
+
+File: quintus.info,  Node: ipc-tcp,  Prev: ipc-rpc,  Up: ipc
+
+tcp: Network Communication Package
+==================================
+
+* Menu:
+
+* ipc-tcp-csr::                         The client/server relationship
+* ipc-tcp-utc::                         Using tcp
+* ipc-tcp-mco::                         Maintaining Connections
+* ipc-tcp-trm::                         Sending and Receiving Terms
+* ipc-tcp-tim::                         Time Predicates
+* ipc-tcp-ups::                         Using Prolog streams
+* ipc-tcp-cbi::                         The Callback Interface
+* ipc-tcp-cfu::                         The C functions
+* ipc-tcp-exa::                         Examples
+
+   This package supplies the necessary primitives for network
+communication.  This allows the user to take advantage of the computing
+power of a network of computers by allowing the construction of a set
+of cooperating processes running on different machines.
+
+   In general, the `tcp' package provides facilities to
+
+   * Send output to some connected process;
+
+   * Wait for input from some connected process, with or without a
+     timeout; and
+
+   * Schedule wakeups.(1)
+
+   This package implements a "stream" socket with the TCP protocol
+providing the underlying communication support.  A "stream" socket
+provides for bidirectional, reliable, sequenced and unduplicated flow
+of data without record boundaries.  Two other types of sockets, the
+"datagram" socket and the "raw" socket, are not used here.  TCP stands
+for the Internet Transmission Control Protocol.
+
+   This library package is intended for network communication, however,
+it does not require that each process be on a separate machine.  It can
+be used to establish connections and communicate with processes on the
+same machine in just the same way that it would establish connections
+and communicate with processes on other machines.
+
+   Here is a simple example of the kind of thing you can do with this
+package.  The example is the producer-filter-consumer problem, each
+running as a separate process.  The producer produces successive terms
+and passes them on to the filter.  The filter reads successive terms
+from the producer and then either passes them on to the consumer or
+discards them.  The consumer reads and echos the terms passed to it by
+the filter.  It is taken from the example program `IPC/TCP/demo/ce.pl'.
+
+     :-use_module(library(random)).
+     :-use_module(library(tcp)).
+     
+     % on machine A we have the producer process:
+     
+     producer:-
+         tcp_address_from_file(filter, Address),
+         tcp_connect(Address, Filter),
+         repeat,
+             random(X),
+             tcp_send(Filter, X),
+         fail.
+     
+     % on machine B we have the filter process:
+     
+     filter:-
+         tcp_create_listener(AddressA, _),
+         tcp_address_to_file(filter, AddressA),
+         tcp_address_from_file(consumer, AddressC),
+         tcp_connect(AddressC, Consumer),
+         repeat,
+             tcp_select(term(_,X)),
+             0.2 =< X, X < 0.7,
+             tcp_send(Consumer, X),
+         fail.
+     
+     % and on machine C we have the consumer process:
+     
+     consumer:-
+         tcp_create_listener(Address, _),
+         tcp_address_to_file(consumer, Address),
+         repeat,
+             tcp_select(term(_,X)),
+             format('The filtered number: ~d~n', [X]),
+         fail.
+
+   ---------- Footnotes ----------
+
+   (1) Not available for C processes.
+
+
+File: quintus.info,  Node: ipc-tcp-csr,  Next: ipc-tcp-utc,  Up: ipc-tcp
+
+The client/server relationship
+------------------------------
+
+   Two processes have a client/server relationship when they cooperate
+with one another in such a way that one process responds to connection
+requests generated by the other.
+
+   It is important to remember that the client/server relationship has a
+very restricted meaning: it refers solely to how connections are
+established.  For example, an X-Windows server controls the X-Windows
+client, whereas a NFS server is controlled by NFS clients.  So saying
+processes have a client/server relationship says nothing about which
+process is the controlling process.
+
+   The distinction between clients and servers is based solely on how
+connections are established.  Servers get connections by accepting
+connection requests, clients get connections by requesting a connection
+from a server.
+
+server
+     a process that accepts connection requests. The server is said to
+     listen for connections.
+
+client
+     a process that requests a connection from a server.
+
+   A process can be a client to some processes, but a server to other
+processes.  In the preceding example, the filter is a server to the
+producer and a client of the consumer.
+
+   A Prolog server is a Prolog process that calls the predicate
+`tcp_create_listener/2' and then accepts connection requests.  A C
+server is a process that calls the C function `tcp_create_listener()'
+and then accepts connection requests.
+
+   A Prolog client is a Prolog process that calls the predicate
+`tcp_connect/2' to generate connection requests.  In the same way a C
+client is a process that calls `tcp_connect()'.
+
+   Although designed principally with Prolog to Prolog communication in
+mind, this package can be used for any combination of C or Prolog
+servers or clients.
+
+
+File: quintus.info,  Node: ipc-tcp-utc,  Next: ipc-tcp-mco,  Prev: ipc-tcp-csr,  Up: ipc-tcp
+
+Using tcp
+---------
+
+* Menu:
+
+* ipc-tcp-utc-trace2::                  tcp_trace(-OldValue, +On_or_Off)
+* ipc-tcp-utc-watch_user2::             tcp_watch_user(-Old, +On_or_Off)
+* ipc-tcp-utc-reset0::                  tcp_reset
+
+   The tcp package is loaded by
+     :- use_module(library(tcp)).
+
+   This package relies on the flag `fileerrors' being set, which is the
+default.  See `fileerrors/0' (*Note ref-iou-sfh-sem::) and
+`prolog_flag/3' (*Note ref-lps-ove::) for more about this flag.  If
+`fileerrors' is not set, the behavior of this package is unpredictable.
+While we're on the subject of flags, it is also probably a good idea to
+set the flag `syntax_errors' to `error' (see *Note ref-ere-err-syn::).
+In summary, we recommend that the commands
+
+     prolog_flag(fileerrors,_,on),
+     prolog_flag(syntax_errors,_,error)
+
+   be issued before connections are established.
+
+
+File: quintus.info,  Node: ipc-tcp-utc-trace2,  Next: ipc-tcp-utc-watch_user2,  Up: ipc-tcp-utc
+
+`tcp_trace(-OLDVALUE, +ON_OR_OFF)'
+..................................
+
+   Causes a trace of the major events.  All trace output is written to
+`user_error'.
+
+   `tcp_trace/2' raises a domain error if either of its arguments do
+not unify with either of the atoms `on' or `off'.
+
+
+File: quintus.info,  Node: ipc-tcp-utc-watch_user2,  Next: ipc-tcp-utc-reset0,  Prev: ipc-tcp-utc-trace2,  Up: ipc-tcp-utc
+
+`tcp_watch_user(-OLD, +ON_OR_OFF)'
+..................................
+
+   Not available under Windows.
+
+   This causes `tcp_select/[1,2]' (see *Note ipc-tcp-trm-select1::) to
+return the atom `user_input' whenever input is available on `stdin'.
+
+   Unless `stdin' is unbuffered, the atom `user_input' will only be
+returned after a newline is received.
+
+   `tcp_watch_user/2' raises a domain error if either of its arguments
+do not unify with either of the atoms `on' or `off'.
+
+
+File: quintus.info,  Node: ipc-tcp-utc-reset0,  Prev: ipc-tcp-utc-watch_user2,  Up: ipc-tcp-utc
+
+`tcp_reset'
+...........
+
+   Resets the tcp software, killing all its sockets and dynamic
+predicates.  All connected processes get an `end_of_file'.
+
+
+File: quintus.info,  Node: ipc-tcp-mco,  Next: ipc-tcp-trm,  Prev: ipc-tcp-utc,  Up: ipc-tcp
+
+Maintaining Connections
+-----------------------
+
+* Menu:
+
+* ipc-tcp-mco-create_listener2::        tcp_create_listener(?Address, -PassiveSocket)
+* ipc-tcp-mco-destroy_listener1::       tcp_destroy_listener(+PassiveSocket)
+* ipc-tcp-mco-listener1::               tcp_listener(?PassiveSocket)
+* ipc-tcp-mco-address_to_file2::        tcp_address_to_file(+ServerFile, +Address)
+* ipc-tcp-mco-address_from_file2::      tcp_address_from_file(+ServerFile, -Address)
+* ipc-tcp-mco-address_from_shell3::     tcp_address_from_shell(+Host, +ServerFile, -Address)
+* ipc-tcp-mco-address_from_shell4::     tcp_address_from_shell(+Host, +UserId, +ServerFile, -Address)
+* ipc-tcp-mco-connect2::                tcp_connect(+Address, -Socket)
+* ipc-tcp-mco-connected1::              tcp_connected(?Socket)
+* ipc-tcp-mco-connected2::              tcp_connected(?Socket,?PassiveSocket)
+* ipc-tcp-mco-shutdown1::               tcp_shutdown(+Socket)
+* ipc-tcp-mco-slc::                     Short lived connections
+
+   Described here are the various predicates for creating and destroying
+connections to other processes.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-create_listener2,  Next: ipc-tcp-mco-destroy_listener1,  Up: ipc-tcp-mco
+
+`tcp_create_listener(?ADDRESS, -PASSIVESOCKET)'
+...............................................
+
+   `tcp_create_listener/2' creates a "passive socket" to listen for
+connections.  If ADDRESS is unbound, `tcp_create_listener/2'
+establishes a listener on a "dynamic port" and binds ADDRESS to an
+"address term" of the form `address(Port,Host)'.  Alternatively,
+`tcp_create_listener/2' will establish a listener on a "fixed port" if
+ADDRESS is bound to an address term with `Port' set to the specific
+port number.  Note that only privileged (or `root') processes can use
+port numbers less than 1024.
+
+   `tcp_create_listener/2' returns immediately after creating the socket
+that is used for accepting connection requests and returns the socket
+identifier in PASSIVESOCKET. Connection requests are accepted by the
+select predicates (see *Note ipc-tcp-trm-select1::).
+
+
+File: quintus.info,  Node: ipc-tcp-mco-destroy_listener1,  Next: ipc-tcp-mco-listener1,  Prev: ipc-tcp-mco-create_listener2,  Up: ipc-tcp-mco
+
+`tcp_destroy_listener(+PASSIVESOCKET)'
+......................................
+
+   This predicate kills the passive socket created by
+`tcp_create_listener/2'.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-listener1,  Next: ipc-tcp-mco-address_to_file2,  Prev: ipc-tcp-mco-destroy_listener1,  Up: ipc-tcp-mco
+
+`tcp_listener(?PASSIVESOCKET)'
+..............................
+
+   This predicate succeeds if the PASSIVESOCKET argument is the socket
+identifier of a listener, or backtracks returning all passive socket
+identifiers if PASSIVESOCKET is unbound.
+

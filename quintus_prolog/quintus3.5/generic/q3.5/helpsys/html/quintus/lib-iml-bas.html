@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Introduction -- <code>library(math)</code></h4>
+
+   <p><code>library(math)</code> is an interface to the <code>math(3m)</code> library.
+
+   <p>All of the predicates in this module take some number of numeric
+arguments and yield a numeric result as their last argument.  For
+example, the predicate call <code>sin(</code><var>X</var><code>, </code><var>Result</var><code>)</code> unifies <var>Result</var> with <code>sin(</code><var>X</var><code>)</code>. 
+The predicates provided are
+
+     <dl>
+
+     <br><dt><code>sign(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> is +/-1, agreeing with sign of <var>X</var>. 
+<br><dt><code>sign(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>AbsX_SignY</var><code>)</code>
+     <dd>
+<br><dt><code>abs(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> has same type as <var>X</var>
+<br><dt><code>fabs(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> is a float
+<br><dt><code>hypot(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> is <code>sqrt(</code><var>X</var><code>*</code><var>X</var><code>+</code><var>Y</var><code>*</code><var>Y</var><code>)</code>
+<br><dt><code>max(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+     <dd>If <var>X</var> and <var>Y</var> are different types,
+<br><dt><code>min(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> may be of either type;
+see NOTE #1, below.
+
+     <br><dt><code>log(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>natural logarithm
+<br><dt><code>log10(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>common logarithm; see NOTE #2, below. 
+<br><dt><code>pow(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> is <var>X</var>**<var>Y</var>; see NOTE #2, below. 
+<br><dt><code>exp(</code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> is e**<var>Y</var>
+<br><dt><code>sqrt(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> is <var>X</var>**0.5
+
+     <br><dt><code>scale(</code><var>X</var><code>, </code><var>Integer</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>X</var> and <var>Result</var>) are floats, <var>Result</var> = <var>X</var>*2^<var>N</var>.
+
+     <br><dt><code>floor(</code><var>+X</var><code>, </code><var>?Result</var><code>)</code>
+     <dd>
+
+     <br><dt><code>floor(</code><var>+X</var><code>, </code><var>Result</var><code>, </code><var>Fraction</var><code>)</code>
+     <dd>
+<br><dt><code>ffloor(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> is <code>float(floor(</code><var>X</var><code>))</code>
+<br><dt><code>ffloor(</code><var>X</var><code>, </code><var>Result</var><code>, </code><var>Fraction</var><code>)</code>
+     <dd>
+<br><dt><code>truncate(</code><var>X</var><code>, </code><var>I</var><code>)</code>
+     <dd>
+<br><dt><code>truncate(</code><var>X</var><code>, </code><var>I</var><code>, </code><var>F</var><code>)</code>
+     <dd>
+<br><dt><code>ftruncate(</code><var>X</var><code>, </code><var>I</var><code>)</code>
+     <dd>
+<br><dt><code>ftruncate(</code><var>X</var><code>, </code><var>I</var><code>, </code><var>F</var><code>)</code>
+     <dd>
+
+     <br><dt><code>ceiling(</code><var>+X</var><code>, </code><var>?Result</var><code>)</code>
+     <dd>
+
+     <br><dt><code>ceiling(</code><var>+X</var><code>, </code><var>?Result</var><code>, </code><var>Fraction</var><code>)</code>
+     <dd>like <code>ceiling/2</code>, with a fraction present.
+
+     <br><dt><code>fceiling(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>Result</var> is <code>float(ceiling(</code><var>X</var><code>))</code>
+
+     <br><dt><code>fceiling(</code><var>X</var><code>, </code><var>Result</var><code>, </code><var>Fraction</var><code>)</code>
+     <dd>like <code>fceiling/2</code>, with a fraction present. 
+<br><dt><code>round(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>round(</code><var>X</var><code>, </code><var>Result</var><code>, </code><var>Fraction</var><code>)</code>
+     <dd>
+<br><dt><code>fround(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>fround(</code><var>X</var><code>, </code><var>Result</var><code>, </code><var>Fraction</var><code>)</code>
+     <dd>
+<br><dt><code>fremainder(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Remainder</var><code>)</code>
+     <dd>
+<br><dt><code>decode_float</code><var>(?Number, ?Sign, ?Significand, ?Exponent)</var><code></code>
+     <dd>
+
+     <br><dt><code>j0(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>These are Bessel functions,
+<br><dt><code>y0(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>see <code>j0(3m)</code>
+<br><dt><code>j1(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>y1(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>jn(</code><var>N</var><code>, </code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd><var>N</var> is an integer. 
+<br><dt><code>yn(</code><var>N</var><code>, </code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>See NOTE #3, below.
+
+     <br><dt><code>sin(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>asin(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>sinh(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>asinh(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>See NOTE #4, below.
+
+     <br><dt><code>cos(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>acos(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>cosh(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>acosh(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>See NOTE #4, below.
+
+     <br><dt><code>tan(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>atan(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>atan2(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>tanh(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>
+<br><dt><code>atanh(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>See NOTE #4, below.
+
+     <br><dt><code>gamma(</code><var>X</var><code>, </code><var>Result</var><code>)</code>
+     <dd>This is really <code>ln(gamma(</code><var>X</var><code>))</code>;
+see NOTE #5, below. 
+</dl>
+
+   <p><strong>Notes:</strong>
+     <ol type=1 start=1>
+
+     <li>If an arithmetic operation like <code>X+Y</code> is given mixed arguments,
+it will convert the integer argument to a floating-point number.  In this
+release, <code>max(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Max</var><code>)</code> and <code>min(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Min</var><code>)</code>
+do not do this.  For
+example,
+     <pre class="example">          | ?- <kbd>min(1, 2.3, X).</kbd>
+          
+          X = 1
+          </pre>
+
+     <p>This is likely to change. 
+</p><li>The names of these functions are copied from C.  In a later release,
+the functions will be
+          <dl>
+
+          <br><dt><code>^(</code><var>X</var><code>, </code><var>N</var><code>, </code><var>Result</var><code>)</code>
+          <dd><var>Result</var> is <var>X</var>^<var>N</var> (<var>N</var> integer)
+
+          <br><dt><code>exp(</code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+          <dd><var>Result</var> is e**<var>Y</var>
+
+          <br><dt><code>exp(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+          <dd><var>Result</var> is <var>X</var>**<var>Y</var>, as exp(<var>Y</var>*log(<var>X</var>))
+
+          <br><dt><code>log(</code><var>X</var><code>, </code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+          <dd><var>Result</var> is the base <var>X</var> logarithm of <var>Y</var>
+
+          <br><dt><code>log(</code><var>Y</var><code>, </code><var>Result</var><code>)</code>
+          <dd><var>Result</var> is the base e logarithm of <var>Y</var>
+</dl>
+
+     <li>The Bessel functions will be moved into another file. 
+They are not generally available on non-UNIX versions of Quintus Prolog. 
+They are retained as is in this release for compatibility with previous
+releases. 
+<li>The inverse hyperbolic trigonometric functions are not provided in most
+systems.  We have provided C code to compute them. 
+It is suggested that you satisfy yourself as to their accuracy before
+relying on them. 
+<li>The function that UNIX calls <code>gamma()</code> is in fact the natural
+logarithm of the gamma function.  It is not generally available on non-UNIX
+versions of Quintus Prolog.  It is retained in this release for
+compatibility with previous releases.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="lib-iml.html#lib-iml">Up</a>
+</ul>
+</div>
+   </body></html>
+

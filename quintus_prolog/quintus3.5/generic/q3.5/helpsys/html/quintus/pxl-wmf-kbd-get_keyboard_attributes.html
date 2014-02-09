@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>get_keyboard_attributes/[1,2]</code></h5>
+
+<pre class="example">     get_keyboard_attributes(+<var>AttributeList</var>)
+     get_keyboard_attributes(+<var>Displayable</var>, +<var>AttributeList</var>)
+     </pre>
+
+   <p>Allows the user to find the state of the keyboard.
+
+   <p><var>Displayable</var> is a ProXL Displayable. If omitted, the default
+Display is used.
+
+   <p><var>AttributeList</var> is a List of keyboard attributes, whose elements
+will be unified with the actual state of the keyboard. Valid
+attributes are:
+     <dl>
+
+     <br><dt><code>key_click_percent(</code><var>C</var><code>)</code>
+     <dd>Unifies <var>C</var> with an integer between
+<code>0</code> and <code>100</code>, giving the volume for key clicks.
+
+     <br><dt><code>bell_percent(</code><var>B</var><code>)</code>
+     <dd>Unifies <var>B</var> with an integer between
+<code>0</code> and <code>100</code>, giving the base volume for the bell.
+
+     <br><dt><code>bell_pitch(</code><var>P</var><code>)</code>
+     <dd>Unifies <var>P</var> with a non-negative integer
+that gives the bell pitch, in Hz.
+
+     <br><dt><code>bell_duration(</code><var>D</var><code>)</code>
+     <dd>Unifies <var>D</var> with a non-negative
+integer that gives the duration of the bell, in milliseconds.
+
+     <br><dt><code>led_mask(</code><var>L</var><code>)</code>
+     <dd>Unifies <var>L</var> with an integer mask, where each
+bit set to 1 indicates that the corresponding led is on. The least
+significant bit of <var>L</var> corresponds to led 1.
+
+     <br><dt><code>global_auto_repeat(</code><var>G</var><code>)</code>
+     <dd>Unifies <var>G</var> with one of
+<code>on</code> or <code>off</code>.
+
+     <br><dt><code>auto_repeats(</code><var>A</var><code>)</code>
+     <dd>Unifies <var>A</var> with a list of bytes that
+indicate what keyboard keys have auto repeat enabled. The predicate
+<code>key_auto_repeat/2</code> is useful for interpreting the result.
+
+     <br><dt><code>keymap(</code><var>K</var><code>)</code>
+     <dd>Unifies <var>K</var> with a list of bytes that indicate the
+logical state of the keyboard. The predicate <code>key_state/2</code> is useful
+for interpreting the result. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-wmf-kbd-put_keyboard_attributes.html#pxl-wmf-kbd-put_keyboard_attributes">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-wmf-kbd.html#pxl-wmf-kbd">Up</a>
+</ul>
+</div>
+   </body></html>
+

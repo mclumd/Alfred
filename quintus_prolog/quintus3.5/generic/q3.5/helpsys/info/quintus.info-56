@@ -1,0 +1,490 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: too-too-qpc,  Next: too-too-qplm,  Prev: too-too-qnm,  Up: too-too
+
+`qpc' -- Quintus Prolog compiler
+--------------------------------
+
+Synopsis
+--------
+
+     qpc [-cvhDHMN] [-o output] [-i initialization-file]
+          [ -L library-directory ] [ -a quintus-product ]
+          [ -f path-name:path-spec ]
+          [ -F path-name:path-spec ]
+          [ -p path-name ]
+          filename ...  [ -QLD qld-options ]
+
+Description
+-----------
+
+   `qpc' compiles the specified Prolog files into QOF (Quintus Object
+Format) files.  It then invokes `qld(1)' to link them together and
+produce an executable image (unless the `-c' option is given).  The QOF
+files are not deleted after processing terminates.
+
+   Each filename must be the name of a valid Prolog source file or a QOF
+file.  Either absolute or relative filenames may be specified.  If
+filename does not name an existing file, and if it does not already
+have an extension, then `.pl' and `.qof' extensions are sought in that
+order.
+
+   File names may be specified as simple paths (e.g. `file.pl',
+`~/library/file') or as file search paths of the form `library(file)',
+`mylib(language(file))', etc.  In the latter case, the path
+specification must be quoted to escape the shell's interpretation of
+the parentheses.
+
+   Unless the `-o' option is given, the name of the output file is the
+name of the input file with the trailing `.pl', if any, replaced by
+`.qof'.  If the input filename does not have a `.pl' extension, then a
+`.qof' extension is appended.  The argument to `-o' may also be
+specified the file search path form (see above).
+
+   Source files specified on the `qpc' command line are always
+recompiled even if the corresponding QOF files are up to date (unless
+the `-M' switch is specified).  QOF files, on the other hand, are only
+recompiled if they are out of date compared to the corresponding source
+files.
+
+   All the "dependencies" of a file, that is all the files named in
+embedded load commands in that file (or in its source if it is a QOF
+file), are checked to ensure that they are up-to-date, and they are
+recompiled if necessary.  This checking and recompiling of dependencies
+can be disabled using the `-N' option.
+
+   A filename of `-' can be used to specify that Prolog source code is
+to be read from the standard input.  The corresponding QOF file will be
+called `a.qof'.
+
+   Command line options may alter the above behavior as indicated
+below.  Unrecognized options and their arguments, if any, are passed to
+`qld(1)'.  Furthermore, the arguments following a `-QLD' option are not
+processed by `qpc' but are passed to `qld(1)'.  Note also that the
+command line is parsed from left to right.  This will affect how the
+file search path or library directory definitions are added if `-f',
+`-F', `-L', or `-a' options are used.
+
+Options
+-------
+
+`-a QUINTUS-PRODUCT'
+     Specifies that the libraries for a particular Quintus product that
+     is sold separately are to be used.  These Quintus products are
+     normally installed in the QUINTUS-DIRECTORY.  List this directory
+     to find the valid directory names for these products.   This
+     option is equivalent to one or more `-L' switches.  Note that the
+     libraries shipped with Quintus Prolog (`qui', `proxt', and
+     `proxl') are automatically available in the system, and,
+     therefore, require no `-a' flag.
+
+`-c'
+     The input files are simply compiled into QOF format, and no
+     further processing takes place.
+
+`-f PATH-NAME:PATH-SPEC'
+     Similar to the `-L' option, but PATH-NAME:PATH-SPEC defines a
+     general file search, which instructs `qpc' to look for a file in
+     directory PATH-SPEC whenever a file specification of the form
+     PATH-NAME(FILE-SPEC) is encountered (in embedded load commands, in
+     QOF file dependencies, or on the command line).  The PATH-NAME and
+     the directory, PATH-SPEC, are separated by `:', and, therefore,
+     PATH-NAME cannot contain a colon.  If PATH-SPEC is given in the
+     file search path form (as in `library:mylib(library)'), then the
+     argument must be quoted to escape the shell's interpretation of the
+     parentheses.  PATH-SPEC may be `.' or null, in which case `.' is
+     assumed.
+
+     There may be a list of path definitions (i.e. `-f' or `-F'
+     options) for the same PATH-NAME.  `qpc' searches the list, just
+     like Prolog, whenever it needs to expand a file search path
+     specification.  The `-f' options appends (like assertz in Prolog)
+     the new path to the end of the list of paths for PATH-NAME, while
+     `-F' prepends (like asserta in Prolog).
+
+     File search paths may also be defined using asserts in the Prolog
+     source being compiled or in initializaiton files (see `-i').  The
+     `-f', `-F', `-L', and `-a' options given on the `qpc' command
+     line, and file_search_path and library_directory definitions
+     asserted in source files or initialization files, are passed on to
+     `qld(1)'.
+
+`-h'
+     Hides or "locks" the predicates in the file so that they are not
+     visible to the debugger.  Such predicates will have
+     predicate_property "locked" when they are linked or loaded into a
+     Prolog system.
+
+`-i INITIALIZATION-FILE'
+     Specifies an initialization file.  The initialization file may be
+     a source (`.pl') or QOF (`.qof') file.  Currently, source files
+     cannot load foreign code; in other words, they cannot contain
+     calls to `load_foreign_files/2' or `load_foreign_executable/1'.
+     The definitions in the initialization file apply during the
+     compilation of all files specified to the right of the `-i' switch
+     on the command line.  The definitions in the initialization file
+     apply only during compile time.  Therefore, no QOF file is
+     generated from an initialization file and its content is not
+     included in any of the generated QOF files.  The initialization
+     file may be specified in the file search path form (eg. `-i
+     "library(basics)"').
+
+`-o OUTPUT'
+     Specifies a name for the output file.  If used with the `-c'
+     option, the qof file will be produced into the given file.  In
+     this case, there may be several `-o' options for each qof file.
+     If the `-o' names a directory, all qof files will be placed in the
+     given directory.  If the `-c' option is not used, the `-o' is
+     passed onto `qld(1)'.
+
+`-p PATH-NAME'
+     This option is just passed to `qld(1)' along with its argument,
+     asking `qld(1)' to print out the file search definition for
+     PATH-NAME.
+
+`-v'
+     When this option is specified, `qpc' echoes its activities,
+     including the call to `qld(1)', to the standard output.  This flag
+     is also passed on to `qld(1)'.
+
+`-D'
+     This option is just passed to the linker `qld(1)' indicating that
+     the Quintus Development System should be linked in.
+
+`-F PATH-NAME:PATH-SPEC'
+     Similar to `-f', but the path is added at the front of the list of
+     paths for PATH-NAME.  Note that `-F library:library-directory' is
+     identical to `-L library-directory'.
+
+`-H'
+     Like `-h' but in this case the hiding (locking) is done also to
+     any files that are compiled because of embedded load commands in
+     the file.
+
+`-L LIBRARY-DIRECTORY'
+     File specifications of the form `library(FILESPEC)' encountered in
+     embedded load commands are searched for in the library search
+     paths.  The initial search paths are the same as in the
+     Development System (see `prolog(1)').  Additional directories may
+     be prepended to the list of library search paths with this option.
+     Note that the command line is parsed from left to right.  Also note
+     that the `-L' must be followed by a space; otherwise, `qpc'
+     assumes that the option specifies a library directory for `qld'.
+
+     Library directories may also be specified with the `-f' and `-F'
+     options.  library-directory may be a path to a directory (e.g.
+     `dir', `~/dir') or a file search path specification of the form
+     `mylib(library)'.  In the latter case, the path-name `mylib' must
+     be defined either in the Prolog source code being compiled or by
+     `-f' or `-F' options.
+
+`-M'
+     Specifies that files on the command line are not to be compiled if
+     their corresponding QOF files are more recent than they are.
+
+`-N'
+     Specifies that files specified in embedded load commands are not
+     to be compiled.  (By default they would be compiled unless their
+     QOF files are already up-to-date.)
+
+`-QLD'
+     All remaining options are simply passed to `qld(1)'.
+
+Environment
+-----------
+
+`TMPDIR'
+     Directory for creating temporary files.  The default is `/usr/tmp'
+
+Files
+-----
+
+`a.out'
+     Executable output file
+
+`a.qof'
+     Output QOF file if filename is `-'
+
+`file.pl'
+     Prolog source file
+
+`file.qof'
+     Quintus QOF file
+
+`$TMPDIR/qp*'
+     Compiler temporary files
+
+`RUNTIME-DIRECTORY/qld'
+     QOF link editor
+
+`RUNTIME-DIRECTORY/qcon'
+     QOF consolidator
+
+See Also
+--------
+
+   `prolog(1)', `qcon(1)', `qgetpath(1)', `qld(1)', `qnm(1)'
+
+
+File: quintus.info,  Node: too-too-qplm,  Next: too-too-qsetpath,  Prev: too-too-qpc,  Up: too-too
+
+`qplm' -- Quintus Prolog license manager
+----------------------------------------
+
+Synopsis
+--------
+
+     qplm -i SiteName
+
+     qplm -a Product Users [ Expiration ] Code
+
+     qplm -d User Product
+
+     qplm -p
+
+Description
+-----------
+
+   `qplm' initializes and maintains the license files for Quintus
+products.
+
+   A code is supplied for each Quintus product that is based on the
+name of the site or company name, product name, number of users and
+optionally an expiration date.
+
+   Users are distinguished as either occasional users, if they have
+used the product less than 5 times, or else regular users. When
+determining whether the number of users is within that allowed by the
+license, only regular users are counted.
+
+   Expiration dates are specified with the format YY-MM-DD.
+
+Options
+-------
+
+`-i SITENAME'
+     Initializes the license files for SITENAME, where SITENAME is a
+     number of arguments comprising the site or company name.  This
+     command must be executed before any products are added.
+
+`-a PRODUCT USERS EXPIRATION CODE'
+     Adds a products to the license file.  The product is typically of
+     the form NAME/ARCH/VERSION, USERS is the number of users allowed
+     to use the product. EXPIRATION is an optional argument specifying
+     when the license will expire. The final CODE argument is a 16
+     character code that is based on the SITENAME, PRODUCT, USERS and
+     EXPIRATION.
+
+`-d USER PRODUCT'
+     Deletes USER from the list of users who use PRODUCT.  When a user
+     no longer uses PRODUCT, he or she can be removed from the license
+     file with this option.
+
+`-p'
+     Print the information in the license file. This prints the site
+     name followed by all of the products licensed. This also prints the
+     list of users using each product.  For occasional users, the
+     number of times they have used the product is also shown.
+
+Example
+-------
+
+   To initialize the license file:
+     % qplm -i Hallatrow Designers Inc.
+
+   To add a 2 user license for Prolog that expires on 17 May 1994,
+     % qplm -a prolog/hppa/3.5 2 94-05-17 thiscodewontwork]
+
+Files
+-----
+
+`license.qof'
+     Contains the site name and product codes
+
+`users.qof'
+     Records the users using the products
+
+   The license files are maintained in
+`QUINTUS-DIRECTORY/licenseVERSION'.  The `users.qof' file must be
+writable by all users, therefore if the QUINTUS-DIRECTORY is stored on
+a read-only file system then the license subdirectory should be made
+into a symbolic link to a writable directory.
+
+See Also
+--------
+
+   `prolog(1)'
+
+
+File: quintus.info,  Node: too-too-qsetpath,  Prev: too-too-qplm,  Up: too-too
+
+`qsetpath' -- Set parameters of Quintus utilities and runtime applications
+--------------------------------------------------------------------------
+
+Synopsis
+--------
+
+     qsetpath [ -aadd-ons ] [ -rruntime-directory ]
+         [ -qquintus-directory ] [ -hhost-type ]
+               [ -bbanner-message ] filename ...
+
+Description
+-----------
+
+   `qsetpath' sets parameters for the executable files.  The executable
+files specified must be Quintus Prolog utilities, such as `qpc' and
+`qld', runtime applications built using the Quintus Prolog Runtime
+Generator, `prolog(1)', or executables generated with `qld(1)'.  There
+are five settable paths, ADD-ONS STRING, RUNTIME-DIRECTORY,
+QUINTUS-DIRECTORY, HOST-TYPE and BANNER MESSAGE.  ADD-ONS STRING
+identifies the Quintus add-on products that are included in the
+executable.  RUNTIME-DIRECTORY and QUINTUS-DIRECTORY are used in the
+executable to find certain files relative to those paths. HOST-TYPE
+identifies the platform of the installation.  BANNER MESSAGE is the
+banner displayed upon the start-up of the executable.  The paths except
+BANNER MESSAGE can be obtained through prolog command `prolog_flag(PATH
+FLAG, VARIABLE)' where PATH FLAG is `add_ons' for ADD-ONS STRING,
+`runtime_directory' for RUNTIME-DIRECTORY, `quintus_directory' for
+QUINTUS-DIRECTORY, and `host_type' for HOST-TYPE.
+
+Options
+-------
+
+`-aADD-ONS'
+     Set the add-ons identification string of the  specified
+     executables to ADD-ONS.
+
+`-rRUNTIME-DIRECTORY'
+     Set the RUNTIME-DIRECTORY of the specified executables to
+     RUNTIME-DIRECTORY.  The specified RUNTIME-DIRECTORY must be an
+     absolute filename.
+
+`-qQUINTUS-DIRECTORY'
+     Set the QUINTUS-DIRECTORY of the specified executables to
+     QUINTUS-DIRECTORY.  The specified QUINTUS-DIRECTORY must be an
+     absolute filename.
+
+`-h/host-type'
+     Set the HOST-TYPE of the specified executables to HOST-TYPE.
+     There must be a `/' preceding HOST-TYPE.  A HOST-TYPE should be in
+     the form of MACHINE-TYPE or MACHINE-TYPE-OS-VERSION,
+
+`-bBANNER-MESSAGE'
+     Set the displayed banner message for the specified executables to
+     BANNER-MESSAGE.
+
+Errors
+------
+
+     Setting banner message has partial or no effects on certain
+     executables.
+
+     Argument specification must following the option immediately.
+     There is no white space allowed between an option and its argument.
+
+See Also:
+---------
+
+   `prolog(1)', `qgetpath(1)', `qld(1)'
+
+
+File: quintus.info,  Node: mpg-ref-qui,  Next: mpg-ref-raise_exception,  Prev: mpg-ref-query_hook,  Up: mpg-ref
+
+`qui' -- Quintus User Interface
+-------------------------------
+
+Synopsis
+--------
+
+   qui [ +f ] [ +l file ] [ +L file ]
+         [ +p [path-name] ] [ +P [path-name] ]
+               [ X-window arguments ]
+               [ +z users arguments ]
+
+Description
+-----------
+
+   The Quintus User Interface (QUI) is a Motif-based window interface
+to the Quintus Prolog Development System. It includes a query
+interpreter window with history menu, a source linked debugger, a help
+window for accessing the on-line manuals and an edit window as well as
+an interface to the GNU Emacs editor.
+
+Options
+-------
+
+   Any argument that does not match options described in this section
+and does not start with a `+' is regarded as a user's argument.  The
+user's arguments may be obtained using the prolog command
+unix(argv(ListOfArgs)).  If a user's argument needs to begin with a
+`+', it should be issued as `++' instead or given after the `+z'
+option.  Double pluses will be translated into a single plus, so the
+user's code will not see the `++'.  Arguments beginning with `+' are
+reserved for Prolog, and an unrecognized argument starting with a `+'
+is treated as an error.
+
+`+f'
+     Fast start.  The initialization file `prolog.ini' will not be read
+     upon startup.
+
+`+l FILE'
+     Load the specified file upon startup.  FILE can be a Prolog or a
+     QOF file, and it may be specified either as a string (e.g.
+     `file', `~/prolog/file.pl') or as a file search path specification
+     (e.g. `library(file)', `home(language(file))').  Note, however,
+     that the latter needs to be quoted to escape the shell
+     interpretation of the parentheses.  Giving the extension is not
+     necessary; if both source (`.pl') and QOF (`.qof') files exist, the
+     more recent of the two will be loaded.
+
+`+L FILE'
+     Similar to `+l' but the user's environment variable `PATH' will be
+     searched for the specified FILE.
+
+`+p [PATH-NAME]'
+     Print the Prolog file search path definitions that begin with the
+     string PATH-NAME (e.g. `library' if `+p lib' is specified);
+     PATH-NAME is optional, and if not given, all file search path
+     definitions are printed; QUI exits after producing the required
+     output to `stdout'.
+
+`+P [PATH-NAME]'
+     Similar to `+p', but the absolutized versions of the file search
+     path definitions are printed.
+
+X-WINDOW ARGUMENTS
+     Any arguments recognized as standard X options are passed to the
+     X-Window system. Examples of these include `-display DISPLAYNAME',
+     `-fg COLOR', `-bg COLOR'.
+
+`+z USER'S-ARGUMENTS'
+     Any arguments following `+z' are taken as user's arguments.
+     User's arguments can then be obtained through
+     `unix(argv(ListOfArgs))'.
+
+Environment
+-----------
+
+`QUINTUS_EDITOR_PATH'
+     Name of the GNU Emacs command.  If set, this is invoked as the
+     editor rather than the standard text editor built in to QUI.
+
+`QUINTUS_LISP_PATH'
+     Absolute filename for the Emacs-Lisp directories.  The default is:
+     `QUINTUS-DIRECTORY/editor3.5/gnu'.
+
+See Also
+--------
+
+   `prolog(1)'
+
+   *Note qui-qui::
+

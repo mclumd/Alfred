@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>help/[0,1]</code> <dfn>hookable,development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>help</code>
+
+   <p>Gives basic information, such as how to start using the help
+system and how to exit from Prolog.
+
+   <p><code>help(</code><var>+Topic</var><code>)</code>
+
+   <p>Displays help available on <var>Topic</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Topic</var> <dfn>atom</dfn>
+     <dd></dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>help(</code><var>Topic</var><code>)</code> is the basic help command.  It attempts to
+accept any argument you give it as a topic for which help may exist in
+the manual.  The argument is converted into a character string, and
+all the index entries that start with that string are combined into a
+menu, which gives you a choice of entry points into the manual
+hierarchy.
+
+   <p>It is not necessary to type the whole of the word that is the topic
+you want information about.  However, the fewer characters you type,
+the larger the menu is likely to be, because more index entries will
+contain with that character sequence.
+
+   <p>A hook is provided so that users can add to or replace this information:
+<code>help/0</code> first calls <code>user_help/0</code>, and if that succeeds <code>help/0</code> does
+nothing else.  Only if the call to <code>user_help/0</code> fails is the standard
+information displayed.
+
+   <p>With the emacs interface see <a href="ema-emi.html#ema-emi">ema-emi</a>
+
+   <p>With QUI see <a href="qui-mai.html#qui-mai">qui-mai</a>
+
+   <p>This predicate is not supported in runtime systems.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>user_help/0</code>, <code>manual/[0,1]</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-ith.html#mpg-ref-ith">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-hash_term.html#mpg-ref-hash_term">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

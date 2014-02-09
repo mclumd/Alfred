@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_cons_*(</code>)</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     void QP_cons_list(term, head, tail)
+     QP_term_ref term;
+     QP_term_ref head;
+     QP_term_ref tail;
+     </pre>
+
+<pre class="example">     void QP_cons_functor(term, name, arity, arg1, ... ,arg_arity)
+     QP_term_ref   term;
+     QP_atom       name;
+     int           arity;
+     QP_term_ref   arg1, ... , arg_arity;
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p>These are C functions that can be used to create new Prolog terms
+from C.
+
+   <p><code>QP_cons_list()</code> assigns to <var>term</var> a reference to a list whose head
+is the term referred to by <var>head</var> and whose tail is the term referred
+to by <var>tail</var>.
+
+   <p><code>QP_cons_functor()</code> assigns to <var>term</var> a reference to a compound term
+whose functor  is the atom represented by <var>name</var> and whose arity is
+the integer <var>arity</var>. The arguments of the compound term are
+terms referred to by <var>arg1</var>, <var>arg2</var>, etc. The call to this
+function should make sure that the number of arguments passed
+is equal to the arity of the compound term.
+
+   <p>Note that the following are equivalent:
+
+   <p>QP_cons_list(term, head, tail)
+
+   <p>dot = QP_atom_from_string(".");
+QP_cons_functor(term, dot, 2, head, tail)
+
+   <p>However, the former is likely to be more efficient.
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>float_to_chars()</code> is a C function that converts a floating point number to
+a list of characters. Note the use of <code>QP_put_integer()</code>.
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(flt_to_chars, flt_to_chars(+float, -term)).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     void flt_to_chars(flt, chars)
+     double flt;
+     QP_term_ref chars;
+     {
+        char buffer[28], *p;
+        int len;
+        QP_term_ref term_char = QP_new_term_ref();
+     
+        QP_put_nil(chars);
+        sprintf( buffer , "%.17e" , flt );
+     
+        /* move to end of buffer */
+        for (p=buffer, len=0; *p; p++, len++);
+     
+        while ( len-- )  {
+           QP_put_integer(term_char, *--p);
+           QP_cons_list(chars, term_char, chars);
+        }
+     }
+     </pre>
+
+<h4 class="subheading">See Also:</h4>
+
+   <p><code>QP_term_type()</code>, <code>QP_get_*()</code>, <code>QP_new_term_ref()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-cut_query.html#cfu-ref-cut_query">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-compare.html#cfu-ref-compare">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

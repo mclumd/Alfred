@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Setting Up The QP_stream Structure</h5>
+
+   <p>The default values in the fields of <code>QP_stream</code> part
+of the user-defined stream are set
+through the <code>QU_stream_param()</code> function. 
+The declaration of <code>QU_stream_param()</code> is given as:
+<pre class="example">     void QU_stream_param(filename, mode, format, option)
+         char        *filename;
+         int         mode;
+         int         format;
+         QP_stream   *option;
+     </pre>
+
+   <p>If the stream does not have a filename, the empty string <code>""</code> should be used. 
+The parameter <code>mode</code> can be one of <code>QP_READ</code>, <code>QP_WRITE</code> or <code>QP_APPEND</code>. 
+The parameter <code>format</code> can be one of the format types listed in
+<a href="fli-ios-sst-fmt.html#fli-ios-sst-fmt">fli-ios-sst-fmt</a>. 
+The default version of <code>QU_stream_param()</code> source code is shipped with
+Quintus Prolog (see <a href="cfu-ref-QU_stream_param.html#cfu-ref-QU_stream_param">cfu-ref-QU_stream_param</a> also lists the source).
+
+   <p>The fields in the <code>QP_stream</code> structure can then be modified based on
+the desired features of the user-defined stream.  All the fields
+described in the Stream Structure section can be modified
+(see <a href="fli-ios-sst.html#fli-ios-sst">fli-ios-sst</a>),
+but often the only modified fields are
+<code>max_reclen</code>, <code>seek_type</code> and bottom layer function fields.
+
+   <p>In our example, the format <code>QP_VAR_LEN</code> is chosen for non-tty
+files, and the <code>line_border</code> field is reset so that
+the middle layer functions do not alter any of the input/output records. 
+The fields <code>max_reclen</code> and <code>seek_type</code> are set to
+the right values for our stream.  The bottom layer function fields are
+set based on the mode and the
+<code>seek_type</code> of the stream.  If the stream is opened for append,
+the file pointer of the stream is moved to the end of file and
+the <code>magic</code> field is updated  (<code>magic.byteno</code> is used since it is
+a UNIX file).
+<pre class="example">             option = &amp;stream-&gt;qpinfo;
+             QU_stream_param(filename, mode, QP_VAR_LEN, option);
+             option-&gt;max_reclen = Buffer_Size;
+             option-&gt;line_border = QP_NOLB;
+             if (isatty(fd)) {
+                 option-&gt;format = QP_DELIM_TTY;
+                 option-&gt;seek_type = QP_SEEK_ERROR;
+             } else {
+                 option-&gt;seek_type = QP_SEEK_BYTE;
+                 option-&gt;seek = bin_seek;
+             }
+             if (mode != QP_READ) {
+                 option-&gt;write = bin_write;
+                 option-&gt;flush = bin_write;
+             } else
+                 option-&gt;read = bin_read;
+             if (option-&gt;mode == QP_APPEND &amp;&amp;
+                                 option-&gt;format != QP_DELIM_TTY) {
+                 if ((option-&gt;magic.byteno=lseek(fd,0L,L_XTND)) &lt; 0) {
+                     (void) close(fd);
+                     *error_num = errno;
+                     return QP_NULL_STREAM;
+                 }
+             }
+             option-&gt;close = bin_close;
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-cps-ire.html#fli-ios-cps-ire">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-cps-all.html#fli-ios-cps-all">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-cps.html#fli-ios-cps">Up</a>
+</ul>
+</div>
+   </body></html>
+

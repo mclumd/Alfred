@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Drawing and filling lines and shapes</h4>
+
+   <p>Drawing in ProXL is fairly straightforward, and quite powerful.  ProXL
+has primitives to
+     <ul>
+
+     <li>draw points, lines, polygons, rectangles, arcs, ellipses (and circles)
+<li>fill closed figures with arbitrary patterns
+<li>draw or fill multiple items
+<li>clear windows
+<li>copy part of one drawable into another. 
+</ul>
+
+   <p>Programming in ProXL requires a certain way of looking at drawing and
+graphics in general.  Think of a line or an ellipse not as an permanent object,
+but as a temporary pattern of pixels on the screen. 
+When you draw a line, you are
+turning bits on.  The next thing you do may turn them off.  Or they
+may be turned off when a user overlays your window with another.  The
+line that you draw has no permanence.  This property of X, call it
+<dfn>procedural drawing,</dfn> makes for a programming style in which you first
+open the windows you will need, and then do all drawing in callback
+routines (<a href="pxl-bas-tyi-cbk.html#pxl-bas-tyi-cbk">pxl-bas-tyi-cbk</a>).  If you want the line to seem to stay
+around, you have to explicitly provide for it to be repainted whenever
+it is damaged or obscured by a later event; see <a href="pxl-bas-tyi-rfr.html#pxl-bas-tyi-rfr">pxl-bas-tyi-rfr</a>
+on refreshing windows.
+
+   <p>The primitives for drawing or filling a single shape take just the
+arguments you would expect:
+
+     <ul>
+
+     <li>the destination window
+
+     <li>the parameters determining the shape to be drawn. 
+</ul>
+
+   <p>The primitives for drawing or filling multiple objects are also fairly
+simple.  They each take
+
+     <ul>
+
+     <li>the destination window
+<li>a list of Prolog terms, each specifying the parameters of a shape to
+be drawn or filled. 
+</ul>
+
+   <p>In all of the drawing commands, and elsewhere in ProXL, the X
+coordinates are given relative to the left edge of the enclosing
+window
+, and Y
+coordinates are given relative to the <dfn>top</dfn> edge.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-bas-txt.html#pxl-bas-txt">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-bas-win.html#pxl-bas-win">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-bas.html#pxl-bas">Up</a>
+</ul>
+</div>
+   </body></html>
+

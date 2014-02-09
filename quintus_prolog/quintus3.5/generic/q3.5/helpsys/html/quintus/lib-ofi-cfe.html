@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Checking To See If A File Exists</h4>
+
+   <p>No matter what programming language you are using,
+all multiple-access file systems have the problem that the
+system may correctly report that a file <em>does</em> exist, and
+then when you attempt to use it you may find that it does <em>not</em>,
+because someone has deleted or renamed it in the meantime.
+
+   <p>The operations below can help you avoid problems,
+but in the final analysis, the only way to tell whether
+you can open a file is to try to open it.
+
+     <dl>
+
+     <br><dt><code>file_exists(</code><var>+FileName</var><code>)</code>
+     <dd>
+<var>FileName</var> must be an atom.  <code>file_exists/1</code> succeeds if a
+file of that name exists.  If there is something of that
+name, but it is a directory, <code>file_exists/1</code> fails. 
+You need sufficient rights to the file to be able to determine whether it
+is a directory (see <code>stat(2)</code>). 
+Named pipes and devices are accepted as files.
+
+     <br><dt><code>file_exists(</code><var>+FileName</var><code>, </code><var>+Permissions</var><code>)</code>
+     <dd>
+ <var>FileName</var> must be an atom, and <var>Permissions</var> must be one of the
+following, or a list of them:
+          <dl>
+
+          <br><dt><code>exists</code>
+          <dd>does the file exist?
+
+          <br><dt><code>read</code>
+          <dd>can the file be read?
+
+          <br><dt><code>write</code>
+          <dd>can the file be <em>over</em>-written? 
+<br><dt><var>N</var>
+          <dd><var>N</var> is an integer(<var>N</var>); see <code>access(2)</code>
+</dl>
+
+     <p><code>file_exists/2</code> succeeds when there is a file (not a directory)
+named <var>FileName</var> and you have each of the <var>Permissions</var> you named.
+
+     <p>If <var>Permission</var> is an integer, it is interpreted the
+way that the argument to the system call <code>access(2)</code>
+is interpreted, namely (the file must exist)
+
+     <pre class="example">              + 1 * ('execute' permission is wanted)
+              + 2 * ('write' permission is wanted)
+              + 4 * ('read' permission is wanted)&gt;
+          </pre>
+
+     <p>This is allowed so that a C programmer who is used to writing
+     <pre class="example">          if (!access(FileName, 6)) {
+              can_read_and_write(FileName);
+          } else {
+              cannot_access_file(FileName);
+          }
+          </pre>
+
+     <p>can write
+     <pre class="example">          (   file_exists(FileName, 6) -&gt;
+              can_read_and_write(FileName)
+          ;    /* otherwise */
+              cannot_access_file(FileName)
+          )
+          </pre>
+
+     <p>We recommend, however, that you code this example as
+     <pre class="example">          (   file_exists(FileName, [read,write]) -&gt;
+              can_read_and_write(FileName)
+          ;       /* otherwise */
+              cannot_access_file(FileName)
+          )
+          </pre>
+
+     <p>Under operating
+systems that do not support version numbers (as UNIX and Windows do not),
+<code>file_exists/2</code> could fail (because there is no such <var>FileName</var>)
+and <code>can_open_file/2</code> could succeed (because you are allowed
+to create one).  Conversely, <code>file_exists/2</code> could succeed
+(because there is such a <var>FileName</var>) and <code>can_open_file/2</code> fail
+(because you have so many files open that you cannot open another).
+
+     <br><dt><code>file_must_exist(</code><var>+FileName</var><code>)</code>
+     <dd>
+succeeds when <code>file_exists(</code><var>FileName</var><code>)</code> succeeds;
+otherwise, it raises an error exception.
+     <pre class="example">          | ?- <kbd>file_must_exist(fred).</kbd>
+          ! Existence error in file_must_exist/1
+          ! file fred does not exist
+          ! O/S error : No such file or directory
+          ! goal:  file_must_exist(fred)
+          </pre>
+
+     <br><dt><code>file_must_exist(</code><var>+FileName</var><code>, </code><var>+Permission</var><code>)</code>
+     <dd>
+succeeds when <code>file_exists(</code><var>FileName</var><code>, </code><var>Permission</var><code>)</code> succeeds;
+otherwise, it raises an error exception.
+     <pre class="example">          | ?- <kbd>unix(system('ls -l files.o')),
+               file_must_exist('files.o', write).</kbd>
+          
+          -r--r--r--  1 ok       746 Jan 24 17:58 files.o
+          ! Permission error: cannot access file 'foo.o'
+          ! O/S error : Permission denied
+          ! goal:  file_must_exist('foo.o',write)
+          </pre>
+
+     <br><dt><code>can_open_file(</code><var>+FileName</var><code>, </code><var>+Mode</var><code>, </code><var>+Quiet</var><code>)</code>
+     <dd>
+<var>FileName</var> is a filename.  <var>Mode</var> is <code>read</code>, <code>write</code>, or <code>append</code>,
+just as for the <code>open/3</code> command.  <code>can_open_file/2</code> fails quietly
+if the file cannot be opened.  The <var>Quiet</var> parameter controls the
+raising of an error exception when the file cannot be opened:  if
+<var>Quiet</var> is <code>fail</code>, <code>can_open_file/3</code> fails quietly, whereas if
+<var>Quiet</var> is <code>warn</code>, it raises an error exception. 
+If <var>Mode</var> is
+          <dl>
+
+          <br><dt><code>read</code>
+          <dd><var>FileName</var> must exist and be readable
+
+          <br><dt><code>append</code>
+          <dd><var>FileName</var> must exist and you must have permission to append
+to it, or <var>FileName</var>
+must be nonexistent in a directory in which you have permission
+to create a new file
+
+          <br><dt><code>write</code>
+          <dd>the same conditions apply as for <code>append</code>
+</dl>
+
+     <p>This predicate actually attempts to open the file.  It will, for
+example, create a file in order to determine whether it <em>can</em>
+create it.  But if that happens, it immediately deletes the file
+again, so there should be no permanent effect on the file system.
+
+     <br><dt><code>can_open_file(</code><var>+FileName</var><code>, </code><var>+Mode</var><code>)</code>
+     <dd>
+equivalent to <code>can_open_file(</code><var>FileName</var><code>, </code><var>Mode</var><code>, fail)</code>.
+
+     <br><dt><code>open_file(</code><var>+FileName</var><code>, </code><var>+Mode</var><code>, </code><var>-Stream</var><code>)</code>
+     <dd>
+is the same as the built-in predicate <code>open/3</code> (which is
+described in the reference pages), except that it
+always raises an error exception if it cannot open
+the file, and is not sensitive to the <code>fileerrors</code> flag.
+
+     <br><dt><code>current_dec10_stream(?FileName, ?See_or_Tell)</code>
+     <dd>is true when
+<var>See_or_Tell</var> is <code>see</code> and <var>FileName</var> is a file that was opened by
+<code>see(</code><var>FileName</var><code>)</code> and has not yet been closed, or when <var>See_or_Tell</var>
+is <code>tell</code> and <var>FileName</var> is a file that was opened by
+<code>tell(</code><var>FileName</var><code>)</code> and has not yet been closed.  It is a version of
+<code>current_stream/3</code>, which just tells you about the Dec-10-compatible
+streams.  It relies on two facts: (1) <em>all</em> the streams you opened
+are in the <code>current_stream/3</code> table.  (2) <code>seeing/1</code> (<code>telling/1</code>) return an
+atom if and only if the current input (output) stream was opened by
+<code>see/1</code> (<code>tell/1</code>), and the atom it returns is the one given to
+<code>see/1</code> (<code>tell/1</code>).
+
+     <br><dt><code>close_all_streams</code>
+     <dd>
+closes all the current streams except the standard streams. 
+</dl>
+
+   <p>None of the predicates described in this section is affected by
+the <code>fileerrors</code> flag.  Indeed, they exist so that you can check
+for errors <em>before</em> they happen.
+
+   <p>See the summary description of <code>library(ask)</code> (<a href="lib-uin.html#lib-uin">lib-uin</a>) for two useful
+predicates that use <code>can_open_file/3</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-ofi-oth.html#lib-ofi-oth">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-ofi-rdf.html#lib-ofi-rdf">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-ofi.html#lib-ofi">Up</a>
+</ul>
+</div>
+   </body></html>
+

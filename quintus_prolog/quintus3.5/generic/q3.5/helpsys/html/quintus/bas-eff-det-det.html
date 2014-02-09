@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Using the Determinacy Checker</h5>
+
+   <p>There are two different ways to use the determinacy checker, either as
+a stand-alone tool, or during compilation.  You may
+use it whichever way fits best with the way you work.  Either way, it
+will discover the same nondeterminacy in your program.
+
+   <p>The stand-alone determinacy checker is called <code>qpdet</code>, and is run
+from the shell prompt, specifying the names of the Prolog source files
+you wish to check.  You may omit the <code>.pl</code> suffix if you like.
+<pre class="example">     % <kbd>qpdet [-r</kbd> [-d] [-D] [-i <var>ifile</var>] <var>fspec</var>...]
+     </pre>
+
+   <p>The <code>qpdet</code> program is placed in the Quintus <code>tools</code>
+directory, and is not built by default when Prolog is installed, so
+you may have to build it (by typing <kbd>make qpdet</kbd> in the
+<code>tools</code> directory) first.  The tool takes a number of options:
+
+     <dl>
+
+     <br><dt><code>-r</code>
+     <dd>Process files recursively, fully checking the specified
+files and all the files they load.
+
+     <br><dt><code>-d</code>
+     <dd>Print out declarations that should be added.
+
+     <br><dt><code>-D</code>
+     <dd>Print out all needed declarations.
+
+     <br><dt><code>-i </code><var>ifile</var><code></code>
+     <dd>An initialization file, which is loaded before
+processing begins. 
+</dl>
+
+   <p>The determinacy checker can also be integrated into the compilation
+process, so that you receive warnings about unwanted nondeterminacy
+along with warnings about singleton variables or discontinuous
+clauses.  To make this happen, simply insert the line
+<pre class="example">     :- load_files(library(detcheck),
+                   [when(compile_time), if(changed)]).
+     </pre>
+
+   <p>Once this line is added, every time that file is compiled, whether
+using <code>qpc</code> or the compiler in the development system, it will be
+checked for unwanted nondeterminacy.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-det-dnd.html#bas-eff-det-dnd">Next</a>
+<li><a rel="up" accesskey="u" href="bas-eff-det.html#bas-eff-det">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_compare()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_compare(term1, term2)
+     QP_term_ref term1;
+     QP_term_ref term2;
+     </pre>
+
+   <p>Compares the two terms referenced by <var>term1</var> and
+<var>term2</var>. Both arguments are <var>term1</var> before <var>term2</var>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The comparison uses the standard total ordering of Prolog terms
+(also used by the built-in Prolog predicate <code>compare/3</code>).
+
+     <dl>
+
+     <br><dt><b>In Standard Order:</b>
+     <dd><b>Ret Value</b>
+<br><dt><var>term1</var> before <var>term2</var>
+     <dd>-1
+<br><dt><var>term1</var> same as <var>term2</var>
+     <dd>0
+<br><dt><var>term1</var> after <var>term2</var>
+     <dd>1
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p><code>c_compare(term1, term2)</code> is an equivalent C version of the Prolog builtin
+<code>compare/3</code>:
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(c_compare, c, c_compare(+term, +term, +term)).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     int c_compare(t1, t2, t3)
+     QP_term_ref t1, t2;
+     {
+        int res;
+        QP_term_ref l_than = QP_new_term_ref();
+        QP_term_ref equal  = QP_new_term_ref();
+        QP_term_ref g_than = QP_new_term_ref();
+     
+        QP_put_atom(l_than, QP_atom_from_string("&lt;"));
+        QP_put_atom(equal,  QP_atom_from_string("="));
+        QP_put_atom(g_than, QP_atom_from_string("&gt;"));
+     
+        res = QP_compare(t2, t3);
+        if ( res &lt; 0) {
+           return QP_unify(t1, l_than);
+        } else if (res == 0) {
+           return QP_unify(t1, equal);
+        } else if (res &gt; 0) {
+           return QP_unify(t1, g_than);
+        }
+     }
+     </pre>
+
+<h4 class="subheading">See Also:</h4>
+
+   <p><code>QP_unify()</code>, <code>compare/3</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-cons.html#cfu-ref-cons">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-close_query.html#cfu-ref-close_query">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

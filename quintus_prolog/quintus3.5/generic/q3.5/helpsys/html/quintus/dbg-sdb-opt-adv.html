@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Advanced Control Options</h5>
+
+   <p>These options are described in greater depth in <a href="dbg-bas-tra-ccf.html#dbg-bas-tra-ccf">dbg-bas-tra-ccf</a>.
+
+     <dl>
+
+     <br><dt><kbd>r</kbd>
+     <dd>retry --
+This option restarts the current invocation.  This may be useful when,
+for example, you find yourself leaving with some incorrect result.  When
+a retry is performed, the invocation counter is reset so that counting
+will continue from the current invocation number regardless of what
+happened before the retry.  This is in accord with the fact that
+execution has returned to the state it was in at the time of the
+original call.  The message
+     <pre class="example">          % Retrying goal
+          </pre>
+
+     <p>is displayed to indicate where this occurred, in case you wish to follow
+these numbers later.
+
+     <br><dt><kbd>r </kbd><var>i</var><kbd></kbd>
+     <dd>retry previous invocation --
+If you supply an integer after the retry command, then this
+is taken as specifying an invocation number and the system
+tries to get you to the Call port, not of the current box,
+but of the invocation box you have specified.  This must be an ancestor
+invocation.
+
+     <br><dt><kbd>f</kbd>
+     <dd>fail --
+This is similar to Retry except that it transfers control to the
+Fail port of the current box.  This places your execution in a
+situation in which it is about to backtrack out of the current
+invocation, having failed the goal.
+
+     <br><dt><kbd>f </kbd><var>i</var><kbd></kbd>
+     <dd>fail previous invocation --
+This is similar to <kbd>r </kbd><var>i</var><kbd></kbd> except that it transfers control to the
+Fail port of the invocation specified (which must be an ancestor).
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="dbg-sdb-opt-eop.html#dbg-sdb-opt-eop">Next</a>
+<li><a rel="previous" accesskey="p" href="dbg-sdb-opt-pri.html#dbg-sdb-opt-pri">Previous</a>
+<li><a rel="up" accesskey="u" href="dbg-sdb-opt.html#dbg-sdb-opt">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Refreshing windows</h5>
+
+   <p>People might expect lines or other shapes they have put on the
+screen to stay put.  In X they do not.  Another way to look at this is
+that the X window system does not automatically refresh windows when
+they become <dfn>damaged</dfn>; that is, when a window that was
+occluding another window is moved or unmapped, it leaves the occluded
+window with the wrong contents.  It is <em>always</em> the responsibility
+of each application to keep its window up to date.
+
+   <p>This is a case where procedural drawing (see <a href="pxl-bas-lin.html#pxl-bas-lin">pxl-bas-lin</a>)
+determines programming style in ProXL.  You start by writing one setup
+call, which determines all aspects of a window, creates that window,
+attaches callbacks, and maps the window.  Then when the window is
+damaged, your callback will be executed to refresh the window. 
+The tutorial ends with a simple example of such a program.
+
+   <p>Also note that attempts to draw into a window before it is mapped will
+quietly be ignored.  So if you write a program that creates a window,
+maps it, and then starts drawing in it, you'll often be surprised to
+find that there's nothing drawn in the window.  It is essential to wait
+for the window to become mapped.  The easiest way to do this is to do
+the drawing in a callback, which will automatically be executed as soon
+as the window becomes visible (as well as every time it is damaged).
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-bas-tyi-err.html#pxl-bas-tyi-err">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-bas-tyi-cbk.html#pxl-bas-tyi-cbk">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-bas-tyi.html#pxl-bas-tyi">Up</a>
+</ul>
+</div>
+   </body></html>
+

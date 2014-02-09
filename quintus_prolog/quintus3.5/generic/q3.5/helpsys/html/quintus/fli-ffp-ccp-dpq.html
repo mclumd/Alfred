@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Making a Determinate Prolog Query</h5>
+
+   <p>A determinate query can be made in a single C function call using
+<code>QP_query</code>.  The first argument passed to <code>QP_query()</code> is a
+<code>QP_pred_ref</code> for the predicate to be called.  Any arguments
+after the first represent parameters to be passed to and from the
+Prolog predicate.
+
+   <p>The foreign language interface will interpret arguments passed to the Prolog
+predicate according to the call specification given when the predicate
+was made callable.  Hence, it is important that the arguments to be passed
+to and from the Prolog predicate should correspond to that call
+specification.  For certain parameter types (passing Prolog atoms in canonical
+form) it is possible to detect inconsistencies between data supplied to
+<code>QP_query()</code> and the call specification, but for the most part this is
+impossible.  Calls that are inconsistent with their call specifications
+will produce undefined results.
+
+   <p><code>QP_query()</code> returns one of three values: <code>QP_SUCCESS</code>,
+indicating that the query was made and a solution to the query was
+computed; <code>QP_FAILURE</code>, meaning that the query was made but no
+solution could be found; and <code>QP_ERROR</code>, which says that either the
+query could not be made, or that an exception was signaled from Prolog
+but not caught.  In this case, see the reference page for
+<code>QP_exception_term()</code>.   Only when the return value is <code>QP_SUCCESS</code>
+should the values in variables passed as outputs from Prolog be
+considered valid.  Otherwise, their contents are undefined.
+
+   <p>It is important that a valid <code>QP_pred_ref</code> is passed to
+<code>QP_query()</code>; in particular, it is advisable to check for an error
+return from <code>QP_predicate()</code> or <code>QP_pred()</code> before calling
+<code>QP_query()</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-ccp-inq.html#fli-ffp-ccp-inq">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ffp-ccp-lcp.html#fli-ffp-ccp-lcp">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-ccp.html#fli-ffp-ccp">Up</a>
+</ul>
+</div>
+   </body></html>
+

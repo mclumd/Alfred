@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Overview</h4>
+
+   <p>Whenever the Prolog system encounters a situation where it cannot continue
+execution, it raises an exception.  For example, if a built-in predicate
+detects an argument of the wrong type, it raises a <code>type_error</code>
+exception.  The manual page description of each built-in predicate lists the
+kinds of exceptions that can be raised by that built-in predicate.
+
+   <p>The default effect of raising an exception is to terminate the current
+computation and then print an error message.  After the error message,
+you are back at Prolog's top level.  For example, if the goal
+<pre class="example">     X is a/2
+     </pre>
+
+   <p>is executed somewhere in a program you get
+<pre class="example">     ! Type error in argument 2 of is/2
+     ! number expected, but a found
+     ! goal:  A is a/2
+     
+     | ?-
+     </pre>
+
+   <p>Particular things to notice in this message are:
+     <dl>
+
+     <br><dt><code>! </code>
+     <dd>This character indicates that this is an error
+message rather than a warning<a rel="footnote" href="#fn-1"><sup>1</sup></a> or informational message.
+
+     <br><dt><code>Type Error</code>
+     <dd>This is the <dfn>exception class</dfn>.  Every exception raised by the
+system is categorized into one of a small number of classes.  The classes are
+listed in <a href="ref-ere-err.html#ref-ere-err">ref-ere-err</a>.
+
+     <br><dt><code>goal:</code>
+     <dd>The goal that caused the exception to be raised. 
+</dl>
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>The difference between an error
+(including exceptions) and a warning: A <dfn>warning</dfn> is issued if
+Prolog detects a situation that is likely to cause problems, though it is
+possible that you intended it.  An <dfn>error</dfn>, however, indicates that
+Prolog recognizes a situation where it cannot continue.</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-rex.html#ref-ere-rex">Next</a>
+<li><a rel="up" accesskey="u" href="ref-ere.html#ref-ere">Up</a>
+</ul>
+</div>
+   </body></html>
+

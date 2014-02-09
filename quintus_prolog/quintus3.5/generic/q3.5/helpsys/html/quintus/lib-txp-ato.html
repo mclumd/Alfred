@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Generating Atoms</h4>
+
+   <p><code>library(strings)</code> defines three predicates for generating atoms.
+
+     <dl>
+
+     <br><dt><code>gensym(</code><var>+Prefix</var><code>, </code><var>-Atom</var><code>)</code>
+     <dd>
+is equivalent to <code>concat_atom([</code><var>Prefix</var><code>, </code><var>N</var><code>], </code><var>Atom</var><code>)</code>,
+where
+<var>N</var> is the next number in the sequence associated with <var>Prefix</var>. 
+Notionally, each <var>Prefix</var> has its own counter, starting with
+zero.  <var>Prefix</var> must be an atom.  Examples:
+     <pre class="example">          | ?- <kbd>gensym(a, X).</kbd>
+          
+          X = a1
+          
+          | ?- <kbd>gensym(a, X).</kbd>
+          
+          X = a2
+          
+          | ?- <kbd>gensym(b, X).</kbd>
+          
+          X = b1
+          
+          | ?- <kbd>gensym(1, X).</kbd>
+          
+          no
+          </pre>
+
+     <br><dt><code>gensym(</code><var>-Atom</var><code>)</code>
+     <dd>
+uses the <var>Prefix</var> <code>%</code>.  Example:
+     <pre class="example">          | ?- <kbd>gensym(X).</kbd>
+          
+          X = '%58'
+          </pre>
+
+     <br><dt><code>cgensym(</code><var>+Prefix</var><code>, </code><var>?Atom</var><code>)</code>
+     <dd>
+if <var>Atom</var> is a variable, it generates a new atom using
+<code>gensym/2</code>.  Otherwise, <var>Prefix</var> and <var>Atom</var> should be
+atoms.  The name is to be read as "<b>c</b>onditionally <b>gen</b>erate
+<b>sym</b>bol". 
+</dl>
+
+   <p>These predicates are included for compatibility with the DEC-10 Prolog
+library, which has contained them for several years. 
+<code>cgensym/2</code> will do nothing to <var>Atom</var> if it is already bound; otherwise it
+is just like <code>gensym/2</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-ctypes.html#lib-txp-ctypes">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-sub.html#lib-txp-sub">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp.html#lib-txp">Up</a>
+</ul>
+</div>
+   </body></html>
+

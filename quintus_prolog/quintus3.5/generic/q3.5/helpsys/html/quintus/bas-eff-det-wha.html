@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">What is Detected</h5>
+
+   <p>As mentioned earlier, it is not in general possible to find exactly
+which places in a program will lead to nondeterminacy.  The
+determinacy checker gives predicates the benefit of the doubt: when
+it's possible that a predicate will be determinate, it will not be
+reported.  The checker will only report places in your program that
+will be nondeterminate regardless of which arguments are bound. 
+Despite this, the checker catches most unwanted nondeterminacy in
+practice.
+
+   <p>The determinacy checker looks for the following sources of
+nondeterminacy:
+     <ul>
+
+     <li>multiple clauses that can't be distinguished by the principal functor
+of the first arguments, and are not made determinate with an
+explicit cut, <code>fail/0</code>, <code>false/0</code>, or <code>raise_exception/1</code>.  First argument indexing is
+not considered for multifile predicates, because another file may have
+a clause for this predicate with the same principal functor of its
+first argument. 
+<li>a clause with a disjunction not forced to be determinate by a cut,
+<code>fail/0</code>, <code>false/0</code>, or <code>raise_exception/1</code> in each arm of the disjunction but the
+last, or where the whole disjunction is followed by a cut, <code>fail/0</code>, <code>false/0</code>, or
+<code>raise_exception/1</code>. 
+<li>a clause that calls something known to be nondeterminate, other than
+when it is followed by a cut, <code>fail/0</code>, <code>false/0</code>, or <code>raise_exception/1</code>, or where it
+appears in the condition of an if-then-else construct.  Known
+nondeterminate predicates include those declared nondeterminate or
+dynamic (since they can be modified, dynamic predicates are assumed to
+be nondeterminate), plus the following built-in predicates:
+          <ul>
+
+          <li><code>absolute_file_name/3</code>, when the second argument is a list containing
+the term <code>solutions(all)</code>
+<li><code>bagof/3</code> , when the second argument contains any variables not
+appearing earlier in the clause (including the clause head). 
+<li><code>clause/[2,3]</code>
+<li><code>current_op/3</code>, when any argument contains any variables not
+appearing earlier in the clause (including the clause head). 
+<li><code>current_key/2</code>, when the second argument contains any variables not
+appearing earlier in the clause (including the clause head). 
+<li><code>current_predicate/2</code>, when the second argument contains any variables not
+appearing earlier in the clause (including the clause head). 
+<li><code>length/2</code>, when both arguments are variables not
+appearing earlier in the clause (including the clause head). 
+<li><code>predicate_property/2</code>, when either argument contains any variables not
+appearing earlier in the clause (including the clause head). 
+<li><code>recorded/3</code>
+<li><code>repeat/0</code>
+<li><code>retract/1</code>
+<li><code>setof/3</code>, when the second argument contains any variables not
+appearing earlier in the clause (including the clause head). 
+<li><code>source_file/[1,2,3]</code> when the last argument contains any variables not
+appearing earlier in the clause (including the clause head). 
+</ul>
+
+   </ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-det-opt.html#bas-eff-det-opt">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-det.html#bas-eff-det">Up</a>
+</ul>
+</div>
+   </body></html>
+

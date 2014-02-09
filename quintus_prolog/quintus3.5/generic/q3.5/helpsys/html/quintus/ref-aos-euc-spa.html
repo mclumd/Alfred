@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Spawning an Interactive Shell</h5>
+
+   <p><code>unix(shell)</code> starts up an interactive shell.  Under UNIX, the shell run
+depends on your <code>SHELL</code> environment variable.  You can exit from the
+shell by typing <kbd>^d</kbd> (or your end-of-file character) unless under
+Emacs, in which case you should type <kbd>^x ^d</kbd>.  The
+Prolog idiom <code>end_of_file.</code> will not work in this context.  If
+<code>ignoreeof</code> is set (for example, in your <code>.cshrc</code> file), <kbd>^d</kbd> may
+not work (setting <code>ignoreeof</code> turns off <kbd>^d</kbd>).  In this case, you
+may type <kbd>exit</kbd> to the shell to kill it.  The call to <code>unix(shell)</code>
+fails if a non-zero result is returned by the shell.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong>  Under UNIX, invoking the predicate <code>unix(shell)</code> when your <code>SHELL</code> environment
+variable
+is set to a non-standard shell (not <code>csh(1)</code> or <code>sh(1)</code>) may cause
+echoing problems under the Emacs interface due to the <code>stty</code> settings
+of the non-standard shell.  If a non-standard shell proves to be a
+problem, an alternative is to use either <code>unix(shell(sh))</code> or
+<code>unix(shell(csh))</code> to invoke the standard shell,
+respectively. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ref-aos-euc-oth.html#ref-aos-euc-oth">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-aos-euc.html#ref-aos-euc">Up</a>
+</ul>
+</div>
+   </body></html>
+

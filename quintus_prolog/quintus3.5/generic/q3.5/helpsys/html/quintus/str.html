@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h2 class="chapter">The Structs Package</h2>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="str-fty.html#str-fty">str-fty</a>:                              Foreign Types
+<li><a accesskey="2" href="str-usq.html#str-usq">str-usq</a>:                              Using Structs with QPC
+<li><a accesskey="3" href="str-cft.html#str-cft">str-cft</a>:                              Checking Foreign Term Types
+<li><a accesskey="4" href="str-cdf.html#str-cdf">str-cdf</a>:                              Creating and Destroying Foreign Terms
+<li><a accesskey="5" href="str-afd.html#str-afd">str-afd</a>:                              Accessing and Modifying Foreign Term Contents
+<li><a accesskey="6" href="str-cas.html#str-cas">str-cas</a>:                              Casting
+<li><a accesskey="7" href="str-nul.html#str-nul">str-nul</a>:                              Null Foreign Terms
+<li><a accesskey="8" href="str-ifc.html#str-ifc">str-ifc</a>:                              Interfacing with Foreign Code
+<li><a accesskey="9" href="str-etr.html#str-etr">str-etr</a>:                              Examining Type Definitions at Runtime
+<li><a href="str-s2c.html#str-s2c">str-s2c</a>:                              Structs to C
+<li><a href="str-tip.html#str-tip">str-tip</a>:                              Tips
+</ul>
+
+   <p>The <code>structs</code> package allows Prolog to hold pointers to C data structures,
+and to access and store into fields in those data structures. 
+Currently, the only representation for a pointer supported by Quintus
+Prolog is an integer, so it isn't possible to guarantee that Prolog
+can't confuse a pointer with an ordinary Prolog term.  What this package
+does is to represent such a pointer as a term with the type of the
+structure or array as its functor and the integer that is the address
+of the actual data as its only argument.  We will refer such terms as
+<dfn>foreign terms</dfn>.
+
+   <blockquote>
+
+        <p><strong>Important caveats:</strong>
+
+        <p>You should not count on future versions of the struct package to
+continue to represent foreign terms as compound Prolog terms.  In
+particular, you should never explicitly take apart a foreign term using
+unification or <code>functor/3</code> and <code>arg/3</code>.  You may use the predicate
+<code>foreign_type/2</code> to find the type of a foreign term, and <code>cast/3</code> (casting
+a foreign term to address) to get the address part of a foreign term. 
+You may also use <code>cast/3</code> to cast an address back to a foreign term.  You
+should use <code>null_foreign_term/2</code> to check if a foreign term is null, or
+to create a null foreign term of some type.
+
+        <p>It should never be necessary to explicitly take apart foreign terms. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj.html#obj">Next</a>
+<li><a rel="previous" accesskey="p" href="lib.html#lib">Previous</a>
+<li><a rel="up" accesskey="u" href="index.html#Top">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

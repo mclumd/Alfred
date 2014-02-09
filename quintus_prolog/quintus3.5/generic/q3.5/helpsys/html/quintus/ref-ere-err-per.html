@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Permission Errors</h5>
+
+   <p>A permission error occurs when an operation is attempted that is among the
+kinds of operation that the system is in general capable of performing, and
+among the kinds that you are in general allowed to request, but this
+particular time it isn't permitted.  Usually, the reason for a permission error
+is that the <dfn>owner</dfn> of one of the objects has requested that the object be
+protected.
+
+   <p>An example of this inside Prolog is attempting to change a predicate that
+has not been declared <code>:-dynamic</code>.
+
+   <p>File system protection is the main cause of such errors.
+
+   <p>The exception code associated with a permission error is
+<pre class="example">     permission_error(<var>Goal, Operation, ObjectType, Culprit, Message</var>)
+     </pre>
+
+     <dl>
+
+     <br><dt><var>Operation</var>
+     <dd>operation attempted; <var>Operation</var> exists but is
+not permitted with <var>Culprit</var>.
+
+     <p>Some <var>Operation</var>s recognized by the system include:
+          <ul>
+
+          <li><code>0</code> -- no operation specified
+<li><code>'find absolute path of'</code>
+<li><code>'get the time stamp of'</code>
+<li><code>'set prompt on'</code>
+<li><code>'use close(filename) on'</code>
+<li><code>abolish</code>
+<li><code>change</code>
+<li><code>check_advice</code>
+<li><code>clauses</code>access clauses of
+<li><code>close</code>
+<li><code>create</code>
+<li><code>export</code>
+<li><code>flush</code>
+<li><code>load</code>
+<li><code>nospy</code>
+<li><code>nocheck_advice</code>
+<li><code>open</code>
+<li><code>position</code>
+<li><code>read</code>
+<li><code>redefine</code>
+<li><code>save</code>
+<li><code>spy</code>
+<li><code>write</code>
+</ul>
+
+     <br><dt><var>ObjectType</var>
+     <dd><var>Culprit'</var>s type.
+
+     <br><dt><var>Culprit</var>
+     <dd>name of protected object.
+
+     <br><dt><var>Message</var>
+     <dd>provides such operating-system-specific additional
+information as may be available.  A message of <code>0</code> or <code>''</code>
+provides no further information. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-err-con.html#ref-ere-err-con">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-err-exi.html#ref-ere-err-exi">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere-err.html#ref-ere-err">Up</a>
+</ul>
+</div>
+   </body></html>
+

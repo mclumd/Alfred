@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QU_initio()</code> user-redefinable</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QU_initio(user_input, user_output, user_error, act_astty, error_num)
+     QP_stream **user_input;
+     QP_stream **user_output;
+     QP_stream **user_error;
+     int         act_astty;
+     int        *error_num;
+     </pre>
+
+   <p>Initializes Prolog input/output system.  Returns <code>QP_SUCCESS</code> upon
+success and <code>QP_ERROR</code> upon failure.
+
+<h4 class="subheading">Description</h4>
+
+   <p>The three Prolog initial stream are created in <code>QU_initio()</code>. 
+The Prolog standard input stream is returned through <var>user_input</var>,
+the standard output stream is returned through <var>user_output</var>, and
+the standard error stream is returned through <var>user_error</var>. 
+The created streams are accessed in the Prolog system as
+<code>user_input</code> (<code>QP_stdin</code>), <code>user_output</code> (<code>QP_stdout</code>),
+and <code>user_error</code> (<code>QP_stderr</code>).
+
+   <p>If <var>act_astty</var> is non-zero, the Prolog system requests <code>QU_initio()</code>
+to initialize the three initial streams as tty streams even if
+they are not really connected to a tty.  One example of such a request
+is that Prolog is running under remote shell.
+
+   <p>The parameter <var>error_num</var> stores the error code if <code>QU_initio()</code>
+returns <code>QP_ERROR</code>.  The error code can be any of the host operating
+system error numbers, QP error numbers or a user-defined error number.
+
+<h4 class="subheading">Tip</h4>
+
+   <p>The process required to create these three initial
+streams is similar to that of implementing a customized Prolog stream. 
+(see <a href="fli-ios-cps.html#fli-ios-cps">fli-ios-cps</a>).  However, these three initial
+streams should not be registered.  Calling <code>QP_register_stream()</code> to
+register any of the three streams created by <code>QU_initio()</code> may cause an
+error when Prolog starts up.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>The following is the source code for an
+implementation of <code>QU_initio()</code> function in C language.
+
+<pre class="example">     #include &lt;sys/types.h&gt;
+     #include &lt;sys/stat.h&gt;
+     #include &lt;quintus/quintus.h&gt;
+     
+     #define TTY_BUFSIZ              128
+     #define MAX_FIFO_BUFSIZ         4096
+     
+     extern  QP_stream    *QU_fdopen();
+     
+     /*
+      *  This I/O initialization function only handles three possible
+      *  types of file, a tty file , a pipe and an ordinary file
+      */
+     int QU_initio(user_input, user_output, user_error, act_astty,
+                               error_num)
+         QP_stream   **user_input, **user_output, **user_error;
+         int         act_astty, *error_num;
+         {
+             int             fd, is_tty;
+             struct  stat    statbuf;
+             QP_stream       option, *streams[3], *prompt_stream;
+             extern char     *ttyname();
+     
+             for (fd=2; fd &gt;= 0 ; --fd) {
+                 is_tty = isatty(fd);
+                 QU_stream_param((is_tty) ? "/dev/tty" : "",
+                             (fd) ? QP_WRITE : QP_READ, &amp;option);
+                 if (is_tty || act_astty) {
+                     /* make sure other parameters are right  */
+                     option.format     = QP_DELIM_TTY;
+                     option.max_reclen = TTY_BUFSIZ;
+                     option.seek_type  = QP_SEEK_ERROR;
+                     if (fd == 0)
+                         option.peof_act = QP_PASTEOF_RESET;
+                 } else  {
+                     if (fstat(fd, &amp;statbuf) &lt; 0)
+                         return QP_ERROR;
+                     if ((statbuf.st_mode &amp; S_IFIFO) == S_IFIFO) {
+                         option.max_reclen = MAX_FIFO_BUFSIZ;
+                         option.seek_type  = QP_SEEK_ERROR;
+                     } else
+                         option.max_reclen = statbuf.st_blksize;
+                 }
+     </pre>
+
+<pre class="example">                 option.mode = (fd) ? QP_WRITE : QP_READ;
+                 if ((streams[fd]=QU_fdopen(&amp;option,"",error_num,fd))
+                                     ==QP_NULL_STREAM)
+                     return QP_ERROR;
+                 if (is_tty) {
+                     char        *tty_id;
+                     if (! (tty_id = ttyname(fd)) )
+                         tty_id = "/PROLOG DEFAULT TTYS";
+                     (void) QP_add_tty(streams[fd], tty_id);
+                 } else if (act_astty)
+                     (void) QP_add_tty(streams[fd],
+                                       "/PROLOG INITAIL STREAMS");
+             }
+             (streams[0])-&gt;filename="USER$INPUT";
+             *user_input  = streams[0];
+             (streams[1])-&gt;filename="USER$OUTPUT";
+             *user_output = streams[1];
+             (streams[2])-&gt;filename="USER$ERROR";
+             *user_error  = streams[2];
+             if ((streams[0])-&gt;format == QP_DELIM_TTY
+                     &amp;&amp; (streams[1])-&gt;format != QP_DELIM_TTY
+                     &amp;&amp; (streams[2])-&gt;format != QP_DELIM_TTY) {
+                 char *tty_id;
+                 /* create an output stream for prompt */
+                 QU_stream_param(isatty(0) ? "/dev/tty" : "", QP_WRITE,
+                                                 &amp;option);
+                 option.format = QP_DELIM_TTY;
+                 option.max_reclen = TTY_BUFSIZ;
+                 option.seek_type = QP_SEEK_ERROR;
+                 if ((prompt_stream = QU_fdopen(&amp;option, "", error_num,
+                                    0)) == QP_NULL_STREAM)
+                     return QP_ERROR;
+                 (void) QP_register_stream(prompt_stream);
+                 if (! (tty_id = ttyname(0)) )
+                     tty_id = "/PROLOG DEFAULT TTYS";
+                 (void) QP_add_tty(prompt_stream, tty_id);
+             }
+             return QP_SUCCESS;
+         }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-QU_open.html#cfu-ref-QU_open">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-QU_free_mem.html#cfu-ref-QU_free_mem">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

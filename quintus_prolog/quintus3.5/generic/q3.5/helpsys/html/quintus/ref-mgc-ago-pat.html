@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Protecting Atoms in Foreign Memory</h5>
+
+   <p>Quintus Prolog's foreign language interface allows atoms to be passed to foreign
+functions.  When calling foreign functions from Prolog, atoms are passed
+via the <code>+atom</code> argument type in the predicate specifications of
+<code>foreign/[2,3]</code> facts.  The strings of atoms can be
+passed to foreign functions via the <code>+string</code> argument type.  In the
+latter case a pointer to the Prolog symbol table's copy of the string for
+an atom is what is passed.  When calling Prolog from C, atoms are passed
+back from C to Prolog using the <code>-atom</code> and <code>-string</code> argument
+types in <code>extern/1</code> declarations.  Atoms can also be created in foreign
+code via functions like <code>QP_atom_from_string()</code>.
+
+   <p>Prolog does not keep track of atoms (or strings of
+atoms) stored in foreign memory. 
+As such, it cannot
+guarantee that those atoms will be retained by atom garbage collection. 
+Therefore Quintus Prolog provides functions to <dfn>register</dfn>
+atoms (or their strings) with the atom garbage collector.  Registered atoms
+will not be reclaimed by the atom garbage collector.  Atoms can be
+registered while it is undesirable for them to be reclaimed, and then
+unregistered when they are no longer needed.
+
+   <p>Of course, the majority of atoms passed as atoms or strings to foreign
+functions do not need to be registered.  Only those that will be stored
+across foreign function calls (in global variables)
+or across nested calls to Prolog are at risk.  An extra margin of
+control is given by the fact the programmer always invokes atom garbage
+collection explicitly, and can ensure that this is only done in contexts
+that are "safe" for the individual application.
+
+   <p>To register or unregister an atom, one of the following functions is used:
+
+<pre class="example">     int QP_register_atom(atom)
+     QP_atom atom;
+     
+     int QP_unregister_atom(atom)
+     QP_atom atom;
+     </pre>
+
+   <p>These functions return either <code>QP_ERROR</code> or a non-negative integer.  The
+return values are discussed further in <a href="ref-mgc-ago-are.html#ref-mgc-ago-are">ref-mgc-ago-are</a>.
+
+   <p>As noted above, when an atom is passed as a string (<code>+string</code>) to a foreign
+function, the string the foreign function receives is the one in Prolog's
+symbol table.  When atom garbage collection reclaims the atom for that
+string, the space for the string will also be reclaimed.
+
+   <p>Thus, if the string is to be stored across foreign calls then either
+a copy of the string or else the atom (<code>+atom</code>) should be passed into the
+foreign function so that it can be registered and
+<code>QP_string_from_atom()</code> can be used to access the string from the atom.
+
+   <p>Keep in mind that the registration of atoms only pertains to those
+passed to foreign functions or created in foreign code.  Atoms in Prolog's
+data areas are maintained automatically.  Note also that even
+though an atom may be unregistered in foreign code, atom garbage
+collection still may not reclaim it as it may be referenced from Prolog's
+data areas.  But if an atom is registered in foreign code, it will be
+preserved regardless of its presence in Prolog's data areas.
+
+   <p>The following example illustrates the use of these functions. In this
+example the current value of an object (which an atom) is being stored
+in a C global variable. There are two C functions that can be called from
+Prolog, one to update the current value and one to access the value.
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     QP_atom current_object = NULL;
+     
+     update_object(newvalue)
+     QP_atom newvalue;
+     {
+             /* if current_object contains an atom, unregister it */
+             if (current_object)
+                     (void) QP_unregister_atom(current_object);
+     
+             /* register new value */
+             (void) QP_register_atom(newvalue);
+             current_object = newvalue;
+     }
+     
+     QP_atom get_object()
+     {
+             return current_object;
+     }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mgc-ago-prm.html#ref-mgc-ago-prm">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mgc-ago-agc.html#ref-mgc-ago-agc">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mgc-ago.html#ref-mgc-ago">Up</a>
+</ul>
+</div>
+   </body></html>
+

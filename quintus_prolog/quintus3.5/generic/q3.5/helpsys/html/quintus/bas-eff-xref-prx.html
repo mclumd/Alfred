@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Practice and Experience</h5>
+
+   <p>Your code will probably rely on operator declarations and
+possibly term expansion. The cross-referencer handles this in
+much the same way as <code>qpc(1)</code>: you must supply an
+initialization file, using the <code>-i </code><var>ifile</var><code></code> option.
+
+   <p>Supply meta-predicate declarations for your
+meta-predicates.  Otherwise, the cross-referencer will not follow
+the meta-predicates' arguments.  Be sure the
+cross-referencer encounters the meta-predicate declarations
+<em>before</em> it encounters calls to the declared predicates.
+
+   <p>The cross-referencer traces from initializations, hooks,
+predicates declared <code>public</code>, and optionally from
+<code>user:runtime_entry/1</code> and module declarations.  The
+way it handles meta-predicates requires that your application
+load its module-files before its non-module-files.
+
+   <p>This cross-referencer was written in order to tear out the copious dead
+code from the application that the author became responsible for. If you
+are doing such a thing, the cross-referencer is an invaluable tool. Be
+sure to save the output from the first run that you get from the cross
+referencer: this is very useful resource to help you find things that
+you've accidentally ripped out and that you really needed after all.
+
+   <p>There are situations where the cross-referencer does not follow certain
+predicates. This can happen if the predicate name is
+constructed on the fly, or if it is retrieved from the
+database. In this case, add <code>public</code> declarations for
+these.  Alternatively, you could create term expansions that are
+peculiar to the cross-referencer.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-xref-use.html#bas-eff-xref-use">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-xref.html#bas-eff-xref">Up</a>
+</ul>
+</div>
+   </body></html>
+

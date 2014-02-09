@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>current_op/3</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>current_op(</code><var>+Precedence</var><code>, </code><var>+Type</var><code>, </code><var>+Name</var><code>)</code>
+
+   <p><code>current_op(</code><var>*Precedence</var><code>, </code><var>*Type</var><code>, </code><var>*Name</var><code>)</code>
+
+   <p>Succeeds when the atom <var>Name</var> is
+currently an operator of type <var>Type</var> and precedence
+<var>Precedence</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Precedence</var> <dfn>integer</dfn>
+     <dd>if instantiated, must be an
+integer in the range 1 to 1200.
+
+     <br><dt><var>Type</var> <dfn>one of </dfn><code>[xfx, xfy, yfx, fx, xf, yf]</code><dfn></dfn>
+     <dd>if instantiated.
+
+     <br><dt><var>Name</var> <dfn>atom</dfn>
+     <dd>atom or a list of atoms if instantiated. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>None of the arguments need be
+instantiated at the time of the call; that is, this predicate can be
+used to find the precedence or type of an operator or to backtrack
+through all operators.
+
+   <p>To add or remove an operator, use <code>op/3</code>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>type_error</code>
+     <dd>
+        <var>Name</var> not an atom or <var>Type</var> not an atom or <var>Precedence</var>
+not an integer
+
+     <br><dt><code>domain_error</code>
+     <dd>
+        <var>Precedence</var> not between 1-1200, or
+        <var>Type</var> not one of listed atoms
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>op/3</code>
+
+   <a href="ref-syn-ops.html#ref-syn-ops">ref-syn-ops</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-current_output.html#mpg-ref-current_output">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-current_module.html#mpg-ref-current_module">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

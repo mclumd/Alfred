@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>add_advice/3</code> <dfn>development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>add_advice</code>(<var>+Goal</var>,<var>+Port</var>,<var>+Action</var>)
+
+   <p>Associate an action with entry to a port of a procedure.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Goal</var> <dfn>callable</dfn> [MOD]
+     <dd>a term to be unified against a calling goal.
+
+     <br><dt><var>Port</var> <dfn>one of </dfn><code>[call,exit,done,redo,fail]</code><dfn></dfn>
+     <dd>an atom indicating the port at which to check advice.
+
+     <br><dt><var>Action</var> <dfn>callable</dfn> [MOD]
+     <dd>a goal to be called when advice is checked at the given port. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>add_advice/3</code> associates an advice action (a goal to be called)
+with a port of the standard Prolog debugger model (see <a href="dbg-bas-pbx.html#dbg-bas-pbx">dbg-bas-pbx</a>).  Variable bindings made when <var>Goal</var> matches the incoming
+call carry across to the advice action, so incoming arguments can be
+verified or processed by advice checking.  Any number of advice
+actions can be associated with a given <var>Goal</var>, <var>Port</var>, or
+<var>Goal</var>-<var>Port</var> combination.  Putting advice on a procedure
+does not automatically turn on checking of advice, so advice can be
+built into a program and checked only when necessary.  At each port,
+advice is checked before interaction with the Prolog debugger, so the
+advice action can be used to control the debugger.  It is not
+currently possible to associate advice with Prolog system built-in
+predicates.
+
+   <p>Advice added using a call to <code>add_advice/3</code> will be
+checked after all preexisting advice for that predicate and port.
+
+   <p>This predicate is not supported in runtime systems.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+if an argument is not sufficiently instantiated.
+
+     <br><dt><code>type_error</code>
+     <dd>
+if <var>Goal</var> or <var>Action</var> is not a callable, or a module prefix is
+not an atom, or <var>Port</var> is not an atom.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+if <var>Port</var> is not a valid port.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+if a specified procedure is built-in.
+
+   </dl>
+
+<h4 class="subheading">Tips</h4>
+
+   <p>Using advice can streamline debugging of deep
+recursions and other situations
+where a given call is made correctly many times but eventually goes amiss. 
+Use of the Prolog debugger's spypoints is inconvenient because of the
+many calls before the error.  If, for instance, it is known that a certain
+bad datum is present in the particular call producing the error, it is
+possible to use advice to set a spypoint only when that datum is seen:
+
+<pre class="example">     :- add_advice(recurse(X,Y), call,
+           (bad_data(X), spy recurse/2)).
+     </pre>
+
+   <p>When advice checking is enabled, this piece of advice will take effect
+only if the first argument passed to <code>recurse/2</code> is bad.  When that
+is so, a spypoint will be placed on <code>recurse/2</code> and execution will
+continue at the call port of <code>recurse/2</code>.  Since advice is checked
+before debugger interaction at the port, the debugger will immediately
+stop.  There is no need to interact with the debugger for all the calls
+that have valid data.
+
+   <p>Advice can also provide a simple and flexible profiling tool by
+associating a counter with various ports of each "interesting" predicate. 
+The advice associated with each port and predicate might map the
+name, arity, module and port to a counter value held in a dynamic table. 
+When advice checking is on and an advised predicate port is reached,
+the advice action simply increments the counter.  The counter table can
+then be inspected to determine the number of times each predicate-port
+combination was reached.
+
+   <p>Advice can also be used to associate "pre-conditions" and
+"post-conditions" to predicates. "pre-conditions" can be
+associated with the "call" port of a predicate and
+"post-conditions" can be associated with the "done" or "exit"
+port of a predicate.  Checking for "pre" and "post" conditions
+will be done only when checking advice is turned on.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>remove_advice/3</code>, <code>current_advice/3</code>, <code>check_advice/[0,1]</code>, <code>nocheck_advice/[0,1]</code>
+
+   <a href="dbg-adv.html#dbg-adv">dbg-adv</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-add_spypoint.html#mpg-ref-add_spypoint">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-absolute_file_name.html#mpg-ref-absolute_file_name">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

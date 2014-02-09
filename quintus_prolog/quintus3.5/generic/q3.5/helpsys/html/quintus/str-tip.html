@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Tips</h3>
+
+     <ol type=1 start=1>
+
+     <li>Most important tip: don't subvert the <code>structs</code> type
+system by looking inside foreign terms to get the address, or use
+<code>functor/3</code> to get the type.  This has two negative effects: firstly, if
+the <code>structs</code> package should change its representation of foreign terms,
+your code will not work.  But more importantly, you are more likely to
+get type mismatches, and likely to get unwrapped terms or even doubly
+wrapped terms where you expect wrapped ones. 
+<li>Remember that a foreign term <code>fred(123456)</code> is not of type <code>fred</code>, but a
+pointer to <code>fred</code>.  Looked at another way, what resides in memory at
+address 123456 is of type <code>fred</code>. 
+<li>The wrapper put on a foreign term signifies the type of that foreign
+term.  If you declare a type to be <code>pointer(opaque)</code> because you want to
+view that pointer to be opaque, then when you get something of this
+type, it will be printed as <code>opaque(456123)</code>.  This is not very
+informative.  It is better to declare
+     <pre class="example">                  fred = opaque,
+                  thing = struct([...,
+                              part:pointer(fred),
+                              ...
+                          ]).
+          </pre>
+
+     <p>so that when you get the contents of the <code>part</code> member of a <code>thing</code>, it is
+wrapped as <code>fred(456123)</code>.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="str-s2c.html#str-s2c">Previous</a>
+<li><a rel="up" accesskey="u" href="str.html#str">Up</a>
+</ul>
+</div>
+   </body></html>
+

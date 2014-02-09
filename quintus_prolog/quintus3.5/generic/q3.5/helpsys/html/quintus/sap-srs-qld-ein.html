@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Explicit Invocation</h5>
+
+   <p>If you wish to call <code>qld</code> with other options than
+those described in <a href="sap-srs-qld-iin.html#sap-srs-qld-iin">sap-srs-qld-iin</a>, use <code>qpc -c</code> and then call
+<code>qld</code> explicitly.  The <code>-c</code> option to
+<code>qpc</code> causes <code>qld</code> to stop after generating an
+object file, rather than continuing and calling
+the linker.  The object file will be called
+<code>a.o</code> (UNIX) or <code>a.obj</code> (Windows) by default; this can be overridden with the <code>-o</code>
+option.  Then you can make your own call to
+the linker; this call must include any needed object-files and
+libraries.
+
+   <p>One reason you might wish to do this is to avoid the use of shared object
+files and shared libraries in a runtime system that is to be delivered on
+a different machine.  See <a href="sap-rge-sos.html#sap-rge-sos">sap-rge-sos</a> for more information on
+this and an example.
+
+   <p>The steps taken by <code>qld</code> -- as illustrated in the above figure
+-- are as follows:
+     <ol type=1 start=1>
+
+     <li>Link all the specified QOF files together with either the
+Runtime Kernel or Development Kernel.  The result of this phase is a
+temporary QOF file. 
+<li>"Consolidate" the temporary QOF file into a temporary
+object file using the subsidiary program <code>qcon</code>.
+
+     <li>UNIX:
+Call the C compiler to build an executable file.  The
+command, which is echoed to
+standard output if the <code>-v</code> option is specified, resembles:
+
+     <pre class="example">          % <kbd>cc [-v] [-o </kbd><var>output-file</var><kbd>] </kbd><var>runtime-directory</var><kbd>/qprel.o </kbd><var>temp</var><kbd>.o
+                        </kbd><var>object-files</var><kbd> </kbd><var>runtime-directory</var><kbd>/libqp.a</kbd>
+          </pre>
+
+     <p>The file <code></code><var>runtime-directory</var><code>/qprel.o</code> is the Development
+Kernel object file.  If you are linking to a Runtime
+Kernel <code>qprel.o</code> will be replaced by <code>qprte.o</code> in the above
+command.  <code>temp.o</code> is the output of Step 2.  <code>libqp.a</code> is the
+Quintus C library. 
+</p><li>Windows:
+Call the C compiler, <code>cl</code> to build an executable file.  The form of the
+link command, which is echoed to
+standard output if the <code>-v</code> option is specified, resembles:
+
+     <pre class="example">          % <kbd>link [-v] [-o </kbd><var>output-file</var><kbd>] </kbd><var>temp</var><kbd>.obj
+                      </kbd><var>runtime-directory</var><kbd>/qpeng.lib </kbd><var>runtime-directory</var><kbd>/qprel.lib
+                      [</kbd><var>runtime-directory</var><kbd>/libpl.lib] </kbd><var>object-files</var><kbd>
+                      </kbd><var>runtime-directory</var><kbd>/libqp.lib</kbd>
+          </pre>
+
+     <p>The file <code></code><var>runtime-directory</var><code>/qprel.lib</code> is the Development
+Kernel object file.  If you are linking to a Runtime
+Kernel <code>qprel.lib</code> will be replaced by <code>qprte.lib</code> in the above
+command.  <code></code><var>temp</var><code>.obj</code> is the output of Step 2.  <code>libqp.lib</code> is the
+Quintus C library.
+        </ol>
+
+   <p>For a complete summary of all the possible options to
+<code>qld</code>, see <a href="too-too.html#too-too">too-too</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-qld-iin.html#sap-srs-qld-iin">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs-qld.html#sap-srs-qld">Up</a>
+</ul>
+</div>
+   </body></html>
+

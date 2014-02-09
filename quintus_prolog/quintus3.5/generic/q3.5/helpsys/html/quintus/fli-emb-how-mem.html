@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Embedding Functions for Memory Management</h5>
+
+   <p>Release 3 of Quintus Prolog makes it possible
+to run Prolog as an embedded system. 
+In terms of memory management this means
+that Prolog does not assume full control of the
+address space or that all its memory is going to be contiguous. 
+This makes it possible to share the same address space
+between Prolog and other applications. The memory used
+by Prolog can be interspersed with the memory used by
+the application into which Prolog is embedded.
+
+   <p>With Release 3 all of Prolog's sophisticated memory management
+can be built on top of a primitive layer, which users can
+replace with their own functions. 
+Such replacement is only required when the application in which the
+Prolog code is embedded demands full control of the address space and
+memory allocation. 
+In general it is not necessary or even advantageous to do this.
+
+   <p>The embedding layer of memory management comprises three primitive
+functions: <code>QU_alloc_init_mem()</code>, <code>QU_alloc_mem()</code> and
+<code>QU_free_mem()</code>.  The system has a default implementation of these
+functions based on <code>sbrk(2)</code> for UNIX and <code>VirtualAlloc()</code>
+for Windows.  If Prolog is to become part of an embedded package that
+would like to provide its own memory management routines then the user
+can redefine these functions and statically link it with the Prolog
+system. (Static linking is discussed in <a href="sap-srs.html#sap-srs">sap-srs</a>.)  If
+the user does not provide these functions, the API
+functions (in e.g. <code>libqp.a</code> or <code>libqps.lib</code>) will be used by default.
+
+   <p>This layer is responsible for allocating memory to Prolog and freeing
+memory back to the Operating System. Prolog calls the functions
+<code>QU_alloc_mem()</code> and <code>QU_free_mem()</code> for these purposes. 
+<code>QU_init_mem()</code> is called the first time Prolog makes a call to
+allocate memory. If the user redefines these functions the
+redefinition should meet the specifications for these functions
+mentioned in the reference pages.  An example of defining your own
+memory management routines is given in the reference page for
+<code>QU_alloc_mem()</code>.
+
+   <p>This layer is also responsible for the environment variables
+<code>PROLOGINCSIZE</code> and <code>PROLOGMAXSIZE</code>, which are available for customizing
+the default memory management routines.  The user can
+set <code>PROLOGINCSIZE</code> to set the least amount by which Prolog should
+expand each time.  The user can set <code>PROLOGMAXSIZE</code> to limit the maximum
+memory used by Prolog.  See <a href="ref-mgc-osi.html#ref-mgc-osi">ref-mgc-osi</a>.
+
+   <p>The Prolog system top level supplied by Quintus automatically cleans
+up Prolog memory each time it returns to top level.  However, when
+Prolog is called directly from a foreign function the Quintus top
+level (or a user-defined equivalent) need not be used.  If nothing
+else is done (such as calling <code>trimcore/0</code> in the Prolog code),
+when a Prolog query returns, the memory allocated to Prolog will stay
+expanded to whatever was required to compute the previous solutions.
+
+   <p>In the case where it is more convenient to call a C function than
+a Prolog built-in, <code>QP_trimcore()</code> is provided to explicitly clean up
+Prolog memory.  It has the same effect as <code>trimcore/0</code>.  Like
+<code>trimcore/0</code> it should be used judiciously, as overuse can result
+in unnecessary time being spent in memory expansion and contraction. 
+However, when Prolog is to be dormant for a period, or as much free
+memory as possible is desired, <code>QP_trimcore()</code> can be quite useful.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-emb-how-iou.html#fli-emb-how-iou">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-emb-how-mai.html#fli-emb-how-mai">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-emb-how.html#fli-emb-how">Up</a>
+</ul>
+</div>
+   </body></html>
+

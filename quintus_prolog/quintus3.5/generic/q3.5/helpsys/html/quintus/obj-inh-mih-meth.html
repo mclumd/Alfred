@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Methods</h5>
+
+   <p>By default, all methods are inherited from all superclasses. Any of
+the superclasses' methods can be uninherited, as described earlier, by
+using the <code>uninherit/1</code> directive.
+
+   <p>If the same message is defined for more than one superclass, however,
+you must choose at most one method to inherit for the message. You may
+choose none. You may do this by defining a new method for the message
+(shadowing the superclasses' methods), or by using the <code>uninherit/1</code>
+directive, or by using the <code>inherit/1</code> directive.
+
+   <p>The following is considered a classic example of multiple inheritance.
+
+<pre class="example">     :- class toy.             % no slots in this class
+     
+     Self &gt;&gt; size(small).
+     
+     Self &gt;&gt; rolls(false).
+     
+     :- end_class toy.
+     
+     :- class truck.         % no slots in this class
+     
+     Self &gt;&gt; size(large).
+     
+     Self &gt;&gt; rolls(true).
+     
+     :- end_class truck.
+     </pre>
+
+   <p>The idea expressed in these definitions is that most toys are small
+and do not roll.  On the other hand, most trucks are large, but they do
+roll. A toy truck shares one feature with each class, but we can
+hardly expect a compiler to choose the correct one.
+
+   <p>The definition of a new class, toy_truck, might begin with
+
+<pre class="example">     :- class toy_truck = toy + truck.
+     </pre>
+
+   <p>Rather than redefine the get methods for <code>size</code> and <code>rolls</code>, we can
+specify which to inherit in two ways. One way is positive, stating
+which to inherit, and the other way is negative, stating which not to
+inherit.
+
+   <p>The positive version would be
+
+<pre class="example">     :- inherit
+             toy &gt;&gt; (size/1),
+             truck &gt;&gt; (rolls/1).
+     </pre>
+
+   <p>This is more convenient when a message is defined in several
+superclasses, because all but the chosen method are uninherited. And,
+it is probably easier to understand.
+
+   <p>The negative version would be
+
+<pre class="example">     :- uninherit
+             toy &gt;&gt; (rolls/1),
+             truck &gt;&gt; (size/1).
+     </pre>
+
+   <p>The <code>toy_truck</code> class would exhibit the same behavior with either
+definition.
+
+   <p>It is possible to define methods that access the shadowed or
+uninherited methods of the superclasses, by sending the message to
+the superclasses. In the case of multiple inheritance, however, it may
+be necessary to specify which superclass to send the message to.
+
+   <p>The <code>toy_truck</code> class, for example, might define these methods:
+
+<pre class="example">     Self &gt;&gt; uninherited_size(S) :-
+             super(truck) &gt;&gt; size(S).
+     
+     Self &gt;&gt; uninherited_rolls(R) :-
+             super(toy) &gt;&gt; rolls(R).
+     </pre>
+
+   <p>They provide access to the unchosen methods from <code>toy_truck</code>'s superclasses.
+
+   <p>While these examples with the toy_truck class are clearly "toy"
+examples, the same techniques can be used in more realistic cases.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-inh-mih-abmix.html#obj-inh-mih-abmix">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-inh-mih-slt.html#obj-inh-mih-slt">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-inh-mih.html#obj-inh-mih">Up</a>
+</ul>
+</div>
+   </body></html>
+

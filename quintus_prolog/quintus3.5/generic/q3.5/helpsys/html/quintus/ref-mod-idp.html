@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Importing Dynamic Predicates</h4>
+
+   <p>Imported dynamic predicates may be asserted and retracted.  For
+example, suppose the following file is loaded via <code>use_module/1</code>:
+
+<pre class="example">     :- module(m1, [f/1]).
+     :- dynamic f/1.
+     f(0).
+     </pre>
+
+   <p>Then <code>f/1</code> can be manipulated as if it were defined in the current module. 
+For example,
+<pre class="example">     | ?- <kbd>clause(f(X), true).</kbd>
+     
+     X = 0
+     </pre>
+
+   <p>The built-in predicate <code>listing/1</code> distinguishes predicates that are
+imported into the current source module by prefixing each clause with the
+module name.  Thus,
+
+<pre class="example">     | ?- <kbd>listing(f).</kbd>
+     
+     m1:f(0).
+     </pre>
+
+   <p>However, <code>listing/1</code> does not prefix clauses with their module if they are
+defined in the source module itself.  Note that
+<pre class="example">     | ?- <kbd>listing.</kbd>
+     </pre>
+
+   <p>can be used to see all the dynamic predicates defined in or
+imported into the current type-in module.  And
+<pre class="example">     | ?- <kbd>listing(m1:_).</kbd>
+     </pre>
+
+   <p>can be used to see all such predicates that are defined in or imported
+into module <code>m1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-mne.html#ref-mod-mne">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-ilm.html#ref-mod-ilm">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

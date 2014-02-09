@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Arbitrary Expressions -- <code>library(activeread)</code></h4>
+
+   <p>Languages such as Lisp allow you to read an expression and to evaluate it,
+returning a data structure.  Prolog provides "evaluation"
+only for arithmetic expressions, and then only in certain
+argument positions. 
+<code>library(activeread)</code> provides a new experimental facility for reading
+an arbitrary "expression" and "evaluating" it.
+
+<pre class="example">     | ?- <kbd>active_read(</kbd><var>InputTerm</var><kbd>).</kbd>
+     </pre>
+
+   <p>reads a term from the current input stream.  If this term has the form
+<pre class="example">     <var>X</var> | <var>Goal</var>.
+     </pre>
+
+   <p>then <var>Goal</var> is called and <var>InputTerm</var> is unified with <var>X</var>.  Otherwise,
+<var>InputTerm</var> is
+unified with the term that was read.  Note that <var>Goal</var> may backtrack, in
+which case <code>active_read/1</code> will also backtrack.
+
+   <p>EXAMPLES:
+<pre class="example">     | ?- <kbd>active_read(X).</kbd>
+     |: <kbd>T | append([1,2],[3,4], T).</kbd>
+     X = [1,2,3,4]
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>active_read(X).</kbd>
+     |: <kbd>Front+Back | append(Front, Back, [1,2,3,4]).</kbd>
+     X = []+[1,2,3,4] <kbd>;</kbd>
+     X = [1]+[2,3,4] <kbd>;</kbd>
+     X = [1,2]+[3,4] <kbd>;</kbd>
+     X = [1,2,3]+[4] <kbd>;</kbd>
+     X = [1,2,3,4]+[] <kbd>;</kbd>
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>active_read(X).</kbd>
+     |: <kbd>abort.</kbd>
+     X = abort
+     yes
+     </pre>
+
+   <p><strong>Please note:</strong>  <code>library(activeread)</code> is not a module-file, but it is sufficiently small that
+there should be no problem with including a separate
+copy in each module where it is required.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-mis-addportray.html#lib-mis-addportray">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-mis-date.html#lib-mis-date">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-mis.html#lib-mis">Up</a>
+</ul>
+</div>
+   </body></html>
+

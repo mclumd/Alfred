@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Overview</h4>
+
+   <p>The module system lets the user divide large Prolog programs into
+<dfn>modules</dfn>, or rather smaller sub-programs, and define
+the interfaces between those modules.  Each module has its own name
+space; that is, a predicate defined in one module is distinct from any
+predicates with the same name and arity that may be defined in other
+modules.  The module system encourages a group of programmers to
+define the dependence each has on others' work before any code is
+written, and subsequently allows all to work on their own parts
+independently.  It also helps to make library predicates behave as
+extensions of the existing set of built-in predicates.
+
+   <p>The Quintus Prolog library uses the module system and can therefore serve as
+an extended example of the concepts presented in the following text.  The
+design of the module system is such that loading library files and calling
+library predicates can be performed without knowledge of the module system.
+
+   <p>Some points to note about the module system are that:
+     <ul>
+
+     <li>It is based on predicate modularity rather than on data
+modularity; that is, atoms and functors are global.
+
+     <li>It is flat rather than hierarchical; any module may
+refer to any other module by its name --
+there is no need to specify a path of modules. 
+<li>It is not strict; modularity rules can be explicitly overridden.  This is
+primarily for flexibility during debugging. 
+<li>It is efficient; calls to predicates across module boundaries incur
+little or no overhead. 
+<li>It is compatible with previous releases of Quintus Prolog;
+existing Prolog code should run unchanged. 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-bas.html#ref-mod-bas">Next</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>profile/[0,1,2,3]</code> <dfn>development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>profile</code>
+
+   <p><code>profile(</code><var>+Goal</var><code>)</code>
+
+   <p><code>profile(</code><var>+Goal</var><code>,</code><var>+Interval</var><code>)</code>
+
+   <p><code>profile(</code><var>+Goal</var><code>,</code><var>+Interval</var><code>,</code><var>+Sigtype</var><code>)</code>
+
+   <p>Turns on the profiler and profiles the execution of <var>Goal</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+<dt><var>Goal</var>  <dfn>callable</dfn> [MOD]
+     <dd>The goal to profile.
+
+     <br><dt><var>Interval</var> <dfn>integer</dfn>
+     <dd>The hit interval in microseconds (default 10000).
+
+     <br><dt><var>Sigtype</var> <dfn>one of </dfn><code>[with_sigprof,with_sigalrm,with_sigvtalrm]</code><dfn></dfn>
+     <dd>Which signal to use (default <code>SIGPROF</code>).
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>profile/0</code> turns the profiler on and resets all counts accumlated
+from previous runs of the profiler. Counts of the number of call,
+choice points created and redos tried are maintained by the profiler.
+
+   <p><code>profile/1</code> performs this same action and then proceeds to execute
+<var>Goal</var>, in addition monitoring timing data. 
+Once execution of the goal has completed, the profiling results can be
+displayed with <code>show_profile_results/[0,1,2]</code>.
+
+   <p>Note that the profiler cannot be used when in debugging mode.
+
+   <p>This predicate is not supported in runtime systems.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>noprofile/0</code>,
+<code>show_profile_results/[0,1,2]</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-prolog_flag.html#mpg-ref-prolog_flag">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-print_message_lines.html#mpg-ref-print_message_lines">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

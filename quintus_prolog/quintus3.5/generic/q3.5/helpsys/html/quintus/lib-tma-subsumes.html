@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Term Subsumption -- <code>library(subsumes)</code></h4>
+
+   <p>Term subsumption is a sort of one-way unification.  Recall that
+terms <var>S</var> and <var>T</var> unify if they have a common instance,
+and that unification in Prolog instantiates both terms to that
+common instance.  <var>S</var> subsumes <var>T</var> if <var>T</var> is already an instance of <var>S</var>.  For our
+purposes, <var>T</var> is an <dfn>instance</dfn> of <var>S</var> if there is a substitution that leaves <var>T</var>
+unchanged and makes <var>S</var> identical to <var>T</var>.
+
+   <p>Two terms are <dfn>alphabetic variants</dfn> if they are identical
+except for variable names, and all common variables appear in
+corresponding positions.  For example,
+<pre class="display">     
+     <code>f(X,Y,X)</code>  and  <code>f(X,Z,X)</code> are alphabetic variants;
+     <code>f(X,Y,X)</code>  and  <code>f(Y,X,Y)</code> are not;
+     <code>f(X,Y,X)</code>  and  <code>f(X,Y,Y)</code> are not;
+     <code>f(X,Y,X)</code>  and  <code>f(Z,V,Z)</code> are
+     </pre>
+
+   <p>This file used to define <code>subsumes_chk/2</code>, but this is now a built-in
+predicate:
+     <dl>
+
+     <br><dt><code>subsumes_chk(</code><var>+General</var><code>, </code><var>+Specific</var><code>)</code>
+     <dd> is true when <var>General</var>
+subsumes <var>Specific</var>; that is, when <var>Specific</var> is already an
+instance of <var>General</var>.  It does not bind any variables in
+<var>General</var> or in <var>Specific</var>.
+
+   </dl>
+
+   <p>There are currently two predicates in this file:
+     <dl>
+
+     <br><dt><code>subsumes(</code><var>?General</var><code>, </code><var>+Specific</var><code>)</code>
+     <dd>
+is true when <var>General</var> subsumes <var>Specific</var>, and instantiates
+<var>General</var> so that it becomes identical to <var>Specific</var>.  It does
+not further instantiate <var>Specific</var>.
+
+     <br><dt><code>variant(</code><var>?Term1</var><code>, </code><var>?Term2</var><code>)</code>
+     <dd>
+is true when <var>Term1</var> and <var>Term2</var> are alphabetic variants.  That is,
+<code>variant(</code><var>Term1</var><code>, </code><var>Term2</var><code>)</code> holds precisely when
+<code>subsumes_chk(</code><var>Term1</var><code>, </code><var>Term2</var><code>)</code> and
+<code>subsumes_chk(</code><var>Term2</var><code>, </code><var>Term1</var><code>)</code> both hold.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-tma-unify.html#lib-tma-unify">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-tma-samefunctor.html#lib-tma-samefunctor">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-tma.html#lib-tma">Up</a>
+</ul>
+</div>
+   </body></html>
+

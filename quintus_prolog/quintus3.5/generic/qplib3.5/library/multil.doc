@@ -1,0 +1,66 @@
+%   File   : MULTIL.PL
+%   Author : Lawrence Byrd
+%   Updated: 18 May 1983
+%   SCCS   : @(#)88/11/10 multil.doc	27.1
+%   Purpose: Multiple-list routines
+
+
+The predicates defined in this package are analogues of those in 'maplist'.
+This style of programming which would find them useful is now frowned upon,
+not least because they cannot be type-checked.  (The type checker isn't yet
+distributed with Quintus Prolog, but was descibed in AI Journal.)  However,
+you may find their structure instructive.
+
+
+ml_taketop(Lists, Heads, Tails)
+    is true when Lists is a list of non-empty lists,  Heads  is  a  list
+    whose  elements are the heads of the elements of Lists, and Tails is
+    a list whose elements are the tails of Lists.
+
+
+ml_allempty(Lists)
+    is true when Lists is a list, all of whose elements are nil ([]). It
+    is used to test whether all the lists being mapped over have come to
+    an end at once.  Since ml_taketop will succeed  precisely  when  all
+    the  lists  have  at  least  one  member,  we could produce a set of
+    routines that terminate when any list runs out  by  simply  omitting
+    this  test.  As it is, the ml* routines demand that all the lists be
+    the same length.
+
+
+ml_maplist(Pred, Lists)
+    applies Pred to argument tuples which are successive slices  of  the
+    Lists.     Thus   mlmaplist(tidy,   [Untidy,Tidied])   would   apply
+    tidy([U,T]) to each successive [U,T] pair from  Untidy  and  Tidied.
+    It   isn't  tail-recursive,  because  Pred  (and  hence  apply)  may
+    backtrack.  Note this definition carefully: Pred has ONE argument,
+    not several.  E.g. if Pred = member(a), we might call
+    member(a, [one,two,three])	**NOT**  member(a, one, two, three).
+
+
+ml_maplist(Pred, Lists, Extra)
+    is like ml_maplist/2, but passes the Extra argument to Pred  as  well
+    as the slices from the Lists.
+
+
+ml_maplist(Pred, Lists, Init, Final)
+    is like mlmaplist/2, but has an extra accumulator feature.  Init  is
+    the initial value of the accumulator, and Final is the final result.
+    Pred(Slice, AccIn, AccOut) is called to update the accumulator.
+
+
+ml_member(Elems, Lists),
+ml_memberchk(Elems, Lists), and
+ml_select(Elems, Lists, Residues)
+    are the multi-list analogues of member, memberchk, and select.  The
+    definition of  mlselect is difficult to believe; it is almost certainly
+    utterly useless.  But it is retained, as that is how it has always been.
+
+
+ml_putback(+Heads, ?Tails, ?Lists)
+    is true  when  ml_taketop(Lists,  Heads,  Tails)  is  true,  but  is
+    rearranged  for  efficiency with different calling pattern.  It only
+    exists for the benefit of mlselect, and as the  bug  in  the  latter
+    went un-noticed for 3 years, I don't suppose it matters much.
+
+

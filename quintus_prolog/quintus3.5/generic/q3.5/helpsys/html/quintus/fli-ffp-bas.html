@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Introduction</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-ffp-bas-sum.html#fli-ffp-bas-sum">fli-ffp-bas-sum</a>:                      Summary of steps
+</ul>
+
+   <p>Quintus Prolog provides tools making it possible to call Prolog
+predicates from foreign languages.  This is useful for a
+number of reasons.
+     <ul>
+
+     <li>In the simplest case, a foreign function may want to get at
+information that is contained in the Prolog database.  It might be
+inconvenient or unnatural for the foreign function to return to
+Prolog, Prolog to query its database and reinvoke foreign code. 
+<li>Foreign functions might also want to make use of Prolog's
+inferencing capabilities, again without having to contort algorithms. 
+<li>When Quintus Prolog is embedded in another application, that
+application invokes Prolog by calling it from foreign functions.  This
+aspect of calling Prolog from foreign functions will be handled fully
+in the section on embedding Prolog (see <a href="fli-emb.html#fli-emb">fli-emb</a>). 
+</ul>
+
+   <p>To take advantage of Quintus Prolog's ability to be called from
+foreign functions, you must first know how to do either of the following:
+     <ul>
+
+     <li> load foreign code into Quintus Prolog; see <a href="fli-p2f.html#fli-p2f">fli-p2f</a>
+<li> embed Quintus Prolog in another application; see <a href="fli-emb.html#fli-emb">fli-emb</a>
+</ul>
+
+   <p>Currently, only functions written in C can call Prolog predicates
+directly; this restriction may be lifted in future releases of Quintus
+Prolog.  However, other languages such as Pascal and FORTRAN can call
+Prolog by virtue of their ability to call C. 
+ foreign
+code!)  calls Prolog.  The FORTRAN and Pascal stuff will then help
+users call the C functions.  It just wasn't making sense writing all
+of this in terms of generic "foreign languages", because I knew full
+well I'd have to eventually do something different for FORTRAN and
+Pascal.  While this should be more clear for release 3, it may as a result
+require more rewriting in case we ever do make Prolog directly
+callable from FORTRAN and Pascal.}
+
+   <p>The interface between C and Prolog supports direct exchange of
+Prolog's atomic data types (atoms, integers or database reference). 
+The data is automatically converted between Prolog's internal
+representation and the internal representation of the foreign
+language.  The interface also supports passing any Prolog term from C
+and returning any Prolog term to C.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-ppc.html#fli-ffp-ppc">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ffp.html#fli-ffp">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

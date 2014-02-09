@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_wait_input()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_wait_input(id,timeout)
+     int id;
+     int *timeout;
+     </pre>
+
+   <p>Wait until I/O is ready on a file descriptor or until a timeout occurs
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>QP_wait_input()</code> waits until input is ready on file descriptor <var>id</var>
+or until <var>timeout</var> milliseconds pass. 
+If timeout is <code>QP_NO_TIMEOUT</code>, it waits indefinitely for input to
+arrive on <var>id</var>. 
+While waiting, <code>QP_wait_input()</code> makes sure that registered callbacks
+are called when input is ready on other file descriptors. However, no
+callback will be called when input is ready on <var>id</var> even if one
+is registered, rather <code>QP_wait_input()</code> returns immediately.
+
+<h4 class="subheading">Return Values</h4>
+
+     <dl>
+
+     <br><dt><code>QP_SUCCESS</code>
+     <dd>if input arrived on <var>id</var>
+
+     <br><dt><code>QP_FAILURE</code>
+     <dd>if a timeout occurred
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>if an error occurs
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_select()</code>,
+<code>QP_add_*()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-QU_alloc_mem.html#cfu-ref-QU_alloc_mem">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-vfprintf.html#cfu-ref-vfprintf">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

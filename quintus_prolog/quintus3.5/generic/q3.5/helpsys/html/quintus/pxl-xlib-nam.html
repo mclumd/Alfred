@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Naming Conventions</h4>
+
+   <p>ProXL has many primitives that are very similar (though none that are
+identical) to Xlib functions.  Unfortunately, Xlib's naming conventions
+are not very convenient in Prolog, so ProXL uses different names.  ProXL
+names are all lowercase, with underscores used to separate words. 
+Also, ProXL names do not have prefixes or suffixes to specify the context
+they are to be used in; in Prolog, context is sufficient to
+disambiguate.  For example, the line style called <code>LineDoubleDash</code> by
+Xlib is called simply <code>double_dash</code> by Prolog, since the context in which
+it is used will make clear that it is a line style.
+
+   <p>To be a little more formal about it, here's a rough algorithm for
+translating names:
+
+     <ol type=1 start=1>
+
+     <li>Strip off the X prefix from a function or structure name, or the context
+prefix or suffix from a #defined symbol. 
+<li>Insert an underscore before the last in any sequence of one or more
+uppercase letters. 
+<li>Make all letters lowercase.
+        </ol>
+
+   <p>So <code>XOpenDisplay</code> would become <code>open_display</code>, <code>NorthWestGravity</code> would
+become <code>north_west</code>, and <code>LSBFirst</code> would become <code>lsb_first</code>.
+
+   <p>Note that not all X functions have direct ProXL counterparts.  In some
+cases, a single ProXL procedure fills the role of many Xlib functions. 
+For example, ProXL has no <code>set_fill_rule</code> procedure, instead you use
+<code>put_graphics_attributes/2</code>.  Also, in a few cases, Xlib functions that
+take boolean arguments have been split into two different ProXL
+procedures, one for each boolean state.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-xlib-arg.html#pxl-xlib-arg">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-xlib.html#pxl-xlib">Up</a>
+</ul>
+</div>
+   </body></html>
+

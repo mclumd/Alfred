@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Linking the DLL</h5>
+
+   <p>Finally, use <code>qld</code> to link the DLL with the code produced in the previous steps
+and any additional libraries, e.g.
+
+<pre class="example">     C:\&gt; <kbd>qld -Ydo vbqp.dll vbqp.qof vbqp.obj -LD oleaut32.lib</kbd>
+     </pre>
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> <code>qcon</code> will complain that there is no
+<code>runtime_entry/1</code>. This can be ignored. 
+</blockquote>
+
+   <p>The option <code>-o</code> is used to name the resulting DLL, in this case <code>vbqp.dll</code>. 
+The option <code>-d</code> is used to ensure that any dependencies are also linked. 
+The option <code>-LD</code> passes the rest of the command line to the linker, in
+this case it causes the library <code>oleaut32.lib</code> to be linked with the
+resulting DLL.
+
+   <p>The option <code>-Y</code> (new in this release) tells <code>qld</code> to produce a DLL as
+opposed to an ordinary EXE file. 
+A similar effect could be obtained with:
+
+<pre class="example">     C:\&gt; <kbd>qld -do vbqp.dll vbqp.qof vbqp.obj -LD /dll oleaut32.lib</kbd>
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="sap-rge-dll-cc.html#sap-rge-dll-cc">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-rge-dll.html#sap-rge-dll">Up</a>
+</ul>
+</div>
+   </body></html>
+

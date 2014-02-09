@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Sharing and Cloning of GCs</h4>
+
+   <p>When you create a drawable without specifying a GC or any GC attributes,
+the drawable gets the default GC for that depth and screen.  This
+default GC has all the default GC attributes, except that foreground is
+black and background is white.  So in fact, you can often create a
+drawable and draw into it without worrying about GCs or graphics
+attributes at all.  You are not permitted to modify the default GC.
+
+   <p>When a drawable gets the default GC, it is actually sharing that GC
+with all the other drawables that use the default.  And if you specify
+a GC when creating a drawable, or if you change the GC of a drawable,
+you are sharing that GC with any other drawables that use that GC. 
+If you should modify a shared GC, all the drawables that use that GC
+will feel the effect.  However, if you modify the graphics attributes
+of a drawable, only that drawable will feel the effect.  This is
+accomplished by cloning the shared GC, modifying the new copy as
+specified, and installing the clone as the drawable's GC.
+
+   <p>It helps to think of two different levels of use.  If you never create
+a GC, and only modify graphics attributes of drawables, then you can
+think of the graphics attributes as belonging to drawables directly. 
+The graphics attributes of a drawable will only change when you do it
+directly.  However, if you create GCs, install them in drawables, and
+modify them directly, then a drawable's graphics attributes can change
+out from under it.
+
+   <p>This can be very useful.  You can change many drawables' graphics
+attributes all at once by changing their shared GC.  And you can still
+change one of these drawables' graphics attributes directly, without
+changing the others.  However, once you do this, that drawable will no
+longer share GCs with the other, so changes to the shared GC will no
+longer be felt by that drawable.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-xlib-mem.html#pxl-xlib-mem">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-xlib-mgc.html#pxl-xlib-mgc">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-xlib.html#pxl-xlib">Up</a>
+</ul>
+</div>
+   </body></html>
+

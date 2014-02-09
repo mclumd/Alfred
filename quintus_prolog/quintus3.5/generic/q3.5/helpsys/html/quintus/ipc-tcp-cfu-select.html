@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_select()</code></h5>
+
+<pre class="example">     #include "tcp.h"
+     
+     int FD,Block;
+     double Timeout;
+     
+     ...
+     
+     switch (tcp_select(Block, Timeout, &amp;FD))
+     {
+     case tcp_ERROR:
+         ... an error occurred.
+     case tcp_TIMEOUT:
+         ... handle a timeout
+     case tcp_SUCCESS:
+         ... input is ready on FD
+     }
+     </pre>
+
+   <p><code>tcp_select()</code> is used to determine which file descriptor is ready for
+input.  It returns 3 status values:
+
+     <dl>
+
+     <br><dt><code>tcp_ERROR</code>
+     <dd>the error message is printed using the system
+function <code>perror(3)</code>.
+
+     <br><dt><code>tcp_TIMEOUT</code>
+     <dd>the time interval specified in Timeout (seconds)
+expired.
+
+     <br><dt><code>tcp_SUCCESS</code>
+     <dd>the FileDescriptor returned is ready to be read.
+
+   </dl>
+
+   <p>With <code>Block == tcp_BLOCK</code>, <code>tcp_select()</code> will ignore the Timeout parameter,
+and simply block until some data is available.
+
+   <p>With <code>Block == tcp_POLL</code>, <code>tcp_select()</code> will sleep for Timeout seconds, or
+until data is available, whichever comes first.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-cfu-shutdown.html#ipc-tcp-cfu-shutdown">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-cfu-accept.html#ipc-tcp-cfu-accept">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-cfu.html#ipc-tcp-cfu">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Translation of Grammar Rules into Prolog Clauses</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ref-gru-tra-lgr.html#ref-gru-tra-lgr">ref-gru-tra-lgr</a>:                      Listing Grammar Rules
+</ul>
+
+   <p>Grammar rules are merely  a  convenient
+abbreviation  for ordinary Prolog clauses.  Each grammar rule is translated
+into a Prolog clause as it is compiled.  This translation is
+described below.
+
+   <p>The procedural interpretation of a grammar rule is that it takes an
+input list of symbols or character codes, analyzes some initial
+portion of that list, and produces the remaining portion (possibly
+enlarged) as output for further analysis.  The arguments required for
+the input and output lists are not written explicitly in a grammar
+rule, but are added when the rule is translated into an ordinary
+Prolog clause.  The translations shown differ from the output of
+<code>listing/[0,1]</code> in that internal translations such as variable
+renaming are not represented.  This is done in the interests of
+clarity.  For example, a rule such as (A) will be depicted as
+translating into (B) rather than (C).
+<pre class="example">     p(X) --&gt; q(X). (A)
+     </pre>
+
+<pre class="example">     p(X, S0, S) :-
+             q(X, S0, S). (B)
+     </pre>
+
+<pre class="example">     p(A,B,C) :-
+             q(A,B,C). (C)
+     </pre>
+
+   <p>If there is more than one non-terminal on the right-hand side, as in
+(D) the corresponding input and output arguments are identified,
+translating into (E):
+
+<pre class="example">     p(X, Y) --&gt; q(X), r(X, Y), s(Y). (D)
+     </pre>
+
+<pre class="example">     
+     p(X, Y, S0, S) :- (E)
+         q(X, S0, S1),
+         r(X, Y, S1, S2),
+         s(Y, S2, S).
+     </pre>
+
+   <p>Terminals are translated using the built-in predicate <code>'C'(S1, X, S2)</code>,
+read as "point S1 is connected by terminal X to point S2", and defined
+by the single clause
+
+<pre class="example">     'C'([X|S], X, S).
+     </pre>
+
+   <p>(This predicate is not normally useful in itself; it has been given the name
+uppercase <code>c</code> simply to avoid pre-empting a more useful name.) 
+Then, for instance (F) is translated into (G):
+
+<pre class="example">     p(X) --&gt; [go, to], q(X), [stop]. (F)
+     </pre>
+
+<pre class="example">     p(X, S0, S) :- (G)
+         'C'(S0, go, S1),
+         'C'(S1, to, S2),
+         q(X, S2, S3),
+         'C'(S3, stop, S).
+     </pre>
+
+   <p>Extra conditions expressed as explicit procedure calls, enclosed in
+curly braces, naturally translate into themselves.  For example (H)
+translates to (I):
+<pre class="example">     p(X) --&gt; [X], {integer(X), X &gt; 0}, q(X). (H)
+     </pre>
+
+<pre class="example">     p(X, S0, S) :- (I)
+         'C'(S0, X, S1),
+         integer(X),
+         X &gt; 0,
+         q(X, S1, S).
+     </pre>
+
+   <p>Similarly, a cut is translated literally.
+
+   <p>Terminals on the left-hand side of a rule, enclosed in square
+brackets, translate into <code>'C'/3</code> goals with the first and third
+arguments reversed.  For example, (J) becomes (K):
+<pre class="example">     is(N), [not] --&gt; [aint]. (J)
+     </pre>
+
+<pre class="example">     is(N, S0, S) :- (K)
+         'C'(S0, aint, S1),
+         'C'(S, not, S1).
+     </pre>
+
+   <p>Disjunction has a fairly obvious translation.  For example, (L), a
+rule that equates phrases like "(sent) a letter to him" and "(sent)
+him a letter", translates to (M):
+<pre class="example">     args(X, Y) --&gt; (L)
+             dir(X), [to], indir(Y) |
+             indir(Y), dir(X).
+     </pre>
+
+<pre class="example">     args(X, Y, S0, S) :- (M)
+         (   dir(X, S0, S1),
+             'C'(S1, to, S2),
+             indir(Y, S2, S)
+         |   indir(Y, S0, S1),
+             dir(X, S1, S)
+         ).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-gru-sum.html#ref-gru-sum">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-gru-exa.html#ref-gru-exa">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-gru.html#ref-gru">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

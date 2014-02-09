@@ -1,0 +1,510 @@
+#! /bin/sh
+# [PM] 3.5 updated for CVS tree
+# [PM] 3.5 use pre-processing variables 3.5, 
+#
+#   File   : install3.4
+#   SCCS   : @(#)install3.4	76.2 05/20/97
+#   Author : Jim Crammond, David Connelly
+#   Purpose: Top level installation script for Quintus Prolog 3.5
+#            
+#   Usage: install3.5
+#   Flags:   -r remove installation
+#
+#   Copyright (C) 1993  Quintus Corporation
+#
+
+# [PM] 3.5 set -x for debugging
+if [ "x${QP_SH_X_FLAG}" != "x" ]; then
+  set ${QP_SH_X_FLAG}
+fi
+
+# [PM] 3.5
+LC_ALL=C
+
+# Installation Script for QP3.5
+VERSION=3.5
+
+PATH=/bin:/usr/bin:/usr/etc:/usr/ucb:/usr/bsd
+export PATH
+
+LOG=/dev/null
+
+# [PM] 3.5 load install-time parameters
+config_file=./config.install
+if [ -f ${config_file} ]; then
+  . ${config_file}
+fi
+
+: ${INSTALL_SED=sed}            # [PM] 3.5 should be set in config.install
+
+#--- Functions
+
+error()
+{
+    echo
+    echo "** $*" | tee -a $LOG >&2
+    echo "** INSTALLATION ABORTED" | tee -a $LOG >&2
+    exit 1
+}
+
+lecho()
+{
+    echo "$*"
+    echo "$*" >> $LOG
+}
+
+# [PM] 3.5 FIXME: use printf
+# figure out echo version
+if [ "`echo -n a`" = a ]
+then
+	ECHON=-n
+	ECHOC=
+else	ECHON=
+	ECHOC='\c'
+fi
+
+necho()
+{
+    echo $ECHON "${*}$ECHOC"
+}
+
+read_yes()
+{
+	while true
+	do
+		read ans
+		ans=`echo $ans | tr '[A-Z]' '[a-z]'`
+		[ "$ans" = y -o "$ans" = "yes" ] && return 0
+		[ "$ans" = n -o "$ans" = "no" ] && return 1
+		necho "** answer yes or no: "
+	done
+}
+
+member()
+{
+	# true if $1 is a member of the list $2 $3 ...
+	elt=$1
+	shift
+
+	for i in $*
+	do
+		[ "$elt" = "$i" ] && return 0
+	done
+	return 1
+}
+
+sort_dependencies()
+{
+	# $1 is list of <comp1> <depend1> <comp2> <depend2> ...
+	# multiple dependencies given as <dep1>:<dep2>:<dep3>
+	# $2 is list of selected components
+	# $3 is list of already installed components
+	unsorted="$1"
+	selected="$2"
+	instd="$3"
+	while [ "$unsorted" ]
+	do
+		prev="$unsorted"
+		set $unsorted
+		unsorted=
+		while [ $# -gt 0 ]
+		do
+		    if [ $2 = none ]
+		    then
+			sorted="$sorted $1"
+		    else
+			newdep=
+			for dep in `echo $2 | ${INSTALL_SED} 's/:/ /g'`
+			do
+			    saveargs="$*"	# needed for hpux
+			    member $dep $selected $instd || continue
+		    	    member $dep $sorted $instd || newdep="$newdep $dep"
+			    set $saveargs
+			done
+			if [ "$newdep" ]
+			then
+			    newdep=`echo $newdep | ${INSTALL_SED} 's/ /:/g'`
+			    unsorted="$unsorted $1 $newdep"
+		    	else
+			    unsorted="$unsorted $1 none"
+		    	fi
+		    fi
+		    shift
+		    shift
+		done
+
+		[ "$unsorted" = "$prev" ] && error "Dependency loop detected"
+	done
+
+	echo $sorted
+}
+
+greeting()
+{
+cat <<!END
+
+	Quintus Prolog Release $VERSION Installation
+
+   Installer            : $USER
+   Hostname             : $HOST
+   Machine type         : $ARCHDIR
+   Operating System	: $OSR
+   Date of installation : `date`
+!END
+} 
+
+Usage()
+{
+cat <<-!END
+Usage: install3.5 [-r]
+Flags: -r  Delete installed components
+!END
+exit 1
+}
+
+#--- Setup general trap
+trap '{
+    error "Aborted by User"
+}' 1 2 3
+
+#--- Get default quintus home
+QPHOME=`pwd`; export QPHOME
+# look for automounted directory
+AM=`expr $QPHOME : '/tmp_mnt\(/.*\)'`
+if [ "$AM" -a "$AM" != "$QPHOME" -a -d "$AM" ]
+then
+	QPHOME=$AM
+fi
+
+#--- Process flags
+
+action='(re)install'
+if [ $# -eq 0 ]
+then
+    # [PM] 3.5 reinstall is now the default
+    # action='(re)install'
+    :
+elif [ $# -eq 1 ]
+then
+	case "$1" in
+	    -i)
+              # action='(re)install' # [PM] 3.5 silently ignore for backward compatibility
+              :
+              ;;
+            # [PM] 3.5 (was documented as -d). Pointless and scary. 
+	    # -r) action=remov ;;
+	    *)
+              Usage
+              ;;
+    	esac
+else
+	Usage
+fi
+
+#--- Gather host information
+# [PM] 3.5 should we use $LOGNAME or $USER from environment instead?
+if [ -f /usr/ucb/whoami ]
+then	USER=`whoami`
+else	USER=`id | ${INSTALL_SED} -e 's/[^(]*(//' -e 's/) .*//'`
+fi
+
+HOST=`uname -n`
+
+# #--- Get Arch and OS version
+# ARCH=`uname -m`
+# OSR=`uname -sr`
+#
+# case `echo $ARCH $OSR | sed 's/ /-/g'` in
+# 	i?86-Linux-*)		ARCHDIR=linux; ANAME='Linux' ;;
+# 	sun4*-SunOS-4.1.*)	ARCHDIR=sun4-4; ANAME='Sun 4' ;;
+# 	sun4*-SunOS-5.*)	ARCHDIR=sun4-5; ANAME='Sun 4' ;;
+# 	9000/7??-HP-UX-?.11.??)	ARCHDIR=hppa;	ANAME='HP PA-RISC' ;;
+# 	9000/8??-HP-UX-?.11.??) ARCHDIR=hppa;   ANAME='HP PA-RISC' ;;
+# 	9000/7??-HP-UX-?.10.??)	ARCHDIR=hppa;	ANAME='HP PA-RISC' ;;
+# 	9000/8??-HP-UX-?.10.??) ARCHDIR=hppa;   ANAME='HP PA-RISC' ;;
+# 	9000/7??-HP-UX-A.09.??)	ARCHDIR=hppa;	ANAME='HP PA-RISC' ;;
+# 	9000/8??-HP-UX-A.09.??)	ARCHDIR=hppa;	ANAME='HP PA-RISC' ;;
+# 	00????????00-AIX-3)	ARCHDIR=rs6000;	ANAME='IBM RS/6000'
+# 				OSR='AIX 4.3' ;;
+# 	alpha-OSF1-V4.?)	ARCHDIR=alpha;	ANAME='DEC ALPHA' ;;
+# 	IP??-IRIX64-6.*)	ARCHDIR=sgi;	ANAME='SGI MIPS' ;;	
+# 	IP??-IRIX-6.*)		ARCHDIR=sgi;	ANAME='SGI MIPS' ;;
+# 	# tadpole sparcbook
+# 	tp_s*-SunOS-4.1.*)	ARCHDIR=sun4-4;	ANAME='Sun 4' ;;
+# 	tp_s*-SunOS-5.*)	ARCHDIR=sun4-5;	ANAME='Sun 4' ;;
+#
+# 	*)	error "This product is not supported on $ARCH running $OSR" ;;
+# esac
+#
+#--- Get Arch and OS version
+ARCH="`uname -m`"
+
+case "`uname -a`" in
+  *AIX*)
+    OSR="`uname -s`-`uname -v`.`uname -r`" # e.g., AIX-5.1
+  ;;
+  *)
+   OSR="`uname -sr`"
+   ;;
+esac
+
+case "`echo $ARCH $OSR | ${INSTALL_SED} 's/ /-/g'`" in
+	i?86-Linux-*)		ARCHDIR=linux; ANAME='Linux' ;;
+	x86_64-Linux-*)		ARCHDIR=linux; ANAME='Linux' ;;
+	sun4*-SunOS-4.1.*)	ARCHDIR=sun4-4; ANAME='Sun 4' ;;
+	sun4*-SunOS-5.*)	ARCHDIR=sun4-5; ANAME='Sun 4' ;;
+	9000/7??-HP-UX-?.11.??)	ARCHDIR=hppa;	ANAME='HP PA-RISC' ;;
+	9000/8??-HP-UX-?.11.??) ARCHDIR=hppa;   ANAME='HP PA-RISC' ;;
+	# 9000/7??-HP-UX-?.10.??)	ARCHDIR=hppa;	ANAME='HP PA-RISC' ;;
+	# 9000/8??-HP-UX-?.10.??) ARCHDIR=hppa;   ANAME='HP PA-RISC' ;;
+	# 9000/7??-HP-UX-A.09.??)	ARCHDIR=hppa;	ANAME='HP PA-RISC' ;;
+	# 9000/8??-HP-UX-A.09.??)	ARCHDIR=hppa;	ANAME='HP PA-RISC' ;;
+# [PM] 3.5 changed OSR for AIX above (used to ignore version (e.g., 4 for 4.3)) and only look at revision (e.g., 3 for 4.3)
+#	00????????00-AIX-3)	ARCHDIR=rs6000;	ANAME='IBM RS/6000'
+#				OSR='AIX 4.3' ;;
+
+# [PM] 3.5 We do not support AIX 4 anymore
+#	00????????00-AIX-4.3)	ARCHDIR=rs6000;	ANAME='IBM RS/6000'
+#				OSR='AIX 4.3'
+#                                ;;
+
+	00????????00-AIX-5.?)	ARCHDIR=rs6000;	ANAME='IBM RS/6000'
+				# OSR='AIX 4.3'
+                                ;;
+
+	alpha-OSF1-V4.?)	ARCHDIR=alpha;	ANAME='DEC ALPHA' ;;
+	alpha-OSF1-V5.?)	ARCHDIR=alpha;	ANAME='Tru64' ;; # [PM] 3.5 no vendor, Tru64 changes owner too often...
+	IP??-IRIX64-6.*)	ARCHDIR=sgi;	ANAME='SGI MIPS' ;;	
+	IP??-IRIX-6.*)		ARCHDIR=sgi;	ANAME='SGI MIPS' ;;
+	# tadpole sparcbook
+	tp_s*-SunOS-4.1.*)	ARCHDIR=sun4-4;	ANAME='Sun 4' ;;
+	tp_s*-SunOS-5.*)	ARCHDIR=sun4-5;	ANAME='Sun 4' ;;
+
+	*)	error "This product is not supported on $ARCH running $OSR" ;;
+esac
+
+BANNER=`echo $ANAME, $OSR | cut -c1-31`
+
+#--- Print greeting message
+greeting
+
+#--- Get Quintus home directory
+while echo
+do
+    necho "Enter name of Quintus home directory [$QPHOME]: "
+    read ans
+    ans=${ans:-$QPHOME}
+    if [ `expr "$ans" : '\/'` -ne 1 ]
+    then
+	echo "** '$ans' must be an absolute pathname" >&2
+    elif [ ! -d "$ans" ]
+    then
+	echo "** '$ans' does not exist or is not a directory" >&2
+    elif [ ! -w "$ans" ]
+    then
+	echo "** '$ans' is not writable by $USER" >&2
+    else
+	QPHOME=$ans
+	break
+    fi
+done
+#---
+
+# [PM] 3.5 was used and set in several postinstall files
+RUNDIR=$QPHOME/bin$VERSION/$ARCHDIR
+export RUNDIR
+
+#--- Now send greeting to log file
+LOG=$QPHOME/Instlog_$ARCHDIR
+[ -f $LOG ] && {
+    echo
+    echo "% Saving old log file as `basename $LOG.old`..."
+    echo
+    mv $LOG $LOG.old
+}
+rm -f $LOG
+touch $LOG
+chmod 666 $LOG
+greeting > $LOG
+
+#--- Echo additional info to screen and log file
+cat <<!END | tee -a $LOG
+
+   Quintus directory    : $QPHOME
+   Installation log file: $LOG
+
+!END
+
+#--- Install menu
+#
+#    components are identified by directories in the installd directory
+#    each of which contain at least an info file that gives information
+#    about the component. 
+
+cat <<!END | tee -a $LOG
+
+   Select components that you wish to install.  You may type 'all'
+   to select all components or else type the individual components
+   on one line (e.g. pro edit qui).  Components marked with '*'
+   appear to be already installed.
+
+   The following components are available:
+
+!END
+
+INSTD=`pwd`/installd$VERSION
+cd installd$VERSION
+
+components=`echo ./*/info | ${INSTALL_SED} 's;\./\([^/]*\)/info;\1;g'`
+allcomponents=
+
+cd $QPHOME
+installed=`[ -f .inst.$ARCHDIR ] && cat .inst.$ARCHDIR`
+
+for comp in $components
+do
+	. $INSTD/$comp/info
+        # [PM] 3.5 should we warn user that some components require root user?
+	if $ROOT && [ "$USER" != root ]; then
+		continue
+	fi
+	allcomponents="$allcomponents $comp"
+	space=`echo $SPACE | awk '{ printf "(%3.1fMb)", $1 / 1000 }'`
+	inst=' '
+	member $comp $installed && inst='*'
+
+	lecho "	$inst $comp	- $DESC  $space"
+done
+
+#--- Get components, validate and check component dependencies
+lecho
+
+selected=
+while [ -z "$selected" ]
+do
+	necho 'Select [all]: '
+	read line
+	if [ -z "$line" -o "$line" = all ]
+	then
+		selected=`echo $allcomponents`
+	else
+	    ok=true
+	    for s in $line
+	    do
+		if member $s $allcomponents
+		then
+		    if [ $action != remov ]
+		    then
+			. $INSTD/$s/info
+			for dep in $DEPEND
+			do
+			    if member $dep none $line $installed
+			    then
+				true
+			    else
+			        echo "** component '$s' requires component '$dep' to be installed"
+				necho 'Do you wish to proceed anyway? (y/n) '
+				read_yes || ok=false
+			    fi
+			done
+		    fi
+		else
+		    echo "** component '$s' unrecognised" >&2
+		    ok=false
+		fi
+	    done
+	    $ok && selected="$line"
+	fi
+done
+
+lecho
+lecho "The following components will be ${action}ed:  $selected"
+echo
+necho 'Do you wish to continue? (y/n) '
+
+read_yes || error "Components not ${action}ed"
+
+#--- Get directories, space requirements and dependency info
+dirs=
+ifiles=
+space=0
+depends=
+
+for comp in $selected
+do
+	. $INSTD/$comp/info
+	dirs="$dirs $FILES"
+	ifiles="$ifiles `eval echo $INSTALLED`"
+	space="$space + $SPACE"
+	depends="$depends $comp `echo $DEPEND | ${INSTALL_SED} 's/ /:/g'`"
+done
+
+dirs=`eval echo $dirs`		# remove extra spaces in $dirs
+space=`expr $space`
+
+#--- Begin Installation
+
+umask 022
+if [ $action = remov ]
+then
+	lecho
+	lecho % Removing $ifiles
+	rm -f $ifiles
+	lecho % Removing $dirs
+	rm -fr $dirs
+	lecho % done
+
+	for f in $dirs $ifiles
+	do
+	    if [ -f $f -o -d $f ]
+	    then
+		error "$f not removed"
+	    fi
+	done
+        # [PM] 3.5 FIXME: Should not hardwire /tmp
+
+	rm -f /tmp/inst$$
+	for comp in $installed
+	do
+		member $comp $selected || echo $comp >> /tmp/inst$$
+	done
+	[ -f /tmp/inst$$ ] && mv /tmp/inst$$ .inst.$ARCHDIR
+	exit 0
+fi
+
+# [PM] 3.5 removed tape drive hackery
+
+#--- Set permissions
+lecho
+
+installf()
+{	chmod -R $4 $1 || return 1
+	chgrp $3 $1 2> /dev/null || true # ignore errors for chown/chgrp
+	chown $2 $1 2> /dev/null || true
+	return 0
+}
+
+# [PM] 3.5 FIXME: Surely the 'bin' group and user are platform dependent!?
+installf . bin bin a+rX
+
+#--- Execute postinstall scripts
+export QPHOME ARCHDIR VERSION BANNER USER LOG RUNDIR
+for comp in `sort_dependencies "$depends" "$selected" "$installed"`
+do
+	script=$INSTD/$comp/postinstall
+	if [ -f $script ]
+	then
+		lecho "% Executing $comp install script"
+		if sh ${QP_SH_X_FLAG} $script
+		then
+			lecho "% Installation of $comp was successful"
+		else
+			error "Installation of $comp failed"
+		fi
+	fi
+	echo $comp >> .inst.$ARCHDIR
+done
+
+lecho
+lecho "% Installation complete."
+exit 0

@@ -1,0 +1,490 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>absolute_file_name/[2,3]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>absolute_file_name</code>(<var>+RelFileSpec</var>,
+                          <var>-AbsFileName</var>)
+
+   <p><code>absolute_file_name</code>(<var>+RelFileSpec</var>,
+                          <var>+Options</var>,
+                          <var>-AbsFileName</var>)
+
+   <p><code>absolute_file_name</code>(<var>+RelFileSpec</var>,
+                          <var>+Options</var>,
+                          <var>*AbsFileName</var>)
+
+   <p>Unifies <var>AbsFileName</var> with the the absolute filename
+that corresponds to the relative file specification <var>RelFileSpec</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>RelFileSpec</var> <dfn>file_spec</dfn>
+     <dd>A valid file specification.
+
+     <br><dt><var>AbsFileName</var> <dfn>atom</dfn>
+     <dd>The first absolute filename
+derived from <var>RelFileSpec</var> that satisfies the access modes given
+by <var>Options</var>.
+
+     <br><dt><var>Options</var> <dfn>list</dfn>
+     <dd>A list of zero or more of the following:
+
+          <dl>
+
+          <br><dt><code>ignore_underscores(</code><var>Bool</var><code>)</code>
+          <dd><var>Bool</var> =
+               <dl>
+
+               <br><dt><code>true</code>
+               <dd>When constructing an absolute
+filename that matches the given access modes, two names are tried:
+First the absolute filename derived directly from <var>RelFileSpec</var>, and
+then the filename obtained by first deleting all underscores from
+<var>RelFileSpec</var>.
+
+               <br><dt><code>false</code>
+               <dd>(default) Suppresses any deletion of underscores. 
+</dl>
+
+          <br><dt><code>extensions(</code><var>Ext</var><code>)</code>
+          <dd>
+ Has no effect if
+<var>RelFileSpec</var> contains a file extension.  <var>Ext</var> is an atom
+or a list of
+atoms, each atom representing an extension that should be tried when
+constructing the absolute filename.  The extensions are tried in the
+order they appear in the list.  Default value is <var>Ext</var> = <code>['']</code>,
+i.e. only the given <var>RelFileSpec</var> is tried, no extension is
+added. To specify <code>extensions('')</code> or <code>extensions([])</code> is
+equal to not giving any extensions option at all.
+
+          <br><dt><code>file_type(</code><var>Type</var><code>)</code>
+          <dd>Has no effect if <var>RelFileSpec</var>
+contains a file extension.  Picks an adequate extension for
+the operating system currently running, which means that programs
+using this option instead of <code>extensions(</code><var>Ext</var><code>)</code> will be more portable
+between operating systems.  <var>Type</var> must be one of the following atoms:
+               <dl>
+
+               <br><dt><code>text</code>
+               <dd>implies <code>extensions([''])</code>. 
+<br>
+
+               <p><var>RelFileSpec</var> is a file without any extension.  (Default)
+
+               <br><dt><code>prolog</code>
+               <dd>implies <code>extensions(['pl',''])</code>. 
+<br>
+
+               <p><var>RelFileSpec</var> is a Prolog source file, maybe with a <code>.pl</code> extension.
+
+               <br><dt><code>object</code>
+               <dd>implies <code>extensions(['o',''])</code>
+<br>
+
+               <p>(substitute the actual object file extension for <code>o</code>)
+<var>RelFileSpec</var> is a foreign language object file, maybe
+with an extension.
+
+               <br><dt><code>executable</code>
+               <dd>implies <code>extensions(['so',''])</code>
+<br>
+
+               <p>(substitute the actual shared object file extension for <code>so</code>)
+<var>RelFileSpec</var> is a foreign executable (shared object file), maybe
+with an extension.
+
+               <br><dt><code>qof</code>
+               <dd>implies <code>extensions(['qof',''])</code>. 
+<br>
+
+               <p><var>RelFileSpec</var> is a Prolog object code file, maybe with a <code>.qof</code>
+extension.
+
+               <br><dt><code>directory</code>
+               <dd>implies <code>extensions([''])</code>. 
+<br>
+
+               <p><var>RelFileSpec</var> is a directory, not a regular file. Only when this
+option is present can <code>absolute_file_name/3</code> access directories
+without raising an exception.
+
+               <br><dt><code>foreign</code>
+               <dd>implies <code>extensions(['o',''])</code>
+<br>
+
+               <p>(substitute the actual object file extension for <code>o</code>)
+Same as <code>object</code>. Included for backward compatibility. Might be removed
+from future releases. 
+</dl>
+
+          <br><dt><code>ignore_version(</code><var>Bool</var><code>)</code>
+          <dd>    This switch has no effect
+on systems where files don't have version numbers. <var>Bool</var> =
+
+               <dl>
+
+               <br><dt><code>true</code>
+               <dd>When looking for a file that
+obeys the specified access modes, the version numbers will be ignored. 
+The returned absolute filename will not contain any version number. 
+To find a filename that includes a proper version number, use
+<code>absolute_file_name/3</code> with the returned file as input, and
+the option <code>ignore_version(false</code>).
+
+               <p>See description of <code>access</code> option.
+
+               <br><dt><code>false</code>
+               <dd>(default) Version numbers are significant.
+
+          </dl>
+
+          <br><dt><code>access(</code><var>Mode</var><code>)</code>
+          <dd><var>Mode</var> must be one of the following:
+
+               <dl>
+
+               <br><dt><code>read</code>
+               <dd><var>AbsFileName</var> must be readable.
+
+               <br><dt><code>write</code>
+               <dd>If <var>AbsFileName</var> exists, it must be
+writable.  If it doesn't exist, it must be possible to create.
+
+               <br><dt><code>append</code>
+               <dd>If <var>AbsFileName</var> exists, it must be
+writable.  If it doesn't exist, it must be possible to create.
+
+               <br><dt><code>exist</code>
+               <dd>The file represented by <var>AbsFileName</var> must exist.
+
+               <br><dt><code>none</code>
+               <dd>(default) The file
+system is not accessed. The first absolute filename that is derived
+from <var>RelFileSpec</var> is returned. Note that if this option is
+specified, no existence exceptions can be raised.
+
+               <br><dt>list of access modes
+               <dd>A list of one or more of the above
+options. If <var>AbsFile</var> exists, it must obey every specified option
+in the list. This makes it possible to combine a read and write, or
+write and exist check, into one call to <code>absolute_file_name/3</code>.
+
+          </dl>
+<br><dt>
+          <dd>
+<strong>Please note:</strong> The following only applies to file systems with version
+numbered files.  If the user explicitly has specified a version number,
+only that version is considered. If no version number is supplied, the
+version number of <var>AbsFileName</var> is determined by:
+
+               <dl>
+
+               <br><dt><code>read</code>
+               <dd>newest readable version.
+
+               <br><dt><code>write</code>
+               <dd>the file exists, the newest version
+plus one. If the file doesn't exist, a system dependent "youngest"
+version number.
+
+               <br><dt><code>append</code>
+               <dd>If the file exists, the newest version. 
+If the file doesn't exist, a system dependent "youngest"
+version number.
+
+               <br><dt><code>exist</code>
+               <dd>newest version.
+
+               <br><dt><code>none</code>
+               <dd>A system dependent "youngest"
+version number. Note that this can
+be switched of with the <code>ignore_version</code> option.
+
+               <br><dt>list of modes
+               <dd>newest version. 
+</dl>
+
+          <br><dt><code>file_errors(</code><var>Val</var><code>)</code>
+          <dd><var>Val</var> =
+               <dl>
+
+               <br><dt><code>error</code>
+               <dd>(default) Raise an exception if a file derived from <var>RelFileSpec</var>
+has the wrong permissions, that is, can't be accessed at all, or doesn't
+satisfy the the access modes specified with the <code>access</code> option.
+
+               <br><dt><code>fail</code>
+               <dd>Fail if a file derived from <var>RelFileSpec</var> has the wrong
+permissions. Normally an exception is raised, which
+might not always be a desirable
+behavior, since files that do obey the access options might
+be found later on in the search.  When this option is given, the search
+space is guaranteed to be exhausted. Note that the effect of this option
+is the same as having the Prolog flag <code>fileerrors</code> set to <code>off</code>. 
+</dl>
+
+          <br><dt><code>solutions(</code><var>Val</var><code>)</code>
+          <dd>i'Val' =
+               <dl>
+
+               <br><dt><code>first</code>
+               <dd>(default) As soon as a file derived from <var>RelFileSpec</var> is found,
+commit to that file. Makes <code>absolute_file_name/3</code> determinate.
+
+               <br><dt><code>all</code>
+               <dd>Return each file derived from <var>RelFileSpec</var> that is found. The files
+are returned through backtracking. This option is probably most useful in
+combination with the option <code>file_errors(fail)</code>. 
+</dl>
+
+     </dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>We can restrict our description to <code>absolute_file_name/3</code>, because
+<code>absolute_file_name/2</code> can be defined as:
+<pre class="example">     absolute_file_name(RelFileSpec, AbsFileName) :-
+        Options = [ ignore_underscores(true),
+                    file_type(prolog),
+                    access(exist),
+                    file_errors(fail) ],
+        (  absolute_file_name(RelFileSpec,
+                              Options,
+                              AbsFileName)
+        -&gt; true
+        ;  absolute_file_name(RelFileSpec,
+                              [],
+                              AbsFileName)
+        ).
+     </pre>
+
+   <p>Note that the semantics of <code>absolute_file_name/2</code> has changed slightly since
+previous releases. The difference is that <code>absolute_file_name/2</code> now always
+succeeds and returns an absolute filename, also when the <var>RelFileSpec</var> is
+a compound
+term. For instance, if the relative filename is <code>library(strings)</code>,
+you get an absolute filename, even if the library file <code>strings.pl</code>
+doesn't exist. In previous releases, this would have raised an exception. 
+If it's important that an error is raised when the file doesn't exist,
+<code>absolute_file_name/3</code> with option <code>access(exist)</code> can be used.
+
+   <p><b>Four phase process:</b> The functionality of <code>absolute_file_name/3</code>
+is most easily described as a four phase process, in which each phase
+gets an infile from the preceding phase, and constructs one or more
+outfiles to be consumed by the succeeding phases. The phases are:
+     <ol type=1 start=1>
+
+     <li> Syntactic rewriting
+<li>Underscore deletion
+<li>Extension expansion
+<li>Access checking
+        </ol>
+
+   <p>Each of the three first phases modifies the infile and produces variants that
+will be fed into the succeeding phases. The functionality of all phases
+but the first are decided with the option list. The last phase checks if
+the generated file exists, and if not asks for a new variant from the
+preceding phases.  If the file exists, but doesn't obey the access
+mode option, a permission exception is raised. If the file
+obeys the access mode option,
+<code>absolute_file_name/3</code> commits to that solution, unifies
+<var>AbsFileName</var> with the filename, and succeeds determinately. For a
+thorough description, see below.
+
+   <p>Note that the relative filename <var>RelFileSpec</var>
+may also be of the form PathAlias(<var>FileSpec</var>),
+in which case the absolute filename of the file <var>FileSpec</var> in
+one of the directories designated by <var>PathAlias</var> is returned
+(see the description of each phase below, and
+ <a href="ref-fdi-fsp.html#ref-fdi-fsp">ref-fdi-fsp</a>).
+
+<h4 class="subheading">Description of each phase</h4>
+
+   <p>(Phase 1) This phase translates the relative file specification given by
+<var>RelFileSpec</var> into the corresponding absolute filename.
+
+   <p>If <var>RelFileSpec</var> is a term with one argument, it is interpreted as
+PathAlias(<var>FileSpec</var>) and outfile becomes the file
+as given by <code>file_search_path/2</code>. 
+  If
+<code>file_search_path/2</code> has more than one solution, outfile is unified
+with the solutions in the order they are generated.  If the succeeding
+phase fails, and there is no more solutions, an existence exception is
+raised.
+
+   <p>If <var>RelFileSpec</var> = <code>''</code>, outfile is unified with the current
+working directory. 
+If <code>absolute_file_name/3</code> is called from a goal in a file being loaded,
+the directory containing that file is considered current working
+directory.  If the succeeding phase fails, an existence exception is
+raised.
+
+   <p>If <var>RelFileSpec</var> is an atom, other than <code>''</code>, it's divided into components. 
+A component are defined to be those characters:
+     <ol type=1 start=1>
+
+     <li>Between the beginning of the filename and the end of the filename
+if there are no <code>/</code>s in the filename. 
+<li>Between the beginning of the filename and the first <code>/</code>. 
+<li>Between any two successive <code>/</code>-groups (where a <code>/</code>-group is defined to be
+a sequence of one or more <code>/</code>s with no non-<code>/</code> character interspersed.) 
+<li>Between the last <code>/</code> and the end of the filename.
+        </ol>
+
+   <p>To give the absolute filename, the following rules are applied to
+each component of <var>RelFileSpec</var>:
+     <ol type=1 start=1>
+
+     <li>        The component <code>~</code><var>user</var><code></code>, if encountered as the first component
+           of <var>RelFileSpec</var>, is replaced by the absolute name
+           of the home directory of <var>user</var>. If <var>user</var> doesn't exist,
+           a permission exception is raised. 
+<li>        The component <code>~</code>, if encountered as the first component
+           of <var>RelFileSpec</var>, is replaced by the absolute name
+           of the home directory of the current user. 
+<li>        If neither (1) nor (2) applies, then <var>RelFileSpec</var>
+           is prefixed with the current working directory. If
+           <code>absolute_file_name/3</code> is called from a goal in a file being
+           loaded, the directory containing that file is considered current
+           working directory. 
+<li>        The component <code>.</code> is deleted. 
+<li>        The component <code>..</code> is deleted together with the directory name
+           syntactically preceding it. For example, <code>a/b/../c</code> is
+           rewritten as <code>a/c</code>. 
+<li>        Two or more consecutive <code>/</code>s are replaced with one <code>/</code>.
+        </ol>
+
+   <p>When these rules have been applied, the absolute filename is unified
+with outfile. If the succeeding phase fails, an existence exception is
+raised.
+
+   <p>(Phase 2) See <code>ignore_underscores</code> option.
+
+   <p>(Phase 3) See <code>extensions</code> and <code>file_type</code> options.
+
+   <p>(Phase 4) See <code>access</code> option.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>domain_error</code>
+     <dd>
+   <var>Options</var> contains an undefined option.
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+    Any of the <var>Options</var> arguments or <var>RelFileSpec</var>
+is not ground.
+
+     <br><dt><code>type_error</code>
+     <dd>
+   In <var>Options</var> or in <var>RelFileSpec</var>.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+   <var>RelFileSpec</var> is syntactically valid but does not correspond to any file.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+   <var>RelFileSpec</var> names an existing file but the file does not obey the given access mode.
+
+   </dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>If an option is specified more than once the rightmost option takes
+precedence. This provides for a convenient way of adding default
+values by putting these defaults at the front of the list of options.
+
+   <p>Note that the default behavior of <code>absolute_file_name/3</code>, that is
+when <var>Options</var> = <code>[]</code>, does not
+mimic the behavior of <code>absolute_file_name/2</code>.
+
+   <p>If <code>absolute_file_name/3</code> succeeds, and the file access option was one
+of {read, write, append}, it is guaranteed that the file can be
+opened with <code>open/[3,4]</code>.  If the access option was <code>exist</code>, the file
+does exist, but might be both read and write protected.
+
+   <p>Note that <code>absolute_file_name/3</code> signals a permission error if a specified
+file refers to a directory (unless the option <code>access(none)</code> is given.)
+
+   <p><code>absolute_file_name/[2,3]</code> is sensitive to the <code>fileerrors</code>
+flag, which causes the predicate to fail rather than raising permission errors
+when reading files with wrong permission.  This has the effect that the search
+space always is exhausted.
+
+   <p>directives
+in the extensions list. This causes the so specified access mode to be used
+as default access mode from there on, and the subsequently generated file
+names will thus be tried for this access mode, and not the default set by
+the access option. This can be particularly useful when used in combination
+with the <code>fileerrors</code> flag mentioned above. 
+}
+
+   <p>If <var>RelFileSpec</var> contains a <code>..</code> component, the constructed
+absolute filename might be wrong. This occurs if the parent directory
+is not the same as the directory preceding <code>..</code> in the relative file
+name, which only can happen if a soft link is involved.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>To check whether the file <code>my_text</code> exists in the
+current user directory, with one of the extensions <code>text</code> or <code>txt</code>, and is
+both writable and readable:
+
+<pre class="example">     absolute_file_name('~/my_text',
+                        [extensions(['text','txt']),
+                         access([read,write])],
+                        File).
+     </pre>
+
+   <p>To check if the Prolog file <code>same_functor</code> exists in some library,
+and also check if it exists under the name <code>samefunctor</code>:
+<pre class="example">     absolute_file_name(library(same_functor),
+                        [file_type(prolog), access(exist),
+                         ignore_underscores(true)],
+                        File).
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>file_search_path/2</code>, <code>library_directory/2</code>
+<code>nofileerrors/0</code>, <code>fileerrors/0</code>, <code>prolog_flag/[2,3]</code>
+
+   <p><code>library(files)</code>  <code>library(directory)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-add_advice.html#mpg-ref-add_advice">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-abort.html#mpg-ref-abort">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

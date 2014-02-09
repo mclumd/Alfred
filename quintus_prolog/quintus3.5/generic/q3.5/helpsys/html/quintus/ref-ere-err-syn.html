@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Syntax Errors</h5>
+
+   <p>A syntax error occurs when data are read from some external source
+but have an improper format or cannot be processed for some other reason. 
+This category mainly applies to <code>read/1</code> and its variants.
+
+   <p>The exception code associated with a syntax error is
+<pre class="example">     syntax_error(<var>Goal, Position, Message, Left, Right</var>)
+     </pre>
+
+   <p>where <var>Goal</var> is the goal in question, <var>Position</var> identifies
+the position in the stream where reading started,
+and <var>Message</var> describes the error.  Left and right are lists of
+tokens before and after the error, respectively.
+
+   <p>Note that the <var>Position</var> is where reading started, not where the
+error <em>is</em>.
+
+   <p><code>read/1</code> does two things.  First, it reads a sequence of characters from the
+current input stream up to and including a clause terminator, or the end of
+file marker, whichever comes first.  Then it attempts to parse the sequence
+of characters as a Prolog term.  If the parse is unsuccessful, a syntax error
+occurs.  Thus, in the case of syntax errors, <code>read/1</code> disobeys the normal
+rule that predicates should detect and report errors before they perform any
+side-effects, because the side-effect of reading the characters has been done.
+
+   <p>A syntax error does not necessarily cause an exception to be raised.  The
+behavior can be controlled via a Prolog flag as follows:
+     <dl>
+
+     <br><dt><code>prolog_flag(syntax_errors, quiet)</code>
+     <dd>When a syntax error is detected, nothing is printed, and <code>read/1</code>
+just quietly fails.
+
+     <br><dt><code>prolog_flag(syntax_errors, dec10)</code>
+     <dd>This provides compatibility with DEC-10 Prolog and earlier versions
+of Quintus Prolog:  when a syntax error
+is detected, a syntax error message is printed on <code>user_error</code>, and
+the <code>read</code> is repeated.  This is the default for the sake of
+compatibility with earlier releases.
+
+     <br><dt><code>prolog_flag(syntax_errors, fail)</code>
+     <dd>This provides compatibility with C Prolog.  When a syntax error is
+detected, a syntax error message is printed on <code>user_error</code>, and the
+<code>read</code> then fails.
+
+     <br><dt><code>prolog_flag(syntax_errors, error)</code>
+     <dd>When a syntax error is detected, an exception is raised. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-err-res.html#ref-ere-err-res">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-err-cns.html#ref-ere-err-cns">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere-err.html#ref-ere-err">Up</a>
+</ul>
+</div>
+   </body></html>
+

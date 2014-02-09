@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>length/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>length(</code><var>-List, +Integer</var><code>)</code>
+
+   <p><code>length(</code><var>*List, *Integer</var><code>)</code>
+
+   <p><var>Integer</var> is the length of <var>List</var>. If <var>List</var> is
+instantiated to a proper <dfn>list</dfn>, the predicate is determinate,
+also when <var>Integer</var> is <dfn>var</dfn>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>List</var> <dfn>list</dfn>
+     <dd>a list
+
+     <br><dt><var>Integer</var> <dfn>integer</dfn>
+     <dd>non-negative integer
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>If <var>List</var> is a list of indefinite length (that is, either a variable
+or of the form <code>[...|X]</code>) and if <var>Integer</var> is bound to an integer,
+then <var>List</var> is made to be a list of length <var>Integer</var> with unique
+variables used to "pad" the list. If <var>List</var> cannot be
+made into a list of length <var>Integer</var>, the call fails.
+<pre class="example">     | ?-  <kbd>List = [a,b|X], length(List, 4).</kbd>
+     
+     List = [a,b,_3473,_3475],
+     X = [_3473,_3475] <kbd>;</kbd>
+     
+     | ?-
+     </pre>
+
+   <p>If <var>Integer</var> is unbound, then it is unified with all possible lengths
+for the list <var>List</var>.
+
+   <p>If <var>List</var> is bound, and is not a list, <code>length/2</code> simply fails.
+
+<h4 class="subheading">Backtracking</h4>
+
+   <p>If both <var>List</var> and <var>Integer</var> are
+variables, the system will backtrack, generating lists of increasing
+length whose elements are anonymous variables.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>type_error</code>
+     <dd>
+                <var>Integer</var> integer
+</dl>
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     
+     | ?- <kbd>length([1,2], 2).</kbd>
+     
+     yes
+     | ?- <kbd>length([1,2], 0).</kbd>
+     
+     no
+     | ?- <kbd>length([1,2], X).</kbd>
+     
+     X = 2 <kbd>;</kbd>
+     
+     no
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-library_directory.html#mpg-ref-library_directory">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-leash.html#mpg-ref-leash">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

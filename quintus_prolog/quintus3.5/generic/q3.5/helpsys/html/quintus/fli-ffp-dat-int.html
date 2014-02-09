@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Passing Integers</h5>
+
+<pre class="example">     Prolog:  +integer
+     C:       long int x;
+     </pre>
+
+   <p>The C long int is converted to a 32-bit Prolog integer,
+   which is passed to the Prolog call.  If the C integer contains garbage
+   when it is passed, Prolog will receive that garbage as an integer.
+
+<pre class="example">     Prolog:  -integer
+     C:       long int *x;
+     </pre>
+
+   <p>A pointer to a C long int is passed to the foreign interface. 
+   When Prolog returns a solution, a Prolog integer is expected in the
+   corresponding argument of the call.  The foreign interface converts
+   that integer into a C long int and writes it at the location supplied. 
+   The previous contents of the location are destroyed.  If the
+   Prolog call does not return an integer in the appropriate position,
+   a type error is raised and the contents of the location is unchanged.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ffp-dat-flo.html#fli-ffp-dat-flo">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ffp-dat.html#fli-ffp-dat">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>garbage_collect/0</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>garbage_collect</code>
+
+   <p>Explicitly invokes the garbage collector.
+
+<h4 class="subheading">Description</h4>
+
+   <p>This predicate
+invokes the garbage collector to reclaim data structures
+in the heap that are no longer accessible to the computation.
+
+   <p>No expansion of the heap is done, even if <code>gc_margin</code> kilobytes cannot
+be reclaimed (see <a href="ref-lps-flg-cha.html#ref-lps-flg-cha">ref-lps-flg-cha</a>). This means that calls to this
+predicate are effective only when the heap contains a significant
+amount of garbage.
+
+   <p>The cut may be used in conjunction with <code>garbage_collect/0</code> to allow code
+that works in cycles and builds up large data structures to run for more
+cycles without running out of memory.  The cut removes any alternatives that
+may be pending, thus potentially freeing up garbage that could not otherwise
+be collected.
+
+<h4 class="subheading">Example</h4>
+
+   <p>In the code fragment:
+<pre class="example">     cycle(X) :- big_goal(X, X1), cycle(X1).
+     </pre>
+
+   <p>if <code>cycle/1</code> is to run for a long time, and if <code>big_goal/2</code>
+generates a lot of garbage, then rewrite the code like this:
+<pre class="example">     cycle(X) :- big_goal(X, X1), !, garbage_collect, cycle(X1).
+     </pre>
+
+<h4 class="subheading">Tip</h4>
+
+   <p>Use of the <code>!, garbage_collect</code> idiom is only
+desirable when you notice that your code does frequent garbage
+collections.  It will allow the garbage collector to collect garbage
+more effectively, and the cycle will run without demanding increasing
+amounts of memory.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>gc/0</code>, <code>prolog_flag(gc_margin,_,_)</code>,
+<code>nogc/0</code>, <code>statistics/2</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-garbage_collect_atoms.html#mpg-ref-garbage_collect_atoms">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-functor.html#mpg-ref-functor">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

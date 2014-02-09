@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The Source Linked Debugger</h4>
+
+   <p>The Emacs-based source linked debugger for Quintus Prolog works very
+much like the QUI debugger (see <a href="dbg-sld.html#dbg-sld">dbg-sld</a>), with
+a few significant differences.  This document describes the
+differences.
+
+   <p>In order to enable the Emacs-based debugger, execute the Emacs command
+<kbd>&lt;ESC&gt; x enable-prolog-source-debugger</kbd>; to disable it, type <kbd>&lt;ESC&gt;
+x disable-prolog-source-debugger</kbd>.  If you would like always to use
+the source-linked debugger when debugging Quintus Prolog code under
+Emacs, put the following in your <code>.emacs</code> file:
+
+<pre class="example">     (add-hook 'comint-prolog-hook 'enable-prolog-source-debugger)
+     </pre>
+
+   <p>Alternatively, under Prolog you may load
+<code>library(emacsdebug)</code> and then execute the Prolog
+goal <code>emacs_debugger(_,on)</code> to enable source-linked debugging,
+<code>emacs_debugger(_,off)</code> to disable it, and
+<code>emacs_debugger(</code><var>State</var><code>,</code><var>State</var><code>)</code>, to see whether it is enabled
+or not (<var>State</var> will be bound to <code>on</code> if enabled and <code>off</code> if
+disabled).
+
+   <p>The first obvious difference when running the Emacs-based debugger
+compared to the QUI one is that it doesn't have any buttons or menu to
+control it.  Therefore all commands are keyboard-based.  Where
+possible, the commands are the same as those used in the standard
+debugger, so most of them should be easy to remember.  The most
+important command in the Emacs-based debugger, as in the standard
+debugger is the <b>help</b> command, invoked by a single <kbd>h</kbd> or <kbd>?</kbd>
+character.  This command displays the following summary:
+
+<pre class="example">       c  creep         &lt;RET&gt; creep            &lt;SPC&gt; creep
+       l  leap           +  spy goal/pred     b  break
+       s  skip           -  nospy goal/pred   a  abort
+       z  zip            [  frame up          ?  help
+       n  nonstop        ]  frame down        h  help
+       q  quasi-skip     |  frame back        =  debugging
+       r  retry          f  fail              .  edit definition
+       w  open extra window                   x  close extra window
+     </pre>
+
+   <p>The commands in the first column behave exactly as they do in the QUI
+debugger.  The <b>spy</b> and <b>nospy</b> commands place a spypoint on the current
+predicate when at a head port, and on the current goal when at any
+other port.  The <b>frame up/down/back</b> commands do exactly what the
+corresponding QUI debugger commands do, as do <b>break</b> and <b>abort</b>.  The
+<b>debugging</b> command just invokes the standard <code>debugging/0</code> built-in
+predicate, showing the current debugging and leashing modes, as well as
+listing the currently active spypoints.
+
+   <p>The <b>open/close extra window</b> commands prompt for a single character
+to select the "extra" window to display, offering the choices
+<code>b=bindings; s=standard; and a=ancestors</code>.  The bindings window is
+probably the most useful of the three.
+
+   <p>Finally, the <b>edit definition</b> command opens puts the file being
+debugged in an editor buffer, putting point at the location of the
+current debugger port (where the arrow is).  You may edit and save the
+file, and then recompile it.  It is recommeded that you recompile the
+whole file rather than just the part you have changed, because the
+debugger keeps track of the times files are written and compiled,
+disabling source linking when the file on disk is newer than the code
+loaded into Prolog.
+
+   <p>The graphical arrows of the QUI debugger are simulated by a
+two-character sequence in the Emacs-based debugger.  The Call, Done
+and determinate Head ports are signified by <code>-&gt;</code>.  Exit and
+nondeterminate Head ports are signified by <code>=&gt;</code>.  Redo and Fail are
+shown as <code>&lt;-</code>.  The Exception port is indicated by <code>&lt;#</code>.  Finally,
+where the QUI debugger shows a "hollow" arrow to signify that the
+currently shown port is not actually the active port but an ancestor
+of it, the Emacs-based debugger shows <code>^&gt;</code>.
+
+   <p>The Emacs-based debugger currently offers no way to change the
+leashing; you can do that using the usual Prolog <code>leash/1</code> built-in
+predicate.   Similarly, it offers no way to set a spyoint except when
+debugging a call to the predicate or goal to be spied.  Again, the
+usual <code>spy/1</code> and <code>add_spypoint/1</code> built-in predicates can
+accomplish this.  Finally, the Emacs-based debugger offers no direct
+way to set the print format.  To change this you must use the
+<code>window_format/3</code> command exported from the <code>emacs_debug</code> module:
+
+<pre class="example">     window_format(<var>+Window</var>, <var>-Oldformat</var>, <var>+Newformat</var>)
+     </pre>
+
+   <p>where <var>Window</var> is one of: <code>source</code>, <code>bindings</code>,
+<code>ancestors</code>, or <code>standard</code>, and <var>Newformat</var> is a list of valid
+options for the last argument to <code>write_term/[2,3]</code>.  The default
+format for all windows is
+
+<pre class="example">     [quoted(true), portrayed(true), max_depth(5)]
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ema-ove-aol.html#ema-ove-aol">Next</a>
+<li><a rel="previous" accesskey="p" href="ema-ove-upe.html#ema-ove-upe">Previous</a>
+<li><a rel="up" accesskey="u" href="ema-ove.html#ema-ove">Up</a>
+</ul>
+</div>
+   </body></html>
+

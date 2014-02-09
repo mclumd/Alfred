@@ -1,0 +1,307 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Window Attributes</h4>
+
+   <p>The appearance and behavior of a window is largely determined by
+window attributes.  The ProXL primitives <code>create_window/2</code>,
+<code>put_window_attributes/2</code>, and <code>get_window_attributes/2</code> form
+a family whose first argument is a windowable and whose second
+argument is a list of attributes.  The first two primitives give
+attributes to a window, and the last allows you to inquire about the
+current state of a window.
+
+   <p>The available attributes are listed here.  The right hand column
+describes the attribute, lists the values of the variable (describing
+them when necessary), and indicates the default value of V.
+
+     <dl>
+
+     <br><dt><b>Attribute</b>
+     <dd><b>Description and values</b>
+
+     <br><dt><code>parent</code><var>(V)</var><code></code>
+     <dd>This window's parent window.  Defaults to the
+root window of default screen on window creation.
+
+     <br><dt><code>x</code><var>(V)</var><code></code>
+     <dd>Left edge of window, relative to parent window's
+inside left edge, in pixels.  Default is 0.
+
+     <br><dt><code>y</code><var>(V)</var><code></code>
+     <dd>Top edge of window, relative to parent window's
+inside top edge, in pixels.  Default is 0.
+
+     <br><dt><code>position</code><var>(X,Y)</var><code></code>
+     <dd><var>X</var> and <var>Y</var> of window relative to
+parent upper left corner, in pixels.  Same as
+<code>x(</code><var>X</var><code>)</code>, <code>y(</code><var>Y</var><code>)</code>.
+
+     <br><dt><code>width</code><var>(V)</var><code></code>
+     <dd>Inside width of window in pixels.  Default is 100.
+
+     <br><dt><code>height</code><var>(V)</var><code></code>
+     <dd>Inside height of window in pixels.  Default is 100.
+
+     <br><dt><code>size</code><var>(W,H)</var><code></code>
+     <dd>Same as <code>width(</code><var>W</var><code>)</code>, <code>height(</code><var>h</var><code>)</code>.
+
+     <br><dt><code>depth</code><var>(V)</var><code></code>
+     <dd>Bits per pixel.  Default is parent's depth.  This
+attribute cannot be modified once a window is created.
+
+     <br><dt><code>border_width</code><var>(V)</var><code></code>
+     <dd>width of window's border, in pixels. 
+Default is 0.
+
+     <br><dt><code>class</code><var>(V)</var><code></code>
+     <dd>Can this window be drawn in, or is it
+only for getting input?  <var>V</var> is either:
+          <ul>
+
+          <li><code>input_output</code> (default)
+<li><code>input_only</code>
+</ul>
+
+     <p>This attribute cannot be modified once a window is created.
+
+     <br><dt><code>visual</code><var>(V)</var><code></code>
+     <dd>The window's visual.  Default is the visual of the
+window's parent's screen.  See <a href="pxl-col.html#pxl-col">pxl-col</a>. 
+This attribute cannot be modified once a window is created.
+
+     <br><dt><code>background</code><var>(V)</var><code></code>
+     <dd>The window's background. 
+<var>V</var> may be
+          <ul>
+
+          <li>a pixel
+<li>a pixmap
+<li><code>none</code> (default)
+<li><code>parent_relative</code>
+</ul>
+
+     <p>Due to the design of the X window system itself, this attribute cannot
+be determined, but only modified.
+
+     <br><dt><code>border</code><var>(V)</var><code></code>
+     <dd>The pattern to be displayed in the
+window's border.  <var>V</var> may be
+          <ul>
+
+          <li>a pixel
+<li>a pixmap
+<li><code>copy_from_parent</code> (default)
+</ul>
+
+     <p>Due to the design of the X window system itself, this attribute cannot
+be determined, but only modified.
+
+     <br><dt><code>bit_gravity</code><var>(V)</var><code></code>
+     <dd>Where to put the contents of the window
+if it is resized.  <var>V</var> may be one of
+          <ul>
+
+          <li><code>north_west</code>
+<li><code>north</code>
+<li><code>north_east</code>
+<li><code>west</code>
+<li><code>center</code>
+<li><code>east</code>
+<li><code>south_west</code>
+<li><code>south</code>
+<li><code>south_east</code>
+<li><code>static</code>
+<li><code>forget</code> (default)
+</ul>
+
+     <br><dt><code>win_gravity</code><var>(V)</var><code></code>
+     <dd>Where to put the subwindows of a window that
+has been resized.  <var>V</var> may be one of
+          <ul>
+
+          <li><code>north_west</code>
+<li><code>north</code>
+<li><code>north_east</code>
+<li><code>west</code>
+<li><code>center</code>
+<li><code>east</code>
+<li><code>south_west</code>
+<li><code>south</code>
+<li><code>south_east</code>
+<li><code>static</code>
+<li><code>unmap</code> (default)
+</ul>
+
+     <br><dt><code>backing_store(</code><var>V</var><code>)</code>
+     <dd>
+Should the contents of this window be saved by the server when it is
+occluded by another window?  <var>V</var> should be one of:
+          <ul>
+
+          <li><code>not_useful</code> (default)
+<li><code>when_mapped</code>
+<li><code>always</code>
+</ul>
+
+     <p>Note that some screens don't support backing store, and even those
+that do may not always provide it when asked.  Your application must
+<em>always</em> be prepared to repaint its own windows.
+
+     <br><dt><code>backing_bit_planes</code><var>(V)</var><code></code>
+     <dd>If <code>backing_store</code> is used, which
+planes should be saved?  <var>V</var> is a bit mask.  The default is to
+save all planes (i.e., <var>V</var> = -1).
+
+     <br><dt><code>backing_pixel</code><var>(V)</var><code></code>
+     <dd>Specifies the bit values to put into
+unbacked planes when restoring from backing store.  Default is 0.
+
+     <br><dt><code>save_under</code><var>(V)</var><code></code>
+     <dd>Should what is under this window be saved
+so that when the window is moved or unmapped, the newly exposed part
+of the screen can be refreshed without asking any applications to do
+the work?  Like <code>backing_store</code><var>(V)</var>, not all screens support
+this, and those that do might not support it whenever asked to. 
+<var>V</var> may be either:
+
+          <ul>
+
+          <li><code>true</code>
+<li><code>false</code> (default)
+</ul>
+
+     <br><dt><code>event_mask</code><var>(V)</var><code></code>
+     <dd>An integer bitmask indicating which events
+this window wants to handle.  Note that if you use the ProXL callback
+mechanism, you should not modify this attribute directly.
+
+     <br><dt><code>do_not_propagate_mask</code><var>(V)</var><code></code>
+     <dd>An integer bitmask indicating
+which events not to propagate.  Any event destined for this window not
+specified by either <code>event_mask(</code><var>V</var><code>)</code> or
+<code>do_not_propagate_mask(</code><var>V</var><code>)</code> will be forwarded to this window's
+parent.
+
+     <br><dt><code>override_redirect</code><var>(V)</var><code></code>
+     <dd>Override redirection of map
+and configure requests?  Possible values of <var>V</var> are
+          <dl>
+
+          <br><dt><code>false</code>
+          <dd>(default) A program, usually a window
+manager, can specify that requests to map or reconfigure a child of a
+certain window, usually the root, should be sent to it.  This allows a
+window manager to decide not to allow top level windows to be moved or
+reshaped, and to put title bars and special borders on top level
+windows.
+
+          <br><dt><code>true</code>
+          <dd>Map and configure requests should go directly to the
+server.  This allows you to pop up a window, say a menu, where you
+want it, and without any adornments the window manager would put on
+it.
+
+     </dl>
+
+     <br><dt><code>colormap</code><var>(V)</var><code></code>
+     <dd><var>V</var> may be either:
+          <ul>
+
+          <li>the colormap for this window
+<li><code>copy_from_parent</code> (default)
+</ul>
+
+     <br><dt><code>cursor</code><var>(V)</var><code></code>
+     <dd><var>V</var> may be either:
+          <dl>
+
+          <br><dt><var>cursor</var>
+          <dd>the cursor to display when the cursor is in this window
+
+          <br><dt><code>none</code>
+          <dd> the parent window's cursor will be displayed. 
+</dl>
+
+     <p>Due to the design of the X window system itself, this attribute cannot
+be determined, but only modified.
+
+     <br><dt><code>mapped</code><var>(V)</var><code></code>
+     <dd>Is this window on the screen, providing that
+its parent is?  Possible values are
+          <dl>
+
+          <br><dt><code>false</code>
+          <dd>  (default)
+
+          <br><dt><code>true</code>
+          <dd>
+
+          <br><dt><code>viewable</code>
+          <dd>the window <em>is</em> on the
+screen; that is, the window is mapped, and
+its parent is viewable.  The root window is
+always viewable. 
+</dl>
+
+     <br><dt><code>gc</code><var>(V)</var><code></code>
+     <dd>The default graphics context for this window.  The
+default is the screen's default gc.  See
+<a href="pxl-graf.html#pxl-graf">pxl-graf</a>
+for more information.
+
+     <br><dt><code>property</code><var>(N,V)</var><code></code>
+     <dd><var>V</var> is the value of the
+<var>N</var> property of the window.  If <var>N</var> is unbound, it will
+backtrack through all the properties of the window.  If <var>N</var> is
+bound, it should be an atom.  See <a href="pxl-win-wmi.html#pxl-win-wmi">pxl-win-wmi</a> for
+information on how to use the <code>property(</code><var>N,V</var><code>)</code> attribute to
+tell a window manager how to handle your windows.
+
+     <br><dt><code>callback</code><var>(E,F,V,C,G)</var><code></code>
+     <dd>Register <var>G</var> as the goal to call
+when event <var>E</var> is received by the window.  <var>F</var> is a list of
+fields of the event to be accessed before calling <var>G</var>, and <var>V</var>
+is a variable, which may be passed back to the <code>handle_events</code>
+procedure in order to exit the <code>handle_events</code> loop.  If <var>V</var>
+is <code>none</code>, then no result will be passed to <code>handle_events</code>. 
+<var>C</var> is the context of the call, which is specified as the second
+argument to <code>handle_events/2</code>.  This allows a callback's behavior
+to depend on the context in which it occurs.  See
+<a href="pxl-ev.html#pxl-ev">pxl-ev</a> for more information.
+
+     <br><dt><code>callback</code><var>(E,F,V,G)</var><code></code>
+     <dd>Equivalent to
+<code>callback(</code><var>E,F,V,_,G</var><code>)</code>.
+
+     <br><dt><code>callback</code><var>(E,F,G)</var><code></code>
+     <dd>Equivalent to
+<code>callback(</code><var>E,F,</var><code>none</code><var>,_,G</var><code>)</code>.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-win-wmi.html#pxl-win-wmi">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-win.html#pxl-win">Up</a>
+</ul>
+</div>
+   </body></html>
+

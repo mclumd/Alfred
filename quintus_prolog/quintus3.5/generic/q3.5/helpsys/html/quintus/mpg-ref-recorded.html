@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>recorded/3</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>recorded(</code><var>-Key</var><code>, </code><var>-Term</var><code>, </code><var>+Ref</var><code>)</code>
+
+   <p><code>recorded</code>(<var>+Key</var>, <var>*Term</var>, <var>*Ref</var>)
+
+   <p>searches the internal database for a term recorded under the key
+<var>Key</var> that unifies with <var>Term</var>, and whose database
+reference unifies with <var>Ref</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Key</var> <dfn>atomic</dfn>
+     <dd>
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>Ref</var> <dfn>db_reference</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>If <var>Ref</var> is instantiated, then <var>Key</var> and <var>Term</var>
+are unified with the key and term associated with <var>Ref</var>. 
+Otherwise, If <var>Key</var> is a compound term, only its principal functor is
+significant.  That is, <code>foo(1)</code> represents the same
+key as <code>foo(n)</code>.
+
+   <p>A call to  <code>recorded/3</code> of the form (<code>-</code>, <code>?</code>, <code>+</code>) will succeed if the
+expected relation holds.  <var>Key</var> need not be instantiated.
+
+<h4 class="subheading">Backtracking</h4>
+
+   <p>Can be used to backtrack through all the
+matching terms recorded under the specified key.  Therefore, if you
+want to match only a single term you should use a cut to prevent
+backtracking.  Alternatively, use the <code>library(not)</code> predicate <code>once/1</code>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>type_error</code>
+     <dd>
+                <var>Ref</var> is not a database reference, or <var>Key</var> is a float
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>record/3</code>, <code>recorda/3</code>, <code>current_key/3</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-recordz.html#mpg-ref-recordz">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-recorda.html#mpg-ref-recorda">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

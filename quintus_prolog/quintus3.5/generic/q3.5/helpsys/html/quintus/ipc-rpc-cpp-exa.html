@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Examples</h5>
+
+   <p>The first example shows how you can package a call to a Prolog goal that is
+known to be determinate.  Here, the C function <code>fred</code> hides the call to
+Prolog.  However, the servant must be initiated by a call to
+<code>QP_ipc_create_servant()</code> before it can be called.
+
+<pre class="example">
+                       <div align="right"><em>Prolog Specification</em>
+     </div>
+     
+             external(fred, xdr, fred(+integer,-integer,+integer)).
+     
+             fred(X, Y, Z) :- ...
+     </pre>
+
+<pre class="example">
+                                  <div align="right"><em>C routine</em>
+     </div>
+     
+             int fred(i, j)
+                 int i, j;
+                 {
+                     static int fredp = -1;
+                     int k;
+     
+                     if (fredp &lt; 0) {        /* initialize */
+                         fredp = QP_ipc_lookup("fred");
+                         if (fredp &lt; 0)
+                             DieBecause("couldn't find fred");
+                     }
+     
+                     /* send the request */
+                     QP_ipc_prepare(fredp, i, j);
+     
+                     /* get the answer back */
+                     if (QP_ipc_next(fredp, &amp;k))
+                         DieBecause("fred failed");
+     
+                     /* known determinate, so close request */
+                     QP_ipc_close();
+     
+                     /* return the answer */
+                     return k;
+                 }
+     </pre>
+
+   <p>The second example shows an entire program and how all types of arguments
+are be passed.  It also shows how <code>QP_ipc_atom_from_string()</code> and
+<code>QP_ipc_string_from_atom()</code> can be used.  In terms of functionality, this is
+not a very interesting program, and the conversion between atoms and
+strings is just to give an example.
+
+<pre class="example">
+                       <div align="right"><em>Prolog Specification</em>
+     </div>
+     
+     external(dupl, xdr, duplicate(-integer,+integer,-string,+string,
+                             -float,+float,-atom,+atom)).
+     
+     duplicate(A, A, B, B, C, C, D, D).
+     </pre>
+
+<pre class="example">
+                                 <div align="right"><em>C program:</em>
+     </div>
+     
+     main()
+     {
+         int pdupl;
+         char host[20], savestate[50];
+         int iint, oint;
+         char istr1[20], istr2[20], ostr1[20], ostr2[20];
+         float iflt, oflt;
+         QP_atom iatom, oatom;
+     
+             printf("Enter host and savestate: ");
+             scanf("%s%s", host, savestate);
+     
+             if (QP_ipc_create_servant(host,savestate,"servant_out"))
+                     DieBecause("Error starting up servant");
+     
+             pdupl = QP_ipc_lookup("dupl");
+             if (pdupl &lt; 0) DieBecause("dupl not defined");
+     
+             for (;;) {      /* loop until break */
+                 printf("Enter int, str, flt, str: ");
+                 if (scanf("%d%s%f%s",&amp;iint,istr1,&amp;iflt,istr2) != 4)
+                     break;
+                 /* get atom for the string typed in */
+                 iatom = QP_ipc_atom_from_string(istr2);
+     
+                 /* send the request */
+                 if (QP_ipc_prepare(pdupl, iint, istr1, iflt, iatom))
+                     DieBecause("dupl prepare error");
+     
+                 /* get answer back, and convert atom back to string */
+                 QP_ipc_next(pdupl, &amp;oint, ostr1, &amp;oflt, &amp;oatom);
+                 QP_ipc_string_from_atom(oatom, ostr2);
+     
+                 /* close request because we want only one answer */
+                 if (QP_ipc_close()) printf("ERROR closing\n");
+     
+                 printf("Answer is: %d %s %G %s(%d)\n",
+                             oint, ostr1, oflt, ostr2, oatom);
+             }
+     
+             if (QP_ipc_shutdown_servant())
+                 DieBecause("Error shutting down servant");
+     }
+     </pre>
+
+   <p>The third example shows how to retrieve multiple answers:
+
+<pre class="example">
+                       <div align="right"><em>Prolog Specification</em>
+     </div>
+     
+     external(table, xdr, table(-string,-integer)).
+     
+             table(samuel, 34).
+             table(sarah, 54).
+             ...
+     </pre>
+
+<pre class="example">
+                                  <div align="right"><em>C program</em>
+     </div>
+     
+     main()
+     {
+             char host[20], savestate[50];
+             int ptable, ret;
+             char strval[40];
+             int intval;
+     
+             printf("Enter host and savestate: ");
+             scanf("%s%s", host, savestate);
+     
+             if (QP_ipc_create_servant(host,savestate,"servant_out"))
+                     DieBecause("Error starting up servant");
+     
+             ptable = QP_ipc_lookup("table");
+             if (ptable &lt; 0) {
+                 printf("table not defined\n");
+                 return;
+             }
+     
+             /* send the request */
+             QP_ipc_prepare(ptable);
+     
+             /* retrieve and print ALL answers */
+             while (!(ret = QP_ipc_next(ptable, strval, &amp;intval)))
+                 printf("String: %s, Integer: %d\n", strval,intval);
+     
+             /* note no close, since we retrieved all the answers! */
+             if (ret == -1) printf("All answers retrieved\n");
+             else printf("Error retrieving answers\n");
+     
+             if (QP_ipc_shutdown_servant())
+                 DieBecause("Error shutting down servant");
+     }
+     </pre>
+
+   <p>The final example shows how one could write a C function to turn Prolog's
+message tracing (see <a href="ipc-rpc-tra.html#ipc-rpc-tra">ipc-rpc-tra</a>) on and off.
+
+<pre class="example">
+                       <div align="right"><em>Prolog Specification</em>
+     </div>
+     
+             external(settrace, xdr, settrace(+string)).
+     
+             settrace(X) :- msg_trace(_,X).
+     </pre>
+
+<pre class="example">
+                                  <div align="right"><em>C routine</em>
+     </div>
+     
+             void settrace(OnOff)
+                 char *OnOff;
+                 {
+                     static int psettrace = -1;
+                     int k;
+     
+                     if (psettrace &lt; 0) {
+                         psettrace = QP_ipc_lookup("settrace");
+                         if (psettrace &lt; 0)
+                             DieBecause("couldn't find settrace");
+                     }
+     
+                     QP_ipc_prepare(psettrace, OnOff);
+                     if (QP_ipc_next(psettrace))
+                         DieBecause("settrace failed");
+                     QP_ipc_close();
+                 }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc-cpp-string_from_atom.html#ipc-rpc-cpp-string_from_atom">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc-cpp.html#ipc-rpc-cpp">Up</a>
+</ul>
+</div>
+   </body></html>
+

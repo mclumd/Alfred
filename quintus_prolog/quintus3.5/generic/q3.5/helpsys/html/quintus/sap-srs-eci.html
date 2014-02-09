@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Embedded Commands and Initialization Files</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="sap-srs-eci-crt.html#sap-srs-eci-crt">sap-srs-eci-crt</a>:                      Compile-time code vs. Runtime code
+<li><a accesskey="2" href="sap-srs-eci-inf.html#sap-srs-eci-inf">sap-srs-eci-inf</a>:                      Initialization Files
+<li><a accesskey="3" href="sap-srs-eci-sid.html#sap-srs-eci-sid">sap-srs-eci-sid</a>:                      Side-Effects in Compile-Time Code
+<li><a accesskey="4" href="sap-srs-eci-mec.html#sap-srs-eci-mec">sap-srs-eci-mec</a>:                      Modules and Embedded Commands
+<li><a accesskey="5" href="sap-srs-eci-spe.html#sap-srs-eci-spe">sap-srs-eci-spe</a>:                      Predicates Treated in a Special Way
+<li><a accesskey="6" href="sap-srs-eci-ctc.html#sap-srs-eci-ctc">sap-srs-eci-ctc</a>:                      Restriction on Compile-Time Code
+</ul>
+
+   <p>This section discusses some differences that exist between compiling a
+file into QOF with <code>qpc</code> and compiling that file into memory
+using <code>compile/1</code> under the Development System.  In certain cases,
+if an application program was developed interactively using the
+built-in compiler, some changes may have to be made to the code before
+using <code>qpc</code> to compile it and link it with the Development
+Kernel or Runtime Kernel.
+
+   <p>For example, if a file containing the following is compiled into memory, the
+embedded command will succeed after writing an <code>x</code> and a newline to the current
+output stream.
+<pre class="example">     f(x).
+     f(z).
+     
+     :- f(X), write(X), nl.
+     </pre>
+
+   <p>Whereas, if the same file is given to <code>qpc</code>, a warning will be
+printed indicating that the embedded command failed.  The reason for this is
+that when <code>qpc</code> compiles a Prolog file, it reads clauses from the
+source file one after the other and compiles them into a QOF file.  The
+clauses for <code>f/1</code> are not kept in memory, and the attempt to access them fails.
+
+   <p>You do <em>not</em> need to read this section if both of the following are true.
+     <ol type=1 start=1>
+
+     <li>The only embedded commands that you use in your Prolog files are commands to
+load other files, that is, commands from the list at the beginning of
+<a href="sap-srs-dep.html#sap-srs-dep">sap-srs-dep</a>. 
+<li>You do not use <code>term_expansion/2</code> to transform your source code at
+compile-time.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-ode.html#sap-srs-ode">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-fsp.html#sap-srs-fsp">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs.html#sap-srs">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

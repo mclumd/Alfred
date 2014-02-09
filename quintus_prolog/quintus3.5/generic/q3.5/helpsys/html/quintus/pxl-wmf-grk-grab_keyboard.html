@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>grab_keyboard/6</code></h5>
+
+<pre class="example">     grab_keyboard(+<var>Window</var>, +<var>OwnerEvents</var>,
+             +<var>PointerMode</var>, +<var>KeyboardMode</var>,
+             +<var>Time</var>, -<var>GrabStatus</var>)
+     </pre>
+
+   <p>Actively grabs control of the keyboard and
+generates <code>focus_in</code> and <code>focus_out</code> events.
+
+   <p><var>Window</var> is the ProXL window to which events will be reported while
+the grab is in effect.
+
+   <p><var>OwnerEvents</var> is one of:
+     <dl>
+
+     <br><dt><code>true</code>
+     <dd>If keyboard events should be reported normally.
+
+     <br><dt><code>false</code>
+     <dd>If keyboard events should be reported only to the grab window. 
+</dl>
+
+   <p><var>PointerMode</var> controls further processing of pointer events:
+     <dl>
+
+     <br><dt><code>async</code>
+     <dd>If pointer event processing continues normally.
+
+     <br><dt><code>sync</code>
+     <dd>If the state of the pointer, as seen by applications
+appears to freeze. No further pointer events
+are generated until the grabbing client calls
+<code>allow_events/[1,2,3]</code> or the pointer grab is released. 
+</dl>
+
+   <p><var>KeyboardMode</var> controls further processing of keyboard events:
+     <dl>
+
+     <br><dt><code>async</code>
+     <dd>If keyboard event processing continues normally.
+
+     <br><dt><code>sync</code>
+     <dd>If the state of the keyboard, as seen by applications
+appears to freeze. No further keyboard events
+are generated until the grabbing client calls
+<code>allow_events/[1,2,3]</code> or the keyboard grab is released. 
+</dl>
+
+   <p><var>Time</var> is a timestamp in milliseconds or <code>current_time</code>.
+
+   <p><var>GrabStatus</var> is unified by <code>grab_keyboard/6</code> with one of:
+     <dl>
+
+     <br><dt><code>success</code>
+     <dd>If the grab was successful.
+
+     <br><dt><code>already_grabbed</code>
+     <dd>If the attempt is unsuccessful because the keyboard
+is already actively grabbed  by some other
+client.
+
+     <br><dt><code>invalid_time</code>
+     <dd>If the attempt is unsuccessful because the specified
+<var>Time</var> is earlier than the last-keyboard-grab time, or later than
+the current server time.
+
+     <br><dt><code>not_viewable</code>
+     <dd>If the attempt is unsuccessful because the
+grabbing <var>Window</var> is not viewable.
+
+     <br><dt><code>frozen</code>
+     <dd>If the attempt is unsuccessful because the keyboard is
+frozen by an active grab of another client. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-wmf-grk-ungrab_keyboard.html#pxl-wmf-grk-ungrab_keyboard">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-wmf-grk.html#pxl-wmf-grk">Up</a>
+</ul>
+</div>
+   </body></html>
+

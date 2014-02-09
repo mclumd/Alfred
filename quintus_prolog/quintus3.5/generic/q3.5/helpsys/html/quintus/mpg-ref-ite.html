@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>;/2</code> -- if-then-else</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><var>+-P</var> <code>-&gt;</code> <var>+*Q</var> <code>;</code> <var>+*R</var>
+
+   <p><em>If</em> <var>P</var> <em>then</em> <var>Q</var> <em>else</em> <var>R</var>, using first solution of
+<var>P</var> only.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>P</var> <dfn>callable</dfn> [MOD]
+     <dd>
+<br><dt><var>Q</var> <dfn>callable</dfn> [MOD]
+     <dd>
+<br><dt><var>R</var> <dfn>callable</dfn> [MOD]
+     <dd></dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The character <code>|</code> can be used as an alternative to <code>;</code>,
+giving the form:
+<pre class="example">     <var>P</var> -&gt; <var>Q</var> | <var>R</var>
+     </pre>
+
+   <p>The <code>|</code> is transformed into a <code>;</code> when the goal is read.
+
+   <p>First <var>P</var> is executed.  If it succeeds, then <var>Q</var> is
+executed, and if <var>Q</var> fails, the whole conditional goal fails.  If
+<var>P</var> fails, however, <var>R</var> is executed instead of <var>Q</var>.
+
+   <p>The operator precedences of the <code>;</code> and <code>-&gt;</code> are
+both greater than 1000, so that they dominate commas.
+
+<h4 class="subheading">Backtracking</h4>
+
+   <p>If <var>P</var> succeeds and <var>Q</var>
+then fails, backtracking into <var>P</var> does not occur.  <var>P</var> may
+not contain a cut.  <code>-&gt;</code> acts like a cut except that its range
+is restricted to within the disjunction: it cuts away <var>R</var> and any
+choice points within <var>P</var>.  <code>-&gt;</code> may be thought of as a
+"local cut".
+
+<h4 class="subheading">See Also</h4>
+
+   <a href="bas-eff-cdi.html#bas-eff-cdi">bas-eff-cdi</a> and <a href="ref-sem-dis.html#ref-sem-dis">ref-sem-dis</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-initialization.html#mpg-ref-initialization">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-ith.html#mpg-ref-ith">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

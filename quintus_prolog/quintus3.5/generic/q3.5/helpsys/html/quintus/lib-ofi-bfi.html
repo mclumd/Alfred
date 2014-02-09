@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Built-in Operations on Files</h4>
+
+   <p>The following operations on files are described in the reference pages.
+
+     <dl>
+
+     <br><dt><code>absolute_file_name(</code><var>+RelFileName</var><code>, </code><var>?AbsFileName</var><code>)</code>
+     <dd>
+takes a filename <var>RelFileName</var> (typically typed in by the user of a
+program) and unifies it with the normalized <var>AbsFileName</var>.
+
+     <p>Beware:  <code>absolute_file_name/2</code> mimics the filename resolution done
+by commands such as <code>compile/1</code>.  It is meant primarily
+for looking up Prolog
+source files.  If you want to find the absolute filename of any
+other file,
+<code>absolute_file_name/2</code> may not be appropriate. 
+See <code>file_member_of_directory/2</code> in <a href="lib-lfi-fdi.html#lib-lfi-fdi">lib-lfi-fdi</a>.
+
+     <br><dt><code>close(</code><var>+FileNameOrStream</var><code>)</code>
+     <dd>
+if <var>FileNameOrStream</var> is an atom, it refers to a DEC-10-compatible
+stream connected to the file of that name; otherwise it is a stream
+object.  In either case, the associated stream is closed.
+
+     <br><dt><code>current_stream(</code><var>?AbsFileName</var><code>, </code><var>?Mode</var><code>, </code><var>?Stream</var><code>)</code>
+     <dd>
+is true if <var>Stream</var> is a stream connected to file <var>AbsFileName</var>, and
+currently open in mode <var>Mode</var>.  <code>current_stream/2</code> can be used to list
+currently open streams and the files to which they are connected.
+
+     <br><dt><code>library_directory(</code><var>?Directory</var><code>)</code>
+     <dd>
+unifies <var>Directory</var> with an entry from the
+user-modifiable table of directories to be searched for library
+files.
+
+     <br><dt><code>open(</code><var>+FileName</var><code>, </code><var>+Mode</var><code>, </code><var>-Stream</var><code>)</code>
+     <dd>
+opens a new <var>Stream</var> connected to the file named by <var>FileName</var>. 
+If <var>Mode</var> is <code>write</code> (<code>append</code>) it will (may) create a new file.
+
+     <br><dt><code>see(</code><var>+FileNameOrStream</var><code>)</code>
+     <dd>
+opens the file or stream <var>FileNameOrStream</var> for input if it is not already open.
+
+     <br><dt><code>tell(</code><var>+FileNameOrStream</var><code>)</code>
+     <dd>
+opens the file or stream <var>FileNameOrStream</var> for output if it is
+not already open.
+
+     <br><dt><code>unix(cd(</code><var>+Directory</var><code>))</code>
+     <dd>
+selects <var>Directory</var> as the default directory for relative file names. 
+This is also known as the current working directory. 
+To find out what the default directory currently is, type
+     <pre class="example">          | ?- <kbd>absolute_file_name(., CurrentDirectory).</kbd>
+          </pre>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-ofi-rdf.html#lib-ofi-rdf">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-ofi-bas.html#lib-ofi-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-ofi.html#lib-ofi">Up</a>
+</ul>
+</div>
+   </body></html>
+

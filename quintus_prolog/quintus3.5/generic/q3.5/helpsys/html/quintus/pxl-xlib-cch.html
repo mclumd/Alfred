@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Caching</h4>
+
+   <p>It's also important to know what is <em>not</em> in a foreign term.  Foreign
+terms do not contain any information about an X resource that may be
+changed.  The sole exception to this rule is graphics contexts, which
+are discussed below.  For example, a ProXL window may remember its depth
+(which cannot be changed once the window is created), but it won't
+remember its width or height, since they can change.  This means that it
+is possible for other programs, running in the same or different address
+space, to share X resources with ProXL.  ProXL will have no problems with
+window managers moving or resizing windows, since it goes to the server
+when it wants to know a window's size.
+
+   <p>An unfortunate result of this is that not all attributes that can be
+changed can be gotten.  This is because the X protocol does not provide
+a way to get all information about every X resource.  For example, it
+is possible to set the background of a window, but it is not possible
+to get it.  There aren't many such attributes, and they are documented
+in the ProXL manual.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-xlib-dscr.html#pxl-xlib-dscr">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-xlib-conv.html#pxl-xlib-conv">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-xlib.html#pxl-xlib">Up</a>
+</ul>
+</div>
+   </body></html>
+

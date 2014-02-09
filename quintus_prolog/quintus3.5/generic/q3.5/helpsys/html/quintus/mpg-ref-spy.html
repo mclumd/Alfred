@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>spy/1</code> <dfn>development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>spy </code><var>+PredSpecs</var><code></code>
+
+   <p>Sets spypoints on all the predicates represented by <var>PredSpecs</var>
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>PredSpecs</var> <dfn>gen_pred_spec_tree</dfn>
+     <dd>Single predicate
+specification of form: <var>Name</var>, or <var>Name/Arity</var>, or a list of such.  [MOD]
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Turns debugger on in debug mode, so that it will stop as soon as it
+reaches a spypoint.  Turning off the debugger does not remove
+spypoints.  Use <code>nospy/1</code> or <code>nospyall/0</code>) to explicitly remove
+them.
+
+   <p>Note that since <code>spy</code> is a built-in operator, the parentheses, which usually
+surround the arguments to a predicate, are not necessary (although they can be
+used if desired).
+
+   <p>If you use the predicate specification form <var>Name</var> but there are
+no clauses for <var>Name</var> (of any arity), then a warning message will
+be displayed and no spypoint will be set.
+<pre class="example">     | ?- <kbd>spy test</kbd>.
+     % The debugger will first leap -- showing spypoints (debug)
+     * There are no predicates with the name test in module user
+     
+     yes
+     [debug]
+     </pre>
+
+   <p>To place a spypoint on a currently undefined
+procedure, use the full form <var>Name</var>/<var>Arity</var>;
+you will still get a warning message, but the spypoint will be set
+.
+<pre class="example">     | ?- <kbd>spy test/1</kbd>.
+     * You have no clauses for user:test/1
+     % Spypoint placed on user:test/1
+     
+     yes
+     [debug]
+     | ?-
+     </pre>
+
+   <p>If <code>spy/1</code> is given any invalid argument it prints a warning.
+
+   <p>This predicate is not supported in runtime systems.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+if the argument is not ground.
+
+     <br><dt><code>type_error</code>
+     <dd>
+if a <var>Name</var> is not an atom or an <var>Arity</var> not an integer.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+if a <var>PredSpec</var> is not a valid procedure specification, or
+if an <var>Arity</var> is specified as an integer outside the range 0-255.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+if a specified procedure is built-in or imported into the source module.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>nospy/1</code>, <code>nospyall/0</code>, <code>debug/0</code>, <code>current_spypoint/1</code>, <code>add_spypoint/1</code>, <code>remove_spypoint/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-tcm.html#mpg-ref-tcm">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-source_file.html#mpg-ref-source_file">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

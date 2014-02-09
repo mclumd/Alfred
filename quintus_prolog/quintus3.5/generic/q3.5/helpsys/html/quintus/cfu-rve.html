@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Return Values and Errors</h3>
+
+   <p>Quintus Prolog C functions return the following:
+     <dl>
+
+     <br><dt>integer
+     <dd>one of
+
+          <dl>
+
+          <br><dt><code>QP_SUCCESS</code>
+          <dd>(0)
+
+          <br><dt><code>QP_FAILURE</code>
+          <dd>(-1)
+
+          <br><dt><code>QP_ERROR</code>
+          <dd>(-2)
+</dl>
+
+     <br><dt>boolean
+     <dd>true (1), false (0)
+
+     <br><dt>pointer
+     <dd>a pointer or null (0)
+
+   </dl>
+
+   <p>In some error situations, a global variable, <code>QP_errno</code> may also be set to
+give more information about the error condition.
+
+   <p>Those I/O related predicates that take a Prolog stream argument do not set
+the error code in <code>QP_errno</code>.  Instead, they set the errno field of
+the stream.
+
+   <p>There are two <code>QP_</code> functions provided to help diagnose error conditions
+from error numbers:
+
+     <dl>
+
+     <br><dt><code>QP_perror()</code>
+     <dd>
+prints out a user message, together with a short error message describing
+the last error encountered that set <code>QP_errno</code>.  This function is similar
+to the system function <code>perror(3)</code>.
+
+     <br><dt><code>QP_error_message()</code>
+     <dd>
+returns a pointer to the diagnostic message corresponding to a specified
+error number.
+
+   </dl>
+
+   <p>In addition, the error number is sometimes reported in the message field
+of exception terms, as in
+<pre class="example">     existence_error(Goal, _,_,_,errno(<var>error number</var>))
+     </pre>
+
+   <p>See <a href="mpg-ref-ove.html#mpg-ref-ove">mpg-ref-ove</a>
+for a description of the conventions observed in the Reference Pages
+for Prolog predicates.  C function Reference Pages differ primarily
+in the synopsis.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-top.html#cfu-top">Next</a>
+<li><a rel="up" accesskey="u" href="cfu.html#cfu">Up</a>
+</ul>
+</div>
+   </body></html>
+

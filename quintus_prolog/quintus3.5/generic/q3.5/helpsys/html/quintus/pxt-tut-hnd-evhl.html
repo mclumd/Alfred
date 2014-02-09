@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Event Handling Loop</h5>
+
+   <p>At some point the application must start handling events. The
+procedure for obtaining these events is <code>xtAppNextEvent/2</code> and the
+procedure for dispatching them to the widgets is
+<code>xtDispatchEvent/1</code>. The call to <code>xtAppMainLoop/1</code> starts an endless
+loop where these two procedures are called one after another. Of
+course, the programmer can always write her own event loop, specifying
+some exit conditions, etc. The following example is a slight
+modification of the first program, which exits the event loop when the
+button is pressed.
+
+<pre class="example">     :- dynamic exit_loop/1.
+     
+     exit_loop(no).
+     
+     exit_callback(_Widget,_CLientData,_CallData) :-
+             retract(exit_loop(no)),
+             assert(exit_loop(yes)).
+     
+     create_button :-
+             xtAppInitialize(App,'Test',[],Shell),
+             xmCreatePushButton(Shell,push_button,
+                                [xmNwidth(100), xmNheight(100)],
+                                Button),
+             xtManageChild(Button),
+             xtAddCallback(Button,xmNactivateCallback,exit_callback,_),
+             xtRealizeWidget(Shell),
+             main_loop(App).
+     
+     main_loop(App) :-
+             (   exit_loop(yes)
+             -&gt;  write('Exiting...'), nl
+             ;   xtAppNextEvent(App,Event),
+                 xtDispatchEvent(Event),
+                 main_loop(App)
+             ).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxt-tut-hnd-oevt.html#pxt-tut-hnd-oevt">Previous</a>
+<li><a rel="up" accesskey="u" href="pxt-tut-hnd.html#pxt-tut-hnd">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>read_term/[2,3]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>read_term</code><var>+Options, -Term</var><code></code>)]
+
+   <p><code>read_term</code><var>+Stream, +-Options, -Term</var><code></code>)]
+
+   <p>Read a term from the current input stream or from <var>Stream</var>,
+optionally returning extra information about the term.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>A valid Prolog stream, which is
+open for input
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>the term that is read
+
+     <br><dt><var>Options</var> <dfn>list of term</dfn>
+     <dd>a list of zero or more of the following:
+
+          <dl>
+
+          <br><dt><code>syntax_errors(</code><var>Val</var><code>)</code>
+          <dd>
+                        <var>Val</var> must be bound to one of the following, indicating what
+            should be done when a syntax error is found:
+
+               <dl>
+
+               <br><dt><code>quiet</code>
+               <dd>nothing is printed, and <code>read_term/[2,3]</code> fails
+
+               <br><dt><code>dec10</code>
+               <dd>a syntax error message is printed, and
+                <code>read_term/[2,3]</code> tries to read the next term (this
+                is compatible with DEC-10 Prolog and previous versions
+                of Quintus Prolog)
+
+               <br><dt><code>fail</code>
+               <dd>a syntax error message is printed, and
+                <code>read_term/[2,3]</code> fails
+
+               <br><dt>error
+               <dd>an exception is raised.
+
+          </dl>
+
+          <p>The default value if this option is not specified is the
+            current value of the <code>syntax_errors</code> prolog flag.  The default
+            value for this flag is <code>dec10</code>.  See
+            <code>prolog_flag/2</code> for more information on these
+            flags.
+
+          <br><dt><code>variable_names(</code><var>Names</var><code>)</code>
+          <dd>
+            On completion, <var>Names</var> is bound to a list of
+            <var>Name=Var</var> pairs, where each <var>Name</var> is an atom
+            indicating the spelling of the name of a variable in the
+            term just read, and <var>Var</var> is the corresponding
+            variable.  Note that anonymous variables, written as
+            <code>_</code>, are not included in this list.
+
+          <br><dt><code>singletons(</code><var>Singletons</var><code>)</code>
+          <dd>
+            On completion, <var>Singletons</var> is bound to a list of
+            <var>Name=Var</var> pairs, one for each variable only appearing
+            once in the term.  Anonymous variables are not included on
+            this list.
+
+          <br><dt><code>term_position(</code><var>Position</var><code>)</code>
+          <dd>
+            On completion, <var>Position</var> is the position of the start
+            of the actual term, as might be returned by
+            <code>stream_position/2</code>.  Any white space and comments before
+            the actual term are not reflected by the position.  To find
+            the position of the end of the term, you need only call
+            <code>stream_position/2</code>; it will give you the position of the
+            first character after the period ending the term.
+
+          <br><dt><code>subterm_positions(</code><var>PositionTerm</var><code>)</code>
+          <dd>
+                        On completion, <var>PositionTerm</var> is bound to a position
+            term that describes the position of the term just read and
+            all of its subterms.  A position term is of one of the forms
+            listed below.  In all these forms, <var>Start</var> and
+            <var>End</var> are the character positions of first character of
+            the term and the character following the last character of
+            the term, respectively.  Similarly <var>FStart</var> and
+            <var>FEnd</var> specify the start and end of the principle
+            functor of the term.  Note that the positions are
+            <em>character</em> positions, not position terms as returned
+            by <code>stream_position/2</code>.
+
+               <dl>
+
+               <br><dt><var>Start-End</var>
+               <dd>
+                    The term corresponding to this position term is
+                    either atomic or a variable.  <var>Start</var> and
+                    <var>End</var> are the character positions of the first
+                    character of the term and the character following
+                    the last character of the term, respectively.
+
+               <br><dt><code>list_position(</code><var>Start</var><code>,</code><var>End</var><code>,</code><var>Elts</var><code>,</code><var>Tail</var><code>)</code>
+               <dd>
+                    The term corresponding to this position term is a
+                    list, which was written using bracket notation (for
+                    example, <code>[a,list]</code>).  <var>Elts</var> is a list of
+                    position terms for each proper element of the list. 
+                    Tail is the position of the tail of the list (the
+                    part following the <code>|</code>), or the atom <code>none</code> if the list
+                    has no tail part.
+
+               <br><dt><code>string_position(</code><var>Start</var><code>,</code><var>End</var><code>)</code>
+               <dd>
+                    The term corresponding to this position term is a
+                    list of character codes written as a quoted string
+                    (for example, <code>"a string"</code>).  The positions specified
+                    include the quote characters.
+
+               <br><dt><code>brace_term_position(</code><var>Start</var><code>,</code><var>End</var><code>,</code><var>Arg</var><code>)</code>
+               <dd>
+                    The term corresponding to this position term is of
+                    the form {<var>X</var>}.  Arg is a position term describing
+                    the argument of this term.
+
+               <br><dt><code>term_position(</code><var>Start</var><code>,</code><var>End</var><code>,</code><var>FStart</var><code>,</code><var>FEnd</var><code>,</code><var>Args</var><code>)</code>
+               <dd>
+                    The term corresponding to this position term is a
+                    compound term not specifically mentioned above. 
+                    This includes terms written with operators.  Args is
+                    a list of position terms, one for each argument of
+                    the term.
+
+          </dl>
+
+     </dl>
+
+   </dl>
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>syntax_error</code>
+     <dd>
+A syntax error is found
+
+     <br><dt><code>permission_error</code>
+     <dd>
+The input stream cannot be read
+
+     <br><dt><code>domain_error</code>
+     <dd>
+An illegal option or an invalid stream is specified
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+Either <var>Stream</var> or <var>Options</var>, or one of the
+elements of the option list, or the argument of the <code>syntax_errors</code>
+option is unbound
+
+     <br><dt><code>type_error</code>
+     <dd>
+The argument to the <code>syntax_errors</code> option is not an atom
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     | ?- <kbd>read_term([variable_names(L)], T).</kbd>
+     |: <kbd>append([U|X],Y,[U|Z]) :- append(X,Y,Z).</kbd>
+     
+     L = ['U'=_1988,'X'=_2003,'Y'=_2020,'Z'=_2046],
+     T = (append([_1988|_2003],_2020,[_1988|_2046]):-
+              append(_2003,_2020,_2046))
+     </pre>
+
+<pre class="example">     | ?- <kbd>read_term([subterm_positions(P)], T).</kbd>
+     |: <kbd>foo+bar+baz.</kbd>
+     
+     P = term_position(1642,1653,1649,1650,
+             [term_position(1642,1649,1645,1646,
+                  [1642-1645,1646-1649]),
+              1650-1653]),
+     T = foo+bar+baz
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>read/[1,2]</code>, <code>prompt/[2,3]</code>
+<code>prolog_flag/[2,3]</code>
+
+   <a href="ref-iou.html#ref-iou">ref-iou</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-reconsult.html#mpg-ref-reconsult">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-read.html#mpg-ref-read">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

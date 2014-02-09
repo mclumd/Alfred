@@ -1,0 +1,175 @@
+
+/* @(#)README	24.1 2/23/88 */
+
+File   : README
+Author : David S. Warren
+Updated: 2/23/88
+Purpose: explain IPC/demo
+
+    This directory contains a set of files to demonstrate the
+    IPC communication facilities that allow a C program or a
+    Prolog program to call a Prolog program.  Both the examples
+    here start their servants on the same machine on which the
+    master is running.  In UNIX systems which support sockets
+    (check your UNIX manual; 4.xBSD has them, most System Vs
+    lack them) it is possible (and sometimes important) to have
+    the servant run on a different machine.  It would be easy
+    (knowing the name of the other machine on which to run) to
+    start a remote servant.
+
+    The 'makefile' and '*.sh' scripts automate the construction
+    of the demonstration programs.  You should have installed
+    Prolog, the Prolog library, and the Prolog IPC library,
+    before trying to make these demos.
+
+    The files in this directory are
+
+	ccaller.c
+    *	ccaller.o		[made by cc]
+    *@	ccallqp.h		[made by makelinks.sh]
+    *@	ccallqp.o		[made by makelinks.sh]
+    *	cpmaster		[made by makefile from ccaller.o]
+    *$	cpservant		[made by cpservant.sh from cpservant.pl]
+	cpservant.pl
+	cpservant.sh
+	makefile
+	makelinks.sh
+    *$	qqmaster		[made by qqmaster.sh from qqmaster.pl]
+	qqmaster.pl
+	qqmaster.sh
+    *$	qqservant		[made by qqservant.sh from qqservant.pl]
+	qqservant.pl
+	qqservant.sh
+
+    The files labelled by *@ should really be links.  For portability
+    they are copies.  Think about editing makelinks.sh.
+
+    The files labelled by *$ are Prolog saved states.
+
+    % make demos
+    is the UNIX command which will build both demos.
+
+
+Prolog calling Prolog: The n-Queens example.
+--------------------------------------------
+
+    The demonstration program for Prolog calling a Prolog
+    servant solves the n-queens problem.  The 8-queens problem
+    is how to set 8 queens on an 8x8 chess board so that no two
+    queens are in opposition (i.e. in the same column or the
+    same row or the same diagonal.)  The n-queens problem is a
+    generalization to an n x n size chess board.
+
+    % make qpcallqpdemo
+    is the UNIX command while will build this demo.
+    It creates two Prolog saved states:
+
+    1.  qqservant
+
+	This is the saved state of the servant.  You will not call
+	it directly.  You should move it either into your search
+	$PATH (see the UNIX manual for an explanation of $PATH) or
+	into the directory that qqmaster will be run in.
+
+    2.  qqmaster
+
+	This is the saved state of the master.  This is the one
+	you call.  When you execute it, you are at Prolog top
+	level.  Type 'go' and it will start up the servant and
+	tell you what to do.
+
+    That is, having made the demo, you type
+    % ./qqmaster
+    | ?- go.
+    | ?- queens(4, Ans).	% or whatever
+    | ?- halt.			% to stop it.
+    In general, you should call shutdown_servant/0 before calling halt.
+
+
+C calling Prolog: Simple Example.
+---------------------------------
+
+    % make ccallqpdemo
+    is the UNIX command which will build this demo.
+    It creates an executable file and a Prolog saved state:
+
+    1.  cpservant
+
+	This is the saved state of the servant.  You will not call
+	it directly.  You should move it either into your search
+	$PATH (see the UNIX manual for an explanation of $PATH) or
+	into the directory that cpmaster will be run in.
+	It has several externals declared in it, which are called
+	in sequence by the example program.  These predicates are: 
+
+	a) The first predicate adds two integers (not a very good
+	use of a Prolog servant).  The example program prompts
+	for 2 integers, sends them to the Prolog servant, and
+	prints what gets sent back.  Enter 0 0 to get out of the
+	loop.  Remember that Prolog's integers are 29 bits and
+	entering too large an integer will result in garbage.
+	DO NOT TRY USING PROLOG'S RADIX NOTATION!  The master is
+	a >>C<< program, which doesn't understand it.
+
+	b) The second predicate is a simple table of tuples,
+	called 'table'.  The example program retrieves them all
+	and prints them out.
+
+	c) The third predicate just duplicates the values sent
+	to it and sends them back.  The example program loops,
+	prompting for an integer, a string, a floating point
+	number, and another string (to send as an atom).  A
+	reasonable thing to type to this request is:
+
+	    1234 abcdefg 76.234 qwerty
+	or
+	    1 two 3.0 four
+
+	It calls the Prolog predicate to duplicate these values
+	(testing all the types) and prints out what gets sent
+	back.  Enter 'stop it' to get out of the loop.
+
+	The example program also has a couple of externals for
+	turning on and off tracing.  It uses these to turn
+	tracing on in the servant, so you may look at the file
+	'qpout' after it has been run to see what the servant
+	has received and sent back to the C program.
+
+	These Prolog routines and the external declarations are
+	compiled into Prolog from the file cpservant.pl.  Look at
+	that file for the examples.
+
+    2.  cpmaster
+
+	This is an ordinary UNIX executable file made from
+	ccaller.c. This is a C program that creates a Prolog
+	servant (using cpservant as the saved state) and
+	does some very simple calls to it.  Just execute cpmaster
+	to make it work.  Look at ccaller.c to see how it works.
+
+	This program takes two arguments: the name of the machine
+	to run the servant on, and the name of the output file.
+	To run on the same machine, use ''.  (System V users will
+	always have to do this.)  By default, the output comes to
+	the terminal.  To get output in 'qpout', do
+
+	    % ./cpmaster '' qpout
+
+	instead of
+
+	    % ./cpmaster
+
+	which is what one normally does.
+
+
+Cleaning up.
+------------
+
+    The Prolog saved states are quite large.  Once you have tried
+    the demos and understood how they work, you might like to
+    remove the inessential files.  Do
+
+	% make clean
+
+    to achieve this.
+

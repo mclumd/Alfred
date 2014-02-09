@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Other Prompted Input -- <code>library(prompt)</code></h4>
+
+   <p><code>library(prompt)</code> defines several commands for reading prompted
+input from the terminal.  In fact, <code>library(ask)</code> is built on top
+of this package.
+
+     <dl>
+
+     <br><dt><code>prompt(</code><var>+Prompt</var><code>)</code>
+     <dd>
+is used by all the commands in <code>library(ask)</code> to print the prompt
+or question.  You may find it
+useful in constructing your prompted input commands. 
+If <var>Prompt</var> is any term except a
+list, it is written to the terminal using <code>write/1</code>; if <var>Prompt</var>
+is a list of terms, each element of the list is written to the
+terminal using <code>write/1</code>, with no additional layout or punctuation. 
+After writing <var>Prompt</var> to the terminal, the terminal output is
+flushed, so that <var>Prompt</var> will appear on the terminal before the
+user has to type an answer.  <code>prompt/1</code> ensures
+that <var>Prompt</var> always starts at the beginning of a line.
+
+     <br><dt><code>prompted_char(</code><var>+Prompt</var><code>, </code><var>-Char</var><code>)</code>
+     <dd>
+writes <var>Prompt</var> to the terminal, and reads a line of characters from it. 
+The first of these characters is returned as <var>Char</var>; the rest are discarded. 
+The original case of
+the character is preserved.  Note that <var>Char</var> might be a newline
+character or the end-of-file character.
+
+     <br><dt><code>prompted_line(</code><var>+Prompt</var><code>, </code><var>-Chars</var><code>)</code>
+     <dd>
+
+     <br><dt><code>prompted_line(</code><var>+Prompt</var><code>, </code><var>-Chars</var><code>, </code><var>-Terminator</var><code>)</code>
+     <dd>
+These predicates write <var>Prompt</var> to the terminal, regardless of
+the current output stream; and read a list of character codes
+from the terminal, regardless of the current input stream. 
+<var>Prompt</var> is written using <code>write/1</code>; it is normally a single atom,
+and should never be a list of character codes. 
+<code>prompted_line/3</code> also returns the end-of-line character, while
+<code>prompted_line/2</code> simply checks that the end-of-line character
+is not end-of-file.  When you want
+to ask the user of your program a question, use <code>prompted_line/[2,3]</code>
+instead of changing I/O streams yourself, or using <code>ttyget0/1</code> and its
+associates.  In order to ask the user of your program
+"Do you really want to stop?" and stop if the user says <kbd>yes</kbd> or
+anything else beginning with a lowercase <kbd>y</kbd>, simply write
+     <pre class="example">          conditional_halt :-
+             prompted_line('Do you really want to stop? ',
+                            [0'y|_]),
+             halt.
+          </pre>
+
+     <p>You can use <code>prompted_line/[2,3]</code> without worrying what the current I/O streams
+are, or whether you need to call
+<code>ttyflush/0</code> or not.  Also, as with <code>get_line/[1,2]</code>, an input line ends
+with the
+line terminator character.  The user does <em>not</em> have to end
+<code>prompted_line/[2,3]</code> input with a <kbd>.</kbd>, just with &lt;RET&gt;.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-uin-readconstant.html#lib-uin-readconstant">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-uin-ask.html#lib-uin-ask">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-uin.html#lib-uin">Up</a>
+</ul>
+</div>
+   </body></html>
+

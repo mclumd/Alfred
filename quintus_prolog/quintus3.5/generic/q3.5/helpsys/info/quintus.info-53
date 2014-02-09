@@ -1,0 +1,2127 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: cfu-ref-close_query,  Next: cfu-ref-compare,  Prev: cfu-ref-clearerr,  Up: cfu-ref
+
+`QP_close_query()'
+------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_close_query(qid)
+     QP_qid qid;
+
+   Equivalent to the Prolog call:
+     !, fail.
+
+Description
+-----------
+
+   The cut renders the current computation determinate, removing the
+possibility of future backtracking.  The following call to `fail/0'
+then initiates backtracking to the first parent goal with outstanding
+alternatives.  In doing so it pops the Prolog heap to its state when
+the parent goal succeeded, in effect throwing away any terms created
+since that parent goal.
+
+   In the context of calling Prolog from foreign languages, terminating
+a query using `QP_close_query()' generally means throwing away the last
+solution that was calculated, unless that solution has been copied into
+a more permanent place.  (Of course, any previous solutions must also
+be assumed to have been overwritten by subsequent solutions unless
+copied elsewhere!)  The converse of this behavior is that closing a
+query using `QP_close_query()' automatically frees up the Prolog memory
+that holds the last solution.
+
+Return Values
+-------------
+
+`QP_SUCCESS'
+     Query was closed successfully
+
+`QP_ERROR'
+     either the query could not be closed or an exception was signalled
+     from Prolog but not caught
+
+See Also
+--------
+
+   `QP_cut_query()', `QP_open_query()', `QP_query()',
+`QP_next_solution()', `QP_pred()', `QP_predicate()', *Note fli-ffp::
+
+
+File: quintus.info,  Node: cfu-ref-compare,  Next: cfu-ref-cons,  Prev: cfu-ref-close_query,  Up: cfu-ref
+
+`QP_compare()'
+--------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_compare(term1, term2)
+     QP_term_ref term1;
+     QP_term_ref term2;
+
+   Compares the two terms referenced by TERM1 and TERM2. Both arguments
+are TERM1 before TERM2
+
+Description
+-----------
+
+   The comparison uses the standard total ordering of Prolog terms
+(also used by the built-in Prolog predicate `compare/3').
+
+In Standard Order:
+     Ret Value
+
+TERM1 before TERM2
+     -1
+
+TERM1 same as TERM2
+     0
+
+TERM1 after TERM2
+     1
+
+Examples
+--------
+
+   `c_compare(term1, term2)' is an equivalent C version of the Prolog
+builtin `compare/3':
+
+                                                               _foo.pl_
+     
+     foreign(c_compare, c, c_compare(+term, +term, +term)).
+
+                                                                _foo.c_
+     
+     #include <quintus/quintus.h>
+     
+     int c_compare(t1, t2, t3)
+     QP_term_ref t1, t2;
+     {
+        int res;
+        QP_term_ref l_than = QP_new_term_ref();
+        QP_term_ref equal  = QP_new_term_ref();
+        QP_term_ref g_than = QP_new_term_ref();
+     
+        QP_put_atom(l_than, QP_atom_from_string("<"));
+        QP_put_atom(equal,  QP_atom_from_string("="));
+        QP_put_atom(g_than, QP_atom_from_string(">"));
+     
+        res = QP_compare(t2, t3);
+        if ( res < 0) {
+           return QP_unify(t1, l_than);
+        } else if (res == 0) {
+           return QP_unify(t1, equal);
+        } else if (res > 0) {
+           return QP_unify(t1, g_than);
+        }
+     }
+
+See Also:
+---------
+
+   `QP_unify()', `compare/3'
+
+
+File: quintus.info,  Node: cfu-ref-cons,  Next: cfu-ref-cut_query,  Prev: cfu-ref-compare,  Up: cfu-ref
+
+`QP_cons_*(')
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     void QP_cons_list(term, head, tail)
+     QP_term_ref term;
+     QP_term_ref head;
+     QP_term_ref tail;
+
+     void QP_cons_functor(term, name, arity, arg1, ... ,arg_arity)
+     QP_term_ref   term;
+     QP_atom       name;
+     int           arity;
+     QP_term_ref   arg1, ... , arg_arity;
+
+Description
+-----------
+
+   These are C functions that can be used to create new Prolog terms
+from C.
+
+   `QP_cons_list()' assigns to TERM a reference to a list whose head is
+the term referred to by HEAD and whose tail is the term referred to by
+TAIL.
+
+   `QP_cons_functor()' assigns to TERM a reference to a compound term
+whose functor  is the atom represented by NAME and whose arity is the
+integer ARITY. The arguments of the compound term are terms referred to
+by ARG1, ARG2, etc. The call to this function should make sure that the
+number of arguments passed is equal to the arity of the compound term.
+
+   Note that the following are equivalent:
+
+   QP_cons_list(term, head, tail)
+
+   dot = QP_atom_from_string("."); QP_cons_functor(term, dot, 2, head,
+tail)
+
+   However, the former is likely to be more efficient.
+
+Examples
+--------
+
+   `float_to_chars()' is a C function that converts a floating point
+number to a list of characters. Note the use of `QP_put_integer()'.
+
+                                                               _foo.pl_
+     
+     foreign(flt_to_chars, flt_to_chars(+float, -term)).
+
+                                                                _foo.c_
+     
+     #include <quintus/quintus.h>
+     
+     void flt_to_chars(flt, chars)
+     double flt;
+     QP_term_ref chars;
+     {
+        char buffer[28], *p;
+        int len;
+        QP_term_ref term_char = QP_new_term_ref();
+     
+        QP_put_nil(chars);
+        sprintf( buffer , "%.17e" , flt );
+     
+        /* move to end of buffer */
+        for (p=buffer, len=0; *p; p++, len++);
+     
+        while ( len-- )  {
+           QP_put_integer(term_char, *--p);
+           QP_cons_list(chars, term_char, chars);
+        }
+     }
+
+See Also:
+---------
+
+   `QP_term_type()', `QP_get_*()', `QP_new_term_ref()'
+
+
+File: quintus.info,  Node: cfu-ref-cut_query,  Next: cfu-ref-error_message,  Prev: cfu-ref-cons,  Up: cfu-ref
+
+`QP_cut_query()'
+----------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_cut_query(qid)
+     QP_qid qid;
+
+   Equivalent to just calling `!' in Prolog.
+
+Description
+-----------
+
+   The computation is rendered determinate, but as it is not failed
+over the Prolog heap is not popped.  Thus when terminating a query
+using `QP_cut_query()' more space may be retained, but so is the last
+solution.
+
+Return Values
+-------------
+
+`QP_SUCCESS'
+
+`QP_ERROR'
+     either something is wrong with the `QP_qid' or Prolog has not been
+     initialized
+
+See Also
+--------
+
+   `QP_query()', `QP_close_query()', `QP_next_solution()',
+`QP_open_query()', `QP_pred()', `QP_predicate()'
+
+   *Note fli-ffp::
+
+
+File: quintus.info,  Node: cfu-ref-eof,  Next: cfu-ref-eoln,  Prev: cfu-ref-exception_term,  Up: cfu-ref
+
+`QP_eof()'
+----------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_eof(stream)
+     QP_stream *stream;
+
+   Returns non-zero when the end of file has been reached on the named
+stream, otherwise zero.
+
+Return Value
+------------
+
+`QP_ERROR'
+     If an error has occurred
+
+1
+     If the end of file has been reached on the named stream
+
+0
+     Otherwise
+
+See Also
+--------
+
+   `QP_fopen()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-eoln,  Next: cfu-ref-fclose,  Prev: cfu-ref-eof,  Up: cfu-ref
+
+`QP_eoln()'
+-----------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_eoln(stream)
+     QP_stream *stream;
+
+   Returns non-zero when the end of record has been reached on the
+named stream, otherwise zero.
+
+Return Value
+------------
+
+`QP_ERROR'
+     If an error has occurred
+
+1
+     If the end of record has been reached on the named stream
+
+0
+     Otherwise
+
+See Also
+--------
+
+   `QP_fopen()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-error_message,  Next: cfu-ref-exception_term,  Prev: cfu-ref-cut_query,  Up: cfu-ref
+
+`QP_error_message()'
+--------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_error_message(errno, is_qp_error, error_string)
+     int    errno;
+     int   *is_qp_error;
+     char **error_string;
+
+Arguments
+---------
+
+ERRNO
+     the error number in question
+
+IS_QP_ERROR
+     set to:
+
+
+
+    0
+          if it _is not_ an error number created by Quintus.
+
+    1
+          if it _is_ an error number created by Quintus.
+
+ERROR_STRING
+     the text of the error message.
+
+Description
+-----------
+
+   This function supplies the text corresponding to the error number
+ERRNO.  The output parameter IS_QP_ERROR can be used to determine if
+the error number was one created by Quintus or is a system error number.
+
+   Typically, the error number of interest is the one in the global
+variable `QP_errno'.  This variable is discussed in the man pages for
+`QP_perror()'.
+
+Return Value
+------------
+
+   `QP_SUCCESS'
+
+Examples
+--------
+
+   The following fragment takes the status value returned by some
+function that returns C calling Prolog style status values and prints
+out the corresponding error.
+     #include <quintus/quintus.h>
+         ...
+     int is_qp_error;
+     char *error_message;
+         ...
+     status = some_function();
+     switch(status) {
+     case QP_ERROR:
+         (void) QP_error_message(QP_errno, &is_qp_error,
+             &error_message);
+         if(is_qp_error)
+             (void) QP_fputs("prolog error: ", QP_stderr);
+         else (void) QP_fputs("UNIX error: ", QP_stderr);
+         (void) QP_fputs(error_message, QP_stderr);
+         (void) QP_fnewln(QP_stderr);
+         ...
+
+See Also
+--------
+
+   `QP_perror()'
+
+
+File: quintus.info,  Node: cfu-ref-exception_term,  Next: cfu-ref-eof,  Prev: cfu-ref-error_message,  Up: cfu-ref
+
+`QP_exception_term()'
+---------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_exception(term)
+     QP_term_ref term;
+
+   A function that users can call when their call to Prolog signals an
+error. If `QP_query()' returns `QP_ERROR' then users can call
+`QP_exception_term()' to get at the exception term signalled.
+
+Description
+-----------
+
+   If C calls Prolog and the Prolog goal raises an exception,
+`QP_query()' (or `QP_next_solution()') returns the value `QP_ERROR'.
+If the user wants to get at the exception term that has been raised,
+they can call the function `QP_exception_term()'.
+`QP_exception_term()' takes a `QP_term_ref' as argument and returns a
+Prolog term.
+
+Example
+-------
+
+                                                               _foo.pl_
+     
+     :- extern(error).
+     
+     error :- raise_exception(error_term(from_prolog)).
+
+                                                                _foo.c_
+     
+             QP_pred_ref pred;
+     
+             if ((pred = QP_predicate("error",0,"user")) !=
+                 (QP_pred_ref) QP_ERROR) {
+     
+                 if (QP_query(pred) == QP_ERROR) {
+                     QP_term_ref err_term = QP_new_term_ref();
+     
+                     QP_exception_term(err_term);
+                 }
+             }
+
+   Once you get `err_term', you can use functions such as the
+`QP_get_*()' family to take apart the error term or to print it.
+
+See Also
+--------
+
+   `QP_query()', `QP_next_solution()', `raise_exception/3'
+
+   *Note ref-ere::
+
+
+File: quintus.info,  Node: cfu-ref-fclose,  Next: cfu-ref-fdopen,  Prev: cfu-ref-eoln,  Up: cfu-ref
+
+`QP_fclose()'
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fclose(stream)
+     QP_stream *stream;
+
+   Writes out any buffered data for the named stream, and closes the
+named stream.
+
+   `QP_fclose()' is similar to the library function `fclose(3S)',
+however the return values differ and STREAM is a Prolog stream rather
+than a `stdio' stream.
+
+Return Value
+------------
+
+`QP_SUCCESS'
+     If function succeeds
+
+`QP_ERROR'
+     Otherwise
+
+See Also
+--------
+
+   `QP_fopen()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fdopen,  Next: cfu-ref-ferror,  Prev: cfu-ref-fclose,  Up: cfu-ref
+
+`QP_fdopen()'
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     QP_stream *QP_fdopen(fildes, type)
+     int   fildes;
+     char *type;
+
+   Associates a stream with the file descriptor files.  File
+descriptors are obtained from system calls like `open(2V)', `dup(2)',
+`creat(2)', or `pipe(2)', which open files but do not return streams.
+Streams are necessary input for many of the system functions.  The type
+of the stream must agree with the mode of the open file.
+
+   `QP_fdopen()' is similar to the library function `fdopen(3V)',
+however the return values differ and the normal return value is a
+Prolog stream rather than a `stdio' stream.
+
+Return Value
+------------
+
+Prolog stream
+     If function succeeds
+
+`QP_NULL_STREAM'
+     Otherwise
+
+See Ablso
+---------
+
+   `QP_fclose()', `QP_fopen()', `QP_prepare_stream/[3,4]'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-ferror,  Next: cfu-ref-fgetc,  Prev: cfu-ref-fdopen,  Up: cfu-ref
+
+`QP_ferror()'
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_ferror(stream)
+     QP_stream *stream;
+
+   Returns non-zero when an error has occurred reading from or writing
+to the named stream, otherwise zero.
+
+   `QP_ferror()' is similar to the library function `ferror(3V)',
+however the return values differ and STREAM is a Prolog stream rather
+than a `stdio' stream.
+
+Return Value
+------------
+
+1
+     If function succeeds writing to the named stream
+
+0
+     Otherwise
+
+See Also
+--------
+
+   `QP_fopen()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fgetc,  Next: cfu-ref-fgets,  Prev: cfu-ref-ferror,  Up: cfu-ref
+
+`QP_fgetc()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fgetc(stream)
+     QP_stream *stream;
+
+   Behaves like `QP_getc()', but is a function rather than a macro.
+
+   `QP_fgetc()' is similar to library function `fgetc(3V)', however the
+return values differ and STREAM is a Prolog stream rather than a
+`stdio' stream.
+
+Return Value
+------------
+
+character read
+     If function succeeds
+
+`QP_ERROR'
+     Otherwise
+
+See Also
+--------
+
+   `QP_ferror()', `QP_fopen()', `QP_fread()', `QP_putc()', `QP_ungetc()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fgets,  Next: cfu-ref-flush,  Prev: cfu-ref-fgetc,  Up: cfu-ref
+
+`QP_fgets()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     char *QP_fgets(s, n, stream)
+     char      *s;
+     int        n;
+     QP_stream *stream;
+
+   Reads characters from the stream into the array pointed to by S,
+until N-1 characters are read, a NEWLINE character is read and
+transferred to S, or an EOF condition is encountered.  The string is
+then terminated with a NULL character.
+
+   `QP_fgets()' is similar to the library function `fgets(3S)', however
+the return values differ and STREAM is a Prolog stream rather than a
+`stdio' stream.
+
+Return Value
+------------
+
+`s'
+     If function succeeds
+
+`NULL'
+     Otherwise
+
+See Also
+--------
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-flush,  Next: cfu-ref-fnewln,  Prev: cfu-ref-fgets,  Up: cfu-ref
+
+`QP_flush()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_flush(stream)
+     QP_stream *stream;
+
+   Forces the buffered output of the stream STREAM to be sent to the
+associated device.
+
+Arguments
+---------
+
+STREAM
+     pointer to a valid stream structure.
+
+Description
+-----------
+
+   Calls the bottom layer flushing function of STREAM to write out the
+current buffered output of the stream.  The output is usually written
+out to a disk or a tty device.
+
+Return Value
+------------
+
+`QP_SUCCESS'
+     The function succeeds
+
+`QP_ERROR'
+     There is an error in the function call, the error number is stored
+     in both `QP_errno' and STREAM->ERRNO.
+
+Errors
+------
+
+`QP_E_PERMISSION'
+     STREAM is not an output stream or it does not permit flushing.
+
+`QP_E_CANT_WRITE'
+     Unknown error in the bottom layer of flush function of STREAM
+
+     Errors from host operating system
+
+See Also
+--------
+
+   `flush_output/1'.
+
+
+File: quintus.info,  Node: cfu-ref-fnewln,  Next: cfu-ref-fopen,  Prev: cfu-ref-flush,  Up: cfu-ref
+
+`QP_fnewln()'
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fnewln(stream)
+     QP_stream *stream;
+
+   Terminates an output record for a Prolog output stream.
+
+Arguments
+---------
+
+STREAM
+     pointer to a valid stream structure
+
+See Also
+--------
+
+   `QP_newline()', `QP_newln()', `nl/[0,1]'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fopen,  Next: cfu-ref-fpeekc,  Prev: cfu-ref-fnewln,  Up: cfu-ref
+
+`QP_fopen()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     QP_stream *QP_fopen(filename, type)
+     unsigned char *filename;
+     char          *type;
+
+   Opens the file named by filename and associates a stream with it.
+
+   `QP_fopen()' is similar to the library function `fopen(3V)', however
+the return values differ and STREAM is a Prolog stream rather than a
+`stdio' stream.
+
+Return Value
+------------
+
+Prolog stream
+     If function succeeds
+
+`QP_NULL_STREAM'
+     Otherwise
+
+See Also
+--------
+
+   `QP_fopen()', `QP_fdopen()', `QP_prepare_stream/[3,4]'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fpeekc,  Next: cfu-ref-fprintf,  Prev: cfu-ref-fopen,  Up: cfu-ref
+
+`QP_fpeekc()'
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fpeekc(stream)
+     QP_stream *stream;
+
+   Look ahead for the next character to be read in from a Prolog input
+stream.
+
+Arguments
+---------
+
+STREAM
+     pointer to a valid stream structure
+
+Return Value
+------------
+
+   Character code or `QP_ERROR'.
+
+See Also
+--------
+
+   `QP_peekc()', `QP_peekchar()', `peek_char/[1,2]'
+
+
+File: quintus.info,  Node: cfu-ref-fprintf,  Next: cfu-ref-fputc,  Prev: cfu-ref-fpeekc,  Up: cfu-ref
+
+`QP_fprintf()'
+--------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fprintf(stream, format [ , arg ]...)
+     QP_stream *stream;
+     char      *format;
+
+   Places output onto the Prolog output stream STREAM.
+
+   `QP_fprintf()' is similar to the library function `fprintf(3V)',
+however the return values differ and STREAM is a Prolog stream rather
+than a `stdio' stream.
+
+Return Value
+------------
+
+Number of characters written to STREAM
+     If function succeeds
+
+`QP_ERROR'
+     Otherwise
+
+See Also
+--------
+
+   `QP_printf()', `QP_putc()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fputc,  Next: cfu-ref-fputs,  Prev: cfu-ref-fprintf,  Up: cfu-ref
+
+`QP_fputc()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fputc(c, stream)
+     int        c;
+     QP_stream *stream;
+
+   Behaves like `QP_putc()', but is a function rather than a macro.
+
+   `QP_fputc()' is similar to the library function `fputc(3S)', however
+the return values differ and STREAM is a Prolog stream rather than a
+`stdio' stream.
+
+Return Value
+------------
+
+The character written
+     If function succeeds
+
+`QP_ERROR'
+     Otherwise
+
+See Also
+--------
+
+   `QP_fclose()', `QP_ferror()', `QP_fopen()', `QP_fread()',
+`QP_getc()', `QP_printf()', `QP_puts()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fputs,  Next: cfu-ref-fread,  Prev: cfu-ref-fputc,  Up: cfu-ref
+
+`QP_fputs()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fputs(s, stream)
+     unsigned char *s;
+     QP_stream     *stream;
+
+   Writes the NULL-terminated string pointed to by S to the named
+output stream.
+
+   `QP_fputs()' is similar to the library function `fputs(3S)', however
+the return values differ and STREAM is a Prolog stream rather than a
+`stdio' stream.
+
+Return Value
+------------
+
+Number of characters written
+     If function succeeds
+
+`QP_ERROR'
+     Otherwise
+
+See Also
+--------
+
+   `QP_ferror()', `QP_fopen()', `QP_fread()', `QP_printf()', `QP_putc()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fread,  Next: cfu-ref-fskipln,  Prev: cfu-ref-fputs,  Up: cfu-ref
+
+`QP_fread()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fread (ptr, size, nitems, stream)
+     char      *ptr;
+     int        size;
+     int        nitems;
+     QP_stream *stream;
+
+   Reads, into a block pointed to by PTR, NITEMS items of data from the
+named input stream STREAM, where an item of data is a sequence of bytes
+(not necessarily terminated by a NULL byte) of length SIZE.
+
+   `QP_fread()' is similar to the library function `fread(3S)', however
+the return values differ slightly and STREAM is a Prolog stream rather
+than a `stdio' stream.
+
+Return Value
+------------
+
+the number of items read
+     Returned if the function succeeds
+
+`QP_ERROR'
+     Otherwise
+
+See Also
+--------
+
+   `QP_fopen()', `QP_getc()', `QP_gets()', `QP_putc()', `QP_puts()',
+`QP_printf()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fskipln,  Next: cfu-ref-fwrite,  Prev: cfu-ref-fread,  Up: cfu-ref
+
+`QP_fskipln()'
+--------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fskipln(stream)
+     QP_stream *stream;
+
+   Skip the current input record of a Prolog input stream
+
+Return Value
+------------
+
+   `QP_SUCCESS', or `QP_ERROR'
+
+Errors
+------
+
+   When `QP_ERROR' is returned, `QP_errno' contains an error code.
+
+See Also
+--------
+
+   `skip_line/[0,1]'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-fwrite,  Next: cfu-ref-get,  Prev: cfu-ref-fskipln,  Up: cfu-ref
+
+`QP_fwrite()'
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_fwrite(ptr, size, nitems, stream)
+     char      *ptr;
+     int        size;
+     int        nitems;
+     QP_stream *stream;
+
+   Writes at most NITEMS items of data from the block pointed to by PTR
+to the named Prolog output stream. `QP_fwrite()' stops writing when it
+has written NITEMS of date or if an error condition is encountered on
+STREAM.
+
+   `QP_fwrite()' is similar to the library function `fwrite()'.
+
+Return Value
+------------
+
+the number of items written
+     Returned if the function succeeds
+
+`QP_ERROR'
+     Otherwise
+
+See Also
+--------
+
+   `QP_fopen()', `QP_getc()', `QP_gets()', `QP_putc()', `QP_puts()',
+`QP_printf()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-get,  Next: cfu-ref-getc,  Prev: cfu-ref-fwrite,  Up: cfu-ref
+
+`QP_get_*(')
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_get_atom(term, atom)
+     QP_term_ref      term;
+     QP_atom         *atom;
+
+     int QP_get_integer(term, integer)
+     QP_term_ref      term;
+     long int        *integer;
+
+     int QP_get_float(term, float)
+     QP_term_ref      term;
+     double          *float;
+
+     int QP_get_functor(term, name, arity)
+     QP_term_ref      term;
+     QP_atom         *name;
+     int             *arity;
+
+     int QP_get_arg(argnum, term, arg)
+     int              argnum;
+     QP_term_ref      term;
+     QP_term_ref      arg;
+
+     int QP_get_list(term, head, tail)
+     QP_term_ref      term;
+     QP_term_ref      head;
+     QP_term_ref      tail;
+
+     int QP_get_head(term, head)
+     QP_term_ref      term;
+     QP_term_ref      head;
+
+     int QP_get_tail(term, tail)
+     QP_term_ref      term;
+     QP_term_ref      tail;
+
+     int QP_get_nil(term)
+     QP_term_ref      term;
+
+     int QP_get_db_reference(term, ref)
+     QP_term_ref      term;
+     QP_db_reference *ref;
+
+   These C functions can be used to test and access Prolog terms passed
+to C through the foreign interface.
+
+Description
+-----------
+
+   If TERM refers to an atom then `QP_get_atom()' assigns to *ATOM the
+unsigned integer representing that atom and returns 1. Else
+`QP_get_atom()' returns 0.  To get at the string corresponding to the
+atom, use `QP_string_from_atom()'.
+
+   If TERM refers to a Prolog integer then `QP_get_integer()' assigns
+that integer to *INTEGER and returns 1.  Else `QP_get_integer()'
+returns 0.
+
+   If TERM refers to a floating point number then `QP_get_float()'
+assigns that number to *FLOAT and returns 1.  Else `QP_get_float()'
+returns 0.
+
+   If TERM refers to a compound term then `QP_get_functor()' assigns to
+*NAME the unsigned integer representing the name of the functor,
+assigns to *ARITY the arity of the functor and returns 1.  If TERM
+refers to an atom, then `QP_get_functor()' assigns to *NAME that atom,
+assigns 0 to *ARITY and returns 1.  If TERM does not refer to a
+compound term or an atom then `QP_get_functor()' returns 0.  Note that
+a list is a compound term with functor `.' and arity 2.
+
+   If TERM refers to a compound term and ARGNUM is between 1 and the
+arity of the compound term then `QP_get_arg()' assigns to ARG a
+reference to the ARGNUM argument of the compound term and returns 1.
+If TERM does not refer to a compound term `QP_get_arg()' returns 0.
+Note that `QP_get_arg()' is similar to the Prolog builtin `arg/3' with
+its first and second arguments bound and its third argument unbound.
+`QP_get_arg()' differs from the other `QP_get' functions in that it
+does not have TERM as its first argument.  This is to make it
+consistent with `arg/3'.
+
+   If TERM refers to a list then `QP_get_list()' assigns to HEAD a
+reference to the head of that list, assigns to TAIL a reference to the
+tail of the list and returns 1. If TERM does not refer to a list then
+`QP_get_list()' returns 0.
+
+   If TERM refers to a list then `QP_get_head()' assigns to HEAD a
+reference to the head of that list and returns 1.  If TERM does not
+refer to a list then `QP_get_head()' returns 0.
+
+   If TERM refers to a list then `QP_get_tail()' assigns to TAIL a
+reference to the tail of that list and returns 1.  If TERM does not
+refer to a list then `QP_get_tail()' returns 0.
+
+   If TERM refers to the atom `[]' then `QP_get_nil()' returns 1. Else
+it returns 0.
+
+   If TERM refers to a db_reference (e.g. returned by `asserta/3' or
+`recorda/3') then `QP_get_db_reference()' assigns to *REF that
+reference and returns 1. If TERM does not refer to a db_reference then
+`QP_get_db_reference()' returns 0.
+
+Examples
+--------
+
+   `write_term()' is a C function that writes out a Prolog term passed
+to it.
+
+                                                               _foo.pl_
+     
+     foreign(write_term, c, write_term(+term)).
+
+                                                                _foo.c_
+     
+     #include <quintus/quintus.h>
+     
+     void write_term(term)
+     QP_term_ref term;
+     {
+         QP_atom a;
+         long int i;
+         double d;
+         switch (QP_term_type(term)) {
+         case QP_VARIABLE:
+             QP_printf("_");
+             break;
+         case QP_INTEGER:
+             QP_get_integer(term, &i);
+             QP_printf("%d", i);
+             break;
+         case QP_FLOAT:
+             QP_get_float(term, &d);
+             QP_printf("%f", d);
+             break;
+         case QP_ATOM:
+             QP_get_atom(term, &a);
+             QP_printf("%s", QP_string_from_atom(a));
+             break;
+         case QP_DB_REFERENCE:
+             QP_printf("'$ref'()");
+             break;
+         case QP_COMPOUND:
+             if (QP_is_list(term)) {
+                 write_list(term);
+             } else {
+                 write_compound(term);
+             }
+             break;
+         }
+     }
+
+                                                                _foo.c_
+     
+     void write_list(term)
+     QP_term_ref term;
+     {
+         QP_term_ref head = QP_new_term_ref();
+         QP_term_ref tail = QP_new_term_ref();
+         QP_atom a;
+     
+         QP_printf("[");
+         QP_get_list(term, head, tail);
+         write_term(head);
+         while (QP_is_list(tail)) {
+             QP_printf(",");
+             QP_get_list(tail, head, tail);
+             write_term(head);
+         }
+         if (QP_get_nil(tail)) {
+             QP_printf("]");
+         } else {
+             QP_printf("|");
+             write_term(tail);
+             QP_printf("]");
+         }
+     }
+     
+     void write_compound(term)
+     QP_term_ref term;
+     {
+         int i, arity;
+         QP_atom name;
+         QP_term_ref arg = QP_new_term_ref();
+     
+         QP_get_functor(term, &name, &arity);
+         QP_printf("%s(", QP_string_from_atom(name));
+         for (i = 1; i < arity; i++) {
+             QP_get_arg(i, term, arg);
+             write_term(arg);
+             QP_printf(",");
+         }
+         QP_get_arg(i, term, arg);
+         write_term(arg);
+         QP_printf(")");
+     }
+
+See Also
+--------
+
+   `QP_term_type()', `QP_put_*()', `QP_new_term_ref()'
+
+
+File: quintus.info,  Node: cfu-ref-getc,  Next: cfu-ref-getchar,  Prev: cfu-ref-get,  Up: cfu-ref
+
+`QP_getc()'
+-----------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_getc(stream)
+     QP_stream *stream;
+
+   `QP_getc()' is similar to the library function `getc(3V)', however
+it operates on a Prolog stream rather than a `stdio'.  Like `getc(3V)',
+`QP_getc()' is a macro.
+
+Return Value
+------------
+
+character read
+     If function succeeds
+
+`QP_ERROR'
+     Otherwise
+
+See Also
+--------
+
+   `QP_ferror()', `QP_fopen()', `QP_fread()', `QP_gets()', `QP_putc()',
+`QP_ungetc()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-getchar,  Next: cfu-ref-getpos,  Prev: cfu-ref-getc,  Up: cfu-ref
+
+`QP_getchar()'
+--------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_getchar()
+
+   Defined as `QP_getc(QP_curin)'.
+
+   `QP_getchar()' is similar to the  library function `getchar(3V)',
+however it operates on the Prolog current input stream rather than the
+standard input stream `stdin'.  Like `getchar(3V)', `QP_getchar()' is a
+macro.
+
+Return Value
+------------
+
+character read
+     If function succeeds
+
+`QP_ERROR'
+     Otherwise
+
+See Also
+--------
+
+   `QP_ferror()', `QP_fopen()', `QP_fread()', `QP_gets()', `QP_putc()',
+`QP_ungetc()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-getpos,  Next: cfu-ref-initialize,  Prev: cfu-ref-getchar,  Up: cfu-ref
+
+`QP_getpos()'
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_getpos(stream, pos)
+     QP_stream   *stream;
+     QP_position *pos;
+
+   Get the current position for a Prolog stream
+
+Arguments
+---------
+
+STREAM
+     pointer to a valid stream structure
+
+POS
+     pointer to a `QP_position' structure
+
+Description
+-----------
+
+   Upon successful return of this function call, the char_count,
+line_count, line_position and magic member of the `QP_position'
+structure pointed to by POS have the valid values indicating the
+current character count, line count, line position and system-dependent
+position.  The POS can be passed as the second argument to
+`QP_setpos()' for seeking back to the current position later.
+
+Return Value
+------------
+
+   Always returns `QP_SUCCESS'.
+
+See Also
+--------
+
+   `QP_setpos()', `QP_seek()', `stream_position/[2,3]',
+`QP_char_count()', `QP_line_count()', `QP_line_position()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-initialize,  Next: cfu-ref-is,  Prev: cfu-ref-getpos,  Up: cfu-ref
+
+`QP_initialize()'
+-----------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_initialize(argc, argv)
+     int    argc;
+     char **argv;
+
+   Initializes Prolog's memory management, I/O, symbol table, etc.
+
+Arguments
+---------
+
+ARGC
+     number of command line arguments (or 0)
+
+ARGV
+     list of command line arguments  (or NULL)
+
+Description
+-----------
+
+   You can ignore `QP_initialize()' if you aren't redefining `main()'.
+
+   Must be called before any other QP_ functions if you are redefining
+`main()' (in which case your top-level view of Prolog is via
+`QP_predicate()' and `QP_query()').
+
+   Summary of functionality: Initializes memory, I/O; sets up command
+line arguments; initializes file search paths, file tables and symbol
+tables; do initializations and start up hooks associated with a
+statically linked component in qof files; do any necessary restores,
+and any initlization and start up hooks associated with the restored
+files.
+
+   `QP_initialize()' also sets up signal handlers so that users can
+interrupt the execution of a start-up goal or initialization with a
+`^c'. If users chose the `a' option after a `^c' (or if the builtin
+`abort/0' is called) when initializations are run, then
+`QP_initialize()' returns. In a default system, (where `main()' hasnt
+been redefined) this means that `QP_toplevel()' gets called.
+`QP_toplevel()' executes the toplevel read-prove loop in a development
+system. In a runtime system, it results in `runtime_entry(start)' being
+called.
+
+   ARGC and ARGV are necessary for Prolog to execute the builtin
+`unix/1' (e.g. `unix(argv(_))' etc.) properly, as well as for restoring
+saved states.
+
+   Can be safely called any number of times.
+
+     *Please note:*  The first call to `QP_initialize()' with non-null
+     arguments will determine the command line arguments as seen by
+     Prolog.
+
+
+Return Value
+------------
+
+`QP_SUCCESS'
+     Prolog was successfully initialized.
+
+`QP_FAILURE'
+     otherwise
+
+Examples
+--------
+
+   In Quintus Prolog the default implementation of `main()' looks like
+this:
+     #include <quintus/quintus.h>
+     
+     main(argc, argv)
+         int argc;
+         char **argv;
+         {
+             int status;
+     
+             status = QP_initialize(argc, argv);
+     
+             if (status == QP_SUCCESS) QP_toplevel();
+         }
+
+   The user can choose not to have the default `main()' and the default
+toplevel loop. Here is an example of how the user can call a Prolog
+predicate with their own `main()'.
+
+                                                             _hello.pl_
+     
+     :- extern(hi(+atom)).
+     
+     hi(X) :-
+         format('Hello world from ~a to Prolog~n',[X]).
+
+                                                               _main.c_
+     
+     #include <quintus/quintus.h>
+     
+     main(argc, argv)
+         int argc;
+         char **argv;
+         {
+             int status;
+             QP_pred_ref pred;
+     
+             status = QP_initialize(argc, argv);
+     
+             if (status == QP_SUCCESS) {
+                pred = QP_predicate("hi", 1, "user");
+     
+                if (pred != QP_BAD_PREDREF) {
+                     status = QP_query(pred,
+                              QP_atom_from_string("C"));
+     
+                     if (status == QP_FAILURE) {
+                         printf("hi/1 failed\n");
+                         exit(1);
+                     } else if (status == QP_ERROR) {
+                       printf("hi/1 raised exception\n");
+                         /* Use QP_exception_term to get
+                            the error term signaled */
+                         exit(1);
+                     }
+                } else {
+                     printf("hi/1 doesn't exist or ");
+                     printf("doesn't have an extern ");
+                     printf("declaration\n");
+                     exit(1);
+                }
+             } else {
+                printf("QP_initialize didn't succeed\n");
+                exit(1);
+             }
+         }
+
+   Steps to produce the executable:
+  1. Compile `hello.pl' using `qpc -c hello.pl'
+
+  2. Compile `main.c' using `cc -c main.c'
+
+  3. Link the two using `qld -Dd hello.qof main.o -o qtest'
+
+  4. Run `qtest'.  The output should be:  `Hello from C to Prolog'
+
+See Also:
+---------
+
+   `runtime_entry/1', `unix/1', `QP_predicate()', `QP_query()',
+`QP_toplevel()'
+
+   *Note fli-emb::
+
+
+File: quintus.info,  Node: cfu-ref-is,  Next: cfu-ref-line_count,  Prev: cfu-ref-initialize,  Up: cfu-ref
+
+`QP_is_*()'
+-----------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_is_variable(term)
+     QP_term_ref term;
+
+     int QP_is_atom(term)
+     QP_term_ref term;
+
+     int QP_is_integer(term)
+     QP_term_ref term;
+
+     int QP_is_float(term)
+     QP_term_ref term;
+
+     int QP_is_compound(term)
+     QP_term_ref term;
+
+     int QP_is_list(term)
+     QP_term_ref term;
+
+     int QP_is_db_reference(term)
+     QP_term_ref term;
+
+     int QP_is_atomic(term)
+     QP_term_ref term;
+
+     int QP_is_number(term)
+     QP_term_ref term;
+
+   These C functions and macros can be used to test the type of the
+Prolog terms passed to C through the foreign interface.
+
+Description
+-----------
+
+`QP_is_variable()'
+     (macro) returns a nonzero value if its argument is a Prolog
+     variable; zero otherwise.
+
+`QP_is_atom()'
+     (macro) returns a nonzero value if its argument is an atom; zero
+     otherwise.
+
+`QP_is_integer()'
+     (macro) returns a nonzero value if its argument is a Prolog
+     integer; zero otherwise.
+
+`QP_is_float()'
+     (macro) returns a nonzero value if its argument is a float; zero
+     otherwise.
+
+`QP_is_compound()'
+     (macro) returns a nonzero value if its argument is a compound
+     Prolog term; zero otherwise.
+
+`QP_is_list()'
+     (function) returns a nonzero value if its argument is a Prolog
+     list; zero otherwise.
+
+`QP_is_db_reference()'
+     (macro) returns a nonzero value if its argument is a database
+     reference; zero otherwise.
+
+`QP_is_atomic()'
+     (function) returns a nonzero value if its argument is an atomic
+     Prolog object; zero otherwise.
+
+`QP_is_number()'
+     (function) returns a nonzero value if its argument is a Prolog
+     integer or float; zero otherwise.
+
+Examples
+--------
+
+   `print_type()' is a C function that prints the type of the Prolog
+term passed to it.
+
+                                                               _foo.pl_
+     
+     foreign(print_type, c, print_type(+term)).
+
+                                                                _foo.c_
+     
+     #include <quintus/quintus.h>
+     
+     void print_type(term)
+     QP_term_ref term;
+     {
+         if (QP_is_atom(term)) {
+             QP_printf("Term is an atom\n");
+         } else if (QP_is_integer(term)) {
+             QP_printf("Term is an integer\n");
+         } else if (QP_is_float(term)) {
+             QP_printf("Term is a float\n");
+         } else if (QP_is_variable(term)) {
+             QP_printf("Term is a variable\n");
+         } else if (QP_is_db_reference(term)) {
+             QP_printf("Term is a database reference\n");
+         } else if (QP_is_compound(term)) {
+             if (QP_is_list(term)) {
+                 QP_printf("Term is a list\n");
+             } else {
+                 QP_printf("Term is a compound term\n");
+             }
+         } else {
+             QP_printf("Unrecognized term\n");
+         }
+     }
+
+See Also
+--------
+
+   `QP_get_*()', `QP_put_*()', `QP_new_term_ref()'
+
+
+File: quintus.info,  Node: cfu-ref-line_count,  Next: cfu-ref-line_position,  Prev: cfu-ref-is,  Up: cfu-ref
+
+`QP_line_count()'
+-----------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_line_count(stream)
+     QP_stream *stream;
+
+   Obtains the line count for a Prolog stream.  `QP_line_count()' is a
+macro.
+
+Arguments
+---------
+
+STREAM
+     pointer to a valid stream structure
+
+See Also
+--------
+
+   `QP_getpos()', `QP_setpos()', `QP_seek()', `stream_position/[2,3]'
+`QP_char_count()', `QP_line_position()'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-line_position,  Next: cfu-ref-malloc,  Prev: cfu-ref-line_count,  Up: cfu-ref
+
+`QP_line_position()'
+--------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_line_position(stream)
+     QP_stream *stream;
+
+   Obtains the line position for a Prolog stream.  `QP_line_position()'
+is a macro.
+
+Arguments
+---------
+
+STREAM
+     pointer to a valid stream structure
+
+See Also
+--------
+
+   `QP_getpos()', `QP_setpos()', `QP_seek()', `stream_position/[2,3]'
+`QP_char_count()', `QP_line_count()',
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-malloc,  Next: cfu-ref-new_term_ref,  Prev: cfu-ref-line_position,  Up: cfu-ref
+
+`QP_malloc('), `QP_free(')
+--------------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     void *QP_malloc(size)
+     int  size;
+
+   A replacement for the C function `malloc()'.
+
+     void QP_free(mem)
+     void *mem;
+
+   A replacement for the C function `free()'.
+
+Description
+-----------
+
+   These function provide memory allocation and deallocation via
+Prolog's embeddable memory allocation layer, instead of directly via
+the C library.  Using the embeddable memory allocation layer tends to
+keep memory fragmentation down.
+
+See Also
+--------
+
+   *Note fli-emb::
+
+
+File: quintus.info,  Node: cfu-ref-new_term_ref,  Next: cfu-ref-newline,  Prev: cfu-ref-malloc,  Up: cfu-ref
+
+`QP_new_term_ref()'
+-------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     QP_term_ref QP_new_term_ref()
+
+Description
+-----------
+
+   `QP_new_term_ref()' returns an initialized `QP_term_ref'. Every
+`QP_term_ref' declared has to be initialized with a call to this
+function. A `QP_term_ref' can be considered as a reference to a Prolog
+term. Calling this function initialises that reference to a location
+where terms can be stored. The actual term that the reference points to
+is initialized to `[]'.
+
+Example
+-------
+
+   `create_term()' is a simple C function that returns different types
+of Prolog terms depending on its first argument.
+
+                                                               _foo.pl_
+     
+     foreign(create_term, create_term(+integer,[-term])).
+
+                                                                _foo.c_
+     
+     #include <quintus/quintus.h>
+     
+     QP_term_ref create_term(kind);
+     long int kind;
+     {
+         QP_term_ref new = QP_new_term_ref();
+     
+         switch (kind) {
+           case 1:
+             QP_put_integer(new, 23);
+             break;
+           case 2:
+             QP_put_atom(new, QP_atom_from_string("Ayn"));
+             break;
+           case 3:
+             QP_put_float(new, 1.1);
+             break;
+           default:
+             QP_put_nil(new);
+             break;
+         }
+         return new;
+     }
+
+See Also:
+---------
+
+   `QP_put_*()', `QP_term_type()', `QP_get_*()'
+
+
+File: quintus.info,  Node: cfu-ref-newline,  Next: cfu-ref-newln,  Prev: cfu-ref-new_term_ref,  Up: cfu-ref
+
+`QP_newline()'
+--------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_newline()
+
+   Terminates the current output record for the Prolog current output
+stream.  `QP_newline()' is a macro.
+
+Arguments
+---------
+
+STREAM
+     pointer to a valid stream structure
+
+Description
+-----------
+
+   Calling `QP_newline()' is equivalent to call `QP_newln(QP_stdout)'.
+
+Return Value
+------------
+
+   a line border character or `QP_ERROR'
+
+See Also
+--------
+
+   `QP_newln()', `QP_error_message()', `nl/[0,1]'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-newln,  Next: cfu-ref-next_solution,  Prev: cfu-ref-newline,  Up: cfu-ref
+
+`QP_newln()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_newln(stream)
+     QP_stream *stream;
+
+   Terminates the current output record for a specified Prolog output
+stream.  `QP_newln()' is a macro.
+
+Arguments
+---------
+
+STREAM
+     pointer to a valid stream structure
+
+Return Value
+------------
+
+   a line border character or `QP_ERROR'
+
+See Also
+--------
+
+   `QP_newline()', `QP_error_message()', `nl/[0,1]'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-next_solution,  Next: cfu-ref-open_query,  Prev: cfu-ref-newln,  Up: cfu-ref
+
+`QP_next_solution()'
+--------------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_next_solution(qid)
+     QP_qid qid;
+
+   Returns the next solution (if any) from an open nondeterminate
+Prolog query.
+
+Description
+-----------
+
+   Solutions are computed on demand, and multiple solutions are returned
+in the normal Prolog order.  `QP_next_solution()' is passed the
+`QP_qid' returned by `QP_open_query()' when the nondeterminate query
+was opened.  No additional input or output parameters are passed: after
+a call to `QP_open_query()', Prolog manages inputs itself, and has been
+told where storage for outputs has been reserved.
+
+   Each time `QP_next_solution()' computes a new solution it writes it
+on the output storage for the foreign function to use as it likes.  Each
+new solution overwrites the old memory, destroying the previous
+solution, so it is important that the foreign function copies solutions
+elsewhere if it wants to accumulate them.
+
+Comment
+-------
+
+   An important restriction: only the innermost, i.e. the most recent,
+open query can be asked to compute a solution.  A new nondeterminate
+query can be made at any point whether or not other queries are open;
+however, while the new query remains open only it will be able to
+return solutions.  Of course, determinate queries can be made at any
+time.
+
+Return Values
+-------------
+
+`QP_SUCCESS'
+     Solution found
+
+`QP_FAILURE'
+     No solution found
+
+`QP_ERROR'
+See Also
+--------
+
+   `QP_cut_query()', `QP_close_query()', `QP_query()',
+`QP_open_query()', `QP_pred()', `QP_predicate()',
+
+   *Note fli-ffp::
+
+
+File: quintus.info,  Node: cfu-ref-open_query,  Next: cfu-ref-peekc,  Prev: cfu-ref-next_solution,  Up: cfu-ref
+
+`QP_open_query()'
+-----------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     QP_qid QP_open_query(pred_ref, arg1,...,arg255)
+     QP_pred_ref pred_ref;
+
+   Initiates a nondeterminate Prolog query.
+
+Description
+-----------
+
+   The first argument passed to `QP_query()' is a reference to the
+Prolog predicate to be called.  `QP_query()' accepts between 0 and 255
+arguments after its first argument.  Any arguments after the first
+represent parameters to be passed to and from the Prolog predicate.
+For the types of arguments that may be passed between C and Prolog
+predicates, see *Note fli-ffp::.
+
+   The arguments passed to `QP_open_query()' are identical to those that
+would be passed to `QP_query()'; however, `QP_open_query()' does not
+compute a solution to the query.  Its effect is to prepare Prolog for
+the computation of solutions to the query, which must be initiated
+using `QP_next_solution()'.  For consistency checking,
+`QP_open_query()' returns a `QP_qid', which represents the Prolog
+query.  The type definition for `QP_qid' is found in the file
+`<quintus/quintus.h>'.
+
+   The `QP_qid' returned by a call to `QP_open_query()' must be passed
+to each call to `QP_next_solution()' for that query, as well as to
+`QP_cut_query()' or `QP_close_query()' when terminating the query.
+
+   When requesting solutions from an open nondeterminate query, input
+and output parameters are _not_ passed.  The effect of
+`QP_open_query()' is to pass inputs to Prolog, which subsequently
+maintains them.  It also tells Prolog where storage for outputs has
+been reserved.  This storage will be written to when solutions are
+returned.
+
+Return Value
+------------
+
+`QP_qid'
+     query was opened successfully
+
+`QP_ERROR'
+     an error occurred when attempting to open the query and the query
+     was automatically terminated
+
+See Also
+--------
+
+   `QP_cut_query()', `QP_close_query()', `QP_query()',
+`QP_next_solution()', `QP_pred()', `QP_predicate()',
+
+   *Note fli-ffp::
+
+
+File: quintus.info,  Node: cfu-ref-peekc,  Next: cfu-ref-peekchar,  Prev: cfu-ref-open_query,  Up: cfu-ref
+
+`QP_peekc()'
+------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_peekc(stream)
+     QP_stream *stream;
+
+   Look a character ahead from a specified Prolog input stream.
+`QP_peekc()' is a macro.
+
+Arguments
+---------
+
+STREAM
+     pointer to a valid stream structure
+
+Return Value
+------------
+
+   Character code or `QP_ERROR'.
+
+See Also
+--------
+
+   `QP_peekchar()', `QP_fpeekc()', `peek_char/[1,2]'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-peekchar,  Next: cfu-ref-perror,  Prev: cfu-ref-peekc,  Up: cfu-ref
+
+`QP_peekchar()'
+---------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     int QP_peekchar()
+
+   Look a character ahead from the Prolog current input stream.
+`QP_peekchar()' is a macro.
+
+Description
+-----------
+
+   `QP_peekchar()' is equvalent to `QP_peekc(QP_stdin)'.
+
+Return Values
+-------------
+
+   Character code or `QP_ERROR'.
+
+See Also
+--------
+
+   `QP_peekc()', `QP_fpeekc()', `peek_char/[2,3]'
+
+   *Note fli-ios::
+
+
+File: quintus.info,  Node: cfu-ref-perror,  Next: cfu-ref-pred,  Prev: cfu-ref-peekchar,  Up: cfu-ref
+
+`QP_perror()'
+-------------
+
+Synopsis
+--------
+
+     #include <quintus/quintus.h>
+     
+     void QP_perror(s)
+     char *s;
+
+Description
+-----------
+
+   `QP_perror()' produces a short error message on the stream
+`user_error' describing the last error encountered.  If S is not a NULL
+pointer and does not point to a null string, the string it points to is
+printed, followed by a colon, followed by a space, followed by the
+message and a NEWLINE.  If S is a NULL pointer or points to a null
+string, just the message is printed, followed by a NEWLINE.  To be of
+most use, the argument string should include the name of the program
+that incurred the error.  The error number is taken from the external
+variable QP_ERRNO (see *Note cfu-rve::), which is set when errors occur
+but not cleared when non-erroneous calls are made.
+
+   This function is modeled on the system function `perror(3)'.
+
+See Also
+--------
+
+   `QP_error_message()'
+

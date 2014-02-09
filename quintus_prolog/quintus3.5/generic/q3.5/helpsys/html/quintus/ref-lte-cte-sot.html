@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Standard Order of Terms</h5>
+
+   <p>These predicates use a standard total order when comparing terms.  The
+standard total order is:
+<pre class="display">     
+     variables <code>@&lt;</code> database references <code>@&lt;</code> numbers <code>@&lt;</code> atoms <code>@&lt;</code> compound terms
+     </pre>
+
+   <p>(Interpret <code>@&lt;</code> as "comes before".)
+
+   <p>Within these categories, ordering
+is as follows.
+     <ul>
+
+     <li>Variables are put in a standard order.  (Roughly, the oldest
+variable is put first; the order is not related to the names of variables. 
+Users should not rely on the order of variables. They should be
+considered implementation dependent. The ordering of variables within
+a sorted list, as produced by <code>setof/3</code> or <code>sort/2</code>, shall remain constant.) 
+<li>Database references are put in a standard order (the order is
+based roughly on the time of creation of the reference). 
+<li>Numbers are put in numeric order.  Where a number may be represented by an
+integer or a floating-point number, as in 2 and 2.0, the integer is
+considered to be infinitesimally smaller than its floating-point counterpart. 
+<li>Atoms are put in alphabetical order according to the character set in use. 
+<li>Compound terms are ordered first by arity, then by the name of the principal
+functor, then by the arguments (in left-to-right order). 
+<li>Lists are compared as ordinary compound terms with functor <code>./2</code>
+
+   </ul>
+
+   <p>For example, here is a list of terms in the standard order:
+<pre class="example">     [ X, '$ref'(123456,12), -9, 1, 1.0, fie, foe, fum, [1],
+          X = Y, fie(0,2), fie(1,1) ]
+     </pre>
+
+   <p>The predicates for comparison of terms are described below.
+
+     <dl>
+
+     <br><dt><var>T1</var> <code>==</code> <var>T2</var>
+     <dd><var>T1</var> and <var>T2</var> are
+literally identical  (in  particular,  variables in equivalent positions in
+the two terms must be identical).
+
+     <br><dt><var>T1</var> <code>\==</code> <var>T2</var>
+     <dd><var>T1</var> and <var>T2</var> are
+<em>not</em> literally identical.
+
+     <br><dt><var>T1</var> <code>@&lt;</code> <var>T2</var>
+     <dd><var>T1</var> is before term <var>T2</var> in the standard order.
+
+     <br><dt><var>T1</var> <code>@&gt;</code> <var>T2</var>
+     <dd><var>T1</var> is after term <var>T2</var>
+
+     <br><dt><var>T1</var> <code>@=&lt;</code> <var>T2</var>
+     <dd><var>T1</var> is not after term <var>T2</var>
+
+     <br><dt><var>T1</var> <code>@&gt;=</code> <var>T2</var>
+     <dd><var>T1</var> is not before term <var>T2</var>
+
+     <br><dt><code>compare(</code><var>Op, T1, T2</var><code>)</code>
+     <dd>the result of comparing terms <var>T1</var> and <var>T2</var> is <var>Op</var>, where
+the possible values for <var>Op</var> are:
+          <dl>
+
+          <br><dt><code>=</code>
+          <dd>if <var>T1</var> is identical to <var>T2</var>,
+<br><dt><code>&lt;</code>
+          <dd>if <var>T1</var> is before <var>T2</var> in the standard order,
+<br><dt><code>&gt;</code>
+          <dd>if <var>T1</var> is after <var>T2</var> in the standard order. 
+</dl>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-lte-cte-sor.html#ref-lte-cte-sor">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-lte-cte-bas.html#ref-lte-cte-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-lte-cte.html#ref-lte-cte">Up</a>
+</ul>
+</div>
+   </body></html>
+

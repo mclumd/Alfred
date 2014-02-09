@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Loading Foreign Executables</h5>
+
+   <p>The built-in Prolog predicate <code>load_foreign_executable/1</code> is used
+to load foreign functions directly into Prolog from a shared object
+file and to attach selected functions and routines in the loaded file
+to Prolog predicates.
+
+   <p>The example below demonstrates the use of these predicates to load code
+compiled using the C compiler.
+
+   <p>In the above example, <code>foreign</code> (or <code>foreign.pl</code>) is a file
+containing facts that describe how Prolog is to call the foreign
+functions. If it is given a filename without an extension then it
+automatically appends the appropriate extension; thus in the example
+above, <code>math</code> is specified to load <code>math.so</code>.
+
+   <p>The loading process may fail if:
+     <ul>
+
+     <li>the facts in the database (see <a href="fli-p2f-lnk.html#fli-p2f-lnk">fli-p2f-lnk</a>) that describe how to link
+foreign functions to Prolog procedures are incomplete;
+<li>the foreign functions specified have already been loaded;
+<li>the shared object file contains undefined symbols that could not
+be resolved when loaded. 
+</ul>
+
+   <p>If the load does not complete successfully then an exception is raised and the
+call to <code>load_foreign_executable/1</code> fails; no change is made to the
+Prolog state. 
+The load can be retried once the problem has been corrected.
+
+   <p>Once a foreign program is loaded, it cannot be unloaded or replaced,
+although you can abolish or redefine any procedure attached to it.
+
+   <blockquote>
+
+        <p><strong>Notes:</strong>
+          <ol type=1 start=1>
+
+          <li> Any foreign file loaded via a
+<code>load_foreign_executable/1</code>
+command that is embedded in a file
+being loaded into Prolog will be sought relative to the directory from which
+the file is being loaded. 
+For example, if the file <code>/usr/fred/test.pl</code> contains the command
+          <pre class="example">               :- load_foreign_executable(test).
+               </pre>
+
+          <p>then the file to be loaded would be <code>/usr/fred/test.so</code>. 
+</p><li> When the linker is given a library such as <code>-lX11</code>, it will
+look for a "shared library" version and if one exists record this
+library as a dependency in the shared object file. 
+<code>load_foreign_executable/1</code> will then automatically load this library
+(if not already loaded) when it loads the shared object file.
+
+          <p>If the linker is given a library for which no shared library exists, then
+object files from the static library are incorporated into the shared
+object file as needed. 
+  This means that any routine in a static
+library that is to be accessed from Prolog must have some reference to
+it in one of the object files being linked into the shared object
+file. 
+</p><li> It is better to load one large shared object file than many small ones. 
+You may have several Prolog files that require routines from one
+shared object file -- in other words, a shared library. 
+The shared library is only loaded once, but different functions could be
+attached to Prolog predicates in different calls to
+<code>load_foreign_executable/1</code>. For example, under UNIX, most of the files in
+the Prolog Library that load foreign code use the shared library file
+<code>libpl.so</code>.
+             </ol>
+
+   </blockquote>
+
+   <p>A description of the internal operation of the
+<code>load_foreign_executable/1</code> predicate is given in <a href="fli-p2f-lfe.html#fli-p2f-lfe">fli-p2f-lfe</a>
+to help solve more difficult foreign code loading problems.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-uso-ffi.html#fli-p2f-uso-ffi">Next</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-uso.html#fli-p2f-uso">Up</a>
+</ul>
+</div>
+   </body></html>
+

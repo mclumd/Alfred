@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Passing a Float to a Foreign Function</h5>
+
+<pre class="example">     Prolog:  +float
+     C:       double x;
+     Pascal:  x: real
+     FORTRAN: real x
+     </pre>
+
+   <p>The argument must be instantiated to an integer or a float; otherwise
+   the call will raise an exception.  The Prolog number is converted to a 32-bit
+   single-precision (FORTRAN) or a 64-bit double-precision (C or Pascal),
+   float and passed to the foreign function.  Many C compilers will allow
+   the parameter declaration to be <code>float</code> instead of <code>double</code>
+   because they always convert single-precision floating-point arguments to
+   double-precision.  However, C compilers conforming to the new ANSI
+   standard will not do this, so it is recommended that <code>double</code> be
+   used.
+
+<pre class="example">     Prolog:  +single
+     ANSI C:  float x;
+     FORTRAN: real x
+     </pre>
+
+   <p>The argument must be instantiated to an integer or a float; otherwise
+   the call will raise an exception.  The Prolog number is converted to a 32-bit
+   single-precision float and passed to the foreign function. 
+   <code>+single</code> can also be used to interface Prolog to any foreign function
+   where you know that the value passed is going to be picked up as a
+   32-bit float.
+
+<pre class="example">     Prolog:  +double
+     C:       double x;
+     Pascal:  real x
+     </pre>
+
+   <p>The argument must be instantiated to an integer or a float; otherwise
+   the call will raise an exception.  The Prolog number is converted to a
+   64-bit double-precision (C or Pascal) float and passed to the foreign
+   function. <code>+double</code> can also be used to interface Prolog to any
+   foreign function where you know that the value passed is going to be
+   picked up as a 64-bit float.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-flo-ret.html#fli-p2f-flo-ret">Next</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-flo.html#fli-p2f-flo">Up</a>
+</ul>
+</div>
+   </body></html>
+

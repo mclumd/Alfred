@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Reading and Writing Lines -- <code>library(lineio)</code></h4>
+
+   <p><code>library(lineio)</code> defines some commands for reading and writing lines of text.
+
+     <dl>
+
+     <br><dt><code>get_line(</code><var>-Chars</var><code>, </code><var>-Terminator</var><code>)</code>
+     <dd>
+
+     <p>reads characters from the current input stream until it finds
+an end-of-line character.  <var>Chars</var> is unified with a list containing
+all the character codes other than the end-of-line character,
+and <var>Terminator</var> is unified with the end-of-line character.  This allows
+you to check which character ended the line; in particular you
+should be prepared to handle the <code>is_endfile(</code><var>Terminator</var><code>)</code> case. 
+When the end of a file is encountered, there may have been a partial
+line preceding it; so when <code>is_endfile(</code><var>Terminator</var><code>)</code>, <var>Chars</var> may or may
+not be the empty list.
+
+     <p><code>get_line/2</code> is normally called with <var>Chars</var> unbound.  A call to <code>get_line/2</code>
+with <var>Chars</var> <em>bound</em> will behave similarly to
+<code>get0/1</code> in that even if the line of characters does not unify with <var>Chars</var>,
+nevertheless the entire line is consumed and is irretrievable. 
+Thus, if you call <code>get_line("fred", Eol)</code> and the next
+line of input is in fact <code>jim</code> or <code>frederica</code>, the entire line will
+have been read before the call to <code>get_line/2</code> fails.  Only call <code>get_line/2</code>
+with <var>Chars</var> bound when you want the line to be thrown away if it
+does not match.  For example, if you want to skip until you encounter a line
+containing only a single <code>.</code> (a convention some editors and
+some mailers use for the end of terminal input), you can write
+     <pre class="example">          ...
+          skip_through_line(".")
+          </pre>
+
+     <p>where
+     <pre class="example">          skip_through_line(X) :-
+                  repeat,
+                      get_line(X, _),
+                  !.
+          </pre>
+
+     <p>(<code>skip_through_line/1</code> is not in the library.)
+
+     <br><dt><code>get_line(</code><var>-Chars</var><code>)</code>
+     <dd>
+is used for the common case in which you are uninterested in what the
+end-of-line character was, provided it was not end-of-file.  <code>get_line/1</code>
+reads a whole line, just like <code>get_line/2</code>, then checks that the line
+terminator was not the end-of-file character, and unifies the list
+of character codes with <var>Chars</var>.  If <var>Chars</var> is instantiated and does not
+match the line that is read, or if the line terminator was end-of-file,
+<code>get_line/1</code> fails quietly (with the same consequences regarding the loss of
+the non-matching text as with <code>get_line/2</code> above).
+
+     <br><dt><code>fget_line(</code><var>+Stream</var><code>, </code><var>?Chars</var><code>, </code><var>?Terminator</var><code>)</code>
+     <dd>like <code>get_line/2</code> except
+that <var>Stream</var> is specified.
+
+     <br><dt><code>fget_line(</code><var>+Stream</var><code>, </code><var>?Chars</var><code>)</code>
+     <dd>like <code>get_line/1</code> except that
+<var>Stream</var> is specified.
+
+     <br><dt><code>put_chars(</code><var>+Chars</var><code>)</code>
+     <dd>
+is a generalization of <code>put/1</code>.  <var>Chars</var> should be instantiated to
+a (possibly empty) list of character codes.  The corresponding
+characters are written to the
+current output stream.  If you know the characters in advance,
+it is better to use <code>write/1</code>; for example,
+     <pre class="example">          put_chars("they do the same thing")
+          </pre>
+
+     <p>and
+     <pre class="example">          write('they do the same thing')
+          </pre>
+
+     <p>both write exactly the same characters to the current output stream, but
+the latter is more efficient.  Use <code>put_chars/1</code> when you
+already have the text you want to write as a list of character codes,
+<code>write/1</code> when you have the text as an atom.
+
+     <br><dt><code>put_line(</code><var>+Chars</var><code>)</code>
+     <dd>
+writes the list of character codes <var>Chars</var>, then writes a newline
+character.  It produces exactly the same output that
+     <pre class="example">          put_chars(<var>Chars</var>), nl
+          </pre>
+
+     <p>would, but is generally more convenient.  If you are reading lines from
+one file using <code>get_line/1</code> and writing them to another, <code>put_line/1</code> is the
+predicate to use. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-uin-continued.html#lib-uin-continued">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-uin-ctypes.html#lib-uin-ctypes">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-uin.html#lib-uin">Up</a>
+</ul>
+</div>
+   </body></html>
+

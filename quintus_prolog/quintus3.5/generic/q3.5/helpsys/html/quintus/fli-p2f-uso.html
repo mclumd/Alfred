@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Using Shared Object Files and Archive Files</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-p2f-uso-fex.html#fli-p2f-uso-fex">fli-p2f-uso-fex</a>:                      Loading Foreign Executables
+<li><a accesskey="2" href="fli-p2f-uso-ffi.html#fli-p2f-uso-ffi">fli-p2f-uso-ffi</a>:                      Loading Foreign Files
+</ul>
+
+   <p>By default, foreign code must be packaged as shared object files for
+use with <code>load_foreign_executable/1</code>.  Archive files are used for
+statically linking foreign code to executables (see
+<a href="sap-srs.html#sap-srs">sap-srs</a>).
+
+   <p>A shared object file is constructed from a list of object files (and
+libraries) using the system linker.  An archive file is constructed
+from a list of object files using special tools.  In both cases, the
+object files are generated using the foreign language compiler.
+
+   <p>Linkers require special options to construct a shared object file, and
+may require that the object files used to generate the shared object
+files be compiled with <dfn>position independent code</dfn> or other
+special compiler options.  Under Windows, Quintus Prolog also requires
+a special compiler option for inclusion into archive files.
+
+   <p>Let <var>CC</var> denote the compiler command,
+let <var>SFLAGS</var> denote the compiler options for shared object files,
+let <var>AFLAGS</var> denote the compiler options for archive files,
+and let <var>LFLAGS</var> denote the linker options.  The following
+table gives these options for the supported Quintus Prolog platforms.
+
+   <p><table>
+<tr align="left"><td valign="top"><b>Platform</b> </td><td valign="top"><var>CC</var> </td><td valign="top"><var>AFLAGS</var> </td><td valign="top"><var>SFLAGS</var> </td><td valign="top"><var>LFLAGS</var>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><code>linux</code> </td><td valign="top"><code>gcc</code> </td><td valign="top">(none) </td><td valign="top"><code>-fPIC</code> </td><td valign="top"><code>-shared</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><code>alpha</code> </td><td valign="top"><code>cc</code> </td><td valign="top">(none) </td><td valign="top">(none) </td><td valign="top"><code>-taso -shared -expect_unresolved 'Q?_*'</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><code>hppa</code> </td><td valign="top"><code>cc</code> </td><td valign="top"><code>+DAportable</code> </td><td valign="top"><code>+Z +DAportable</code> </td><td valign="top"><code>-b</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><code>hppa</code> </td><td valign="top"><code>gcc</code> </td><td valign="top">(none) </td><td valign="top"><code>-fPIC</code> </td><td valign="top"><code>-shared</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><code>sgi</code> </td><td valign="top"><code>cc</code> </td><td valign="top"><code>-n32</code> </td><td valign="top"><code>-n32</code> </td><td valign="top"><code>-n32 -shared</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><code>sgi</code> </td><td valign="top"><code>gcc</code> </td><td valign="top"><code>-mabi=n32</code> </td><td valign="top"><code>-mabi=n32 -fPIC</code> </td><td valign="top"><code>-mabi=n32 -shared</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><code>sun4-5</code> </td><td valign="top"><code>cc</code> </td><td valign="top">(none) </td><td valign="top"><code>-K pic</code> </td><td valign="top"><code>-G</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><code>sun4-5</code> </td><td valign="top"><code>gcc</code> </td><td valign="top">(none) </td><td valign="top"><code>-fPIC</code> </td><td valign="top"><code>-shared</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top"><code>rs6000</code> </td><td valign="top"><code>cc</code> </td><td valign="top">(none) </td><td valign="top">(none) </td><td valign="top"><code>-bI:</code><var>runtime-directory</var><code>/prolog.exp -e QP_entry glue.o</code>
+<br></td></tr><tr align="left"><td valign="top">
+<br></td></tr><tr align="left"><td valign="top">Windows </td><td valign="top"><code>cl</code> </td><td valign="top"><code>/MD</code> </td><td valign="top"><code>/MD</code> </td><td valign="top"><code>/dll</code>
+   <br></td></tr></table>
+
+   <p>To build a shared object file, say <code>mylib.so</code>, under UNIX, issue the following:
+<pre class="example">     % <kbd></kbd><var>CC</var><kbd> </kbd><var>SFLAGS</var><kbd> -c </kbd><var>SOURCE1</var><kbd></kbd>
+     % ...
+     % <kbd></kbd><var>CC</var><kbd> </kbd><var>SFLAGS</var><kbd> -c </kbd><var>SOURCEn</var><kbd></kbd>
+     % <kbd>ld -o mylib.so </kbd><var>LFLAGS</var><kbd> </kbd><var>OBJECTS</var><kbd></kbd>
+     </pre>
+
+   <p>When you build a shared object file, say <code>mylib.dll</code>, under
+Windows, a corresponding import library will normally also be built. 
+Consult the Windows documentation for details.  Issue the
+following:
+
+<pre class="example">     C:\&gt; <kbd>cl </kbd><var>SFLAGS</var><kbd> /c </kbd><var>SOURCE1</var><kbd></kbd>
+     C:\&gt; ...
+     C:\&gt; <kbd>cl </kbd><var>SFLAGS</var><kbd> /c </kbd><var>SOURCEn</var><kbd></kbd>
+     C:\&gt; <kbd>link /dll /out:mylib.dll </kbd><var>OBJECTS</var><kbd></kbd>
+     </pre>
+
+   <p>To build a archive file, say <code>mylib.a</code>, under UNIX, issue the following:
+<pre class="example">     % <kbd></kbd><var>CC</var><kbd> </kbd><var>AFLAGS</var><kbd> -c </kbd><var>SOURCE1</var><kbd></kbd>
+     % ...
+     % <kbd></kbd><var>CC</var><kbd> </kbd><var>AFLAGS</var><kbd> -c </kbd><var>SOURCEn</var><kbd></kbd>
+     % <kbd>ar r mylib.a </kbd><var>OBJECTS</var><kbd></kbd>
+     % <kbd>ranlib mylib.a</kbd>
+     </pre>
+
+   <p>For archive files under Windows, a special naming convention is used:
+an extra <code>s</code> is placed before the <code>.lib</code> extension, to
+distinguish archive files from import libraries (see
+<a href="sap-rge-sos.html#sap-rge-sos">sap-rge-sos</a>).  To build an archive file, say
+<code>mylibs.lib</code>, issue the following:
+
+<pre class="example">     C:\&gt; <kbd>cl </kbd><var>AFLAGS</var><kbd> /c </kbd><var>SOURCE1</var><kbd></kbd>
+     C:\&gt; ...
+     C:\&gt; <kbd>cl </kbd><var>AFLAGS</var><kbd> /c </kbd><var>SOURCEn</var><kbd></kbd>
+     C:\&gt; <kbd>link /lib /out:mylibs.lib </kbd><var>OBJECTS</var><kbd></kbd>
+     </pre>
+
+   <blockquote>
+
+        <p><strong>Platform specific notes:</strong>
+          <dl>
+
+          <br><dt><code>alpha</code>
+          <dd>Foreign code must be compiled in native
+mode, i.e. <em>not</em> using the <code>-xtaso_short</code> option.
+
+          <br><dt><code>rs6000</code>
+          <dd>You must supply the file <code>glue.o</code>.  See
+<code></code><var>QuintusDir</var><code>/generic/qplib3.5/structs/library/rs6000/structs_lnk.c</code>
+for an example.
+
+          <br><dt>Windows
+          <dd>
+If building a DLL that calls any of the Quintus Prolog C API functions
+exported from the Runtime Kernel DLL (<code>qpeng.dll</code>) or the Embedding
+Layer DLL (<code>libqp.dll</code>) then you must also link in the import
+libraries for these DLLs, which are named <code>qpeng.lib</code> and <code>libqp.lib</code>
+and reside in the directory <code></code><var>quintus-directory</var><code>\lib\ix86</code>. 
+This is needed because DLLs must have their external references resolved
+at link time rather than at load time, in contrast to typical UNIX shared library
+implementations. Run the <code>qpvars.bat</code> file to set-up the
+environment variables necessary for the C-compiler and linker to fine
+the needed Quintus files.
+
+          <p>The <code>makefile.win</code> file in the Quintus Library
+directory <code></code><var>quintus-directory</var><code>\src\library</code> contains an example of
+how to build a DLL for dynamic loading into Quintus Prolog. 
+</dl>
+
+   </blockquote>
+
+   <p>The following two sections describe the use of shared object files in
+Quintus Prolog:
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-lnk.html#fli-p2f-lnk">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-bas.html#fli-p2f-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f.html#fli-p2f">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>send_event/[4,5]</code></h4>
+
+<pre class="example">     send_event(+<var>WindowSpec</var>, +<var>Propagate</var>, +<var>EventMask</var>, +<var>XEvent</var>)
+     send_event(+<var>Displayable</var>, +<var>WindowSpec</var>, +<var>Propagate</var>, +<var>EventMask</var>, +<var>XEvent</var>)
+     </pre>
+
+   <p>Asks the server to send the event <var>XEvent</var>, an  X11 event
+structure, to the specified window. Fail if <var>XEvent</var> could not be
+converted into the server format, usually a sign that the event
+<code>type</code> is invalid. The delivered event will have a value of
+<code>true</code> in its <code>send_event</code> field.
+
+   <p>The argument <var>WindowSpec</var> can be:
+     <dl>
+
+     <br><dt>A valid ProXL Window
+     <dd>In this case the event will be sent to the Window and
+its Display is used as the Display
+connection. If <var>Displayable</var> was specified, it must have the same Display
+as the Window.
+
+     <br><dt><code>pointer_window</code>
+     <dd>In this case the event will be send to the window
+that the pointer is in. If <var>Displayable</var> was not specified, the
+default Display is used.
+
+     <br><dt><code>input_focus</code>
+     <dd>In this case, if the focus window contains the pointer,
+the event will be sent to the window that contains the pointer. Otherwise,
+the event will be sent to the focus window. 
+If <var>Displayable</var> was not specified, the default Display is used. 
+</dl>
+
+   <p><var>Propagate</var> is a boolean value and <var>EventMask</var> an integer bitmask that
+specifies the selected events.
+
+   <p><code>send_event/[4,5]</code> uses the <var>Propagate</var> and <var>EventMask</var>
+arguments to
+determine which clients should receive the specified events as follows:
+     <dl>
+
+     <br><dt>If <var>EventMask</var> is 0
+     <dd>The event is sent to the client that created the
+receiving window. If that client no longer exists, no event is sent.
+
+     <br><dt>If <var>Propagate</var> is <code>false</code>
+     <dd>The event is sent to every client selecting
+any of the event types from <var>EventMask</var> on the receiving window.
+
+     <br><dt>If <var>Propagate</var> is <code>true</code>
+     <dd>The event propagates up the receiving
+window hierarchy in the normal way. 
+</dl>
+
+   <p>The predicate <code>event_list_mask/2</code> is useful to translate
+between X11 event mask names and bitmasks.
+
+   <p>No checking on the validity of the event contents is performed.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-evf-send.html#pxl-evf-send">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-evf-put_back_event.html#pxl-evf-put_back_event">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-evf.html#pxl-evf">Up</a>
+</ul>
+</div>
+   </body></html>
+

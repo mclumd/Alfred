@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">runtime_entry/1 <dfn>hook</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- multifile runtime_entry/1.</code>
+
+   <p><code>runtime_entry(</code><var>+Event</var><code>)</code>
+
+   <p>This predicate is called upon start-up and exit of stand alone
+applications.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Event</var> <dfn>one of </dfn><code>[start,abort]</code><dfn></dfn>
+     <dd></dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>In a default runtime system, the program starts by executing the goal,
+<pre class="example">     runtime_entry(start)
+     </pre>
+
+   <p>When that goal terminates, either by succeeding or by
+failing, the runtime system terminates.
+
+   <p>Similarly, it is possible to specify what is to be done on an abort. 
+An abort happens when a call is made either to the built-in predicate
+<code>abort/0</code> or to the C routine <code>QP_action(QP_ABORT)</code>.  (By default, a
+call of <code>QP_action(QP_ABORT)</code> happens when a user types <kbd>^c</kbd> -- see
+<a href="sap-rge-iha.html#sap-rge-iha">sap-rge-iha</a>).  At this point, the current computation is
+abandoned and the program is restarted with the goal
+<pre class="example">     runtime_entry(abort)
+     </pre>
+
+   <p>Effectively this replaces the original call to <code>runtime_entry(start)</code>, so that
+when this call succeeds or fails, the runtime system terminates.
+
+   <p>Users of the module system should ensure that the predicate
+<code>runtime_entry/1</code> is defined in the
+module <code>user</code>, that is, not inside any user-defined module.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_toplevel()</code>
+
+   <a href="fli-emb-how-mai.html#fli-emb-how-mai">fli-emb-how-mai</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-save_modules.html#mpg-ref-save_modules">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-retractall.html#mpg-ref-retractall">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

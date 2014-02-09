@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>display/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>display(</code><var>+Term</var><code>)</code>
+
+   <p>Displays <var>Term</var> on the standard output stream .
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Ignores operator declarations and shows all compound
+terms in standard prefix form.
+
+<h4 class="subheading">Tips</h4>
+
+   <p><code>display/1</code> is a good way of finding
+out how Prolog parses a term with several operators. 
+<code>display(Term)</code> is equivalent to
+
+<pre class="example">     write_term(Term, [quoted(false),ignore_ops(true)])
+     </pre>
+
+   <p>Output is not terminated by a full-stop; therefore, if you want the
+term to be acceptable as input to <code>read/[1,2]</code>, you must send the
+terminating full-stop to the output stream yourself.  <code>display/1</code>
+does not put quotes around atoms and functors.
+
+<h4 class="subheading">Example</h4>
+
+<pre class="example">     | ?- <kbd>display(a+b).</kbd>
+     +(a,b)
+     yes
+     </pre>
+
+<pre class="example">     | ?- <kbd>read(X), display(X), nl.</kbd>
+     |: <kbd>a + b * c.</kbd>
+     +(a,*(b,c))
+     
+     X = a+b*c
+     
+     | ?-
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>write/[1,2]</code>, <code>write_term/[2,3]</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-dynamic.html#mpg-ref-dynamic">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-discontiguous.html#mpg-ref-discontiguous">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

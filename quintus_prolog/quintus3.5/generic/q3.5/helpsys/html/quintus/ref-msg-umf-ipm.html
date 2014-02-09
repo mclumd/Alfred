@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Intercepting the printing of a message</h5>
+
+   <p>After a message is parsed, but before the message is printed out,
+<code>print_message/2</code> calls
+
+<pre class="example">     user:message_hook(+Message,+Severity,+Lines)
+     </pre>
+
+   <p>where Lines is of the form [<var>Line1</var>, <var>Line2</var>, <small class="dots">...</small>], where each <var>Linei</var> is of
+the form [<var>Control_1</var>-<var>Args_1</var>,<var>Control_2</var>-<var>Args_2</var>, <small class="dots">...</small>].
+
+   <p>In our example,
+
+<pre class="example">     message_hook(world(flat,wet),error,
+         [['The world is ~w and ~w.'-[flat,wet]]])
+     </pre>
+
+   <p>would be called.
+
+   <p>If the call to user:<code>message_hook/3</code> succeeds, <code>print_message/2</code>
+succeeds without further processing.  Otherwise, the built-in message
+display is used.
+
+   <p>An example of using a hook to redirect output can be seen
+in the reference page for <code>print_message_lines/3</code>.
+
+   <p>It is often useful for a message hook to execute some code for its
+effects, and then fail.  This allows other message hooks a chance to
+run, and allows the printing of the message to proceed normally.
+
+   <p>For example, we might want to ring a bell when printing an error
+message, and print a count of error messages seen so far.  This could
+be done as follows:
+
+<pre class="example">     :- dynamic error_count/1.
+     
+     user:message_hook(_, error, _) :-
+             put(7),                         <var>% ASCII 7 rings bell</var>
+             (   error_count(N) -&gt; true
+             ;   N = 1
+             ),
+             format('! Error ~w:~n', [N]),
+             N1 is N+1,
+             retractall(error_count(_)),
+             assert(error_count(N1)),
+             fail.
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-msg-umf-int.html#ref-msg-umf-int">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-msg-umf-cmt.html#ref-msg-umf-cmt">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-msg-umf.html#ref-msg-umf">Up</a>
+</ul>
+</div>
+   </body></html>
+

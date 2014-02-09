@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">The Bottom Layer Flush Function</h5>
+
+<pre class="example">     int <var>&lt;flush function&gt;</var>(qpstream, bufptr, sizeptr)
+            QP_stream         *qpstream;
+            unsigned char    **bufptr;
+            size_t            *sizeptr;
+     
+     Return Values:   QP_SUCCESS
+                      QP_ERROR
+     </pre>
+
+   <p>The parameters and the return values of the flush function have the
+same syntax and the same meaning as the write function.  The write
+function may buffer the output record without writing the record out. 
+The flush function should write out the output record immediately when
+it is called.  The middle layer function will not call the write
+function with an empty record (<code>*sizeptr</code> is zero), but the flush
+function may be called with an empty record passed in.  In general,
+the flush function can be the same as write function unless the write
+function buffers output records.  An output stream needs a bottom
+layer flush function only if <code>flush_type</code> of the stream is not
+<code>FLUSH_ERROR</code>.
+
+   <p>In our example, the bottom layer write function does not buffer
+output record and it can also handle writing an empty record, so
+the bottom layer flush function is the same as the write function.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-bot-see.html#fli-ios-bot-see">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-bot-wri.html#fli-ios-bot-wri">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-bot.html#fli-ios-bot">Up</a>
+</ul>
+</div>
+   </body></html>
+

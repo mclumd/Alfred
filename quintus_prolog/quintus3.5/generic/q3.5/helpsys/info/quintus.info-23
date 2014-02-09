@@ -1,0 +1,1285 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-address_to_file2,  Next: ipc-tcp-mco-address_from_file2,  Prev: ipc-tcp-mco-listener1,  Up: ipc-tcp-mco
+
+`tcp_address_to_file(+SERVERFILE, +ADDRESS)'
+............................................
+
+   This predicate writes the address term ADDRESS to the file
+SERVERFILE. This is useful when creating a listener on a dynamic port
+to enable clients to find out the server address by using the
+complementary predicate `tcp_address_from_file/2'.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-address_from_file2,  Next: ipc-tcp-mco-address_from_shell3,  Prev: ipc-tcp-mco-address_to_file2,  Up: ipc-tcp-mco
+
+`tcp_address_from_file(+SERVERFILE, -ADDRESS)'
+..............................................
+
+   A client uses this predicate to obtain the address of the server
+from the file SERVERFILE, written by the server using
+`tcp_address_to_file/2'.  If the client and server are on different
+machines then SERVERFILE must be located on a network transparent
+filesystem (e.g. NFS) to be accessible to the client.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-address_from_shell3,  Next: ipc-tcp-mco-address_from_shell4,  Prev: ipc-tcp-mco-address_from_file2,  Up: ipc-tcp-mco
+
+`tcp_address_from_shell(+HOST, +SERVERFILE, -ADDRESS)'
+......................................................
+
+   Not available under Windows.
+
+   This is identical to `tcp_address_from_file/2' except that, instead
+of relying on a network transparent file system to be able to read
+SERVERFILE, it executes a remote shell command on HOST to read the
+contents of the file.  This is useful for applications that cannot rely
+on the presence of a network transparent file system.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-address_from_shell4,  Next: ipc-tcp-mco-connect2,  Prev: ipc-tcp-mco-address_from_shell3,  Up: ipc-tcp-mco
+
+`tcp_address_from_shell(+HOST, +USERID, +SERVERFILE, -ADDRESS)'
+...............................................................
+
+   This adds a USERID parameter, so that the machine that has the handle
+file need not have an account for every user that wishes to access it.
+
+   The USERID is an atom representing the login name of some account on
+the target machine HOST.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-connect2,  Next: ipc-tcp-mco-connected1,  Prev: ipc-tcp-mco-address_from_shell4,  Up: ipc-tcp-mco
+
+`tcp_connect(+ADDRESS, -SOCKET)'
+................................
+
+   This is used by a Prolog client to connect to a server.  SOCKET is
+unified with the active socket identifier created when the connection
+is established.  The ADDRESS parameter is an address term, such as that
+returned by `tcp_address_from_file/2'.
+
+   Once a connection has been made to SOCKET later calls to
+`tcp_connect/2' succeed immediately, without attempting to re-establish
+a connection to SOCKET.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-connected1,  Next: ipc-tcp-mco-connected2,  Prev: ipc-tcp-mco-connect2,  Up: ipc-tcp-mco
+
+`tcp_connected(?SOCKET)'
+........................
+
+   This predicate succeeds if the SOCKET argument is the socket
+identifier of an active connection, or backtracks returning all
+currently active connections if SOCKET is unbound.
+
+   For example, this predicate can be used to shutdown all connections:
+
+     close_all_connections :-
+             tcp_connected(X),
+             tcp_shutdown(X),
+             fail
+         ;   true.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-connected2,  Next: ipc-tcp-mco-shutdown1,  Prev: ipc-tcp-mco-connected1,  Up: ipc-tcp-mco
+
+`tcp_connected(?SOCKET,?PASSIVESOCKET)'
+.......................................
+
+   A server process can use this predicate to identify which active
+connections are associated with which listeners. This can be useful if
+a server process establishes multiple listeners, listening on different
+ports simultaneously.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-shutdown1,  Next: ipc-tcp-mco-slc,  Prev: ipc-tcp-mco-connected2,  Up: ipc-tcp-mco
+
+`tcp_shutdown(+SOCKET)'
+.......................
+
+   This kills the connection to SOCKET.  SOCKET gets, through
+`tcp_select/[1,2]', an `end_of_file'.  If there is no connection to
+SOCKET, it silently fails.
+
+   Note that when `tcp_select/[1,2]' (see *Note ipc-tcp-trm-select1::)
+returns `end_of_file(SOCKET)', `tcp_shutdown(SOCKET)' has already been
+called.
+
+   `tcp_shutdown/1' raises an instantiation error when SOCKET is
+uninstantiated.
+
+
+File: quintus.info,  Node: ipc-tcp-mco-slc,  Prev: ipc-tcp-mco-shutdown1,  Up: ipc-tcp-mco
+
+Short lived connections
+.......................
+
+   The operating system limits the number of simultaneous connections
+open by a process at one time. The limit various with different
+operating systems but is typically 64 connections.
+
+   If the number is too small for your application, consider making
+connections persist only long enough for a send or receive.  This way
+at most one connection would be alive at any time.
+
+   Here is an example of how you might implement sending and receiving
+in terms of short lived connections.
+
+     send(To,Term):-    % +To, +Term
+         my_address(MyAddress),
+         tcp_connect(To, Socket),
+         tcp_send(Socket, MyAddress-Term),
+         tcp_shutdown(Socket).
+     
+     receive(From,Term):-  % -From, -Term
+         repeat,
+         tcp_select(term(Socket, From-Term)),
+         !,
+         tcp_shutdown(Socket).
+
+   In the above example, it is assumed that all processes are servers,
+and have asserted the address obtained from a call to
+`tcp_create_listener/2' into `my_address/1'.
+
+   The performance penalty of short lived connections is the time for
+making and breaking connections, which is actually quite fast.  For
+comparison, the time it takes to create and then destroy a connection to
+a server is hundreds of times slower than sending a character to the
+server, but is comparable to the time it takes to send a large term to
+the server.
+
+
+File: quintus.info,  Node: ipc-tcp-trm,  Next: ipc-tcp-tim,  Prev: ipc-tcp-mco,  Up: ipc-tcp
+
+Sending and Receiving Terms
+---------------------------
+
+* Menu:
+
+* ipc-tcp-trm-select1::                 tcp_select(-Term)
+* ipc-tcp-trm-select2::                 tcp_select(+Timeout, -Term)
+* ipc-tcp-trm-send2::                   tcp_send(+Socket, +Term)
+
+
+File: quintus.info,  Node: ipc-tcp-trm-select1,  Next: ipc-tcp-trm-select2,  Up: ipc-tcp-trm
+
+`tcp_select(-TERM)'
+...................
+
+   The purpose of `tcp_select/1' is to process connection requests,
+return terms related to timing, and return in a round-robin fashion
+terms read from connected processes.  TERM is one of:
+
+`connected(SOCKET)'
+     is returned when the server has accepted a connection request from
+     SOCKET.  SOCKET is small integer.  It is a socket file descriptor
+     (a small integer).
+
+`wakeup(TERM)'
+     is returned when the timer alarm specified in
+     `tcp_schedule_wakeup/2' was delivered (see *Note
+     ipc-tcp-tim-schedule_wakeup2::).
+
+`user_input'
+     is returned whenever there is input available on `stdin' and
+     `tcp_watch_user(_,on)' has been called.  See `tcp_watch_user/2',
+     *Note ipc-tcp-utc-watch_user2::.
+
+`term(SOCKET,TERM)'
+     is returned when some process whose socket file descriptor is
+     SOCKET has called `tcp_send/2' (see *Note ipc-tcp-trm-send2::).
+     This is the result of a read from the socket.
+
+`end_of_file(SOCKET)'
+     is returned when the connection is lost to the process whose
+     socket file descriptor is SOCKET.  This is the result a read from
+     the socket.  The connection is shut down.
+
+     *Windows caveats:*
+        * `tcp_select/[1,2]' is not interruptible by `^C'. For this
+          reason, calling `tcp_select/2' with infinite timeout is
+          probably a bad idea. If called with infinite timeout and if
+          there are no open sockets, then `tcp_select/2' will return
+          immediately, indicating a timeout.
+
+        *
+
+
+File: quintus.info,  Node: ipc-tcp-trm-select2,  Next: ipc-tcp-trm-send2,  Prev: ipc-tcp-trm-select1,  Up: ipc-tcp-trm
+
+`tcp_select(+TIMEOUT, -TERM)'
+.............................
+
+   This is the same as `tcp_select/1' (see *Note
+ipc-tcp-trm-select1::), except `tcp_select/2' will return the atom
+`timeout' if the timeout interval expires before input is available or
+before a timer alarm is delivered (from `tcp_schedule_wakeup/2', see
+*Note ipc-tcp-tim-schedule_wakeup2::).
+
+   TIMEOUT is a floating point number indicating seconds.
+
+   The `tcp_select' predicates must deal with three events:
+
+  1. Timer alarms -- are dealt with first.  These are scheduled with
+     `tcp_schedule_wakeup/2' (see *Note ipc-tcp-tim-schedule_wakeup2::).
+
+  2. ready input -- are dealt with when (1) doesn't apply, that is, if
+     no timer alarm is delivered; `tcp_select/2' will sleep until there
+     is input available from some connected process.
+
+  3. timeout -- when neither (1) or (2) apply, and the timeout interval
+     specified has expired, then the atom `timeout' is returned.
+
+   A poll is effected by specifying 0 for TIMEOUT.
+
+
+File: quintus.info,  Node: ipc-tcp-trm-send2,  Prev: ipc-tcp-trm-select2,  Up: ipc-tcp-trm
+
+`tcp_send(+SOCKET, +TERM)'
+..........................
+
+   This sends TERM to the process whose socket identifier is SOCKET.
+SOCKET gets the term TERM(FROM,TERM) from `tcp_select/[1,2]' (see *Note
+ipc-tcp-trm-select1::).
+
+   Note that `tcp_send/2' can only be used to send terms to a Prolog
+server as TERM is sent in an encoded form that is efficiently decoded
+by `tcp_select/[1,2]' (see *Note ipc-tcp-trm-select1::).
+
+   Here is an example of how one might use `tcp_send/2' to implement a
+remote procedure call to some process whose file descriptor is P.  It
+is assumed that the connections between the two processes have been
+established elsewhere.
+
+     :-use_module(library(basics), [member/2]).
+     :-use_module(library(freevars), [free_variables/4]).
+     
+     % machine a has p_call/2
+     
+     p_call(P, Goal):-
+         free_variables(Goal, [], [], FreeVars),
+         tcp_send(P, satisfy(FreeVars, Goal)),
+         tcp_select(term(P, Bag)),
+         member(FreeVars, Bag).
+     
+     % machine b has slave/0
+     
+     slave:-
+         T = term(P, satisfy(FreeVars, Goal)),
+         repeat,
+             tcp_select(T),
+             findall(FreeVars, Goal, Bag),
+             tcp_send(P, Bag),
+         fail.
+
+   The use of `library(freevars)' is to limit the amount of data being
+sent by the slave to just those variables that may be instantiated by
+calling `Goal'.
+
+   For many applications this is all that is required.  It has the
+advantage of limiting both the frequency of messages sent
+(`findall/3'), and the size of the messages (`free_variables/4').  A
+better implementation of remote procedure call would allow the caller
+to respond to solutions from several different machines as soon as the
+solutions are generated, without waiting for the solutions to be
+assembled into a list.  This is attempted in the example program
+`IPC/TCP/demo/sibling.pl' (see *Note ipc-tcp-exa::).
+
+   If you try to send to a broken socket, the "Broken pipe" exception is
+raised:
+     existence_error(_,_,_,_,errno(32))
+
+
+File: quintus.info,  Node: ipc-tcp-tim,  Next: ipc-tcp-ups,  Prev: ipc-tcp-trm,  Up: ipc-tcp
+
+Time Predicates
+---------------
+
+* Menu:
+
+* ipc-tcp-tim-now1::                    tcp_now(-Timeval)
+* ipc-tcp-tim-time_plus3::              tcp_time_plus(?Timeval1, ?DeltaTime, ?Timeval2)
+* ipc-tcp-tim-schedule_wakeup2::        tcp_schedule_wakeup(+Timeval, +Term)
+* ipc-tcp-tim-scheduled_wakeup2::       tcp_scheduled_wakeup(?Timeval, ?Term)
+* ipc-tcp-tim-can::                     Canceling Wakeups
+* ipc-tcp-tim-daily4::                  tcp_daily(+Hour, +Minute, +Seconds, -Timeval)
+* ipc-tcp-tim-date_timeval2::           tcp_date_timeval(?Date, ?Timeval)
+
+   The tcp package supplies various operations on time.  These
+predicates can be used independently of the rest of the package.  The
+tcp package provides a timer scheduling facility and time conversion
+facilities.  Time stamping and portrayal is supplied by another library
+package, namely `library(date)' (see *Note lib-mis-date::).
+
+   All the time predicates use an absolute time format called the
+`timeval/2' representation.  It is a term of the form
+`timeval(SECONDS,MICROSECONDS)', where SECONDS and MICROSECONDS are
+integers representing the absolute system time in seconds and
+microseconds, respectively.
+
+
+File: quintus.info,  Node: ipc-tcp-tim-now1,  Next: ipc-tcp-tim-time_plus3,  Up: ipc-tcp-tim
+
+`tcp_now(-TIMEVAL)'
+...................
+
+   `tcp_now/1' returns the current absolute system time in a
+`timeval/2' structure.
+
+
+File: quintus.info,  Node: ipc-tcp-tim-time_plus3,  Next: ipc-tcp-tim-schedule_wakeup2,  Prev: ipc-tcp-tim-now1,  Up: ipc-tcp-tim
+
+`tcp_time_plus(?TIMEVAL1, ?DELTATIME, ?TIMEVAL2)'
+.................................................
+
+   This predicate is true when the interval between TIMEVAL1 and
+TIMEVAL2 is DELTATIME. DELTATIME is a floating point number
+representing seconds.  Both TIMEVAL1 and TIMEVAL2 are `timeval/2'
+structures.
+
+   At least two of the arguments to `tcp_time_plus/3' must be ground.
+
+
+File: quintus.info,  Node: ipc-tcp-tim-schedule_wakeup2,  Next: ipc-tcp-tim-scheduled_wakeup2,  Prev: ipc-tcp-tim-time_plus3,  Up: ipc-tcp-tim
+
+`tcp_schedule_wakeup(+TIMEVAL, +TERM)'
+......................................
+
+   This schedules a wakeup from `tcp_select/1' (see *Note
+ipc-tcp-trm-select1::).  For example,
+
+     tcp_now(Now),
+     tcp_time_plus(Now, 0.1, Timeval),
+     tcp_schedule_wakeup(Timeval, foo)
+
+   forces `tcp_select/[1,2]' to return the term `wakeup(foo)' a tenth of
+a second after the call to `tcp_now/1'.  Any number of wakeups may be
+pending.
+
+   The wakeup mechanism is implemented in terms of timer alarms.  If a
+timer alarm was delivered when the process was not waiting at select,
+the next call to select will indicate that an alarm was delivered.
+
+   The wakeup mechanism can be used independently of the rest of the tcp
+package.  You need not set up communications with other processes to
+use the wakeup mechanism.
+
+
+File: quintus.info,  Node: ipc-tcp-tim-scheduled_wakeup2,  Next: ipc-tcp-tim-can,  Prev: ipc-tcp-tim-schedule_wakeup2,  Up: ipc-tcp-tim
+
+`tcp_scheduled_wakeup(?TIMEVAL, ?TERM)'
+.......................................
+
+   `tcp_schedule_wakeup/2' backtracks through the list of scheduled
+wakeups.
+
+
+File: quintus.info,  Node: ipc-tcp-tim-can,  Next: ipc-tcp-tim-daily4,  Prev: ipc-tcp-tim-scheduled_wakeup2,  Up: ipc-tcp-tim
+
+Canceling Wakeups
+.................
+
+   Two predicates are provided:
+
+   `tcp_cancel_wakeup(+TIMEVAL, +TERM)'
+
+   `tcp_cancel_wakeups'
+
+   `tcp_cancel_wakeup/2' cancels the wakeup that was previously
+specified using `tcp_schedule_wakeup/2'.  `tcp_cancel_wakeups/0'
+cancels all the pending wakeups.
+
+
+File: quintus.info,  Node: ipc-tcp-tim-daily4,  Next: ipc-tcp-tim-date_timeval2,  Prev: ipc-tcp-tim-can,  Up: ipc-tcp-tim
+
+`tcp_daily(+HOUR, +MINUTE, +SECONDS, -TIMEVAL)'
+...............................................
+
+   This predicate is useful for scheduling daily events.  The given time
+will be translated into the equivalent absolute time, and that time
+will definitely be within the next 24 hours.  For example,
+     tcp_daily(13, 0, 0, Timeval)
+ unifies TIMEVAL with the `timeval/2' representation for 1 pm.  If
+the goal was submitted at noon, TIMEVAL will represent an hour later.
+If the goal was submitted at 2 pm, TIMEVAL will represent 1 pm the
+following day.
+
+   HOUR, MINUTE, and SECOND must all be integers.
+
+   The following example wakes up every 24 hours
+
+             ...
+             tcp_daily(H, M, S, Timeval)
+             tcp_schedule_wakeup(Timeval, time(H,M,S)),
+             repeat,
+                 tcp_select(X),
+                 dispatch(X),
+             fail.
+     
+         dispatch(wakeup(T)):-
+             T = time(H,M,S),
+             tcp_daily(H, M, S, Timeval),
+             tcp_schedule_wakeup(Timeval, T),
+             ...
+
+
+File: quintus.info,  Node: ipc-tcp-tim-date_timeval2,  Prev: ipc-tcp-tim-daily4,  Up: ipc-tcp-tim
+
+`tcp_date_timeval(?DATE, ?TIMEVAL)'
+...................................
+
+   This predicate is used to convert between the time format supplied by
+`library(date)' and the `timeval/2' representation.  At least one of the
+arguments must be ground.  The parameter DATE is of the form
+`date(YEAR,MONTH,DAY,HOUR,MINUTE,SECOND)'.
+
+   `library(date)' has facilities for portraying time.
+`tcp_date_timeval/2' can be used with `library(date)' for portrayal:
+
+     :-use_module(library(addportray), [add_portray/1]).
+     :-use_module(library(date), [time_stamp/3]).
+     :-use_module(library(tcp), [tcp_date_timeval/2]).
+     
+     :-initialization add_portray(portray_timeval).
+     
+     portray_timeval(timeval(Seconds, MicroSeconds)):-
+         tcp_date_timeval(Date,timeval(Seconds, MicroSeconds)),
+         time_stamp(Date,'%y %02n %M %02d %W %02c:%02i:', Stamp),
+         write(Stamp),
+         Date=date(_, _, _, _, _, S),
+         X is (S * 1.0e6 + MicroSeconds) / 1.0e6,
+         (X < 10 -> write(0) ; true),
+         format('~2f', X).
+
+   Which would result in the following:
+
+         | ?- tcp_now(X).
+     
+         X = 1989 03 March 01 Wednesday 17:09:58.12
+
+
+File: quintus.info,  Node: ipc-tcp-ups,  Next: ipc-tcp-cbi,  Prev: ipc-tcp-tim,  Up: ipc-tcp
+
+Using Prolog streams
+--------------------
+
+* Menu:
+
+* ipc-tcp-ups-select_from1::            tcp_select_from(-Term)
+* ipc-tcp-ups-select_from2::            tcp_select_from(+Timeout, -Term)
+* ipc-tcp-ups-input_stream2::           tcp_input_stream(?Socket, ?Stream)
+* ipc-tcp-ups-output_stream2::          tcp_output_stream(?Socket, ?Stream)
+
+   Sometimes the format of data being exchanged between processes is not
+known in advance and it is not possible to assume that the data sent
+are valid Prolog terms.  This package provides Prolog streams for each
+connection that can be read from or written to using the stream
+input/output predicates.  For more information about Prolog streams,
+see *Note ref-iou-str::.
+
+   Although these streams can be written to or read from using the
+standard input/output predicates supplied by Prolog, they must be
+closed using `tcp_shutdown/1' instead of `close/1', otherwise the
+database internal to `library(tcp)' will become inconsistent.
+
+   There is a subtle point about `end_of_file': in a correct
+implementation of TCP it is possible to receive zero-length packets, so
+that a socket _should_ be able to signal end-of-file repeatedly just
+like a terminal.  So does `end_of_file(SOCKET)' mean "connection lost
+to SOCKET", or does it mean "zero-length packet received from SOCKET"?
+Using `tcp_select/1' or `tcp_select/2', `end_of_file' causes the
+connection to be shutdown.  Reading the streams yourself lets you
+decide what `end_of_file' means on your sockets.
+
+
+File: quintus.info,  Node: ipc-tcp-ups-select_from1,  Next: ipc-tcp-ups-select_from2,  Up: ipc-tcp-ups
+
+`tcp_select_from(-TERM)'
+........................
+
+   This is similar to `tcp_select/1' (see *Note ipc-tcp-trm-select1::),
+but instead of reading the socket that has data available, it returns
+the term `from(SOCKET)', where SOCKET is socket to some other process.
+The other terms it may return are
+
+   * `connected(Socket)'
+
+   * `wakeup(T)'
+
+   * `user_input'
+
+   as described in the section on `tcp_select/1'.
+
+   It is up to the caller to read from the stream associated with the
+socket file descriptor, SOCKET, by using `tcp_input_stream/2' and then
+reading from that stream using the standard stream input predicates, as
+in
+
+     ...,
+     tcp_select_from(from(Socket)),
+     tcp_input_stream(Socket, S),
+     get0(S,X),
+     ...
+
+
+File: quintus.info,  Node: ipc-tcp-ups-select_from2,  Next: ipc-tcp-ups-input_stream2,  Prev: ipc-tcp-ups-select_from1,  Up: ipc-tcp-ups
+
+`tcp_select_from(+TIMEOUT, -TERM)'
+..................................
+
+   The behavior of `tcp_select_from/2' is the same as
+`tcp_select_from/1', except `tcp_select_from/2' will return the atom
+`timeout' if the timeout interval expires before input is available or
+a timer alarm is delivered.
+
+   TIMEOUT is a floating point number indicating seconds
+
+
+File: quintus.info,  Node: ipc-tcp-ups-input_stream2,  Next: ipc-tcp-ups-output_stream2,  Prev: ipc-tcp-ups-select_from2,  Up: ipc-tcp-ups
+
+`tcp_input_stream(?SOCKET, -STREAM)'
+....................................
+
+   Returns the input stream STREAM from the socket file descriptor
+SOCKET.  You can read from the stream using the regular stream input
+predicates.
+
+   If you attempt to read from a broken socket, the "Connection reset by
+peer" exception is raised:
+     existence_error(_,_,_,_,errno(54))
+
+   When using `tcp_select/[1,2]', this exception is caught and
+interpreted as an `end_of_file', and the connection is shut down.
+
+
+File: quintus.info,  Node: ipc-tcp-ups-output_stream2,  Prev: ipc-tcp-ups-input_stream2,  Up: ipc-tcp-ups
+
+`tcp_output_stream(?SOCKET, -STREAM)'
+.....................................
+
+   Returns the output stream STREAM from the socket file descriptor
+term SOCKET.  You can write to the stream using the regular stream
+output predicates.
+
+   Output on socket streams are buffered.  If you want to send
+characters one at a time, you must follow each write with a flush, as in
+
+     tcp_output_stream(Socket, Stream),
+     put(Stream, Character),
+     flush_output(Stream)
+
+   If you try to write to a broken socket, the "Broken pipe" exception
+is raised:
+     existence_error(_,_,_,_,errno(32))
+
+
+File: quintus.info,  Node: ipc-tcp-cbi,  Next: ipc-tcp-cfu,  Prev: ipc-tcp-ups,  Up: ipc-tcp
+
+The Callback Interface
+----------------------
+
+* Menu:
+
+* ipc-tcp-cbi-create_input_callback2::  tcp_create_input_callback(+Socket, +Goal)
+* ipc-tcp-cbi-destroy_input_callback1:: tcp_destroy_input_callback(+Socket)
+* ipc-tcp-cbi-input_callback2::         tcp_input_callback(*Socket, *Goal)
+* ipc-tcp-cbi-create_timer_callback3::  tcp_create_timer_callback(+Timeval, +Goal, -TimerId)
+* ipc-tcp-cbi-destroy_timer_callback1:: tcp_destroy_timer_callback(+TimerId)
+* ipc-tcp-cbi-timer_callback2::         tcp_timer_callback(*Timerid, *Goal)
+* ipc-tcp-cbi-accept2::                 tcp_accept(+PassiveSocket, -Socket)
+
+   The tcp package supplies a callback interface, which is a way of
+arranging for a predicate to be called whenever some tcp event occurs.
+This is especially useful for applications that can not wait at one of
+the `tcp_select' predicates.  A callback is a predicate that is called
+when some condition is met.  Callbacks are called when your process is
+in some wait state.  It uses the callback facility described in
+relation to the Quintus supplied C functions `QP_select()' and
+`QP_add_input()'.
+
+   For example, applications that use the callbacks defined in the
+Quintus X Toolkit interface (`xif') use callbacks extensively.  Before
+the callback interface to `library(tcp)' was provided, there was no way
+for a graphics program to both service its callbacks and service
+`library(tcp)' without polling.
+
+   Although this interface may seem primitive, it has the advantage of
+being able to be used by separate subcomponents of a larger system since
+the requirement that the application wait at `tcp_select/[1,2]' is
+lifted.
+
+
+File: quintus.info,  Node: ipc-tcp-cbi-create_input_callback2,  Next: ipc-tcp-cbi-destroy_input_callback1,  Up: ipc-tcp-cbi
+
+`tcp_create_input_callback(+SOCKET, +GOAL)'
+...........................................
+
+   `tcp_create_input_callback/2' arranges that GOAL is called whenever
+there is data available on SOCKET.
+
+   To arrange for the client to make a callback whenever there is input
+available on a given socket:
+
+         ...
+         tcp_connect(Address, Socket),
+         tcp_create_input_callback(Socket, input_on(Socket)).
+         ...
+     
+     input_on(Socket) :-
+         tcp_input_stream(Socket, I),
+         read(I, Term),
+         ...
+
+
+File: quintus.info,  Node: ipc-tcp-cbi-destroy_input_callback1,  Next: ipc-tcp-cbi-input_callback2,  Prev: ipc-tcp-cbi-create_input_callback2,  Up: ipc-tcp-cbi
+
+`tcp_destroy_input_callback(+SOCKET)'
+.....................................
+
+   `tcp_destroy_input_callback/1' destroys the callback associated with
+SOCKET.
+
+
+File: quintus.info,  Node: ipc-tcp-cbi-input_callback2,  Next: ipc-tcp-cbi-create_timer_callback3,  Prev: ipc-tcp-cbi-destroy_input_callback1,  Up: ipc-tcp-cbi
+
+`tcp_input_callback(*SOCKET, *GOAL)'
+....................................
+
+   `tcp_input_callback/2' backtracks through the list of SOCKET-GOAL
+pairs maintained by the callback interface to the tcp package.
+
+
+File: quintus.info,  Node: ipc-tcp-cbi-create_timer_callback3,  Next: ipc-tcp-cbi-destroy_timer_callback1,  Prev: ipc-tcp-cbi-input_callback2,  Up: ipc-tcp-cbi
+
+`tcp_create_timer_callback(+TIMEVAL, +GOAL, -TIMERID)'
+......................................................
+
+   `tcp_create_timer_callback/3' arranges things so that GOAL will be
+called when the absolute time value TIMEVAL is called.
+
+   Note that this goal will only be called when your program is in a
+wait state.  Therefore all the tcp package can do is guarantee that if
+your program goes to sleep at `QP_select()' and the absolute time
+specified is reached or passed, then the goal is called.  It does not
+work using asynchronous operating system timers.
+
+   The output argument TIMERID can be used for destroying the timer
+callback just created.
+
+   To arrange for a goal to be called at some absolute time:
+
+         ...,
+         tcp_create_timer_callback(Timeval, Goal, TimerId),
+         ...
+
+
+File: quintus.info,  Node: ipc-tcp-cbi-destroy_timer_callback1,  Next: ipc-tcp-cbi-timer_callback2,  Prev: ipc-tcp-cbi-create_timer_callback3,  Up: ipc-tcp-cbi
+
+`tcp_destroy_timer_callback(+TIMERID)'
+......................................
+
+   `tcp_destroy_timer_callback/1' uses the TIMERID obtained by calling
+`tcp_create_timer_callback/3' for removing the timer callback.
+
+
+File: quintus.info,  Node: ipc-tcp-cbi-timer_callback2,  Next: ipc-tcp-cbi-accept2,  Prev: ipc-tcp-cbi-destroy_timer_callback1,  Up: ipc-tcp-cbi
+
+`tcp_timer_callback(*TIMERID, *GOAL)'
+.....................................
+
+   `tcp_timer_callback/2' backtracks through the list of TIMERID-GOAL
+pairs maintained by the callback interface to the tcp package.
+
+
+File: quintus.info,  Node: ipc-tcp-cbi-accept2,  Prev: ipc-tcp-cbi-timer_callback2,  Up: ipc-tcp-cbi
+
+`tcp_accept(+PASSIVESOCKET, -SOCKET)'
+.....................................
+
+   `tcp_accept/2' is used to accept a connection request on
+PASSIVESOCKET and binding a Prolog stream to it.  The input and output
+streams created by calling this predicate can be obtained by using the
+SOCKET output argument when calling `tcp_input_stream/2' and
+`tcp_output_stream/2', respectively.
+
+   To arrange for a server to make a callback whenever there is a
+connection request:
+
+         ...
+         tcp_create_listener(Port, Host, Passive),
+         tcp_create_input_callback(Passive, accept(Passive)),
+         ...
+     
+     accept(Passive) :-
+         tcp_accept(Passive, Socket),
+         ...
+
+   Probably you will want to make the newly created socket a callback as
+well, so then the clause for `accept/1' in the preceding example would
+be:
+
+     accept(Passive) :-
+         tcp_accept(Passive, Socket),
+         tcp_create_input_callback(Socket, input_on(Socket)).
+
+   Where `input_on/1' is as defined in the example for
+`tcp_create_input_callback/2'.
+
+
+File: quintus.info,  Node: ipc-tcp-cfu,  Next: ipc-tcp-exa,  Prev: ipc-tcp-cbi,  Up: ipc-tcp
+
+The C functions
+---------------
+
+* Menu:
+
+* ipc-tcp-cfu-create_listener::         tcp_create_listener()
+* ipc-tcp-cfu-address_to_file::         tcp_address_to_file()
+* ipc-tcp-cfu-address_from_file::       tcp_address_from_file()
+* ipc-tcp-cfu-address_from_shell::      tcp_address_from_shell()
+* ipc-tcp-cfu-connect::                 tcp_connect()
+* ipc-tcp-cfu-accept::                  tcp_accept()
+* ipc-tcp-cfu-select::                  tcp_select()
+* ipc-tcp-cfu-shutdown::                tcp_shutdown()
+
+   Communication between processes is effected through sockets.  Sockets
+are referred to by small 32 bit integers, called file descriptors below
+(even though they are proper file descriptors only under UNIX).
+
+   The program using this package should be linked with the object file
+`tcp_c.o' (substitute the actual object file extension for `.o').  The
+sources to create this file, the C source files `tcp.c' and `tcp.h',
+are provided in the tcp library directory.(1)  Furthermore, the source
+file `tcp.h' from `IPC/TCP' should be included in the C sources using
+the package.
+
+   Errors from using the C tcp package are written to `stderr' using the
+system function `perror(3)', so whenever a tcp C function indicates an
+error, the error message has already been printed and errno has already
+been set.
+
+   Although sockets may be used like any other file descriptor, they
+must be killed using `tcp_shutdown()', otherwise the behavior of
+`tcp_select()' will become unpredictable.
+
+   For a C client calling a Prolog server, see example `cs.c' (*Note
+ipc-tcp-exa::).
+
+   For a Prolog client calling a C server, see example `c_server.pl,
+c_server.c' (*Note ipc-tcp-exa::).
+
+   ---------- Footnotes ----------
+
+   (1) The object file is also created in the system directories of tcp
+at installation time.  In the development system, the call
+`absolute_file_name(library(system('tcp_c.o')),AbsPath)' returns the
+full path to the object file `tcp_c.o' for the particular architecture
+being used.
+
+
+File: quintus.info,  Node: ipc-tcp-cfu-create_listener,  Next: ipc-tcp-cfu-address_to_file,  Up: ipc-tcp-cfu
+
+`tcp_create_listener()'
+.......................
+
+   A C process can listen for connection requests generated by client
+processes by calling the C function `tcp_create_listener()', as shown by
+the following program fragment:
+
+     int Port,Service;
+     char *Host;
+     
+     if (tcp_create_listener(0, &Port,&Host,&Service) != 0)
+             ... an error occurred.
+
+   The C function `tcp_create_listener()' is used by a C server to
+create a listener (SERVICE).  A passive socket is used to accept
+connection requests.  It returns the port and hostname in PORT and HOST
+arguments respectively. The first argument specifies a fixed port number
+to listen on. If it is zero, as in this example, then a dynamic port
+number is allocated. The SERVICE is used with later calls to the C
+function `tcp_accept()' to accept a connection request.  A connection
+request is detected using the C function `tcp_select()'.
+
+   The example program `c_server.c' illustrates the use of this function
+(see *Note ipc-tcp-exa::).
+
+
+File: quintus.info,  Node: ipc-tcp-cfu-address_to_file,  Next: ipc-tcp-cfu-address_from_file,  Prev: ipc-tcp-cfu-create_listener,  Up: ipc-tcp-cfu
+
+`tcp_address_to_file()'
+.......................
+
+     #include "tcp.h"
+     
+     int tcp_address_to_file(ServerFile, Port, Host)
+         char *ServerFile;
+         int Port;
+         char *Host;
+
+   This function writes the PORT and HOST to the file SERVERFILE to
+enable a client to find the server's address.  This is useful when
+establishing a listener on a dynamic port.
+
+
+File: quintus.info,  Node: ipc-tcp-cfu-address_from_file,  Next: ipc-tcp-cfu-address_from_shell,  Prev: ipc-tcp-cfu-address_to_file,  Up: ipc-tcp-cfu
+
+`tcp_address_from_file()'
+.........................
+
+     #include "tcp.h"
+     
+     int tcp_address_from_file(ServerFile, Port, Host)
+         char *ServerFile;
+         int *Port;
+         char **Host;
+
+   This reads the server's address from the file SERVERFILE, which was
+written by the server calling `tcp_address_to_file/2'.
+
+   Note that *HOST is a pointer to static storage that will be
+overwritten at the next call to `tcp_address_from_file()'.
+
+   `tcp_address_from_file()' returns zero upon successful completion.
+
+
+File: quintus.info,  Node: ipc-tcp-cfu-address_from_shell,  Next: ipc-tcp-cfu-connect,  Prev: ipc-tcp-cfu-address_from_file,  Up: ipc-tcp-cfu
+
+`tcp_address_from_shell()'
+..........................
+
+     #include "tcp.h"
+     
+     int tcp_address_from_shell(Host1, UserId, ServerFile, Port, Host)
+         char *Host1;
+         char *UserId;
+         char *ServerFile;
+         int *Port;
+         char **Host;
+
+   This is identical to `tcp_address_from_file()', except that, instead
+of relying on a network transparent file system to be able read
+SERVERFILE, it executes a remote shell command to HOST1 to read the
+contents of the file.  This is useful for applications that cannot rely
+on the presence of a network transparent file system.
+
+   *HOST is a pointer to static storage that will be overwritten at the
+next call to `tcp_address_from_shell()'.
+
+   The USERID argument may be specified as `""', meaning login as
+myself.  It is provided so that the machine that has the handle file
+need not have an account for every user that wishes to access it.
+
+   Note that HOST1 need not be the same string as *HOST, but typically
+is.
+
+   `tcp_address_from_shell()' returns zero upon successful completion.
+
+
+File: quintus.info,  Node: ipc-tcp-cfu-connect,  Next: ipc-tcp-cfu-accept,  Prev: ipc-tcp-cfu-address_from_shell,  Up: ipc-tcp-cfu
+
+`tcp_connect()'
+...............
+
+   The C function `tcp_connect()' is used by C clients to connect to
+some server running on machine "host" at some "port".  It returns the
+newly created socket.  The following program fragment demonstrates the
+use of the C function `tcp_connect()' along with its companion C
+function `tcp_address_from_file()':
+
+     #include "tcp.h"
+     
+     int c,port;
+     char *host;
+     
+     if(tcp_address_from_file(serverfile, &port, &host) != 0)
+         ... an error occurred.
+     c = tcp_connect(host, port);
+     if (c == -1)  ... an error occurred.
+
+   A fuller example of the above can be found in the demonstration
+program `cs.c'.
+
+
+File: quintus.info,  Node: ipc-tcp-cfu-accept,  Next: ipc-tcp-cfu-select,  Prev: ipc-tcp-cfu-connect,  Up: ipc-tcp-cfu
+
+`tcp_accept()'
+..............
+
+     #include "tcp.h"
+     
+     int fd,Service;
+     
+     fd = tcp_accept(Service);
+     if (fd == -1)  ... an error occurred.
+
+   The C function `tcp_accept()' is used to accept a connection
+request. It returns the file descriptor for the newly created socket
+(FD).
+
+   A connection request is recognized when the file descriptor returned
+by the C function `tcp_select()' is the file descriptor for the passive
+socket returned by `tcp_create_listener()'.  In other words,
+`tcp_select()' indicates that the passive socket created by
+`tcp_create_listener()' has input available.  Since it is impossible to
+read from a passive socket, this means that a connection request is
+pending, and it is time to call `tcp_accept()' to accept the connection
+request.
+
+
+File: quintus.info,  Node: ipc-tcp-cfu-select,  Next: ipc-tcp-cfu-shutdown,  Prev: ipc-tcp-cfu-accept,  Up: ipc-tcp-cfu
+
+`tcp_select()'
+..............
+
+     #include "tcp.h"
+     
+     int FD,Block;
+     double Timeout;
+     
+     ...
+     
+     switch (tcp_select(Block, Timeout, &FD))
+     {
+     case tcp_ERROR:
+         ... an error occurred.
+     case tcp_TIMEOUT:
+         ... handle a timeout
+     case tcp_SUCCESS:
+         ... input is ready on FD
+     }
+
+   `tcp_select()' is used to determine which file descriptor is ready
+for input.  It returns 3 status values:
+
+`tcp_ERROR'
+     the error message is printed using the system function `perror(3)'.
+
+`tcp_TIMEOUT'
+     the time interval specified in Timeout (seconds) expired.
+
+`tcp_SUCCESS'
+     the FileDescriptor returned is ready to be read.
+
+   With `Block == tcp_BLOCK', `tcp_select()' will ignore the Timeout
+parameter, and simply block until some data is available.
+
+   With `Block == tcp_POLL', `tcp_select()' will sleep for Timeout
+seconds, or until data is available, whichever comes first.
+
+
+File: quintus.info,  Node: ipc-tcp-cfu-shutdown,  Prev: ipc-tcp-cfu-select,  Up: ipc-tcp-cfu
+
+`tcp_shutdown()'
+................
+
+     #include "tcp.h"
+     
+     int FD;
+     
+     if (tcp_shutdown(FD) == -1)    ... an error occurred.
+
+   The C function `tcp_shutdown()' is used to kill a passive or active
+socket.  It is important that this is used instead of the system
+function `close(2)', since it affects the behavior of the C function
+`tcp_select()'.
+
+
+File: quintus.info,  Node: ipc-tcp-exa,  Prev: ipc-tcp-cfu,  Up: ipc-tcp
+
+Examples
+--------
+
+   Five examples have been provided in `IPC/TCP/demo'.  Each example has
+detailed instructions on its use in its source file.  A Makefile is
+provided in the `demo' directory.
+
+   Calling `absolute_file_name/2' is a convenient way of finding the
+path to a demonstration program.  For example, to find the sibling
+demonstration, try issuing the command
+
+     | ?- absolute_file_name(demo('sibling.pl'),X).
+
+   Here is a list of the example tcp programs.
+
+`client.pl, server.pl'
+     The client/server example.  This illustrates how connections are
+     established and a very simple method of remote procedure call.
+
+`sibling.pl'
+     This file demonstrates the tcp software for three connected
+     processes.  Once connected, all three send and receive goals to
+     each other as peers.  It can detect reception of keyboard input,
+     since it uses the `tcp_watch_user/2' predicate.
+
+`ce.pl'
+     An example of the producer, filter, consumer problem.  The
+     producer process sends random numbers between 0 and 1 to the
+     filter process, which in turn sends copies of the numbers it
+     received from the producer ranging between 0.2 and 0.7 to the
+     consumer.
+
+`cs.c'
+     This is a simple way to call the Prolog server defined in
+     `server.pl' from the c-shell.  If the SERVERFILE (see
+     `tcp_address_from_file/2', *Note ipc-tcp-mco-address_from_file2::)
+     for some server is `x', then
+
+          % cs x "write('hi there'),nl"
+
+     causes the server to write the string `"hi there\n"' to its
+     socket.  The C program `cs.c' copies the socket output from the
+     server to `stdout'.
+
+`c_server.c, c_server.pl'
+     This illustrates a Prolog client calling a C server.
+
+
+File: quintus.info,  Node: ipc-rpc,  Next: ipc-tcp,  Up: ipc
+
+IPC/RPC: Remote Predicate Calling
+=================================
+
+* Menu:
+
+* ipc-rpc-ove::                         Overview
+* ipc-rpc-p2p::                         Prolog Process Calling Prolog Process
+* ipc-rpc-cpp::                         C Process Calling Prolog Process
+* ipc-rpc-tra::                         Tracing
+* ipc-rpc-bug::                         Known Bugs
+
+
+File: quintus.info,  Node: ipc-rpc-ove,  Next: ipc-rpc-p2p,  Up: ipc-rpc
+
+Overview
+--------
+
+   We recommend that if you are just starting out, do _not_ use this
+package.  The TCP package is much faster and more powerful.  IPC/RPC is
+not available under Windows.
+
+   In releases prior to Quintus Prolog Release 2.5, this package was
+simply known as IPC.  It is now called IPC/RPC to distinguish it from
+another interprocess communication package, which is called IPC/TCP.
+That package is more general than this one since its facilities can be
+used to implement the functionality of this package.
+
+   This package has some interesting facilities for calling a Prolog
+servant from C.  Before Release 3.0, this was the only way to call
+Prolog from C.  Now Prolog can be fully embedded in a C application.
+
+   This Interprocess Communication (IPC) package provides tools for
+allowing programs written in Prolog or C to remotely call predicates in
+a Prolog program that is running as a separate process, possibly on a
+different machine.  The communication between the processes is
+implemented using sockets or pipes to send goals to the remote process
+and to retrieve answers back.
+
+   We refer to the Prolog process that is being invoked by some other
+program as a "servant", because it provides a goal evaluation service
+at the request of another program:  it is given a goal to invoke,
+invokes it, and then returns the answers to the caller.  It is called a
+servant, as opposed to a server, because it serves a single master.  We
+refer to the program that is calling the servant as the "master".  The
+interface described here permits a program (the master) to call _one_
+servant and use it to evaluate many subgoals.  The characteristics of
+the interface vary somewhat with the programming language of the
+master.  If the master is itself a Prolog program, then the interface
+can be much more flexible than when the calling program is written in a
+procedural language, such as C.  We divide the description of the
+interface into two parts:  (1) when the master program is written in
+Prolog, and (2) when the master program is written in C.  Although only
+C calling Prolog is documented, other languages can also call Prolog if
+they adhere to the specified protocol.
+
+     *Please note:* On System V versions of UNIX or VMS, the master and
+     server processes are currently required to run on the same
+     machine, and the communication is via pipes rather than sockets.
+     On UNIX systems based on BSD, such as SunOS 4.x, the user can
+     choose to use either pipes or sockets, provided that the two
+     processes are on the same machine.  Sockets must be used when the
+     processes are on separate machines.  When sockets are used, there
+     needs to be an entry in the `/etc/hosts' file(s) for each machine
+     that is used.
+
+
+File: quintus.info,  Node: ipc-rpc-p2p,  Next: ipc-rpc-cpp,  Prev: ipc-rpc-ove,  Up: ipc-rpc
+
+Prolog Process Calling Prolog Process
+-------------------------------------
+
+* Menu:
+
+* ipc-rpc-p2p-save_servant::            save_servant(+SavedState)
+* ipc-rpc-p2p-create_servant::          create_servant(+Machine, +SavedState, +OutFile)
+* ipc-rpc-p2p-call_servant::            call_servant(+Goal)
+* ipc-rpc-p2p-bag_of_all_servant::      bag_of_all_servant(?Template, +Goal, -Bag)
+* ipc-rpc-p2p-set_of_all_servant::      set_of_all_servant(?Template, +Goal, -Set)
+* ipc-rpc-p2p-reset_servant::           reset_servant
+* ipc-rpc-p2p-shutdown_servant::        shutdown_servant
+
+   When the master is a Prolog program, a very flexible interface is
+supported because the nondeterminacy of the two Prolog programs can be
+combined.  Also, general Prolog data structures can be passed between
+the programs easily, since both programs support the same data types.
+Using this interface, a complex Prolog system can achieve significant
+parallel evaluation, by using a servant on another processor and
+communicating over a network.  The routines described below allow a
+master to have only a single servant process.  (They could be extended
+without much difficulty to support multiple servants and servants being
+masters of other servants, if that proves important.)
+
+   There are two sides to any interface:  here we have the calling
+Prolog program (the master), and the called Prolog program (the
+servant).  Each must perform certain functions that allow them to
+cooperate.
+
+   For a master to use a servant, the master must first create it.
+This is done by starting a Prolog process that will be the servant.
+The system creates that process by running a saved state previously
+created by the programmer.  After the servant has been created and is
+running, the master may send it goals to evaluate using
+`call_servant/1' and `bag_of_all_servant/3'.  All goals sent to the
+servant are evaluated in the database of the servant, which is disjoint
+from the database of the master.  This means that all programs that the
+servant will execute must either already be in the saved state that was
+initially loaded, or a goal must be sent to the servant telling it to
+compile (or consult) the appropriate files.  One could also use remote
+call to have the servant evaluate an `assert/1'.
+
+   For an example of using a Prolog servant from Prolog, see the
+`IPC/RPC/demo' library directory (`qplib('IPC/RPC/demo')').
+
+   All the following predicates are defined in the module `qpcallqp'.
+To be able to use them, the master program must first load them by
+entering the directive:
+     :- use_module(library(qpcallqp)).
+
+
+File: quintus.info,  Node: ipc-rpc-p2p-save_servant,  Next: ipc-rpc-p2p-create_servant,  Up: ipc-rpc-p2p
+
+`save_servant(+SAVEDSTATE)'
+...........................
+
+   To be able to call a servant, you must first create (using
+`save_servant/1') a saved state that is to be run as the servant.  Run
+Prolog on the machine on which the servant is to be run, and load (that
+is, compile, consult, or assert) everything that the servant will need.
+Then call `save_servant(SAVEDSTATE)', where SAVEDSTATE is the name of
+the file in which to save the state.  (This saved state should not
+normally be started directly from a terminal by a user; when started it
+will automatically try to open and read a socket.)
+
+
+File: quintus.info,  Node: ipc-rpc-p2p-create_servant,  Next: ipc-rpc-p2p-call_servant,  Prev: ipc-rpc-p2p-save_servant,  Up: ipc-rpc-p2p
+
+`create_servant(+MACHINE, +SAVEDSTATE, +OUTFILE)'
+.................................................
+
+   Before a master can use a servant, the servant must first be started
+up and connections to it must be made.  This is done by a call to
+`create_servant/[2,3]'.
+
+   MACHINE is the name of the machine on which to run the servant.  If
+MACHINE is omitted, or set to the null atom `''', the servant is run on
+the same machine, and communication is via pipes.  If MACHINE is the
+atom `local', the servant is run on the same machine but communication
+is via sockets.  If MACHINE names another machine, communication will
+be via sockets.  You need to be able to use `rsh' on that machine.
+
+   SAVEDSTATE is the name of the file that contains the Prolog saved
+state on that machine.  It must have been previously created with
+`save_servant/1'.
+
+   OUTFILE is the name of the file to which output from the servant
+will be written.  This file is on the local machine and it will be
+created if it does not already exist.  _This file should be examined if
+there are problems with the communication to the servant._  Tracing
+information (if any, see *Note ipc-rpc-tra::) will also be written to
+this file.
+
+   If OUTFILE is the atom `user', then all output will be sent to the
+standard output stream of the master.  If it is the null atom `''', the
+servant's standard output is discarded and its standard error is
+directed to the master's standard error.
+
+
+File: quintus.info,  Node: ipc-rpc-p2p-call_servant,  Next: ipc-rpc-p2p-bag_of_all_servant,  Prev: ipc-rpc-p2p-create_servant,  Up: ipc-rpc-p2p
+
+`call_servant(+GOAL)'
+.....................
+
+   Once a servant has been created (by `create_servant/2'), goals can
+be sent to it for evaluation, by using `call_servant(GOAL)'.  This
+sends the goal GOAL to the servant, which evaluates it (with respect to
+its own database) and sends all the answers back.  The answers are
+returned as solutions of `call_servant/1'.  The answers bind the
+variables in GOAL.  Answers after the first are obtained by
+backtracking into `call_servant/1'.  Note that the servant computes and
+sends _all_ answers back to the master, even if the caller uses a cut
+to throw away all but the first.
+
+
+File: quintus.info,  Node: ipc-rpc-p2p-bag_of_all_servant,  Next: ipc-rpc-p2p-set_of_all_servant,  Prev: ipc-rpc-p2p-call_servant,  Up: ipc-rpc-p2p
+
+`bag_of_all_servant(?TEMPLATE, +GOAL, -BAG)'
+............................................
+
+   If the servant is running on a different physical processor than the
+master, then it is desirable to be able to achieve some degree of
+parallelism, to have both machines doing useful work at the same time.
+This is not the case with `call_servant/1', since the master Prolog
+process is waiting the entire time that the servant process is
+computing.  The predicate `bag_of_all_servant/3' is provided to allow a
+sophisticated user to write some truly parallel applications.  (See the
+demo program `queensdemo' for an example of using parallelism in a
+search problem.)
+
+   Semantically `bag_of_all_servant/3' is very similar to `bagof/3'.
+The reader should be familiar with the operation of `bagof/3' before
+reading further.  The differences are:
+  1. `bag_of_all_servant/3' requires that there be no free variables in
+     GOAL that do not appear in TEMPLATE.  If there are,
+     `bag_of_all_servant/3' will report an error.  You may use the
+     existential operator (`^') as in `bagof/3'.
+
+  2. `bag_of_all_servant/3' succeeds with BAG bound to `[]' if GOAL has
+     no answers at all.  This means that `bag_of_all_servant/3' always
+     succeeds and returns in BAG exactly one answer:  the list of
+     instances of TEMPLATE, one instance for each success of GOAL.
+
+   The exact operation of `bag_of_all_servant/3' depends on the form of
+GOAL.  If GOAL is a conjunction of the form `(GOAL1, GOAL2)' or a
+disjunction of the form `(GOAL1; GOAL2)', then the first subgoal
+(GOAL1) will be executed by the servant, and the second subgoal (GOAL2)
+will be executed by the current process.  The system will try to
+overlap local and remote evaluation as much as possible.  If GOAL is
+neither a conjunction nor a disjunction, then the entire goal will be
+sent to the servant to be executed.
+
+   There are several restrictions on how `bag_of_all_servant/3' can be
+used.
+   * GOAL2 may not contain any cuts.
+
+   * GOAL2 must not require the services of the servant to be
+     evaluated.  That is, it cannot call any predicate that uses
+     `call_servant/1' or `bag_of_all_servant/3'.
+
+
+File: quintus.info,  Node: ipc-rpc-p2p-set_of_all_servant,  Next: ipc-rpc-p2p-reset_servant,  Prev: ipc-rpc-p2p-bag_of_all_servant,  Up: ipc-rpc-p2p
+
+`set_of_all_servant(?TEMPLATE, +GOAL, -SET)'
+............................................
+
+   This is just like `bag_of_all_servant' except that duplicates are
+removed in the returned list.
+

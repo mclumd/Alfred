@@ -1,0 +1,35 @@
+# -*- Mode:Makefile -*-
+# [PM] 3.5 created
+
+include config.mk
+
+
+# currently (3.5) we do not build anything in the tool three
+.PHONY: all
+all: ;
+
+# [PM] 3.5 QPRELDIR should come from command line
+REL_TOOL_ROOT := $(QPRELDIR)/src/tools
+GENERATED_FILES += $(REL_TOOL_ROOT)
+
+TOOL_FILES := $(shell find . -name CVS -prune -o -type f ! -name '*~' -print)
+TOOL_DIRS := $(shell find . -name CVS -prune -o -type d -print)
+REL_FILES := $(addprefix $(REL_TOOL_ROOT)/, $(TOOL_FILES))
+REL_DIRS := $(REL_TOOL_ROOT) $(addprefix $(REL_TOOL_ROOT)/, $(TOOL_DIRS))
+
+$(REL_TOOL_ROOT)/% : %
+	cp -p $< $@
+
+.PHONY: install
+install: install_dirs $(REL_FILES)
+
+GENERATED_FILES += $(REL_DIRS)
+.PHONY: install_dirs
+install_dirs: $(REL_DIRS)
+
+$(REL_DIRS):
+	- [ -d $@ ] || mkdir $@
+
+.PHONY: clean
+clean:
+	rm -rf $(GENERATED_FILES)

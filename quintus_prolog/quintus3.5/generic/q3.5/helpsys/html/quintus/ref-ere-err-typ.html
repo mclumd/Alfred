@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Type Errors</h5>
+
+   <p>A type error occurs when an input argument is of the wrong <dfn>type</dfn>.  In general,
+a <dfn>type</dfn> is taken to be a class of terms for which there exists a unary <dfn>type
+test predicate</dfn>.  Some types are built-in, such as <code>atom/1</code> and
+<code>integer/1</code>.  Some are defined in <code>library(types)</code>, such as <code>chars/1</code>.
+
+   <p>The type of a term is the sort of thing you can tell just
+by looking at it, without checking to see how <em>big</em> it is.  So "integer"
+is a type, but "non-negative integer" is not, and "atom" is a type,
+but "atom with 5 letters in its name" and "atom starting with <code>x</code>" are
+not.
+
+   <p>The point of a type error is that you have <em>obviously</em> passed the
+wrong sort of argument to a command; perhaps you have switched two
+arguments, or perhaps you have called the wrong predicate, but it isn't
+a subtle matter of being off by one.
+
+   <p>Most built-in predicates check all their input arguments for type errors.
+
+   <p>The exception code associated with a type error is
+<pre class="example">     type_error(<var>Goal, ArgNo, TypeName, Culprit</var>)
+     </pre>
+
+     <dl>
+
+     <br><dt><var>ArgNo</var>
+     <dd><var>Culprit</var> occurs somewhere in the <var>ArgNo</var>th
+argument of <var>Goal</var>.
+
+     <br><dt><var>TypeName</var>
+     <dd>says what sort of term was expected; it should be the
+name of a unary predicate that is true of whatever terms would not
+provoke a type error.
+
+     <p>Some <var>TypeName</var>s recognized by the system include:
+          <ul>
+
+          <li><code>0</code> -- No type name specified
+<li><code>atom</code>
+<li><code>atomic</code>
+<li><code>callable</code>
+<li><code>db_reference</code>
+<li><code>integer</code>
+<li><code>number</code>
+</ul>
+
+     <br><dt><var>Culprit</var>
+     <dd>is the actual term being complained about:
+<var>TypeName</var>(<var>Culprit</var>) should be false.
+
+   </dl>
+
+   <p>For example, suppose we had a predicate
+<pre class="example">     date_plus(<var>NumberOfDays</var>, <var>Date0</var>, <var>Date</var>)
+     </pre>
+
+   <p>true when <var>Date0</var> and <var>Date</var> were <code>date(</code><var>Y</var><code>,</code><var>M</var><code>,</code><var>D</var><code>)</code> records and <var>NumberOfDays</var> was
+the number of days between those two dates.  You might see an error
+term such as
+<pre class="example">     type_error(/* Goal     */ date_plus(27, date(18,mar,11), _235),
+                /* Argno    */ 2,
+                /* TypeName */ integer,
+                /* Culprit  */ mar
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-err-dom.html#ref-ere-err-dom">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-err-ins.html#ref-ere-err-ins">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere-err.html#ref-ere-err">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>release_gc/1</code></h5>
+
+<pre class="example">     release_gc(+<var>Gc</var>)
+     </pre>
+
+   <p>Inform ProXL that <var>Gc</var> is no longer being "held onto" by the programmer. 
+As soon as no drawables refer to it, <var>Gc</var> will be destroyed.
+
+   <p><em>Warning</em>:  A gc is considered to be "held onto" when it is created,
+or when it is got from a drawable (e.g. <code>get_window_attributes</code>). 
+It is the
+responsibility of the programmer to ensure that she is not releasing
+a gc that is being held by another branch of her code.  For example,
+If a gc is created, asserted somewhere, and put into a drawable, and later
+is accessed through the drawable, the programmer <em>must not</em> release it
+at this
+point, since it is still in the database and may be used.  <em>Be careful</em>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-graf-cre-use.html#pxl-graf-cre-use">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-graf-cre-create_gc.html#pxl-graf-cre-create_gc">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-graf-cre.html#pxl-graf-cre">Up</a>
+</ul>
+</div>
+   </body></html>
+

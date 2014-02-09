@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Pascal Interface</h5>
+
+   <p>If the Pascal file <code>p.p</code> is compiled as shown below, then loading the
+Prolog file as shown will produce the indicated results.
+
+<pre class="example">
+                                        <div align="right"><em>p.p</em>
+     </div>
+     
+     type
+     alfa = packed array[1..10] of char;
+     
+     (* p1(+integer, [-integer]) *)
+     function p1(a: integer32): integer32;
+     begin
+       p1 := a + 9;
+     end;
+     
+     (* p2(-integer) *)
+     procedure p2(var a: integer32);
+     begin
+       a := 99;
+     end;
+     
+     (* p11(+atom, [-atom]) *)
+     function p11(a: integer32) : integer32;
+     begin
+       p11 := a;
+     end;
+     
+     (* p21(+atom, -atom) *)
+     procedure p21(a: integer32; var b: integer32);
+     begin
+       b := a;
+     end;
+     
+     (* p3(+float, [-float]) *)
+     function p3(a: real) : real;
+     begin
+       p3 := a + 9.0;
+     end;
+     
+     (* p4(-float) *)
+     procedure p4(var a: real);
+     begin
+       a := 9.9;
+     end;
+     
+     (* p5(+string(10), -string(10)) *)
+     procedure p5(var s: alfa; var t: alfa);
+     begin
+             t := s;
+     end;
+     
+     (* p6(-string(10)) *)
+     procedure p6(var s: alfa);
+     begin
+             s := 'output';
+     end;
+     </pre>
+
+   <p>At the command level:
+
+<pre class="example">     % <kbd>pc -c p.p</kbd>
+     </pre>
+
+   <p>Produces the object file.
+
+<pre class="example">
+                                       <div align="right"><em>p.pl</em>
+     </div>
+     
+     foreign_file(p, [p1, p2, p11, p21, p3, p4, p5, p6]).
+     
+     foreign(p1,  pascal, p1(+integer, [-integer])).
+     foreign(p2,  pascal, p2(-integer)).
+     foreign(p11, pascal, p11(+atom, [-atom])).
+     foreign(p21, pascal, p21(+atom, -atom)).
+     foreign(p3,  pascal, p3(+float, [-float])).
+     foreign(p4,  pascal, p4(-float)).
+     foreign(p6,  pascal, p5(+string(10),-string(10))).
+     foreign(p5,  pascal, p6(-string(10))).
+     
+     :- load_foreign_files([p], ['-lpc']),
+        abolish(foreign_file,2),
+        abolish(foreign,3).
+     </pre>
+
+   <p>Loading the Prolog file (see <code>foreign/3</code>)
+into Prolog and invoking the following query gives the following results:
+<pre class="example">     | ?- <kbd>p1(1,X1), p2(X2), p11(foo,X11), p21(foo,X21), p3(1.5,X3), p4(X4),
+          p5('parameter',X5), p6(X6).</kbd>
+     
+     X1 = 10,
+     X2 = 99,
+     X11 = X21 = foo,
+     X3 = 10.5,
+     X4 = 9.89999,
+     X5 = parameter,
+     X6 = output <kbd>;</kbd>
+     
+     no
+     </pre>
+
+   <p><strong>Notes:</strong>
+     <ol type=1 start=1>
+
+     <li>Passing of unsized strings (i.e. use of the <code>string</code> argument specification
+in a <code>foreign/3</code> fact) is not supported in this interface since <code>pc</code> does
+not have a convention for passing variable length arrays.  Instead, padded
+strings (the <code>string(</code><var>N</var><code>)</code> argument specification) must be used. 
+Notice that the corresponding parameter of <code>+string(</code><var>N</var><code>)</code> declaration is
+actually a call by reference parameter in Pascal procedures. 
+<li>The linker option <code>-lpc</code> must be included in the call to
+<code>load_foreign_files/2</code>
+so that the foreign code routine will have
+access to the standard Pascal library.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-fex-for.html#fli-p2f-fex-for">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-fex-api.html#fli-p2f-fex-api">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-fex.html#fli-p2f-fex">Up</a>
+</ul>
+</div>
+   </body></html>
+

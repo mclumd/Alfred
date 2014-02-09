@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code></code><var>Term1</var><code> ~= </code><var>Term2</var><code></code></h5>
+
+   <p>Obviously, if we can have a version of <code>\+/2</code> that checks whether
+it is safe to proceed, we can have a version of <code>\=/2</code> that does the
+same.  So <code>library(not)</code> also defines a "sound inequality" predicate
+
+     <dl>
+
+     <br><dt><code></code><var>Term1</var><code> ~= </code><var>Term2</var><code></code>
+     <dd><var>Term1</var> and <var>Term2</var> are not equal
+</dl>
+
+   <p>There are three cases:  it may succeed, or fail, or warn you that
+there is not enough information yet to tell.  Note that <code>~=/2</code> is
+a bit more clever than <code>not(T1 = T2)</code> would be:
+<pre class="example">     f(X, a) ~= f(Y, b)
+     </pre>
+
+   <p>will succeed (correctly) even though
+<pre class="example">     not(f(X,a) = f(Y,b))
+     </pre>
+
+   <p>would complain about the unbound variables <code>X</code> and <code>Y</code>.
+
+   <p>As <code>~=/2</code> is sound and <code>\=/2</code> is not,
+we recommend that you use <code>~=/2</code> rather than <code>\=/2</code> in your Prolog code.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-neg-ine-nop.html#lib-neg-ine-nop">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-neg-ine.html#lib-neg-ine">Up</a>
+</ul>
+</div>
+   </body></html>
+

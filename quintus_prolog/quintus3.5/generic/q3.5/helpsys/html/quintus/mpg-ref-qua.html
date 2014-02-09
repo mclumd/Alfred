@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>^/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><var>+X</var> <code>^</code> <var>+*P</var>
+
+   <p>Equivalent to "there exists an <var>X</var> such that <var>P</var> is
+true", thus <var>X</var> is normally an unbound variable. The use of the
+explicit existential quantifier outside <code>setof/3</code> and <code>bagof/3</code>
+is superfluous.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>X</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>P</var> <dfn>callable</dfn> [MOD]
+     <dd></dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Equivalent to simply calling <var>P</var>
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>As for <code>call/1</code>:
+     <dl>
+
+     <br><dt><code>type_error</code>
+     <dd>
+
+     <br><dt><code>context_error</code>
+     <dd>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+</dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>Using <code>bagof/3</code> without and with the existential quantifier:
+<pre class="example">     | ?- <kbd>bagof(X, foo(X,Y), L).</kbd>
+     
+     X = _3342,
+     Y = 2,
+     L = [1,1] <kbd>;</kbd>
+     
+     X = _3342,
+     Y = 3,
+     L = [2] <kbd>;</kbd>
+     
+     no
+     
+     | ?- <kbd>bagof(X, Y^foo(X,Y), L).</kbd>
+     
+     X = _3342,
+     Y = _3361,
+     L = [1,1,2] <kbd>;</kbd>
+     
+     no
+     </pre>
+
+   <a href="ref-all-cse-equ.html#ref-all-cse-equ">ref-all-cse-equ</a>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>setof/3</code>, <code>bagof/3</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-expand_term.html#mpg-ref-expand_term">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-erase.html#mpg-ref-erase">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

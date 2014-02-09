@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Objects</h5>
+
+   <p>The <code>class_of/2</code> predicate is used to test whether an object is of a
+particular type or to determine the type of an object. Similarly, the
+<code>descendant_of/2</code> predicate relates an object to all ancestors of its
+class. (Remember that the object's class is, itself, an ancestor class
+of the object.)
+
+   <p>Both require the first argument (the object) to be instantiated. That
+is, the predicates cannot be used to find objects of a given class. If
+you need to search among all the objects of a class, you must provide
+a way to do it. One way to do this is to assert a fact connecting the
+class name to every object, when it is created. The named_point
+example of the previous section took that idea a step further by
+allowing each object to have a different name.
+
+   <p>The <code>pointer_object/2</code> predicate relates an object's address (a pointer)
+to the object. Remember that an instance of <var>Class</var> is represented by a
+term of the form
+
+<pre class="example">     <var>Class</var>(<var>Address</var>)
+     </pre>
+
+   <p>The <code>pointer_object/2</code> predicate requires that one of its arguments be
+instantiated, but it may be either one. Hence, just by knowing the
+address of an object (which possibly was returned by a foreign
+function) it is possible to determine the object's type.
+
+   <p>Most Prolog programmers can safely ignore the <code>pointer_object/2</code>
+predicate, unless they are using Quintus Objects with foreign
+functions or with the Structs package.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-inh-ask-cls.html#obj-inh-ask-cls">Next</a>
+<li><a rel="up" accesskey="u" href="obj-inh-ask.html#obj-inh-ask">Up</a>
+</ul>
+</div>
+   </body></html>
+

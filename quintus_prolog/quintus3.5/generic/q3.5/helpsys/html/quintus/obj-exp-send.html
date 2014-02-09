@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>&lt;-/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><var>+Obj</var> <code>&lt;-</code> <var>+*Mesg</var>
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Obj</var>
+     <dd><dfn>object</dfn>
+
+     <br><dt><var>Mesg</var>
+     <dd><dfn>term</dfn>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Sends <var>Mesg</var> to <var>Obj</var>. A send
+message. The class of <var>Obj</var> must have a method defined for this
+message.
+
+   <p>A clause with <code>&lt;-/2</code> as the principal functor of its head is a
+method definition clause. Such clauses only occur within the scope of
+a class definition. They are expanded at compile time.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+either argument is unbound.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>Mesg</var> is not <dfn>callable</dfn> or <var>Obj</var> is not a valid object.
+
+     <br><dt><code>existence_error</code>
+     <dd>
+<var>Mesg</var> is not a defined message for <var>Obj</var>. 
+</dl>
+
+<h4 class="subheading">Caveat</h4>
+
+   <p>For reasons of efficiency, an <code>existence_error</code>
+exception will only be raised if the code that sends the message is
+compiled with debugging enabled (see <code>debug_message</code>), or if the
+message is not determined at compile-time.  In other circumstances,
+the message will simply fail.
+
+   <p>Calls to the <code>&lt;-/2</code> predicate will be compiled into
+more efficient code if the <code>obj_decl</code> module is loaded at compile time.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>&lt;&lt;/2</code>, <code>&gt;&gt;/2</code>, <code>direct_message/4</code>, <code>message/4</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-exp-put.html#obj-exp-put">Next</a>
+<li><a rel="up" accesskey="u" href="obj-exp.html#obj-exp">Up</a>
+</ul>
+</div>
+   </body></html>
+

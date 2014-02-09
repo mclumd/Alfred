@@ -1,0 +1,317 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Creating A Binary Stream</h5>
+
+   <p>This example creates a binary stream.  All the characters read from
+the stream are exactly the same as the characters stored in the
+file of the stream.  All the characters stored in the file of the
+stream are the same as the characters written to the stream. 
+The stream permits flushing output and random seek to arbitrary
+byte position in the file. 
+By choosing <code>QP_VAR_LEN</code> as the format of the stream and using the
+full buffer as a record to communicate between middle layer and bottom layer
+functions, a line is actually a full buffer of the stream.  A newline
+operation does not output a &lt;LFD&gt; either so that the line count
+of the stream is not based on the number of &lt;LFD&gt; characters.
+
+<pre class="example">
+                                     <div align="right"><em>bin.pl</em>
+     </div>
+     
+     foreign(open_bin, c, open_bin(+string, +string, -integer, [-address])).
+     foreign_file('bin', [open_bin]).
+     
+     :- load_foreign_files(['bin'],[]).
+     
+     open_bin_file(FileName, ModeName, Stream) :-
+             open_bin(FileName, ModeName, ErrorNum, CStream),
+             ( CStream =:= 0 -&gt;
+                     raise_exception(existence_error(
+                         open_bin_file(FileName, ModeName, Stream),
+                         1, file, FileName, errno(ErrorNum)))
+             ; stream_code(Stream, CStream)
+             ).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>bin.c</em>
+     </div>
+     
+     #include &lt;fcntl.h&gt;
+     #include &lt;errno.h&gt;
+     #include &lt;sys/file.h&gt;           /* for seek */
+     
+     #ifndef L_SET
+     #define L_SET   0
+     #endif
+     #ifndef L_INCR
+     #define L_INCR  1
+     #endif
+     #ifndef L_XTND
+     #define L_XTND  2
+     #endif
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     extern  char *QP_malloc();
+     
+     /*  The following three functions support UNIX I/O on files
+         without breaking things into records.  All the characters
+         read from or written to the file are kept exactly the same.
+     */
+     
+     #define Buffer_Size             8192
+     
+     typedef struct
+         {
+             QP_stream qpinfo;
+             int fd;                 /* UNIX file descriptor */
+             int last_rdsize;        /* size of last returned line */
+             unsigned char buffer[Buffer_Size];      /* I/O buffer */
+         } BinStream;
+     
+     #define CoerceBinStream(x) ((BinStream *)(x))
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>bin.c</em>
+     </div>
+     
+     static int
+     bin_read(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             int n;
+             register BinStream *stream = CoerceBinStream(qpstream);
+     
+             qpstream-&gt;magic.byteno += stream-&gt;last_rdsize;
+             stream-&gt;last_rdsize = 0;
+             n = read(stream-&gt;fd, (char*)stream-&gt;buffer,
+                                  (int)  qpstream-&gt;max_reclen);
+             if (n &gt; 0) {
+                 *bufptr  = stream-&gt;buffer;
+                 *sizeptr = n;
+                 stream-&gt;last_rdsize = n;
+                 return QP_FULL;
+             } else if (n == 0) {
+                 *sizeptr = 0;
+                 return QP_EOF;
+             } else {
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+         }
+     
+     static int
+     bin_write(qpstream, bufptr, sizeptr)
+         QP_stream           *qpstream;
+         unsigned char       **bufptr;
+         size_t              *sizeptr;
+         {
+             BinStream  *stream = CoerceBinStream(qpstream);
+             int        n, len=(int) *sizeptr;
+             char       *buf = (char *) *bufptr;
+     
+             while ((n = write(stream-&gt;fd, buf, len)) &gt; 0 &amp;&amp; n &lt; len) {
+                 buf += n;
+                 len -= n;
+             }
+             if (n &gt;= 0) {
+                 qpstream-&gt;magic.byteno += *sizeptr;
+                 *sizeptr = qpstream-&gt;max_reclen;
+                 *bufptr  = stream-&gt;buffer;
+                 return QP_SUCCESS;
+             } else {
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+         }
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>bin.c</em>
+     </div>
+     
+     static int
+     bin_seek(qpstream, qpmagic, whence, bufptr, sizeptr)
+          QP_stream          *qpstream;
+          union QP_cookie    *qpmagic;
+          int                whence;
+          unsigned char      **bufptr;
+          size_t             *sizeptr;
+          {
+             BinStream *stream = CoerceBinStream(qpstream);
+             off_t           new_offset;
+     
+             switch (whence) {
+             case QP_BEGINNING:
+                 new_offset = lseek(stream-&gt;fd,qpmagic-&gt;byteno,L_SET);
+                 break;
+             case QP_CURRENT:
+             /* The current location of file pointer is different from
+                what the user thinks it is due to buffering.  The magic
+                field has been brought up to date by the caller of this
+                function, so just seek to that position first. */
+                 if (lseek(stream-&gt;fd, qpstream-&gt;magic.byteno, L_SET)
+                                               == -1) {
+                     qpstream-&gt;errno = errno;
+                     return QP_ERROR;
+                 }
+                 new_offset = lseek(stream-&gt;fd,qpmagic-&gt;byteno,L_INCR);
+                 break;
+             case QP_END:
+                 new_offset = lseek(stream-&gt;fd,qpmagic-&gt;byteno,L_XTND);
+                 break;
+             default:
+                 qpstream-&gt;errno = QP_E_INVAL;
+                 return QP_ERROR;
+             }
+             if (new_offset == -1) { /* error in seeking */
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+             qpstream-&gt;magic.byteno = new_offset;
+             *bufptr  = stream-&gt;buffer;
+             *sizeptr = (qpstream-&gt;mode == QP_READ) ? 0
+                                   : qpstream-&gt;max_reclen;
+             stream-&gt;last_rdsize = 0;
+             return QP_SUCCESS;
+          }
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>bin.c</em>
+     </div>
+     
+     static int
+     bin_close(qpstream)
+         QP_stream   *qpstream;
+         {
+             BinStream *stream = CoerceBinStream(qpstream);
+             int fd = stream-&gt;fd;
+     
+             if (close(fd) &lt; 0) {
+                 qpstream-&gt;errno = errno;
+                 return QP_ERROR;
+             }
+             (void) QP_free(qpstream);
+             return QP_SUCCESS;
+         }
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>bin.c</em>
+     </div>
+     
+     QP_stream *
+     open_bin(filename, modename, error_num)
+         char   *filename, *modename;
+         int    *error_num;
+         {
+             BinStream       *stream;
+             QP_stream       *option;
+             int             fd, mode;
+     
+             switch (*modename) {
+             case 'r': mode = QP_READ;
+                       fd = open(filename, O_RDONLY, 0000);
+                       break;
+             case 'w': mode = QP_APPEND;
+                       fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC,
+                                           0666);
+                       break;
+             case 'a': mode = QP_APPEND;
+                       fd = open(filename, O_WRONLY|O_CREAT, 0666);
+                       break;
+             default:  *error_num = QP_E_BAD_MODE;
+                       return QP_NULL_STREAM;
+             }
+             if (fd &lt; 0) {
+                 *error_num = errno;
+                 return QP_NULL_STREAM;
+             }
+             if ((stream = (BinStream *) QP_malloc(sizeof(*stream)))
+                             == ((BinStream *) 0) ) {
+                 (void) close(fd);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+             stream-&gt;fd = fd;
+             stream-&gt;last_rdsize = 0;
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>bin.c</em>
+     </div>
+     
+                     /* obtain default values in QP_stream structure */
+                     /*     and modified fields for this stream */
+             option = &amp;stream-&gt;qpinfo;
+             QU_stream_param(filename, mode, QP_VAR_LEN, option);
+             option-&gt;max_reclen = Buffer_Size;
+             option-&gt;line_border = QP_NOLB;
+             if (isatty(fd)) {
+                 option-&gt;format = QP_DELIM_TTY;
+                 option-&gt;seek_type = QP_SEEK_ERROR;
+             } else {
+                 option-&gt;seek_type = QP_SEEK_BYTE;
+                 option-&gt;seek = bin_seek;
+             }
+             if (mode != QP_READ) {
+                 option-&gt;write = bin_write;
+                 option-&gt;flush = bin_write;
+             } else
+                 option-&gt;read = bin_read;
+             if (option-&gt;mode == QP_APPEND
+                       &amp;&amp; option-&gt;format != QP_DELIM_TTY) {
+                 if ((option-&gt;magic.byteno=lseek(fd,0L,L_XTND)) &lt; 0) {
+                     (void) close(fd);
+                     *error_num = errno;
+                     return QP_NULL_STREAM;
+                 }
+             }
+             option-&gt;close = bin_close;
+     
+             QP_prepare_stream(&amp;stream-&gt;qpinfo, stream-&gt;buffer);
+             if (QP_register_stream(&amp;stream-&gt;qpinfo) == QP_ERROR) {
+                 (void) stream-&gt;qpinfo.close(&amp;stream-&gt;qpinfo);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+     
+             /* Use filename to register tty stream to its group */
+             if (option-&gt;format == QP_DELIM_TTY)
+                 (void) QP_add_tty(&amp;stream-&gt;qpinfo, filename);
+     
+             return &amp;stream-&gt;qpinfo;
+         }
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-uds-est.html#fli-ios-uds-est">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ios-uds.html#fli-ios-uds">Up</a>
+</ul>
+</div>
+   </body></html>
+

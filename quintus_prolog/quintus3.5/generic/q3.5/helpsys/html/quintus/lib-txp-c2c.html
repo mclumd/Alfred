@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Converting Between Constants and Characters</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="lib-txp-c2c-name.html#lib-txp-c2c-name">lib-txp-c2c-name</a>:                     name(?Constant, ?Chars)
+<li><a accesskey="2" href="lib-txp-c2c-atom_chars.html#lib-txp-c2c-atom_chars">lib-txp-c2c-atom_chars</a>:               atom_chars(?Atom, ?Chars)
+<li><a accesskey="3" href="lib-txp-c2c-number_chars.html#lib-txp-c2c-number_chars">lib-txp-c2c-number_chars</a>:             number_chars(?Number, ?Chars)
+<li><a accesskey="4" href="lib-txp-c2c-char_atom.html#lib-txp-c2c-char_atom">lib-txp-c2c-char_atom</a>:                char_atom(?Char, ?Atom)
+</ul>
+
+   <p>Quintus Prolog currently supports the following kinds of constants:
+
+     <ul>
+
+     <li>atoms
+
+     <li>integers
+
+     <li>floating-point numbers
+
+   </ul>
+
+   <p>The data type "list of character codes" is called <dfn>chars</dfn>. 
+You can convert between atoms, numbers,
+and chars using the following predicates:
+     <ul>
+
+     <li><code>name(</code><var>+Constant</var><code>, </code><var>-Chars</var><code>)</code>
+
+     <li><code>atom_chars(</code><var>?Atom</var><code>, </code><var>?Chars</var><code>)</code>
+
+     <li><code>number_chars(</code><var>?Number</var><code>, </code><var>?Chars</var><code>)</code>
+
+     <li><code>char_atom(</code><var>?Char</var><code>, </code><var>?Atom</var><code>)</code>
+
+   </ul>
+
+   <p><code>name/2</code> is retained for compatibility with DEC-10 Prolog,
+C-Prolog, and earlier releases of Quintus Prolog.  All the
+other predicates have names that follow a rule, which you
+would do well to follow in your own code.
+
+   <p>Suppose you have two data types <var>foo</var> and <var>baz</var>, and a
+predicate that converts from one type to another.  If
+each value of type <var>foo</var> corresponds to exactly one
+value of type <var>baz</var>, and if each value of type <var>baz</var>
+corresponds to at most one value of type <var>foo</var>,
+the predicate should be called
+<pre class="example">     <var>foo</var>_<var>baz</var>(?The_<var>foo</var>, ?The_<var>baz</var>)
+     </pre>
+
+   <p>As an example, let <var>foo</var> be the data type "character code"
+(we call this "char"), and let <var>baz</var> be the data type
+"atom".  Given any char <var>C</var>, there is exactly one atom whose
+name is [<var>C</var>].  Given any atom, either its name contains one
+single character <var>C</var>, or it contains some other number of
+characters, in which case there is no unique character to
+which it corresponds.  Therefore, a predicate that converts
+between character codes and single-character atoms will have
+the name
+<pre class="example">     char_atom(<var>?Char</var>, <var>?Atom</var>)
+     </pre>
+
+   <p>Remember that this pattern means that we can <em>always</em> solve for
+the second argument given a value for the first, and that we <em>may</em>
+be able to solve for the first argument given a value for the
+second.
+
+   <p>If a <var>foo</var> can be converted to a unique <var>baz</var>,
+but a <var>baz</var> might correspond to more than one <var>foo</var>,
+the predicate is to be called
+<pre class="example">     <var>foo</var>_to_<var>baz</var>(+The_<var>foo</var>, ?The_<var>baz</var>)
+     </pre>
+
+   <p>The <code>_to_</code> tells you that the conversion only works one way
+around.  For example, given an atom or
+number, there
+is a unique list of character codes that can be made from it,
+but a given list of character codes such as <code>"0</code>" could have
+come from an atom or an
+integer. 
+Therefore a predicate that converts between
+arbitrary constants and character codes should be called
+<pre class="example">     constant_to_chars(<var>+Constant</var>, <var>?Chars</var>)
+     </pre>
+
+   <p>In fact this operation is called <code>name/2</code>, because that
+is what it was called in DEC-10 Prolog.
+
+   <p>All the new data type conversion predicates follow these
+naming rules.  Now let us look at them.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-txp-cto.html#lib-txp-cto">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-txp-typ.html#lib-txp-typ">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-txp.html#lib-txp">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

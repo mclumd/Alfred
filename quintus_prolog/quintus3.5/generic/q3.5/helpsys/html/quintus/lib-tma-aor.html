@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Note on Argument Order</h4>
+
+   <p>All the predicates in <code>library(occurs)</code> have the same argument pattern:
+<pre class="example">     {<var>prefix</var>}_{term|var}(<var>SubTerm</var>, <var>Term</var>[, <var>Extra</var>])
+     </pre>
+
+   <p>where <var>Extra</var> includes any other arguments.  Why does the <var>SubTerm</var>
+argument appear first?  The answer involves <code>library(call)</code> and
+<code>library(maplist)</code>.  Here are some of the things you can do with the
+arguments this way around:
+
+<pre class="example">     terms_containing_term(SubTerm, Terms, Selected) :-
+             include(contains_term(SubTerm), Terms, Selected).
+         %   if member(Term, Terms), then Term will be included in
+         %   Selected iff contains_term(SubTerm, Term) succeeds.
+     
+     terms_free_of_var(SubTerm, Terms, Selected) :-
+             exclude(contains_var(SubTerm), Terms, Selected).
+         %   if member(Term, Terms), then Term will be included in
+         %   Selected iff contains_var(SubTerm, Term) fails.
+     
+     tallies_of_term(SubTerm, Terms, Tallies) :-
+             maplist(occurrences_of_term(SubTerm), Terms, Tallies).
+         %   if nth1(N, Terms, Term), then nth1(N, Tally, Tallies)
+         %   where occurrences_of_term(SubTerm, Term, Tally).
+     </pre>
+
+   <p>The same argument order is used for <code>sub_term/2</code> even though
+it is not used in this way, in order to preserve consistency.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-tma-samefunctor.html#lib-tma-samefunctor">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-tma-occurs.html#lib-tma-occurs">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-tma.html#lib-tma">Up</a>
+</ul>
+</div>
+   </body></html>
+

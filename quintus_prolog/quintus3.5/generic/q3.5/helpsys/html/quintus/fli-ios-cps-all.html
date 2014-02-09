@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Allocating Space And Setting Field Values For the User-Defined Stream</h5>
+
+   <p>The memory space for a user-defined stream structure and its buffer
+are controlled by the user application.  It is recommended to use
+<code>QP_malloc()</code> to allocate the space for more efficient memory utilization
+in the Prolog system.  In our example, the buffer is a field
+in the <code>BinStream</code> structure so that only one <code>QP_malloc()</code> call
+allocates both buffer and stream space.
+
+   <p>After memory is allocated, the fields in the stream structure
+are set appropriately. 
+The fields of <code>QP_stream</code> part in the stream structure
+is set up in the next step.
+
+<pre class="example">             if ((stream = (BinStream *) QP_malloc(sizeof(*stream)))
+                             == ((BinStream *) 0) ) {
+                 (void) close(fd);
+                 *error_num = QP_errno;
+                 return QP_NULL_STREAM;
+             }
+             stream-&gt;fd = fd;
+             stream-&gt;last_rdsize = 0;
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-cps-sqs.html#fli-ios-cps-sqs">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-cps-opn.html#fli-ios-cps-opn">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios-cps.html#fli-ios-cps">Up</a>
+</ul>
+</div>
+   </body></html>
+

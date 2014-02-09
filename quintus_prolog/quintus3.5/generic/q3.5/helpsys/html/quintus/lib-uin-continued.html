@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Reading Continued Lines -- <code>library(continued)</code></h4>
+
+   <p><code>library(continued)</code> is an extension of <code>library(lineio)</code>.  It defines
+two commands for reading continued lines.
+
+     <dl>
+
+     <br><dt><code>read_oper_continued_line(</code><var>-Line</var><code>)</code>
+     <dd>
+reads a line of text,
+using a convention rather like that of BCPL:  an input line that
+ends with <code>&lt;</code><var>op</var><code>, newline&gt;</code> where <var>op</var> is a left parenthesis <code>(</code>,
+left bracket <code>[</code>, left brace <code>{</code>,
+or a binary infix character from the set
+     <pre class="example">          + * - / # = &lt; &gt; ^ | &amp; : ,
+          </pre>
+
+     <p>is taken to be continued; the <var>op</var> character is included in the
+combined <var>Line</var>, but the newline is <em>not</em> included.
+     <pre class="example">          | ?- <kbd>compile([library(printchars),library(continued)]).</kbd>
+                    . . .
+          | ?- <kbd>read_oper_continued_line(Line).</kbd>
+          |: <kbd>command /option1=value1,</kbd>
+          |:    <kbd>/option2=value2</kbd>
+          
+          Line = "command /option1=value1,   /option2=value2"
+          
+          | ?- <kbd>read_oper_continued_line(Line).</kbd>
+          |: <kbd>Not continued!</kbd>
+          
+          Line = "Not continued!"
+          
+          | ?- <kbd>read_oper_continued_line(Line).</kbd>
+          |: <kbd>x^2+</kbd>
+          |: <kbd>2*x+</kbd>
+          |: <kbd>1</kbd>
+          
+          Line = "x^2+2*x+1"
+          </pre>
+
+     <p>It is likely that this will not be exactly the set of
+characters you want to act as continuation indicators, and you may want
+some <var>op</var> characters retained and others discarded.  That is why we
+make the source code available:  this file is intended mainly as an example.
+
+     <br><dt><code>read_unix_continued_line(</code><var>-Line</var><code>)</code>
+     <dd>
+uses the UNIX convention (understood by <code>sh</code>, <code>csh</code>, <code>cc</code>, and
+several other programs) that a line terminated by a
+<code>&lt;backslash, newline&gt;</code> pair is continued, and the backslash and newline
+do <em>not</em> appear in the combined <var>Line</var>. 
+For example,
+     <pre class="example">          | ?- <kbd>read_unix_continued_line(Line).</kbd>
+          |: <kbd>ab\</kbd>
+          |: <kbd>cde\</kbd>
+          |: <kbd>f</kbd>
+          
+          Line = "abcdef"
+          </pre>
+
+     <p>The following example is an extract from <code>/etc/termcap</code>:
+     <pre class="example">          | ?- <kbd>unix(system('cat termcap-extract')).</kbd>
+          
+          dw|vt52|dec vt52:\
+              :cr=^M:do=^J:nl=^J:bl=^G:\
+              :le=^H:bs:cd=\EJ:ce=\EK:cl=\EH\EJ:cm=\EY%+ %+ :\
+              :co#80:li#24:nd=\EC:ta=^I:pt:sr=\EI:up=\EA:\
+              :ku=\EA:kd=\EB:kr=\EC:kl=\ED:kb=^H:
+          dx|dw2|decwriter II:\
+              :cr=^M:do=^J:nl=^J:bl=^G:\
+              :kb=^h:le=^H:bs:co#132:hc:os:
+          
+          | ?- <kbd>see('termcap-extract'),</kbd>
+          |    <kbd>read_unix_continued_line(Line),</kbd>
+          |    <kbd>seen.</kbd>
+          
+          Line = "dw|vt52|dec vt52:    :cr=^M:do=^J:nl=^J:bl=^G:
+              :le=^H:bs:cd=\EJ:ce=\EK:cl=\EH\EJ:cm=\EY%+ %+ :
+           :co#80:li#24:nd=\EC:ta=^I:pt:sr=\EI:up=\EA:    :ku=\E
+          A:kd=\EB:kr=\EC:kl=\ED:kb=^H:"
+          </pre>
+
+     <p>Note that only the backslashes at the ends of the lines have been
+discarded, and that the spaces at the beginning of the following
+lines have been retained.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-uin-ese.html#lib-uin-ese">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-uin-lineio.html#lib-uin-lineio">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-uin.html#lib-uin">Up</a>
+</ul>
+</div>
+   </body></html>
+

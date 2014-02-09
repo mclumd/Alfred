@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Create and Destroy Methods</h5>
+
+   <p>Objects are created with the <code>create/2</code> predicate. When you define a
+class, you must specify all the ways that instances of the class can
+be created. The simplest creation method is defined as
+
+<pre class="example">     Self &lt;- create.
+     </pre>
+
+   <p>If this method were defined for <var>Class</var>, then the command
+
+<pre class="example">     | ?- <kbd>create(</kbd><var>Class</var><kbd>, </kbd><code>Object</code><kbd>).</kbd>
+     </pre>
+
+   <p>would create an instance of <var>Class</var> and bind the variable <code>Object</code> to that
+instance. All slots would receive their (possibly default) initial
+values.
+
+   <p>More generally, if the definition for <var>Class</var> contains a create method
+
+<pre class="example">     Self &lt;- create(<var>Arguments</var>) :-
+             <var>Body</var>.
+     </pre>
+
+   <p>then the command
+
+<pre class="example">     | ?- <kbd>create(</kbd><var>Class</var><kbd>(</kbd><var>Arguments</var><kbd>), </kbd><var>Object</var><kbd>).</kbd>
+     </pre>
+
+   <p>will create an instance of <var>Class</var> and execute the <var>Body</var> of the
+create method, using the specified <var>Arguments</var>. The variable
+<var>Object</var> is bound to the new instance.
+
+   <p>If a simple class definition has no create methods, then it is
+impossible create instances of the class. While the absence of create
+methods may be a programmer error, that is not always the
+case. Abstract classes, which are classes that cannot have instances,
+are often quite useful in defining a class hierarchy.
+
+   <p>Create methods can be used to initialize slots in situations when
+specifying initial slot values will not suffice. (Remember that
+initial values must be specified as constants at compile time).  The
+simplest case uses the arguments of the create message as initial slot
+values. For example, the definition of the point class might contain
+the following create method.
+
+<pre class="example">     Self &lt;- create(X,Y) :-
+             Self &lt;&lt; x(X),
+             Self &lt;&lt; y(Y).
+     </pre>
+
+   <p>If used as follows
+
+<pre class="example">     | ?- <kbd>create(point(3.14159, 2.71828), PointObj),
+          PointObj &gt;&gt; x(X),
+          PointObj &gt;&gt; y(Y).</kbd>
+     </pre>
+
+   <p>it would give <code>X</code> and <code>Y</code> the values of 3.14159 and 2.71828, respectively.
+
+   <p>In some cases, the create method might compute the initial values. The
+following (partial) class definition uses the <code>date/1</code> predicate from
+<code>library(date)</code> to initialize its year, month and day slots.
+
+<pre class="example">     :- class date_stamp =
+             [year:integer,
+              month:integer,
+              day:integer].
+     
+     Self &lt;- create :-
+             date(date(Year, Month, Day)),
+             store_slot(year, Year),
+             store_slot(month, Month),
+             store_slot(day, Day).
+     </pre>
+
+   <p>All three slots are private, so it will be necessary to define get
+methods in order to retrieve the time information. If no put methods
+are defined, however, the date cannot be modified after
+the <code>date_stamp</code> object is created (unless some other method for
+this class invokes <code>store_slot/2</code> itself).
+
+   <p>Create methods can do more than initialize slot values. Consider the
+<code>named_point</code> class, whose definition begins as follows:
+
+<pre class="example">     :- class named_point =
+             [public name:atom,
+              public x:float=1,
+              public y:float=0].
+     
+     Self &lt;- create(Name, X, Y) :-
+             Self &lt;&lt; name(Name),
+             Self &lt;&lt; x(X),
+             Self &lt;&lt; y(Y),
+             assert(name_point(Name, Self)).
+     </pre>
+
+   <p>Not only does the <code>create/3</code> message initialize the slots of a new
+<code>named_point</code> object, but it also adds a <code>name_point/2</code> fact to
+the Prolog database, allowing each new object to be found by its
+name. (This create method does not require the <code>named_point</code> object
+to have a unique name. Defining a <code>uniq_named_point</code> class is left
+as an exercise.)
+
+   <p>An object is destroyed with the <code>destroy/1</code> command. Unlike
+<code>create/2</code>, <code>destroy/1</code> does not require that you define a <code>destroy</code>
+method for a class. However, <code>destroy/1</code> will send a destroy message
+(with no arguments) to an object before it is destroyed, if a
+<code>destroy</code> method is
+defined for the object's class.
+
+   <p>If a <code>named_point</code> object is ever destroyed, the address of the
+object stored in this name <code>point/2</code> fact is no longer valid. Hence,
+there should be a corresponding destroy method that retracts it.
+
+<pre class="example">     Self &lt;- destroy :-
+             Self &gt;&gt; name(Name),
+             retract(name_point(Name, Self)).
+     </pre>
+
+   <p>Similar create and destroy methods can be defined for objects that
+allocate their own separate memory or that announce their existence to
+foreign code.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-scl-meth-ins.html#obj-scl-meth-ins">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-scl-meth-send.html#obj-scl-meth-send">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-scl-meth.html#obj-scl-meth">Up</a>
+</ul>
+</div>
+   </body></html>
+

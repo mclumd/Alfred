@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Displaying Statistics</h5>
+
+   <p>Statistics relating to memory usage, run time, and garbage collection,
+including information about which areas of memory have overflowed and
+how much time has been spent expanding them, can be displayed by
+calling <code>statistics/0</code>.
+
+   <p>The output from <code>statistics/0</code> looks like this:
+
+<pre class="example">     memory (total)         377000 bytes:     350636 in use,      26364 free
+        program space       219572 bytes
+           atom space        (2804 atoms)      61024 in use,  43104 free
+     
+        global space         65532 bytes:       9088 in use,      56444 free
+           global stack                         6984 bytes
+           trail                                  16 bytes
+           system                               2088 bytes
+        local stack          65532 bytes:        356 in use,      65176 free
+           local stack                           332 bytes
+           system                                 24 bytes
+     
+      0.000 sec. for 0 global and 0 local space shifts
+      0.000 sec. for 0 garbage collections which collected 0 bytes
+      0.000 sec. for 0 atom garbage collections which collected 0 bytes
+      0.233 sec. runtime
+     </pre>
+
+   <p>Note the use of indentation to indicate sub-areas.  That is, memory
+contains the program space, global space, and local stack, and the global
+space contains the global stack and trail.
+
+   <p>The memory (total) figure shown as "in use" is the sum of the
+spaces for the program, global and local areas. The "free" figures for
+the global and local areas are for free space within those areas. 
+However, this free space is considered used as far as the memory (total)
+area is concerned, because it has been allocated to the global and local
+areas. The program space is not considered to have its own free space. 
+It always allocates new space from the general memory (total) free area.
+
+   <p>Individual statistics can be obtained by <code>statistics/2</code>, which
+accepts a keyword and returns a list of statistics related to that
+keyword.
+
+   <p>The keys and values for <code>statistics(</code><var>Keyword</var><code>, </code><var>List</var><code>)</code>
+are summarized below.  The keywords <code>core</code> and <code>heap</code> are
+included to retain compatibility with DEC-10 Prolog.  Times are given
+in milliseconds and sizes are given in bytes.
+
+     <dl>
+
+     <p><var>Keyword</var>                    <var>List</var>
+
+     <br><dt>runtime
+     <dd>[cpu time used by Prolog, cpu time since last call to
+<code>statistics/[0,2]</code>]
+
+     <br><dt>system_time
+     <dd>[cpu time used by the operating system, cpu time used by
+the system since the last call to <code>statistics/[0,2]</code>]
+
+     <br><dt>real_time
+     <dd>[wall clock time since 00:00 GMT 1/1/1970, wall clock time
+since the last call to <code>statistics/[0,2]</code>]
+
+     <br><dt>memory
+     <dd>[total virtual memory in use, total virtual memory free]
+
+     <br><dt>stacks
+     <dd>[total global stack memory, total local stack memory]
+
+     <br><dt>program
+     <dd>[program space, 0]
+
+     <br><dt>global_stack
+     <dd>[global stack in use, global stack free]
+
+     <br><dt>local_stack
+     <dd>[local stack in use, local stack free]
+
+     <br><dt>trail
+     <dd>[size of trail, 0]
+
+     <br><dt>garbage_collection
+     <dd>[number of GCs, freed bytes, time spent]
+
+     <br><dt>stack_shifts
+     <dd>[number of global stack area shifts, number of local
+stack area shifts, time spent shifting]
+
+     <br><dt>atoms
+     <dd>[number of atoms, atom space in use, atom space free]
+
+     <br><dt>atom_garbage_collection
+     <dd>[number of AGCs, freed bytes, time spent]
+
+     <br><dt>core
+     <dd>(same as memory)
+
+     <br><dt>heap
+     <dd>(same as program)
+
+   </dl>
+
+   <p>For the keywords <code>program</code> and <code>trail</code>, the second element of
+the returned list is always 0.  This is for backward compatibility
+only, 0 being the most appropriate value in the Quintus Prolog system for the
+quantities that would be returned here in DEC-10 Prolog and previous
+releases of Quintus Prolog .
+
+   <p>To see an example of the use of each of these keywords, type
+<pre class="example">     | ?- <kbd>statistics(K, L).</kbd>
+     </pre>
+
+   <p>and then repeatedly type <code>;</code> to backtrack through all the possible
+keywords.  As an additional example, to report information on the runtime of
+a predicate p/0, add the following to your program:
+
+<pre class="example">     :- statistics(runtime, [T0| _]),
+        p,
+        statistics(runtime, [T1|_]),
+        T is T1 - T0,
+        format('p/0 took ~3d sec.~n', [T]).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ref-mgc-ove-rsp.html#ref-mgc-ove-rsp">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mgc-ove.html#ref-mgc-ove">Up</a>
+</ul>
+</div>
+   </body></html>
+

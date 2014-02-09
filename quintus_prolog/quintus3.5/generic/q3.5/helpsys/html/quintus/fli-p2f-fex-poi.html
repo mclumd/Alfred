@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Passing pointers between Prolog and Foreign Code</h5>
+
+   <p>Suppose we have a FORTRAN subroutine that multiplies a 3-element vector by a
+3-by-3 matrix, returning a 3-element vector.  This situation is then
+represented by the following code:
+
+<pre class="example">
+                                     <div align="right"><em>C code</em>
+     </div>
+     
+     typedef double vec_3[3];
+     typedef double mat_3_3[3][3];
+     
+     vec_3 *make_vec(a, b, c)
+         double a, b, c;
+         {
+             register vec_3 *x;
+     
+             x = (vec_3*)malloc(sizeof(vec_3));
+             (*x)[0] = a, (*x)[1] = b, (*x)[2] = c;
+             return x;
+         }
+     
+     mat_3_3 *make_mat(a0, a1, a2, b0, b1, b2, c0, c1, c2)
+         double a0, a1, a2, b0, b1, b2, c0, c1, c2;
+         {
+             register mat_3_3 *x;
+     
+             x = (mat_3_3*)malloc(sizeof(mat_3_3));
+             (*x)[0][0] = a0, (*x)[0][1] = a1, (*x)[0][2] = a2,
+             (*x)[1][0] = b0, (*x)[1][1] = b1, (*x)[1][2] = b2,
+             (*x)[2][0] = c0, (*x)[2][1] = c1, (*x)[2][2] = c2;
+             return x;
+         }
+     </pre>
+
+<pre class="example">
+                               <div align="right"><em>FORTRAN code</em>
+     </div>
+     
+           subroutine matvec(mat, vec, ans)
+               real mat(3,3), vec(3), ans(3)
+     
+               ans(1) = mat(1,1)*vec(1)+mat(2,1)*vec(2)+mat(3,1)*vec(3)
+               ans(2) = mat(1,2)*vec(2)+mat(2,2)*vec(2)+mat(3,2)*vec(3)
+               ans(3) = mat(1,3)*vec(3)+mat(2,3)*vec(2)+mat(3,3)*vec(3)
+               return
+           end
+     </pre>
+
+<pre class="example">
+                               <div align="right"><em>Prolog Code:</em>
+     </div>
+     
+     foreign(make_vec, c, make_vec(+float,+float,+float,
+                                   [-address(vec_3)])).
+     foreign(make_mat, c, make_mat(+float,+float,+float,
+                                   +float,+float,+float,
+                                   +float,+float,+float,
+                                   [-address(mat_3_3)])).
+     foreign(matvec_, fortran, matvec(+address(float),+address(float),
+                                     +address(float))).      % note all +!
+     
+     make_vec([A,B,C], X) :-
+             make_vec(A, B, C, X).
+     
+     make_mat([[A0,A1,A2],[B0,B1,B2],[C0,C1,C2]], X) :-
+             make_mat(A0,A1,A2, B0,B1,B2, C0,C1,C2, X).
+     
+     do_matvec(Vec, Mat, AnsObj) :-
+             make_vec(Vec, VecObj),
+             make_mat(Mat, MatObj),
+             make_vec(0.0, 0.0, 0.0, AnsObj),
+             matvec(VecObj, MatObj, AnsObj).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-fex-for.html#fli-p2f-fex-for">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f-fex.html#fli-p2f-fex">Up</a>
+</ul>
+</div>
+   </body></html>
+

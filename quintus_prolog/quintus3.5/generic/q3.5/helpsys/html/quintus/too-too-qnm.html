@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>qnm</code> -- print QOF file information</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     qnm [-PADFMU] [ [-m module] [-n name] [-a arity]]
+         [-p proc#] [-o] filename ...
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>qnm</code> prints information
+about each QOF file named in the argument list.  The command line
+options specify the information required.  The default behavior, if
+no command line option is given, is identical to the behavior of the
+<code>-P</code> option.  Except where noted, only the first valid command line
+option is accepted per invocation of <code>qnm</code>; subsequent options are
+ignored.  Each filename must be a QOF file.
+
+<h4 class="subheading">Options</h4>
+
+     <dl>
+
+     <br><dt><code>-P</code>
+     <dd>Print information about all procedures
+that are defined or called in each QOF file. 
+<br><dt>
+     <dd>
+Information for a procedure is preceded by a decimal number that is
+unique for that QOF file.  This is followed by letter
+codes indicating the procedure state and properties. The letter codes are:
+
+          <dl>
+
+          <br><dt><code>U</code>
+          <dd>undefined
+
+          <br><dt><code>S</code>
+          <dd>static
+
+          <br><dt><code>D</code>
+          <dd>dynamic
+
+          <br><dt><code>M</code>
+          <dd>multifile
+
+          <br><dt><code>F</code>
+          <dd>foreign
+
+          <br><dt><code>V</code>
+          <dd>volatile
+
+          <br><dt><code>L</code>
+          <dd>locked
+
+     </dl>
+<br><dt>
+     <dd>
+If the procedure is neither foreign nor multifile, the second letter
+is omitted. 
+<br><dt>
+     <dd>
+The state and property information is followed by the module, name
+and arity of the procedure, in the format <var>module:name/arity</var>. 
+Procedure information is sorted alphabetically by procedure name. 
+Internal procedure names and modules that have been made anonymous are
+printed as <code>$anon</code>.
+
+     <br><dt><code>-A</code>
+     <dd>Print all atoms referenced in each QOF file.  Each atom is
+preceded by a number that is unique for that QOF file.  Atoms are
+sorted alphabetically.  Internal atoms that have been made anonymous
+are printed as <code>$anon</code>.
+
+     <br><dt><code>-D</code>
+     <dd>Print the names of all QOF or object files and library
+directories on which each QOF file depends.
+
+     <br><dt><code>-F</code>
+     <dd>Print the number of source files contained in the QOF file.
+
+     <br><dt><code>-M</code>
+     <dd>Print information about modules contained in the QOF file. 
+This information consists of the name of each module, its export list,
+and its meta-predicates.
+
+     <br><dt><code>-U</code>
+     <dd>Print information about all procedures that are called but
+not defined in each QOF file.  Information about undefined procedures
+is in the same format as when using the <code>-P</code> flag.
+
+     <br><dt><code>-m </code><var>module</var><code></code>
+     <dd>Print information about procedures in module <var>module</var>.  This
+option may be used in conjunction with the <code>-n</code> and <code>-a</code> options.
+
+     <br><dt><code>-n </code><var>name</var><code></code>
+     <dd>Print information about procedures named <var>name</var>.  This
+option may be used in conjunction with the <code>-m</code> and <code>-a</code> options.
+
+     <br><dt><code>-a </code><var>arity</var><code></code>
+     <dd>Print information about procedures with arity <var>arity</var>. 
+This option may be used in conjunction with the <code>-m</code> and <code>-n</code> options.
+
+     <br><dt><code>-p </code><var>proc#</var><code></code>
+     <dd>Print information about the procedure numbered <var>proc#</var>. 
+Procedure numbers are as given by the <code>-P</code> option.
+
+     <br><dt><code>-o</code>
+     <dd>Prepend to each output line the name of its QOF file.  The
+<code>-o</code> flag may be used in addition to any valid combination of options. 
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>nm(1)</code>, <code>qpc(1)</code>, <code>qld(1)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="too-too-qpc.html#too-too-qpc">Next</a>
+<li><a rel="previous" accesskey="p" href="too-too-qld.html#too-too-qld">Previous</a>
+<li><a rel="up" accesskey="u" href="too-too.html#too-too">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Examining Type Definitions at Runtime</h3>
+
+   <p>The above described procedures should be sufficient for most needs. 
+This module does, however, provide a few procedures to allow
+programmers to access type definitions.  These may be a convenience
+for debugging, or in writing tools to manipulate type definitions.
+
+   <p>The following procedures allow programmers to find the definition
+of a given type:
+<pre class="example">         type_definition(<var>+Type</var>, <var>-Definition</var>)
+         type_definition(<var>*Type</var>, <var>*Definition</var>)
+         type_definition(<var>+Type</var>, <var>-Definition</var>, <var>-Size</var>)
+         type_definition(<var>*Type</var>, <var>*Definition</var>, <var>*Size</var>)
+     </pre>
+
+   <p><var>Type</var> is an atom naming a type, <var>Definition</var> is the definition of that
+type, and <var>Size</var> is the number of bytes occupied by a foreign term of
+this type.  <var>Size</var> will be the atom <code>unknown</code> if the size of an object of
+that type is not known.  Such types may not be used as fields in
+structs or unions, or in arrays.  However, pointers to them may be
+created.  If <var>Type</var> is not bound at call time, these procedures will
+backtrack through all current type definitions.
+
+   <p>A definition looks much like the definition given when the type was
+defined with <code>type/1</code>, except that it has been simplified.  Firstly,
+intermediate type names have been elided.  For example, if <code>foo</code> is
+defined as <code>foo=integer</code>, and <code>bar</code> as <code>bar=foo</code>, then
+<code>type_definition(bar, integer)</code> would hold.  Also, in the definition
+of a compound type, types of parts are always defined by type names,
+rather than complex specifications.  So if the type of a field in a
+struct was defined as <code>pointer(fred)</code>, it will show up in the
+definition as <code>'$fred'</code>.  Of course, <code>type_definition('$fred', pointer(fred))</code> would hold, also.
+
+   <p>The following predicates allow the programmer to determine whether
+or not a given type is atomic:
+<pre class="example">         atomic_type(<var>+Type</var>)
+         atomic_type(<var>*Type</var>)
+     
+         atomic_type(<var>+Type</var>, <var>-Primitive_type</var>)
+         atomic_type(<var>*Type</var>, <var>*Primitive_type</var>)
+     
+         atomic_type(<var>+Type</var>, <var>-Primitive_type</var>, <var>-Size</var>)
+         atomic_type(<var>*Type</var>, <var>*Primitive_type</var>, <var>*Size</var>)
+     </pre>
+
+   <p><var>Type</var> is an atomic type.  See <a href="str-fty.html#str-fty">str-fty</a> for the definition
+of an atomic type.  <var>Primitive_type</var> is the primitive type that
+<var>Type</var> is defined in terms of.  <var>Size</var> is the number of bytes
+occupied by an object of type <var>Type</var>, or the atom <code>unknown</code>, as
+above.  If <var>Type</var> is unbound at call time, these predicates will
+backtrack through all the currently defined atomic types.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="str-s2c.html#str-s2c">Next</a>
+<li><a rel="previous" accesskey="p" href="str-ifc.html#str-ifc">Previous</a>
+<li><a rel="up" accesskey="u" href="str.html#str">Up</a>
+</ul>
+</div>
+   </body></html>
+

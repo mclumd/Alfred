@@ -1,0 +1,1584 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxt-exp-px,  Next: pxt-exp-pxt,  Prev: pxt-exp-motif,  Up: pxt-exp
+
+X Toolkit Predicates
+--------------------
+
+     xtAddActions(+ACTIONS)
+     ACTIONS:    ActionsList
+
+     xtAddCallback(+WIDGET,+WIDGETCALLBACK,+CALLBACK,+CLIENTDATA)
+     WIDGET:     Widget
+     WIDGETCALLBACK:     WidgetCallbackType
+     CALLBACK:   CallbackProc
+     CLIENTDATA: AnyTerm
+
+     xtAddCallbacks(+WIDGET,+WIDGETCALLBACK,+CALLBACKS)
+     WIDGET:     Widget
+     WIDGETCALLBACK:     WidgetCallbackType
+     CALLBACKS:  CallbackList
+
+     xtAddEventHandler(+WIDGET,+EVENTMASK,+NONMASKABLE,+EVENTHANDLER,+CLIENTDATA)
+     WIDGET:     Widget
+     EVENTMASK:  XEventMask
+     NONMASKABLE:        Boolean
+     EVENTHANDLER:       EventProc
+     CLIENTDATA: AnyTerm
+
+     xtAddGrab(+WIDGET,+EXCLUSIVE,+SPRINGLOADED)
+     WIDGET:     Widget
+     EXCLUSIVE:  Boolean
+     SPRINGLOADED:       Boolean
+
+     xtAddInput(+SOURCE,+CONDITION,+INPUTPROC,+CLIENTDATA,-INPUTID)
+     SOURCE:     Integer
+     CONDITION:  XtInputCondMask
+     INPUTPROC:  InputProc
+     CLIENTDATA: AnyTerm
+     INPUTID:    XtInputId
+
+     xtAddRawEventHandler(+WIDGET,+EVENTMASK,+NONMASKABLE,+EVENTHANDLER,
+              +CLIENTDATA)
+     WIDGET:     Widget
+     EVENTMASK:  XEventMask
+     NONMASKABLE:        Boolean
+     EVENTHANDLER:       EventProc
+     CLIENTDATA: AnyTerm
+
+     xtAddTimeOut(+INTERVAL,+TIMERPROC,+CLIENTDATA,-INTERVALID)
+     INTERVAL:   Integer
+     TIMERPROC:  TimerProc
+     CLIENTDATA: AnyTerm
+     INTERVALID: XtIntervalId
+
+     xtAddWorkProc(+WORKPROC,+CLIENTDATA,-WORKPROCID)
+     WORKPROC:   WorkProc
+     CLIENTDATA: AnyTerm
+     WORKPROCID: XtWorkProcId
+
+     xtAppAddActions(+APPCONTEXT,+ACTIONS)
+     APPCONTEXT: XtAppContext
+     ACTIONS:    ActionsList
+
+     xtAppAddInput(+APPCONTEXT,+SOURCE,+CONDITION,+INPUTPROC,+CLIENTDATA,-INPUTID)
+     APPCONTEXT: XtAppContext
+     SOURCE:     Integer
+     CONDITION:  XtInputCondMask
+     INPUTPROC:  InputProc
+     CLIENTDATA: AnyTerm
+     INPUTID:    XtInputId
+
+     xtAppAddTimeOut(+APPCONTEXT,+INTERVAL,+TIMERPROC,+CLIENTDATA,-INTERVALID)
+     APPCONTEXT: XtAppContext
+     INTERVAL:   Integer
+     TIMERPROC:  TimerProc
+     CLIENTDATA: AnyTerm
+     INTERVALID: XtIntervalId
+
+     xtAppAddWorkProc(+APPCONTEXT,+WORKPROC,+CLIENTDATA,-WORKPROCID)
+     APPCONTEXT: XtAppContext
+     WORKPROC:   WorkProc
+     CLIENTDATA: AnyTerm
+     WORKPROCID: XtWorkProcId
+
+     xtAppCreateShell(+NAME,+CLASS,+WIDGETCLASS,+DISPLAY,
+              +ATTRIBUTES,-WIDGET)
+     NAME:       String
+     CLASS:      String
+     WIDGETCLASS:        WidgetClass
+     DISPLAY:    Display
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xtAppGetSelectionTimeout(+APPCONTEXT, +TIMEOUT)
+     APPCONTEXT: XtAppContext
+     TIMEOUT:    Integer
+
+     xtAppInitialize(-APPCONTEXT, +CLASS, +ATTRIBUTES, -WIDGET)
+     APPCONTEXT: XtAppContext
+     CLASS:      String
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xtAppMainLoop(+APPCONTEXT)
+     APPCONTEXT: XtAppContext
+
+     xtAppNextEvent(+APPCONTEXT, +EVENT)
+     APPCONTEXT: XtAppContext
+     EVENT:      XEvent
+
+     xtAppPeekEvent(+APPCONTEXT, +EVENT)
+     APPCONTEXT: XtAppContext
+     EVENT:      XEvent
+
+     xtAppPending(+APPCONTEXT, -MASK)
+     APPCONTEXT: XtAppContext
+     MASK        XtInputMask
+
+     xtAppProcessEvent(+APPCONTEXT, +MASK)
+     APPCONTEXT: XtAppContext
+     MASK        XtInputMask
+
+     xtAppSetErrorHandler(+APPCONTEXT, +ERRORPROC)
+     APPCONTEXT: XtAppContext
+     ERRORPROC:  CallbackProc
+
+     xtAppSetSelectionTimeout(+APPCONTEXT, +TIMEOUT)
+     APPCONTEXT: XtAppContext
+     TIMEOUT:    Integer
+
+     xtAppSetWarningHandler(+APPCONTEXT, +WARNPROC)
+     APPCONTEXT: XtAppContext
+     WARNPROC:   CallbackProc
+
+     xtAugmentTranslations(+WIDGET, +TRANSLATIONTABLE)
+     WIDGET:     Widget
+     TRANSLATIONTABLE:   XtTranslations
+
+     xtBuildEventMask(+WIDGET,-EVENTMASK)
+     WIDGET:     Widget
+     EVENTMASK:  XEventMask
+
+     xtCallbackExclusive(+WIDGET,+SHELL,+DUMMYCLIENTDATA)
+     WIDGET:     Widget
+     SHELL:      Widget
+     DUMMYCLIENTDATA:    Integer
+
+     xtCallbackNone(+WIDGET,+SHELL,+DUMMYCLIENTDATA)
+     WIDGET:     Widget
+     SHELL:      Widget
+     DUMMYCLIENTDATA:    Integer
+
+     xtCallbackNonexclusive(+WIDGET,+SHELL[+DummyClientData])
+     WIDGET:     Widget
+     SHELL:      Widget
+     DUMMYCLIENTDATA:    Integer
+
+     xtCallbackPopdown(+WIDGET,+SHELL,+DUMMYCLIENTDATA)
+     WIDGET:     Widget
+     SHELL:      Widget
+     DUMMYCLIENTDATA:    Integer
+
+     xtClass(+WIDGET,-WIDGETCLASS)
+     WIDGET:     Widget
+     WIDGETCLASS:        WidgetClass
+
+     xtCloseDisplay(+DISPLAY)
+     DISPLAY:    Display
+
+     xtConvert(+WIDGET,+FROMTYPE,+FROM,+FROMLEN,+TOTYPE,-TO,-TOLEN)
+     WIDGET:     Widget
+     FROMTYPE:   String
+     FROM:       String or Integer
+     FROMLEN:    Integer
+     TOTYPE:     String
+     TO: String or Integer
+     TOLEN:      Integer
+
+     xtCreateApplicationContext(-APPCONTEXT)
+     APPCONTEXT
+
+     xtCreateApplicationShell(+NAME,+WIDGETCLASS,+ATTRIBUTES,-WIDGET)
+     NAME:       String
+     WIDGETCLASS:        WidgetClass
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xtCreateManagedWidget(+NAME,+WIDGETCLASS,+PARENT,+ATTRIBUTES,-WIDGET)
+     NAME:       String
+     WIDGETCLASS:        WidgetClass
+     PARENT:     Widget
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xtCreatePopupShell(+NAME,+WIDGETCLASS,+PARENT,+ATTRIBUTES,-WIDGET)
+     NAME:       String
+     WIDGETCLASS:        WidgetClass
+     PARENT:     Widget
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xtCreateWidget(+NAME,+WIDGETCLASS,+PARENT,+ATTRIBUTES,-WIDGET)
+     NAME:       String
+     WIDGETCLASS:        WidgetClass
+     PARENT:     Widget
+     ATTRIBUTES: AttributeList
+     WIDGET:     Widget
+
+     xtDestroyApplicationContext(+APPCONTEXT)
+     APPCONTEXT: XtAppContext
+
+     xtDestroyWidget(+WIDGET)
+     WIDGET:     Widget
+
+     xtDispatchEvent(+EVENT)
+     EVENT:      XEvent
+
+     xtDisplay(+WIDGET,-DISPLAY)
+     WIDGET:     Widget
+     DISPLAY:    Display
+
+     xtDisplayInitialize(+APPCONTEXT,+DISPLAY,+NAME,+CLASS)
+     APPCONTEXT: XtAppContext
+     DISPLAY:    Display
+     NAME:       String
+     CLASS:      String
+
+     xtDisplayOfObject(+WIDGET,-DISPLAY)
+     WIDGET:     Widget
+     DISPLAY:    Display
+
+     xtDisplayToApplicationContext(+DISPLAY, -APPCONTEXT)
+     DISPLAY:    Display
+     APPCONTEXT: XtAppContext
+
+     xtFree(+OBJECT)
+     OBJECT:     AnyTerm
+
+     xtGetSelectionTimeout(+APPCONTEXT, +TIMEOUT)
+     TIMEOUT:    Integer
+
+     xtGetValues(+WIDGET,+ATTRIBUTES)
+     WIDGET:     Widget
+     ATTRIBUTES: AttributeList
+
+     xtHasCallbacks(+WIDGET,+WIDGETCALLBACK,+CALLBACKSTATUS)
+     WIDGET:     Widget
+     WIDGETCALLBACK:     WidgetCallbackType
+     CALLBACKSTATUS:     XtCallbackStatus
+
+     xtInitialize(+NAME,+CLASS,-WIDGET)
+     NAME:       String
+     CLASS:      String
+     WIDGET:     Widget
+
+     xtInitializeWidgetClass(+WIDGET)
+     WIDGET:     Widget
+
+     xtInstallAccelerators(+DESTINATION,+SOURCE)
+     DESTINATION:        Widget
+     SOURCE:     Widget
+
+     xtInstallAllAccelerators(+DESTINATION,+SOURCE)
+     DESTINATION:        Widget
+     SOURCE:     Widget
+
+     xtIsManaged(+WIDGET)
+     WIDGET:     Widget
+
+     xtIsObject(+WIDGET)
+     WIDGET:     Widget
+
+     xtIsRealized(+WIDGET)
+     WIDGET:     Widget
+
+     xtIsSensitive(+WIDGET)
+     WIDGET:     Widget
+
+     xtIsSubclass(+WIDGET, +WIDGETCLASS)
+     WIDGET:     Widget
+     WIDGETCLASS:        WidgetClass
+
+     xtMainLoop
+
+     xtManageChild(+WIDGET)
+     WIDGET:     Widget
+
+     xtManageChildren(+WIDGETLIST)
+     WIDGETLIST: WidgetList
+
+     xtName(+WIDGET,-NAME)
+     WIDGET:     Widget
+     NAME:       String
+
+     xtNameToWidget(+REFERENCE, +NAME, -WIDGET)
+     REFERENCE:  Widget
+     NAME:       String
+     WIDGET:     Widget
+
+     xtNextEvent(+EVENT)
+     EVENT:      XEvent
+
+     xtOpenDisplay(+APPCONTEXT,+NAME,APPNAME,+CLASS,-DISPLAY)
+     APPCONTEXT: XtAppContext
+     NAME:       String
+     APPNAME:    String
+     CLASS:      String
+     DISPLAY:    Display
+
+     xtOverrideTranslations(+WIDGET, +TRANSLATIONTABLE)
+     WIDGET:     Widget
+     TRANSLATIONTABLE:   XtTranslations
+
+     xtParent(+CHILD,-PARENT)
+     CHILD:      Widget
+     PARENT:     Widget
+
+     xtParseAcceleratorTable(+ACCELERATORS, -ACCELERATORTABLE)
+     ACCELERATORS:       String
+     ACCELERATORTABLE:   XtAccelerators
+
+     xtParseTranslationTable(+TRANSLATIONS, -TRANSLATIONTABLE)
+     TRANSLATIONS:       String
+     TRANSLATIONTABLE:   XtTranslations
+
+     xtPeekEvent(-EVENT)
+     EVENT:      XEvent
+
+     xtPending(-INPUTMASK)
+     INPUTMASK:  XEventMask
+
+     xtPopdown(+WIDGET)
+     WIDGET:     Widget
+
+     xtPopup(+WIDGET,+GRABKIND)
+     WIDGET:     Widget
+     GRABKIND:   XtGrabKind
+
+     xtProcessEvent(+INPUTMASK)
+     INPUTMASK:  XEventMask
+
+     xtRealizeWidget(+WIDGET)
+     WIDGET:     Widget
+
+     xtRemoveAllCallbacks(+WIDGET,+WIDGETCALLBACK)
+     WIDGET:     Widget
+     WIDGETCALLBACK:     WidgetCallbackType
+
+     xtRemoveCallback(+WIDGET,+WIDGETCALLBACK,+CALLBACK,+CLIENTDATA)
+     WIDGET:     Widget
+     WIDGETCALLBACK:     WidgetCallbackType
+     CALLBACK:   CallbackProc
+     CLIENTDATA: AnyTerm
+
+     xtRemoveCallbacks(+WIDGET,+WIDGETCALLBACK,+CALLBACKS)
+     WIDGET:     Widget
+     WIDGETCALLBACK:     WidgetCallbackType
+     CALLBACKS:  CallbackList
+
+     xtRemoveEventHandler(+WIDGET,+EVENTMASK,+NONMASKABLE,+EVENTHANDLER,
+              +CLIENTDATA)
+     WIDGET:     Widget
+     EVENTMASK:  XEventMask
+     NONMASKABLE:        Boolean
+     EVENTHANDLER:       EventProc
+     CLIENTDATA: AnyTerm
+
+     xtRemoveGrab(+WIDGET)
+     WIDGET:     Widget
+
+     xtRemoveInput(+INPUTID)
+     INPUTID:    XtInputId
+
+     xtRemoveRawEventHandler(+WIDGET,+EVENTMASK,+NONMASKABLE,+EVENTHANDLER,
+              +CLIENTDATA)
+     WIDGET:     Widget
+     EVENTMASK:  XEventMask
+     NONMASKABLE:        Boolean
+     EVENTHANDLER:       EventProc
+     CLIENTDATA: AnyTerm
+
+     xtRemoveTimeOut(+INTERVALID)
+     INTERVALID: XtIntervalId
+
+     xtRemoveWorkProc(+WORKPROCID)
+     WORKPROCID: XtWorkProcId
+
+     xtScreen(+WIDGET,-SCREEN)
+     WIDGET:     Widget
+     SCREEN:     Screen
+
+     xtScreenOfObject(+WIDGET,-SCREEN)
+     WIDGET:     Widget
+     SCREEN:     Screen
+
+     xtSetErrorHandler(+ERRORPROC)
+     ERRORPROC:  CallbackProc
+
+     xtSetKeyboardFocus(+SUBTREE,+DESCENDANT)
+     SUBTREE:    Widget
+     DESCENDANT: Widget
+
+     xtSetMappedWhenManaged(+WIDGET,+MAPPEDWHENMANAGED)
+     WIDGET:     Widget
+     MAPPEDWHENMANAGED:  Boolean
+
+     xtSetSelectionTimeout(+TIMEOUT)
+     TIMEOUT:    Integer
+
+     xtSetSensitive(+WIDGET, +SENSITIVE)
+     WIDGET:     Widget
+     SENSITIVE:  Boolean
+
+     xtSetValues(+WIDGET,+ATTRIBUTES)
+     WIDGET:     Widget
+     ATTRIBUTES: AttributeList
+
+     xtSetWarningHandler(+WARNPROC)
+     WARNPROC:   CallbackProc
+
+     xtSuperclass(+WIDGET, -WIDGETCLASS)
+     WIDGET:     Widget
+     WIDGETCLASS:        WidgetClass
+
+     xtToolkitInitialize
+
+     xtTranslateCoords(+WIDGET, +X, +Y, -ROOTX, -ROOTY)
+     WIDGET:     Widget
+     X:  Position
+     Y:  Position
+     ROOTXRETURN:        Position
+     ROOTYRETURN:        Position
+
+     xtUninstallTranslations(+WIDGET)
+     WIDGET:     Widget
+
+     xtUnmanageChild(+WIDGET)
+     WIDGET:     Widget
+
+     xtUnmanageChildren(+WIDGETLIST)
+     WIDGETLIST: WidgetList
+
+     xtUnrealizeWidget(+WIDGET)
+     WIDGET:     Widget
+
+     xtWidgetToApplicationContext(+WIDGET,-APPCONTEXT)
+     WIDGET:     Widget
+     APPCONTEXT: XtAppContext
+
+     xtWindow(+WIDGET,-WINDOW)
+     WIDGET:     Widget
+     WINDOW:     Window
+
+     xtWindowOfObject(+WIDGET,-WINDOW)
+     WIDGET:     Widget
+     WINDOW:     Window
+
+     xtWindowToWidget(+DISPLAY, +WINDOW, +WIDGET)
+     DISPLAY:    Display
+     WINDOW:     Window
+     WIDGET:     Widget
+
+     xCreateGC(+DISPLAY, +WINDOW, +VALUES, -GC)
+     DISPLAY:    Display
+     WINDOW:     Window
+     VALUES:     XGCValues
+     GC: XGC
+
+     xFreeGC(+DISPLAY, +GC)
+     DISPLAY:    Display
+     GC: XGC
+
+     xLoadQueryFont(+DISPLAY, +FONTNAME, -FONT)
+     DISPLAY:    Display
+     FONTNAME:   String
+     FONT:       XFont
+
+
+File: quintus.info,  Node: pxt-exp-pxt,  Prev: pxt-exp-px,  Up: pxt-exp
+
+ProXT Specific Predicates
+-------------------------
+
+     proxtGetCallbackEvent(+CALLDATA,-EVENT)
+     CALLDATA:   Calldata
+     EVENT:      XEvent
+
+     proxtGetCallbackReason(+CALLDATA,-REASON)
+     CALLDATA:   Calldata
+     REASON:     String
+
+     proxtGetCallbackFields(+CALLDATA,-CALLDATALIST)
+     CALLDATA:   Calldata
+     CALLDATALIST:       CalldataFields
+
+     proxtGetWidgetClass(+WIDGET,-WIDGETCLASS)
+     WIDGET:     Widget
+     WIDGETCLASS:        WidgetClass
+
+     proxtGetEventFields(+EVENT,-FIELDS)
+     EVENT:      XEvent
+     FIELDS:     EventFields
+
+     proxtSetCallbackFields(+CALLDATA,-CALLDATALIST)
+     CALLDATA:   Calldata
+     CALLDATALIST:       CalldataFields
+
+
+File: quintus.info,  Node: pxt-chg,  Next: pxt-man,  Up: pxt
+
+Changes from ProXT 3.1
+======================
+
+* Menu:
+
+* pxt-chg-hig::                         Highlights
+* pxt-chg-bwd::                         Backward Compatibility
+
+
+File: quintus.info,  Node: pxt-chg-hig,  Next: pxt-chg-bwd,  Up: pxt-chg
+
+Highlights
+----------
+
+   There are a number of changes from the previous version of ProXT
+that was released with Quintus Prolog 3.1. These changes are summarized
+as follows:
+
+   * Predicates and attributes that used to take a CharPtr type now take
+     a String type, which is represented as a Prolog atom. This means
+     that the predicates `proxtCharPtrToString/2' and
+     `proxtStringToCharPtr/2' are obsolete.
+
+   * The predicate `proxtGetDefaultCharset/1' is obsolete. In Motif2.1,
+     most functions that used to take a CHARSET parameter now take a
+     FONTLISTTAG parameter and the atom `xmDEFAULT_FONTLIST_TAG' can be
+     used as a FONLISTTAG.
+
+   * All predicates that correspond to Boolean functions in Motif now
+     succeed or fail according to whether the Motif function returns
+     `true' or `false'.  This means that some predicates that used to
+     include a RESULTS parameter have been replaced by predicates with
+     that argument removed.
+
+   * The CALLDATA argument returned by widget callbacks is now a
+     handle, rather than a list of field, that can be inspected (and
+     modified) by three new proxt predicates: the callback reason can
+     be extracted by the predicate `proxtGetCallbackReason/2'; a list
+     of all fields is returned by `proxtGetCallbackFields/2' (the
+     contents of this list varies depending on the type of callback);
+     and finally a list of fields to be modified can be specified in
+     `proxtSetCallbackFields/2'.
+
+   * ProXT will now backtrack through callback predicates if they return
+     nondeterminately.
+
+   * The client data argument in the Action datatype has been dropped
+     and similarly the client data argument to action callbacks has
+     been dropped.  Instead parameters specified in the translation
+     table are now passed into the action callback as a list of items
+     of type String in the third argument.  The second argument to the
+     action callback is now the Event.
+
+   * Attributes that used to be of type CallbackList are now of type
+     CallbackTerm, that is, they take a single callback as value, not a
+     list of callbacks.
+
+     The format of datatype XRectangle has changed. This is now a term
+     of the form `rectangle(X,Y,WIDTH,HEIGHT)'.
+
+   * The format of datatype XmClipboardPendingList has changed. This is
+     now a list of terms of the form
+     `clipboardpending(DATAID,PRIVATEID)'.
+
+   * The return value of `xtPending/1' has changed, returning an
+     XEventMask type rather than a `mask/1' structure.
+
+   * The predicate `proxtGetDefaultGC/2' is obsolete. The predicate
+     `xCreateGC/4' should be used to define a GC graphics context.
+
+   * The predicate `proxtFree/1' has been renamed `xtFree/1'.
+
+   * The values returned as datatype ClipboardStatus have been renamed
+     from `clipboard*' to `xmClipboard*' in line with the change made
+     in Motif2.1.
+
+   * Some values included in the datatype XmDialogType have changed.
+
+   * The predicate `xtOpenDisplay' now has an additional argument
+     specifying the APPNAME.
+
+   One of the main changes to ProXT 3.5 concerns the ability to extend
+ProXT with new widget classes and resources.  The file
+`demo(proxrt.pl)' demonstrates how a graph widget can be incorporated
+into ProXT.
+
+
+File: quintus.info,  Node: pxt-chg-bwd,  Prev: pxt-chg-hig,  Up: pxt-chg
+
+Backward Compatibility
+----------------------
+
+   Definitions for the predicates that are now obsolete in ProXT 3.5
+are provided in the file `library(proxtbc)'.  Many ProXT 3.1 programs
+will be able to run simply by adding the following declaration in the
+program:
+     :- use_module(library(proxtbc)).
+
+   This module includes appropriate definitions for
+`proxtCharPtrToString/2', `proxtStringToCharPtr/2' and
+`proxtGetDefaultCharset/1' to enable programs that use these in
+conjunction with `xmString' and `xmText' predicates to continue to work.
+
+
+File: quintus.info,  Node: mpg,  Next: cfu,  Prev: pxt,  Up: Top
+
+Prolog Reference Pages
+**********************
+
+* Menu:
+
+* mpg-top::                             Topical List of Prolog Built-ins
+* mpg-bpr::                             Built-in Predicates
+* mpg-ref::                             Reading the Reference pages
+
+
+File: quintus.info,  Node: mpg-ref,  Prev: mpg-bpr,  Up: mpg
+
+Reading the Reference pages
+===========================
+
+* Menu:
+
+* mpg-ref-ove::                         Overview
+* mpg-ref-mod::                         Mode Annotations
+* mpg-ref-cat::                         Predicate Categories
+* mpg-ref-aty::                         Argument Types
+* mpg-ref-exc::                         Exceptions
+* mpg-ref-abolish::                     abolish/[1,2]
+* mpg-ref-abort::                       abort/0
+* mpg-ref-absolute_file_name::          absolute_file_name/[2,3]
+* mpg-ref-add_advice::                  add_advice/3
+* mpg-ref-add_spypoint::                add_spypoint/1
+* mpg-ref-and::                         ,/2
+* mpg-ref-append::                      append/3
+* mpg-ref-uni::                         =/2
+* mpg-ref-arg::                         arg/3
+* mpg-ref-acm::                         </2, =:=/2, =</2, =\=/2, >/2, >=/2
+* mpg-ref-assert::                      assert/[1,2]
+* mpg-ref-assign::                      assign/2
+* mpg-ref-at_end_of_file::              at_end_of_file/[0,1]
+* mpg-ref-at_end_of_line::              at_end_of_line/[0,1]
+* mpg-ref-atom::                        atom/1
+* mpg-ref-atom_chars::                  atom_chars/2
+* mpg-ref-atomic::                      atomic/1
+* mpg-ref-bagof::                       bagof/3
+* mpg-ref-break::                       break/0
+* mpg-ref-cla::                         C/3
+* mpg-ref-call::                        call/1
+* mpg-ref-callable::                    callable/1
+* mpg-ref-character_count::             character_count/2
+* mpg-ref-check_advice::                check_advice/[0,1]
+* mpg-ref-clause::                      clause/[2,3]
+* mpg-ref-close::                       close/1
+* mpg-ref-compare::                     compare/3
+* mpg-ref-compile::                     compile/1
+* mpg-ref-compound::                    compound/1
+* mpg-ref-consult::                     consult/1
+* mpg-ref-copy_term::                   copy_term/2
+* mpg-ref-current_advice::              current_advice/3
+* mpg-ref-current_atom::                current_atom/1
+* mpg-ref-current_input::               current_input/1
+* mpg-ref-current_key::                 current_key/2
+* mpg-ref-current_module::              current_module/[1,2]
+* mpg-ref-current_op::                  current_op/3
+* mpg-ref-current_output::              current_output/1
+* mpg-ref-current_predicate::           current_predicate/2
+* mpg-ref-current_spypoint::            current_spypoint/1
+* mpg-ref-current_stream::              current_stream/3
+* mpg-ref-cut::                         !/0
+* mpg-ref-db_reference::                db_reference/1
+* mpg-ref-debug::                       debug/0
+* mpg-ref-debugging::                   debugging/0
+* mpg-ref-discontiguous::               discontiguous/1
+* mpg-ref-display::                     display/1
+* mpg-ref-dynamic::                     dynamic/1
+* mpg-ref-ensure_loaded::               ensure_loaded/1
+* mpg-ref-erase::                       erase/1
+* mpg-ref-qua::                         ^/2
+* mpg-ref-expand_term::                 expand_term/2
+* mpg-ref-extern::                      extern/1
+* mpg-ref-fail::                        fail/0
+* mpg-ref-false::                       false/0
+* mpg-ref-file_search_path::            file_search_path/2
+* mpg-ref-fileerrors::                  fileerrors/0
+* mpg-ref-findall::                     findall/3
+* mpg-ref-float::                       float/1
+* mpg-ref-flush_output::                flush_output/1
+* mpg-ref-foreign::                     foreign/[2,3]
+* mpg-ref-foreign_file::                foreign_file/2
+* mpg-ref-format::                      format/[2,3]
+* mpg-ref-functor::                     functor/3
+* mpg-ref-garbage_collect::             garbage_collect/0
+* mpg-ref-garbage_collect_atoms::       garbage_collect_atoms/0
+* mpg-ref-gc::                          gc/0
+* mpg-ref-gen::                         'QU_messages':generate_message/3
+* mpg-ref-generate_message_hook::       generate_message_hook/3
+* mpg-ref-get::                         get/[1,2]
+* mpg-ref-get0::                        get0/[1,2]
+* mpg-ref-get_profile_results::         get_profile_results/4
+* mpg-ref-rar::                         -->/2
+* mpg-ref-ground::                      ground/1
+* mpg-ref-halt::                        halt/[0,1]
+* mpg-ref-hash_term::                   hash_term/2
+* mpg-ref-help::                        help/[0,1]
+* mpg-ref-ith::                         ->/2
+* mpg-ref-ite::                         ;/2 --- if-then-else
+* mpg-ref-initialization::              initialization/1
+* mpg-ref-instance::                    instance/2
+* mpg-ref-integer::                     integer/1
+* mpg-ref-is::                          is/2
+* mpg-ref-keysort::                     keysort/2
+* mpg-ref-leash::                       leash/1
+* mpg-ref-length::                      length/2
+* mpg-ref-library_directory::           library_directory/1
+* mpg-ref-line_count::                  line_count/2
+* mpg-ref-line_position::               line_position/2
+* mpg-ref-listing::                     listing/[0,1]
+* mpg-ref-load_files::                  load_files/[1,2]
+* mpg-ref-load_foreign_executable::     load_foreign_executable/1
+* mpg-ref-load_foreign_files::          load_foreign_files/2
+* mpg-ref-manual::                      manual/[0,1]
+* mpg-ref-message_hook::                message_hook/3
+* mpg-ref-meta_predicate::              meta_predicate/1
+* mpg-ref-mode::                        mode/1
+* mpg-ref-module2::                     module/2
+* mpg-ref-module1::                     module/1
+* mpg-ref-multifile::                   multifile/1
+* mpg-ref-multifile_assertz::           multifile_assertz/1
+* mpg-ref-name::                        name/2
+* mpg-ref-nl::                          nl/[0,1]
+* mpg-ref-no_style_check::              no_style_check/1
+* mpg-ref-nocheck_advice::              nocheck_advice/[0,1]
+* mpg-ref-nodebug::                     nodebug/0
+* mpg-ref-nofileerrors::                nofileerrors/0
+* mpg-ref-nogc::                        nogc/0
+* mpg-ref-nonvar::                      nonvar/1
+* mpg-ref-noprofile::                   noprofile/0
+* mpg-ref-nospy::                       nospy/1
+* mpg-ref-nospyall::                    nospyall/0
+* mpg-ref-not::                         \+/1
+* mpg-ref-notrace::                     notrace/0
+* mpg-ref-number::                      number/1
+* mpg-ref-number_chars::                number_chars/2
+* mpg-ref-numbervars::                  numbervars/3
+* mpg-ref-on_exception::                on_exception/3
+* mpg-ref-op::                          op/3
+* mpg-ref-open::                        open/[3,4]
+* mpg-ref-open_null_stream::            open_null_stream/1
+* mpg-ref-or::                          ;/2 --- disjunction
+* mpg-ref-otherwise::                   otherwise/0
+* mpg-ref-peek_char::                   peek_char/[1,2]
+* mpg-ref-phrase::                      phrase/[2,3]
+* mpg-ref-portray::                     portray/1
+* mpg-ref-portray_clause::              portray_clause/1
+* mpg-ref-predicate_property::          predicate_property/2
+* mpg-ref-print::                       print/1
+* mpg-ref-print_message::               print_message/2
+* mpg-ref-print_message_lines::         print_message_lines/3
+* mpg-ref-profile::                     profile/[0,1,2,3]
+* mpg-ref-prolog_flag::                 prolog_flag/[2,3]
+* mpg-ref-prolog_load_context::         prolog_load_context/2
+* mpg-ref-prompt::                      prompt/[2,3]
+* mpg-ref-public::                      public/1
+* mpg-ref-put::                         put/[1,2]
+* mpg-ref-query_abbreviation::          query_abbreviation/3
+* mpg-ref-query_hook::                  query_hook/6
+* mpg-ref-qui::                         qui --- Quintus User Interface
+* mpg-ref-raise_exception::             raise_exception/1
+* mpg-ref-read::                        read/[1,2]
+* mpg-ref-read_term::                   read_term/[2,3]
+* mpg-ref-reconsult::                   reconsult/1
+* mpg-ref-recorda::                     recorda/3
+* mpg-ref-recorded::                    recorded/3
+* mpg-ref-recordz::                     recordz/3
+* mpg-ref-remove_advice::               remove_advice/3
+* mpg-ref-remove_spypoint::             remove_spypoint/1
+* mpg-ref-repeat::                      repeat/0
+* mpg-ref-restore::                     restore/1
+* mpg-ref-retract::                     retract/1
+* mpg-ref-retractall::                  retractall/1
+* mpg-ref-runtime_entry::               runtime_entry/1
+* mpg-ref-save_modules::                save_modules/2
+* mpg-ref-save_predicates::             save_predicates/2
+* mpg-ref-save_program::                save_program/[1,2]
+* mpg-ref-see::                         see/1
+* mpg-ref-seeing::                      seeing/1
+* mpg-ref-seek::                        seek/4
+* mpg-ref-seen::                        seen/0
+* mpg-ref-set_input::                   set_input/1
+* mpg-ref-set_output::                  set_output/1
+* mpg-ref-setof::                       setof/3
+* mpg-ref-show_profile_results::        show_profile_results/[0,1,2]
+* mpg-ref-simple::                      simple/1
+* mpg-ref-skip::                        skip/[1,2]
+* mpg-ref-skip_line::                   skip_line/[0,1]
+* mpg-ref-sort::                        sort/2
+* mpg-ref-source_file::                 source_file/[1,2,3]
+* mpg-ref-spy::                         spy/1
+* mpg-ref-tcm::                         @</2, @=</2, @>/2, @>=/2
+* mpg-ref-statistics::                  statistics/[0,2]
+* mpg-ref-stream_code::                 stream_code/2
+* mpg-ref-stream_position::             stream_position/[2,3]
+* mpg-ref-style_check::                 style_check/1
+* mpg-ref-subsumes_chk::                subsumes_chk/2
+* mpg-ref-tab::                         tab/[1,2]
+* mpg-ref-tell::                        tell/1
+* mpg-ref-telling::                     telling/1
+* mpg-ref-teq::                         ==/2, \==/2
+* mpg-ref-term_expansion::              term_expansion/2
+* mpg-ref-told::                        told/0
+* mpg-ref-trace::                       trace/0
+* mpg-ref-trimcore::                    trimcore/0
+* mpg-ref-true::                        true/0
+* mpg-ref-tty::                         ttyflush/0, ttyget/1, ttyget0/1, ttynl/0, ttyput/1, ttyskip/1, ttytab/1
+* mpg-ref-unv::                         =../2
+* mpg-ref-unix::                        unix/1
+* mpg-ref-unknown::                     unknown/2
+* mpg-ref-unknown_predicate_handler::   unknown_predicate_handler/3
+* mpg-ref-use_module::                  use_module/[1,2,3]
+* mpg-ref-user_help::                   user_help/0
+* mpg-ref-var::                         var/1
+* mpg-ref-version::                     version/[0,1]
+* mpg-ref-vms::                         vms/[1,2]
+* mpg-ref-volatile::                    volatile/1
+* mpg-ref-write::                       write/[1,2]
+* mpg-ref-write_canonical::             write_canonical/[1,2]
+* mpg-ref-write_term::                  write_term/[2,3]
+* mpg-ref-writeq::                      writeq/[1,2]
+
+
+File: quintus.info,  Node: mpg-ref-ove,  Next: mpg-ref-mod,  Up: mpg-ref
+
+Overview
+--------
+
+   The reference pages for Quintus Prolog built-in predicates conform
+to certain conventions concerning
+   * mode annotations
+
+   * predicate categories
+
+   * argument types
+
+   These are particularly important in utilizing the Synopsis and
+Arguments fields of each reference page.  The Synopsis field consists
+of the goal template(s) with mode annotations and a brief description
+of the purpose of the predicate.  For example, consider this excerpt
+from the reference page for `assert/[1,2]':
+
+Synopsis
+--------
+
+   `assert'(+CLAUSE) `assert'(+CLAUSE, -REF)
+
+   Adds dynamic clause CLAUSE to the Prolog database.  Returns database
+reference in REF.
+
+   The Arguments field lists, for each metavariable name in the
+template, its argument type, (e.g. "callable"), a brief description
+(sometimes omitted), and an indication (`[MOD]') if it does module name
+expansion.  For example,
+
+Arguments
+---------
+
+CLAUSE "callable" [MOD]
+     A valid Prolog clause.
+
+REF "db_reference"
+   For further information see *Note mpg-ref-cat::.
+
+
+File: quintus.info,  Node: mpg-ref-mod,  Next: mpg-ref-cat,  Prev: mpg-ref-ove,  Up: mpg-ref
+
+Mode Annotations
+----------------
+
+   The mode annotations are useful to tell whether an argument is input
+or output or both. They also describe formally the instantiation
+pattern to the call that makes the call to the built-ins determinate.
+
+   The mode annotations in the above example are `+' and `-'.
+Following is a complete description of the mode annotations you will
+find in the reference pages:
+
+`+'
+     Input argument. This argument will be inspected by the predicate,
+     and affects the behavior of the predicate, but will not be further
+     instantiated by the predicate. An exception is raised if the
+     argument isn't of the expected type. Note that the type class of
+     an input arguments might include "var".
+
+`-'
+     Determinate output argument. This argument is unified with the
+     output value of the predicate. An output argument is only tested
+     to be of the same type as the possible output value, if the type
+     is simple (see *Note mpg-ref-aty-sim::), and such testing is
+     helpful to the user.  Given the input arguments, the value of a
+     determinate output argument is uniquely defined.
+
+`*'
+     Nondeterminate output argument. This argument is unified with the
+     output value of the predicate. An output argument is only tested
+     to be of the same type as the possible output value, if the type
+     is simple (see *Note mpg-ref-aty-sim::), and such testing is
+     helpful to the user.  The predicate might be resatisfiable, and
+     might through backtracking generate more than one output value for
+     this argument.
+
+`+-'
+     An input argument that determinately might be further instantiated
+     by the predicate. Since it is an input argument, an exception will
+     be raised if it isn't in the expected domain.
+
+`+*'
+     An input argument that might be further instantiated by the
+     predicate.  The predicate might be resatisfiable, and might
+     through backtracking generate more than one instantiation pattern
+     for this argument. Since it is an input argument, an exception
+     will be raised if it isn't in the expected domain.
+
+   If the synopsis of a predicate has more than one mode declaration,
+the first (the topmost) that satisfies _both_ modes and types (of a
+goal instance), is the one to be applied (to that goal instance).
+
+   All built-in predicates of arity zero are determinate (with the
+exception of `repeat/0').
+
+   For _input_ arguments, an exception _will_ be raised if the argument
+isn't of the specified type.
+
+   For _output_ arguments, an exception _might_ be raised if the
+argument is "nonvar", and not of the specified type. The generated
+_value_ of the argument _will_ be of the specified type.
+
+
+File: quintus.info,  Node: mpg-ref-cat,  Next: mpg-ref-aty,  Prev: mpg-ref-mod,  Up: mpg-ref
+
+Predicate Categories
+--------------------
+
+   This section describes the categories of predicates and how they are
+indicated in the reference pages for predicates of each given category.
+The names of categories hookable, hook, extendible, declaration, and
+meta-logical appear to the right of the title of the reference page.
+The annotation development is used for predicates that are not
+available in runtime systems.
+
+   * "hookable":  The behavior of the predicate can be
+     customized/redefined by defining one or more hooks.  The mode and
+     type annotations of a hookable predicate might not be absolute,
+     since hooks added by the user can change the behavior.
+
+   * "hook": The predicate is user defined, and is called by a
+     "hookable" builtin. A hook must be defined in module user. For a
+     hook, the mode and type annotations should be seen as guide-lines
+     to the user who wants to add his own hook; they describe how the
+     predicate is used by the system.
+
+   * "extendible":   A dynamic, multifile predicate, to which new
+     clauses can be added by the user. For such a predicate, the mode
+     and type annotations should be seen as guide-lines to the user who
+     wants to extend the predicate; they describe how the predicate is
+     used by the system.
+
+   * "declaration":  You cannot call these directly but they can appear
+     in files as `:- DECLARATION' and give information to the compiler.
+     The goal template is preceded by `:-' in the Synopsis.
+
+   "Meta-predicates" and "operators" are recognizable by the implicit
+conventions described below.
+
+   * "Meta-predicates" are predicates that need to assume some module.
+     A list of built-in predicates that do module name expansion is
+     provided in *Note ref-mod-mne::.  The reference pages of these
+     predicates indicate which arguments are in a module expansion
+     position by marking them as  [MOD]  in the Arguments field.  That
+     is, the argument can be preceded by a module prefix (an "atom"
+     followed by a colon).  For example:
+          assert(mod:a(1), Ref)
+      If no module prefix is supplied, it will implicitly be set
+     to the calling module.  If the module prefix is a variable, an
+     instantiation error will be raised.  If it is not an atom a type
+     error will be raised.  So in any meta-predicate reference page the
+     following exceptions are implicit:
+
+Exceptions
+----------
+
+    `instantiation_error'
+          A module prefix is written as a variable.
+
+    `type_error'
+          A module prefix is not an atom.
+
+   *  Whenever the name of a built-in predicate is defined as
+     "operator", the name is presented in the Synopsis as an operator,
+     for example
+          `:- initialization' +GOAL                  (A)
+          +TERM1 `@>' +TERM2              (B)
+
+     It is thus always possible to see if a name is an operator or not.
+     The predicate can, of course, be written using the canonical
+     representation, even when the name is an operator.  Thus (A) and
+     (B) can be written as (C) and (D), respectively:
+          `:- initialization'(+GOAL)                  (C)
+          `@>'(+TERM1,  +TERM2)                (D)
+
+
+
+File: quintus.info,  Node: mpg-ref-aty,  Next: mpg-ref-exc,  Prev: mpg-ref-cat,  Up: mpg-ref
+
+Argument Types
+--------------
+
+* Menu:
+
+* mpg-ref-aty-sim::                     Simple Types
+* mpg-ref-aty-ety::                     Extended Types
+
+   The argument section describes the type/domain of each argument. If
+it is a `+' argument, then the built-in always tests if the argument is
+the right type/domain. In some cases, types/domains mentioned in the
+Arguments section need not be the smallest set of all acceptable
+arguments.
+
+
+File: quintus.info,  Node: mpg-ref-aty-sim,  Next: mpg-ref-aty-ety,  Up: mpg-ref-aty
+
+Simple Types
+............
+
+   The simple argument types are those for which type tests are
+provided.  They are summarized in *Note mpg-top-typ::.
+
+   In addition there is "stream_object", a special type of term
+described in *Note ref-iou-sfh-sob::.
+
+   If an output argument is given the type "var", it means that that
+argument is not used by the predicate in the given instantiation
+pattern.
+
+
+File: quintus.info,  Node: mpg-ref-aty-ety,  Prev: mpg-ref-aty-sim,  Up: mpg-ref-aty
+
+Extended Types
+..............
+
+   Following is a list of argument types that are defined in terms of
+the simple argument types. This is a formal description of the
+types/domains used in the Arguments sections of the reference pages for
+the built-ins. The rules are given in BNF (Backus-Naur form).
+
+TERM               ::= (any Prolog term) | VAR | NONVAR
+
+LIST               ::= `[]' | `[TERM|LIST]'
+
+LIST OF TYPE       ::= `[]' | `[TYPE|LIST OF TYPE]'
+
+ONE OF             ::= ELEMENT | ONE OF REST
+[ELEMENT|REST]     
+
+ARITY              ::= {An INTEGER X in the range 0..255}
+
+CHAR               ::= {An INTEGER X in the range 1..255}
+
+CHARS              ::= `[]' | `[CHAR|CHARS]'
+
+PAIR               ::= `TERM-TERM'
+
+SIMPLE_PRED_SPEC   ::= `ATOM/ARITY'
+
+PRED_SPEC          ::= SIMPLE_PRED_SPEC | `ATOM:PRED_SPEC'
+
+PRED_SPEC_TREE     ::= `[]' | PRED_SPEC |
+                   `[PRED_SPEC_TREE|PRED_SPEC_TREE]'
+
+PRED_SPEC_FOREST   ::= `[]' | PRED_SPEC
+                   | `[PRED_SPEC_FOREST|PRED_SPEC_FOREST]'
+                   | `PRED_SPEC_FOREST,PRED_SPEC_FOREST'
+
+GEN_PRED_SPEC      ::= ATOM | `ATOM:GEN_PRED_SPEC'
+                   | SIMPLE_PRED_SPEC
+
+GEN_PRED_SPEC_TREE ::= `[]' | GEN_PRED_SPEC
+                   | `[GEN_PRED_SPEC_TREE|GEN_PRED_SPEC_TREE]'
+
+GEN_PRED_SPEC_TREE_VAR::= GEN_PRED_SPEC_TREE {in which all atoms also can
+                   be variables}
+
+EXTERN_SPEC        ::= ATOM
+                   | COMPOUND {all arguments being EXTERN_ARG}
+
+EXTERN_ARG         ::= `+INTERF_ARG_TYPE' | `-INTERF_ARG_TYPE'
+
+FOREIGN_SPEC       ::= ATOM
+                   | COMPOUND {all arguments being FOREIGN_ARG}
+
+FOREIGN_ARG        ::= `+INTERF_ARG_TYPE' | `-INTERF_ARG_TYPE' |
+                   `[-INTERF_ARG_TYPE]'
+
+INTERF_ARG_TYPE    ::= `integer' | `float' | `single' | `double' | `atom'
+                   | `term' | `string' | `string(INTEGER)' | `address' |
+                   `address(ATOM)'
+
+FILE_SPEC          ::= ATOM | `ATOM(FILE_SPEC)'
+
+EXPR               ::= {everything that is accepted as second argument
+                   to `is/2';
+                   see the description of arithmetic expressions in
+                   *Note ref-ari-aex::.}
+
+
+File: quintus.info,  Node: mpg-ref-exc,  Next: mpg-ref-abolish,  Prev: mpg-ref-aty,  Up: mpg-ref
+
+Exceptions
+----------
+
+   The exceptions field of the reference page consists of a list of
+exception type names, each followed by a brief description of the
+situation that causes that type of exception to be raised.  The
+following example comes from the reference page for `assert/[1,2]':
+
+Exceptions
+----------
+
+`instantiation_error'
+     If HEAD (in CLAUSE) or M is uninstantiated.
+
+`type_error'
+     If HEAD is not of type callable, or if M is not an atom, or if
+     BODY is not a valid clause body.
+
+   For _input_ arguments, an exception _will_ be raised if the argument
+isn't of the specified type.
+
+   For _output_ arguments, an exception _might_ be raised if the
+argument is "nonvar", and not of the specified type. The generated
+_value_ of the argument _will_ be of the specified type.
+
+
+File: quintus.info,  Node: mpg-top,  Next: mpg-bpr,  Up: mpg
+
+Topical List of Prolog Built-ins
+================================
+
+* Menu:
+
+* mpg-top-ari::                         Arithmetic
+* mpg-top-cio::                         Character I/O
+* mpg-top-con::                         Control
+* mpg-top-dat::                         Database
+* mpg-top-deb::                         Debugging
+* mpg-top-eqs::                         Executables and QOF-Saving
+* mpg-top-est::                         Execution State
+* mpg-top-fnm::                         Filename Manipulation
+* mpg-top-fsh::                         File and Stream Handling
+* mpg-top-fin::                         Foreign Interface
+* mpg-top-gru::                         Grammar Rules
+* mpg-top-hlp::                         Help
+* mpg-top-hok::                         Hook Predicates
+* mpg-top-lis::                         List Processing
+* mpg-top-lod::                         Loading Programs
+* mpg-top-mem::                         Memory
+* mpg-top-msg::                         Messages
+* mpg-top-mod::                         Modules
+* mpg-top-sta::                         Program State
+* mpg-top-tcm::                         Term Comparison
+* mpg-top-tha::                         Term Handling
+* mpg-top-tio::                         Term I/O
+* mpg-top-typ::                         Type Tests
+
+   Following is a complete list of Quintus Prolog built-in predicates,
+arranged by topic.  A predicate may be included in more than one list.
+
+
+File: quintus.info,  Node: mpg-top-ari,  Next: mpg-top-cio,  Up: mpg-top
+
+Arithmetic
+----------
+
+`Y is X'
+     Y is the value of arithmetic expression X
+
+`X =:= Y'
+     the results of evaluating terms X and Y as arithmetic expressions
+     are equal.
+
+`X =\= Y'
+     the results of evaluating terms X and Y as arithmetic expressions
+     are not equal.
+
+`X < Y'
+     the result of evaluating X as an arithmetic expression is less
+     than the result of evaluating Y as an arithmetic expression.
+
+`X >= Y'
+     the result of evaluating X as an arithmetic expression is not less
+     than the result of evaluating Y as an arithmetic expression.
+
+`X > Y'
+     the result of evaluating X as an arithmetic expression X is
+     greater than the result of evaluating Y as an arithmetic
+     expression.
+
+`X =< Y'
+     the result of evaluating X as an arithmetic expression is not
+     greater than the result of evaluating Y as an arithmetic
+     expression.
+
+
+File: quintus.info,  Node: mpg-top-cio,  Next: mpg-top-con,  Prev: mpg-top-ari,  Up: mpg-top
+
+Character I/O
+-------------
+
+`at_end_of_file'
+     testing whether end of file is reached for current input stream
+
+`at_end_of_file(S)'
+     testing whether end of file is reached for the input stream S
+
+`at_end_of_line'
+     testing whether at end of line on current input stream
+
+`at_end_of_line(S)'
+     testing whether at end of line on input stream S
+
+`get(C)'
+     C is the next non-blank character on the current input stream
+
+`get(S,C)'
+     C is the next non-blank character on input stream S
+
+`get0(C)'
+     C is the next character on the current input stream
+
+`get0(S,C)'
+     C is the next character on input stream S
+
+`nl'
+     send a newline to the current output stream
+
+`nl(S)'
+     send a newline to stream S
+
+`peek_char(C)'
+     looks ahead for next input character on the current input stream
+
+`peek_char(S,C)'
+     looks ahead for next input character on the input stream S
+
+`put(C)'
+     write character C to the current output stream
+
+`put(S,C)'
+     write character C to stream S
+
+`skip(C)'
+     skip input on the current input stream until after character C
+
+`skip(S,C)'
+     skip input on stream S until after character C
+
+`skip_line'
+     skip the rest input characters of the current line (record) on the
+     current input stream
+
+`skip_line(S)'
+     skip the rest input characters of the current line (record) on the
+     input stream S
+
+`tab(N)'
+     send N spaces to the current output stream
+
+`tab(S,N)'
+     send N spaces to stream S
+
+`ttyget(C)'
+     the next non-blank character input from the terminal is C
+
+`ttyget0(C)'
+     the next character read in from the terminal is C
+
+`ttynl'
+     display a new line on the terminal
+
+`ttyput(C)'
+     the next character sent to the terminal is C
+
+`ttyskip(C)'
+     skip over terminal input until after character C
+
+`ttytab(N)'
+     send N spaces to the terminal
+
+
+File: quintus.info,  Node: mpg-top-con,  Next: mpg-top-dat,  Prev: mpg-top-cio,  Up: mpg-top
+
+Control
+-------
+
+`P,Q'
+     prove P and Q
+
+`P;Q'
+     prove P or Q
+
+`M:P'
+     call P in module M
+
+`P->Q;R'
+     if P succeeds, prove Q; if not, prove R
+
+`P->Q'
+     if P succeeds, prove Q; if not, fail
+
+`!'
+     cut any choices taken in the current procedure
+
+`\+ P'
+     goal P is not provable
+
+`X ^ P'
+     there exists an X such that P is provable (used in `setof' and
+     `bagof')
+
+`bagof(X,P,B)'
+     B is the bag of instances of X such that P is provable
+
+`call(P)'
+     prove (execute) P
+
+`fail'
+     fail (start backtracking)
+
+`false'
+     same as fail
+
+`findall(T,G,L)'
+     L is the list of all solutions T for the goal G
+
+`otherwise'
+     same as true
+
+`repeat'
+     succeed repeatedly on backtracking
+
+`setof(X,P,S)'
+     S is the set of instances of X such that P is provable
+
+`true'
+     succeed
+
+
+File: quintus.info,  Node: mpg-top-dat,  Next: mpg-top-deb,  Prev: mpg-top-con,  Up: mpg-top
+
+Database
+--------
+
+`abolish(F)'
+     abolish the predicate(s) specified by F
+
+`abolish(F,N)'
+     abolish the predicate named F of arity N
+
+`assert(C)'
+     clause C (for dynamic predicate) is added to database
+
+`assert(C,R)'
+     clause C is asserted; reference R is returned
+
+`asserta(C)'
+     clause C is asserted before existing clauses
+
+`asserta(C,R)'
+     clause C is asserted before existing clauses; reference R is
+     returned
+
+`assertz(C)'
+     clause C is asserted after existing clauses
+
+`assertz(C,R)'
+     clause C is asserted after existing clauses; reference R is
+     returned
+
+`clause(P,Q)'
+     there is a clause for a dynamic predicate with head P and body Q
+
+`clause(P,Q,R)'
+     there is a clause for a dynamic predicate with head P, body Q, and
+     reference R
+
+`current_key(N, K)'
+     N is the name and K is the key of a recorded term
+
+`dynamic(P)'
+     declaration that predicates specified by P are dynamic
+
+`erase(R)'
+     erase the clause or record with reference R
+
+`instance(R,T)'
+     T is an instance of the clause or term referenced by R
+
+`multifile_assertz(C)'
+     add clause C to the end of a (possibly compiled) multifile
+     procedure
+
+`recorda(K,T,R)'
+     make term T the first record under key K; reference R is returned
+
+`recorded(K,T,R)'
+     term T is recorded under key K with reference R
+
+`recordz(K,T,R)'
+     make term T the last record under key K; reference R is returned
+
+`retract(C)'
+     erase the first dynamic clause that matches C
+
+`retractall(H)'
+     erase every clause whose head matches H
+
+
+File: quintus.info,  Node: mpg-top-deb,  Next: mpg-top-eqs,  Prev: mpg-top-dat,  Up: mpg-top
+
+Debugging
+---------
+
+`add_spypoint(P)'
+     adds a spypoint to a procedure or to a particular call to a
+     procedure
+
+`add_advice(G,P,A)'
+     associates advice with a port of Prolog predicate model
+
+`check_advice'
+     enables advice checking for all predicates with advice
+
+`check_advice(P)'
+     enables advice checking for the specified predicates
+
+`current_advice(G,P,A)'
+     find out what advice exists
+
+`current_spypoint(L)'
+     find out what spypoints exist
+
+`debug'
+     switch on debugging
+
+`debugging'
+     display debugging status information
+
+`get_profile_results(B,N,L,T)'
+     get the results of the last execution profile
+
+`leash(M)'
+     set the debugger's leashing mode to M
+
+`nocheck_advice'
+     disables all advice-checking
+
+`nocheck_advice(P)'
+     disables advice-checking from specified predicates
+
+`nodebug'
+     switch off debugging
+
+`noprofile'
+     switch off profiling
+
+`nospy(P)'
+     remove spypoints from the procedure(s) specified by P
+
+`nospyall'
+     remove all spypoints
+
+`notrace'
+     switch off debugging (same as `nodebug/0')
+
+`profile'
+     switch on profiling
+
+`profile(G)'
+     switch on profiling and profile the execution of goal G
+
+`remove_advice(G,P,A)'
+     remove advice from a port/predicate
+
+`remove_spypoint'
+     removes a spypoint
+
+`show_profile_results'
+     show the results of the last execution profile by time
+
+`show_profile_results(B)'
+     show the results of the last execution profile by B
+
+`show_profile_results(B,N)'
+     show the results of the last execution profile by B, listing N
+     predicates
+
+`spy(P)'
+     set spypoints on the procedure(s) specified by P
+
+`trace'
+     switch on debugging and start tracing immediately
+
+`unknown_predicate_handler(G,M,N)'
+     user-defined handle for unknown predicates.
+
+
+File: quintus.info,  Node: mpg-top-eqs,  Next: mpg-top-est,  Prev: mpg-top-deb,  Up: mpg-top
+
+Executables and QOF-Saving
+--------------------------
+
+`initialization(G)'
+     G is to be run when program is started
+
+`runtime_entry(S)'
+     entry point for a runtime system
+
+`save_modules(L,F)'
+     save the modules specifed in L into file F
+
+`save_predicates(L,F)'
+     save the predicates specified in L into file  F
+
+`version'
+     display system identification messages
+
+`version(A)'
+     add the atom A to the list of introductory messages
+
+`volatile(P)'
+     predicates specified by P are not to be included in saves.
+
+`save_program(F)'
+     save all Prolog data
+
+
+File: quintus.info,  Node: mpg-top-est,  Next: mpg-top-fnm,  Prev: mpg-top-eqs,  Up: mpg-top
+
+Execution State
+---------------
+
+`abort'
+     abort execution of the program; return to current break level
+
+`break'
+     start a new break-level to interpret commands from the user
+
+`halt'
+     exit from Prolog
+
+`on_exception(E,P,H)'
+     specify a handler H for any exception E arising in the execution
+     of the goal P
+
+`raise_exception(E)'
+     raise an exception
+

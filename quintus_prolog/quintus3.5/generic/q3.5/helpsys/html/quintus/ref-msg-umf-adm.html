@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Adding messages</h5>
+
+   <p>To add new messages, define clauses for <code>generate_message_hook/3</code>. 
+For instance, to create a new message term indicating that the world
+is round, one could choose the message term <code>round_world</code> and provide
+the definition:
+
+<pre class="example">     generate_message_hook(round_world) --&gt; ['The world is round.'-[],nl]
+     </pre>
+
+   <blockquote>
+ <strong>Please note:</strong> The atom <code>nl</code> is used for breaking the message into
+lines.  Using the format specification <code>~n</code> (new-line) is strongly discouraged,
+since applications typically require explicit control over new-lines. 
+</blockquote>
+
+   <p>Though this was not obvious from the <code>round_world</code> example, message
+terms parse to a list of <var>Control-Args</var> pairs, where <var>Control</var> is a format
+specification string, and <var>Args</var> is the list of arguments for the given
+Control string.  To illustrate, if we wanted to say that the world was
+flat and wet, we could write
+
+<pre class="example">     
+     user:generate_message_hook(world(X,Y))--&gt;
+                            ['The world is ~w and ~w.'-[X,Y],nl].
+     
+     ?- print_message(help,world(flat,wet)).
+     </pre>
+
+   <p>Here is an example of how one might implement a new exception,
+<code>bad_font</code>, when the File associated with that font doesn't
+exist.
+
+<pre class="example">     check_font(Font,File):-
+         (   file_exists(File)-&gt;true
+         ;   raise_exception(bad_font(Font, File))
+         ).
+     
+     generate_message_hook(bad_font(Font,File)) --&gt;
+         ['Can''t find the file ~w corresponding to font ~w'-
+             [File, Font],nl]).
+     </pre>
+
+   <p>Instead of using the message facility, you could use an existing error message
+in this way:
+<pre class="example">     check_font1(Font,File):-
+         (   file_exists(File)-&gt;true
+         ;   raise_exception(existence_error(check_font1(Font,File),2,
+                                                         file, File,0))
+         ).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-msg-umf-cmt.html#ref-msg-umf-cmt">Next</a>
+<li><a rel="up" accesskey="u" href="ref-msg-umf.html#ref-msg-umf">Up</a>
+</ul>
+</div>
+   </body></html>
+

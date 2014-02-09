@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>library(ctr)</code></h4>
+
+   <p><code>library(ctr)</code> provides an array of 32 global integer variables. 
+It was written some time ago for compatibility with another dialect of
+Prolog.  The operations provided on these variables are
+     <dl>
+
+     <br><dt><code>ctr_set(</code><var>+Ctr</var><code>, </code><var>+N</var><code>)</code>
+     <dd>ctr[<var>Ctr</var>] := <var>N</var>
+
+     <br><dt><code>ctr_set(</code><var>+Ctr</var><code>, </code><var>+N</var><code>, </code><var>?Old</var><code>)</code>
+     <dd>
+<var>Old</var> is ctr[<var>Ctr</var>], ctr[<var>Ctr</var>] := <var>N</var>
+
+     <br><dt><code>ctr_inc(</code><var>+Ctr</var><code>)</code>
+     <dd>ctr[<var>Ctr</var>] := ctr[<var>Ctr</var>] + 1
+
+     <br><dt><code>ctr_inc(</code><var>+Ctr</var><code>, </code><var>+N</var><code>)</code>
+     <dd>ctr[<var>Ctr</var>] := ctr[<var>Ctr</var>] + <var>N</var>
+
+     <br><dt><code>ctr_inc(</code><var>+Ctr</var><code>, </code><var>+N</var><code>, </code><var>?Old</var><code>)</code>
+     <dd>
+<var>Old</var> is ctr[<var>Ctr</var>], ctr[<var>Ctr</var>] := ctr[<var>Ctr</var>] + N
+
+     <br><dt><code>ctr_dec(</code><var>+Ctr</var><code>)</code>
+     <dd>ctr[<var>Ctr</var>] := ctr[<var>Ctr</var>] - 1
+
+     <br><dt><code>ctr_dec(</code><var>+Ctr</var><code>, </code><var>+N</var><code>)</code>
+     <dd>ctr[<var>Ctr</var>] := ctr[<var>Ctr</var>] - <var>N</var>
+
+     <br><dt><code>ctr_dec(</code><var>+Ctr</var><code>, </code><var>+N</var><code>, </code><var>?Old</var><code>)</code>
+     <dd>
+<var>Old</var> is ctr[<var>Ctr</var>], ctr[<var>Ctr</var>] := ctr[<var>Ctr</var>] - <var>N</var>
+
+     <br><dt><code>ctr_is(</code><var>+Ctr</var><code>, </code><var>?Old</var><code>)</code>
+     <dd><var>Old</var> is ctr[<var>Ctr</var>]
+</dl>
+
+   <p>If you want to use these counters in a nestable construct, remember
+to reset them properly; for example,
+<pre class="example">     count_solutions(Goal, Count) :-
+             ctr_set(17, 0, Old),
+             (call(Goal), ctr_inc(17), fail ; true),
+             ctr_set(17, Old, X),
+             Count = X.
+     </pre>
+
+   <p>This will work even if <var>Goal</var> contains a call to <code>count_solutions/2</code>, because
+the old counter value is saved on entry to the clause, and restored on
+exit.  Contrast this with the following example:
+<pre class="example">     count_solutions(Goal, Count) :-
+             ctr_set(17, 0),
+             (call(Goal), ctr_inc(17), fail ; true),
+             ctr_set(17, X),
+             Count = X.
+     </pre>
+
+   <p>In this example, if Goal contains a call to <code>count_solutions/2</code>,
+the inner call will clobber the counter of the outer call, and the predicate
+will not work.
+
+   <p>This file is provided mainly to allow you to experience (by doing your
+own timing tests) that the foreign interface, <em>not</em> the database, is
+the tool for hacking global variables in Prolog, provided that the
+global variables take only constants as values.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-mis-date.html#lib-mis-date">Next</a>
+<li><a rel="up" accesskey="u" href="lib-mis.html#lib-mis">Up</a>
+</ul>
+</div>
+   </body></html>
+

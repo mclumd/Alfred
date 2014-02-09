@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>put/[1,2]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>put(</code><var>+Char</var><code>)</code>
+
+   <p><code>put(</code><var>+Stream, +Char</var><code>)</code>
+
+   <p>Evaluates the integer expression <var>Char</var>, and writes the lower 8-bits
+to the current output stream or to <var>Stream</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>a valid Prolog output stream
+
+     <br><dt><var>Char</var> <dfn>expr</dfn>
+     <dd>a legal character code or an integer
+expression.  A useful form of integer expression for this argument is
+a single character following <code>0'</code>, such as <code>0'a</code>, <code>0'b</code>, etc.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>put/[1,2]</code> writes out the least significant 8 bits of the
+evaluated <var>Char</var> to the specified output stream unless
+<var>Char</var> is evaluated to be the line border code of the stream. 
+The character written out is usually stored in the buffer of the
+stream.  If the buffer overflows, it is written out to the disk.  If
+the evaluated <var>Char</var> is the same as the line border code of the
+output stream, the operation works like <code>nl/[0,1]</code>.  The default
+line border code for a text stream and a tty stream is the linefeed
+character (ASCII code 10).
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>),
+plus:
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+                <var>Char</var> is not instantiated.
+
+     <br><dt><code>type_error</code>
+     <dd>
+                <var>Char</var> is not an integer type.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+                There is an error in the bottom layer of write function
+                of the stream.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>nl/[0,1]</code>,
+<code>skip_line/[0,1]</code>,
+<code>open/[3,4]</code>
+
+   <a href="ref-iou.html#ref-iou">ref-iou</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-query_abbreviation.html#mpg-ref-query_abbreviation">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-public.html#mpg-ref-public">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

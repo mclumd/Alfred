@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Overview</h4>
+
+   <p>This section gives a number of tips on how to organize your programs
+for increased efficiency.  A lot of clarity and efficiency is gained
+by sticking to a few basic rules.  This list is necessarily very
+incomplete.  The reader is referred to textbooks such as <cite>The
+Craft of Prolog</cite> by Richard O'Keefe, MIT Press, 1990, a thorough
+exposition of the elements of Prolog programming style and techniques.
+
+     <ul>
+
+     <li>Don't write code in the first place if there is a library
+predicate that will do the job. 
+<li>Write clauses representing base case before clauses
+representing recursive cases. 
+<li>Input arguments before output arguments in clause
+heads and goals. 
+<li>Use pure data structures instead of database changes. 
+<li>Use cuts sparingly, and <em>only</em> at proper places. 
+A cut should be placed at the exact point that it
+is known that the current choice is the correct one: no sooner, no
+later. 
+<li>Make cuts as local in their effect as possible.  If a
+predicate is intended to be determinate, define <em>it</em> as
+such; do not rely on its callers to prevent unintended
+backtracking. 
+<li>Binding output arguments before a cut is a common
+source of programming errors, so don't do it. 
+<li>Replace cuts by if-then-else constructs if the test is simple enough. 
+<li>Use disjunctions sparingly, <em>always</em> put parentheses around
+them, <em>never</em> put parentheses around the individual disjuncts, and
+<em>never</em> put the <code>;</code> at the end of a line. 
+<li>Write the clauses of a predicate so that they discriminate
+on the principal functor of the first argument (see below). 
+For maximum efficiency, avoid "defaulty" programming ("catch-all"
+clauses). 
+<li>Don't use lists (<code>[...]</code>), "round lists" (<code>(...)</code>),
+or braces (<code>{...</code>}) to represent compound terms, or
+"tuples", of some fixed arity.  The name of a compound
+term comes for free. 
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-cut.html#bas-eff-cut">Next</a>
+<li><a rel="up" accesskey="u" href="bas-eff.html#bas-eff">Up</a>
+</ul>
+</div>
+   </body></html>
+

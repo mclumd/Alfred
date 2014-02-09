@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>nonmember(</code><var>+Element</var><code>, </code><var>+List</var><code>)</code></h5>
+
+   <p><code>nonmember(</code><var>+Element</var><code>, </code><var>+List</var><code>)</code>
+is true when <var>Element</var> does not occur in the <var>List</var>.  For <code>nonmember/2</code>
+to instantiate <var>Element</var> in any way would be meaningless, as there are
+infinitely many terms that do not occur in any given list.
+
+   <p><code>nonmember/2</code> should only be used when <var>List</var>
+and <var>Element</var> are sufficiently instantiated that you can tell whether
+ <var>Element</var> occurs in  <var>List</var> or not without instantiating any variables. 
+If this requirement is not met, the answers generated may not be exactly
+what you would expect from the logic.
+
+   <p>For example, some valid uses of <code>nonmember/2</code> are:
+<pre class="example">     | ?- <kbd>nonmember(a, [x,y,z]).</kbd>
+     
+     yes
+     | ?- <kbd>nonmember(x, [x,y,z]).</kbd>
+     
+     no
+     </pre>
+
+   <p>In the following examples, <code>nonmember/2</code> is invalidly used with
+insufficiently instantiated arguments.  In these cases it simply fails.
+<pre class="example">     | ?- <kbd>nonmember(X, [x,y,z]).</kbd>
+     
+     no
+     | ?- <kbd>nonmember(x, [X]).</kbd>
+     
+     no
+     | ?- <kbd>nonmember(x, X).</kbd>
+     
+     no
+     </pre>
+
+   <p>Use <code>nonmember/2</code> to check whether a known element occurs in a known
+list, in preference to <code>\+ member/2</code> or <code>\+ memberchk/2</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-lis-basics-memberchk.html#lib-lis-basics-memberchk">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-lis-basics.html#lib-lis-basics">Up</a>
+</ul>
+</div>
+   </body></html>
+

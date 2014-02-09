@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Drawing text</h4>
+
+   <p>Drawing text in ProXL is like drawing lines or shapes.  This means that
+every command to draw text must supply a position at which the text is
+to be drawn.  ProXL does not maintain a <dfn>current</dfn> drawing
+position in a window, so you cannot use the standard Prolog
+primitives such as <code>write/[1,2]</code>, or <code>format/[2,3]</code><a rel="footnote" href="#fn-1"><sup>1</sup></a> for putting text into an X window.
+
+   <p>Furthermore, note that the position in a drawable at which text is to be
+drawn is given in pixel coordinates, not character coordinates.  There
+are three reasons for this:
+
+     <ul>
+
+     <li>Using pixel coordinates gives you much greater flexibility in
+positioning and spacing of text. 
+<li>The font in which you are printing may not be fixed width (see
+<a href="pxl-bas-graf-font.html#pxl-bas-graf-font">pxl-bas-graf-font</a>), so you cannot reliably determine where to print by
+multiplying the width of a character by the number of characters. 
+<li>X provides for fonts that write from right to left, so it is not
+always sufficient to add the pixel width of a string to its origin
+position to determine its right side.  In this case, the origin point
+is at the right end of the string. 
+</ul>
+
+   <p>ProXL provides primitives for determining how large a string will be
+when it is displayed, including a primitive that will determine how
+many pixels left, right, above, and below the origin point a text
+string will occupy.
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>Of course, the
+Prolog text output primitives will continue to work in the window you
+are running Prolog in.  This is usually a terminal emulator window
+maintained by a program such as xterm; X does not automatically do
+this.</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-bas-pix.html#pxl-bas-pix">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-bas-lin.html#pxl-bas-lin">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-bas.html#pxl-bas">Up</a>
+</ul>
+</div>
+   </body></html>
+

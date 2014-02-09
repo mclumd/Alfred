@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>call_servant(</code><var>+Goal</var><code>)</code></h5>
+
+   <p>Once a servant has been created (by <code>create_servant/2</code>), goals can be sent to
+it for evaluation, by using <code>call_servant(</code><var>Goal</var><code>)</code>.  This sends the goal
+<var>Goal</var> to the servant, which evaluates it (with respect to its own
+database) and sends all the answers back.  The answers are returned as
+solutions of <code>call_servant/1</code>.  The answers bind the variables in
+<var>Goal</var>.  Answers after the first are obtained by backtracking into
+<code>call_servant/1</code>.  Note that the servant computes and sends <em>all</em> answers
+back to the master, even if the caller uses a cut to throw away all but the
+first.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-p2p-bag_of_all_servant.html#ipc-rpc-p2p-bag_of_all_servant">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc-p2p-create_servant.html#ipc-rpc-p2p-create_servant">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc-p2p.html#ipc-rpc-p2p">Up</a>
+</ul>
+</div>
+   </body></html>
+

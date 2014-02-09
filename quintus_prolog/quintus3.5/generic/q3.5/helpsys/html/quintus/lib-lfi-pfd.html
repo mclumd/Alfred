@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Finding Properties of Files and Directories</h4>
+
+   <p>Once you have obtained a file or directory name, you can ask
+about the properties of that file or directory.  The set of
+properties available is inherently operating-system-dependent. 
+This section describes the facilities currently available under UNIX
+and the restrictions in the Windows version.
+
+   <p>Properties fall into several classes.  The current classes are
+     <dl>
+
+     <br><dt><code>boolean</code>
+     <dd>having values <code>true</code> and <code>false</code>
+
+     <br><dt><code>integer</code>
+     <dd>having non-negative integer values
+
+     <p>In the Windows version no <code>_id</code> information, such as
+<code>user_id</code>, is obtained.
+
+     <br><dt><code>who</code>
+     <dd>(UNIX only) values are sub<em>sequences</em> of <code>[user,group,other]</code> -- that is,
+the order of the elements must be preserved.  Sub<em>sets</em>
+will not do -- <code>[other,user]</code> is not a possible value.
+
+     <br><dt><code>date</code>
+     <dd>values are <code>date(</code><var>Year</var><code>, </code><var>Month</var><code>, </code><var>Day</var><code>)</code> terms.  The arguments are
+this way round so you can use them for sorting.
+
+     <br><dt><code>time</code>
+     <dd>values are <code>date(</code><var>Year</var><code>, </code><var>Month</var><code>, </code><var>Day</var><code>, </code><var>Hour</var><code>, </code><var>Minute</var><code>, </code><var>Second</var><code>)</code> terms,
+with <var>Hour</var> on a 24-hour clock.  The arguments are in this order
+so you can use them for sorting.  The times given are <em>local</em> times, not
+GMT times.  See <code>ctime(3)</code>.
+
+     <br><dt><code>user</code>
+     <dd>(UNIX only) values are user names
+
+     <br><dt><code>group</code>
+     <dd>(UNIX only) values are group names
+</dl>
+
+   <p>The properties, with their types, are
+<pre class="example">     readable        : boolean
+     writable        : boolean
+     executable      : boolean       file only
+     searchable      : boolean       directory only
+     set_user_id     : boolean       file only
+     set_group_id    : boolean       file only
+     save_text       : boolean       file only
+     only_one_link   : boolean       file only
+     who_can_read    : who
+     who_can_write   : who
+     who_can_execute : who           file only
+     who_can_search  : who           directory only
+     access_date     : date
+     modify_date     : date
+     create_date     : date
+     access_time     : time
+     modify_time     : time
+     create_time     : time
+     owner_user_name : user
+     owner_group_name: group
+     owner_user_id   : integer
+     owner_group_id  : integer
+     number_of_links : integer       file only
+     size_in_bytes   : integer       file only
+     size_in_blocks  : integer       file only
+     block_size      : integer       file only
+     </pre>
+
+   <p>The properties <code>readable</code>, <code>writable</code>, <code>executable</code>, and
+<code>searchable</code> ask the question "can this process do
+such-and-such to the file". For more information, see
+<code>access(2)</code>.  For more information on
+the other properties, see <code>stat(2)</code>.
+
+   <p>The basic routine for determining the properties of files is
+
+     <dl>
+
+     <br><dt><code>file_property(</code><var>+File</var><code>, </code><var>?Property</var><code>, </code><var>?Value</var><code>)</code>
+     <dd>
+<code>file_property/3</code> is true when <var>File</var> is the name of a visible
+regular file, <var>Property</var> is one of the properties listed in
+the table above, other than those specific to directories,
+and <var>Value</var> is the actual value of <var>Property</var> for that <var>File</var>. 
+<var>File</var>  must be specified; there may be tens of thousands
+of files with a particular attribute!  However, you can enumerate
+all the properties of a given <var>File</var>
+(by leaving <var>Property</var> uninstantiated) if you like. 
+</dl>
+
+   <p><code>file_property/3</code> has the following variant:
+     <dl>
+
+     <br><dt><code>file_property(</code><var>+File</var><code>, </code><var>?Property</var><code>)</code>
+     <dd>
+is only allowed when <var>Property</var> is a boolean property, and is otherwise
+equivalent to the call
+     <pre class="example">          file_property(<var>File</var>, <var>Property</var>, true)
+          </pre>
+
+     <p>(Note that if there is a user with login name <code>true</code>,
+<code>file_property(F,owner_user_name,true)</code> is possible, but
+<code>file_property(F,owner_user_name)</code> is not; the <var>Property</var> really must
+be a boolean property, not just have <code>true</code> as its value.) 
+In particular, a quick way to check whether <var>File</var> names a file that
+this process can read is to ask
+     <pre class="example">          file_property(<var>File</var>, readable)
+          </pre>
+
+     <p>See also <code>can_open_file/3</code> in <code>library(files)</code>.  Note that
+     <pre class="example">          file_property(<var>File</var>, writable)
+          </pre>
+
+     <p>asks whether a writable <var>File</var> already exists; if you want to
+know whether <code>open(</code><var>File</var><code>, write, Stream)</code> will be allowed,
+use <code>can_open_file/3</code> (see <a href="lib-ofi.html#lib-ofi">lib-ofi</a>). 
+</dl>
+
+   <p>To match these two predicates, which access properties of files, there are
+two predicates for asking about the properties of directories:
+
+     <ul>
+
+     <li><code>directory_property(</code><var>?Directory</var><code>, </code><var>?Property</var><code>, </code><var>?Value</var><code>)</code>
+<li><code>directory_property(</code><var>?Directory</var><code>, </code><var>?Property</var><code>)</code>  % boolean only
+</ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-lfi-sum.html#lib-lfi-sum">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-lfi-sub.html#lib-lfi-sub">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-lfi.html#lib-lfi">Up</a>
+</ul>
+</div>
+   </body></html>
+

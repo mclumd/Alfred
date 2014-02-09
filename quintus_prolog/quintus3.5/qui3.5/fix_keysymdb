@@ -1,0 +1,54 @@
+#!/bin/sh
+# SCCS: @(#)fix_keysymdb	67.1 07/11/93
+
+# This script fixes the XKeysymDB supplied with OpenWindows 3.0 and 3.1.
+# The keysym names used in the 3.0 version are incorrect as they are prefixed
+# with "osfXK_" and not just "osf".
+# In both 3.0 and 3.1 there are trailing spaces after keysyms BeginLine,
+# Endline and BeginData which invalidate these keysyms.
+# This script will remove the XK_ from the osf keysym names and remove
+# trailing spaces.
+
+if [ ! "$OPENWINHOME" ]
+then
+	echo 'Error: $OPENWINHOME is not set'
+	exit 1
+fi
+
+if [ ! -f $OPENWINHOME/lib/XKeysymDB ]
+then
+	echo Error: $OPENWINHOME/lib/XKeysymDB does not exist
+	echo '$OPENWINHOME should be set to the top level directory'
+	echo 'of an OpenWindows 3.x installation, e.g. /usr/openwin'
+	exit 1
+fi
+
+if [ ! -w $OPENWINHOME/lib/XKeysymDB ]
+then
+	echo Error: $OPENWINHOME/lib/XKeysymDB is not writable
+fi
+
+if grep -s osfXK $OPENWINHOME/lib/XKeysymDB
+then
+	version=3.0
+elif grep -s 'osf.* $' $OPENWINHOME/lib/XKeysymDB
+then
+	version=3.1
+else
+	echo $OPENWINHOME/lib/XKeysymDB already appears to be patched
+	exit 0
+fi
+
+cp -p $OPENWINHOME/lib/XKeysymDB $OPENWINHOME/lib/XKeysymDB.$version
+
+ed -s $OPENWINHOME/lib/XKeysymDB <<'EOF'
+g/osfXK_/s//osf/
+g/osf/s/   $//
+w
+q
+EOF
+
+echo $OPENWINHOME/lib/XKeysymDB is patched,
+echo original file is in $OPENWINHOME/lib/XKeysymDB.$version
+
+exit 0

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Reading Terms: The "Read" Predicates</h5>
+
+   <p>The "Read" predicates are
+     <ul>
+
+     <li><code>read(</code><var>-Term</var><code>)</code>
+<li><code>read(</code><var>+Stream, -Term</var><code>)</code>
+<li><code>read_term(</code><var>+Options, -Term</var><code>)</code>
+<li><code>read_term(</code><var>+Stream, +Options, -Term</var><code>)</code>
+</ul>
+
+   <p><code>read_term/[2,3]</code> offers many options to return extra information about the
+term.
+
+   <p>When Prolog reads a term from the current input stream the following
+conditions hold:
+
+     <ul>
+
+     <li>The term must be followed by a full-stop.  See
+<a href="ref-syn-syn-ove.html#ref-syn-syn-ove">ref-syn-syn-ove</a>.  The full-stop is removed from the input stream but
+is not a part of the term that is read.
+
+     <p><code>read/[1,2]</code> does not terminate until the full-stop
+is encountered.  Thus, if you type at top level
+     <pre class="example">          | ?- <kbd>read(X)</kbd>
+          </pre>
+
+     <p>you will keep getting prompts (first <code>|: </code>, and five spaces
+thereafter) every time you type &lt;RET&gt;, but nothing else will
+happen, whatever you type, until you type a full-stop. 
+</p><li>The term is read with respect to current operator declarations.  See
+<a href="ref-syn-ops.html#ref-syn-ops">ref-syn-ops</a>, for a discussion of operators. 
+<li>When a syntax error is encountered, an error message is printed and then
+the "read" predicate tries again, starting immediately after the
+full-stop that terminated the
+erroneous <code>term</code>.  That is, it does not fail on a syntax error,
+but perseveres until it eventually manages to read a term. This behavior
+can be changed with <code>prolog_flag/3</code> or using <code>read_term/[2,3]</code>.
+
+     <li>If the end of the current input stream has been reached, then
+<code>read(</code><var>X</var><code>)</code> will cause <var>X</var> to be unified with the atom
+<code>end_of_file</code>.
+
+   </ul>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iou-tin-cpr.html#ref-iou-tin-cpr">Next</a>
+<li><a rel="up" accesskey="u" href="ref-iou-tin.html#ref-iou-tin">Up</a>
+</ul>
+</div>
+   </body></html>
+

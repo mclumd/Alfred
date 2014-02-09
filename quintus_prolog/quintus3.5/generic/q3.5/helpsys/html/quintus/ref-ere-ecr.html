@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Exceptions and Critical Regions</h4>
+
+   <p>The point of critical regions in your code is that sometimes you have data-base
+updates or other operations that, once started, must be completed in order to
+avoid an inconsistent state.  In particular, such operations should not be
+interrupted by a <kbd>^C</kbd> from the keyboard.
+
+   <p>In releases of Quintus Prolog prior to release 3.0, <code>library(critical)</code> was
+provided to allow critical regions to be specified using the predicates
+<code>begin_critical/0</code> and <code>end_critical/0</code>.  These predicates are still
+provided, but they should be regarded as obsolete since they do not interact
+well with exception handling.  An exception occurring in between the
+<code>begin_critical</code> and the <code>end_critical</code> could cause two problems:
+     <ol type=1 start=1>
+
+     <li>the
+Prolog database could be left in an inconsistent state, and
+<li>the critical region would never be exited, so interrupts would be left
+disabled indefinitely.
+        </ol>
+
+   <p>To avoid these problems, you should use the new predicates
+<pre class="example">     critical(<var>Goal</var>)
+     critical_on_exception(<var>ErrorCode, Goal, Handler</var>)
+     </pre>
+
+   <p>which <code>library(critical)</code> now provides.
+
+   <p><code>critical/1</code> runs the specified goal inside a critical region.  It
+solves (2)  by catching any exceptions that are
+raised and taking care to close the critical region before re-raising the
+exception.
+
+   <p><code>critical_on_exception/3</code> allows you to solve
+(1) by specifying appropriate clean-up actions in
+<var>Handler</var>. 
+If an exception occurs during <var>Goal</var>, and the exception code unifies with
+<var>ErrorCode</var>, <code>critical_on_exception/3</code> acts as if you had
+written
+<pre class="example">     critical(<var>Handler</var>)
+     </pre>
+
+   <p>instead.  That is, the <var>Handler</var> will still be inside the critical region,
+and only the first solution it returns will be taken.
+
+   <p>These forms also have the effect of committing to the first solution of
+<var>Goal</var>.  Since the point of a critical region is to ensure that some
+operation with side-effects is completed, <var>Goal</var> should be determinate
+anyway, so this should be no problem.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-sum.html#ref-ere-sum">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-exa.html#ref-ere-exa">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere.html#ref-ere">Up</a>
+</ul>
+</div>
+   </body></html>
+

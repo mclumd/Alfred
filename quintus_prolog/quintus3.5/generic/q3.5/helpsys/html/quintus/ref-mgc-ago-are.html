@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Details of Atom Registration</h5>
+
+   <p>The functions that register and unregister atoms are
+in fact using reference counting to keep track of atoms that have been
+registered.  As a result, it is safe to combine your code with libraries
+and code others have written.  If the other code has been careful to
+register and unregister its atoms as appropriate, atoms will not be
+reclaimed until everyone has unregistered them.
+
+   <p>Of course, it is possible when writing code that needs to register atoms
+that errors could occur.  Atoms that are registered too many times simply
+will not be garbage collected until they are fully unregistered.  However,
+atoms that aren't registered when they should be may be reclaimed on
+atom garbage collection.  One normally doesn't need to think about the
+reference counting going on in <code>QP_register_atom()</code> and
+<code>QP_unregister_atom()</code>, but some understanding of its details could
+prove helpful when debugging.
+
+   <p>To help you diagnose problems with registering
+and unregistering atoms, <code>QP_register_atom()</code> and
+<code>QP_unregister_atom()</code> both normally return the current reference count
+for the atom.  If an error occurs, e.g. a nonexistent atom is registered
+or unregistered, <code>QP_ERROR</code> is returned.
+
+   <p>An unregistered atom has a reference count of 0. 
+Unregistering an atom that is unregistered is a no-op; in this
+case, <code>QP_unregister_atom()</code> returns 0.  A permanent atom has a
+reference count of 128.  In addition, if an atom is simultaneously
+registered 128 times, it becomes permanent.  (An atom with 128 distinct
+references is an unlikely candidate for reclamation!) 
+Registering or unregistering an atom that
+is permanent is also a no-op;  <code>QP_register_atom()</code> and
+<code>QP_unregister_atom()</code> return 128.
+
+   <p>Various safeguards enable you to detect when an atom may
+have been reclaimed prematurely. 
+An atom that has been reclaimed and has not yet been reused appears as
+the special system atom <code>'$anon'</code>, which cannot match any user atom (even a
+user-supplied <code>'$anon'</code>, which will be a distinct atom).  However, once
+an atom's space is reused, any references to the old atom will now
+see only the new atom.  It is not possible to detect that an atom has
+been reused once the reuse occurs.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ref-mgc-ago-prm.html#ref-mgc-ago-prm">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mgc-ago.html#ref-mgc-ago">Up</a>
+</ul>
+</div>
+   </body></html>
+

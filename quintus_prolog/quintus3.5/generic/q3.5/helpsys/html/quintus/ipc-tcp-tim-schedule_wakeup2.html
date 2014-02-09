@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_schedule_wakeup(</code><var>+Timeval</var><code>, </code><var>+Term</var><code>)</code></h5>
+
+   <p>This schedules a wakeup from <code>tcp_select/1</code> (see <a href="ipc-tcp-trm-select1.html#ipc-tcp-trm-select1">ipc-tcp-trm-select1</a>). 
+For example,
+
+<pre class="example">     tcp_now(Now),
+     tcp_time_plus(Now, 0.1, Timeval),
+     tcp_schedule_wakeup(Timeval, foo)
+     </pre>
+
+   <p>forces <code>tcp_select/[1,2]</code> to return the term <code>wakeup(foo)</code> a tenth of
+a second after the call to <code>tcp_now/1</code>.  Any number of wakeups may
+be pending.
+
+   <p>The wakeup mechanism is implemented in terms of timer alarms.  If a
+timer alarm was delivered when the process was not waiting at select,
+the next call to select will indicate that an alarm was delivered.
+
+   <p>The wakeup mechanism can be used independently of the rest of the tcp
+package.  You need not set up communications with other processes to
+use the wakeup mechanism.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-tim-scheduled_wakeup2.html#ipc-tcp-tim-scheduled_wakeup2">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-tim-time_plus3.html#ipc-tcp-tim-time_plus3">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-tim.html#ipc-tcp-tim">Up</a>
+</ul>
+</div>
+   </body></html>
+

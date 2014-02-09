@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The "is-not-provable" Operator</h4>
+
+   <p>DEC-10 Prolog, C-Prolog, and Quintus Prolog all provide an "is-not-provable"
+operator <code>\+</code>.  The meaning of
+
+<pre class="example">     \+ Goal
+     </pre>
+
+   <p>is that the Prolog system is unable to find any solution for
+Goal as it currently stands.
+
+   <p>In operational terms, we have
+<pre class="example">     \+ Goal :-
+         ( call(Goal) -&gt; fail
+         ; true
+         ).
+     </pre>
+
+   <p>In DEC-10 Prolog and C-Prolog, this is exactly how <code>\+</code> is implemented. 
+In Quintus Prolog there is a slight difference:  the Quintus Prolog
+compiler supports <code>(</code><var>if</var><code> -&gt; </code><var>then</var><code> ; </code><var>else</var><code>)</code> directly, so a clause of the form
+<pre class="example">     p :-
+          q,
+          \+ <var>r</var>,
+          s.
+     </pre>
+
+   <p>is compiled as if you had written
+<pre class="example">     p :-
+          q,
+          ( <var>r</var> -&gt; fail ; true ),
+          s.
+     </pre>
+
+   <p>If <code>\+</code> were not known to the compiler, the form <var>r</var> would be built as a
+data structure and passed to <code>\+</code> to interpret, which would be slower
+and would require more memory.  The extra efficiency of having <code>\+</code>
+handled directly by the compiler is well worth having.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-neg-not.html#lib-neg-not">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-neg-bas.html#lib-neg-bas">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-neg.html#lib-neg">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,1147 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: lib-uin-ese-readsent,  Prev: lib-uin-ese-readin,  Up: lib-uin-ese
+
+`library(readsent)'
+...................
+
+`read_until(?DELIMITERS, -ANSWER)'
+     reads characters from the current input until a character in the
+     DELIMITERS string is read.  The characters are accumulated in the
+     ANSWER string, and include the closing delimiter.  The end-of-file
+     character always acts as a delimiter, even if it is not in the
+     list of characters you supply.
+
+`trim_blanks(+RAWINPUT, ?CLEANED)'
+     removes leading and trailing layout characters from RAWINPUT, and
+     replaces internal groups of layout characters by single spaces.
+
+`chars_to_words(+Chars, ?Words)'
+     parses a list of characters (read by read_until) into a list of
+     tokens, where a token is
+    X
+          X a full stop or other punctuation mark
+
+    `atom(X)'
+          X a sequence of letters, e.g. `atom(the)'
+
+    `integer(X)'
+          X a sequence of digits, e.g. `integer(12)'
+
+    `apost'
+          `''
+
+    `aposts'
+          `''s
+
+    `string(X)'
+          X `"..SEQUENCE OF ANY.."'
+
+     Thus the string `the "Z-80" is on card 12.' would be parsed as
+     `[atom(the),string('Z-80'),atom(is),atom(on),atom(card),
+     integer(12),'.']'.  It is up to the sentence parser to decide what
+     to do with these.  Note that the final full stop, if any, is
+     retained, as the parser may need it.
+
+`case_shift(+MIXED, ?LOWER)'
+     converts all the upper case letters in MIXED to lower case.  Other
+     characters (not necessarily letters!) are left alone.  If you
+     decide to accept other characters in words only `chars_to_atom'
+     has to alter.  See also `lower/2' in `library(caseconv)'.
+
+`read_line(-Chars)'
+     reads characters up to the next newline or the end of the file,
+     and returns them in a list, including the newline or end-of-file.
+     Usually you want multiple spaces conflated to one, and the newline
+     dropped.  To do this, call `trim_blanks' on the result.  For a
+     routine that does not include the newline character in the result,
+     see the predicate `get_line/1' in `library(lineio)'.
+
+`read_sent(-SENTENCE)'
+     reads a single sentence from the current input stream.  It reads
+     characters up to the first sentence terminator (as defined by
+     `is_period/1') it finds, then throws characters away until it has
+     reached the end of a line.  The characters read are then broken up
+     into "words", where a "word" is
+        * a sequence of letters, which is converted to lowercase and
+          returned as a compound term `atom(WORD)'.  For example,
+          `THIS' would be returned as `atom(this)'
+
+        * a sequence of decimal digits, which is returned as a compound
+          term `integer(VALUE)'.  For example, `0123' would be returned
+          as `integer(123)'.  Plus and minus signs become separate
+          atoms.
+
+        * a sequence of characters in double quotes, which is returned
+          as a compound term `string(X)', where X is an atom containing
+          the characters between the quotes.  Two adjacent quotes are
+          read as one, so the input string `Double "" Quote' is
+          returned as `string('Double " Quote')'.
+
+        * apostrophe s (`'s') is returned as the atom `aposts'.
+
+        * apostrophe not followed by s (`'') is returned as the atom
+          `apost'.
+
+        * any other graphic character is returned as a single-character
+          Prolog atom.
+
+     The resulting string is returned in SENTENCE.  Here is an example.
+          | ?- read_sent(X).
+          |: The predicate read_sent/1 accepts sentences
+          |: that span more than 1 line, but not lines
+          |: that contain +2 or more sentences.  trash trash
+          
+          X = [atom(the),atom(predicate),string(read_sent),
+               atom(accepts),atom(sentences),atom(that),
+               atom(span),atom(more),atom(than),integer(1),
+               atom(line),',',atom(but),atom(not),atom(lines),
+               atom(that),atom(contain),+,integer(2),atom(or),
+               atom(more),atom(sentences),.]
+
+     This is more unwieldy than the output of `read_in/1', but it does
+     mean that your parser can tell the difference between words,
+     numbers, and strings by pattern matching rather than having to use
+     the "meta-logical" predicates `atom/1', `integer/1', and so forth.
+
+
+File: quintus.info,  Node: lib-uin-ask,  Next: lib-uin-prompt,  Prev: lib-uin-ese,  Up: lib-uin
+
+Yes-no Questions, and Others -- `library(ask)'
+----------------------------------------------
+
+   The file `library(ask)' defines a set of commands for asking
+questions whose answer is a single character, and for asking for file
+names (see *Note lib-ofi-oth-ask::).
+
+   `library(ask)' uses several commands from `library(prompt)', but if
+you want to use them in your program you should explicitly include the
+directive
+     :- ensure_loaded(library(prompt)).
+
+   in your program.  The principal such command is `prompt/1', which is
+used to print the question or prompt.
+
+`yesno(+QUESTION)'
+     writes QUESTION (using `write/1') to the terminal, regardless of
+     the current output stream, and reads an answer.  The prompt is
+     followed by `? ', so you should not put a question mark in the
+     question yourself.  The answer is the first character typed in
+     response; anything following on the same line will be thrown away.
+     If the answer is `y' or `Y', `yesno/1' succeeds.  If the answer
+     is `n' or `N', `yesno/1' fails.  Otherwise it repeats the
+     question.  The user has to explicitly type a `y' or `n' before it
+     will stop.  Because the rest of the line is thrown away, the user
+     can type `yes', `Yes', `You'd better not', and so forth with
+     exactly the same effect as a plain `y'.  If the user just presses
+     <RET>, that is _not_ taken as `yes'.
+
+`yesno(+QUESTION, +DEFAULT)'
+     is like `yesno/1' except that
+        * DEFAULT may be an atom (the first character of whose name
+          will be used), a string (whose first character will be used)
+          or an ASCII code, and will be written in brackets before the
+          question mark; and
+
+        * if the user just presses <RET>,  DEFAULT will be used as the
+          answer.
+
+     For example,
+          yesno('Do you want an extended trace', yes)
+
+     prints
+          Do you want an extended trace [y]? _
+
+     and leaves the terminal's cursor where the underscore is.  If the
+     user presses <RET>, this call to `yesno/1' will succeed.  If the
+     user answers `yes' it will succeed.  If the user answers `no' it
+     will fail.      If the first non-layout character of the user's
+     answer is neither `n', `N', `y', nor `Y', the question will be
+     repeated.
+
+`ask(+QUESTION, -ANSWER)'
+     writes QUESTION to the terminal as `yesno/1' would, and reads a
+     single character ANSWER.  ANSWER must be a "graphic" character (a
+     printing character other than space).  `ask/2' will continue
+     asking until it is given such a character.  The remainder of the
+     input line will be thrown away.
+
+`ask(+QUESTION, +DEFAULT, -ANSWER)'
+     uses DEFAULT as the default character the way that `yesno/2' does,
+     and mentions the default in brackets just before the question
+     mark.  If the user presses carriage return,  DEFAULT will be
+     returned as his ANSWER.  ANSWER can be instantiated, in which case
+     the call to `ask/2' or `ask/3' will fail if the user does not give
+     that answer.  For example, `yesno/2' could (almost) have been
+     defined as
+          yesno(Question, Default) :-
+                  ask(Question, Default, 0'y).
+
+`ask_chars(+PROMPT, +MINLENGTH, +MAXLENGTH, -ANSWER)'
+     writes PROMPT to the terminal, and reads a line of characters from
+     it.  This response must contain between MINLENGTH and MAXLENGTH
+     characters inclusive, otherwise the question will be repeated
+     until an answer of satisfactory length is obtained.  Leading
+     and/or trailing layout characters are retained in the result, and
+     are counted when determining the length of the answer.  The list
+     of character codes read is unified with ANSWER.  Note that a colon
+     and a space (`: ') are added to the Prompt, so don't add such
+     punctuation yourself.  The end-user can find out what sort of
+     input is required by typing a line that starts with a question
+     mark.  Therefore it is not possible to read such a line as data.
+     See `prompted_line/2' in `library(prompt)'.
+
+     Examples:
+          | ?- ask_chars('Label', 1, 8, Answer).
+          Label: 213456789
+          Please enter between 1 and 8 characters.
+          Do not add a full stop unless it is part of the answer.
+          Label: four
+          
+          Answer = "four"
+          
+          | ?- ask_chars('Heading', 1, 30, Answer).
+          Heading: ?
+          Please enter between 1 and 30 characters.
+          Do not add a full stop unless it is part of the answer.
+          Heading:    three leading spaces
+          
+          Answer = "   three leading spaces"
+
+`ask_number(+PROMPT, +DEFAULT, -ANSWER)'
+     writes PROMPT on the terminal, and reads a line from it in
+     response.  If, after "garbage" characters are thrown away, the
+     line read represents a Prolog number, that number is unified with
+     ANSWER.  The "garbage" characters that are thrown away are layout
+     characters (including spaces and tabs), underscores `_', and plus
+     signs `+'.  For example, the input `+ 123_456' would be treated as
+     if the user had typed `123456'.  The conversion is done by
+     `number_chars/2'.  If the user entered an integer, ANSWER will be
+     unified with an integer.  If the user entered a floating-point
+     number, ANSWER will be unified with a floating-point number.  No
+     conversion is done.  If the line contains only "garbage"
+     characters and there is a DEFAULT argument, ANSWER is unified with
+     DEFAULT.  This happens regardless of whether or not DEFAULT is a
+     number.  If the input is unacceptable, the question will be
+     repeated after an explanation of what is expected.  The user can
+     type `?' for help.  Examples:
+          | ?- ask_number('Pick a number', X).
+          Pick a number: ?
+          Please enter a number followed by RETURN
+          Pick a number: 27
+          
+          X = 27
+          
+          | ?- ask_number('Say cheese', X).
+          Say cheese:
+          Please enter a number followed by RETURN
+          Say cheese: 3 . 141 _ 593
+          
+          X = 3.14159
+          
+          | ?- ask_number('Your guess', '100%', X).
+          Your guess [100%]: 38.
+          Please enter a number followed by RETURN
+          Your guess [100%]: 38
+          
+          X = 38
+          
+          | ?- ask_number('Your guess', '100%', X).
+          Your guess [100%]: <RET>
+          
+          X = '100%'
+
+`ask_number(+PROMPT, +LOWER, +UPPER[, +DEFAULT], -ANSWER)'
+     These two predicates are a combination of `ask_between/[4,5]' and
+     `ask_number/[2,3]'.  They write the prompt to the terminal, read a
+     line from it in response, throw away "garbage" characters, try to
+     parse the result as a number, and check that it is between the
+     LOWER and UPPER bounds.  LOWER and UPPER may severally be integers
+     or floating point numbers.  ANSWER will be unified with an integer
+     if the user typed an integer, with a floating-point number if the
+     user typed a floating-point number, or with whatever DEFAULT
+     happens to be if there is a DEFAULT and the user entered an empty
+     line.  If you want a floating-point result whatever the user
+     typed, you will have to do your own conversion with `is/2'.
+     Examples:
+          | ?- ask_number('Enter temperature in Fahrenheit',
+                           32.0, 212.0, 77.0, Temp).
+          Enter temperature in Fahrenheit [77.0]: 10
+          Please enter a number between 32.0 and 212.0 followed
+          by RETURN
+          Enter temperature in Fahrenheit [77.0]: 68
+          
+          Temp = 68
+
+`ask_file(+QUESTION, -FILENAME)'
+     same as `ask_file/3'.
+
+`ask_file(+QUESTION, +MODE, -FILENAME)'
+     writes QUESTION to the terminal and reads a filename from the
+     terminal, regardless of the current I/O streams.  If the user
+     presses <RET>, `ask_file/3' just fails; an empty filename is taken
+     as an indication that the user has finished entering file names.
+     A reply beginning with a question mark will cause a brief help
+     message to be printed (explaining that a filename is wanted, and
+     how to enter one), and the question will be repeated.  Otherwise,
+     `ask_file/3' checks that the file can be opened in the mode
+     specified by MODE (`read', `write', or `append').  If it is not
+     possible to open the file in mode MODE, the operating system's
+     error result is reported and the question is repeated.  If it is
+     possible to open the file in this mode, the name of the file is
+     returned as FILENAME.  However, `ask_file/3' does _not_ open the
+     file for you, it simply checks that it is _possible_ to open the
+     file.  Here is an example "dialogue":
+          | ?- ask_file('Where should the cross-reference go? ',
+               write, File).
+          Where should the cross-reference go? ?
+          Please enter the name of a file that can be opened
+          in write mode, followed by <RET>.  To end this
+          operation, just type <RET> with no filename.
+          Where should the cross-reference go? call.pl
+          
+          ! Permission error: cannot access file 'call.pl'
+          ! O/S error : Permission denied
+          ! goal:  can_open_file('call.pl',write,warn)
+
+          | ?- ask_file('Where should the cross-reference go? ',
+               write, File).
+          Where should the cross-reference go? call.xref
+          
+          File = 'call.xref'
+          
+          | ?- ask_file('Next file: ', read, File).
+          Next file: call.pl
+          
+          ! Permission error: cannot access file 'call.pl'
+          ! O/S error : Permission denied
+          ! goal:  can_open_file('call.pl',read,warn)
+
+          | ?- ask_file('Next file: ', read, File).
+          Next file: call.xref
+          
+          ! Existence error in can_open_file/3
+          ! file call.xref does not exist
+          ! O/S error : No such file or directory
+          ! goal:  can_open_file('call.xref',read,warn)
+
+     Points to note:
+        * `ask_file/3' does not add a question mark and space to the
+          prompt; you must  put them in the question yourself.
+
+        * Although the first call to `ask_file/3' found that it was
+          _possible_ to open `call.xref' for output, it _did not_ open
+          it, so the second call to `ask_file/3' could not find any
+          such file.
+
+`ask_between(+PROMPT, +LOWER, +UPPER[, +DEFAULT], -ANSWER)'
+     writes PROMPT on the terminal, and reads a line in response.  If
+     the line read represents a Prolog integer between LOWER and UPPER
+     inclusive, this line is unified with ANSWER.  The line may contain
+     only digits and perhaps a leading minus sign.  If the line is
+     empty and there is a DEFAULT argument, ANSWER is unified with
+     DEFAULT.  This happens regardless of whether DEFAULT is an integer
+     or in the indicated range.  If the answer read is not acceptable,
+     the user is told what sort of answer is wanted and is prompted
+     again.  For example, after defining
+          p(X) :-
+             ask_between('Number of samples',1,20,
+                          [none],X),
+             integer(X).
+
+     the following conversation might take place.
+          | ?- p(X).
+          Number of samples [none]: ?
+          Please enter an integer between 1 and 20
+          Do not add a full stop.
+          Number of samples [none]: 0
+          Please enter an integer between 1 and 20
+          Do not add a full stop.
+          Number of samples [none]: 9
+          
+          X = 9
+          
+          | ?- p(X).
+          Number of samples [none]: <RET>
+          no
+
+     The prompt that is printed is `PROMPT [DEFAULT]: ' if there is a
+     DEFAULT argument, `PROMPT: ' otherwise, so that you can use the
+     same prompt whether or not there is a default argument.
+
+`ask_oneof(+PROMPT, +CONSTANTS[, +DEFAULT], -ANSWER)'
+     prints PROMPT on the terminal, and reads a line in response.
+     CONSTANTS should be a list of constants (terms that are acceptable
+     as the first argument of `name/2').  If the user's response is the
+     full name of one of the constants, ANSWER is unified with that
+     constant.  Failing that, if the user's response is a prefix of
+     exactly one of the constants, ANSWER is unified with that
+     constant.  If the response is just <RET>, and there is a DEFAULT
+     argument, ANSWER is unified with DEFAULT (which need not be a
+     constant, nor need it be an element of CONSTANTS).  If nothing
+     else works, the user is told what sort of response is wanted, and
+     is prompted again.
+
+     The prompt that is printed is `PROMPT [DEFAULT]: ' if there is a
+     DEFAULT argument, `PROMPT: ' otherwise, so that you can use the
+     same prompt whether or not there is a default argument.
+
+   You should find it straightforward to define your own simple queries
+using this kit.  As a general rule, try to arrange things so that if
+the user types a question mark s/he is told what sort of response is
+wanted.  All the queries defined in this section do that.
+
+   The commands for reading English sentences do nothing special when
+their input is a single question mark.  Here is an example of how you
+can build a query from them that does something sensible in this case.
+     ask_sentence(Prompt, Sentence) :-
+         repeat,
+             prompt(Prompt),
+             read_in(X),
+             (   X = [?] ->
+                 format(user_output,
+                     'Please enter an English sentence.~n', []),
+                 fail
+             ;   true
+             ),
+         !,
+         Sentence = X.
+
+
+File: quintus.info,  Node: lib-uin-prompt,  Next: lib-uin-readconstant,  Prev: lib-uin-ask,  Up: lib-uin
+
+Other Prompted Input -- `library(prompt)'
+-----------------------------------------
+
+   `library(prompt)' defines several commands for reading prompted
+input from the terminal.  In fact, `library(ask)' is built on top of
+this package.
+
+`prompt(+PROMPT)'
+     is used by all the commands in `library(ask)' to print the prompt
+     or question.  You may find it useful in constructing your prompted
+     input commands.  If PROMPT is any term except a list, it is
+     written to the terminal using `write/1'; if PROMPT is a list of
+     terms, each element of the list is written to the terminal using
+     `write/1', with no additional layout or punctuation.  After
+     writing PROMPT to the terminal, the terminal output is flushed, so
+     that PROMPT will appear on the terminal before the user has to
+     type an answer.  `prompt/1' ensures that PROMPT always starts at
+     the beginning of a line.
+
+`prompted_char(+PROMPT, -CHAR)'
+     writes PROMPT to the terminal, and reads a line of characters from
+     it.  The first of these characters is returned as CHAR; the rest
+     are discarded.  The original case of the character is preserved.
+     Note that CHAR might be a newline character or the end-of-file
+     character.
+
+`prompted_line(+PROMPT, -CHARS)'
+
+`prompted_line(+PROMPT, -CHARS, -TERMINATOR)'
+     These predicates write PROMPT to the terminal, regardless of the
+     current output stream; and read a list of character codes from the
+     terminal, regardless of the current input stream.  PROMPT is
+     written using `write/1'; it is normally a single atom, and should
+     never be a list of character codes.  `prompted_line/3' also
+     returns the end-of-line character, while `prompted_line/2' simply
+     checks that the end-of-line character is not end-of-file.  When
+     you want to ask the user of your program a question, use
+     `prompted_line/[2,3]' instead of changing I/O streams yourself, or
+     using `ttyget0/1' and its associates.  In order to ask the user of
+     your program "Do you really want to stop?" and stop if the user
+     says `yes' or anything else beginning with a lowercase `y', simply
+     write
+          conditional_halt :-
+             prompted_line('Do you really want to stop? ',
+                            [0'y|_]),
+             halt.
+
+     You can use `prompted_line/[2,3]' without worrying what the
+     current I/O streams are, or whether you need to call `ttyflush/0'
+     or not.  Also, as with `get_line/[1,2]', an input line ends with
+     the line terminator character.  The user does _not_ have to end
+     `prompted_line/[2,3]' input with a `.', just with <RET>.
+
+
+File: quintus.info,  Node: lib-uin-readconstant,  Prev: lib-uin-prompt,  Up: lib-uin
+
+Pascal-like Input -- `library(readconstant)'
+--------------------------------------------
+
+   `library(readconst)' provides a set of Pascal-like input commands.
+The commands are
+   * `read_constant(X)'
+
+   * `read_constant(Stream,X)'
+
+   * `read_constants([X1,...,Xn])'
+
+   * `read_constants(Stream,[X1..Xn])'
+
+   * `prompted_constant(Prompt, X)'
+
+   * `prompted_constants(Prompt, [X1,...,Xn])'
+
+   * `skip_constant'
+
+   * `skip_constant(Stream)'
+
+   * `skip_constants(N)'
+
+   * `skip_constants(Stream,N)'
+
+   The idea is that these commands consume some number of "tokens" from
+the input stream (for `read_constant/1', `skip_constant/0',
+`read_constants/1', and `skip_constants/1' this is the current input
+stream; for `read_constant/2', `skip_constant/1', `read_constants/2',
+and `skip_constants/2' it is the STREAM argument; for
+`prompted_constant/2' and `prompted_constants/2' it is the `user_input'
+stream).  `prompted_constant/1' and `prompted_constants/2' resemble
+Pascal's `readln' command; the others resemble Pascal's `read' command.
+
+   These commands skip initial layout (spaces and control characters).
+There are two kinds of tokens:  quoted tokens and unquoted tokens.
+
+   A "quoted token" starts with a single quote (`'') or a double quote
+(`"').  It ends with the same character that it starts with.  To
+include a quote in such a token, write the quote twice.  This is the
+same as Prolog with the `character_escapes' flag off.  (There is
+currently no way of making `read_constant/1' use C-style character
+escapes.)  A token that starts with a single quote will be returned as
+a Prolog atom, even if it looks like a number.  Again, this is the same
+as Prolog.  For example, `5' will be returned as the atom `5', not the
+integer 5.  A token that starts with a double quote will be returned as
+a list of character codes.  For example, `""""' (four double quotes)
+will be returned as the list [34].  Both `''' (two single quotes) and
+`""' (two double quotes) are acceptable tokens, meaning the atom with
+no characters in its name (`''') and the empty list (`[]') respectively.
+
+   The character following the closing quote of a quoted token is always
+discarded.  This character is normally a space, tab, newline, or comma.
+
+   An unquoted token is anything else.  Characters are read until a
+layout character or a comma is found.  The comma or layout character
+that terminates the token is discarded.  The other characters are given
+to the built-in predicate `name/2', so the token will be returned as a
+number if it looks like a number; otherwise it will be returned as an
+atom.  The syntax of numbers is perforce identical to the syntax of
+numbers in Quintus Prolog.
+
+   In both cases, we have leading layout, which is skipped, the token
+proper, and a terminating character, which is discarded.  If, for
+example, the input looks like
+     fred, 1.2 ' ', last<LFD>
+
+   and we call `read_constants([A,B,C,D])', the bindings will be
+`A=fred, B=1.2, C=' ', D=last', and the entire line will have been
+consumed.  But if the input looks like
+     fred, 1.2 ' ', last<SPC><SPC><LFD>
+
+   the last <SPC> and <LFD> will be left in the input stream.
+
+   The input stream can contain end-of-line comments, which begin with
+a percent sign (`%') just as they do in Prolog.  A comment will
+terminate an unquoted token, and will be skipped.  Suppose you want a
+data file that contains a number and a filename.  The file could look
+like this:
+     % This is the data file.
+     137 % is the number
+     foobaz/other-file % is the filename
+
+   You could read it by calling
+     | ?- see('the-file'), read_constants([Nbr,File]), seen.
+
+   The following predicates are defined in `library(readconst)':
+
+`read_constant(-CONSTANT)'
+     reads a single constant from the current input stream, then
+     unifies CONSTANT with the result.
+
+`read_constant(+STREAM, -CONSTANT)'
+     reads a single constant from STREAM, then unifies CONSTANT with
+     the result.
+
+`read_constants(-[X1,...,XN])'
+     The argument must be a proper list.  N constants are read from the
+     current input stream, then [X1,...,XN] is unified with a list of
+     the results.
+
+`read_constants(+STREAM, -[X1,...,XN])'
+     The second argument must be a proper list.  N constants are read
+     from STREAM, then [X1,...,XN] is unified with a list of the
+     results.
+
+`skip_constant'
+     reads a single constant from the current input stream, then throws
+     it away.  This produces the same effect as calling
+     `read_constant(_)', but is more efficient, as it doesn't convert
+     the constant from character form to Prolog form before discarding
+     it.
+
+`skip_constant(+STREAM)'
+     reads a single constant from STREAM and discards it.  This produces
+     the same effect as calling `read_constant(Stream, _)' but is more
+     efficient.
+
+`skip_constants(+N)'
+     reads N constants from the current input stream and discards them.
+     N must be a non-negative integer.
+
+`skip_constants(+STREAM, +N)'
+     reads N constants from STREAM and discards them.  N must be a
+     non-negative integer.
+
+`prompted_constant(+PROMPT, -CONSTANT)'
+     writes PROMPT to the terminal (to `user_output') and reads one
+     constant from it (from `user_input') in response, then unifies
+     CONSTANT with the result.  This command will flush the rest of the
+     input line after it has read CONSTANT, just like the commands in
+     `library(ask)'.  Here is an example:
+          | ?- prompted_constant('Guess the magic number: ', X),
+          |    integer(X).
+          Guess the magic number: 27 is my guess
+          
+          X = 27
+
+     The words `is my guess' and the new-line are discarded.
+
+`prompted_constants(+PROMPT, -[X1,...,XN])'
+     writes a prompt to the terminal (to `user_output') and reads N
+     constants from it (from `user_input') in response, then unifies
+     [X1,...,XN] with a list of the results.  This command will flush
+     the rest of the input line after it has read [X1,...,XN], just
+     like the commands in `library(ask)'.
+
+
+File: quintus.info,  Node: lib-iml,  Next: lib-mis,  Prev: lib-uin,  Up: lib
+
+Interface to Math Library
+=========================
+
+* Menu:
+
+* lib-iml-bas::                         Introduction --- library(math)
+
+
+File: quintus.info,  Node: lib-iml-bas,  Up: lib-iml
+
+Introduction -- `library(math)'
+-------------------------------
+
+   `library(math)' is an interface to the `math(3m)' library.
+
+   All of the predicates in this module take some number of numeric
+arguments and yield a numeric result as their last argument.  For
+example, the predicate call `sin(X, RESULT)' unifies RESULT with
+`sin(X)'.  The predicates provided are
+
+`sign(X, RESULT)'
+     RESULT is +/-1, agreeing with sign of X.
+
+`sign(X, Y, ABSX_SIGNY)'
+
+`abs(X, RESULT)'
+     RESULT has same type as X
+
+`fabs(X, RESULT)'
+     RESULT is a float
+
+`hypot(X, Y, RESULT)'
+     RESULT is `sqrt(X*X+Y*Y)'
+
+`max(X, Y, RESULT)'
+     If X and Y are different types,
+
+`min(X, Y, RESULT)'
+     RESULT may be of either type; see NOTE #1, below.
+
+`log(X, RESULT)'
+     natural logarithm
+
+`log10(X, RESULT)'
+     common logarithm; see NOTE #2, below.
+
+`pow(X, Y, RESULT)'
+     RESULT is X**Y; see NOTE #2, below.
+
+`exp(Y, RESULT)'
+     RESULT is e**Y
+
+`sqrt(X, RESULT)'
+     RESULT is X**0.5
+
+`scale(X, INTEGER, RESULT)'
+     X and RESULT) are floats, RESULT = X*2^N.
+
+`floor(+X, ?RESULT)'
+
+`floor(+X, RESULT, FRACTION)'
+
+`ffloor(X, RESULT)'
+     RESULT is `float(floor(X))'
+
+`ffloor(X, RESULT, FRACTION)'
+
+`truncate(X, I)'
+
+`truncate(X, I, F)'
+
+`ftruncate(X, I)'
+
+`ftruncate(X, I, F)'
+
+`ceiling(+X, ?RESULT)'
+
+`ceiling(+X, ?RESULT, FRACTION)'
+     like `ceiling/2', with a fraction present.
+
+`fceiling(X, RESULT)'
+     RESULT is `float(ceiling(X))'
+
+`fceiling(X, RESULT, FRACTION)'
+     like `fceiling/2', with a fraction present.
+
+`round(X, RESULT)'
+
+`round(X, RESULT, FRACTION)'
+
+`fround(X, RESULT)'
+
+`fround(X, RESULT, FRACTION)'
+
+`fremainder(X, Y, REMAINDER)'
+
+`decode_float(?NUMBER, ?SIGN, ?SIGNIFICAND, ?EXPONENT)'
+
+`j0(X, RESULT)'
+     These are Bessel functions,
+
+`y0(X, RESULT)'
+     see `j0(3m)'
+
+`j1(X, RESULT)'
+
+`y1(X, RESULT)'
+
+`jn(N, X, RESULT)'
+     N is an integer.
+
+`yn(N, X, RESULT)'
+     See NOTE #3, below.
+
+`sin(X, RESULT)'
+
+`asin(X, RESULT)'
+
+`sinh(X, RESULT)'
+
+`asinh(X, RESULT)'
+     See NOTE #4, below.
+
+`cos(X, RESULT)'
+
+`acos(X, RESULT)'
+
+`cosh(X, RESULT)'
+
+`acosh(X, RESULT)'
+     See NOTE #4, below.
+
+`tan(X, RESULT)'
+
+`atan(X, RESULT)'
+
+`atan2(X, Y, RESULT)'
+
+`tanh(X, RESULT)'
+
+`atanh(X, RESULT)'
+     See NOTE #4, below.
+
+`gamma(X, RESULT)'
+     This is really `ln(gamma(X))'; see NOTE #5, below.
+
+   *Notes:*
+  1. If an arithmetic operation like `X+Y' is given mixed arguments, it
+     will convert the integer argument to a floating-point number.  In
+     this release, `max(X, Y, MAX)' and `min(X, Y, MIN)' do not do
+     this.  For example,
+          | ?- min(1, 2.3, X).
+          
+          X = 1
+
+     This is likely to change.
+
+  2. The names of these functions are copied from C.  In a later
+     release, the functions will be
+    `^(X, N, RESULT)'
+          RESULT is X^N (N integer)
+
+    `exp(Y, RESULT)'
+          RESULT is e**Y
+
+    `exp(X, Y, RESULT)'
+          RESULT is X**Y, as exp(Y*log(X))
+
+    `log(X, Y, RESULT)'
+          RESULT is the base X logarithm of Y
+
+    `log(Y, RESULT)'
+          RESULT is the base e logarithm of Y
+
+  3. The Bessel functions will be moved into another file.  They are
+     not generally available on non-UNIX versions of Quintus Prolog.
+     They are retained as is in this release for compatibility with
+     previous releases.
+
+  4. The inverse hyperbolic trigonometric functions are not provided in
+     most systems.  We have provided C code to compute them.  It is
+     suggested that you satisfy yourself as to their accuracy before
+     relying on them.
+
+  5. The function that UNIX calls `gamma()' is in fact the natural
+     logarithm of the gamma function.  It is not generally available on
+     non-UNIX versions of Quintus Prolog.  It is retained in this
+     release for compatibility with previous releases.
+
+
+File: quintus.info,  Node: lib-mis,  Next: lib-too,  Prev: lib-iml,  Up: lib
+
+Miscellaneous Packages
+======================
+
+* Menu:
+
+* lib-mis-ctr::                         library(ctr)
+* lib-mis-date::                        library(date)
+* lib-mis-activeread::                  Arbitrary Expressions --- library(activeread)
+* lib-mis-addportray::                  library(addportray)
+
+
+File: quintus.info,  Node: lib-mis-ctr,  Next: lib-mis-date,  Up: lib-mis
+
+`library(ctr)'
+--------------
+
+   `library(ctr)' provides an array of 32 global integer variables.  It
+was written some time ago for compatibility with another dialect of
+Prolog.  The operations provided on these variables are
+`ctr_set(+CTR, +N)'
+     ctr[CTR] := N
+
+`ctr_set(+CTR, +N, ?OLD)'
+     OLD is ctr[CTR], ctr[CTR] := N
+
+`ctr_inc(+CTR)'
+     ctr[CTR] := ctr[CTR] + 1
+
+`ctr_inc(+CTR, +N)'
+     ctr[CTR] := ctr[CTR] + N
+
+`ctr_inc(+CTR, +N, ?OLD)'
+     OLD is ctr[CTR], ctr[CTR] := ctr[CTR] + N
+
+`ctr_dec(+CTR)'
+     ctr[CTR] := ctr[CTR] - 1
+
+`ctr_dec(+CTR, +N)'
+     ctr[CTR] := ctr[CTR] - N
+
+`ctr_dec(+CTR, +N, ?OLD)'
+     OLD is ctr[CTR], ctr[CTR] := ctr[CTR] - N
+
+`ctr_is(+CTR, ?OLD)'
+     OLD is ctr[CTR]
+
+   If you want to use these counters in a nestable construct, remember
+to reset them properly; for example,
+     count_solutions(Goal, Count) :-
+             ctr_set(17, 0, Old),
+             (call(Goal), ctr_inc(17), fail ; true),
+             ctr_set(17, Old, X),
+             Count = X.
+
+   This will work even if GOAL contains a call to `count_solutions/2',
+because the old counter value is saved on entry to the clause, and
+restored on exit.  Contrast this with the following example:
+     count_solutions(Goal, Count) :-
+             ctr_set(17, 0),
+             (call(Goal), ctr_inc(17), fail ; true),
+             ctr_set(17, X),
+             Count = X.
+
+   In this example, if Goal contains a call to `count_solutions/2', the
+inner call will clobber the counter of the outer call, and the predicate
+will not work.
+
+   This file is provided mainly to allow you to experience (by doing
+your own timing tests) that the foreign interface, _not_ the database,
+is the tool for hacking global variables in Prolog, provided that the
+global variables take only constants as values.
+
+
+File: quintus.info,  Node: lib-mis-date,  Next: lib-mis-activeread,  Prev: lib-mis-ctr,  Up: lib-mis
+
+`library(date)'
+---------------
+
+   `library(date)' is a time-stamp package.
+   * Dates are records of the form `date(YEAR, MONTH, DAY)'.
+
+   * Times are records of the form `time(HOUR, MINUTE, SECOND)'.
+
+   * Datimes are records of the form `date(YEAR, MONTH, DAY, HOUR,
+     MINUTE, SECOND)'.
+
+   * "When" values are 32-bit time-stamps representing the number of
+     seconds since the beginning of January 1st 1970, represented as
+     integers.
+
+   The parameter ranges are
+
+YEAR           year-1900      (e.g. 1987 -> 87)
+MONTH          0..11          (e.g. January -> 0, September -> 8)
+DAY            1..31          (e.g. 27 -> 27)
+HOUR           0..23          (e.g. midnight -> 0, noon -> 12)
+MINUTE         0..59          
+SECOND         0..59          
+
+   These parameter ranges are compatible with the library function
+`localtime(3)'.  Note that the range for months is not what you might
+expect.
+
+   The predicates provided are:
+   * `now(?WHEN)'
+
+   * `date(-DATENOW)'
+
+   * `date(+WHEN, -DATETHEN)'
+
+   * `time(-TIMENOW)'
+
+   * `time(+WHEN, -TimeThen)'
+
+   * `datime(-DATIMENOW)'
+
+   * `datime(+WHEN, -DATIMETHEN)'
+
+   * `datime(?DATIME, ?DATE, ?TIME)'
+
+   * `date_and_time(-DATENOW, -TIMENOW)'
+
+   * `date_and_time(+WHEN, -DATETHEN, -TIMETHEN)'
+
+   * `portray_date(+TIMESTAMP)'
+
+   * `time_stamp(+FORMAT, -TIMESTAMP)'
+
+   * `time_stamp(+WHEN, +FORMAT, -TIMESTAMP)'
+
+   For example,
+     | ?- date(X), portray_date(X).
+     11-Jan-90
+     X = date(90,0,11)
+
+   Note that if you want both the current date and time, you should
+call either `datime/1' or `date_and_time/2'.  It is an error to obtain
+the date and time in separate calls, because midnight could intervene
+and put you nearly 24 hours out.
+
+   Dates and datimes are also returned by `directory_property/3' and
+`file_property/3' (see `library(directory)').  All these records can be
+compared using term comparison.
+
+   The predicates `time_stamp/[2,3]' provide a way of creating a
+time-stamp atom using a special kind of format string.  For example,
+     | ?- time_stamp('%W, %d %M %y',Date).
+     
+     Date = 'Thursday, 11 January 1990'
+
+   The details of the format strings are explained in a comment in the
+sources.  Please note that, in the interests of internationalization,
+`time_stamp/[2,3]' are likely to be superseded in a future release by
+something based on the ANSI C operation `strftime(3)'.  The other
+predicates in this package will _not_ change at that time.
+
+
+File: quintus.info,  Node: lib-mis-activeread,  Next: lib-mis-addportray,  Prev: lib-mis-date,  Up: lib-mis
+
+Arbitrary Expressions -- `library(activeread)'
+----------------------------------------------
+
+   Languages such as Lisp allow you to read an expression and to
+evaluate it, returning a data structure.  Prolog provides "evaluation"
+only for arithmetic expressions, and then only in certain argument
+positions.  `library(activeread)' provides a new experimental facility
+for reading an arbitrary "expression" and "evaluating" it.
+
+     | ?- active_read(INPUTTERM).
+
+   reads a term from the current input stream.  If this term has the
+form
+     X | GOAL.
+
+   then GOAL is called and INPUTTERM is unified with X.  Otherwise,
+INPUTTERM is unified with the term that was read.  Note that GOAL may
+backtrack, in which case `active_read/1' will also backtrack.
+
+   EXAMPLES:
+     | ?- active_read(X).
+     |: T | append([1,2],[3,4], T).
+     X = [1,2,3,4]
+     yes
+
+     | ?- active_read(X).
+     |: Front+Back | append(Front, Back, [1,2,3,4]).
+     X = []+[1,2,3,4] ;
+     X = [1]+[2,3,4] ;
+     X = [1,2]+[3,4] ;
+     X = [1,2,3]+[4] ;
+     X = [1,2,3,4]+[] ;
+     no
+
+     | ?- active_read(X).
+     |: abort.
+     X = abort
+     yes
+
+   *Please note:*  `library(activeread)' is not a module-file, but it
+is sufficiently small that there should be no problem with including a
+separate copy in each module where it is required.
+
+
+File: quintus.info,  Node: lib-mis-addportray,  Prev: lib-mis-activeread,  Up: lib-mis
+
+`library(addportray)'
+---------------------
+
+   `library(addportray)' makes the use of `portray/1' more convenient.
+In DEC-10 Prolog and C Prolog, a program could contain clauses like
+     portray(X) :-
+             should_be_handled_here(X),
+             print_it_this_way
+
+   scattered through any number of files.  In Quintus Prolog, this does
+not work, because each file will wipe out every other file's clauses
+for `portray/1'; in any case, a clause for `portray/1' in a module will
+do nothing at all, because it is `user:portray/1' that you must define.
+DEC-10 Prolog and C Prolog had a similar problem in that if you
+reconsulted a file containing such clauses, you lost all the other
+clauses for `portray/1'.
+
+   Now, in order to add a link to `portray/1' clauses to your program,
+you can do the following:
+     :- use_module(library(addportray)).
+     
+     local_portray(X) :-
+             should_be_handled_here(X),
+             print_it_this_way(X).
+     
+     :- add_portray(local_portray).
+
+   To cancel such a link, you can call
+     :- del_portray(local_portray).
+
+   Note that if you use this package, you should not define `portray/1'
+in any other way; otherwise, these links will be lost.
+
+   You can link to other user-defined predicates (such as
+`term_expansion/2') this way too.  Suppose the other predicate to be
+linked to is `user:PRED/ARITY'.  Then
+     :- add_linking_clause(LINK, PRED, ARITY).
+
+   ensures that there is a clause
+     PRED(X1,...,XARITY) :- LINK(X1,...,XARITY).
+
+   in module `user', where LINK/ARITY is called in the module from
+which `add_linking_clause/3' is called, and
+     :- del_linking_clause(LINK, PRED, ARITY).
+
+   ensures that there is no such clause.  For example, you can add a
+case to `term_expansion/2' by adding the following directive to a
+module:
+     :- add_linking_clause(local_expander, term_expansion, 2).
+
+
+File: quintus.info,  Node: lib-too,  Next: lib-abs,  Prev: lib-mis,  Up: lib
+
+Tools
+=====
+
+* Menu:
+
+* lib-too-too::                         The tools Directory
+* lib-too-xref::                        The Cross-Referencer --- qpxref
+* lib-too-det::                         Determinacy Checker --- qpdet
+
+
+File: quintus.info,  Node: lib-too-too,  Next: lib-too-xref,  Up: lib-too
+
+The `tools' Directory
+---------------------
+
+* Menu:
+
+* lib-too-too-ove::                     Overview
+
+
+File: quintus.info,  Node: lib-too-too-ove,  Up: lib-too-too
+
+Overview
+........
+
+   The `tools' directory, `qplib(tools)' is a subdirectory of the
+library directory, (see *Note lib-bas::).  The primary tools that it
+contains are:
+
+`qpxref'
+     A Prolog cross-referencer
+
+`qpdet'
+     determinacy checker
+
+
+File: quintus.info,  Node: lib-too-xref,  Next: lib-too-det,  Prev: lib-too-too,  Up: lib-too
+
+The Cross-Referencer -- `qpxref'
+--------------------------------
+
+   ]
+
+   ]
+
+   The main purpose of the `qpxref' program is to find undefined
+predicates and unreachable code.  It can also aid in the formation of
+`module/2' and `use_module/2' statements by file, and list all
+cross-reference for each predicate.
+
+   See *Note bas-eff-xref:: for detailed information on using this tool.
+
+
+File: quintus.info,  Node: lib-too-det,  Prev: lib-too-xref,  Up: lib-too
+
+Determinacy Checker -- `qpdet'
+------------------------------
+
+   ]
+
+   `qpdet' is a tool to help you write efficient, determinate code.  It
+is intended to be used to look for unwanted nondeterminacy in programs
+that are intended to be mostly determinate.  Unintended nondeterminacy
+should be eradicated because
+
+  1. it may give you wrong answers on backtracking
+
+  2. it may cause a lot of memory to be wasted
+
+   See *Note bas-eff-det:: for detailed information on using this tool.
+

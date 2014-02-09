@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The Bottom Layer Functions</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-ios-bot-rea.html#fli-ios-bot-rea">fli-ios-bot-rea</a>:                      The Bottom Layer Read Function
+<li><a accesskey="2" href="fli-ios-bot-wri.html#fli-ios-bot-wri">fli-ios-bot-wri</a>:                      The Bottom Layer Write Function
+<li><a accesskey="3" href="fli-ios-bot-flu.html#fli-ios-bot-flu">fli-ios-bot-flu</a>:                      The Bottom Layer Flush Function
+<li><a accesskey="4" href="fli-ios-bot-see.html#fli-ios-bot-see">fli-ios-bot-see</a>:                      The Bottom Layer Seek Function
+<li><a accesskey="5" href="fli-ios-bot-clo.html#fli-ios-bot-clo">fli-ios-bot-clo</a>:                      The Bottom Layer Close Function
+</ul>
+
+   <p>There are five bottom layer functions for a stream: read, write, flush,
+seek and close. However, not all of these functions are needed for
+every stream:
+     <ul>
+
+     <li>The <code>seek</code> function is not required when the <code>seek_type</code> is
+<code>QP_SEEK_ERROR</code>. 
+<li>The <code>read</code> function is only required for an input stream. 
+<li>The <code>write</code> function is only required for an output stream. 
+<li>The <code>flush</code> function is not required when the <code>flush_type</code> is
+<code>QP_FLUSH_ERROR</code>. 
+<li>The <code>close</code> function should be supplied for every stream. 
+</ul>
+
+   <p>These functions usually only operate on the specific
+fields of a particular user-defined stream.  (i.e. Fields other than
+the first field in a user-defined stream structure.)  The <code>errno</code>
+field and <code>magic</code> field in <code>QP_stream</code> part may also be
+maintained by the bottom layer functions.  The <code>mode</code> field and
+<code>max_reclen</code> field are also typically accessed by the bottom layer
+functions.
+
+   <p>Except for the read function, all the bottom layer functions
+return <code>QP_SUCCESS</code> upon success, and return <code>QP_ERROR</code>
+and assign an error code to the <code>errno</code> field upon failure. 
+These functions are described further in subsequent
+sub-sections.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-uds.html#fli-ios-uds">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-cps.html#fli-ios-cps">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios.html#fli-ios">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

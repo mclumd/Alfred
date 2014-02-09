@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Using Quintus Objects</h4>
+
+   <p>One of the basic ideas of object-oriented programming is the
+encapsulation of data and procedures into objects. Each object belongs
+to exactly one class, and an object is referred to as an instance of
+its class. A class definition determines the following things for its
+objects:
+
+     <ul>
+
+     <li>slots, where an object holds data
+<li>messages, the commands that can be sent to an object
+<li>methods, the procedures the object uses to respond to the messages
+</ul>
+
+   <p>All interaction with an object is by sending it messages. The command
+to send a message to an object has the form
+
+<pre class="example">     <var>Object</var> <var>MessageOp</var> <var>Message</var>
+     </pre>
+
+   <p>where <var>Object</var> is an object, <var>MessageOp</var> is one of the message
+operators (<code>&lt;&lt;</code>, <code>&gt;&gt;</code>, or <code>&lt;-</code>) and <var>Message</var> is a message
+defined for the object's class.  Roughly speaking, the <code>&gt;&gt;</code> message
+operator is used for extracting information from an object, <code>&lt;&lt;</code> is for
+storing information into an object, and <code>&lt;-</code> is for any other sort
+of operation.
+
+   <p>For example, using the point class defined in the next section, it
+would be possible to give the following command, which demonstrates
+all three message operators.
+
+<pre class="example">     | ?- <kbd>create(point, PointObj),
+          PointObj &gt;&gt; x(InitX),
+          PointObj &gt;&gt; y(InitY),
+          PointObj &lt;&lt; x(2.71828),
+          PointObj &lt;&lt; y(3.14159),
+          PointObj &lt;- print(user),
+          nl(user).</kbd>
+     
+     (2.71828,3.14159)
+     PointObj = point(23461854),
+     InitX = 1.0,
+     InitY = 2.0
+     </pre>
+
+   <p>First it binds the variable
+<code>PointObj</code> to a newly created <code>point</code> object. Then, the two get messages (sent with the <code>&gt;&gt;</code>
+operator) fetch the initial values of the point's <code>x</code> and <code>y</code> slots, binding
+the variables <code>InitX</code> and <code>InitY</code> to these values.  Next, the two
+put messages (sent with the <code>&lt;&lt;</code> operator) assign new values to
+the object's <code>x</code> and <code>y</code> slots. Finally, the send message (sent with the
+<code>&lt;-</code> operator) instructs the point object to print itself to the
+<code>user</code> stream, followed by a newline.  Following the goal, we see
+the point has been printed in a suitable form.  Following this, the values of
+<code>PointObj</code>, <code>InitX</code>, and <code>InitY</code> are printed as usual
+for goals entered at the Prolog prompt.
+
+   <p>Because this goal is issued at the Prolog prompt, the values of the
+variables <code>PointObj</code>, <code>InitX</code> and <code>InitY</code> are not retained after
+the command is executed and their values are displayed, as with any
+goal issued at the Prolog prompt.  However, the
+point object still exists, and it retains the changes made to its
+slots. Hence, objects, like clauses
+asserted to the Prolog database, are more persistent than Prolog variables.
+
+   <p>Another basic idea of object-oriented programming is the notion of
+inheritance. Rather than defining each class separately, a new class
+can inherit the properties of a more general superclass. Or, it can be
+further specialized by defining a new subclass, which inherits its
+properties. (C++ uses the phrase "base class" where we use
+"superclass." It also uses "derived class" where we use "subclass.")
+
+   <p>Quintus Objects uses term expansion to translate object-oriented
+programs into ordinary Prolog. (This is the same technique that Prolog
+uses for its DCG grammar rules.) As much as possible is done at
+compile time. Class definitions are used to generate Prolog clauses
+that implement the class's methods. Message commands are translated into
+calls to those Prolog clauses.  And, inheritance is resolved at
+translation time.
+
+   <p>Quintus Objects consists of two modules, <code>obj_decl</code> and <code>objects</code>. The
+<code>obj_decl</code> module is used at compile time to translate the
+object-oriented features of Quintus Objects. Any file that defines
+classes or sends messages should include the command
+
+<pre class="example">     :- load_files(library(obj_decl),
+                   [when(compile_time), if(changed)]).
+     </pre>
+
+   <p>The <code>objects</code> module provides runtime support for Quintus Objects
+programs. A file that sends messages or asks questions about what
+classes are defined or to what class an object belongs should include
+the command:
+
+<pre class="example">     :- use_module(library(objects)).
+     </pre>
+
+   <p>You will probably include both in most files that define and use classes.
+
+   <p>You must have a license to use the <code>obj_decl</code> module, but you may
+include the <code>objects</code> module in programs that you will distribute.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-bas-def.html#obj-bas-def">Next</a>
+<li><a rel="up" accesskey="u" href="obj-bas.html#obj-bas">Up</a>
+</ul>
+</div>
+   </body></html>
+

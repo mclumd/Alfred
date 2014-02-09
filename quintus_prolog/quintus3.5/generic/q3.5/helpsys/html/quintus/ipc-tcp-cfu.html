@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The C functions</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ipc-tcp-cfu-create_listener.html#ipc-tcp-cfu-create_listener">ipc-tcp-cfu-create_listener</a>:          tcp_create_listener()
+<li><a accesskey="2" href="ipc-tcp-cfu-address_to_file.html#ipc-tcp-cfu-address_to_file">ipc-tcp-cfu-address_to_file</a>:          tcp_address_to_file()
+<li><a accesskey="3" href="ipc-tcp-cfu-address_from_file.html#ipc-tcp-cfu-address_from_file">ipc-tcp-cfu-address_from_file</a>:        tcp_address_from_file()
+<li><a accesskey="4" href="ipc-tcp-cfu-address_from_shell.html#ipc-tcp-cfu-address_from_shell">ipc-tcp-cfu-address_from_shell</a>:       tcp_address_from_shell()
+<li><a accesskey="5" href="ipc-tcp-cfu-connect.html#ipc-tcp-cfu-connect">ipc-tcp-cfu-connect</a>:                  tcp_connect()
+<li><a accesskey="6" href="ipc-tcp-cfu-accept.html#ipc-tcp-cfu-accept">ipc-tcp-cfu-accept</a>:                   tcp_accept()
+<li><a accesskey="7" href="ipc-tcp-cfu-select.html#ipc-tcp-cfu-select">ipc-tcp-cfu-select</a>:                   tcp_select()
+<li><a accesskey="8" href="ipc-tcp-cfu-shutdown.html#ipc-tcp-cfu-shutdown">ipc-tcp-cfu-shutdown</a>:                 tcp_shutdown()
+</ul>
+
+   <p>Communication between processes is effected through sockets.  Sockets
+are referred to by small 32 bit integers, called file descriptors
+below (even though they are proper file descriptors only under UNIX).
+
+   <p>The program using this package should be linked with the object file
+<code>tcp_c.o</code> (substitute the actual object file extension for <code>.o</code>). 
+The sources to create this file, the C source files <code>tcp.c</code>
+and <code>tcp.h</code>, are provided in the tcp library directory.<a rel="footnote" href="#fn-1"><sup>1</sup></a>  Furthermore, the source file <code>tcp.h</code> from <code>IPC/TCP</code>
+should be included in the C sources using the package.
+
+   <p>Errors from using the C tcp package are written to <code>stderr</code> using the
+system function <code>perror(3)</code>, so whenever a tcp C function
+indicates an error, the error message has already been printed and
+errno has already been set.
+
+   <p>Although sockets may be used like any other file descriptor, they must
+be killed using <code>tcp_shutdown()</code>, otherwise the behavior of
+<code>tcp_select()</code> will become unpredictable.
+
+   <p>For a C client calling a Prolog server, see example <code>cs.c</code> (<a href="ipc-tcp-exa.html#ipc-tcp-exa">ipc-tcp-exa</a>).
+
+   <p>For a Prolog client calling a C server, see example <code>c_server.pl, c_server.c</code>
+(<a href="ipc-tcp-exa.html#ipc-tcp-exa">ipc-tcp-exa</a>).
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>The
+object file is also created in the system directories of tcp at
+installation time.  In the development system, the call
+<code>absolute_file_name(library(system('tcp_c.o')),AbsPath)</code> returns the
+full path to the object file <code>tcp_c.o</code> for the particular architecture
+being used.</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-tcp-exa.html#ipc-tcp-exa">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-cbi.html#ipc-tcp-cbi">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp.html#ipc-tcp">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

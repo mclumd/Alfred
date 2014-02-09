@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">QOF Loading and Saving</h4>
+
+   <p>Since Release 2.5, the Runtime Generator compiler <code>qpc</code> has been
+made available as part of the Development System. 
+<code>qpc</code> compiles Prolog files into QOF (Quintus Object Format) files. 
+QOF files can be linked together to make an executable file, which is
+an extended version of the development system.  If you have a Runtime
+Generator license, you have the alternative of linking your QOF files
+into a runtime system, which omits development features (the compiler
+and debugger) and which can be conveniently deployed to different
+machines since it requires no authorization code in order to be run.
+
+   <p>Release 3 introduces the ability to load QOF files directly into a
+running Prolog system.  Loading a QOF file is up to 100 times faster
+than compiling it from source.  File loading has been adapted to take
+advantage fo this new functionality.  For instance, the form
+<pre class="example">     | ?- <kbd>[file].</kbd>
+     </pre>
+
+   <p>now loads <code>file.qof</code> if it exists and is more recent than <code>file.pl</code>; otherwise
+it compiles <code>file.pl</code>.
+
+   <p>The saved-state produced by <code>save_program/1</code> is now a QOF file. 
+This means that it is now portable between different hardware and
+operating systems as well as between all releases of Quintus Prolog.  It can
+still be executed as if it were an executable file, or it can be
+loaded into a running Prolog system.  Another alternative is to call
+the QOF-linker <code>qld</code> on it to convert it to an executable file. 
+It is also possible to save individual predicates or modules into a QOF
+file.
+
+   <a href="ref-lod.html#ref-lod">ref-lod</a> and <a href="ref-sls.html#ref-sls">ref-sls</a> describe
+QOF loading and QOF saving  respectively.  See <a href="sap-srs-bas-cld.html#sap-srs-bas-cld">sap-srs-bas-cld</a> for how to
+link QOF files to make an executable file.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="int-hig-qui.html#int-hig-qui">Next</a>
+<li><a rel="previous" accesskey="p" href="int-hig-emb.html#int-hig-emb">Previous</a>
+<li><a rel="up" accesskey="u" href="int-hig.html#int-hig">Up</a>
+</ul>
+</div>
+   </body></html>
+

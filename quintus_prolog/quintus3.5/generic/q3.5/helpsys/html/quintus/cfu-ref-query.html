@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_query()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_query(pred_ref, arg1,...,arg255)
+     QP_pred_ref pred_ref;
+     </pre>
+
+   <p>Make a determinate query in a single C function call.
+
+<h4 class="subheading">Description</h4>
+
+   <p>The first argument passed to <code>QP_query()</code> is a reference
+to the Prolog predicate to be called.  <code>QP_query()</code> accepts between 0 and 255
+arguments after its first argument.  Any arguments after the first
+represent parameters to be passed to and from the Prolog predicate. 
+For the types of arguments that may be passed between C and Prolog predicates,
+see <a href="fli-ffp.html#fli-ffp">fli-ffp</a>.
+
+   <p>The foreign language interface will interpret arguments passed to the Prolog
+predicate according to the call specification given when the predicate
+was made callable.  Hence, it is important that the arguments to be passed
+to and from the Prolog predicate should correspond with that call
+specification.  In certain cases (passing Prolog atoms in canonical
+form) it is possible to detect inconsistencies between data supplied to
+<code>QP_query()</code> and the call specification, but for the most part this is
+impossible.  Calls that are inconsistent with their call specifications
+will produce undefined results.
+
+   <p>Only when the return value is <code>QP_SUCCESS</code> are the values in variables
+passed as outputs from Prolog valid.  Otherwise, their contents are
+undefined.
+
+<h4 class="subheading">Return Value</h4>
+
+     <dl>
+
+     <br><dt><code>QP_SUCCESS</code>
+     <dd>query was made and a solution to the query was computed
+
+     <br><dt><code>QP_FAILURE</code>
+     <dd>query was made but no solution could be found
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>either the query could not be made, or that
+an exception was signaled from Prolog but not caught. 
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_cut_query()</code>, <code>QP_close_query()</code>,
+<code>QP_next_solution()</code>, <code>QP_open_query()</code>, <code>QP_pred()</code>,
+<code>QP_predicate()</code>, <a href="fli-ffp.html#fli-ffp">fli-ffp</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-register_atom.html#cfu-ref-register_atom">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-puts.html#cfu-ref-puts">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

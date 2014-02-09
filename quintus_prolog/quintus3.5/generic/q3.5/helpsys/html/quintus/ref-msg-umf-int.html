@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Interaction</h5>
+
+   <p>Prolog's default ways of eliciting keyboard input are enumerated in
+the clauses for <code>query_abbreviation/3</code>
+in <code>messages(language('QU_messages.pl'))</code>.  These clauses specify valid
+abbreviations for a given key word.  For example,
+
+<pre class="example">     query_abbreviation(yes_or_no,'(y/n)',[yes-"yY",no-"nN"]).
+     </pre>
+
+   <p>A French translator might decide that the letters <code>O</code> and <code>o</code> are
+reasonable abbreviations for <code>oui</code> (yes), and therefore write
+<code>yes-"oO"</code>.  See the reference page for more information on
+<code>query_abbreviation/3</code>.
+
+   <p>The query hook provides a means of overriding the default interaction. 
+Whenever Prolog attempts to solicit input from the user, it first
+looks to see if the application wants to take control of the query by
+calling user:<code>query_hook/6</code>  (see the above figure).  The
+various queries are listed in the manual page for <code>query_hook/6</code>. 
+For example, if Prolog is looking for a yes-no response, as in the
+toplevel, this request for input can be captured as follows, where
+<code>my_yes_no/2</code> binds Answer to <code>yes</code> or <code>no</code>:
+
+<pre class="example">     query_hook(toplevel,_,_,_,_,Answer):-
+         my_yes_no('Done?',Answer).
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ref-msg-umf-ipm.html#ref-msg-umf-ipm">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-msg-umf.html#ref-msg-umf">Up</a>
+</ul>
+</div>
+   </body></html>
+

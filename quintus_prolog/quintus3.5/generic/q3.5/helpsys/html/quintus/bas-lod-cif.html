@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Commands in Files</h4>
+
+   <p>A Prolog source file can contain commands as well as clauses. 
+If you have a program that is spread across many files, it may be useful
+to create a file containing commands to load each of those files.  For
+example, such a file could look like this:
+<pre class="example">     :- compile(file1).
+     :- compile(file2).
+     :- compile(file3).
+     </pre>
+
+   <p>When this master-file is compiled, the <code>% compiling File...</code>  and
+<code>% File compiled</code> messages for file1, file2 and file3 will be indented
+by one character.  If they in turn cause other files to be loaded, the
+messages for those files will be indented two characters, and so on.
+
+   <p><strong>Notes:</strong>
+     <ol type=1 start=1>
+
+     <li>The <code>:- </code> symbol is placed at the beginning of the line just as
+it appears in the example above. 
+<li>When a file being compiled contains a command to compile
+another file, a relative filename in that command is interpreted with
+reference to the directory that contains the first file.  For example, if
+the file <code>/usr/fred/test.pl</code> contains the following commands
+     <pre class="example">          :- compile('../whatsit').
+          :- compile('xyz.pl').
+          </pre>
+
+     <p>then the files to be compiled would be <code>/usr/whatsit.pl</code> (or <code>/usr/whatsit</code>) and
+<code>/usr/fred/xyz.pl</code>.
+
+     <p>For example, you can have a file called <code>mainfile.pl</code> containing
+
+     <pre class="example">          :- [file1, file2, file3].
+          </pre>
+
+     <p>and provided that you keep all of these files in the same directory as
+<code>mainfile.pl</code>, you can compile them all, no matter what your current
+working directory is, by giving <code>compile/1</code> a file specification
+for <code>mainfile.pl</code>.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-lod-syn.html#bas-lod-syn">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-lod-qof.html#bas-lod-qof">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-lod.html#bas-lod">Up</a>
+</ul>
+</div>
+   </body></html>
+

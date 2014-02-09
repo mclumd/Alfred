@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Parts of lists -- <code>library(listparts)</code></h4>
+
+   <p><code>library(listparts)</code> exists to establish a common vocabulary for
+names of parts of lists among Prolog programmers.  You will
+seldom have occasion to use <code>head/2</code> or <code>tail/2</code> in your programs --
+pattern matching is clearer and faster -- but you will often use
+these words when talking about your programs.  The
+predicates provided are
+     <dl>
+
+     <br><dt><code>cons(</code><var>?Head</var><code>, </code><var>?Tail</var><code>, </code><var>?List</var><code>)</code>
+     <dd>
+<var>Head</var> is the head of <var>List</var> and <var>Tail</var> is its tail; i.e. <code>append([</code><var>Head</var><code></code>, <var>Tail</var>, <var>List</var>)]. 
+No restrictions.
+
+     <br><dt><code>last(</code><var>?Fore</var><code>, </code><var>?Last</var><code>, </code><var>?List</var><code>)</code>
+     <dd><var>Last</var> is the last element
+of <var>List</var> and <var>Fore</var> is the list of preceding elements, e.g. 
+<code>append(</code><var>Fore</var><code>, [</code><var>Last</var><code></code>, <var>List</var>)].  <var>Fore</var> or <var>Last</var> should be proper. 
+It is expected that <var>List</var> will be proper and <var>Fore</var> unbound, but
+it will work in reverse too. 
+</dl>
+
+   <p>The remaining predicates are binary, and <code></code><var>part</var><code>(</code><var>Whole</var><code>, </code><var>Part</var><code>)</code> is to be
+read as "<var>Part</var> is the/a <var>part</var> of <var>Whole</var>".  When both <code></code><var>part</var><code>/2</code> and
+<code>proper_</code><var>part</var><code>/2</code> exist, proper <var>part</var>s are strictly smaller than <var>Whole</var>,
+whereas <var>Whole</var> may be a <var>part</var> of itself.  <var>N</var> is the length of the whole
+argument, assumed to be a proper list.  This order is strictly in
+accord with the fundamental principle of argument ordering in Prolog:
+INPUTS BEFORE OUTPUTS.
+     <dl>
+
+     <br><dt><code>head(</code><var>List</var><code>, </code><var>Head</var><code>)</code>
+     <dd><var>List</var> is a non-empty list and
+<var>Head</var> is its head.  A list has only one head.  No restrictions.
+
+     <br><dt><code>tail(</code><var>List</var><code>, </code><var>Tail</var><code>)</code>
+     <dd><var>List</var> is a non-empty list and
+<var>Tail</var> is its tail.  A list has only one tail.  No restrictions.
+
+     <br><dt><code>prefix(</code><var>List</var><code>, </code><var>Prefix</var><code>)</code>
+     <dd><var>List</var> and <var>Prefix</var>
+are lists and <var>Prefix</var> is a proper prefix of <var>List</var>.
+
+     <br><dt><code>proper_prefix(</code><var>List</var><code>, </code><var>Prefix</var><code>)</code>
+     <dd><var>List</var> and <var>Prefix</var>
+are lists and <var>Prefix</var> is a proper prefix of <var>List</var>.  That is,
+<var>Prefix</var> is a prefix of <var>List</var> but is not <var>List</var> itself.   It terminates if
+either argument is proper, and has at most <var>N</var> solutions.  Prefixes
+are enumerated in ascending order of length.
+
+     <br><dt><code>suffix(</code><var>List</var><code>, </code><var>Suffix</var><code>)</code>
+     <dd><var>List</var> and <var>Suffix</var> are
+lists and <var>Suffix</var> is a suffix of <var>List</var>.  It terminates only if
+<var>List</var> is proper, and has at most <var>N</var>+1 solutions.  Suffixes are
+enumerated in descending order of length.
+
+     <br><dt><code>proper_suffix(</code><var>List</var><code>, </code><var>Suffix</var><code>)</code>
+     <dd><var>List</var> and <var>Suffix</var> are
+lists and <var>Suffix</var> is a proper suffix of <var>List</var>. That is,
+<var>Suffix</var> is a suffix of <var>List</var>.  It terminates only if <var>List</var> is
+proper, and has at most <var>N</var>+1 solutions.  Suffixes are enumerated in
+descending order of length.
+
+     <br><dt><code>segment(</code><var>List</var><code>, </code><var>Segment</var><code>)</code>
+     <dd><var>List</var> and <var>Segment</var> are lists and
+<var>Segment</var> is a sublist of <var>List</var>.
+
+     <br><dt><code>proper_segment(</code><var>List</var><code>, </code><var>Segment</var><code>)</code>
+     <dd><var>List</var> and <var>Segment</var> are
+lists and <var>Segment</var> is a proper sublist of <var>List</var>.
+
+     <br><dt><code>sublist/2</code>
+     <dd>same as <code>segment/2</code>
+
+     <br><dt><code>proper_sublist/2</code>
+     <dd>same as <code>proper_segment/2</code>
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="lib-lis-ordsets.html#lib-lis-ordsets">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-lis.html#lib-lis">Up</a>
+</ul>
+</div>
+   </body></html>
+

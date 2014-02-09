@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_new_term_ref()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     QP_term_ref QP_new_term_ref()
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>QP_new_term_ref()</code> returns an initialized <code>QP_term_ref</code>. Every
+<code>QP_term_ref</code> declared has to be initialized with a call to this
+function. A <code>QP_term_ref</code> can be considered as a reference to a Prolog
+term. Calling this function initialises that reference to a location
+where terms can be stored. The actual term that the reference points to
+is initialized to <code>[]</code>.
+
+<h4 class="subheading">Example</h4>
+
+   <p><code>create_term()</code> is a simple C function that returns
+different types of Prolog terms depending on its first argument.
+
+<pre class="example">
+                                     <div align="right"><em>foo.pl</em>
+     </div>
+     
+     foreign(create_term, create_term(+integer,[-term])).
+     </pre>
+
+<pre class="example">
+                                      <div align="right"><em>foo.c</em>
+     </div>
+     
+     #include &lt;quintus/quintus.h&gt;
+     
+     QP_term_ref create_term(kind);
+     long int kind;
+     {
+         QP_term_ref new = QP_new_term_ref();
+     
+         switch (kind) {
+           case 1:
+             QP_put_integer(new, 23);
+             break;
+           case 2:
+             QP_put_atom(new, QP_atom_from_string("Ayn"));
+             break;
+           case 3:
+             QP_put_float(new, 1.1);
+             break;
+           default:
+             QP_put_nil(new);
+             break;
+         }
+         return new;
+     }
+     </pre>
+
+<h4 class="subheading">See Also:</h4>
+
+   <p><code>QP_put_*()</code>, <code>QP_term_type()</code>, <code>QP_get_*()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-newline.html#cfu-ref-newline">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-malloc.html#cfu-ref-malloc">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

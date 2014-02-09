@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Checking Terms for Subterms -- <code>library(occurs)</code></h4>
+
+   <p>The predicates in <code>library(occurs)</code> test whether a given term
+is a subterm of another or not.  We define a subterm thus:
+     <ul>
+
+     <li><var>T</var> is a subterm of <var>T</var>
+<li><var>S</var> is a subterm of <var>T</var> if <var>A</var> is an argument of <var>T</var>
+and <var>S</var> is a subterm of <var>A</var>
+</ul>
+
+   <p>A <dfn>proper</dfn> subterm of a term <var>T</var> would be any subterm of
+<var>T</var> other than <var>T</var> itself.  There are no library predicates
+concerned with the "proper subterm" relationship, only the
+"subterm" relationship.
+
+   <p>There are two questions we might ask:
+     <ul>
+
+     <li>does <var>S</var> unify with (is it <code>=</code> to) some subterm of <var>T</var>? 
+The predicates that ask this question have <code>_term</code> in their names.
+
+     <li>is <var>S</var> identical to (is it <code>==</code> to) some subterm of <var>T</var>? 
+The predicates that ask this question have <code>_var</code> in their names.
+
+   </ul>
+
+   <p>When the predicates are applied to ground terms, both
+questions have the same answers.
+
+   <p>Seven predicates are defined by <code>library(occurs)</code>:
+     <dl>
+
+     <br><dt><code>contains_term(</code><var>+SubTerm</var><code>, </code><var>+Term</var><code>)</code>
+     <dd>
+is true when <var>Term</var> contains a subterm that unifies with (<code>=</code>)
+<var>SubTerm</var>.
+
+     <br><dt><code>contains_var(</code><var>+SubTerm</var><code>, </code><var>+Term</var><code>)</code>
+     <dd>
+is true when <var>Term</var> contains a subterm that is identical to
+(<code>==</code>) <var>SubTerm</var>.  The reason for the name is that this predicate is
+normally used to check whether <var>Term</var> contains a particular
+<em>variable</em> <var>SubTerm</var>.  But <code>contains_var/2</code> makes sense
+even when <var>SubTerm</var>
+is not a variable.  In fact, if <var>Term</var> and <var>SubTerm</var> are both
+ground, <code>contains_term/2</code> and <code>contains_var/2</code> are the same test.
+
+     <br><dt><code>free_of_term(</code><var>+SubTerm</var><code>, </code><var>+Term</var><code>)</code>
+     <dd>
+is true when <var>Term</var> does <em>not</em> contain a subterm that unifies
+with (<code>=</code>) <var>SubTerm</var>.
+
+     <br><dt><code>free_of_var(</code><var>+SubTerm</var><code>, </code><var>+Term</var><code>)</code>
+     <dd>
+is true when <var>Term</var> does <em>not</em> contain a subterm that is
+identical to (<code>==</code>) <var>SubTerm</var>.  This is the "occur check",
+which is needed for sound unification:  a variable <var>X</var> should
+unify with a non-variable term <var>T</var> only if <code>free_of_var(</code><var>X</var><code>, </code><var>T</var><code>)</code>. 
+See <code>library(unify)</code> (<a href="lib-tma-unify.html#lib-tma-unify">lib-tma-unify</a>) for an example of the use of this predicate.
+
+     <br><dt><code>occurrences_of_term(</code><var>+SubTerm</var><code>, </code><var>+Term</var><code>, </code><var>?Tally</var><code>)</code>
+     <dd>
+unifies <var>Tally</var> with the number of subterms of <var>Term</var> that
+unify with (<code>=</code>) <var>SubTerm</var>.
+
+     <br><dt><code>occurrences_of_var(</code><var>+SubTerm</var><code>, </code><var>+Term</var><code>, </code><var>?Tally</var><code>)</code>
+     <dd>
+unifies <var>Tally</var> with the number of subterms of <var>Term</var> that
+are identical to (<code>==</code>) <var>SubTerm</var>.
+
+     <br><dt><code>sub_term(</code><var>-SubTerm</var><code>, </code><var>+Term</var><code>)</code>
+     <dd>
+enumerates the <var>SubTerm</var>s of <var>Term</var>.  The order in that the
+subterms are enumerated is not fully defined, though each subterm will
+be reported before any of its own subterms.  Be careful:  terms
+tend to have <em>lots</em> of subterms.
+     <pre class="example">          | ?- <kbd>sub_term(X, (a+b)*(c+d)), tab(8),
+          write(X), nl, fail.</kbd>
+          
+                  (a+b)*(c+d)
+                  c+d
+                  d
+                  c
+                  a+b
+                  b
+                  a
+          no
+          </pre>
+
+     <p>The order in which these terms are generated is subject to change, and
+should not be relied upon. 
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-tma-aor.html#lib-tma-aor">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-tma-changearg.html#lib-tma-changearg">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-tma.html#lib-tma">Up</a>
+</ul>
+</div>
+   </body></html>
+

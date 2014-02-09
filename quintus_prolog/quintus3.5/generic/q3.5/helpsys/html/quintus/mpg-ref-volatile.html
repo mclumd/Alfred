@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>volatile/1</code> <dfn>declaration</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- volatile </code><var>+PredSpecs</var><code></code>
+
+   <p>Declares <var>PredSpecs</var> to be volatile.  Volatile predicates are not
+saved in QOF files by Prolog <code>save</code> predicates.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>PredSpecs</var> <dfn>pred_spec_forest</dfn> [MOD]
+     <dd>A single predicate
+specification of the form <var>Name/Arity</var>, or a sequence of
+predicate specifications separated by commas.  <var>Name</var> must be an
+atom and <var>Arity</var> an integer in the range 0..255.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>A built-in prefix operator, so that declarations can be written as
+e.g.
+<pre class="example">      :- volatile a/1, b/3.
+     </pre>
+
+   <p>callable both at compile-time and run-time. 
+In both cases the predicate specified will, with immediate
+effect, be declared as volatile.
+
+   <p>When used as a compile-time directive, the volatile declaration of a
+predicate must appear before all clauses of that predicate.  The predicate
+is reinitialized.
+
+   <p>When used as a callable goal, the only effect on the predicate is that
+it is set to be volatile.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+    If  <var>PredSpec</var> is not  ground.
+
+     <br><dt><code>type_error</code>
+     <dd>
+    If  <var>PredSpec</var> is not a proper predicate specification.
+
+     <br><dt><code>permission_error</code>
+     <dd>
+   <var>PredSpec</var> names a non-volatile predicate that is already
+defined  (This exception is only raised when volatile is used as a compile-time
+directive.)
+
+   </dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>Whether <var>PredSpec</var> is
+volatile can be checked with <code>predicate_property/2</code>.
+
+   <p>The properties, as well as the predicate, can be deleted with <code>abolish/1</code>.
+
+   <p><var>PredSpec</var> clauses are saved by <code>qpc</code>.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>see examples under <code>initialization/1</code>.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>initialization/1</code>,
+<code>save_program/[1,2]</code>,
+<code>save_modules/2</code>,
+<code>save_predicates/2</code>
+
+   <a href="ref-sls-igs-vol.html#ref-sls-igs-vol">ref-sls-igs-vol</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-write.html#mpg-ref-write">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-vms.html#mpg-ref-vms">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

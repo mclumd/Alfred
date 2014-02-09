@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Checker Output</h5>
+
+   <p>The output of the determinacy checker is quite simple.  For each
+clause containing unexpected nondeterminacy, a single line is printed
+showing the module, name, arity, and clause number (counting from 1). 
+The form of the information is:
+<pre class="example">     * Non-determinate: <var>module:name/arity</var> (clause <var>number</var>)
+     </pre>
+
+   <p>A second line for each nondeterminate clause indicates the cause of
+the nondeterminacy.  The recognized causes are:
+     <ul>
+
+     <li>The clause contains a disjunction that is not forced to be
+determinate with a cut or by ending the clause with a call to <code>fail/0</code>
+or <code>raise_exception/1</code>. 
+<li>The clause calls a nondeterminate predicate.  In this case the
+predicate is named. 
+<li>There is a later clause for the same predicate whose first argument
+has the same principal functor (or one of the two clauses has a
+variable for the first argument), and this clause does not contain a
+cut or end with a call to <code>fail/0</code> or <code>raise_exception/1</code>.  In this case, the
+clause number of the other clause is mentioned. 
+<li>If the predicate is multifile, clause indexing is not considered
+sufficient to ensure determinacy.  This is because other clauses may
+be added to the predicate in other files, so the determinacy checker
+cannot be sure it has seen all the clauses for the predicate.  It is
+good practice to include a cut (or fail) in every clause of a
+multifile predicate. 
+</ul>
+
+   <p>The determinacy checker also occasionally prints warnings when
+declarations are made too late in the file or not at all.  For
+example, if you include a <code>dynamic</code>, <code>nondet</code>, or
+<code>discontiguous</code> declaration for a predicate after some clauses
+for that predicate, or if you put a <code>dynamic</code> or <code>nondet</code>
+declaration for a predicate after a clause that includes a call to
+that predicate, the determinacy checker may have missed some
+nondeterminacy in your program.  The checker also detects undeclared
+discontiguous predicates, which may also have undetected
+nondeterminacy.  Finally, the checker looks for goals in your program
+that indicate that predicates are dynamic; if no <code>dynamic</code>
+declaration for those predicates, you will be warned.
+
+   <p>These warnings take the following form:
+<pre class="example">     ! warning: predicate module:name/arity is <var>property</var>.
+     !          Some nondeterminacy may have been missed.
+     !          Add (or move) the directive~n
+     !              :- <var>property</var> module:name/arity.
+     !          near the top of this file.
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-det-exa.html#bas-eff-det-exa">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-det-dnd.html#bas-eff-det-dnd">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-det.html#bas-eff-det">Up</a>
+</ul>
+</div>
+   </body></html>
+

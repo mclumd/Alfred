@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Opening and Closing a Query</h4>
+
+   <p>Prolog queries are represented in Visual Basic in textual form, i.e. 
+as a string containing the query, but not followed by a full stop. 
+For example, the following Visual Basic code fragments create valid
+Prolog queries:
+
+<pre class="example">     'Q1 is a query finding the first "good" element of the list [1,2,3]
+     Q1 = "member(X,[1,2,3]), good(X)"
+     
+     'create a Q2 query finding the first "good" element of the list
+     '[1,2,...,N]:
+     Q2 = "member(X,["
+     For i = 1 To N-1
+        Q2 = Q2 &amp; i &amp; ","
+     Next
+     Q2 = Q2 &amp; N &amp; "]), good(X)"
+     </pre>
+
+   <p>Before executing a query, it has to be explicitly opened, via the
+<code>PrologOpenQuery</code> function, which will return a <dfn>query
+identifier</dfn> that can be used for successive retrieval of solutions.
+
+   <p>The <code>PrologCloseQuery</code> procedure will close the query represented
+by a query identifier.  The use of an invalid query identifier will
+result in undefined behavior.  For example:
+
+<pre class="example">     Dim qid As Long
+     
+     Q1 = "member(X,[1,2,3]), good(X)"
+     qid = PrologOpenQuery(Q1)
+     
+        ... &lt;execution of the query&gt; ...
+     
+     PrologCloseQuery(qid)
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="vb-vbp-sol.html#vb-vbp-sol">Next</a>
+<li><a rel="up" accesskey="u" href="vb-vbp.html#vb-vbp">Up</a>
+</ul>
+</div>
+   </body></html>
+

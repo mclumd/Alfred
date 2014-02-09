@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>handle_events</code> and Terminating a Dispatch Loop</h5>
+
+   <p>The last thing we need to learn to complete the example is how to wait
+for a ProXL condition.  The example we have so far will keep our window
+refreshed indefinitely, but to make this a stand-alone demo we need to
+wait, handling refresh events, until the user indicates he is finished
+with this demo.  Let's say when you click a mouse button in the window,
+we destroy the window and exit.
+
+   <p>This is the role of the <code>handle_events/[0,1,2]</code> predicates.  The
+simplest, <code>handle_events/0</code>, will wait, handling all ProXL events,
+until all windows with callbacks are destroyed.  <code>handle_events/[1,2]</code>
+may be made to return before all windows have been destroyed,
+may be used to get information back from callbacks, and to pass
+context information to a callback (so it can behave differently in
+different contexts).  But for this simple example, <code>handle_events/0</code>
+is perfectly adequate.
+
+   <p>So all we need to do is arrange for our window to be destroyed when a
+mouse button is pressed in it:
+
+<pre class="example">     | ?- <kbd>win(Window),
+          put_window_attributes(Window,
+                  [callback(button_press,
+                         [],
+                         destroy_window(Win))]).</kbd>
+     
+     Window = window(2376568)
+     </pre>
+
+   <p>Upon receiving a <code>button_press</code> event, the ProXL procedure
+<code>destroy_window/1</code> is invoked, destroying our window.  At this
+point, <code>handle_events/0</code> will return.
+
+   <p>Let's try it out:
+
+<pre class="example">     | ?- <kbd>handle_events.</kbd>
+     </pre>
+
+   <p>Now press a mouse button while the cursor is in our window.  The
+window should go away and <code>handle_events/0</code> should return.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="pxl-tut-cbk-redraw.html#pxl-tut-cbk-redraw">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-tut-cbk.html#pxl-tut-cbk">Up</a>
+</ul>
+</div>
+   </body></html>
+

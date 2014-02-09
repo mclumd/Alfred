@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Interaction of Garbage Collection and Heap Expansion</h4>
+
+   <p>For most programs, the default
+settings for the garbage collection parameters should suffice. 
+For programs that have high heap requirements, the default
+parameters may result in a higher ratio of garbage collection time to
+run time.  These programs should be given more space in which to run.
+
+   <p>The <code>gc_margin</code> is a non-negative integer specifying the desired margin in
+kilobytes.  For example, the default value of 1000 means that the
+heap will not be expanded if garbage collection can reclaim at least
+one megabyte.  The advantage of this criterion is that
+it takes into account both
+the user's estimate of the heap usage and the effectiveness of garbage
+collecting.
+
+     <ol type=1 start=1>
+
+     <li> Setting the <code>gc_margin</code> higher than the default will cause fewer heap expansions
+and garbage collections.  However, it will use more space, and garbage
+collections will be more time-consuming when they do occur.
+
+     <p>Setting the margin too large will cause the heap to expand so that if
+it does overflow, the resulting garbage collection will
+significantly disrupt normal processing.  This will be especially so
+if much of the heap is accessible to future computation. 
+</p><li> Setting the <code>gc_margin</code> lower than the default will use less space, and
+garbage collections will be less time-consuming.  However, it will cause more
+heap expansions and garbage collections.
+
+     <p>Setting the margin too small will cause many garbage collections in a small
+amount of time, so that the ratio of garbage-collecting time to computation
+time will be abnormally high. 
+</p><li>Setting the margin correctly will cause the heap to expand to a size
+where expansions and garbage collections are infrequent and garbage
+collections are not too time-consuming, if they occur at all.
+        </ol>
+
+   <p>The correct value for the <code>gc_margin</code> is dependent upon many factors. 
+Here is a non-prioritized list of some of them:
+     <ul>
+
+     <li>The amount of memory available to the Prolog process
+<li>The maximum memory limit imposed on the Prolog process
+(see <a href="ref-mgc-osi.html#ref-mgc-osi">ref-mgc-osi</a>, <a href="ref-mgc-osi.html#ref-mgc-osi">ref-mgc-osi</a>)
+<li>The program's rate of heap garbage generation
+<li>The program's rate of heap non-garbage generation
+<li>The program's backtracking behavior
+<li>The amount of time needed to collect the generated garbage
+<li>The growth rate of the other Prolog stacks
+</ul>
+
+   <p>The algorithm used when the heap overflows is as follows:
+
+<pre class="display">     
+     if <code>gc</code> is on
+     and the heap is larger than <code>gc_margin</code> kilobytes then
+        garbage collect the heap
+        if less than <code>gc_margin</code> bytes are reclaimed then
+           try to expand the heap
+        endif
+     else
+        try to expand the heap
+     endif
+     </pre>
+
+   <p>The user can use the <code>gc_margin</code> option of <code>prolog_flag/3</code> to
+reset the <code>gc_margin</code> (see <a href="ref-lps-ove.html#ref-lps-ove">ref-lps-ove</a>).  If a garbage
+collection reclaims at least the <code>gc_margin</code> kilobytes of heap space
+the heap is not expanded after garbage collection completes. 
+Otherwise, the heap is expanded after garbage collection.  This
+expansion provides space for the future heap usage that will
+presumably occur.  In addition, no garbage collection occurs if the
+heap is smaller than <code>gc_margin</code> kilobytes.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong>  <code>prolog_flag(gc_margin, </code><var>Old</var><code>, </code><var>New</var><code>)</code> has nothing to do with
+the <code>gcguide(margin, </code><var>Old</var><code>, </code><var>New</var><code>)</code> of older Prolog systems. 
+The "margin" of those other systems was used for entirely different purposes. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mgc-gcd.html#ref-mgc-gcd">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mgc-mgc.html#ref-mgc-mgc">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mgc.html#ref-mgc">Up</a>
+</ul>
+</div>
+   </body></html>
+

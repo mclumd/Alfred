@@ -1,0 +1,50 @@
+#!/bin/sh
+# @(#)run_pcal_demo	20.1	08/03/94
+
+#  usage: run_pcal_demo
+#  this script sets up an appropriate Calendar file to do a pcal demo
+#  it then compiles pcal, loads the resources file and runs proxt
+
+calfile=`date | sed 's/... \(...\) .. ..:..:.. ... \(....\)/xp\1\2/'`
+prolog=prolog
+
+#
+#  set up a calendar file
+#
+if [ ! -d $HOME/Calendar ]
+then
+	mkdir $HOME/Calendar
+fi
+
+if [ ! -f $HOME/Calendar/$calfile ]
+then
+	echo "(creating a calendar file in ~/Calendar/$calfile)"
+	cat > $HOME/Calendar/$calfile <<EOF
+cal(14,notes,'Travel to Japan').
+cal(16,10,'Talk at Nihon').
+cal(17,14,'Prolog Consortium Meeting').
+cal(18,notes,'INAP Conference').
+cal(19,notes,'INAP Conference').
+cal(22,notes,'QJDC day').
+cal(23,11,'Travel to Taiwan').
+cal(23,18,'Travel to Singapore').
+cal(24,9,'Talk at Univ. of Singapore').
+cal(24,12,'Travel to NZ').
+cal(27,notes,'Return to California').
+EOF
+fi
+
+#
+#  load resources
+#
+xrdb -merge Pcal
+
+#
+#  run proxt
+#
+
+#  echo the commands to give an idea of whats going on
+
+echo "`hostname`% $prolog"
+echo "write('| ?- [demo(pcal)].'),nl, [demo(pcal)], nl,
+      write('| ?- main.'),nl, main." | $prolog

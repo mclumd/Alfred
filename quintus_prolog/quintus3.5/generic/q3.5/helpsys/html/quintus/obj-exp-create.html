@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>create/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>create(</code><var>+Descriptor</var><code>,</code><var>-Obj</var><code>)</code>
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Descriptor</var>
+     <dd><dfn>term</dfn>
+
+     <br><dt><var>Obj</var>
+     <dd><dfn>object</dfn>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>Obj</var> is a newly created and initialized
+object. Descriptor is a term describing the object to create. After
+memory is allocated and any slot initializations are performed, a
+create message is sent to the object.
+
+   <p>The functor of <var>Descriptor</var> indicates the class to create. The
+arguments of the create message are the arguments of <var>Descriptor</var>.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+<var>Descriptor</var> is unbound.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+<var>Descriptor</var> is not a valid <code>create</code> descriptor.
+
+     <br><dt><code>resource_error</code>
+     <dd>
+unable to allocate enough memory for object. 
+</dl>
+
+<h4 class="subheading">Caveat</h4>
+
+   <p>You must have a <code>create/</code><var>N</var><code></code> method for every
+arity <var>N</var> you want to be able to use in creating instances of a
+class.  This includes arity 0.  If no such method exists, a domain
+error will be raised.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>Given the class definition
+
+<pre class="example">     :- class point =
+                     [public x:integer=1,
+                      public y:integer=2].
+     
+     Self &lt;- create.
+     Self &lt;- create(X, Y) :-
+                     Self &lt;&lt; x(X),
+                     Self &lt;&lt; y(Y).
+     :- end_class point.
+     </pre>
+
+   <p>the command
+
+<pre class="example">     | ?- <kbd>create(point, Point1).</kbd>
+     </pre>
+
+   <p>creates a <code>point</code> object, with the default slot values for <code>x</code> and <code>y</code>, and
+binds variable <code>Point1</code> to the new object. The command
+
+<pre class="example">     | ?- <kbd>create(point(10,15), Point2).</kbd>
+     </pre>
+
+   <p>creates a <code>point</code> object with values 10 and 15 for slots <code>x</code> and <code>y</code>,
+respectively, and binds variable <code>Point2</code> to the new object.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>destroy/1</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-exp-current_class.html#obj-exp-current_class">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-exp-class_of.html#obj-exp-class_of">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-exp.html#obj-exp">Up</a>
+</ul>
+</div>
+   </body></html>
+

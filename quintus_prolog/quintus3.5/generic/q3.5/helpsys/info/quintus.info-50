@@ -1,0 +1,1831 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: mpg-ref-print_message,  Next: mpg-ref-print_message_lines,  Prev: mpg-ref-print,  Up: mpg-ref
+
+`print_message/2' "hookable"
+----------------------------
+
+Synopsis
+--------
+
+   `print_message(+SEVERITY, +MESSAGETERM)'
+
+   Print a MESSAGE of a given SEVERITY. The behavior can be customized
+using the two hooks `generate_message_hook/3' and `message_hook/3'.
+
+Arguments
+---------
+
+SEVERITY "atom"
+     Unless the default system portrayal is overidden with
+     `message_hook/3', SEVERITY must be one of
+
+    Value
+          Prefix
+
+    `informational'
+          `% '
+
+    `warning'
+          `* '
+
+    `error'
+          `! '
+
+    `help'
+          no prefix
+
+    `silent'
+          no prefix
+
+MESSAGETERM "term"
+     any term
+
+Description
+-----------
+
+   Messages are parsed according to the definite clause grammars in
+`qplib('QU_messages')', which defines
+`'QU_messages':generate_message/3'. If
+`generate_message(MESSAGETERM,L,[])' is true, the message is printed
+according to the transformation L; otherwise, the message is considered
+to be undefined.
+
+   An unhandled exception message E calls `print_message(error, E)'
+before returning to the top level.  The convention is that an error
+message is the result of an unhandled exception.  Thus, an error
+message should only be printed if `raise_exception/1' does not find a
+handler and unwind to the top-level.
+
+   All messages from the system are printed using this predicate.
+Means of intercepting these messages before they are printed are
+provided.
+
+   `print_message/2' always prints to `user_error'. Messages can be
+redirected to other streams using `message_hook/3' and
+`print_message_lines/3'
+
+   "Silent" messages do not get translated or printed. They do not go
+through `generate_message/3' or `generate_message_hook/3' but they can
+be intercepted with `message_hook/3'.
+
+See Also
+--------
+
+   `message_hook/3', `generate_message/3', `print_message_lines/3',
+`generate_message_hook/3'
+
+   *Note ref-msg-tbm::
+
+
+File: quintus.info,  Node: mpg-ref-print_message_lines,  Next: mpg-ref-profile,  Prev: mpg-ref-print_message,  Up: mpg-ref
+
+`print_message_lines/3'
+-----------------------
+
+Synopsis
+--------
+
+   `print_message_lines(+STREAM, +PREFIX, +LINES)'
+
+   Print the LINES to STREAM, preceding each line with PREFIX. Note
+that `print_message_lines/3' only succeeds if LINES is a "list of pair".
+
+Arguments
+---------
+
+STREAM "stream_object"
+     Any valid output stream.
+
+PREFIX "term"
+     Any term.
+
+LINES "list"
+     is of the form `[LINE1, LINE2, ...]', where each LINEI is of the
+     form `[CONTROL_1-ARGS_1,CONTROL_2-ARGS_2, ...]'.
+
+Description
+-----------
+
+   This command is intended to be used in conjunction with
+`message_hook/3'.  After a message is intercepted using
+`message_hook/3', this command is used to print the lines.  If the hook
+has not been defined, the arguments are those provided by the system.
+
+   `print_message_lines/3' is a simple failure driven loop over the
+LINES data structure, implemented as:
+
+     :-use_module(library(basics),[member/2]).
+     
+     print_message_lines(Stream,Prefix,Lines):-
+         member(Line,Lines),
+         format(Stream,'~N~w',[Prefix]),
+         (   member(C-A,Line),
+             format(Stream,C,A)
+         ;   nl(Stream)
+         ),
+         fail.
+     print_message_lines(_,_,_).
+
+Exceptions
+----------
+
+   Any exception that `format/3' might raise.
+
+Examples
+--------
+
+   A typical use of this would be when using the user defined
+predicate, `message_hook/3' to redirect output.  For example:
+
+     message_hook(_,_,Lines):-
+         my_stream(MyStream),
+         print_message_lines(MyStream,'',Lines).
+
+See Also:
+---------
+
+   `message_hook/3', `print_message/2', `generate_message/3',
+`query_hook/6'
+
+
+File: quintus.info,  Node: mpg-ref-profile,  Next: mpg-ref-prolog_flag,  Prev: mpg-ref-print_message_lines,  Up: mpg-ref
+
+`profile/[0,1,2,3]' "development"
+---------------------------------
+
+Synopsis
+--------
+
+   `profile'
+
+   `profile(+GOAL)'
+
+   `profile(+GOAL,+INTERVAL)'
+
+   `profile(+GOAL,+INTERVAL,+SIGTYPE)'
+
+   Turns on the profiler and profiles the execution of GOAL.
+
+Arguments
+---------
+
+GOAL  "callable" [MOD]
+     The goal to profile.
+
+INTERVAL "integer"
+     The hit interval in microseconds (default 10000).
+
+SIGTYPE "one of `[with_sigprof,with_sigalrm,with_sigvtalrm]'"
+     Which signal to use (default `SIGPROF').
+
+Description
+-----------
+
+   `profile/0' turns the profiler on and resets all counts accumlated
+from previous runs of the profiler. Counts of the number of call,
+choice points created and redos tried are maintained by the profiler.
+
+   `profile/1' performs this same action and then proceeds to execute
+GOAL, in addition monitoring timing data.  Once execution of the goal
+has completed, the profiling results can be displayed with
+`show_profile_results/[0,1,2]'.
+
+   Note that the profiler cannot be used when in debugging mode.
+
+   This predicate is not supported in runtime systems.
+
+See Also
+--------
+
+   `noprofile/0', `show_profile_results/[0,1,2]'
+
+
+File: quintus.info,  Node: mpg-ref-prolog_flag,  Next: mpg-ref-prolog_load_context,  Prev: mpg-ref-profile,  Up: mpg-ref
+
+`prolog_flag/[2,3]'
+-------------------
+
+Synopsis
+--------
+
+   `prolog_flag(*FLAGNAME, *VALUE)'
+
+   FLAGNAME is a flag, which currently is set to VALUE.
+
+   `prolog_flag(+FLAGNAME, -OLDVALUE, +NEWVALUE)'
+
+   Unifies the current value of FLAGNAME with OLDVALUE and then sets
+the value of the flag to NEWVALUE.
+
+Arguments
+---------
+
+FLAGNAME "atom"
+
+VALUE "atomic"
+
+OLDVALUE "atomic"
+
+NEWVALUE "atomic"
+   Currently, the supported FLAGNAMEs and VALUEs for both
+`prolog_flag/2' and `prolog_flag/3' are:
+
+FlagNames
+     Values
+
+`character_escapes'
+     `on' or `off'
+
+`debugging'
+     `trace', `debug', `zip', or `off'
+
+`fileerrors'
+     `on' or `off'
+
+`gc'
+     `on' or `off'
+
+`gc_margin'
+     non-negative integer
+
+`'
+     in thousands of bytes
+
+`gc_trace'
+     `on' or `off'
+
+`unknown'
+     `error' or `fail'
+
+`syntax_errors'
+     (see *Note ref-ere-err-syn::)
+
+`single_var'
+     `on' or `off'
+
+`discontiguous'
+     `on' or `off'
+
+`multiple'
+     `on' or `off'
+
+   Values available only to `prolog_flag/2' (query-only) are:
+
+
+
+FlagNames
+     Values
+    `add_ons'
+          an atom containing the list of add-on products that are
+          statically linked into the Prolog system.  If no add-ons are
+          part of the system, the empty atom `''' is returned.
+
+    `host_type'
+          the host type, which is generally a hardware-operating system
+          combination.  This `prolog_flag' is used to create the
+          `system' `file_search_path/2' facts (see *Note
+          ref-fdi-fsp-pre:: and *Note ref-fdi-fsp-sys::).
+
+    `quintus_directory'
+          the absolute name of the Quintus directory.  The Quintus
+          directory is the root of the entire Quintus installation
+          hierarchy.
+
+    `runtime_directory'
+          the absolute name of the directory where all the Prolog
+          executables reside.
+
+    `version'
+          the version of the Prolog being run.
+
+    `system_type'
+          `development' or `runtime'.
+
+Description
+-----------
+
+   To inspect the value of a flag without changing it, use
+`prolog_flag/2' or the following idiom, where FlagName is bound to one
+of the valid flags above.
+      | ?- prolog_flag(FlagName, Value, Value).
+
+   Use `prolog_flag/2' to query and `prolog_flag/3' to set values.
+
+   `prolog_flag/3' can be used to save flag values so that one can
+return a flag to its previous state.  For example:
+     ...
+     prolog_flag(debugging,Old,on), % Save in Old and set
+     ...
+     prolog_flag(debugging,_,Old),  % Restore from Old
+     ...
+
+   The read-only `prolog_flag/2' flags `add_ons', `host_type',
+`quintus_directory', and `runtime_directory' represent information set
+by the `qsetpath' program.  For more detail on the `qsetpath' and
+`qgetpath' utilities, see  and .
+
+Backtracking
+------------
+
+   `prolog_flag/2' enumerates all valid flagnames of a given current
+value, or all pairs of flags and their current values.  It is not a way
+to find out non-current values for a flag.
+
+Exceptions
+----------
+
+`instantiation_error'
+     In `prolog_flag/3', FLAGNAME unbound, _or_
+
+     NEWVALUE unbound and not identical to OLDVALUE.
+
+`type_error'
+     FLAGNAME is not an atom.
+
+`domain_error'
+     In `prolog_flag/3', FLAGNAME bound to an atom that does not
+     represent a supported flag, _or_
+
+     NEWVALUE bound to atom that does not represent a valid value for
+     FLAGNAME.
+
+See Also
+--------
+
+   `gc/0', `nogc/0', `style_check/1', `no_style_check/1', `unknown/2',
+`fileerrors/0', `nofileerrors/0'
+
+   *Note ref-lps::
+
+
+File: quintus.info,  Node: mpg-ref-prolog_load_context,  Next: mpg-ref-prompt,  Prev: mpg-ref-prolog_flag,  Up: mpg-ref
+
+`prolog_load_context/2'
+-----------------------
+
+Synopsis
+--------
+
+   `prolog_load_context(+KEY, -VALUE)'
+
+   `prolog_load_context(*KEY, *VALUE)'
+
+   Finds  out the context of the current load.
+
+Arguments
+---------
+
+KEY "atom"
+
+VALUE "atom"
+Description
+-----------
+
+   You can call `prolog_load_context/2' from an embedded command or by
+`term_expansion/2' to find out the context of the current load.  If
+called outside the context of a load, it simply fails.
+
+Key
+     Value
+
+`module'
+     the module you are compiling into
+
+`file'
+     absolute filename of the file being compiled
+
+`stream'
+     the stream you are compiling from
+
+`directory'
+     directory of the file on which the stream is open
+
+`term_position'
+     a stream position object referring to the position of the clause
+     just read
+
+Backtracking
+------------
+
+   This predicate is meant to be used in the mode (`+', `-'), but it is
+also possible to backtrack through it.
+
+See Also
+--------
+
+   `load_files/[1,2]'
+
+   *Note ref-lps::
+
+
+File: quintus.info,  Node: mpg-ref-prompt,  Next: mpg-ref-public,  Prev: mpg-ref-prolog_load_context,  Up: mpg-ref
+
+`prompt/[2,3]'
+--------------
+
+Synopsis
+--------
+
+   `prompt(-OLDPROMPT, +NEWPROMPT)'
+
+   `prompt(+STREAM, -OLDPROMPT, +NEWPROMPT)'
+
+   Queries or changes the prompt string of the current input stream or
+an input stream STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog input stream.
+
+OLDPROMPT "atom"
+     the old prompt atom of the stream.
+
+NEWPROMPT "atom"
+     the new prompt atom of the stream.
+
+Description
+-----------
+
+   A "prompt atom" is a sequence of characters that indicates the
+Prolog system is waiting for input when a "Read" or "Get" predicate is
+called.  If an input stream connected to a terminal is waiting for
+input at the beginning of a line (at line position 0), the prompt atom
+of the stream will be printed through an output stream associated with
+the same terminal.
+
+   Prolog sets the prompt of the input stream to `|:'.  This is the
+prompt that can be changed by invoking `prompt/[2,3]'.   Unlike state
+changes such as those implemented as prolog flags, the scope of a prompt
+change is a goal typed at the toplevel.  Therefore, the change is in
+force only until returning to the toplevel (prompt = `| ?- ').
+
+   To _query_ the current prompt atom of a stream, OLDPROMPT and
+NEWPROMPT should be the same unbound variable.  For example:
+     prompt(X, X).  prompt(user_input, X, X).
+  To _set_ the prompt of a stream, NEWPROMPT should be an
+instantiated atom.  `prompt/2' queries or changes the prompt on the
+current Prolog input stream.
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`instantiation_error'
+     NEWPROMPT argument is not instantiated
+
+`type_error'
+     NEWPROMPT is not an atom type
+
+Comments
+--------
+
+   The "Load" predicates change the prompt of the input stream during
+the time operations are performed: If a built-in loading predicate is
+performed on the module `user' (such as `compile(user)', etc.), the
+prompt string of the standard Prolog input stream, `user_input'
+(`user') is set to `| '.  This prompt is not affected by `prompt/[2,3]'.
+
+   `prompt/3' succeeds for any valid input stream.  If the input stream
+is not a tty format stream, the Prolog system does not print out the
+prompt string when it is waiting input from the stream.
+
+   Normally prompts only appear on `user_error' when the system is
+waiting for input on `user_input'.  These prompts are suppressed when
+`user_input' is not connected to a terminal, unless the `+tty' option
+to `prolog(1)' was specified.  (See *Note fli-ios-tty::.)
+
+   For prompts to be used on streams other than `user_input' or
+`user_error', the C function `QP_add_tty()' must be used.
+
+See Also
+--------
+
+   `QP_add_tty()', `read/[1,2]', `read_term/[2,3]', `get/[1,2]',
+`get0/[1,2]' *Note fli-ios::
+
+
+File: quintus.info,  Node: mpg-ref-public,  Next: mpg-ref-put,  Prev: mpg-ref-prompt,  Up: mpg-ref
+
+`public/1' "declaration"
+------------------------
+
+Synopsis
+--------
+
+   `:- public +TERM'
+
+   Dummy declaration for backwards compatibility.
+
+Arguments
+---------
+
+TERM "term"  [MOD]
+
+File: quintus.info,  Node: mpg-ref-put,  Next: mpg-ref-query_abbreviation,  Prev: mpg-ref-public,  Up: mpg-ref
+
+`put/[1,2]'
+-----------
+
+Synopsis
+--------
+
+   `put(+CHAR)'
+
+   `put(+STREAM, +CHAR)'
+
+   Evaluates the integer expression CHAR, and writes the lower 8-bits
+to the current output stream or to STREAM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog output stream
+
+CHAR "expr"
+     a legal character code or an integer expression.  A useful form of
+     integer expression for this argument is a single character
+     following `0'', such as `0'a', `0'b', etc.
+
+Description
+-----------
+
+   `put/[1,2]' writes out the least significant 8 bits of the evaluated
+CHAR to the specified output stream unless CHAR is evaluated to be the
+line border code of the stream.  The character written out is usually
+stored in the buffer of the stream.  If the buffer overflows, it is
+written out to the disk.  If the evaluated CHAR is the same as the line
+border code of the output stream, the operation works like `nl/[0,1]'.
+The default line border code for a text stream and a tty stream is the
+linefeed character (ASCII code 10).
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`instantiation_error'
+     CHAR is not instantiated.
+
+`type_error'
+     CHAR is not an integer type.
+
+`permission_error'
+     There is an error in the bottom layer of write function
+         of the stream.
+
+See Also
+--------
+
+   `nl/[0,1]', `skip_line/[0,1]', `open/[3,4]'
+
+   *Note ref-iou::
+
+
+File: quintus.info,  Node: mpg-ref-query_abbreviation,  Next: mpg-ref-query_hook,  Prev: mpg-ref-put,  Up: mpg-ref
+
+`query_abbreviation/3' "extendable"
+-----------------------------------
+
+Synopsis
+--------
+
+   `:- multifile 'QU_messages':query_abbreviation/3.'
+
+   `query_abbreviation(+TAG, -PROMPT, -PAIRS)'
+
+   A way to specify one letter abbreviations for responses to queries
+from the Prolog System.
+
+Arguments
+---------
+
+TAG "atom"
+     This indicates which query type.
+
+PROMPT "atom"
+     An atom indicating appropriate abbreviations.
+
+PAIRS "list of pair"
+     A list of word-abbreviation pairs.
+
+Description
+-----------
+
+   Prolog only asks for keyboard input in a few different ways.  These
+are enumerated in the clauses for `query_abbreviation/3' in the module
+`messages(language('QU_messages'))'.  These clauses specify valid
+abbreviations for a given key word.  For example,
+
+     query_abbreviation(yes_or_no,'(y/n)',[yes-"yY",no-"nN"]).
+
+   a French translator might decide that the letters `O' and `o' are
+reasonable abreviations for `oui' (yes), and therefore write
+
+     query_abbreviation(yes_or_no,'(o/n)',[yes-"oO",no-"nN"]).
+
+   For an example of how this is used with `query_hook/6', see the
+reference page for `query_hook_example'.
+
+See Also:
+---------
+
+   *Note ref-msg-umf-int::, and the reference page for `query_hook/6'
+
+
+File: quintus.info,  Node: mpg-ref-query_hook,  Next: mpg-ref-qui,  Prev: mpg-ref-query_abbreviation,  Up: mpg-ref
+
+`query_hook/6' "hook"
+---------------------
+
+Synopsis
+--------
+
+   `:- multifile query_hook/6.'
+
+   `query_hook(+QUERYCLASS, +PROMPT, +PROMPTLINES, +HELP, +HELPLINES,
+-ANSWER)'
+
+   Provides a method of overriding Prolog's default keyboard based
+input requests.  The query hook is used by the Quintus User Interface.
+
+Arguments
+---------
+
+QUERYCLASS "term"
+     determines the allowed values for the atom ANSWER.
+
+    If QUERYCLASS is:
+          ANSWER must be:
+
+    `yes_or_no(QUESTION)'
+          `yes' or `no'.
+
+    `toplevel'
+          `yes' or `no'
+
+    `yes_no_proceed'
+          `yes', `no', or `proceed'.
+
+PROMPT "list of pair"
+     A message term.
+
+PROMPTLINES "list of pair"
+     The message generated from the PROMPT message term.
+
+HELP "term"
+     A message term.
+
+HELPLINES "list of pair"
+     The message generated from the HELP message term.
+
+ANSWER "term"
+     see QUERYCLASS
+
+Description
+-----------
+
+   This provides a way of overriding Prolog's default method of
+interaction.  If this predicate fails, Prolog's default method of
+interaction is invoked.
+
+   The default method first prints out the prompt, then if the response
+from the user is not one of the allowed values, the help message is
+printed.
+
+   It is useful to compare this predicate to `message_hook/3', since
+this explains how you might use the PROMPT, PROMPTLINES, HELP,
+HELPLINES.
+
+Exceptions
+----------
+
+   An exception raised by this predicate causes an error message to be
+printed and then the default method of interation is invoked.  In other
+words, exceptions are treated as failures.
+
+Examples
+--------
+
+   If Prolog is looking for a yes-no response to one question `Done?',
+as in the toplevel, this request for input can be captured
+     query_hook(toplevel,_,_,_,_,Answer):-
+         my_yes_no('Done?',Answer).
+
+   where `my_yes_no/2' binds Answer to either `yes' or `no'.
+
+   Here is roughly how the default method works.  Notice the
+interaction with `query_abbreviation/3'.
+
+     query_hook(QueryClass,_,PromptLines,_,HelpLines,Answer):-
+         'QU_messages':query_abbreviation(QueryClass,
+                                          AbbreviationPrompt,
+                                          Pairs),
+         repeat,
+             (   print_message_lines(user_output,'',PromptLines),
+                 (   AbbreviationPrompt == ''
+                 ->  write(Stream,' ')
+                 ;   format(Stream,' ~w ',[AbbreviationPrompt])
+                 ),
+                 flush_output(Stream),
+                 get0(C),
+                 member(Answer-Abrv,Pairs),
+                 member(C,Abrv),
+                 !
+             ;   print_message_lines(Stream,'',HelpLines),
+                 fail
+             ).
+
+Tips
+----
+
+See Also
+--------
+
+   `query_abbreviation/3', `message_hook/3', `print_message_lines/3'
+
+   *Note ref-msg::
+
+
+File: quintus.info,  Node: mpg-ref-raise_exception,  Next: mpg-ref-read,  Prev: mpg-ref-qui,  Up: mpg-ref
+
+`raise_exception/1'
+-------------------
+
+Synopsis
+--------
+
+   `raise_exception(+EXCEPTION)'
+
+   Raise an exception (that might be intercepted by `on_exception/3').
+
+Arguments
+---------
+
+EXCEPTION "nonvar"
+     Any term.
+
+Description
+-----------
+
+   A call to `raise_exception/1' can _never_ backtrack, fail or
+succeed.  Rather, `raise_exception/1' searches for an ancestor of the
+current goal, PROTECTEDGOAL, which is of the form:
+
+     on_exception(E,PROTECTEDGOAL,HANDLER)
+
+   The first argument, E, unifies with EXCEPTION.  It then executes the
+HANDLER instead of the PROTECTEDGOAL.  It will always find a handler at
+the top level, which prints out a message corresponding to the
+exception.  See *Note ref-msg-tbm:: for a discussion on how exceptions
+are printed.
+
+Exceptions
+----------
+
+`instantiation_error'
+     when EXCEPTION is unbound.  When a built-in predicate detects an
+     error situation, it causes an exception to be raised.
+
+See Also
+--------
+
+   `on_exception/3'.
+
+   *Note ref-ere::
+
+
+File: quintus.info,  Node: mpg-ref-read,  Next: mpg-ref-read_term,  Prev: mpg-ref-raise_exception,  Up: mpg-ref
+
+`read/[1,2]'
+------------
+
+Synopsis
+--------
+
+   `read(-TERM)'
+
+   `read(+STREAM, -TERM)'
+
+   Reads the next term from the current input stream or STREAM and
+unifies it with TERM.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     a valid Prolog stream, which is open for input
+
+TERM "term"
+     the term to be read
+
+Description
+-----------
+
+   Term must be followed by a full-stop.  The full-stop is removed from
+the input stream and is not a part of the term that is read.
+
+   For the syntax of Prolog terms see *Note ref-syn-syn::.
+
+   The term is read with respect to current operator declarations.  See
+*Note ref-syn-ops::, for a discussion of operators.
+
+   Does not finish until the full-stop is encountered.  Thus, if you
+type at top level
+     | ?- read(X)
+
+   you will keep getting prompts (first `|: ', and five spaces
+thereafter) every time you type <RET>, but nothing else will happen,
+whatever you type, until you type a full-stop.
+
+   When a syntax error is encountered, an error message is printed and
+then `read/1' tries again, starting immediately after the full-stop
+that terminated the erroneous "term".  That is, `read/1' does not fail
+on a syntax error, but perseveres until it eventually manages to read a
+term.
+
+   If the end of the current input stream has been reached, then
+`read(X)' will cause X to be unified with the atom `end_of_file'
+
+Exceptions
+----------
+
+   Stream errors (see *Note ref-iou-sfh-est::), plus:
+`syntax_error'
+See Also
+--------
+
+   `read_term/[2,3]', `prompt/[2,3]'
+
+   *Note ref-syn-syn::
+
+
+File: quintus.info,  Node: mpg-ref-read_term,  Next: mpg-ref-reconsult,  Prev: mpg-ref-read,  Up: mpg-ref
+
+`read_term/[2,3]'
+-----------------
+
+Synopsis
+--------
+
+   `read_term+OPTIONS, -TERM')]
+
+   `read_term+STREAM, +-OPTIONS, -TERM')]
+
+   Read a term from the current input stream or from STREAM, optionally
+returning extra information about the term.
+
+Arguments
+---------
+
+STREAM "stream_object"
+     A valid Prolog stream, which is open for input
+
+TERM "term"
+     the term that is read
+
+OPTIONS "list of term"
+     a list of zero or more of the following:
+
+    `syntax_errors(VAL)'
+          VAL must be bound to one of the following, indicating what
+                  should be done when a syntax error is found:
+
+         `quiet'
+               nothing is printed, and `read_term/[2,3]' fails
+
+         `dec10'
+               a syntax error message is printed, and
+               `read_term/[2,3]' tries to read the next term (this
+                         is compatible with DEC-10 Prolog and previous
+               versions                 of Quintus Prolog)
+
+         `fail'
+               a syntax error message is printed, and
+               `read_term/[2,3]' fails
+
+         error
+               an exception is raised.
+
+          The default value if this option is not specified is the
+                current value of the `syntax_errors' prolog flag.  The
+          default             value for this flag is `dec10'.  See
+                `prolog_flag/2' for more information on these
+            flags.
+
+    `variable_names(NAMES)'
+          On completion, NAMES is bound to a list of
+          NAME=VAR pairs, where each NAME is an atom
+          indicating the spelling of the name of a variable in the
+                term just read, and VAR is the corresponding
+           variable.  Note that anonymous variables, written as
+              `_', are not included in this list.
+
+    `singletons(SINGLETONS)'
+          On completion, SINGLETONS is bound to a list of
+          NAME=VAR pairs, one for each variable only appearing
+            once in the term.  Anonymous variables are not included on
+                     this list.
+
+    `term_position(POSITION)'
+          On completion, POSITION is the position of the start
+            of the actual term, as might be returned by
+          `stream_position/2'.  Any white space and comments before
+                 the actual term are not reflected by the position.
+          To find             the position of the end of the term, you
+          need only call             `stream_position/2'; it will give
+          you the position of the             first character after the
+          period ending the term.
+
+    `subterm_positions(POSITIONTERM)'
+          On completion, POSITIONTERM is bound to a position
+          term that describes the position of the term just read and
+                   all of its subterms.  A position term is of one of
+          the forms             listed below.  In all these forms,
+          START and             END are the character positions of
+          first character of             the term and the character
+          following the last character of             the term,
+          respectively.  Similarly FSTART and             FEND specify
+          the start and end of the principle             functor of the
+          term.  Note that the positions are             _character_
+          positions, not position terms as returned             by
+          `stream_position/2'.
+
+         START-END
+               The term corresponding to this position term is
+                         either atomic or a variable.  START and
+                            END are the character positions of the
+               first                     character of the term and the
+               character following                     the last
+               character of the term, respectively.
+
+         `list_position(START,END,ELTS,TAIL)'
+               The term corresponding to this position term is a
+                           list, which was written using bracket
+               notation (for                     example, `[a,list]').
+               ELTS is a list of                     position terms for
+               each proper element of the list.
+               Tail is the position of the tail of the list (the
+                           part following the `|'), or the atom `none'
+               if the list                     has no tail part.
+
+         `string_position(START,END)'
+               The term corresponding to this position term is a
+                           list of character codes written as a quoted
+               string                     (for example, `"a string"').
+               The positions specified                     include the
+               quote characters.
+
+         `brace_term_position(START,END,ARG)'
+               The term corresponding to this position term is of
+                            the form {X}.  Arg is a position term
+               describing                     the argument of this term.
+
+         `term_position(START,END,FSTART,FEND,ARGS)'
+               The term corresponding to this position term is a
+                           compound term not specifically mentioned
+               above.                      This includes terms written
+               with operators.  Args is                     a list of
+               position terms, one for each argument of
+                  the term.
+
+Exceptions
+----------
+
+`syntax_error'
+     A syntax error is found
+
+`permission_error'
+     The input stream cannot be read
+
+`domain_error'
+     An illegal option or an invalid stream is specified
+
+`instantiation_error'
+     Either STREAM or OPTIONS, or one of the elements of the option
+     list, or the argument of the `syntax_errors' option is unbound
+
+`type_error'
+     The argument to the `syntax_errors' option is not an atom
+
+Examples
+--------
+
+     | ?- read_term([variable_names(L)], T).
+     |: append([U|X],Y,[U|Z]) :- append(X,Y,Z).
+     
+     L = ['U'=_1988,'X'=_2003,'Y'=_2020,'Z'=_2046],
+     T = (append([_1988|_2003],_2020,[_1988|_2046]):-
+              append(_2003,_2020,_2046))
+
+     | ?- read_term([subterm_positions(P)], T).
+     |: foo+bar+baz.
+     
+     P = term_position(1642,1653,1649,1650,
+             [term_position(1642,1649,1645,1646,
+                  [1642-1645,1646-1649]),
+              1650-1653]),
+     T = foo+bar+baz
+
+See Also
+--------
+
+   `read/[1,2]', `prompt/[2,3]' `prolog_flag/[2,3]'
+
+   *Note ref-iou::
+
+
+File: quintus.info,  Node: mpg-ref-reconsult,  Next: mpg-ref-recorda,  Prev: mpg-ref-read_term,  Up: mpg-ref
+
+`reconsult/1'
+-------------
+
+Synopsis
+--------
+
+   `reconsult(+FILES)'
+
+   Same as `compile/1'
+
+Arguments
+---------
+
+FILES "file_spec" or "list of file_spec"  [MOD]
+
+File: quintus.info,  Node: mpg-ref-recorda,  Next: mpg-ref-recorded,  Prev: mpg-ref-reconsult,  Up: mpg-ref
+
+`recorda/3'
+-----------
+
+Synopsis
+--------
+
+   `recorda(+KEY, +TERM, -REF)'
+
+   records the TERM in the internal database as the first item for the
+key KEY; a database reference to the newly-recorded term is returned in
+REF.
+
+Arguments
+---------
+
+KEY "atomic"
+
+TERM "term"
+
+REF "db_reference"
+Description
+-----------
+
+   If KEY is a compound term, only its principal functor is
+significant.  That is, `foo(1)' represents the same key as `foo(n)'.
+
+Exceptions
+----------
+
+`instantiation_error'
+     KEY is not instantiated
+
+`range_error'
+     REF is not a database reference or an unbound variable
+
+See Also
+--------
+
+   `recorded/3', `recordz/3', `current_key/2'
+
+   *Note ref-mdb-bas::
+
+
+File: quintus.info,  Node: mpg-ref-recorded,  Next: mpg-ref-recordz,  Prev: mpg-ref-recorda,  Up: mpg-ref
+
+`recorded/3'
+------------
+
+Synopsis
+--------
+
+   `recorded(-KEY, -TERM, +REF)'
+
+   `recorded'(+KEY, *TERM, *REF)
+
+   searches the internal database for a term recorded under the key KEY
+that unifies with TERM, and whose database reference unifies with REF.
+
+Arguments
+---------
+
+KEY "atomic"
+
+TERM "term"
+
+REF "db_reference"
+Description
+-----------
+
+   If REF is instantiated, then KEY and TERM are unified with the key
+and term associated with REF.  Otherwise, If KEY is a compound term,
+only its principal functor is significant.  That is, `foo(1)'
+represents the same key as `foo(n)'.
+
+   A call to  `recorded/3' of the form (`-', `?', `+') will succeed if
+the expected relation holds.  KEY need not be instantiated.
+
+Backtracking
+------------
+
+   Can be used to backtrack through all the matching terms recorded
+under the specified key.  Therefore, if you want to match only a single
+term you should use a cut to prevent backtracking.  Alternatively, use
+the `library(not)' predicate `once/1'.
+
+Exceptions
+----------
+
+`type_error'
+     REF is not a database reference, or KEY is a float
+
+`instantiation_error'
+See Also
+--------
+
+   `record/3', `recorda/3', `current_key/3'
+
+
+File: quintus.info,  Node: mpg-ref-recordz,  Next: mpg-ref-remove_advice,  Prev: mpg-ref-recorded,  Up: mpg-ref
+
+`recordz/3'
+-----------
+
+Synopsis
+--------
+
+   `recordz(+KEY, +TERM, -REF)'
+
+   Records the term TERM in the internal database as the last item for
+the key KEY; a database reference to the newly-recorded term is
+returned in REF.
+
+Arguments
+---------
+
+KEY "atomic"
+
+TERM "term"
+
+REF "db_reference"
+Exceptions
+----------
+
+`instantiation_error'
+     KEY is not instantiated
+
+`range_error'
+     REF is not a db_reference or an unbound variable
+
+See Also:
+---------
+
+   `recorded/3', `recorda/3', `current_key/2'
+
+
+File: quintus.info,  Node: mpg-ref-remove_advice,  Next: mpg-ref-remove_spypoint,  Prev: mpg-ref-recordz,  Up: mpg-ref
+
+`remove_advice/3' "development"
+-------------------------------
+
+Synopsis
+--------
+
+   `remove_advice(+GOAL,+*PORT,+*ACTION)'
+
+   remove the association of an action with entry to a port of a
+procedure. `remove_advice/3' will only succeed when PORT is "var" or
+one of {`call', `exit', `done', `redo', `fail'}, and ACTION is "var" or
+"callable".
+
+Arguments
+---------
+
+GOAL "callable" [MOD]
+     a term to be unified against a calling goal of existing advice.
+
+PORT "term"
+     any term.
+
+ACTION "term" [MOD]
+     any term.
+
+Description
+-----------
+
+   `remove_advice/3' removes the association of an advice action with a
+goal and port, undoing the effect of `add_advice/3'.
+
+   This predicate is not supported in runtime systems.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if an argument is not sufficiently instantiated.
+
+`type_error'
+     if GOAL or ACTION is not a callable, or a module prefix is not an
+     atom, or PORT is not an atom.
+
+`domain_error'
+     if PORT is not a valid port.
+
+`permission_error'
+     if a specified procedure is built-in.
+
+See Also
+--------
+
+   `add_advice/3', `current_advice/3', `check_advice/[0,1]',
+`nocheck_advice/[0,1]'
+
+
+File: quintus.info,  Node: mpg-ref-remove_spypoint,  Next: mpg-ref-repeat,  Prev: mpg-ref-remove_advice,  Up: mpg-ref
+
+`remove_spypoint/1' "development"
+---------------------------------
+
+Synopsis
+--------
+
+   `remove_spypoint(+SPYSPEC)'
+
+   removes a spypoint from the specified predicate or call.
+
+Arguments
+---------
+
+SPYSPEC "compound"
+     a specification of an individual spypoint.  Two forms of spyspec
+     are allowed:
+
+    `predicate(PRED)'
+          A spypoint on any call to PRED. PRED must be a skeletal
+          predicate specification, and may be module qualified.
+
+    `call(CALLER,CLAUSENUM,CALLEE,CALLNUM)'
+          A spypoint on the CALLNUM call to CALLEE in the body of the
+          CLAUSENUM clause of CALLER. CALLEE and CALLNUM must be
+          skeletal predicate specifications.  CALLNUM and CLAUSENUM
+          must be integers, and begin counting from 1.  Note that
+          CALLNUM specifies a _lexical_ position, that is, the number
+          of the occurrence of CALLEE counting from the beginning of
+          the body of the clause, and ignoring any punctuation.
+
+Description
+-----------
+
+   This predicate is not supported in runtime systems.
+
+See Also
+--------
+
+   `current_spypoint/1', `add_spypoint/1', `spy/1', `nospy/1',
+`debugging/0'
+
+   *Note dbg-bas-bas::
+
+
+File: quintus.info,  Node: mpg-ref-repeat,  Next: mpg-ref-restore,  Prev: mpg-ref-remove_spypoint,  Up: mpg-ref
+
+`repeat/0'
+----------
+
+Synopsis
+--------
+
+   `repeat'
+
+   Succeeds immediately when called and whenever reentered by
+backtracking.
+
+Description
+-----------
+
+   Generally used to simulate the looping constructs found in
+traditional procedural languages.  The general form of a repeat loop is
+as follows:
+     repeat,
+        ACTION1,
+        ACTION2,
+        ...,
+        ACTIONN,
+        test,
+     !,
+      ... rest of clause body ...
+
+   The effect of this is to execute ACTION1 through ACTIONN in sequence.
+The test is then executed.  If it succeeds, the loop is (effectively)
+terminated by the cut (`!') (which cuts away any alternatives in the
+clause, including the one created by `repeat/0').  A failure of the
+test will cause backtracking that will be caught by `repeat/0', which
+will succeed again and re-execute the ACTIONS.
+
+   The easiest way to understand the effect of `repeat/0' is to think of
+failures as "bouncing" back off them causing re-execution of the later
+goals.
+
+   Repeat loops are not often needed; usually recursive procedure calls
+will lead to code that is easier to understand as well as more
+efficient.  There are certain circumstances, however, in which
+`repeat/0' will lead to greater efficiency.  An important property of
+Quintus Prolog is that all run-time data is stored in stacks so that any
+storage that has been allocated during a proof of a goal is recovered
+immediately on backtracking through that goal.  Thus, in the above
+example, any space allocated by any of the ACTIONS is very efficiently
+reclaimed.  When an iterative construct is implemented using recursion,
+storage reclamation will only be done by the garbage collector.
+
+Tips
+----
+
+   In the most common use of repeat loops, each of the calls succeeds
+determinately.  It can be confusing if calls sometimes fail, so that
+backtracking starts before the test is reached, or if calls are
+nondeterminate, so that backtracking does not always go right back to
+`repeat/0'.
+
+   Note that the repeat loop can only be useful if one or more of the
+ACTIONS involves a side-effect -- either a change to the data base
+(such as an assertion) or an I/O operation.  Otherwise you would do the
+same thing each time around the loop (which would never terminate).
+
+Examples
+--------
+
+   `repeat/0' could have been written in Prolog as follows:
+     repeat.
+     repeat :- repeat.
+
+
+File: quintus.info,  Node: mpg-ref-restore,  Next: mpg-ref-retract,  Prev: mpg-ref-repeat,  Up: mpg-ref
+
+`restore/1'
+-----------
+
+Synopsis
+--------
+
+   `restore(+FILESPEC)'
+
+   Restores a saved-state.
+
+Arguments
+---------
+
+FILESPEC "file_spec"
+     The name of a QOF file.
+
+Description
+-----------
+
+   `restore(FILE)' terminates the currently running executable and
+restarts it with the command line arguments `+L FILE OLD ARGS' where
+OLD ARGS are the arguments specified when the executable was started.
+FILE is normally a file previously created by a call to save_program,
+but it can be any QOF file.  The `+L' option causes  FILE to be loaded
+into the executable as it starts up.
+
+   If FILE was created by `save_program/[1,2]', then it includes
+information about operator declarations, debugging and advice
+information, Prolog flags, and `file_search_path' and
+`library_directory' tables, as well as the Prolog code that was saved.
+Thus restoring FILE will create the   same Prolog state and database
+that existed at the time the `save_program'      was done (assuming
+that the same executable that was used for the `save_program' is used
+for the `restore').
+
+   It is also possible to give any QOF file to `restore/1'.  In this
+case, the running executable is reinitialized, and then the QOF file is
+reloaded into the system.  As such QOF files store no state
+information, the state is the same as in a freshly started Prolog
+system.
+
+   It is not normally useful to use `restore/1' in a runtime system.
+In a runtime system, command-line arguments are not interpreted by the
+system, so   the re-started runtime system will just begin again at
+`runtime_entry(start)' and will not load the specified FILE
+automatically.  An application could, if the programmer so chose, pick
+up the arguments with `unix(argv(L))', and then take some appropriate
+action.  For example:
+     runtime_entry(start) :-
+         unix(argv(['+L',File|_])),
+         !,
+         load_files(File),
+         start_after_restore.
+     runtime_entry(start) :-
+         normal_start.
+
+   See *Note ref-pro-arg:: and *Note too-too-prolog:: for a description
+of the `+L' option.
+
+Exceptions
+----------
+
+`instantiation_error'
+     FILESPEC is not bound.
+
+`type_error'
+     FILESPEC is not a valid file specification.
+
+`domain_error'
+     FILESPEC is not a QOF file.
+
+`permission_error'
+     FILESPEC is not readable
+
+Windows Caveat
+--------------
+
+   Under Windows, it is not possible to replace a running executable
+with another.  Under Windows, `restore/1' will instead start a new
+sub-process and then terminate the running process. For more details see
+the Microsoft documentation for `execv()'.
+
+   In a Windows command prompt window, the command interpreter does not
+wait when a process executes an `execv()' library call. Thus after
+`restore/1', the program gives the appearance of running in the
+background.
+
+See Also
+--------
+
+   `load_files/[1,2]', `save_modules/2', `save_predicates/2',
+`save_program/[1,2]'
+
+   *Note ref-sls::
+
+
+File: quintus.info,  Node: mpg-ref-retract,  Next: mpg-ref-retractall,  Prev: mpg-ref-restore,  Up: mpg-ref
+
+`retract/1'
+-----------
+
+Synopsis
+--------
+
+   `retract(+*CLAUSE)'
+
+   Removes the first occurrence of dynamic clause CLAUSE from module M.
+
+Arguments
+---------
+
+CLAUSE "callable" [MOD]
+     A valid Prolog clause.
+
+Description
+-----------
+
+   `retract/1' erases the first clause in the database that matches
+CLAUSE.  CLAUSE is retracted in module M if specified.  Otherwise,
+CLAUSE is retracted in calling module.
+
+   `retract/1' is nondeterminate.  If control backtracks into the call
+to `retract/1', successive clauses matching CLAUSE are erased.  If and
+when no clauses match, the call to `retract/1' fails.
+
+   CLAUSE must be of one of the forms:
+   * HEAD
+
+   * `HEAD :- BODY'
+
+   * `MODULE:CLAUSE'
+
+   where HEAD is of type callable and the principal functor of HEAD is
+the name of a dynamic procedure.  If specified, MODULE must be an atom.
+
+   `retract(HEAD)' means retract the unit-clause HEAD.  The exact same
+effect can be achieved by `retract((HEAD :- true))'.
+
+   BODY may be uninstantiated, in which case it will match any body.  In
+the case of a unit-clause it will be bound to `true'.  Thus, for
+example,
+     | ?- retract((foo(X) :- Body)), fail.
+
+   is guaranteed to retract all the clauses for `foo/1', including any
+unit-clauses, providing of course that `foo/1' is dynamic.
+
+   Since `retract/1' is nondeterminate it is important if you only want
+to retract a single clause to use a cut to eliminate the alternatives
+generated.  See *Note ref-mdb-rcd-efu:: for more information on the use
+of cuts with `retract/1'.
+
+   `retract/1' searches for the clause to remove in the same way that
+`clause/2' does.  (And, like `clause/2', it uses first argument indexing
+to speed up this search when possible.)  Therefore it is redundant to
+call `clause/2' immediately before calling `retract/1' on the clause it
+returns.  That is, the call to `clause/2' in the following program
+fragment can be removed without changing its effect.
+     ... clause(H,B), retract((H:-B)), ...
+
+   The space occupied by a clause that is retracted is reclaimed.  The
+reclamation does not necessarily happen immediately, but is not delayed
+until backtracking past the call to `retract/1', as in some
+implementations.
+
+   WARNING: `retract/1' is a nondeterminate procedure.  Thus, we can use
+
+     | ?- retract((foo(X) :- Body)), fail.
+
+   to retract all clauses for `foo/1'.  However, when `retract/1' is
+used determinately; for example, to retract a single clause, it is
+crucial that you cut away unintended chice points to avoid "freezing"
+the retracted CLAUSE, disabling tail recursion optimization, or runaway
+retraction on the unexpected failure of a subsequent goal. See *Note
+ref-mdb-rcd-efu:: for further discussion.
+
+Exceptions
+----------
+
+     Same as `assert/1'.
+
+See Also:
+---------
+
+   `abolish/[1,2]', `assert/1', `dynamic/1', `erase/1', `retractall/1'.
+
+
+File: quintus.info,  Node: mpg-ref-retractall,  Next: mpg-ref-runtime_entry,  Prev: mpg-ref-retract,  Up: mpg-ref
+
+`retractall/1'
+--------------
+
+Synopsis
+--------
+
+   `retractall(+HEAD)'
+
+   Removes every clause in module M whose head matches HEAD.
+
+Arguments
+---------
+
+HEAD "callable" [MOD]
+     Head of a Prolog clause.
+
+Description
+-----------
+
+   HEAD must be instantiated to a term that looks like a call to a
+dynamic procedure.  For example, to retract all the clauses of `foo/3',
+you would write
+     | ?- retractall(foo(_,_,_)).
+
+   HEAD may be preceded by a M: prefix, in which case the clauses are
+retracted from module M instead of the calling module.
+
+   `retractall/1' could be defined (less efficiently) as
+     retractall(Head) :-
+             clause(Head, _, Ref),
+             erase(Ref),
+             fail ; true.
+
+   or
+     retractall(Head) :-
+             retract((Head :- _Body)),
+             fail ; true.
+
+   `retractall/1' is useful for erasing all the clauses of a dynamic
+procedure without forgetting that it is dynamic; `abolish/1' will not
+only erase all the clauses, but will also forget absolutely everything
+about the procedure.  `retractall/1' only erases the clauses. This is
+important if the procedure is called later on.
+
+   Since `retractall/1' erases _all_ the dynamic clauses whose heads
+match HEAD, it has no choices to make, and is determinate.  If there
+are no such clauses, it succeeds trivially.  None of the variables in
+HEAD will be instantiated by this command.  For example,
+     | ?- listing(baz/2).
+     
+     baz(a,1).
+     baz(b,2).
+     baz(a,3).
+     baz(b,4).
+     
+     yes
+     | ?- retractall(baz(a, X)).
+     
+     X = _798
+     
+     | ?- listing(baz/2).
+     
+     baz(b,2).
+     baz(b,4).
+     
+     yes
+
+   The space previously occupied by a retracted clause is reclaimed.
+This reclamation is not necessarily immediate, but it is not delayed
+until backtracking past the call of `retractall/1', as in some
+implementations.
+
+Exceptions
+----------
+
+`instantiation_error'
+     if HEAD or MODULE is uninstantiated.
+
+`type_error'
+     if HEAD is not of type callable.
+
+`permission_error'
+     if the procedure corresponding to HEAD is built-in or has a static
+     definition.
+
+See Also
+--------
+
+   `abolish/[1,2]', `assert/1', `dynamic/1', `erase/1', `retract/1'
+
+   *Note ref-mdb-bas::
+
+
+File: quintus.info,  Node: mpg-ref-runtime_entry,  Next: mpg-ref-save_modules,  Prev: mpg-ref-retractall,  Up: mpg-ref
+
+runtime_entry/1 "hook"
+----------------------
+
+Synopsis
+--------
+
+   `:- multifile runtime_entry/1.'
+
+   `runtime_entry(+EVENT)'
+
+   This predicate is called upon start-up and exit of stand alone
+applications.
+
+Arguments
+---------
+
+EVENT "one of `[start,abort]'"
+Description
+-----------
+
+   In a default runtime system, the program starts by executing the
+goal,
+     runtime_entry(start)
+
+   When that goal terminates, either by succeeding or by failing, the
+runtime system terminates.
+
+   Similarly, it is possible to specify what is to be done on an abort.
+An abort happens when a call is made either to the built-in predicate
+`abort/0' or to the C routine `QP_action(QP_ABORT)'.  (By default, a
+call of `QP_action(QP_ABORT)' happens when a user types `^c' -- see
+*Note sap-rge-iha::).  At this point, the current computation is
+abandoned and the program is restarted with the goal
+     runtime_entry(abort)
+
+   Effectively this replaces the original call to
+`runtime_entry(start)', so that when this call succeeds or fails, the
+runtime system terminates.
+
+   Users of the module system should ensure that the predicate
+`runtime_entry/1' is defined in the module `user', that is, not inside
+any user-defined module.
+
+See Also
+--------
+
+   `QP_toplevel()'
+
+   *Note fli-emb-how-mai::
+
+
+File: quintus.info,  Node: mpg-ref-save_modules,  Next: mpg-ref-save_predicates,  Prev: mpg-ref-runtime_entry,  Up: mpg-ref
+
+`save_modules/2'
+----------------
+
+Synopsis
+--------
+
+   `save_modules(+MODULES, +FILE)'
+
+   Saves all predicates in MODULES in QOF format to FILE.
+
+Arguments
+---------
+
+MODULES "atom" or "list of atom"
+     An atom representing a current module, or a list of such atoms
+     representing a list of modules.
+
+FILE "file_spec"
+     An atom representing a filename
+
+Description
+-----------
+
+   `save_modules/2' saves the current definitions of all predicates in
+a module, or list of modules, in QOF format into a file. The modules
+imported by the saved modules are recorded as dependencies in the QOF
+file.  The foreign files loaded into that module are also recorded as
+foreign dependencies in the QOF file.  The QOF file produced can be
+loaded into a development system (using `load_files/1') or it can be
+linked using `qld'.
+
+   When multiple modules are saved into a file, loading that file will
+import only the first of those modules into the module in which the
+load occurred.
+
+Exceptions
+----------
+
+`instantiation_error'
+     MODULES or FILE is not bound.
+
+`type_error'
+     MODULES is not a valid list of module names, or a single module
+     name, or FILE is not a valid file specification
+
+`permission_error'
+     FILE is not writable
+
+`existence_error'
+     A given module is not a current module.
+
+See Also:
+---------
+
+   `load_files/1', `save_predicates/2', `save_program/1', `volatile/1'
+
+
+File: quintus.info,  Node: mpg-ref-save_predicates,  Next: mpg-ref-save_program,  Prev: mpg-ref-save_modules,  Up: mpg-ref
+
+`save_predicates/2'
+-------------------
+
+Synopsis
+--------
+
+   `save_predicates(+PREDSPECS, +FILE)'
+
+   Saves the predicates specified by the PREDSPECS in QOF format to
+FILE.
+
+Arguments
+---------
+
+PREDSPECS "pred_spec_tree" [MOD]
+     A list of predicate specifications.
+
+FILE "file_spec"
+     An atom representing a filename
+
+Description
+-----------
+
+   `save_predicates/2' saves the current definitions of all the
+predicates specified by the list of predicate specifications in QOF
+format into a file.  The `exported' and `meta_predicate' properties of
+the predicates are _not_ stored in the QOF file.  The module of the
+predicates saved in the QOF file is fixed, so it is not possible to
+save a predicate from any module `foo', and reload it into module
+`bar'.  Likewise, the module dependencies or foreign file dependencies
+of these predicates are _not_ saved into the QOF file.  A typical use
+of this would be to take a snapshot of a table of dynamic facts.  The
+QOF file that is written out can be loaded into a development system
+(using `load_files/1') or it can be linked with other QOF files using
+`qld'.
+
+Exceptions
+----------
+
+`instantiation_error'
+     the list of predicate specifications or the filename is not ground.
+
+`type_error'
+`domain_error'
+     in the list of predicate specifications or in the filename.
+
+`permission_error'
+     the file is not writable, or a predicate is built-in.
+
+`existence_error'
+     A predicate is undefined.
+
+See Also:
+---------
+
+   `load_files/1', `save_modules/2', `save_program/1', `volatile/1'
+

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Last Call Optimization</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="bas-eff-lco-acp.html#bas-eff-lco-acp">bas-eff-lco-acp</a>:                      Accumulating Parameters
+<li><a accesskey="2" href="bas-eff-lco-acl.html#bas-eff-lco-acl">bas-eff-lco-acl</a>:                      Accumulating Lists
+</ul>
+
+   <p>Another important efficiency feature of Quintus Prolog is last call
+optimization.  This is a space optimization
+technique, which applies when a
+predicate is determinate at the point where it is about to call the last
+goal in the body of a clause.  For example,
+
+<pre class="example">     % for(Int, Lower, Upper)
+     % Lower and Upper should be integers such that Lower =&lt; Upper.
+     % Int should be uninstantiated; it will be bound successively on
+     % backtracking to Lower, Lower+1, ... Upper.
+     
+     for(Int, Int, _Upper).
+     for(Int, Lower, Upper) :-
+             Lower &lt; Upper,
+             Next is Lower + 1,
+             for(Int, Next, Upper).
+     </pre>
+
+   <p>This predicate is determinate at the point where the recursive call is
+about to be made, since this is the last clause and the preceding goals
+(<code>&lt;/2</code> and <code>is/2</code>) are determinate.  Thus last call
+optimization can be applied; effectively, the stack space being used
+for the current predicate call is reclaimed before the recursive call is
+made.  This means that this predicate uses only a constant amount of space,
+no matter how deep the recursion.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-bdm.html#bas-eff-bdm">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-det.html#bas-eff-det">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff.html#bas-eff">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

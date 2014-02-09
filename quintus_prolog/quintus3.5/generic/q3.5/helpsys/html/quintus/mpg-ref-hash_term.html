@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>hash_term/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>hash_term(</code><var>+Term, -HashValue</var><code>)</code>
+
+   <p>Provides an efficient way to calculate an <dfn>integer</dfn> hash value
+for the ground term <var>Term</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Term</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>HashValue</var> <dfn>term</dfn>
+     <dd>is an integer or variable
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>If the first argument passed to <code>hash_term/2</code> is ground, an integer
+hash value corresponding to that term is calculated and returned in
+the second argument.  If the first argument is not ground, a new variable
+is returned in the second argument.
+
+   <p>For example:
+
+<pre class="example">      | ?- <kbd>hash_term(foo(name,2,module), H).</kbd>
+     
+     H = 1391
+     
+     | ?- <kbd>hash_term(foo(X), H).</kbd>
+     
+     X = _4734,
+     H = _4755
+     
+     | ?-
+     </pre>
+
+<h4 class="subheading">Tips</h4>
+
+   <p><code>hash_term/2</code> is provided primarily as a tool
+for the construction of sophisticated Prolog clause access schemes. 
+Its intended use is to generate hash values for ground terms that will
+be used with first argument clause indexing, yielding compact and
+efficient multi-argument or deep argument indexing.
+
+   <p><code>hash_term/2</code> is most easily used when a known pattern of access
+to a predicate is desired and both arguments of the call and arguments
+of the predicate are known to be ground.  In the following simple
+but typical example, <code>hash_term/2</code> calls are used together with
+Prolog's database manipulation predicates (<code>assert/1</code> and
+<code>clause/2</code>) to calculate and add an additional argument to
+the clauses actually stored in the Prolog database:
+
+<pre class="example">     add_pred_info(Name, Arity, Module, Info) :-
+             hash_term([Name,Arity,Module], Hash),
+             assert(info(Hash,Name,Arity,Module,Info)).
+     
+     get_pred_info(Name, Arity, Module, Info) :-
+             hash_term([Name,Arity,Module], Hash),
+             clause(info(Hash,Name,Arity,Module,Info), _).
+     </pre>
+
+   <p>This example assumes that the name, arity and module to be stored
+in the Prolog database are ground when <code>add_pred_info/4</code> is called, and
+that they are also ground when <code>get_pred_info/4</code> is called.  The predicate
+that is actually asserted, <code>info/5</code>, has an additional argument
+calculated by <code>hash_term/2</code>; <code>info/5</code> would not normally be called
+directly.  A predicate using <code>hash_term/2</code> to delete the stored
+information would also be straightforward.
+
+   <p>If the first argument passed to <code>hash_term/2</code> is not ground,
+<code>hash_term/2</code> returns a variable.  Thus, if <code>add_pred_info/4</code> is
+called with the name, arity or module not ground, the <code>info/5</code> information
+will be asserted with a variable as its first argument, so it will not
+be indexed.  If <code>get_pred_info/4</code> is called with the name, arity or module
+not ground, <code>info/5</code> will simply be searched sequentially.  Prolog's
+normal semantics will be retained, although access will be considerably
+less efficient.
+
+   <p>It is possible to use <code>hash_term/2</code> in more complex indexing schemes
+as well by checking instantiation when adding, accessing, and deleting
+clauses; however, it is up to the user to ensure appropriate instantiation
+patterns in calls.  The tradeoff between run-time argument checking and
+reduced indexing effectiveness depends on the degree of discrimination
+otherwise afforded by normal first argument indexing.  The efficiency
+gained by fast multi-argument indexing can often more than make up for
+such additional run-time costs.
+
+   <p>It is also possible to use such indexing techniques
+on compiled predicates using term expansion.  Note that calculated hash
+values are not dependent on transitory information like atom numbers or
+internal pointers.  Hash values are consistent across saving and restoring
+or multiple invocations of an application.
+
+   <p>Calculation of hash values is very fast, and indices constructed using
+the techniques sketched above are also very compact, as the only
+additional cost is for storing the additional (hash value) argument. 
+When a solution to a complex indexing problem can be constructed using
+<code>hash_term/2</code> it will probably be preferable to solutions using other
+techniques.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-help.html#mpg-ref-help">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-halt.html#mpg-ref-halt">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

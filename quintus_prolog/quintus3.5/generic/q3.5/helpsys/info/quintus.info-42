@@ -1,0 +1,1559 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxt-typ,  Prev: pxt-tut,  Up: pxt
+
+ProXT 3.5 Data Types
+====================
+
+Action
+     Represented as `action(ACTIONNAME,PREDICATE)',
+     where ACTIONNAME is the action name to be mapped
+        to a Prolog goal whose functor is PREDICATE.
+
+ActionsList
+     Represented as a list of items of type Action.
+
+AnyTerm
+     This can be any Prolog term
+
+Attribute
+     Represented as a term whose functor is the resource
+          name and whose argument is the value of the
+        attribute.
+
+AttributeList
+     Represented as a list of items of type Attribute.
+
+Boolean
+     Represented as atom. Accepted values: `true' or `false'.
+
+CallbackList
+     Represented as a list of items of type CallbackTerm.
+
+CallbackProc
+     This must be a Prolog predicate.
+
+CallbackTerm
+     Represented as `callback(PREDICATE,CLIENTDATA)',
+       where PREDICATE is the name of the callback goal
+          and CLIENTDATA is the callback client data.
+
+Calldata
+     A term returned in the callback call data.
+
+CalldataFields
+     A list of the fields and their values from the
+     term returned in the callback call data.
+
+Cardinal
+     Represented as integer.
+
+Char
+     Represented as a single character atom.
+
+ClipboardStatus
+     Represented as atom. Accepted values:
+        *                      `xmClipboardFail'
+
+        *                      `xmClipboardSuccess'
+
+        *                      `xmClipboardTruncate'
+
+        *                      `xmClipboardLocked'
+
+        *                      `xmClipboardBadFormat'
+
+        *                      `xmClipboardNoData'
+
+Colormap
+     Represented as integer.
+
+CopyStatus
+     Represented as atom. Accepted values:
+        *                      `xmCOPY_FAILED'
+
+        *                      `xmCOPY_SUCCEEDED'
+
+        *                      `xmCOPY_TRUNCATED'
+
+Cursor
+     Represented as integer.
+
+Dimension
+     Represented as integer.
+
+Display
+     Represented as `xtdisplay(ADDRESS)'.
+
+EventFields
+     A list of the fields and their values from
+     the XEvent structure.
+
+EventProc
+     This must be a Prolog predicate.
+
+InputProc
+     This must be a Prolog predicate.
+
+Integer
+     Of course, this is an integer.
+
+IntegerList
+     This is a list of integers.
+
+KeySym
+     Represented as a single character atom.
+
+KeySymTable
+     Represented as a list of items of type KeySym.
+
+Pixel
+     Represented as integer.
+
+Pixmap
+     Represented as integer.
+
+Position
+     Represented as integer.
+
+Screen
+     Represented as `xtscreen(ADDRESS)'.
+
+String
+     This is an atom.
+
+StringTable
+     Represented as a list of atoms.
+
+Time
+     Represented as integer.
+
+TimerProc
+     This must be a Prolog predicate.
+
+Visual
+     Represented as integer.
+
+Widget
+     Represented as `widget(ADDRESS)'.
+
+WidgetCallbackType
+     Represented as atom. Accepted values are the
+     resource names for resources of type CallbackProc
+
+WidgetClass
+     Represented as atom. Accepted values:
+        *                      `compositeWidgetClass'
+
+        *                      `constraintWidgetClass'
+
+        *                      `coreWidgetClass'
+
+        *                      `widgetClass'
+
+        *                      `objectClass'
+
+        *                      `rectObjClass'
+
+        *                      `shellWidgetClass'
+
+        *                      `overrideShellWidgetClass'
+
+        *                      `wmShellWidgetClass'
+
+        *                      `transientShellWidgetClass'
+
+        *                      `topLevelShellWidgetClass'
+
+        *                      `applicationShellWidgetClass'
+
+        *                      `vendorShellWidgetClass'
+
+        *                      `xmArrowButtonWidgetClass'
+
+        *                      `xmArrowButtonGadgetClass'
+
+        *                      `xmBulletinBoardWidgetClass'
+
+        *                      `xmCascadeButtonWidgetClass'
+
+        *                      `xmCascadeButtonGadgetClass'
+
+        *                      `xmCommandWidgetClass'
+
+        *                      `xmDialogShellWidgetClass'
+
+        *                      `xmDropSiteManagerObjectClass'
+
+        *                      `xmDragIconObjectClass'
+
+        *                      `xmDropTransferObjectClass'
+
+        *                      `xmDrawingAreaWidgetClass'
+
+        *                      `xmDrawnButtonWidgetClass'
+
+        *                      `xmFileSelectionBoxWidgetClass'
+
+        *                      `xmFormWidgetClass'
+
+        *                      `xmFrameWidgetClass'
+
+        *                      `xmGadgetClass'
+
+        *                      `xmLabelWidgetClass'
+
+        *                      `xmLabelGadgetClass'
+
+        *                      `xmListWidgetClass'
+
+        *                      `xmMainWindowWidgetClass'
+
+        *                      `xmManagerWidgetClass'
+
+        *                      `xmMenuShellWidgetClass'
+
+        *                      `xmMessageBoxWidgetClass'
+
+        *                      `xmPanedWindowWidgetClass'
+
+        *                      `xmPrimitiveWidgetClass'
+
+        *                      `xmPushButtonWidgetClass'
+
+        *                      `xmPushButtonGadgetClass'
+
+        *                      `xmRowColumnWidgetClass'
+
+        *                      `xmScaleWidgetClass'
+
+        *                      `xmScrollBarWidgetClass'
+
+        *                      `xmScrolledWindowWidgetClass'
+
+        *                      `xmSelectionBoxWidgetClass'
+
+        *                      `xmSeparatorWidgetClass'
+
+        *                      `xmSeparatorGadgetClass'
+
+        *                      `xmTextWidgetClass'
+
+        *                      `xmTextFieldWidgetClass'
+
+        *                      `xmToggleButtonWidgetClass'
+
+        *                      `xmToggleButtonGadgetClass'
+
+WidgetList
+     Represented as a list of items of type Widget.
+
+Window
+     Represented as integer.
+
+WorkProc
+     This must be a Prolog predicate.
+
+XAtom
+     Represented as integer.
+
+XAtomList
+     Represented as a list of items of type XAtom.
+
+XEvent
+     Represented as `xtevent(ADDRESS)'.
+
+XEventMask
+     Represented as a list of atoms. Accepted values:
+        *                      `keyPressMask'
+
+        *                      `keyReleaseMask'
+
+        *                      `buttonPressMask'
+
+        *                      `buttonReleaseMask'
+
+        *                      `enterWindowMask'
+
+        *                      `leaveWindowMask'
+
+        *                      `pointerMotionMask'
+
+        *                      `pointerMotionHintMask'
+
+        *                      `button1MotionMask'
+
+        *                      `button2MotionMask'
+
+        *                      `button3MotionMask'
+
+        *                      `button4MotionMask'
+
+        *                      `button5MotionMask'
+
+        *                      `buttonMotionMask'
+
+        *                      `keymapStateMask'
+
+        *                      `exposureMask'
+
+        *                      `visibilityChangeMask'
+
+        *                      `structureNotifyMask'
+
+        *                      `resizeRedirectMask'
+
+        *                      `substructureNotifyMask'
+
+        *                      `substructureRedirectMask'
+
+        *                      `focusChangeMask'
+
+        *                      `propertyChangeMask'
+
+        *                      `colormapChangeMask'
+
+        *                      `ownerGrabButtonMask'
+
+XFont
+     Represented as `xtfontstruct(ADDRESS)'.
+
+XFontSet
+     Represented as `xtfontset(ADDRESS)'.
+
+XGC
+     Represented as `xtgc(ADDRESS)'.
+
+XGCMask
+     Represented as a list of atoms. Accepted values:
+        *                      `gcFunction'
+
+        *                      `gcPlaneMask'
+
+        *                      `gcForeground'
+
+        *                      `gcBackground'
+
+        *                      `gcLindWidth'
+
+        *                      `gcLineStyle'
+
+        *                      `gcCapStyle'
+
+        *                      `gcJoinStyle'
+
+        *                      `gcFillStyle'
+
+        *                      `gcFillRule'
+
+        *                      `gcTile'
+
+        *                      `gcStipple'
+
+        *                      `gcTileStipXOrigin'
+
+        *                      `gcFont'
+
+        *                      `gcSubwindowMode'
+
+        *                      `gcGraphicsExposures'
+
+        *                      `gcClipXOrigin'
+
+        *                      `gcClipYOrigin'
+
+        *                      `gcClipMask'
+
+        *                      `gcDashOffset'
+
+        *                      `gcDashList'
+
+        *                      `gcArcMode'
+
+XGCValues
+     Represented as a list of terms whose functor is the
+          name of a XGCMask field and whose argument is the
+              field value.
+
+XImage
+     Represented as `xtimage(ADDRESS)'.
+
+XRectangle
+     Represented as a term of the form
+     `rectangle(X,Y,WIDTH,HEIGHT)', where X, Y,
+     WIDTH and HEIGHT are all integers.
+
+XRectangleList
+     Represented as a list of items of type XRectangle.
+
+XmAlignment
+     Represented as atom. Accepted values:
+        *                       `xmALIGNMENT_BEGINNING'
+
+        *                      `xmALIGNMENT_CENTER'
+
+        *                      `xmALIGNMENT_END'
+
+XmAnimationStyle
+     Represented at atom. Accepted values:
+        *                      `xmDRAG_UNDER_NONE'
+
+        *                      `xmDRAG_UNDER_PIXMAP'
+
+        *                      `xmDRAG_UNDER_SHADOW_IN'
+
+        *                      `xmDRAG_UNDER_SHADOW_OUT'
+
+        *                      `xmDRAG_UNDER_HIGHLIGHT'
+
+XmArrowDirection
+     Represented as atom. Accepted values:
+        *                      `xmARROW_UP'
+
+        *                      `xmARROW_DOWN'
+
+        *                      `xmARROW_LEFT'
+
+        *                      `xmARROW_RIGHT'
+
+XmAttachment
+     Represented as atom. Accepted values:
+        *                      `xmATTACH_NONE'
+
+        *                      `xmATTACH_FORM'
+
+        *                      `xmATTACH_OPPOSITE_FORM'
+
+        *                      `xmATTACH_WIDGET'
+
+        *                      `xmATTACH_OPPOSITE_WIDGET'
+
+        *                      `xmATTACH_POSITION'
+
+        *                      `xmATTACH_SELF'
+
+XmAudibleWarning
+     Represented as atom. Accepted values:
+        *                      `xmNONE'
+
+        *                      `xmBELL'
+
+XmBlendModel
+     Represented as atom. Accepted values:
+        *                      `xmBLEND_ALL'
+
+        *                      `xmBLEND_STATE_SOURCE'
+
+        *                      `xmBLEND_JUST_SOURCE'
+
+        *                      `xmBLEND_NONE'
+
+XmButtonType
+     Represented as atom. Accepted values:
+        *                      `xmPUSHBUTTON'
+
+        *                      `xmTOGGLEBUTTON'
+
+        *                      `xmRADIOBUTTON'
+
+        *                      `xmCASCADEBUTTON'
+
+        *                      `xmSEPARATOR'
+
+        *                      `xmDOUBLE_SEPARATOR'
+
+        *                      `xmTITLE'
+
+XmButtonTypeTable
+     Represented as a list of items of type
+     XmButtonType.
+
+XmChildPlacement
+     Represented as atom. Accepted values:
+        *                      `xmPLACE_TOP'
+
+        *                      `xmPLACE_ABOVE_SELECTION'
+
+        *                      `xmPLACE_BELOW_SELECTION'
+
+XmChildType
+     Represented as atom. Accepted values:
+        *                      `xmDIALOG_NONE'
+
+        *                      `xmDIALOG_APPLY_BUTTON'
+
+        *                      `xmDIALOG_CANCEL_BUTTON'
+
+        *                      `xmDIALOG_DEFAULT_BUTTON'
+
+        *                      `xmDIALOG_OK_BUTTON'
+
+        *                      `xmDIALOG_FILTER_LABEL'
+
+        *                      `xmDIALOG_FILTER_TEXT'
+
+        *                      `xmDIALOG_HELP_BUTTON'
+
+        *                      `xmDIALOG_HISTORY_LIST'
+
+        *                      `xmDIALOG_LIST'
+
+        *                      `xmDIALOG_LIST_LABEL'
+
+        *                      `xmDIALOG_MESSAGE_LABEL'
+
+        *                      `xmDIALOG_SELECTION_LABEL'
+
+        *                      `xmDIALOG_SYMBOL_LABEL'
+
+        *                      `xmDIALOG_TEXT'
+
+        *                      `xmDIALOG_SEPARATOR'
+
+        *                      `xmDIALOG_DIR_LIST'
+
+        *                      `xmDIALOG_DIR_LIST_LABEL'
+
+XmChildVerticalAlignment
+     Represented as atom. Accepted values:
+        *                      `xmALIGNMENT_BASELINE_TOP'
+
+        *                      `xmALIGNMENT_CENTER'
+
+        *                      `xmALIGNMENT_BASELINE_BOTTOM'
+
+        *                      `xmALIGNMENT_WIDGET_TOP'
+
+        *                      `xmALIGNMENT_WIDGET_BOTTOM'
+
+XmClipboardPendingList
+     Represented as a list of terms of the form
+     `clipboardpending(DATAID,PRIVATEID)', where
+     DATAID and PRIVATEID are integers.
+
+XmCommandWindowLocation
+     Represented as atom. Accepted values:
+        *                      `xmCOMMAND_ABOVE_WORKSPACE'
+
+        *                      `xmCOMMAND_BELOW_WORKSPACE'
+
+XmDefaultButtonType
+     Represented as atom. Accepted values:
+        *                      `xmDIALOG_NONE'
+
+        *                      `xmDIALOG_CANCEL_BUTTON'
+
+        *                      `xmDIALOG_OK_BUTTON'
+
+        *                      `xmDIALOG_HELP_BUTTON'
+
+XmDeleteResponse
+     Represented as atom. Accepted values:
+        *                      `xmDESTROY'
+
+        *                      `xmUNMAP'
+
+        *                      `xmDO_NOTHING'
+
+XmDialogStyle
+     Represented as atom. Accepted values:
+        *                      `xmDIALOG_MODELESS'
+          `xmDIALOG_PRIMARY_APPLICATION_MODAL'
+
+        *                      `xmDIALOG_FULL_APPLICATION_MODAL'
+
+        *                      `xmDIALOG_SYSTEM_MODAL'
+
+XmDialogType
+     Represented as atom. Accepted values:
+        *                      `xmDIALOG_TEMPLATE'
+
+        *                      `xmDIALOG_ERROR'
+
+        *                      `xmDIALOG_INFORMATION'
+
+        *                      `xmDIALOG_MESSAGE'
+
+        *                      `xmDIALOG_WARNING'
+
+        *                      `xmDIALOG_WORKING'
+
+        *                      `xmDIALOG_WORK_AREA'
+
+        *                      `xmDIALOG_PROMPT'
+
+        *                      `xmDIALOG_SELECTION'
+
+        *                      `xmDIALOG_COMMAND'
+
+        *                      `xmDIALOG_FILE_SELECTION'
+
+XmDragAttachment
+     Represented as atom. Accepted values:
+        *                      `xmATTACH_NORTH_WEST'
+
+        *                      `xmATTACH_NORTH'
+
+        *                      `xmATTACH_NORTH_EAST'
+
+        *                      `xmATTACH_EAST'
+
+        *                      `xmATTACH_SOUTH_EAST'
+
+        *                      `xmATTACH_SOUTH'
+
+        *                      `xmATTACH_SOUTH_WEST'
+
+        *                      `xmATTACH_WEST'
+
+        *                      `xmATTACH_CENTER'
+
+        *                      `xmATTACH_HOT'
+
+XmDragDropOperations
+     Represented as atom. Accepted values:
+        *                      `xmDRAG_NOOP'
+
+        *                      `xmDRAG_MOVE'
+
+        *                      `xmDRAG_COPY'
+
+        *                      `xmDRAG_LINK'
+
+XmDragProtocolStyle
+     Represented as atom. Accepted values:
+        *                      `xmDRAG_NONE'
+
+        *                      `xmDRAG_DROP_ONLY'
+
+        *                      `xmDRAG_PREFER_PREREGISTER'
+
+        *                      `xmDRAG_PREREGISTER'
+
+        *                      `xmDRAG_PREFER_DYNAMIC'
+
+        *                      `xmDRAG_DYNAMIC'
+
+        *                      `xmDRAG_PREFER_RECEIVER'
+
+XmDropSiteActivity
+     Represented as atom. Accepted values:
+        *                      `xmDROP_SITE_ACTIVE'
+
+        *                      `xmDROP_SITE_INACTIVE'
+
+XmDropSiteType
+     Represented as atom. Accepted values:
+        *                      `xmDROP_SITE_SIMPLE'
+
+        *                      `xmDROP_SITE_COMPOSITE'
+
+XmDropTransfers
+     Represented as list of terms of the form
+     `droptransfer(WIDGET,TARGET)', where WIDGET is
+     of type Widget and TARGET is of type XAtom.
+
+XmEditMode
+     Represented as atom. Accepted values:
+        *                      `xmMULTI_LINE_EDIT'
+
+        *                      `xmSINGLE_LINE_EDIT'
+
+XmFileTypeMask
+     Represented as atom. Accepted values:
+        *                      `xmFILE_DIRECTORY'
+
+        *                      `xmFILE_REGULAR'
+
+        *                      `xmFILE_ANY_TYPE'
+
+XmFontContext
+     Represented as `xmfontcontext(ADDRESS)'.
+
+XmFontList
+     Represented as `xmfontlist(ADDRESS)'.
+
+XmFontListEntry
+     Represented as `xmfontlistentry(ADDRESS)'.
+
+XmFontListTag
+     Represented as `char_ptr(ADDRESS)' or as the atom
+        `xmFONTLIST_DEFAULT_TAG'
+
+XmFontType
+     Represented as atom. Accepted values:
+        *                      `xmFONT_IS_FONT'
+
+        *                      `xmFONT_IS_FONTSET'
+
+XmHighlightMode
+     Represented as atom. Accepted values:
+        *                      `xmHIGHLIGHT_NORMAL'
+
+        *                      `xmHIGHLIGHT_SELECTED'
+
+        *                      `xmHIGHLIGHT_SECONDARY_SELECTED'
+
+XmIndicatorType
+     Represented as atom. Accepted values:
+        *                      `xmN_OF_MANY'
+
+        *                      `xmONE_OF_MANY'
+
+XmKeyboardFocusPolicy
+     Represented as atom. Accepted values:
+        *                      `xmEXPLICIT'
+
+        *                      `xmPOINTER'
+
+XmLabelType
+     Represented as atom. Accepted values:
+        *                      `xmPIXMAP'
+
+        *                      `xmSTRING'
+
+XmListSizePolicy
+     Represented as atom. Accepted values:
+        *                      `xmVARIABLE'
+
+        *                      `xmCONSTANT'
+
+        *                      `xmRESIZE_IF_POSSIBLE'
+
+XmMultiClick
+     Represented as atom. Accepted values:
+        *                      `xmMULTICLICK_DISCARD'
+
+        *                      `xmMULTICLICK_KEEP'
+
+XmNavigationType
+     Represented as atom. Accepted values:
+        *                      `xmNONE'
+
+        *                      `xmTAB_GROUP'
+
+        *                      `xmSTICKY_TAB_GROUP'
+
+        *                      `xmEXCLUSIVE_TAB_GROUP'
+
+        *                      `xmDYNAMIC_DEFAULT_TAB_GROUP'
+
+XmOrientation
+     Represented as atom. Accepted values:
+        *                      `xmNO_ORIENTATION'
+
+        *                      `xmVERTICAL'
+
+        *                      `xmHORIZONTAL'
+
+XmPacking
+     Represented as atom. Accepted values:
+        *                      `xmNO_PACKING'
+
+        *                      `xmPACK_TIGHT'
+
+        *                      `xmPACK_COLUMN'
+
+        *                      `xmPACK_NONE'
+
+XmPositionIndex
+     Represented as atom. Accepted values:
+        *                      `xmLAST_POSITION'
+
+        *                      `xmFIRST_POSITION'
+
+XmProcessingDirection
+     Represented as atom. Accepted values:
+        *                      `xmMAX_ON_TOP'
+
+        *                      `xmMAX_ON_BOTTOM'
+
+        *                      `xmMAX_ON_LEFT'
+
+        *                      `xmMAX_ON_RIGHT'
+
+XmRepTypeEntry
+     Represented as `xmreptypeentry(ADDRESS)'.
+
+XmRepTypeId
+     Represented as an integer.
+
+XmRepTypeList
+     Represented as `xmreptypelist(ADDRESS)'.
+
+XmResizePolicy
+     Represented as atom. Accepted values:
+        *                      `xmRESIZE_NONE'
+
+        *                      `xmRESIZE_GROW'
+
+        *                      `xmRESIZE_ANY'
+
+XmRowColumnType
+     Represented as atom. Accepted values:
+        *                      `xmWORK_AREA'
+
+        *                      `xmMENU_BAR'
+
+        *                      `xmMENU_PULLDOWN'
+
+        *                      `xmMENU_POPUP'
+
+        *                      `xmMENU_OPTION'
+
+XmScrollBarDisplayPolicy
+     Represented as atom. Accepted values:
+        *                      `xmSTATIC'
+
+        *                      `xmAS_NEEDED'
+
+XmScrollBarPlacement
+     Represented as atom. Accepted values:
+        *                      `xmBOTTOM_RIGHT'
+
+        *                      `xmTOP_RIGHT'
+
+        *                      `xmBOTTOM_LEFT'
+
+        *                      `xmTOP_LEFT'
+
+XmScrollingPolicy
+     Represented as atom. Accepted values:
+        *                      `xmAUTOMATIC'
+
+        *                      `xmAPPLICATION_DEFINED'
+
+XmSelectionArray
+     Represented as list of items of type
+     XmSelectionType.
+
+XmSelectionPolicy
+     Represented as atom. Accepted values:
+        *                      `xmSINGLE_SELECT'
+
+        *                      `xmMULTIPLE_SELECT'
+
+        *                      `xmEXTENDED_SELECT'
+
+        *                      `xmBROWSE_SELECT'
+
+XmSelectionType
+     Represented as atom. Accepted values:
+        *                      `xmSELECT_POSITION'
+
+        *                      `xmSELECT_WHITESPACE'
+
+        *                      `xmSELECT_WORD'
+
+        *                      `xmSELECT_LINE'
+
+        *                      `xmSELECT_ALL'
+
+        *                      `xmSELECT_PARAGRAPH'
+
+XmSeparatorType
+     Represented as atom. Accepted values:
+        *                      `xmNO_LINE'
+
+        *                      `xmSINGLE_LINE'
+
+        *                      `xmDOUBLE_LINE'
+
+        *                      `xmSINGLE_DASHED_LINE'
+
+        *                      `xmDOUBLE_DASHED_LINE'
+
+        *                      `xmSHADOW_ETCHED_IN'
+
+        *                      `xmSHADOW_ETCHED_OUT'
+
+        *                      `xmSHADOW_ETCHED_IN_DASH'
+
+        *                      `xmSHADOW_ETCHED_OUT_DASH'
+
+        *                      `xmINVALID_SEPARATOR_TYPE'
+
+XmShadowType
+     Represented as atom. Accepted values:
+        *                      `xmSHADOW_ETCHED_IN'
+
+        *                      `xmSHADOW_ETCHED_OUT'
+
+        *                      `xmSHADOW_IN'
+
+        *                      `xmSHADOW_OUT'
+
+XmStackMode
+     Represented as atom. Accepted values:
+        *                      `xmABOVE'
+
+        *                      `xmBELOW'
+
+XmString
+     Represented as `xmstring(ADDRESS)'.
+
+XmStringCharSet
+     Represented as `xmstringcharset(ADDRESS)' or as an
+         atom with the following accepted values:
+        *                      `xmFONTLIST_DEFAULT_TAG'
+
+        *                      `xmSTRING_DEFAULT_CHARSET'
+
+        *                      `xmSTRING_FALLBACK_CHARSET'
+
+        *                      `xmSTRING_ISO8859_1'
+
+XmStringCharSets
+     Represented as list of items of type XmStringCharSet
+           `xmstringcharset(ADDRESS)' or atoms with values:
+
+XmStringComponentType
+     Represented as atom. Accepted values:
+        *                      `xmSTRING_COMPONENT_UNKNOWN'
+
+        *                      `xmSTRING_COMPONENT_CHARSET'
+
+        *                      `xmSTRING_COMPONENT_TEXT'
+
+        *                      `xmSTRING_COMPONENT_DIRECTION'
+
+        *                      `xmSTRING_COMPONENT_SEPARATOR'
+
+        *                      `xmSTRING_COMPONENT_END'
+
+        *                      `xmSTRING_COMPOUND_STRING'
+
+        *                      `xmSTRING_COMPONENT_USER_BEGIN'
+
+        *                      `xmSTRING_COMPONENT_USER_END'
+
+XmStringContext
+     Represented as `xmstringcontext(ADDRESS)'.
+
+XmStringDirection
+     Represented as atom. Accepted values:
+        *                      `xmSTRING_DIRECTION_L_TO_R'
+
+        *                      `xmSTRING_DIRECTION_R_TO_L'
+
+        *                      `xmSTRING_DIRECTION_DEFAULT'
+
+XmStringTable
+     Represented as a list of items of type XmString.
+
+XmTearOffModel
+     Represented as atom. Accepted values:
+        *                      `xmTEAR_OFF_ENABLED'
+
+        *                      `xmTEAR_OFF_DISABLED'
+
+XmTextDirection
+     Represented as atom. Accepted values:
+        *                      `xmTEXT_FORWARD'
+
+        *                      `xmTEXT_BACKWARD'
+
+XmTextPosition
+     Represented as integer.
+
+XmTextSource
+     Represented as `xmtextsource(ADDRESS)'.
+
+XmTransferStatus
+     Represented as atom. Accepted values:
+        *                      `xmTRANSFER_FAILURE'
+
+        *                      `xmTRANSFER_SUCCESS'
+
+XmTraversalDirection
+     Represented as atom. Accepted values:
+        *                      `xmTRAVERSE_CURRENT'
+
+        *                      `xmTRAVERSE_NEXT'
+
+        *                      `xmTRAVERSE_PREV'
+
+        *                      `xmTRAVERSE_HOME'
+
+        *                      `xmTRAVERSE_NEXT_TAB_GROUP'
+
+        *                      `xmTRAVERSE_PREV_TAB_GROUP'
+
+        *                      `xmTRAVERSE_UP'
+
+        *                      `xmTRAVERSE_DOWN'
+
+        *                      `xmTRAVERSE_LEFT'
+
+        *                      `xmTRAVERSE_RIGHT'
+
+XmUnitType
+     Represented as atom. Accepted values:
+        *                      `xmPIXELS'
+
+        *                      `xm100TH_MILLIMETERS'
+
+        *                      `xm1000TH_INCHES'
+
+        *                      `xm100TH_POINTS'
+
+        *                      `xm100TH_FONT_UNITS'
+
+XmUnpostBehavior
+     Represented as atom. Accepted values:
+        *                      `xmUNPOST'
+
+        *                      `xmUNPOST_AND_REPLAY'
+
+XmValueWcs
+     Represented as `wchar_ptr(ADDRESS)'.
+
+XmVerticalAlignment
+     Represented as atom. Accepted values:
+        *                      `xmALIGNMENT_BASELINE_TOP'
+
+        *                      `xmALIGNMENT_CENTER'
+
+        *                      `xmALIGNMENT_BASELINE_BOTTOM'
+
+        *                      `xmALIGNMENT_CONTENTS_TOP'
+
+        *                      `xmALIGNMENT_CONTENTS_BOTTOM'
+
+XmVisibility
+     Represented as atom. Accepted values:
+        *                      `xmVISIBLILITY_UNOBSCURED'
+
+        *                      `xmVISIBLILITY_PARTIALLY_OBSCURED'
+
+        *                      `xmVISIBLILITY_FULLY_OBSCURED'
+
+XmVisualPolicy
+     Represented as atom. Accepted values:
+        *                      `xmVARIABLE'
+
+        *                      `xmCONSTANT'
+
+XtAccelerators
+     Represented as `xtaccelerators(ADDRESS)'.
+
+XtAppContext
+     Represented as `app_context(ADDRESS)'.
+
+XtCallbackStatus
+     Represented as atom. Accepted values:
+        *                      `xtCallbackNoList'
+
+        *                      `xtCallbackHasNone'
+
+        *                      `xtCallbackHasSome'
+
+XtGrabKind
+     Represented as atom. Accepted values:
+        *                      `xtGrabNone'
+
+        *                      `xtGrabNonexclusive'
+
+        *                      `xtGrabExclusive'
+
+XtInputCondMask
+     Represented as a list of atoms. Accepted values:
+        *                      `xtInputReadMask'
+
+        *                      `xtInputWriteMask'
+
+        *                      `xtInputExceptMask'
+
+XtInputId
+     Represented as integer.
+
+XtInputMask
+     Represented as a list of atoms. Accepted values:
+        *                      `xtIMXEvent'
+
+        *                      `xtIMTimer'
+
+        *                      `xtIMAlternateInput'
+
+        *                      `xtIMAll'
+
+XtIntervalId
+     Represented as integer.
+
+XtPointer
+     Represented as `xtpointer(ADDRESS)'.
+
+XtTranslations
+     Represented as `xttranslations(ADDRESS)'.
+
+XtWorkProcId
+     Represented as integer.
+
+
+File: quintus.info,  Node: pxt-wid,  Next: pxt-tut,  Prev: pxt-exp,  Up: pxt
+
+ProXT 3.5 Widget Resource Data Types
+====================================
+
+`xmNaccelerator':                    String
+`xmNacceleratorText':                XmString
+`xmNaccelerators':                   XtAccelerators
+`xmNactivateCallback':               CallbackTerm
+`xmNadjustLast':                     Boolean
+`xmNadjustMargin':                   Boolean
+`xmNalignment':                      XmAlignment
+`xmNallowOverlap':                   Boolean
+`xmNallowResize':                    Boolean
+`xmNallowShellResize':               Boolean
+`xmNancestorSensitive':              Boolean
+`xmNanimationMask':                  Pixmap
+`xmNanimationPixmap':                Pixmap
+`xmNanimationPixmapDepth':           Integer
+`xmNanimationStyle':                 XmAnimationStyle
+`xmNapplyCallback':                  CallbackTerm
+`xmNapplyLabelString':               XmString
+`xmNargc':                           Integer
+`xmNargv':                           StringTable
+`xmNarmCallback':                    CallbackTerm
+`xmNarmColor':                       Pixel
+`xmNarmPixmap':                      Pixmap
+`xmNarrowDirection':                 XmArrowDirection
+`xmNattachment':                     XmAttachment
+`xmNaudibleWarning':                 XmAudibleWarning
+`xmNautoShowCursorPosition':         Boolean
+`xmNautoUnmanage':                   Boolean
+`xmNautomaticSelection':             Boolean
+`xmNbackground':                     Pixel
+`xmNbackgroundPixmap':               Pixmap
+`xmNbaseHeight':                     Integer
+`xmNbaseWidth':                      Integer
+`xmNblendModel':                     XmBlendModel
+`xmNblinkRate':                      Integer
+`xmNborderColor':                    Pixel
+`xmNborderPixmap':                   Pixmap
+`xmNborderWidth':                    Dimension
+`xmNbottomAttachment':               XmAttachment
+`xmNbottomOffset':                   Integer
+`xmNbottomPosition':                 Integer
+`xmNbottomShadowColor':              Pixel
+`xmNbottomShadowPixmap':             Pixmap
+`xmNbottomWidget':                   Widget
+`xmNbrowseSelectionCallback':        CallbackTerm
+`xmNbuttonAcceleratorText':          XmStringTable
+`xmNbuttonAccelerators':             StringTable
+`xmNbuttonCount':                    Integer
+`xmNbuttonFontList':                 XmFontList
+`xmNbuttonMnemonicCharSets':         XmStringCharSets
+`xmNbuttonMnemonics':                KeySymTable
+`xmNbuttonSet':                      Integer
+`xmNbuttonType':                     XmButtonTypeTable
+`xmNbuttons':                        XmStringTable
+`xmNcancelButton':                   Widget
+`xmNcancelCallback':                 CallbackTerm
+`xmNcancelLabelString':              XmString
+`xmNcascadePixmap':                  Pixmap
+`xmNcascadingCallback':              CallbackTerm
+`xmNchildHorizontalAlignment':       XmAlignment
+`xmNchildHorizontalSpacing':         Dimension
+`xmNchildPlacement':                 XmChildPlacement
+`xmNchildType':                      XmChildType
+`xmNchildVerticalAlignment':         XmChildVerticalAlignment
+`xmNchildren':                       WidgetList
+`xmNclientData':                     Widget
+`xmNclipWindow':                     Widget
+`xmNcolormap':                       Colormap
+`xmNcolumns':                        Integer
+`xmNcommand':                        XmString
+`xmNcommandChangedCallback':         CallbackTerm
+`xmNcommandEnteredCallback':         CallbackTerm
+`xmNcommandWindow':                  Widget
+`xmNcommandWindowLocation':          XmCommandWindowLocation
+`xmNconvertProc':                    CallbackProc
+`xmNcreatePopupChildProc':           CallbackProc
+`xmNcursorBackground':               Pixel
+`xmNcursorForeground':               Pixel
+`xmNcursorPosition':                 XmTextPosition
+`xmNcursorPositionVisible':          Boolean
+`xmNdarkThreshold':                  Integer
+`xmNdecimalPoints':                  Integer
+`xmNdecrementCallback':              CallbackTerm
+`xmNdefaultActionCallback':          CallbackTerm
+`xmNdefaultButton':                  Widget
+`xmNdefaultButtonShadowThickness':   Dimension
+`xmNdefaultButtonType':              XmDefaultButtonType
+`xmNdefaultCopyCursorIcon':          Widget
+`xmNdefaultFontList':                XmFontList
+`xmNdefaultInvalidCursorIcon':       Widget
+`xmNdefaultLinkCursorIcon':          Widget
+`xmNdefaultMoveCursorIcon':          Widget
+`xmNdefaultNoneCursorIcon':          Widget
+`xmNdefaultPosition':                Boolean
+`xmNdefaultSourceCursorIcon':        Widget
+`xmNdefaultValidCursorIcon':         Widget
+`xmNdeleteResponse':                 XmDeleteResponse
+`xmNdepth':                          Integer
+`xmNdestroyCallback':                CallbackTerm
+`xmNdialogStyle':                    XmDialogStyle
+`xmNdialogTitle':                    XmString
+`xmNdialogType':                     XmDialogType
+`xmNdirListItemCount':               Integer
+`xmNdirListItems':                   XmStringTable
+`xmNdirListLabelString':             XmString
+`xmNdirMask':                        XmString
+`xmNdirSearchProc':                  CallbackProc
+`xmNdirSpec':                        XmString
+`xmNdirectory':                      XmString
+`xmNdirectoryValid':                 Boolean
+`xmNdisarmCallback':                 CallbackTerm
+`xmNdoubleClickInterval':            Integer
+`xmNdragCallback':                   CallbackTerm
+`xmNdragDropFinishCallback':         CallbackTerm
+`xmNdragInitiatorProtocolStyle':     XmDragProtocolStyle
+`xmNdragMotionCallback':             CallbackTerm
+`xmNdragOperations':                 XmDragDropOperations
+`xmNdragProc':                       CallbackProc
+`xmNdragReceiverProtocolStyle':      XmDragProtocolStyle
+`xmNdropFinishCallback':             CallbackTerm
+`xmNdropProc':                       CallbackProc
+`xmNdropRectangles':                 XRectangleList
+`xmNdropSiteActivity':               XmDropSiteActivity
+`xmNdropSiteEnterCallback':          CallbackTerm
+`xmNdropSiteLeaveCallback':          CallbackTerm
+`xmNdropSiteOperations':             XmDragDropOperations
+`xmNdropSiteType':                   XmDropSiteType
+`xmNdropStartCallback':              CallbackTerm
+`xmNdropTransfers':                  XmDropTransfers
+`xmNeditMode':                       XmEditMode
+`xmNeditable':                       Boolean
+`xmNentryAlignment':                 XmAlignment
+`xmNentryBorder':                    Dimension
+`xmNentryCallback':                  CallbackTerm
+`xmNentryClass':                     WidgetClass
+`xmNentryVerticalAlignment':         XmVerticalAlignment
+`xmNexportTargets':                  XAtomList
+`xmNexposeCallback':                 CallbackTerm
+`xmNextendedSelectionCallback':      CallbackTerm
+`xmNfileListItemCount':              Integer
+`xmNfileListItems':                  XmStringTable
+`xmNfileListLabelString':            XmString
+`xmNfileSearchProc':                 CallbackProc
+`xmNfileTypeMask':                   XmFileTypeMask
+`xmNfillOnArm':                      Boolean
+`xmNfillOnSelect':                   Boolean
+`xmNfilterLabelString':              XmString
+`xmNfocusCallback':                  CallbackTerm
+`xmNfont':                           XFont
+`xmNfontList':                       XmFontList
+`xmNforeground':                     Pixel
+`xmNforegroundThreshold':            Integer
+`xmNfractionBase':                   Integer
+`xmNgainPrimaryCallback':            CallbackTerm
+`xmNgeometry':                       String
+`xmNheight':                         Dimension
+`xmNheightInc':                      Integer
+`xmNhelpCallback':                   CallbackTerm
+`xmNhelpLabelString':                XmString
+`xmNhighlightColor':                 Pixel
+`xmNhighlightOnEnter':               Boolean
+`xmNhighlightPixmap':                Pixmap
+`xmNhighlightThickness':             Dimension
+`xmNhistoryItemCount':               Integer
+`xmNhistoryItems':                   XmStringTable
+`xmNhistoryMaxItems':                Integer
+`xmNhistoryVisibleItemCount':        Integer
+`xmNhorizontalFontUnit':             Integer
+`xmNhorizontalScrollBar':            Widget
+`xmNhorizontalSpacing':              Dimension
+`xmNhotX':                           Position
+`xmNhotY':                           Position
+`xmNiconMask':                       Pixmap
+`xmNiconName':                       String
+`xmNiconNameEncoding':               XAtom
+`xmNiconPixmap':                     Pixmap
+`xmNiconWindow':                     Window
+`xmNiconX':                          Integer
+`xmNiconY':                          Integer
+`xmNiconic':                         Boolean
+`xmNimportTargets':                  XAtomList
+`xmNincrement':                      Integer
+`xmNincrementCallback':              CallbackTerm
+`xmNincremental':                    Boolean
+`xmNindicatorOn':                    Boolean
+`xmNindicatorSize':                  Dimension
+`xmNindicatorType':                  XmIndicatorType
+`xmNinitialDelay':                   Integer
+`xmNinitialFocus':                   Widget
+`xmNinitialResourcesPersistent':     Boolean
+`xmNinitialState':                   Integer
+`xmNinput':                          Boolean
+`xmNinputCallback':                  CallbackTerm
+`xmNinputMethod':                    String
+`xmNinsertPosition':                 CallbackProc
+`xmNinvalidCursorForeground':        Pixel
+`xmNisAligned':                      Boolean
+`xmNisHomogeneous':                  Boolean
+`xmNitemCount':                      Integer
+`xmNitems':                          XmStringTable
+`xmNkeyboardFocusPolicy':            XmKeyboardFocusPolicy
+`xmNlabelFontList':                  XmFontList
+`xmNlabelInsensitivePixmap':         Pixmap
+`xmNlabelPixmap':                    Pixmap
+`xmNlabelString':                    XmString
+`xmNlabelType':                      XmLabelType
+`xmNleftAttachment':                 XmAttachment
+`xmNleftOffset':                     Integer
+`xmNleftPosition':                   Integer
+`xmNleftWidget':                     Widget
+`xmNlightThreshold':                 Integer
+`xmNlistItemCount':                  Integer
+`xmNlistItems':                      XmStringTable
+`xmNlistLabelString':                XmString
+`xmNlistMarginHeight':               Dimension
+`xmNlistMarginWidth':                Dimension
+`xmNlistSizePolicy':                 XmListSizePolicy
+`xmNlistSpacing':                    Dimension
+`xmNlistUpdated':                    Boolean
+`xmNlistVisibleItemCount':           Integer
+`xmNlosePrimaryCallback':            CallbackTerm
+`xmNlosingFocusCallback':            CallbackTerm
+`xmNmainWindowMarginHeight':         Dimension
+`xmNmainWindowMarginWidth':          Dimension
+`xmNmapCallback':                    CallbackTerm
+`xmNmappedWhenManaged':              Boolean
+`xmNmappingDelay':                   Integer
+`xmNmargin':                         Dimension
+`xmNmarginBottom':                   Dimension
+`xmNmarginHeight':                   Dimension
+`xmNmarginLeft':                     Dimension
+`xmNmarginRight':                    Dimension
+`xmNmarginTop':                      Dimension
+`xmNmarginWidth':                    Dimension
+`xmNmask':                           Pixmap
+`xmNmaxAspectX':                     Integer
+`xmNmaxAspectY':                     Integer
+`xmNmaxHeight':                      Integer
+`xmNmaxLength':                      Integer
+`xmNmaxWidth':                       Integer
+`xmNmaximum':                        Integer
+`xmNmenuAccelerator':                String
+`xmNmenuBar':                        Widget
+`xmNmenuCursor':                     String
+`xmNmenuHelpWidget':                 Widget
+`xmNmenuHistory':                    Widget
+`xmNmenuPost':                       String
+`xmNmessageAlignment':               XmAlignment
+`xmNmessageString':                  XmString
+`xmNmessageWindow':                  Widget
+`xmNminAspectX':                     Integer
+`xmNminAspectY':                     Integer
+`xmNminHeight':                      Integer
+`xmNminWidth':                       Integer
+`xmNminimizeButtons':                Boolean
+`xmNminimum':                        Integer
+`xmNmnemonic':                       KeySym
+`xmNmnemonicCharSet':                XmFontListTag
+`xmNmodifyVerifyCallback':           CallbackTerm
+`xmNmodifyVerifyCallbackWcs':        CallbackTerm
+`xmNmotionVerifyCallback':           CallbackTerm
+`xmNmoveOpaque':                     Boolean
+`xmNmultiClick':                     XmMultiClick
+`xmNmultipleSelectionCallback':      CallbackTerm
+`xmNmustMatch':                      Boolean
+`xmNmwmDecorations':                 Integer
+`xmNmwmFunctions':                   Integer
+`xmNmwmInputMode':                   Integer
+`xmNmwmMenu':                        String
+`xmNnavigationType':                 XmNavigationType
+`xmNnoMatchCallback':                CallbackTerm
+`xmNnoMatchString':                  XmString
+`xmNnoResize':                       Boolean
+`xmNnoneCursorForeground':           Pixel
+`xmNnumChildren':                    Cardinal
+`xmNnumColumns':                     Integer
+`xmNnumDropRectangles':              Cardinal
+`xmNnumDropTransfers':               Cardinal
+`xmNnumExportTargets':               Cardinal
+`xmNnumImportTargets':               Cardinal
+`xmNoffsetX':                        Position
+`xmNoffsetY':                        Position
+`xmNokCallback':                     CallbackTerm
+`xmNokLabelString':                  XmString
+`xmNoperationChangedCallback':       CallbackTerm
+`xmNoperationCursorIcon':            Widget
+`xmNoptionLabel':                    XmString
+`xmNoptionMnemonic':                 KeySym
+`xmNorientation':                    XmOrientation
+`xmNoverrideRedirect':               Boolean
+`xmNpacking':                        XmPacking
+`xmNpageDecrementCallback':          CallbackTerm
+`xmNpageIncrement':                  Integer
+`xmNpageIncrementCallback':          CallbackTerm
+`xmNpaneMaximum':                    Dimension
+`xmNpaneMinimum':                    Dimension
+`xmNpattern':                        XmString
+`xmNpendingDelete':                  Boolean
+`xmNpixmap':                         Pixmap
+`xmNpopdownCallback':                CallbackTerm
+`xmNpopupCallback':                  CallbackTerm
+`xmNpopupEnabled':                   Boolean
+`xmNpositionIndex':                  XmPositionIndex
+`xmNpostFromButton':                 Integer
+`xmNpreeditType':                    String
+`xmNprocessingDirection':            XmProcessingDirection
+`xmNpromptString':                   XmString
+`xmNpushButtonEnabled':              Boolean
+`xmNqualifySearchDataProc':          CallbackProc
+`xmNradioAlwaysOne':                 Boolean
+`xmNradioBehavior':                  Boolean
+`xmNrecomputeSize':                  Boolean
+`xmNrefigureMode':                   Boolean
+`xmNrepeatDelay':                    Integer
+`xmNresizable':                      Boolean
+`xmNresizeCallback':                 CallbackTerm
+`xmNresizeHeight':                   Boolean
+`xmNresizePolicy':                   XmResizePolicy
+`xmNresizeWidth':                    Boolean
+`xmNrightAttachment':                XmAttachment
+`xmNrightOffset':                    Integer
+`xmNrightPosition':                  Integer
+`xmNrightWidget':                    Widget
+`xmNrowColumnType':                  XmRowColumnType
+`xmNrows':                           Integer
+`xmNrubberPositioning':              Boolean
+`xmNsashHeight':                     Dimension
+`xmNsashIndent':                     Position
+`xmNsashShadowThickness':            Dimension
+`xmNsashWidth':                      Dimension
+`xmNsaveUnder':                      Boolean
+`xmNscaleHeight':                    Dimension
+`xmNscaleMultiple':                  Integer
+`xmNscaleWidth':                     Dimension
+`xmNscreen':                         Screen
+`xmNscrollBarDisplayPolicy':         XmScrollBarDisplayPolicy
+`xmNscrollBarPlacement':             XmScrollBarPlacement
+`xmNscrollHorizontal':               Boolean
+`xmNscrollLeftSide':                 Boolean
+`xmNscrollTopSide':                  Boolean
+`xmNscrollVertical':                 Boolean
+`xmNscrolledWindowMarginHeight':     Dimension
+`xmNscrolledWindowMarginWidth':      Dimension
+`xmNscrollingPolicy':                XmScrollingPolicy
+`xmNselectColor':                    Pixel
+`xmNselectInsensitivePixmap':        Pixmap
+`xmNselectPixmap':                   Pixmap
+`xmNselectThreshold':                Integer
+`xmNselectedItemCount':              Integer
+`xmNselectedItems':                  XmStringTable
+`xmNselectionArray':                 XmSelectionArray
+`xmNselectionArrayCount':            Integer
+`xmNselectionLabelString':           XmString
+`xmNselectionPolicy':                XmSelectionPolicy
+`xmNsensitive':                      Boolean
+`xmNseparatorOn':                    Boolean
+`xmNseparatorType':                  XmSeparatorType
+`xmNset':                            Boolean
+`xmNshadow':                         XmShadowType
+`xmNshadowThickness':                Dimension
+`xmNshadowType':                     XmShadowType
+`xmNshellUnitType':                  XmUnitType
+`xmNshowArrows':                     Boolean
+`xmNshowAsDefault':                  Dimension
+`xmNshowSeparator':                  Boolean
+`xmNshowValue':                      Boolean
+`xmNsimpleCallback':                 CallbackProc
+`xmNsingleSelectionCallback':        CallbackTerm
+`xmNskipAdjust':                     Boolean
+`xmNsliderSize':                     Integer
+`xmNsource':                         XmTextSource
+`xmNsourceCursorIcon':               Widget
+`xmNsourcePixmapIcon':               Widget
+`xmNspacing':                        Dimension
+`xmNstateCursorIcon':                Widget
+`xmNstringDirection':                XmStringDirection
+`xmNsubMenuId':                      Widget
+`xmNsymbolPixmap':                   Pixmap
+`xmNtearOffMenuActivateCallback':    CallbackTerm
+`xmNtearOffMenuDeactivateCallback':  CallbackTerm
+`xmNtearOffModel':                   XmTearOffModel
+`xmNtextAccelerators':               XtAccelerators
+`xmNtextColumns':                    Integer
+`xmNtextFontList':                   XmFontList
+`xmNtextString':                     XmString
+`xmNtextTranslations':               XtTranslations
+`xmNtitle':                          String
+`xmNtitleEncoding':                  XAtom
+`xmNtitleString':                    XmString
+`xmNtoBottomCallback':               CallbackTerm
+`xmNtoPositionCallback':             CallbackTerm
+`xmNtoTopCallback':                  CallbackTerm
+`xmNtopAttachment':                  XmAttachment
+`xmNtopCharacter':                   XmTextPosition
+`xmNtopItemPosition':                Integer
+`xmNtopLevelEnterCallback':          CallbackTerm
+`xmNtopLevelLeaveCallback':          CallbackTerm
+`xmNtopOffset':                      Integer
+`xmNtopPosition':                    Integer
+`xmNtopShadowColor':                 Pixel
+`xmNtopShadowPixmap':                Pixmap
+`xmNtopWidget':                      Widget
+`xmNtransferProc':                   CallbackProc
+`xmNtransferStatus':                 XmTransferStatus
+`xmNtransient':                      Boolean
+`xmNtransientFor':                   Widget
+`xmNtranslations':                   XtTranslations
+`xmNtraversalOn':                    Boolean
+`xmNtraverseObscuredCallback':       CallbackTerm
+`xmNtroughColor':                    Pixel
+`xmNunitType':                       XmUnitType
+`xmNunmapCallback':                  CallbackTerm
+`xmNunpostBehavior':                 XmUnpostBehavior
+`xmNuseAsyncGeometry':               Boolean
+`xmNuserData':                       XtPointer
+`xmNvalidCursorForeground':          Pixel
+`xmNvalue':                          Integer
+`xmNvalue':                          Integer
+`xmNvalue':                          String
+`xmNvalue':                          String
+`xmNvalueChangedCallback':           CallbackTerm
+`xmNvalueWcs':                       XmValueWcs
+`xmNverifyBell':                     Boolean
+`xmNverticalFontUnit':               Integer
+`xmNverticalScrollBar':              Widget
+`xmNverticalSpacing':                Dimension
+`xmNvisibleItemCount':               Integer
+`xmNvisibleWhenOff':                 Boolean
+`xmNvisual':                         Visual
+`xmNvisualPolicy':                   XmVisualPolicy
+`xmNwaitForWm':                      Boolean
+`xmNwhichButton':                    Integer
+`xmNwidth':                          Dimension
+`xmNwidthInc':                       Integer
+`xmNwinGravity':                     Integer
+`xmNwindowGroup':                    Window
+`xmNwmTimeout':                      Integer
+`xmNwordWrap':                       Boolean
+`xmNworkWindow':                     Widget
+`xmNx':                              Position
+`xmNy':                              Position
+
+
+
+File: quintus.info,  Node: pxt-exp,  Next: pxt-wid,  Prev: pxt-man,  Up: pxt
+
+ProXT 3.5 Exported Predicates
+=============================
+
+* Menu:
+
+* pxt-exp-motif::                       Motif Predicates
+* pxt-exp-px::                          X Toolkit Predicates
+* pxt-exp-pxt::                         ProXT Specific Predicates
+

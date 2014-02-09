@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Predicates Visible in a Module</h5>
+
+   <p>The built-in predicate <code>predicate_property/2</code> can be used to find the
+properties of any predicate that is visible to a particular module.
+
+   <p>To backtrack through all of the predicates imported by module <code>m</code>, use
+
+<pre class="example">     | ?- <kbd>predicate_property(m:Goal, imported_from(_)).</kbd>
+     </pre>
+
+   <p>To backtrack through all of the predicates imported by module <code>m1</code>
+from module <code>m2</code>, use
+
+<pre class="example">     | ?- <kbd>predicate_property(m1:Goal, imported_from(m2)).</kbd>
+     </pre>
+
+   <p>For example, you can load the <code>basics</code>
+module from the library and then remind yourself of
+what predicates it defines like this:
+
+<pre class="example">     | ?- <kbd>compile(library(basics))</kbd>.
+     % ... loading messages ...
+     
+     yes
+     | ?- <kbd>predicate_property(P, imported_from(basics))</kbd>.
+     
+     P = member(_2497,_2498) <kbd>;</kbd>
+     P = memberchk(_2497,_2498) <kbd>;</kbd>
+       .
+       .
+       .
+     </pre>
+
+   <p>This tells you what predicates are imported into the type-in module
+from <code>basics</code>.
+
+   <p>You can also find <em>all</em> imports into <em>all</em> modules using
+<pre class="example">     | ?- <kbd>predicate_property(M1:G, imported_from(M2)).</kbd>
+     </pre>
+
+   <p>To backtrack through all of the predicates exported by module <code>m</code>, use
+
+<pre class="example">     | ?- <kbd>predicate_property(m:Goal, exported).</kbd>
+     </pre>
+
+   <p>There is a library package, <code>library(showmodule)</code>, which prints
+out information about current modules.  For more information see
+<a href="lib.html#lib">lib</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-ilm-def.html#ref-mod-ilm-def">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod-ilm.html#ref-mod-ilm">Up</a>
+</ul>
+</div>
+   </body></html>
+

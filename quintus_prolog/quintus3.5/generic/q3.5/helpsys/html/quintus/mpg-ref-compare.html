@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>compare/3</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>compare(</code><var>-Order, +Term1, +Term2</var><code>)</code>
+
+   <p>succeeds if the result of comparing terms <var>Term1</var> and
+<var>Term2</var> is <var>Order</var>
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Order</var> <dfn>one of </dfn><code>[&lt;,=,&gt;]</code><dfn></dfn>
+     <dd>
+          <dl>
+
+          <br><dt><code>=</code>
+          <dd>if <var>Term1</var> is identical to <var>Term2</var>,
+<br><dt><code>&lt;</code>
+          <dd>if <var>Term1</var> is before <var>Term2</var> in the standard order,
+<br><dt><code>&gt;</code>
+          <dd>if <var>Term1</var> is after <var>Term2</var> in the standard order. 
+</dl>
+
+     <br><dt><var>Term1</var> <dfn>term</dfn>
+     <dd>
+
+     <br><dt><var>Term2</var> <dfn>term</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The standard total order is
+as follows.  For further details see <a href="ref-lte-cte-sot.html#ref-lte-cte-sot">ref-lte-cte-sot</a>.
+<pre class="display">     
+     variables <code>@&lt;</code> database references <code>@&lt;</code> numbers <code>@&lt;</code> atoms <code>@&lt;</code> compound terms
+     </pre>
+
+   <p>The goal (A) is equivalent to (B):
+<pre class="example">     | ?- <kbd>compare(=, Term1, Term2).</kbd> (A)
+     </pre>
+
+<pre class="example">     |?- <kbd>(Term1 == Term2).</kbd> (B)
+     </pre>
+
+   <p>The following query succeeds, binding <var>R</var> to <code>&lt;</code>, because 1 comes
+before 2 in the standard order.
+<pre class="example">      | ?- <kbd>compare(R, 1, 2).</kbd>
+     
+     R = &lt;
+     </pre>
+
+   <p>If <var>Order</var> is supplied, and is not one of <code>&lt;</code>, <code>&gt;</code>, or <code>=</code>, <code>compare/3</code>
+simply fails.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>@&lt;/2</code>,
+<code>@=&lt;/2</code>,
+<code>@&gt;/2</code>,
+<code>@&gt;=/2</code>,
+<code>QP_compare()</code>
+<a href="ref-lte.html#ref-lte">ref-lte</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-compile.html#mpg-ref-compile">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-close.html#mpg-ref-close">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

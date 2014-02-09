@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>initialization/1</code> <dfn>declaration</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- initialization </code><var>Goal</var><code></code>
+
+   <p>Declares that <var>Goal</var> is to be run when the file in which the
+declaration appears is loaded into a running system, or when a
+stand-alone program or runtime system that contains the file is started
+up.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Goal</var> <dfn>callable</dfn> [MOD]
+     <dd>A valid goal. 
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Defined as built-in prefix operator, so a simplified
+syntax can be used when using <code>initialization/1</code> as a directive. See
+examples.
+
+   <p>Callable at any point during compilation of a file. That is, it can be
+used as a directive, or as part of a goal called at compile-time.  The
+initialization goal will be run as soon as the loading of the file is
+completed. That is at the end of the load, and notably after all other
+directives appearing in the file have been run.
+
+   <p><code>qpc</code> and <code>save_program/[1,2]</code> save initialization goals in the QOF
+file, so that they will run when the qof file is loaded.
+
+   <p><var>Goal</var> is associated with the file loaded, and with a module, if
+applicable.  When a file, or module, is going to be reloaded, all
+goals earlier installed by that file or in that module, are
+removed.  This is done before the actual load, thus allowing a new
+initialization <var>Goal</var> to be specified, without creating duplicates.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+    The argument <var>Goal</var> is not instantiated
+</dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>To understand the examples fully, read the
+reference page on <code>volatile/1</code> first.
+
+   <p>A common case is when the Prolog process at start up should connect
+itself to an external database. It should also make the connection when the
+file with the code for the connection is loaded for the first time.
+<pre class="example">     :- volatile db_connection/1.
+     :- initialization my_init.
+     
+     my_init :-
+       ( clause(db_connection(_), _) -&gt;
+         true
+       ; set_up_connection(Connection),
+         assert(db_connection(Connection))
+       ).
+     </pre>
+
+   <p>In the above example, <code>set_up_connection/1</code> is user defined. 
+We do not declare <code>db_connection/1</code> as
+dynamic in the file, since such a declaration would implicitly delete
+all clauses of the predicate when the file is reloaded.
+
+   <p>It might not always be desirable to have the connection set up the
+first time the file is loaded, but only when a system is started up (for
+instance during the debugging of a database application.) This
+can be achieved with the following code (note that we use the property
+that a dynamic declaration reinitiliazes/resets the declared predicate):
+<pre class="example">     :- dynamic connect/0.
+     :- volatile db_connection/1.
+     :- initialization my_init.
+     
+     my_init :-
+       ( connect -&gt;
+         set_up_connection(Connection),
+         assert(db_connection(Connection))
+       ; assert(connect)
+       ).
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>volatile/1</code>,  <code>load_files/1</code>, <code>compile/1</code>
+
+   <p>See <a href="ref-sls.html#ref-sls">ref-sls</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-instance.html#mpg-ref-instance">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-ite.html#mpg-ref-ite">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

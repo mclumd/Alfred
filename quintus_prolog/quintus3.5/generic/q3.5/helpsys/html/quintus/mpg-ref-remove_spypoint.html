@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>remove_spypoint/1</code> <dfn>development</dfn></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>remove_spypoint(</code><var>+Spyspec</var><code>)</code>
+
+   <p>removes a spypoint from the specified predicate
+or call.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Spyspec</var> <dfn>compound</dfn>
+     <dd>a specification of an individual
+spypoint.  Two forms of spyspec are allowed:
+
+          <dl>
+
+          <br><dt><code>predicate(</code><var>Pred</var><code>)</code>
+          <dd>
+A spypoint on any call to <var>Pred</var>. <var>Pred</var> must be a skeletal
+predicate specification, and may be module qualified.
+
+          <br><dt><code>call(</code><var>Caller</var><code>,</code><var>Clausenum</var><code>,</code><var>Callee</var><code>,</code><var>Callnum</var><code>)</code>
+          <dd>
+A spypoint on the <var>Callnum</var> call to <var>Callee</var> in the body of
+the <var>Clausenum</var> clause of <var>Caller</var>. <var>Callee</var> and
+<var>Callnum</var> must be skeletal predicate specifications. 
+<var>Callnum</var> and <var>Clausenum</var> must be
+integers, and begin counting from 1.  Note that <var>Callnum</var> specifies
+a <em>lexical</em> position, that is, the number of the occurrence of
+<var>Callee</var> counting from the beginning of the body of the clause, and
+ignoring any punctuation.
+
+     </dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>This predicate is not supported in runtime systems.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>current_spypoint/1</code>, <code>add_spypoint/1</code>,
+<code>spy/1</code>, <code>nospy/1</code>, <code>debugging/0</code>
+
+   <a href="dbg-bas-bas.html#dbg-bas-bas">dbg-bas-bas</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-repeat.html#mpg-ref-repeat">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-remove_advice.html#mpg-ref-remove_advice">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

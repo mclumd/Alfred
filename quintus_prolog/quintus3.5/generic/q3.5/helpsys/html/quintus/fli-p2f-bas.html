@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Introduction</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-p2f-bas-sum.html#fli-p2f-bas-sum">fli-p2f-bas-sum</a>:                      Summary of steps
+</ul>
+
+   <p>This section describes how to
+load and call programs written in C, Pascal, FORTRAN, or Assembly
+language.  This may be desirable in order to:
+     <ul>
+
+     <li>combine Prolog with existing programs and libraries, thereby forming
+composite systems;
+<li>interface with the operating system or other system level programs;
+<li>speed up certain critical operations. 
+</ul>
+
+   <p>Examples showing the correct use of the foreign interface are
+found in the library directory.  Examples of incrementally loading C, Pascal
+and FORTRAN code can be found in <a href="fli-p2f-fex.html#fli-p2f-fex">fli-p2f-fex</a>.
+
+   <p>Foreign functions are loaded directly into the
+Prolog system by using one of the built-in predicates
+<code>load_foreign_executable/1</code> or
+<code>load_foreign_files/2</code>. These predicates load executable
+images or object files into the address space of the running Prolog.
+
+   <p>Before calling these predicates, you must prepare facts in the
+database that describe which functions may be called by Prolog,
+the native language of each function, and the argument types of
+each function. 
+This information is used to link Prolog predicates and foreign functions
+when loading the foreign code.
+
+   <p>The foreign language interface supports the direct exchange of
+Prolog's atomic data types (atoms, integers and floating-point
+numbers).  The data is automatically converted between Prolog's
+internal representation and the internal representation of the foreign
+language.
+
+   <p>The foreign language interface also supports passing
+any Prolog term to C and receiving any Prolog term from C. 
+A set of C functions is provided to type test and access
+terms passed to C and to create new Prolog terms in C.  For information
+on these functions see <a href="cfu.html#cfu">cfu</a>.
+
+   <p>Prolog procedures that are attached to foreign functions are determinate,
+in that they
+succeed at most once for a given call and are not re-entered
+on backtracking. 
+This imposes no serious limitation, since it is always possible
+to divide  a foreign function
+ into the part to be done on the
+first call and the part to be redone on backtracking. 
+Backtracking can then take place at the Prolog level where it is naturally
+expressed.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-uso.html#fli-p2f-uso">Next</a>
+<li><a rel="up" accesskey="u" href="fli-p2f.html#fli-p2f">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

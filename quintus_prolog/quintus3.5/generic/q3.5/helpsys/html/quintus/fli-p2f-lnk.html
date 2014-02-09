@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Linking Foreign Functions to Prolog Procedures</h4>
+
+   <p>When <code>load_foreign_executable/1</code> or <code>load_foreign_files/2</code> is
+called, it calls the hook predicates <code>foreign_file/2</code> and
+<code>foreign/3</code> in the current source module.  These should have been
+previously defined by clauses of the form:
+
+<pre class="example">     foreign_file(<var>FileName</var>, [<var>Function1,Function2,<small class="dots">...</small>,FunctionN</var>]).
+     
+     foreign(<var>Function1, Language, PredicateSpecification1</var>).
+     foreign(<var>Function2, Language, PredicateSpecification2</var>).
+     ...
+     foreign(<var>FunctionN, Language, PredicateSpecificationN</var>).
+     </pre>
+
+   <p>Example:
+<pre class="example">     foreign_file(math, [sin,cos,tan]).
+     
+     foreign(sin, c, sin(+float,[-float])).
+     foreign(cos, c, cos(+float,[-float])).
+     foreign(tan, c, tan(+float,[-float])).
+     </pre>
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> If a Prolog module includes foreign code, all relevant
+<code>foreign/[2,3]</code> and <code>foreign_file/2</code> facts should be loaded into that
+module and the <code>load_foreign_executable/1</code> or <code>load_foreign_files/2</code>
+command should be called from that module. 
+</blockquote>
+
+   <p>A <code>foreign_file/2</code> fact lists the functions that will be
+provided by the associated (shared) object file.  When using
+<code>load_foreign_files/2</code>, a fact of this form must be provided
+for each file specified in the <var>ListOfFiles</var> argument. 
+The functions specified should be only those that are to be attached to
+Prolog procedures.  Supporting functions that will not be called directly
+from Prolog should not be listed.
+
+   <p>Each <code>foreign/3</code> fact describes how a foreign function is to be attached to a
+Prolog procedure.  <var>PredicateSpecification</var>
+specifies the Prolog procedure
+and also the argument passing interface (described below).  A fact of this
+form must be provided for each function that is to be attached to a
+Prolog procedure.
+
+   <p>When <code>load_foreign_executable/1</code> or <code>load_foreign_files/2</code> is called,
+the specified files are loaded into the running Prolog and then
+all the specified Prolog
+procedures are abolished and redefined to be links to the foreign
+functions.  Calling one of the Prolog procedures now results in a call
+to a foreign function.
+
+   <p>Prolog procedures can be directly linked to library
+functions.  Note, however, that some functions shown in the library
+documentation are actually C macros (found in included <code>.h</code> files).  In
+this case, the simplest approach is to write a C function that uses
+the macro and then link to that function.
+
+   <p>You may abolish or redefine (using <code>compile/1</code>) any
+procedure that has been attached to a foreign function. 
+This severs the link between the Prolog predicate and the foreign function. 
+It is not possible to reestablish this link.
+
+   <p>The <code>foreign_file/2</code> and <code>foreign/3</code> facts must be consistent  whenever
+<code>load_foreign_executable/1</code> or
+<code>load_foreign_files/2</code> is called.  They are, however, not used after
+this point and may be abolished, if desired.<a rel="footnote" href="#fn-1"><sup>1</sup></a>.
+
+   <p>The <code>load_foreign_executable/1</code> and <code>load_foreign_files/2</code> commands
+can be used any number of times in a
+Prolog session to load different foreign programs. For example:
+<pre class="example">     | ?- <kbd>compile(f1),
+          load_foreign_executable(f1),
+          abolish([foreign/3, foreign_file/2]).</kbd>
+     | ?- <kbd>compile(f2),
+          load_foreign_executable(f2),
+          abolish([foreign/3, foreign_file/2]).</kbd>
+     </pre>
+
+   <p>Each <code>compile/1</code> installs a new set of facts describing a set of
+functions to be loaded by <code>load_foreign_executable/1</code>. 
+Unless you abolish all <code>foreign/3</code> and <code>foreign_file/2</code> facts before
+each compilation, Prolog will warn you that <code>foreign/3</code> and
+<code>foreign_file/2</code> have been previously defined in another file.
+
+   <p>A better way to do this is to insert the call to
+<code>load_foreign_executable</code> into the file that defines
+<code>foreign_file/2</code> and <code>foreign/3</code> as an embedded command.  For
+example, you could add the following command to the end of the file
+<code>f1.pl</code>:
+<pre class="example">     :-  load_foreign_executable(f1),
+         abolish([foreign/3, foreign_file/2]).
+     </pre>
+
+   <p>so that compiling <code>f1.pl</code> will automatically load <code>f1.so</code>.  This embedded command
+will also work when building a stand-alone program, as described in
+<a href="sap-srs.html#sap-srs">sap-srs</a>.
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>See example in the reference page for <code>foreign/[2,3]</code>.</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f-api.html#fli-p2f-api">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-p2f-uso.html#fli-p2f-uso">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-p2f.html#fli-p2f">Up</a>
+</ul>
+</div>
+   </body></html>
+

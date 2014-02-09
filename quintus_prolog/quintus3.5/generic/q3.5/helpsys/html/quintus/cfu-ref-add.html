@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_add_*()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_add_input(id,fn,data,flush_fn, flush_data)
+     int  id;
+     void (*fn)();
+     char *data;
+     void (*flush_fn)();
+     char *flush_data;
+     </pre>
+
+<pre class="example">     int QP_add_output(id,fn,data,flush_fn,flush_data)
+     int  id;
+     void (*fn)();
+     char *data;
+     void (*flush_fn)();
+     char *flush_data;
+     </pre>
+
+<pre class="example">     int QP_add_exception(id,fn,data,flush_fn,flush_data)
+     int  id;
+     void (*fn)();
+     char *data;
+     void (*flush_fn)();
+     char *flush_data;
+     </pre>
+
+<pre class="example">     int QP_add_timer(msecs,fn,data)
+     int  msecs;
+     void (*fn)();
+     char *data;
+     </pre>
+
+<pre class="example">     int QP_add_absolute_timer(timeo,fn,data)
+     struct timeval *timeo;
+     void (*fn)();
+     char *data;
+     </pre>
+
+   <p>These C functions register callback functions to be called on
+input/output or timing events.
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>QP_add_input()</code> arranges for a function to be called when input becomes
+available on the file descriptor <var>id</var>. The callback function <var>fn</var>
+is called with two arguments: the file descriptor <var>id</var> and the specified
+call data <var>data</var>.
+
+   <p>Before the function is called, the callback is disabled so that
+the function will not be inadvertently reentered while it is running. 
+The callback will be enabled automatically after the callback function
+returns.
+
+   <p>If the flush function <var>flush_fn</var> is not <code>NULL</code> then it is called
+whenever Prolog needs to wait for input. This is useful when you
+communicate with another process using bidirectional buffered connections,
+where you must flush the output before you wait for input, lest your process
+waits for a response to a message that is still buffered in your output
+queue.
+
+   <p><code>QP_add_output()</code> is like <code>QP_add_input()</code> except that the callback
+function is called if output is ready on file descriptor <var>id</var>. 
+<code>QP_add_exception()</code> is like <code>QP_add_input()</code> except that the callback
+function is called if an exception condition occurs on file descriptor
+<var>id</var>.
+
+   <p><code>QP_add_timer()</code> arranges for a function to be called in <var>msecs</var>
+milliseconds time with two arguments: the actual time waited and the
+specified call data <var>data</var>. This timer does not repeat automatically;
+if you want a repeating timer, you should call <code>QP_add_timer()</code> within
+the callback function explicitly.
+
+   <p><code>QP_add_absolute_timer()</code> is like <code>QP_add_timer()</code> except that
+an absolute time is specified by the timeval structure <var>timeo</var>;
+see <code>gettimeofday(2)</code>.
+
+<h4 class="subheading">Return Values</h4>
+
+     <dl>
+
+     <br><dt><var>timerid</var>
+     <dd>
+Returned by <code>QP_add_timer()</code> and <code>QP_add_absolute_time()</code>
+if successful. 
+<br><dt><code>QP_SUCCESS</code>
+     <dd>
+Returned by other functions.
+
+     <br><dt><code>QP_ERROR</code>
+     <dd>
+Returned by all functions if an error occurs. 
+</dl>
+
+<h4 class="subheading">Tips</h4>
+
+   <p>Often your code will maintain a buffer associated with an
+input connection. If this is the case, then your flush function must check
+for this buffered input, and as long as it finds some, it should
+repeatedly call your callback function directly.  If you don't do
+this, then your callback function may not be called, even though you
+have pending input, since the operating system isn't aware of your buffer.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_wait_input()</code>,
+<code>QP_select()</code>,
+<code>QP_remove_*()</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-add_tty.html#cfu-ref-add_tty">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-action.html#cfu-ref-action">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

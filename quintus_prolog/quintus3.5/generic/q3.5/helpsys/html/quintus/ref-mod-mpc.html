@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Module Prefixes on Clauses</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ref-mod-mpc-cmo.html#ref-mod-mpc-cmo">ref-mod-mpc-cmo</a>:                      Current Modules
+</ul>
+
+   <p>Every clause in a Prolog file has a source module implicitly associated with
+it.  If the file is a module-file, then the module named in the module
+declaration at the top of the file is the source module for all the clauses. 
+If the file is not a module-file, the relevant module
+is the source module for the command that caused this file to be
+loaded.
+
+   <p>The source module of a predicate decides in which module it is defined
+(the module of the head), and in which module the goals in the body are
+going to be called (the module of the body). It is possible to override
+the implicit source module, both for head and body, of clauses and
+directives, by using prefixes. For example, consider the module-file:
+<pre class="example">     :- module(a, []).
+     
+     :- dynamic m:a/1.
+     b(1).
+     m:c([]).
+     m:d([H|T]) :- q(H), r(T).
+     m:(e(X) :- s(X), t(X)).
+     f(X) :- m:(u(X), v(X)).
+     </pre>
+
+   <p>In the previous example, the following modules apply:
+     <ol type=1 start=1>
+
+     <li><code>a/1</code> is declared dynamic in the module <code>m</code>. 
+<li><code>b/1</code> is defined in module <code>a</code> (the module of the file). 
+<li><code>c/1</code> is defined in module <code>m</code>. 
+<li><code>d/1</code> is defined in module <code>m</code>, but <code>q/1</code> and <code>r/1</code> are called in module
+<code>a</code> (and must therefore be defined in module <code>a</code>). 
+<li><code>e/1</code> is defined in module <code>m</code>, and <code>s/1</code> and <code>t/1</code> are called in module
+<code>m</code>. 
+<li><code>f/1</code> is defined in module <code>a</code>, but <code>u/1</code> and <code>v/1</code> are called in module
+<code>m</code>.
+        </ol>
+
+   <p>Module prefixing is especially useful when the module prefix is <code>user</code>.  There
+are several predicates that have to be defined in module <code>user</code> but
+that you may want to define (or extend) in a program that is otherwise
+entirely defined in some other module or modules:
+     <ul>
+
+     <li><code>runtime_entry/1</code>
+<li><code>term_expansion/2</code>
+<li><code>portray/1</code>
+<li><code>file_search_path/2</code>
+<li><code>library_directory/1</code>
+</ul>
+
+   <p>Note that if clauses for one of these predicates are to be spread
+across multiple files, it will be necessary to declare that predicate
+to be multifile by putting a multifile declaration in each of the files.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mod-cim.html#ref-mod-cim">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mod-dmo.html#ref-mod-dmo">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mod.html#ref-mod">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

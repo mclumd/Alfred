@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Example</h5>
+
+   <p>Here is an example file:
+<pre class="example">     :- load_files(library(detcheck),
+                   [when(compile_time), if(changed)]).
+     
+     parent(abe, rob).
+     parent(abe, sam).
+     parent(betty, rob).
+     parent(betty, sam).
+     
+     is_parent(Parent) :- parent(Parent, _).
+     </pre>
+
+   <p>The determinacy checker notices that the first arguments of clauses 1
+and 2 have the same principal functor, and similarly for clauses 3 and
+4.  It reports:
+<pre class="example">     * Non-determinate: user:parent/2 (clause 1)
+     *     Indexing cannot distinguish this from clause 2.
+     * Non-determinate: user:parent/2 (clause 3)
+     *     Indexing cannot distinguish this from clause 4.
+     </pre>
+
+   <p>In fact, <code>parent/2</code> should be nondeterminate, so we should add the
+declaration
+<pre class="example">     :- nondet parent/2.
+     </pre>
+
+   <p>before the clauses for <code>parent/2</code>.  If run again after modifying file,
+the determinacy checker prints:
+<pre class="example">     * Non-determinate: user:is_parent/1 (clause 1)
+     *     This clause calls user:parent/2, which may be nondeterminate.
+     </pre>
+
+   <p>It no longer complains about <code>parent/2</code> being nondeterminate, since
+this is declared.  But now it notices that because <code>parent/2</code> is
+nondeterminate, then so is <code>is_parent/1</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="bas-eff-det-opt.html#bas-eff-det-opt">Next</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-det-cou.html#bas-eff-det-cou">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-det.html#bas-eff-det">Up</a>
+</ul>
+</div>
+   </body></html>
+

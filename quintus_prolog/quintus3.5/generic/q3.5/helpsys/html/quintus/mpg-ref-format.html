@@ -1,0 +1,438 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>format/[2,3]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>format(</code><var>+Control, +Arguments</var><code>)</code>
+
+   <p><code>format(</code><var>+Stream, +Control, +Arguments</var><code>)</code>
+
+   <p>Interprets the <var>Arguments</var> according to the <var>Control</var> string and
+prints the result on the current or specified output stream.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>
+
+     <br><dt><var>Control</var> <dfn>list of char</dfn> or <dfn>atom</dfn>
+     <dd>either an
+atom or a string, which can contain control sequences of the form
+<code>~</code><var>&lt;n&gt;</var><code></code><var>&lt;c&gt;</var><code></code>
+
+          <dl>
+
+          <br><dt><var>&lt;c&gt;</var>
+          <dd>a format control option
+
+          <br><dt><var>&lt;n&gt;</var>
+          <dd><br><dt>is its optional argument.
+          <dd><var>&lt;n&gt;</var> must be a non-negative integer.
+
+     </dl>
+<br><dt>
+     <dd>
+Any characters that are not part of a control sequence are written
+to the current output stream.
+
+     <br><dt><var>Arguments</var> <dfn>term</dfn>
+     <dd>list of arguments, which will be interpreted and
+possibly printed by format control options. 
+If there is only one argument then this argument need not be
+enclosed in a list.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><strong>Please note:</strong> In the case where there is only one argument and that argument
+is a list, then that argument must be enclosed in a list.
+
+   <p>If <var>&lt;n&gt;</var> can be specified, then it can be the character <code>*</code>. 
+In this case <var>&lt;n&gt;</var> will be taken as the next argument
+from <var>Arguments</var>.
+
+   <p>The following control options cause formatted printing of the next
+element from <var>Arguments</var> to the current output stream.  The
+argument must be of the type specified, or <code>format/1</code> will raise a
+consistency error.
+     <dl>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>a</code>
+     <dd>argument is an atom, which is printed without
+quoting. The maximum number of characters printed is <var>&lt;n&gt;</var>. If <var>&lt;n&gt;</var> is omitted
+the entire atom is printed.
+
+     <pre class="example">          | ?- <kbd>format('~a', foo).</kbd>
+          foo
+          </pre>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>c</code>
+     <dd>argument is a numeric ASCII code (0 =&lt; code =&lt; 127),
+which is printed <var>&lt;n&gt;</var> times. 
+If <var>&lt;n&gt;</var> is omitted, it defaults to 1.
+
+     <pre class="example">          | ?- <kbd>format('~2c', 97).</kbd>
+          aa
+          </pre>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>e</code>
+     <dd>argument is a floating-point number, which is printed in
+exponential notation with precision <var>&lt;n&gt;</var>. 
+The form of output is (in left-to-right order):
+
+          <ul>
+
+          <li>an optional <code>-</code>,
+<li>a digit,
+<li>a <code>.</code> if <var>&lt;n&gt;</var> is greater than 0,
+<li><var>&lt;n&gt;</var> digits,
+<li>an <code>e</code>,
+<li>a <code>+</code> or a <code>-</code>, and
+<li>two or more digits. 
+</ul>
+
+     <p>If <var>&lt;n&gt;</var> is omitted, it defaults to 6.
+
+     <pre class="example">          | ?- <kbd>format('~3e', 1.33333).</kbd>
+          1.333e+00
+          </pre>
+
+     <p>See <a href="ref-ari-ove.html#ref-ari-ove">ref-ari-ove</a> for detailed information on precision.
+
+     <p><strong>Notes:</strong>
+          <ol type=1 start=1>
+
+          <li><code>~</code><var>&lt;n&gt;</var><code>e</code> coerces integers to floats
+<li>If n is greater than 60, only 60 digits will be printed.
+          </ol>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>E</code>
+     <dd>same as ~<var>&lt;n&gt;</var>e, except <code>E</code> is used for exponentiation instead of <code>e</code>.
+
+     <pre class="example">          | ?- <kbd>format('~3E', 1.33333).</kbd>
+          1.333E+00
+          </pre>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>f</code>
+     <dd>argument is a floating-point number, which
+is printed in non-exponential format, with <var>&lt;n&gt;</var>
+digits to the right of the decimal point. 
+If <var>&lt;n&gt;</var> is omitted, it defaults to 6. 
+If <var>&lt;n&gt;</var> is equal to 0, no decimal point is printed.
+
+     <pre class="example">          | ?- <kbd>format('~3f', 1.33333).</kbd>
+          1.333
+          </pre>
+
+     <p><strong>Notes:</strong>
+          <ol type=1 start=1>
+
+          <li><code>~</code><var>&lt;n&gt;</var><code>f</code> coerces integers to floats
+<li>If n is greater than 60, only 60 digits will be printed.
+          </ol>
+
+     <p>See the section on floating-point arithmetic for detailed information on
+precision.
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>g</code>
+     <dd>argument is a floating-point number, which
+is printed in either ~<var>&lt;n&gt;</var>e or ~<var>&lt;n&gt;</var>f form, whichever gives the best
+precision in minimal space, with the exception that no trailing zeroes are
+printed unless one is necessary immediately after the decimal point to make
+the resultant number syntactically valid. 
+At most <var>&lt;n&gt;</var> significant digits are printed. 
+If <var>&lt;n&gt;</var> is omitted, it defaults to 6.
+     <pre class="example">          | ?- <kbd>format('~g', 1000000000.0).</kbd>
+          1e+09
+          
+          | ?- <kbd>format('~20g', 1000000000.0).</kbd>
+          1000000000
+          </pre>
+
+     <p>See the section on floating-point arithmetic for detailed information on
+precision.
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>G</code>
+     <dd>same as ~<var>&lt;n&gt;</var>g, except <code>E</code> is used for exponentiation instead of <code>e</code>.
+
+     <pre class="example">          | ?- <kbd>format('~G', 1000000.0).</kbd>
+          1E+06
+          </pre>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>d</code>
+     <dd>argument is an integer, which is printed as a signed decimal
+number, shifted right <var>&lt;n&gt;</var> decimal places. 
+If <var>&lt;n&gt;</var> is omitted, it defaults to 0.  If <var>&lt;n&gt;</var> is 0, the decimal point is not printed.
+
+     <pre class="example">          | ?- <kbd>format('~d', 29).</kbd>
+          29
+          
+          | ?- <kbd>format('~1d', 29).</kbd>
+          2.9
+          </pre>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>D</code>
+     <dd>same as ~<var>&lt;n&gt;</var>d, except that commas are inserted to separate
+groups of three digits to the left of the decimal point.
+
+     <pre class="example">          | ?- <kbd>format('~1D', 29876).</kbd>
+          2,987.6
+          </pre>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>r</code>
+     <dd>argument is an integer, which is printed in radix <var>&lt;n&gt;</var> (where
+2 =&lt; n =&lt; 36) using the digits 0-9 and the letters <code>a-z</code>. 
+If <var>&lt;n&gt;</var> is omitted, it defaults to 8.
+
+     <pre class="example">          | ?- <kbd>format('~2r', 13).</kbd>
+          1101
+          
+          | ?- <kbd>format('~r', 13).</kbd>
+          15
+          
+          | ?- <kbd>format('~16r', 13).</kbd>
+          d
+          </pre>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>R</code>
+     <dd>same as ~<var>&lt;n&gt;</var>r, except it uses the digits 0-9 and the letters <code>A-Z</code> instead of <code>a-z</code>.
+
+     <pre class="example">          | ?- <kbd>format('~16R', 13).</kbd>
+          D
+          </pre>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>s</code>
+     <dd>argument is a string (list of numeric
+ASCII codes), from which at most the first <var>&lt;n&gt;</var> codes are printed as ASCII
+characters. If <var>&lt;n&gt;</var> is zero or if <var>&lt;n&gt;</var> is omitted, it defaults to the
+length of the string. If the string is shorter than <var>&lt;n&gt;</var> then all the
+ASCII codes that make up the string are printed.
+
+     <pre class="example">          | ?- <kbd>format('~s', ["string"]).</kbd>
+          string
+          
+          | ?- <kbd>format('~3s', ["string"]).</kbd>
+          str
+          
+          | ?- <kbd>format('~a', "string").</kbd>
+          ! Consistency error: a and
+            [115,116,114,105,110,103] are inconsistent
+          ! the argument for the format control
+            option "a" must be of type "atom".
+          ! goal:  format('~a',
+            [115,116,114,105,110,103])
+          </pre>
+
+   </dl>
+
+   <p>The following control options can take an argument of any type:
+     <dl>
+
+     <br><dt><code>~i</code>
+     <dd>argument is ignored.
+
+     <pre class="example">          | ?- <kbd>format('~i', 10).</kbd>
+          </pre>
+
+     <br><dt><code>~k</code>
+     <dd>argument is passed to <code>write_canonical/[1,2]</code>.
+
+     <pre class="example">          | ?- <kbd>format('~k', 'A'+'B').</kbd>
+          +('A','B')
+          </pre>
+
+     <br><dt><code>~p</code>
+     <dd>argument is passed to <code>print/[1,2]</code>.
+
+     <pre class="example">          | ?- <kbd>asserta((portray(X+Y) :-
+                   write(X), write(' plus '),
+                   write(Y))).</kbd>
+          
+          | ?- <kbd>format('~p', 'A'+'B').</kbd>
+          A plus B
+          </pre>
+
+     <br><dt><code>~q</code>
+     <dd>argument is passed to <code>writeq/[1,2]</code>.
+
+     <pre class="example">          | ?- <kbd>format('~q', 'A'+'B').</kbd>
+          'A'+'B'
+          </pre>
+
+     <br><dt><code>~w</code>
+     <dd>argument is passed to <code>write/[1,2]</code>.
+
+     <pre class="example">          | ?- <kbd>format('~w', 'A'+'B').</kbd>
+          A+B
+          </pre>
+
+   </dl>
+
+   <p>The following control options do not have a corresponding argument:
+     <dl>
+
+     <br><dt><code>~~</code>
+     <dd>prints one <code>~</code>.
+
+     <pre class="example">          | ?- <kbd>format('~~', []).</kbd>
+          ~
+          </pre>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>n</code>
+     <dd>prints <var>&lt;n&gt;</var> newline characters. 
+If <var>&lt;n&gt;</var> is omitted, it defaults to 1.
+
+     <pre class="example">          | ?- <kbd>format('begin~nend', []).</kbd>
+          begin
+          end
+          </pre>
+
+     <br><dt><code>~N</code>
+     <dd>prints nothing if at the beginning of a line, otherwise prints
+one newline character.
+
+     <pre class="example">          | ?- <kbd>format('~Nbegin~N~Nend', []).</kbd>
+          begin
+          end
+          </pre>
+
+   </dl>
+
+   <p>The following control options manipulate column boundaries (tab positions). 
+These column boundaries only apply to the line currently being written. 
+A column boundary is initially assumed to be in line position 0.
+
+     <dl>
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>|</code>
+     <dd>sets a column boundary at line position <var>&lt;n&gt;</var> and moves the cursor to
+that line position. 
+If <var>&lt;n&gt;</var> is omitted, a column boundary is set at the current line position. 
+See extended example below (also see <a href="ref-iou-cou-fou.html#ref-iou-cou-fou">ref-iou-cou-fou</a>).
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>+</code>
+     <dd>sets a column boundary at <var>&lt;n&gt;</var> positions past the
+previous column boundary and moves the cursor to that line position. 
+If <var>&lt;n&gt;</var> is omitted, it defaults to 8. 
+See extended example below.
+
+     <br><dt><code>~</code><var>&lt;n&gt;</var><code>t</code>
+     <dd>When fewer characters are written between two
+column boundaries than the width of the
+column, the space remaining in the column is divided equally
+amongst all the <code>~t</code>'s, if any, in the column, and each ~t
+fills its allotted space with characters of ASCII code <var>&lt;n&gt;</var>. 
+If <var>&lt;n&gt;</var> is omitted, it defaults to ASCII 32 (space). 
+<var>&lt;n&gt;</var> can also be of the form `<var>&lt;c&gt;</var>, where <var>&lt;c&gt;</var> is the fill character. 
+See extended example below. 
+</dl>
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>), plus:
+     <dl>
+
+     <br><dt><code>consistency_error</code>
+     <dd>
+                                wrong number of arguments
+
+     <br><dt><code>domain_error</code>
+     <dd>
+                                wrong format option type
+</dl>
+
+<h4 class="subheading">Examples</h4>
+
+   <p>1.  The following is an extended
+example of the use of <code>format/[2,3]</code> and the character escaping
+facility.
+
+<pre class="example">     | ?- <kbd>prolog_flag(character_escapes, _, on).</kbd>
+     
+     yes
+     | ?- <kbd>compile(user).</kbd>
+     | <kbd>toc(Rel) :-</kbd>
+         <kbd>format('Table of Contents ~t ~a~72|~*n', [i,3]),</kbd>
+         <kbd>format('~tTable of Contents~t~72|~*n', 2),</kbd>
+         <kbd>format("1. Documentation supplement for ~s~1f \c</kbd>
+         <kbd>  ~`.t ~d~72|~*n", ["Quintus Prolog Release ",Rel,2,2]),</kbd>
+         <kbd>format("~t~*+~w Definition of the term \"loaded\" \c</kbd>
+         <kbd>  ~`.t ~d~72|~n", [3,1-1,2]),</kbd>
+         <kbd>format("~t~*+~w Finding all solutions ~`.t ~d~72|~n", [3,1-2,3]),</kbd>
+         <kbd>format("~t~*+~w Searching for a file in a library \c</kbd>
+         <kbd>  ~`.t ~d~72|~n", [3,1-3,4]),</kbd>
+         <kbd>format("~t~*+~w New Built-in Predicates ~`.t ~d~72|~n", [3,1-4,5]),</kbd>
+         <kbd>format("~t~*+~w write_canonical (?Term) ~`.t ~d~72|~n", [7,1-4-1,5]),</kbd>
+         <kbd>format("~*+.~n~*+.~n~*+.~n", [20,20,20]),</kbd>
+         <kbd>format("~t~*+~w File Specifications ~`.t ~d~72|~n", [3,1-7,17]),</kbd>
+         <kbd>format("~t~*+~w multifile(+PredSpec) ~`.t ~d~72|~n", [7,1-7-1,18]).</kbd>
+     | <kbd>^D</kbd>
+     % user compiled, 20.783 sec 4888 bytes
+     
+     yes
+     | ?- <kbd>toc(1.5).</kbd>
+                                Table of Contents
+     
+     1. Documentation supplement for Quintus Prolog Release 1.5 ........... 2
+     
+        1-1 Definition of the term "loaded" ............................... 2
+        1-2 Finding all solutions ......................................... 3
+        1-3 Searching for a file in a library ............................. 4
+        1-4 New Built-in Predicates ....................................... 5
+            1-4-1 write_canonical (?Term) ................................. 5
+                         .
+                         .
+                         .
+        1-7 File Specifications .......................................... 17
+            1-7-1 multifile(+PredSpec) ................................... 18
+     
+     yes
+     </pre>
+
+   <p>2.  Misc. examples:
+<pre class="example">     | ?- <kbd>X=12, format('X =:= ~2d', X).</kbd>     <code>% These three</code>
+     | ?- <kbd>X=12, format("X=:= ~2d", X).</kbd>      <code>%  have the</code>
+     | ?- <kbd>X=12, format('X =:= ~*d', [2,X]).</kbd> <code>%  same results</code>
+     
+     | ?- <kbd>format('~s', ["string"]).</kbd>     <code>% These two have</code>
+     | ?- <kbd>format('string', []).</kbd>         <code>% the same results</code>
+     
+     | ?- <kbd>X=12, Y= 123, format('X = ~d, Y = ~d', [X,Y]).</kbd>
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>write_canonical/[1,2]</code>, <code>print/[1,2]</code>, <code>write/[1,2]</code>
+<a href="ref-iou.html#ref-iou">ref-iou</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-functor.html#mpg-ref-functor">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-foreign_file.html#mpg-ref-foreign_file">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

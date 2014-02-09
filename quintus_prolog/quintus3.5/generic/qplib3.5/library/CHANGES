@@ -1,0 +1,414 @@
+%   File: library/CHANGES
+%   SCCS: @(#)94/01/19 CHANGES	71.1
+
+Changes in library/ part of the Quintus Prolog Library, December 2003
+-----------------------------------------------------------------
+
+New Library Files:
+
+	fastrw.pl		provides fast term I/O
+
+Changes in library/ part of the Quintus Prolog Library, January 1994
+-----------------------------------------------------------------
+
+New Library Files:
+
+	expansion.pl		provides extensions to term_expansion/2
+
+Changes in library/ part of the Quintus Prolog Library, April 1990
+-----------------------------------------------------------------
+
+New Library Files:
+
+	hooks.pl		implements hooks using messages
+
+
+Changes in library/ part of the Quintus Prolog Library, June 1990
+-----------------------------------------------------------------
+
+New Library Files:
+
+	mapqueue.pl		mapping operations over queues
+
+Changed Library Files:
+
+	queues.pl		total rewrite; old version is still
+				available as library(oldqueues)
+
+
+Changes in library/ part of the Quintus Prolog Library, August 1989
+-------------------------------------------------------------------
+
+New Library Files:
+
+	avl.pl			AVL trees in Prolog.
+
+	benchmark.pl		Getting accurate timings of programs.
+
+	bitsets.pl		Bit sets.
+
+	clump.pl		Group adjacent related elements of lists.
+
+	demo.pl			Defines demo file_search_path.
+
+	environment.pl		Portability aid.
+
+	filename.pl		Portable file name manipulation.
+	filename.txt		(documentation)
+	filename.unix
+	filename.cms
+	filename.mac
+	filename.msdos
+	filename.vms
+	
+	gauss.pl		Gaussian elimination.
+
+	getfile.pl		defines get_file(+FileName, -ListOfLines) which
+				reads an entire file into memory in one go.
+
+	ibm2iso.c		Character code mapping (IBM PC & Mac)
+
+	lpa.pl			Compatibility library for LPA Prologs.
+	quintus.mac		(version to be used on Mac)
+	quintus.dec		(version to be used on PC)
+
+	nlist.pl		Interface to the Unix library function	
+	nlist.c			nlist(3).
+
+
+Changed Library Files:
+
+	arity.pl		We now have a tool (arity2quintus - see
+	arity.c			../tools/CHANGES) for translating Arity/Prolog
+	aritystrings.pl		programs to Quintus Prolog.  Operations which
+				are peculiar to PCs (such as the scan-code of a
+				key, or any of the graphics operations) are not
+				supported, nor do we imitate Arity's new C
+				interface.  library(arity) has been
+				considerably expanded and library(aritystrings)
+				added to provide support for other Arity/Prolog
+				operations which differ from "Edinburgh"
+				Prologs.  
+
+	assoc.pl		Speeded up; no change to interface.
+
+	bags.pl			New operations:
+				    bag_intersection/2
+				    bag_max/3
+				    bag_min/3
+				    bag_subtract/3
+				    bag_union/2
+
+	caseconv.pl		New predicate lower_upper
+
+	ctypes.pl		New operations:
+				    is_digit/2
+				    is_layout/1
+
+	date.pl			New operations:
+				    now/1
+				    date_plus/3
+				    datime/6 (for LPA package)
+				Mistake corrected: date/3 was documented as
+				returning month numbers in the range 1..12, not
+				0..11.  This was for compatibility with an
+				earlier timestamps package.  Unfortunately, the
+				code didn't agree...
+
+	foreach.pl		Speeded up forall/2.
+
+	freevars.pl		free_variables/4 was completely rewritten.  The
+				point of this is that SETOF.PL in the DEC-10
+				Prolog library (from which our library packages
+				are derived) tries to locate free variables in
+				the second argument of setof/3 and bagof/3, but
+				it tends to interpret too much of that argument
+				as code, and so if it saw not(_) or _^_ in what
+				was actually a _data_ position it could get
+				confused.  The new version of free_variables/4
+				is much harder to confuse.
+
+	knuth_b_1.pl		The constants have been extended to more digits
+				so that they should have the right values for
+				64-bit floating-point arithmetic when it is
+				supported by Prolog.
+
+	lineio.pl		Deleted predicate:
+				    get_line/3
+				New predicates:
+				    fget_line(+Stream, -Chars)
+				    fget_line(+Stream, -Chars, -Terminator)
+
+	lists.pl		Renamed internal predicate:
+				    last/3 -> last_1/3    
+				this is so that lists.pl and listparts.pl can 
+				be used together.
+				Improved predicates:
+				    perm/2
+				    permutation/2
+				perm/2 is now about 30-35% faster.  A
+				consequence of the rewrite is that
+				library(lists) no longer requires
+				library(sets).
+
+	listparts.pl		New predicates:
+				    cons(?Head, ?Tail, ?List)
+				    last(?Fore, ?Last, ?List)
+				The latter is 3-3.5 times faster than using 
+				append/3.
+
+	math.pl			Renamed predicates:
+	math.c			    ceil/2		-> ceiling/2
+				    fceil/2		-> fceiling/2
+				    trunc/2		-> truncate/2
+				Deleted predicates:
+				    cabs/2
+				New family of predicates:
+				    [f]{floor,truncate,ceiling,round}/[2,3]
+				atanh() and acosh() are much more accurate now.
+				asinh() is better for small arguments, but
+				there's a long way to go.
+
+	morelists.pl		New predicates:
+				    bnd(+Limit, ?List)
+				    bnd(+Limit, ?Seg0, ?Seg)
+				    bnd(+Limit, ?List, ?Seg0, ?Seg)
+					List = Seg0\Seg & length(List) =< Limit
+
+	note.pl			Starting to switch over to new
+				{should,must}_be/4 interface of types.pl
+
+	ordsets.pl		Bug fix: ord_intersection([], X) now fails,
+				there being no such X.
+
+	pairup.pl		New predicates:
+				    select_cons/[4,5]
+				    select_list/[4,5]
+				    select_pair/[4,5]
+				    select_side/[4,5]
+
+	read.pl			Added new portable_gread/[1,2] predicates to
+				support LPA Prolog.
+
+	readsent.pl		The trim* predicates are now steadfast (i.e.
+				you can guess the answer, and guess wrong, and
+				they'll still work properly).
+
+	termdepth.pl		Correction: size_bound/2 failed if its first
+				argument was non- ground.  It has been changed
+				to be consistent with its writeup.
+
+	tokens.pl		Now accepts whole ISO 8859/1 character set Now
+				accepts floating-point constants (but there is
+				a problem:  the leading digits are read as an
+				integer, so things can go strange)
+
+	types.pl		Added new predicates
+				    must_be(Type, Term, ArgNo, Goal)
+				    should_be(Type, Term, ArgNo, Goal)
+				which are to replace all the existing
+				must_be_* predicates.
+
+	writetokens.pl		The comments said the "tokens" were *fix(Atom);
+				the code sometimes did that and sometimes did
+				*fixop(Atom).  The code was changed to match
+				the comments.
+
+
+Other changes:
+
+	load_foreign_files commands have been changed to use new system(File)
+	file specifications so that platform-specific subdirectories can be
+	used in the library area.  For example, system('foo.o') will, by
+	default, cause foo.o to be sought first in a subdirectory called
+	sun4-4.0 on a Sun-4 running SunOS 4.0.
+
+	meta_predicate declarations have been moved up to the top of files,
+	immediately following the module declarations.  The system now gives
+	warning messages if this is not done because there is a bug that in the
+	case of a circular sequence of use_modules it is possible for a
+	meta_predicate declaration following a use_module to be ignored.  E.g.
+	----------------------------------------------------------------------
+	file a.pl:
+
+	    :- module(a, [a/1]).
+	    :- use_module(b).
+	    :- meta_predicate(a(0)).	    % now (2.5) gives a warning message
+	    a(X) :- call(X).
+
+	file b.pl:
+
+	    :- module(b, [test/0]).
+	    :- use_module(a).
+	    test :- a(b).
+	    b :- write(b), nl.
+
+	Goal:
+
+	    ?- use_module([a,b]), test.	    % get undefined message for b/0
+	----------------------------------------------------------------------
+
+
+
+
+Changes in library/ part of the Quintus Prolog Library, November 1988
+---------------------------------------------------------------------
+
+Most files have had minor edits to improve the file headers and make the
+version numbering consistent so that the Unix command 'what' will always
+find an SCCS identification string in each file.  All files have also been
+tested on both Unix 4.2bsd and Unix System V.  All occurances of comments
+after "#else" and "#endif" in C source files have been enclosed in comment
+delimiters to avoid warnings from some System V C compilers. Appropriate
+C casts have also been added where necessary to avoid unnecessary warnings
+on different Unix systems. The comments below do not mention any of these
+simple changes - only changes of some semantic significance are noted.
+
+New Library Files:
+
+	break.pl	        In order to avoid the problem with break/0
+				in qpc, break.pl has been added, defining 
+                                error_break(Format, List). 
+
+	makelib.pl      	This is a tool for making the CONTENTS and
+				INDEX files.  
+
+	order.pl		Some examples
+
+	plot.pl			Using the UNIX plot(5) interface.  
+
+	putfile.pl		This lets you copy the contents of a file
+	putfile.c		to the current output stream (it is the
+				fastest known method for doing so).
+                                Example of using stream functions from C.
+
+	ranstk.pl		This defines a "random-access stack" data
+				structure:  you can push and pop items in
+				O(1) expected time and access an arbitrary
+				item in O(lgN) expected time.
+
+	statistics.pl		What this is *about* is providing the 
+				number statistics.c of page faults.  
+				Nothing depends on it, but it's
+				a nice example of using formats.  It has
+                                already been set up to work under VMS and
+                                give up gracefully in System V.
+				
+	stchk.pl		An alternative interface 
+				{push,pop,set}_style interface to the
+                		style checker options. 
+				
+	writetokens.pl		A  way of writing term which didn't create 
+				excessively long lines. 
+
+	antiunify.pl		dual of unification
+
+	count.pl		count calls of predicates
+
+	fft.pl			fast fourier transform
+
+	read.pl			portable read
+
+	tokens.pl		tokeniser for read.pl
+
+	qerrno.h 		defines the library-specific error numbers.
+			
+
+Changed Library Files:
+
+	bags.pl			bug fix: (1) meta_predicate declarations 
+				corrected.(2) is_bag/1 now checks that the bag 
+				is proper.(3) portray_bag/3 now works.
+
+	basics.pl		unrolled member/2 and memberchk/2
+
+	call.pl			bug fix for call/[6,7]
+
+	critical.c		declaration of signal() fixed for SysV
+				[note: this will be needed for all ANSI C].
+				also made to work better with SysV.
+			        
+	ctr.pl,c		major rewrite to avoid generating "unsafe"
+				(and useless) variables.
+
+	ctypes.pl		Rewrite for ISO 8859/1.
+
+	date.pl			bug fix: moved portray_date/1 here
+
+	environ.pl,c		added and corrected expanded_file_name/2
+
+	freevars.pl		tuning
+
+	graphs.pl		lots of new stuff, some speedups, more comments
+
+	heaps.pl		speedups
+
+	length.pl		made rotate_list/2 bidirectional
+
+	lists.pl		improved reverse/2, perm/2, permutation/2
+
+	maplist.pl		+scanlist/N, +cumlist/N, moved some stuff out
+				 to library(moremaps), fixed declarations
+
+	maps.pl			exported map_to_list/2, some tuning
+
+	morelists.pl		added oneof/[3,4]
+
+	moremaps.pl		module name change, +include/N,exclude/N
+
+	mst.pl			bug fix: added meta-predicate declarations
+
+	multil.pl		made some operations work in more cases
+
+	ordsets.pl		speedup up ord_intersection/2, fixed typos
+
+	random.pl		added random_graph/3, random_numlist/4
+
+	strings.pl		bug fix for char_atom/2
+
+	printchars.pl           has been almost completely rewritten.
+
+	kee.pl	  		doesn't use printchars.pl any more  
+
+	terms.pl		shuffled foreign facts to avoid a style warning
+
+	mst.pl			added meta_predicate declarations	
+
+	vectors.pl		integers replaced by suitable 0'character
+				codes or made less ASCII-specific:  
+
+	readconst.pl           	integers replaced by suitable 0'character
+				codes or made less ASCII-specific:  
+
+	printchars.pl          	integers replaced by suitable 0'character
+				codes or made less ASCII-specific:  
+
+	makelib.pl             	integers replaced by suitable 0'character
+				codes or made less ASCII-specific  
+   
+	assoc.pl		fixed bug in portray_assoc/1; nonexistent 
+				is_portray/1
+
+	heaps.pl		corrected :- mode declarations.
+
+	between.pl	        corrected :- mode declarations. 
+
+	basics.pl		member/2, memberchk/2 unrolled for speed
+
+	sets.pl			select/3, seletchk/3 (was del_element_1/3)
+				unrolled for speed.
+
+	portraydate.pl		portray_date/1 has been moved into date.pl
+
+	unix.c			declaration of signal() fixed for SysV
+
+	errno.pl		Formerly this file was provided in the 
+				library and was not changable. But as UNIX
+				systems get bigger, the differecnes between
+				the various versions have increased. It is
+ 				possible that the default errno.pl might be
+   				inadequate for some particular system. The
+				ed script errno.ed is provided to be able
+ 				to generate a new copy of errno.pl. Just run
+                                       ed < errno.ed 
+

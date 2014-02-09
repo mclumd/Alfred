@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>QP_setpos()</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     #include &lt;quintus/quintus.h&gt;
+     
+     int QP_setpos(stream, pos)
+     QP_stream   *stream;
+     QP_position *pos;
+     </pre>
+
+   <p>Reset a specified Prolog stream back to a previous read/written position.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>stream</var>
+     <dd>pointer to a valid stream structure
+
+     <br><dt><var>pos</var>
+     <dd>pointer to a <code>QP_position</code> structure.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>Upon successful return of this function call, the <var>stream</var> is
+repositioned to the value specified in the <code>magic</code> member pointed to by
+<var>pos</var>.  The character, line and line position counts of
+<var>stream</var> are also reset to the values specified in <code>char_count</code>,
+<code>line_count</code> and <code>line_position</code> members in <var>pos</var>.
+
+   <p>The specified <var>stream</var> must have the permission to seek back to a
+previous read/written position.  Typically, the value of <var>pos</var> is
+obtained through a previous <code>QP_getpos()</code> call.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_getpos()</code>,
+<code>QP_seek()</code>,
+<code>stream_position/[2,3]</code>
+<code>QP_char_count()</code>,
+<code>QP_line_count()</code>,
+<code>QP_line_position()</code>
+
+   <a href="fli-ios.html#fli-ios">fli-ios</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="cfu-ref-skipline.html#cfu-ref-skipline">Next</a>
+<li><a rel="previous" accesskey="p" href="cfu-ref-setoutput.html#cfu-ref-setoutput">Previous</a>
+<li><a rel="up" accesskey="u" href="cfu-ref.html#cfu-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

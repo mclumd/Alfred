@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>qplm</code> -- Quintus Prolog license manager</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     qplm -i SiteName
+     </pre>
+
+<pre class="example">     qplm -a Product Users [ Expiration ] Code
+     </pre>
+
+<pre class="example">     qplm -d User Product
+     </pre>
+
+<pre class="example">     qplm -p
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>qplm</code> initializes and maintains
+the license files for Quintus products.
+
+   <p>A code is supplied for each Quintus product that is based on
+the name of the site or company name, product name, number of users and
+optionally an expiration date.
+
+   <p>Users are distinguished as either occasional users, if they have used the
+product less than 5 times, or else regular users. When determining whether
+the number of users is within that allowed by the license, only regular users
+are counted.
+
+   <p>Expiration dates are specified with the format YY-MM-DD.
+
+<h4 class="subheading">Options</h4>
+
+     <dl>
+
+     <br><dt><code>-i </code><var>SiteName</var><code></code>
+     <dd>Initializes the license files for <var>SiteName</var>,
+where <var>SiteName</var> is a number of arguments comprising the site or company name. 
+This command must be executed before any products are added.
+
+     <br><dt><code>-a </code><var>Product</var><code> </code><var>Users</var><code> </code><var>Expiration</var><code> </code><var>Code</var><code></code>
+     <dd>Adds a products to the license file. 
+The product is typically of the form <var>name</var>/<var>arch</var>/<var>version</var>, <var>Users</var> is the
+number of users allowed to use the product. <var>Expiration</var> is an optional argument
+specifying when the license will expire. The final <var>Code</var> argument is a
+16 character code that is based on the <var>SiteName</var>, <var>Product</var>, <var>Users</var> and
+<var>Expiration</var>.
+
+     <br><dt><code>-d </code><var>User</var><code> </code><var>Product</var><code></code>
+     <dd>Deletes <var>User</var> from the list of users who use <var>Product</var>. 
+When a user no longer uses <var>Product</var>, he or she can be removed from the
+license file with this option.
+
+     <br><dt><code>-p</code>
+     <dd>Print the information in the license file. This prints the
+site name followed by all of the products licensed. This also prints the
+list of users using each product.  For occasional users,
+the number of times they have used the product is also shown.
+
+   </dl>
+
+<h4 class="subheading">Example</h4>
+
+   <p>To initialize the license file:
+<pre class="example">     % <kbd>qplm -i Hallatrow Designers Inc.</kbd>
+     </pre>
+
+   <p>To add a 2 user license for Prolog that expires on 17 May 1994,
+<pre class="example">     % <kbd>qplm -a prolog/hppa/3.5 2 94-05-17 thiscodewontwork]</kbd>
+     </pre>
+
+<h4 class="subheading">Files</h4>
+
+     <dl>
+
+     <br><dt><code>license.qof</code>
+     <dd>Contains the site name and product codes
+
+     <br><dt><code>users.qof</code>
+     <dd>Records the users using the products
+</dl>
+
+   <p>The license files are maintained in
+<code></code><var>quintus-directory</var><code>/license</code><var>version</var><code></code>.  The
+<code>users.qof</code> file must be writable by all users, therefore if the
+<var>quintus-directory</var> is stored on a read-only file system then the
+license subdirectory should be made into a symbolic link to a writable
+directory.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>prolog(1)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="too-too-qsetpath.html#too-too-qsetpath">Next</a>
+<li><a rel="previous" accesskey="p" href="too-too-qpc.html#too-too-qpc">Previous</a>
+<li><a rel="up" accesskey="u" href="too-too.html#too-too">Up</a>
+</ul>
+</div>
+   </body></html>
+

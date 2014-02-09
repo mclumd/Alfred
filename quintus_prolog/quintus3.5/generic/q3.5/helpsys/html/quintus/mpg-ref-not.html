@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>\+/1</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>\+</code>  <var>+P</var>
+
+   <p>Fails if the goal <var>P</var> has a solution, and succeeds otherwise.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>P</var> <dfn>callable</dfn> [MOD]
+     <dd></dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>This is not real negation ("<var>P</var> is
+false"), which is not possible in Prolog, but negation-by-failure
+meaning "<var>P</var> is not provable".  <var>P</var> may not contain a
+cut.  The goal <code>\+ </code><var>P</var><code></code> behaves exactly like
+<pre class="example">     ( P -&gt; fail ; true)
+     </pre>
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>type_error</code>
+     <dd>
+
+     <br><dt><code>context_error</code>
+     <dd>
+</dl>
+
+<h4 class="subheading">Tip</h4>
+
+   <p>Remember that with prefix operators such as this
+one, it is necessary to be careful about spaces if the argument starts
+with a <code>(</code>.  For example:
+<pre class="example">     | ?- <kbd>\+ (</kbd><var>P</var>, <var>Q</var><kbd>).</kbd>
+     </pre>
+
+   <p>is the <code>\+/1</code> operator applied to the conjunction of <var>P</var>
+and <var>Q</var>,
+but
+<pre class="example">     | ?- <kbd>\+(</kbd><var>P</var>, <var>Q</var><kbd>).</kbd>
+     </pre>
+
+   <p>would require a predicate <code>\+/2</code> for its solution.  The
+prefix
+operator can, however, be written as a functor of one argument; thus
+<pre class="example">     | ?- <kbd>\+((</kbd><var>P</var>,<var>Q</var><kbd>)).</kbd>
+     </pre>
+
+   <p>is also correct.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>library(not)</code> -- defines a safer form of
+negation as failure.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-notrace.html#mpg-ref-notrace">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-nospyall.html#mpg-ref-nospyall">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,166 @@
+# File   : Makefile
+# Author : David Connelly
+# Origin : August, 1993
+# Purpose: Microsoft NMAKE Makefile for Quintus Prolog library.
+
+# [PM] 3.5 NOTE: this make file is no longer used when building
+#           Quintus Prolog and is therefore not properly
+#           maintained. The documentation refers to it as an example
+#           of building a dynamic foreign executable on Windows but it
+#           is really not a good example of that. Contact
+#           qpupport@sics.se if you need help with building on Windows
+#
+# [PM] 2003 3.5 Changed from -MT and -MD to $(CLIB_STATIC)
+#           $(CLIB_DYNAMIC) which are now both -MD to match what QP
+#           3.5 uses for all code.
+#
+# [PM] 1999 Oct 18. Changing -ML (single-threaded LIBC) to -MT (multithreaded LIBC).
+#      This is to match the fact that QP itself is now compiled with -MT.
+#      Note: It is unclear if the use of -MD (multi-threaded DLL) is
+#            really what we want for DLLs. The DLL part means that the
+#            LIBC used (msvcrt.dll or some such) is a DLL, it does
+#            *not* have anything to do with if we are building a dll
+#            or not. The effect of -MD is thus to create a runtime
+#            dependency on the MS runtime DLL.
+#
+
+BIN=ix86
+QPDIR=..\..
+SYSBIN=$(QPDIR)\bin\$(BIN)
+SYSLIB=$(QPDIR)\lib\$(BIN)
+
+PROLOG=$(SYSBIN)\prolog
+QPC=$(SYSBIN)\qpc
+CC=cl
+LD=link
+
+# [PM] 3.5 -MD is what QP now uses for all code. 
+CLIB_DYNAMIC = -MD
+CLIB_STATIC = -MD
+
+QPCFLAGS=-H -L .
+CFLAGS=-Ox -I..\embed -DWIN32
+
+DOBJS = $(BIN)\dll\arity.obj    \
+	$(BIN)\dll\big_text.obj \
+	$(BIN)\dll\charsio.obj  \
+	$(BIN)\dll\count.obj    \
+	$(BIN)\dll\critical.obj \
+	$(BIN)\dll\crypt.obj    \
+	$(BIN)\dll\ctr.obj      \
+	$(BIN)\dll\date.obj     \
+	$(BIN)\dll\directory.obj\
+	$(BIN)\dll\eaccess.obj  \
+	$(BIN)\dll\environ.obj  \
+	$(BIN)\dll\exit.obj     \
+	$(BIN)\dll\files.obj    \
+	$(BIN)\dll\fuzzy.obj    \
+	$(BIN)\dll\openfiles.obj\
+	$(BIN)\dll\pipe.obj     \
+	$(BIN)\dll\putfile.obj  \
+	$(BIN)\dll\random.obj   \
+	$(BIN)\dll\statistics.obj\
+	$(BIN)\dll\strings.obj  \
+	$(BIN)\dll\terms.obj    \
+	$(BIN)\dll\unix.obj     \
+	$(BIN)\dll\vectors.obj
+
+SOBJS = $(DOBJS:\dll\=\static\)
+
+
+{}.c{$(BIN)\dll}.obj:
+	$(CC) $(CFLAGS) -MD -c -Fo$@ $<
+
+# [PM] -ML -> -MT -> $(CLIB_STATIC)
+{}.c{$(BIN)\static}.obj:
+	$(CC) $(CFLAGS) $(CLIB_STATIC) -c -Fo$@ $<
+
+
+default: library.qof dirs libraries
+
+library.qof: library.pl *.pl
+	$(QPC) $(QPCFLAGS) -cv "library(library.pl)"
+
+dirs:	$(BIN) $(BIN)\dll $(BIN)\static
+
+libraries: $(BIN)\libpl.dll $(BIN)\libpl.lib $(BIN)\libpls.lib \
+	   $(BIN)\libplm.dll $(BIN)\libplm.lib $(BIN)\libplms.lib
+
+$(BIN) $(BIN)\dll $(BIN)\static:
+	mkdir $@
+
+$(BIN)\libpl.dll: $(DOBJS) $(BIN)\libpl.exp
+	$(LD) -dll -out:$@ -dll $(LFLAGS) $** $(SYSLIB)\qpeng.lib $(SYSLIB)\libqp.lib $(CLIBS)
+
+$(BIN)\libpl.lib $(BIN)\libpl.exp: libpl.def
+	$(LD) -lib -out:$(BIN)\libpl.lib -def:$**
+
+$(BIN)\libpls.lib: $(SOBJS)
+	$(LD) -lib -out:$@ $**
+
+
+$(BIN)\libplm.dll: $(BIN)\dll\math.obj $(BIN)\libplm.exp
+	$(LD) -dll -out:$@ -dll $(LFLAGS) $** $(CLIBS)
+
+$(BIN)\libplm.lib $(BIN)\libplm.exp: libplm.def
+	$(LD) -lib -out:$(BIN)\libplm.lib -def:$**
+
+$(BIN)\libplms.lib: $(BIN)\static\math.obj
+	$(LD) -lib -out:$@ $**
+
+
+$(BIN)\dll\arity.obj:           arity.c
+$(BIN)\dll\big_text.obj:        big_text.c
+$(BIN)\dll\charsio.obj:         charsio.c malloc.h
+$(BIN)\dll\count.obj:           count.c
+$(BIN)\dll\critical.obj:        critical.c
+$(BIN)\dll\crypt.obj:           crypt.c malloc.h
+$(BIN)\dll\ctr.obj:             ctr.c
+$(BIN)\dll\date.obj:            date.c qerrno.h
+$(BIN)\dll\direct.obj:          direct.c eaccess.h ntdirent.h
+$(BIN)\dll\eaccess.obj:         eaccess.c
+$(BIN)\dll\environ.obj:         environ.c
+$(BIN)\dll\exit.obj:            exit.c malloc.h
+$(BIN)\dll\files.obj:           files.c eaccess.h
+$(BIN)\dll\fuzzy.obj:           fuzzy.c
+$(BIN)\dll\ntdirent.obj:        ntdirent.c ntdirent.h
+$(BIN)\dll\openfile.obj:        openfile.c eaccess.h malloc.h
+$(BIN)\dll\pipe.obj:            pipe.c malloc.h
+$(BIN)\dll\putfile.obj:         putfile.c
+$(BIN)\dll\random.obj:          random.c
+$(BIN)\dll\stats.obj:           stats.c
+$(BIN)\dll\strings.obj:         strings.c
+$(BIN)\dll\terms.obj:           terms.c terms.h
+$(BIN)\dll\unix.obj:            unix.c
+$(BIN)\dll\vectors.obj:         vectors.c malloc.h
+
+$(BIN)\static\arity.obj:        arity.c
+$(BIN)\static\big_text.obj:     big_text.c
+$(BIN)\static\charsio.obj:      charsio.c malloc.h
+$(BIN)\static\count.obj:        count.c
+$(BIN)\static\critical.obj:     critical.c
+$(BIN)\static\crypt.obj:        crypt.c malloc.h
+$(BIN)\static\ctr.obj:          ctr.c
+$(BIN)\static\date.obj:         date.c qerrno.h
+$(BIN)\static\direct.obj:       direct.c eaccess.h ntdirent.h
+$(BIN)\static\eaccess.obj:      eaccess.c
+$(BIN)\static\environ.obj:      environ.c
+$(BIN)\static\exit.obj:         exit.c malloc.h
+$(BIN)\static\files.obj:        files.c eaccess.h
+$(BIN)\static\fuzzy.obj:        fuzzy.c
+$(BIN)\static\ntdirent.obj:     ntdirent.c ntdirent.h
+$(BIN)\static\openfile.obj:     openfile.c eaccess.h malloc.h
+$(BIN)\static\pipe.obj:         pipe.c malloc.h
+$(BIN)\static\putfile.obj:      putfile.c
+$(BIN)\static\random.obj:       random.c
+$(BIN)\static\stats.obj:        stats.c
+$(BIN)\static\strings.obj:      strings.c
+$(BIN)\static\terms.obj:        terms.c terms.h
+$(BIN)\static\unix.obj:         unix.c
+$(BIN)\static\vectors.obj:      vectors.c malloc.h
+
+$(BIN)\dll\math.obj:            math.c
+	$(CC) $(CFLAGS) $(CLIB_DYNAMIC) -DNODREM -c -Fo$@ math.c
+# [PM] -ML -> -MT -> $(CLIB_DYNAMIC)
+$(BIN)\static\math.obj:         math.c
+	$(CC) $(CFLAGS) $(CLIB_DYNAMIC) -DNODREM -c -Fo$@ math.c

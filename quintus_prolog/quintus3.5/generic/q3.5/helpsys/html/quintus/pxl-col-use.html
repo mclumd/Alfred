@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Using Colors</h4>
+
+   <p>There are five different ways you can use color in ProXL, in approximate
+order of increasing difficulty:
+     <ol type=1 start=1>
+
+     <li>You can use the <code>black_pixel</code> and <code>white_pixel</code> of your screen. 
+<code>black_pixel</code> is the default foreground color, so if you don't change
+your drawable's foreground graphics attribute, you will be drawing in
+black.  And the default window background is its screen's <code>white_pixel</code>,
+so if you don't change that, you will be drawing in black on a white
+background, which is often good enough. 
+<li>
+
+     <p>You can allocate <dfn>colors</dfn>.  If you want to have color images, this is
+usually the best approach.  Allocating a color never fails, even on a
+monochrome screen, it just gives you the <em>closest</em> color it can. 
+So if you ask for yellow and navy blue, you will get white and black,
+respectively.  This allows your application to run on monochrome (or
+grayscale) screens, as well as color.
+
+     <p>When you allocate colors, you share these colors with other
+applications, too.  This means that if you ask for blue, and another
+application is already using blue, you will get the same pixel value. 
+Obviously this is good citizenship on a color screen with a limited
+number of pixel values available.  It also means that you cannot change
+the color of a pixel value you get this way, because it would confound
+the other applications using this pixel value. 
+</p><li>
+
+     <p>You can allocate <dfn>color cells</dfn> and <dfn>planes</dfn>.  This gives you private pixel
+values for you to play with.  You can set these pixel values to any
+colors you like, and change them as often as you like.  Allocating
+color planes also allows you to control the actual bit patterns of the
+pixels you use, allowing you to do sophisticated tricks with images. 
+</p><li>
+
+     <p>You can use a <dfn>standard colormap</dfn>.  Standard colormaps provide a
+number of pre-selected colors, and can be shared with other
+applications.  You must rely on your window manager to create standard
+colormaps for you, and, unfortunately, not all window managers do this. 
+</p><li>You can allocate a <dfn>colormap</dfn>.  While this might seem harmless enough,
+since your color table is yours alone, and doesn't affect the colormaps
+used by other applications, in practice few screens can support more
+than one colormap at a time.  This means that when you colormap is
+installed, <em>all the other windows on the screen may display the wrong
+colors</em>.  Also, if you use a private colormap, you must make sure that
+your colormap is installed.  In theory, your window manager is
+responsible for installing your colormap when the pointer is in your
+window.  In practice, few window managers do this now.  This will
+probably change, but at the moment, this is a serious problem.
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-col-alc.html#pxl-col-alc">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-col-vis.html#pxl-col-vis">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-col.html#pxl-col">Up</a>
+</ul>
+</div>
+   </body></html>
+

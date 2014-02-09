@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>prolog_flag/[2,3]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>prolog_flag(</code><var>*FlagName</var><code>, </code><var>*Value</var><code>)</code>
+
+   <p><var>FlagName</var> is a flag, which currently is set to <var>Value</var>.
+
+   <p><code>prolog_flag(</code><var>+FlagName</var><code>, </code><var>-OldValue</var><code>, </code><var>+NewValue</var><code>)</code>
+
+   <p>Unifies the current value of <var>FlagName</var> with <var>OldValue</var>
+and then sets the value of the flag to <var>NewValue</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>FlagName</var> <dfn>atom</dfn>
+     <dd>
+
+     <br><dt><var>Value</var> <dfn>atomic</dfn>
+     <dd>
+
+     <br><dt><var>OldValue</var> <dfn>atomic</dfn>
+     <dd>
+
+     <br><dt><var>NewValue</var> <dfn>atomic</dfn>
+     <dd>
+</dl>
+
+   <p>Currently, the supported <var>FlagName</var>s and
+<var>Value</var>s for both <code>prolog_flag/2</code> and <code>prolog_flag/3</code> are:
+
+     <dl>
+
+     <br><dt><b>FlagNames</b>
+     <dd><b>Values</b>
+<br><dt><code>character_escapes</code>
+     <dd><code>on</code> or <code>off</code>
+
+     <br><dt><code>debugging</code>
+     <dd><code>trace</code>, <code>debug</code>, <code>zip</code>, or <code>off</code>
+
+     <br><dt><code>fileerrors</code>
+     <dd><code>on</code> or <code>off</code>
+
+     <br><dt><code>gc</code>
+     <dd><code>on</code> or <code>off</code>
+
+     <br><dt><code>gc_margin</code>
+     <dd>non-negative integer
+
+     <br><dt><code></code>
+     <dd>in thousands of bytes
+<br><dt><code>gc_trace</code>
+     <dd><code>on</code> or <code>off</code>
+
+     <br><dt><code>unknown</code>
+     <dd><code>error</code> or <code>fail</code>
+
+     <br><dt><code>syntax_errors</code>
+     <dd>(see <a href="ref-ere-err-syn.html#ref-ere-err-syn">ref-ere-err-syn</a>)
+
+     <br><dt><code>single_var</code>
+     <dd><code>on</code> or <code>off</code>
+
+     <br><dt><code>discontiguous</code>
+     <dd><code>on</code> or <code>off</code>
+
+     <br><dt><code>multiple</code>
+     <dd><code>on</code> or <code>off</code>
+
+   </dl>
+
+   <p>Values available only to <code>prolog_flag/2</code> (query-only) are:
+
+     <dl>
+
+     <br><dt>
+     <dd>
+<br><dt><b>FlagNames</b>
+     <dd><b>Values</b>
+          <dl>
+
+          <br><dt><code>add_ons</code>
+          <dd>an atom containing the list of
+add-on products that are statically linked into the Prolog system. 
+If no add-ons are part of the system, the empty atom <code>''</code> is
+returned.
+
+          <br><dt><code>host_type</code>
+          <dd>the host type, which is
+generally a hardware-operating system combination.  This
+<code>prolog_flag</code> is used to create the <code>system</code>
+<code>file_search_path/2</code> facts (see <a href="ref-fdi-fsp-pre.html#ref-fdi-fsp-pre">ref-fdi-fsp-pre</a>
+and <a href="ref-fdi-fsp-sys.html#ref-fdi-fsp-sys">ref-fdi-fsp-sys</a>).
+
+          <br><dt><code>quintus_directory</code>
+          <dd>the absolute name
+of the Quintus directory.  The Quintus directory is the root of the
+entire Quintus installation hierarchy.
+
+          <br><dt><code>runtime_directory</code>
+          <dd>the absolute name
+of the directory where all the Prolog executables reside.
+
+          <br><dt><code>version</code>
+          <dd>the version of the Prolog being run.
+
+          <br><dt><code>system_type</code>
+          <dd><code>development</code> or <code>runtime</code>.
+
+     </dl>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>To inspect the value of a
+flag without changing it, use <code>prolog_flag/2</code> or the following
+idiom, where FlagName is bound to one of the valid flags above.
+<pre class="example">      | ?- <kbd>prolog_flag(FlagName, Value, Value).</kbd>
+     </pre>
+
+   <p>Use <code>prolog_flag/2</code> to query and <code>prolog_flag/3</code> to set values.
+
+   <p><code>prolog_flag/3</code> can be used to save flag values so that one can
+return a flag to its previous state. 
+For example:
+<pre class="example">     ...
+     prolog_flag(debugging,Old,on), % Save in Old and set
+     ...
+     prolog_flag(debugging,_,Old),  % Restore from Old
+     ...
+     </pre>
+
+   <p>The read-only <code>prolog_flag/2</code> flags <code>add_ons</code>,
+<code>host_type</code>, <code>quintus_directory</code>, and <code>runtime_directory</code>
+represent information set by the <code>qsetpath</code> program.  For more
+detail on the <code>qsetpath</code> and <code>qgetpath</code> utilities, see
+ and
+.
+
+<h4 class="subheading">Backtracking</h4>
+
+   <p><code>prolog_flag/2</code> enumerates all valid
+flagnames of a given current value, or all pairs of flags and their
+current values.  It is not a way to find out non-current values for a
+flag.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+In <code>prolog_flag/3</code>, <var>FlagName</var> unbound, <em>or</em>
+
+     <p><var>NewValue</var> unbound and not identical to <var>OldValue</var>.
+
+     <br><dt><code>type_error</code>
+     <dd>
+<var>FlagName</var> is not an atom.
+
+     <br><dt><code>domain_error</code>
+     <dd>
+In <code>prolog_flag/3</code>, <var>FlagName</var> bound to an atom that does not
+represent a supported flag, <em>or</em>
+
+     <p><var>NewValue</var> bound to atom that does not represent a valid value
+for <var>FlagName</var>.
+
+   </dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>gc/0</code>,
+<code>nogc/0</code>,
+<code>style_check/1</code>,
+<code>no_style_check/1</code>,
+<code>unknown/2</code>,
+<code>fileerrors/0</code>,
+<code>nofileerrors/0</code>
+
+   <a href="ref-lps.html#ref-lps">ref-lps</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-prolog_load_context.html#mpg-ref-prolog_load_context">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-profile.html#mpg-ref-profile">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

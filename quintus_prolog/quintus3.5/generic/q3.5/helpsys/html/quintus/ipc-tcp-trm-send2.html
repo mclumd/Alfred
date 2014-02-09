@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>tcp_send(</code><var>+Socket</var><code>, </code><var>+Term</var><code>)</code></h5>
+
+   <p>This sends <var>Term</var> to the process whose socket identifier is
+<var>Socket</var>.  <var>Socket</var> gets the term
+<var>term</var>(<var>From</var>,<var>Term</var>) from <code>tcp_select/[1,2]</code>
+(see <a href="ipc-tcp-trm-select1.html#ipc-tcp-trm-select1">ipc-tcp-trm-select1</a>).
+
+   <p>Note that <code>tcp_send/2</code> can only be used to send terms to a Prolog server
+as <var>Term</var> is sent in an encoded form that is efficiently decoded
+by <code>tcp_select/[1,2]</code> (see <a href="ipc-tcp-trm-select1.html#ipc-tcp-trm-select1">ipc-tcp-trm-select1</a>).
+
+   <p>Here is an example of how one might use <code>tcp_send/2</code> to implement a
+remote procedure call to some process whose file descriptor is <var>P</var>. 
+It is assumed that the connections between the two processes have been
+established elsewhere.
+
+<pre class="example">     :-use_module(library(basics), [member/2]).
+     :-use_module(library(freevars), [free_variables/4]).
+     
+     % machine a has p_call/2
+     
+     p_call(P, Goal):-
+         free_variables(Goal, [], [], FreeVars),
+         tcp_send(P, satisfy(FreeVars, Goal)),
+         tcp_select(term(P, Bag)),
+         member(FreeVars, Bag).
+     
+     % machine b has slave/0
+     
+     slave:-
+         T = term(P, satisfy(FreeVars, Goal)),
+         repeat,
+             tcp_select(T),
+             findall(FreeVars, Goal, Bag),
+             tcp_send(P, Bag),
+         fail.
+     </pre>
+
+   <p>The use of <code>library(freevars)</code> is to limit the amount of data being sent
+by the slave to just those variables that may be instantiated by
+calling <code>Goal</code>.
+
+   <p>For many applications this is all that is required.  It has the
+advantage of limiting both the frequency of messages sent
+(<code>findall/3</code>), and the size of the messages (<code>free_variables/4</code>). 
+A better implementation of remote procedure call would allow the
+caller to respond to solutions from several different machines as soon
+as the solutions are generated, without waiting for the solutions to
+be assembled into a list.  This is attempted in the example program
+<code>IPC/TCP/demo/sibling.pl</code> (see <a href="ipc-tcp-exa.html#ipc-tcp-exa">ipc-tcp-exa</a>).
+
+   <p>If you try to send to a broken socket, the "Broken pipe" exception is
+raised:
+<pre class="example">     existence_error(_,_,_,_,errno(32))
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ipc-tcp-trm-select2.html#ipc-tcp-trm-select2">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-tcp-trm.html#ipc-tcp-trm">Up</a>
+</ul>
+</div>
+   </body></html>
+

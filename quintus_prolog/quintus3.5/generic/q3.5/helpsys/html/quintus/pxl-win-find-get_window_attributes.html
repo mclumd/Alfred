@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>get_window_attributes/[2,3]</code></h5>
+
+<pre class="example">     get_window_attributes(+<var>Windowable</var>, +<var>Attribs</var>)
+     get_window_attributes(+<var>Windowable</var>, +<var>Attribs</var>, +<var>Graphics_attribs</var>)
+     </pre>
+
+   <p><var>Windowable</var> is a windowable, and <var>Attribs</var> is a proper list
+of window Attribute settings.  Note that <var>Attribs</var> <var>must</var> be a
+proper list.  If an element of <var>Attribs</var> is an unbound variable,
+<code>get_window_attributes</code> will backtrack through all the window attributes
+of <var>Windowable</var>.
+
+   <p>If <var>Graphics_attribs</var> is given, it is a proper list of graphics
+attributes of <var>Windowable</var>.  The predicate
+<code>get_window_attributes/3</code> is as if defined by the following
+procedure, but it is more efficient.
+
+<pre class="example">     get_window_attributes(Window, Attribs, Graphics_attribs):-
+          get_window_attributes(Window, Attribs),
+          get_graphics_attributes(Window, Graphics_attribs).
+     </pre>
+
+   <p>See <a href="pxl-graf.html#pxl-graf">pxl-graf</a> for information
+about graphics attributes.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-win-find-put_window_attributes.html#pxl-win-find-put_window_attributes">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-win-find.html#pxl-win-find">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Instance Methods</h5>
+
+   <p>Instance methods allow each object in a class to have its own method
+for handling a specified message. For example, in a push-button class
+it would be convenient for each instance (each push-button) to have
+its own method for responding to being pressed.
+
+   <p>The declaration
+
+<pre class="example">     :- instance_method <var>Name/Arity</var>, <var><small class="dots">...</small></var>.
+     </pre>
+
+   <p>inside a class definition states that the message <var>Name/Arity</var>
+supports instance methods. If the class definition defines a method
+for this message, it will be treated as a default method for the
+message.
+
+   <p>The <code>define_method/3</code> predicate installs a method for an object of
+the class, and the <code>undefine_method/3</code> predicate removes that
+method.
+
+   <p>Suppose that the <code>date_stamp</code> class, defined earlier, declared an
+instance method to print the year of a <code>date_stamp</code> instance.
+
+<pre class="example">     :- instance_method print_year/1.
+     
+     Self &lt;- print_year(Stream) :-
+             Self &gt;&gt; year(Y0),
+             Y1 is YO + 1970,
+             format(Stream, "~d", [Y1]).
+     </pre>
+
+   <p>The arithmetic is necessary because UNIX dates are based on January 1, 1970.
+
+   <p>If a particular <code>date_stamp</code> object's date were to be printed in
+Roman numerals, it could be given a different <code>print_year</code> method, using
+the <code>define_method/3</code> predicate.
+
+<pre class="example">     | ?- <kbd>create(date_stamp, DateObj),
+          define_method(DateObj,
+     		   print_year(Stream),
+     		   print_roman_year(Stream, DateObj)).</kbd>
+     </pre>
+
+   <p>If this <code>date_stamp</code> object is created in 1994, then a
+<code>print_year</code> message sent to it would print the current year as
+
+<pre class="example">     MCMXCIV
+     </pre>
+
+   <p>Defining the predicate <code>print_roman_year/2</code> is left as an exercise. It
+must be able to access the <code>year</code> slot of a <code>date_stamp</code> object. Because
+it is not defined by a method clause within the class definition,
+<code>print_roman_year/2</code> cannot use the <code>get_slot/2</code> predicate.
+
+   <p>None of <code>instance_method/1</code>, <code>define_method/3</code>,
+<code>undefine_method/3</code> specify a message operator. Instance methods can
+only be defined for send messages.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="obj-scl-meth-credes.html#obj-scl-meth-credes">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-scl-meth.html#obj-scl-meth">Up</a>
+</ul>
+</div>
+   </body></html>
+

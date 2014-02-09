@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Handling Exceptions in Visual Basic</h4>
+
+   <p>If an exception has been raised during Prolog execution, the functions
+<code>PrologQueryCutFail</code> or <code>PrologNextSolution</code> return -1.  To
+access the exception term, the procedure <code>PrologGetException</code> can
+be used. This procedure will deposit the exception term in string format
+into an output parameter, as if written via the <code>writeq/2</code>
+predicate.
+
+   <p>Example:
+when the following code fragment is executed, the message box will
+display the <code>domain_error(_1268 is 1+a,2,expression,a)</code> error
+string.
+
+<pre class="example">     Dim exc As String
+     
+     qid = PrologOpenQuery("X is 1+a")
+     If PrologNextSolution(qid) &lt; 0 Then
+        PrologGetException(exc)
+        Msg exc,48,"Error"
+     End if
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="vb-vbp-sid.html#vb-vbp-sid">Previous</a>
+<li><a rel="up" accesskey="u" href="vb-vbp.html#vb-vbp">Up</a>
+</ul>
+</div>
+   </body></html>
+

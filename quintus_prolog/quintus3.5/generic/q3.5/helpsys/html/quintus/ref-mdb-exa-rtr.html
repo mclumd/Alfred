@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Example: retract</h5>
+
+<pre class="example">     | ?- <kbd>assert(p(1)), assert(p(2)), assert(p(3)).</kbd>
+     
+     yes
+     | ?- <kbd>p(N), write(N), nl, retract(p(2)),
+          retract(p(3)), fail.</kbd>
+     1
+     2
+     3
+     
+     no
+     | ?- <kbd>p(N), write(N), fail.</kbd>
+     1
+     no
+     | ?-
+     </pre>
+
+   <p>At the first call to <code>p/1</code>, the procedure has three clauses. 
+These remain visible throughout execution of the call to <code>p/1</code>. 
+Thus, when backtracking is forced by <code>fail/0</code>, <var>N</var> is bound
+to 2 and written.  The retraction is again attempted, causing
+backtracking into <code>p/1</code>.  <var>N</var> is bound to 3 and written out. 
+The call to <code>retract/1</code> fails.  There are no more clauses in
+<code>p/1</code>, so the query finally fails.  A subsequent call to
+<code>p/1</code>, made after the retractions, sees only one clause.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-mdb-exa-abo.html#ref-mdb-exa-abo">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-mdb-exa-asz.html#ref-mdb-exa-asz">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-mdb-exa.html#ref-mdb-exa">Up</a>
+</ul>
+</div>
+   </body></html>
+

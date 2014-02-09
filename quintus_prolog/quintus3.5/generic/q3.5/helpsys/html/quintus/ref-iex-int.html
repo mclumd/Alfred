@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Control-c Interrupts</h4>
+
+   <p>At any time, Prolog's execution can be interrupted by typing
+<kbd>^c</kbd>. 
+Under Windows, interruption may be delayed if Prolog is in
+certain OS routines, especially when waiting for input; the interrupt
+will then happen when returning to the OS routine. 
+The following prompt is then displayed:
+<pre class="example">     Prolog interruption (h for help)?
+     </pre>
+
+   <p>If you then type <kbd>h</kbd>, followed by
+&lt;RET&gt;,  you will get a list of the possible responses to this prompt:
+
+<pre class="example">     Prolog interrupt options:
+       h  help         - this list
+       c  continue     - do nothing
+       d  debug        - debugger will start leaping
+       t  trace        - debugger will start creeping
+       a  abort        - abort to the current break level
+       q  really abort - abort to the top level
+       e  exit         - exit from Prolog
+     </pre>
+
+   <p>The <kbd>d</kbd> option will cause you to enter the debugger the next time control
+passes to a spypoint.  You can then use the <kbd>g</kbd> (ancestors) option of the
+debugger to find out at what level of execution you interrupted the program.
+
+   <p>The <kbd>t</kbd> option will also cause you to enter the debugger at the next call.
+
+   <p>The <kbd>a</kbd> option causes an abort to the current break level.  In
+previous releases of Quintus Prolog, the <kbd>a</kbd> option ignored break levels,
+always aborting to the top level (break level 0).
+
+   <p>The <kbd>q</kbd> option causes an abort to the top level (break level 0). 
+This behavior is identical to the <kbd>a</kbd> option in previous Quintus Prolog
+systems.
+
+   <p>In runtime systems, the default behavior on a <kbd>^c</kbd> interrupt is
+to abort immediately, rather than display the above menu.
+
+   <p>For more information on <kbd>^c</kbd> interrupts and signal handlers, see
+<a href="ref-iex-iha.html#ref-iex-iha">ref-iex-iha</a>.
+
+   <p>The predicates that control this are:
+
+     <dl>
+
+     <br><dt><code>halt/0</code>
+     <dd>exit from Prolog
+
+     <br><dt><code>break/0</code>
+     <dd>start a new break-level to interpret commands from the user
+
+     <br><dt><code>abort/0</code>
+     <dd>abort execution of the program; return to current break level
+</dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-iex-iha.html#ref-iex-iha">Next</a>
+<li><a rel="up" accesskey="u" href="ref-iex.html#ref-iex">Up</a>
+</ul>
+</div>
+   </body></html>
+

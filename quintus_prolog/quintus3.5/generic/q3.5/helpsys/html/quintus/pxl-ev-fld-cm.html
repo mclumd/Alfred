@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>client_message</code> Event</h5>
+
+   <p>The fields that can be unified in <code>client_message</code> events
+are:
+     <ol type=1 start=1>
+
+     <li><code>type(</code><var>T</var><code>)</code> unifies <var>T</var> with <code>client_message</code>. 
+<li><code>serial(</code><var>S</var><code>)</code> unifies <var>S</var> with the serial number of the last request
+processed by the server. 
+<li><code>send_event(</code><var>B</var><code>)</code> unifies <var>B</var>, a boolean value, with one of
+          <dl>
+
+          <br><dt><code>true</code>
+          <dd>If the event was sent by another client.
+
+          <br><dt><code>false</code>
+          <dd>If the event was sent by the server. 
+</dl>
+
+     <li><code>display(</code><var>D</var><code>)</code> unifies <var>D</var> with the ProXL Display the event was read from. 
+<li><code>window(</code><var>W</var><code>)</code> unifies <var>W</var> with the ProXL Window receiving the event. 
+<li><code>message_type(</code><var>M</var><code>)</code> unifies <var>M</var> with a ProXL Atom that specifies to the
+receiving client how to interpret the data. 
+<li><code>format(</code><var>F</var><code>)</code> unifies <var>F</var> with one of the integers <code>8</code>, <code>16</code>
+or <code>32</code> to specify the format of the data. 
+<li><code>data(</code><var>D</var><code>)</code> unifies <var>D</var> with a list of the data sent in the event. 
+This will be one of:
+          <dl>
+
+          <br><dt>A list of 20 C <code>char</code> elements
+          <dd>If the format is <code>8</code>.
+
+          <br><dt>A list of 10 C <code>short</code> elements
+          <dd>If the format is <code>16</code>.
+
+          <br><dt>A list of 20 C <code>int</code> elements
+          <dd>If the format is <code>32</code>. 
+</dl>
+
+        </ol>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-ev-fld-cmnot.html#pxl-ev-fld-cmnot">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-ev-fld-creq.html#pxl-ev-fld-creq">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-ev-fld.html#pxl-ev-fld">Up</a>
+</ul>
+</div>
+   </body></html>
+

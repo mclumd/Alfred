@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Displaying Text in the Window</h4>
+
+   <p>Now let's load a big font and write a message in the window.
+
+<pre class="example">     | ?- <kbd>load_font('*-times-bold-i-normal--24-*', Font),
+          win(Window),
+          put_graphics_attributes(Window, [font(Font)]),
+          draw_string(Window, 10, 50, 'Hello, world!!').</kbd>
+     
+     Font = font(1787304),
+     Window = window(2376568)
+     </pre>
+
+   <p><code>load_font/2</code> does just what it sounds like.  The atom,
+<code>'*-times-bold-i-*-240-*'</code> is the specification of a font that is known
+to the X11 server.<a rel="footnote" href="#fn-1"><sup>1</sup></a>  To see all of the fonts known to your X11 server, use
+the shell command <code>xlsfonts</code>.
+
+   <p><code>put_graphics_attributes/2</code> will change graphics attributes of its
+first argument (aspects you might expect to specify when drawing).  In
+this case, we're specifying that we want to use the font we just
+loaded when we draw text in this window.  Then we call
+<code>draw_string/4</code> to write the message <code>Hello, world!!</code> into
+the window starting at the pixel position (10,50).
+
+   <p>Notice that we didn't use <code>put_window_attributes/2</code> to specify the
+font for the window, but instead used <code>put_graphics_attributes/2</code>. 
+The difference is important.  ProXL has many
+<code>put_</code><var>something</var><code>_attributes/2</code> procedures, and in all cases the
+<var>something</var> refers to the attributes, not to the object being
+changed.  In this case, <code>put_window_attributes/2</code> changes
+<dfn>window</dfn> attributes of the window you pass it.  But
+<code>put_graphics_attributes/2</code> changes <dfn>graphics</dfn> attributes of the
+argument you pass it.  Here that argument is a window; in <a href="pxl-tut-dbg.html#pxl-tut-dbg">pxl-tut-dbg</a> we will use <code>put_graphics_attributes/2</code> to
+change a pixmap.
+
+   <p>The text is positioned at the coordinates (10,50).  This means that
+the <dfn>origin point</dfn> for the first character is at that position, but
+what is the origin point?  Actually, each type of font has its own way
+of positioning text relative to the origin point.  For the typical
+latin fonts (fonts for the ASCII character set), however, all of a
+character is usually printed to the right of the origin point, and
+only descenders go below the origin point.  So you can usually think
+of the origin as the left end of the baseline for the text being
+drawn.
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4>
+<ol type="1">
+<li><a name="fn-1"></a>
+<p>If you are using X11 Release 2, then use the
+font name <code>'vbg-25'</code>.  The way to specify fonts changed from Release 2
+to Release 3.</p>
+
+   </ol><hr></div>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-tut-siz.html#pxl-tut-siz">Next</a>
+<li><a rel="previous" accesskey="p" href="pxl-tut-dwin.html#pxl-tut-dwin">Previous</a>
+<li><a rel="up" accesskey="u" href="pxl-tut.html#pxl-tut">Up</a>
+</ul>
+</div>
+   </body></html>
+

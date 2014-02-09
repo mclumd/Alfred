@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Context Errors</h5>
+
+   <p>A context error occurs when a goal or declaration appears in the wrong place. 
+There may or may not be anything wrong with the goal or declaration as such;
+the point is that it is out of place.  Calling <code>multifile/1</code> as a goal is a
+context error, as is having <code>:-module/2</code> anywhere but as the first term in a
+source file.
+
+   <p>The exception code associated with a context error is
+<pre class="example">     context_error(<var>Goal, ContextType, CommandType</var>)
+     </pre>
+
+     <dl>
+
+     <br><dt><var>ContextType</var>
+     <dd>the context in which the command was attempted.
+
+     <p>Some <var>ContextType</var>s recognized by the system include:
+          <ul>
+
+          <li><code>'pseudo-file ''user'''</code> -- for pseudo-file <code>'user'</code>
+<li><code>if</code> -- inside an if
+<li><code>bof</code> -- at beginning of file
+<li><code>bom</code> -- at beginning of module
+<li><code>query</code> -- in query
+<li><code>before</code> -- before
+<li><code>'after clauses'</code> -- after clauses
+<li><code>'not multifile and defined'</code> -- for defined, non-multifile procedure
+<li><code>'static multifile'</code> -- for static multifile procedure. 
+<li><code>language(</code><var>L</var><code>)</code> -- for language <var>L</var>. 
+<li><code>file_load</code> -- during load of file(s). 
+<li><code>started</code> -- started up
+<li><code>notoplevel</code> -- when no top level
+</ul>
+
+     <br><dt><var>CommandType</var>
+     <dd>the type of command that was attempted.
+
+     <p>Some <var>CommandType</var>s recognized by the system include:
+          <ul>
+
+          <li><code>0</code> -- no commandtype specified
+<li><code>cut</code>
+<li><code>clause</code>
+<li><code>declaration</code>
+<li><code>'meta_predicate declaration'</code>
+<li><code>use_module</code>
+<li><code>'multifile assert'</code>
+<li><code>'module declaration'</code>
+<li><code>'dynamic declaration'</code>
+<li><code>meta_predicate(</code><var>M</var><code>)</code> -- meta_predicate declaration for <var>M</var>
+<li><code>argspec(</code><var>A</var><code>)</code> -- Invalid argument specification <var>A</var>
+<li><code>foreign_file(</code><var>File</var><code>)</code> -- <code>foreign_file/2</code> declaration for <var>File</var>
+<li><code>foreign(</code><var>F</var><code>)</code> -- <code>foreign/3</code> declaration for <var>F</var>
+<li><code>(initialization)</code> -- initialization hook
+<li><code>abort</code> -- call to <code>abort/0</code>
+</ul>
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-err-cns.html#ref-ere-err-cns">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-err-per.html#ref-ere-err-per">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere-err.html#ref-ere-err">Up</a>
+</ul>
+</div>
+   </body></html>
+

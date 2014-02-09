@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>QP_ipc_prepare()</code></h5>
+
+<pre class="example">     int QP_ipc_prepare(<var>command, arg1, <small class="dots">...</small>, argn</var>)
+         int <var>command</var>;
+         <var>va_dcl</var>
+     </pre>
+
+   <p>This function sends a request to the Prolog process to evaluate a goal.  The
+command is identified by <var>command</var>, which must have been obtained by an
+earlier call to <code>QP_ipc_lookup()</code>.  The arguments are the values to be sent to
+the command, that is those in the interface specification with a <code>+</code>
+annotation.  They must be in left-to-right order as they appear in the
+specification.  They must be of the corresponding types as indicated in the
+specification:
+
+<pre class="example">             +integer:       int
+             +float:         float
+             +atom:          QP_atom
+             +string:        char *
+     </pre>
+
+   <p>See the example below in <a href="ipc-rpc-cpp-exa.html#ipc-rpc-cpp-exa">ipc-rpc-cpp-exa</a>.
+
+   <p>On successful completion, this routine returns 0.  If an error has occurred,
+it returns -1.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ipc-rpc-cpp-next.html#ipc-rpc-cpp-next">Next</a>
+<li><a rel="previous" accesskey="p" href="ipc-rpc-cpp-lookup.html#ipc-rpc-cpp-lookup">Previous</a>
+<li><a rel="up" accesskey="u" href="ipc-rpc-cpp.html#ipc-rpc-cpp">Up</a>
+</ul>
+</div>
+   </body></html>
+

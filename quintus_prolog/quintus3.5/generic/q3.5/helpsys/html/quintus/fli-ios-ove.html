@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Overview</h4>
+
+   <p>The Quintus Prolog input/output system is designed to handle various
+file formats, device-dependent I/O, and
+in particular, it enables you to create customized Prolog streams in C. 
+File-related input/output operations of a Prolog program can be
+coded to be portable among different operating systems
+and the underlying formats of files.
+
+   <p>A <dfn>Prolog stream</dfn> is an
+object storing the information about how to complete input/output
+operations to a file, device or other form of I/O channel. 
+All Prolog input/output operations
+are performed through Prolog streams.
+
+   <p>The embedding ("bottom") layer of the Quintus Prolog system provides a set of
+default functions for handling normal Prolog streams. However,
+<em>user defined streams</em> can be defined at runtime in such a way that Prolog
+built-in I/O operations work on other types of Prolog stream. 
+Examples of user-defined streams include:
+
+     <ul>
+
+     <li>a stream to inter-process communication
+<li>a stream to a window in a graphic environment
+</ul>
+
+   <p>There are three streams opened by the embedding layer I/O initialization
+functions when a Prolog process starts:
+
+     <ul>
+
+     <li>user input stream: normal input channel
+<li>user output stream: normal output channel
+<li>user error stream: normal error message channel
+</ul>
+
+   <p>Prolog also keeps track of two current streams,
+     <ul>
+
+     <li>current input stream
+<li>current output stream
+</ul>
+
+   <p>A Prolog input/output built-in predicate or function that takes no
+stream argument is performed on the current input or current output
+stream.
+
+   <p>In this section, we outline the Quintus Prolog input/output model and describe
+the Prolog stream structure, defining the different formats and options that
+can be associated with a stream. Then we discuss the method of creating
+a user-defined stream.
+
+   <p>We also list a number of functions that enable Prolog streams to be
+manipulated in foreign code. Finally we discuss some compatability issues
+with the I/O system in previous versions of Quintus Prolog.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong> The terms <dfn>record</dfn> and <dfn>line</dfn> have
+the same meaning in this section.  A line terminated with
+&lt;LFD&gt; is just a type of record. 
+However, a record (line) is not always terminated by &lt;LFD&gt;. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-iom.html#fli-ios-iom">Next</a>
+<li><a rel="up" accesskey="u" href="fli-ios.html#fli-ios">Up</a>
+</ul>
+</div>
+   </body></html>
+

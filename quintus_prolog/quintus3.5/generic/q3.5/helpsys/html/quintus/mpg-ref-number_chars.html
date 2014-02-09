@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>number_chars/2</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>number_chars(</code><var>+Number</var><code>, </code><var>-Chars</var><code>)</code>
+
+   <p><code>number_chars(</code><var>-Number</var><code>, </code><var>+Chars</var><code>)</code>
+
+   <p><var>Chars</var> is the list consisting of the ASCII character codes
+comprising the printed representation of <var>Number</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Number</var> <dfn>number</dfn>
+     <dd>
+
+     <br><dt><var>Chars</var> <dfn>chars</dfn>
+     <dd>
+</dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p><var>Chars</var> is the list of ASCII character codes comprising the
+printed representation of <var>Number</var>.
+
+   <p>Initially, either <var>Number</var> must be instantiated to a number, or
+<var>Chars</var> must be instantiated to a proper list of character codes
+(containing no variables).
+
+   <p>If <var>Number</var> is initially instantiated to a number, <var>Chars</var>
+will be unified with the list of character codes that make up its
+printed representation.
+
+   <p>If <var>Number</var> is uninstantiated and <var>Chars</var> is initially
+instantiated to a list of characters that corresponds to the correct
+syntax of a number (either integer or float), <var>Number</var> will be
+bound to that number; otherwise <code>number_chars/2</code> will simply fail.
+
+<h4 class="subheading">Exceptions</h4>
+
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+                <var>Number</var> and <var>Chars</var> are both uninstantiated
+
+     <br><dt><code>domain_error</code>
+     <dd>
+                <var>Chars</var> is not a list of ASCII codes
+
+     <br><dt><code>type_error</code>
+     <dd>
+                <var>Number</var> is not a number or <var>Chars</var> is not a list
+
+     <br><dt><code>representation_error</code>
+     <dd>
+                <var>Chars</var> is a list corresponding to a number that can't be represented
+
+   </dl>
+
+<h4 class="subheading">Examples</h4>
+
+<pre class="example">     | ?- <kbd>number_chars(foo, L).</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>number_chars(431, L).</kbd>
+     
+     L = [52,51,49]
+     </pre>
+
+<pre class="example">     | ?- <kbd>number_chars(X, [102,111,111]).</kbd>
+     
+     no
+     </pre>
+
+<pre class="example">     | ?- <kbd>number_chars(X, [52,51,49]).</kbd>
+     
+     X = 431
+     </pre>
+
+<pre class="example">     | ?- <kbd>number_chars(X, "15.0e+12").</kbd>
+     
+     X = 1.5e+13
+     </pre>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>atom_chars/2</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-numbervars.html#mpg-ref-numbervars">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-number.html#mpg-ref-number">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

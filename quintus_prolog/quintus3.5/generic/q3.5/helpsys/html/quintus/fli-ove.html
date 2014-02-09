@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3 class="section">Overview</h3>
+
+   <p>The <dfn>Foreign Language Interface</dfn> is the protocol by which you can
+call functions written in other programming languages from Prolog (see
+<a href="fli-p2f.html#fli-p2f">fli-p2f</a>), and by which you can call Prolog predicates from C (see
+<a href="fli-ffp.html#fli-ffp">fli-ffp</a>).
+
+   <p>In both cases you have to supply declarations in Prolog specifying the
+argument types of the function/predicate being called.  This is
+necessary so that the Prolog system can automatically make the necessary
+transformations of data as they are passed between the languages.  The
+declarations are compiled into special abstract machine instructions in
+order to minimize the cost of inter-language calls.
+
+   <p>It is possible to specify that an argument is a Prolog term.  In this
+case a foreign function receiving such a term sees it as a special kind
+of object called a <dfn>QP_term_ref</dfn>.  A set of functions is provided that
+allow foreign functions to manipulate terms via these QP_term_refs.  Term
+passing is described in <a href="fli-p2f-trm.html#fli-p2f-trm">fli-p2f-trm</a> and <a href="fli-ffp-a2s-trm.html#fli-ffp-a2s-trm">fli-ffp-a2s-trm</a>. 
+The functions for manipulating terms are described in <a href="cfu.html#cfu">cfu</a>.
+
+   <p>Some kinds of data are not best represented in Prolog.  It is better to
+keep such data in foreign data structures and just pass pointers to these
+structures to Prolog.  Given such pointers, Prolog arithmetic
+predicates such as <code>is/2</code> and <code>=:=/2</code> allow access to foreign
+data; see <a href="ref-ari-aex.html#ref-ari-aex">ref-ari-aex</a>.  Foreign data can also be
+modified directly from Prolog using <code>assign/2</code>, which is described in
+<a href="cfu.html#cfu">cfu</a>.
+
+   <p>Input/Output operations on Prolog streams can be performed in C. 
+Functions, macros and variables for this purpose are summarized in
+<a href="fli-ios-bio.html#fli-ios-bio">fli-ios-bio</a>.  The I/O system has been designed to make it
+maximally customizable at the C level.  The kinds of customization that you
+might want to do are to create a stream to read from or write
+to a socket, or to create a stream to read from an encrypted file. 
+The C level of the I/O system is described in <a href="fli-ios.html#fli-ios">fli-ios</a>.
+
+   <p>A number of functions are defined to aid in embedding Prolog programs
+into other software systems.  These functions all begin with the letters
+<code>QU</code> and they are defined in <a href="fli-emb.html#fli-emb">fli-emb</a>.  The source of these
+functions is provided with the system, and you may define your own versions
+to replace them.  To do this you will need to link your routines with
+the development system to make your own customized version of the development
+system.  How to do this is described in <a href="sap.html#sap">sap</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-p2f.html#fli-p2f">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios.html#fli-ios">Previous</a>
+<li><a rel="up" accesskey="u" href="fli.html#fli">Up</a>
+</ul>
+</div>
+   </body></html>
+

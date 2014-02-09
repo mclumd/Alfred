@@ -1,0 +1,1493 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: pxl-dis-attr-get_display_attributes,  Up: pxl-dis-attr
+
+`get_display_attributes/[1,2]'
+..............................
+
+     get_display_attributes(+ATTRIBS)
+     get_display_attributes(+DISPLAY, +ATTRIBS)
+
+   ATTRIBS is a list of attribute specifications.  Accepted display
+attributes are listed above. DISPLAY defaults to the default display.
+
+
+File: quintus.info,  Node: pxl-dis-opn,  Next: pxl-dis-sync,  Prev: pxl-dis-attr,  Up: pxl-dis
+
+Opening and Closing Displays
+----------------------------
+
+* Menu:
+
+* pxl-dis-opn-open_display::            open_display/2
+* pxl-dis-opn-close_display::           close_display/1
+
+
+File: quintus.info,  Node: pxl-dis-opn-open_display,  Next: pxl-dis-opn-close_display,  Up: pxl-dis-opn
+
+`open_display/2'
+................
+
+     open_display(+DISPLAYNAME, -DISPLAY)
+
+   DISPLAY is the newly opened display named DISPLAYNAME (an atom).
+Fails if it can't open DISPLAYNAME.
+
+
+File: quintus.info,  Node: pxl-dis-opn-close_display,  Prev: pxl-dis-opn-open_display,  Up: pxl-dis-opn
+
+`close_display/1'
+.................
+
+     close_display(+DISPLAY)
+
+   Close DISPLAY.  Note that DISPLAY must be an actual display, not a
+displayable
+
+
+File: quintus.info,  Node: pxl-dis-sync,  Next: pxl-dis-find,  Prev: pxl-dis-opn,  Up: pxl-dis
+
+Flushing and Syncing Displays
+-----------------------------
+
+* Menu:
+
+* pxl-dis-sync-flush::                  flush/[0,1]
+* pxl-dis-sync-sync::                   sync/[0,1] and sync_discard/[0,1]
+
+
+File: quintus.info,  Node: pxl-dis-sync-flush,  Next: pxl-dis-sync-sync,  Up: pxl-dis-sync
+
+`flush/[0,1]'
+.............
+
+     flush
+     flush(+DISPLAY)
+
+   Flush the output buffer to DISPLAY.  If DISPLAY is omitted, flush
+output to all open X displays.
+
+
+File: quintus.info,  Node: pxl-dis-sync-sync,  Prev: pxl-dis-sync-flush,  Up: pxl-dis-sync
+
+`sync/[0,1]' and `sync_discard/[0,1]'
+.....................................
+
+     sync
+     sync(+DISPLAY)
+     sync_discard
+     sync_discard(+DISPLAY)
+
+   Flush the output buffer of DISPLAY and wait until all request have
+been processed by the server.  If DISPLAY is omitted, we default to
+syncing all open displays.  `sync_discard/[0,1]' also throw away all
+queued events.
+
+
+File: quintus.info,  Node: pxl-dis-find,  Next: pxl-dis-cdsp,  Prev: pxl-dis-sync,  Up: pxl-dis
+
+Finding Currently Open Displays
+-------------------------------
+
+* Menu:
+
+* pxl-dis-find-current_display::        current_display/1
+* pxl-dis-find-default_display::        default_display/1
+
+
+File: quintus.info,  Node: pxl-dis-find-current_display,  Next: pxl-dis-find-default_display,  Up: pxl-dis-find
+
+`current_display/1'
+...................
+
+     current_display(?DISPLAY)
+
+   DISPLAY is a currently open ProXL display.
+
+
+File: quintus.info,  Node: pxl-dis-find-default_display,  Prev: pxl-dis-find-current_display,  Up: pxl-dis-find
+
+`default_display/1'
+...................
+
+     default_display(-DISPLAY)
+
+   DISPLAY is the display of the default screen.
+
+
+File: quintus.info,  Node: pxl-dis-cdsp,  Next: pxl-dis-atts,  Prev: pxl-dis-find,  Up: pxl-dis
+
+Checking Display Validity
+-------------------------
+
+* Menu:
+
+* pxl-dis-cdsp-valid_display::          valid_display/1
+* pxl-dis-cdsp-valid_displayable::      valid_displayable/2
+* pxl-dis-cdsp-ensure_valid_display::   ensure_valid_display/2
+* pxl-dis-cdsp-ensure_valid_displayable::ensure_valid_displayable/3
+
+
+File: quintus.info,  Node: pxl-dis-cdsp-valid_display,  Next: pxl-dis-cdsp-valid_displayable,  Up: pxl-dis-cdsp
+
+`valid_display/1'
+.................
+
+     valid_display(+DISPLAY)
+
+   Succeeds if DISPLAY is a valid, open, display.
+
+
+File: quintus.info,  Node: pxl-dis-cdsp-valid_displayable,  Next: pxl-dis-cdsp-ensure_valid_display,  Prev: pxl-dis-cdsp-valid_display,  Up: pxl-dis-cdsp
+
+`valid_displayable/2'
+.....................
+
+     valid_displayable(+DISPLAYABLE, -DISPLAY)
+
+   DISPLAY is the ProXL display associated with DISPLAYABLE, a
+displayable.  A displayable is any ProXL resource that has a unique
+display associated with it, that is, _any_ ProXL resource.  Fails
+unless DISPLAY is a valid, open, display.
+
+
+File: quintus.info,  Node: pxl-dis-cdsp-ensure_valid_display,  Next: pxl-dis-cdsp-ensure_valid_displayable,  Prev: pxl-dis-cdsp-valid_displayable,  Up: pxl-dis-cdsp
+
+`ensure_valid_display/2'
+........................
+
+     ensure_valid_display(+DISPLAY, +GOAL)
+
+   DISPLAY is a valid display.  If it's not, an error message
+mentioning GOAL is printed, and execution is aborted.
+
+
+File: quintus.info,  Node: pxl-dis-cdsp-ensure_valid_displayable,  Prev: pxl-dis-cdsp-ensure_valid_display,  Up: pxl-dis-cdsp
+
+`ensure_valid_displayable/3'
+............................
+
+     ensure_valid_displayable(+DISPLAYABLE, -DISPLAY, +GOAL)
+
+   DISPLAY is the valid display associated with DISPLAYABLE.  If it's
+not, an error message mentioning GOAL is printed, and execution is
+aborted.
+
+
+File: quintus.info,  Node: pxl-dis-atts,  Next: pxl-dis-def,  Prev: pxl-dis-cdsp,  Up: pxl-dis
+
+Screen Attributes
+-----------------
+
+* Menu:
+
+* pxl-dis-atts-get_screen_attributes::  get_screen_attributes/[1,2]
+
+   Screen attributes include:
+
+`black_pixel(V)'
+     Pixel value for black on this screen.  An integer.
+
+`white_pixel(V)'
+     Pixel value for white on this screen.  An integer.
+
+`cells(N)'
+     Number of entries in default color map.
+
+`colormap(C)'
+     The default color map for this screen.
+
+`depth(D)'
+     Number of planes for default root window.
+
+`default_visual(V)'
+     Default way pixel values are shown on this screen.  See the
+     documentation of visuals in *Note pxl-col-vis::.
+
+`visual(V)'
+     A possible way pixel values can be shown on this screen.  Multiple
+     results are possible, one of which will be the `default_visual'.
+
+`does_backing_store(V)'
+     Is this screen capable of saving the obscured part of windows so
+     applications don't have to repaint them when they become exposed?
+     Possible values are `when_mapped', `not_useful', or `always'.
+
+`does_save_unders(B)'
+     Is this screen capable of saving whatever is hidden by a window so
+     when the window is unmapped, the exposed area need not be
+     repainted?  Possible values are `true' or `false'.
+
+`display(D)'
+     The display of this screen.
+
+`planes(N)'
+     Number of bits/pixel in root window.
+
+`width(W)'
+     Width of screen, in pixels.
+
+`width_mm(W)V'
+     Width of screen, in millimeters.
+
+`height(H)'
+     Height of screen, in pixels.
+
+`height_mm(H)'
+     Height of screen, in millimeters.
+
+`size(W, H)'
+     Width and height of screen, in pixels.
+
+`size_mm(W, H)'
+     Width and height of screen in millimeters.
+
+`root(V)'
+     Root window of this screen.
+
+`screen_number(N)'
+     The number of this screen on its display.
+
+
+File: quintus.info,  Node: pxl-dis-atts-get_screen_attributes,  Up: pxl-dis-atts
+
+`get_screen_attributes/[1,2]'
+.............................
+
+     get_screen_attributes(+ATTRIBS)
+     get_screen_attributes(+SCREEN, +ATTRIBS)
+
+   ATTRIBS is a list of screen attributes, as listed above, of the
+screen uniquely associated with Screenable.  SCREEN defaults the
+current default screen.
+
+
+File: quintus.info,  Node: pxl-dis-def,  Next: pxl-dis-cscr,  Prev: pxl-dis-atts,  Up: pxl-dis
+
+The Default Screen
+------------------
+
+* Menu:
+
+* pxl-dis-def-default_screen::          default_screen/2
+
+
+File: quintus.info,  Node: pxl-dis-def-default_screen,  Up: pxl-dis-def
+
+`default_screen/2'
+..................
+
+     default_screen(-OLDSCREEN, +NEWSCREEN)
+
+   OLDSCREEN is the old default screen, and NEWSCREEN becomes the new
+default screen.
+
+
+File: quintus.info,  Node: pxl-dis-cscr,  Next: pxl-dis-ifc,  Prev: pxl-dis-def,  Up: pxl-dis
+
+Checking Screen Validity
+------------------------
+
+* Menu:
+
+* pxl-dis-cscr-valid_screen::           valid_screen/1
+* pxl-dis-cscr-valid_screenable::       valid_screenable/2
+* pxl-dis-cscr-ensure_valid_screen::    ensure_valid_screen/2
+* pxl-dis-cscr-ensure_valid_screenable::ensure_valid_screenable/3
+
+
+File: quintus.info,  Node: pxl-dis-cscr-valid_screen,  Next: pxl-dis-cscr-valid_screenable,  Up: pxl-dis-cscr
+
+`valid_screen/1'
+................
+
+     valid_screen(+SCREEN)
+
+   Succeeds if SCREEN is a screen on a valid, open, display.
+
+
+File: quintus.info,  Node: pxl-dis-cscr-valid_screenable,  Next: pxl-dis-cscr-ensure_valid_screen,  Prev: pxl-dis-cscr-valid_screen,  Up: pxl-dis-cscr
+
+`valid_screenable/2'
+....................
+
+     valid_screenable(+SCREENABLE, -SCREEN)
+
+   SCREEN is the ProXL screen associated with SCREENABLE, a screenable.
+A screenable is any ProXL resource that has a unique screen associated
+with it, that is, a display (which has a default screen), gc, colormap
+pixmap, or window.  Fails unless SCREEN is a screen on a valid, open,
+display.
+
+
+File: quintus.info,  Node: pxl-dis-cscr-ensure_valid_screen,  Next: pxl-dis-cscr-ensure_valid_screenable,  Prev: pxl-dis-cscr-valid_screenable,  Up: pxl-dis-cscr
+
+`ensure_valid_screen/2'
+.......................
+
+     ensure_valid_screen(+SCREEN, +GOAL)
+
+   SCREEN is a valid screen.  If it's not, an error message mentioning
+GOAL is printed, and execution is aborted.
+
+
+File: quintus.info,  Node: pxl-dis-cscr-ensure_valid_screenable,  Prev: pxl-dis-cscr-ensure_valid_screen,  Up: pxl-dis-cscr
+
+`ensure_valid_screenable/3'
+...........................
+
+     ensure_valid_screenable(+SCREENABLE, -SCREEN, +GOAL)
+
+   SCREEN is the valid screen associated with SCREENABLE.  If it's not,
+an error message mentioning GOAL is printed, and execution is aborted.
+
+
+File: quintus.info,  Node: pxl-dis-ifc,  Prev: pxl-dis-cscr,  Up: pxl-dis
+
+Interfacing with Foreign Code
+-----------------------------
+
+* Menu:
+
+* pxl-dis-ifc-proxl_xlib::              proxl_xlib/[3,4]
+* pxl-dis-ifc-display_xdisplay::        display_xdisplay/2
+* pxl-dis-ifc-screen_xscreen::          screen_xscreen/2
+* pxl-dis-ifc-visual_id::               visual_id/[2,3]
+
+   In order to interface your ProXL code with code written in other
+languages using the Xlib interface, it will often be necessary to find
+the "XID" of a ProXL object, or to create a new ProXL object from an
+XID.  These primitives allow you to do this.
+
+
+File: quintus.info,  Node: pxl-dis-ifc-proxl_xlib,  Next: pxl-dis-ifc-display_xdisplay,  Up: pxl-dis-ifc
+
+`proxl_xlib/[3,4]'
+..................
+
+     proxl_xlib(?PROXLOBJ, ?TYPE, ?XID)
+     proxl_xlib(?PROXLOBJ, ?TYPE, ?XID, ?DISPLAY)
+
+   PROXLOBJ is a ProXL object of TYPE on DISPLAY whose XID is XID.  If
+DISPLAY is not specified, it is assumed to be the display of the current
+default screen.  TYPE is one of `window', `pixmap', `font', `cursor', or
+`colormap'.  Either PROXLOBJ or all three of TYPE, XID, and DISPLAY
+must be bound.  `proxl_xlib/3' fails if PROXLOBJ is bound to a ProXL
+object on a display other than the display of the default screen.
+
+
+File: quintus.info,  Node: pxl-dis-ifc-display_xdisplay,  Next: pxl-dis-ifc-screen_xscreen,  Prev: pxl-dis-ifc-proxl_xlib,  Up: pxl-dis-ifc
+
+`display_xdisplay/2'
+....................
+
+     display_xdisplay(?DISPLAY, ?XDISPLAY)
+
+   DISPLAY is the ProXL display corresponding to the X display XDISPLAY.
+May be used to find the ProXL display given an X display, or to find
+the X display given a ProXL display.  But one or the other must be
+bound.
+
+
+File: quintus.info,  Node: pxl-dis-ifc-screen_xscreen,  Next: pxl-dis-ifc-visual_id,  Prev: pxl-dis-ifc-display_xdisplay,  Up: pxl-dis-ifc
+
+`screen_xscreen/2'
+..................
+
+     screen_xscreen(?SCREEN, ?XSCREEN)
+
+   SCREEN is the ProXL screen corresponding to the X screen XSCREEN.
+May be used to find the ProXL screen given an X screen, or to find the
+X screen given a ProXL screen.  But one or the other must be bound.
+
+
+File: quintus.info,  Node: pxl-dis-ifc-visual_id,  Prev: pxl-dis-ifc-screen_xscreen,  Up: pxl-dis-ifc
+
+`visual_id/[2,3]'
+.................
+
+     visual_id(?VISUAL, ?VISUAL_ID)
+     visual_id(+SCREENABLE, ?VISUAL, ?VISUAL_ID)
+
+   VISUAL_ID is the X visual id corresponding to the visual term VISUAL
+on the screen associated with SCREENABLE.  SCREENABLE defaults to the
+default screen.
+
+
+File: quintus.info,  Node: pxl-evf,  Next: pxl-bas,  Prev: pxl-eh,  Up: pxl
+
+Event Handling Functions
+========================
+
+* Menu:
+
+* pxl-evf-active_windows::              active_windows/[0,1]
+* pxl-evf-events_queued::               events_queued/[2,3]
+* pxl-evf-pending::                     pending/[1,2]
+* pxl-evf-new_event::                   new_event/[1,2]
+* pxl-evf-dispose_event::               dispose_event/1
+* pxl-evf-next_event::                  next_event/[2,3]
+* pxl-evf-peek_event::                  peek_event/[2,3]
+* pxl-evf-window_event::                window_event/4
+* pxl-evf-check_window_event::          check_window_event/4
+* pxl-evf-mask_event::                  mask_event/[3,4]
+* pxl-evf-check_mask_event::            check_mask_event/[3,4]
+* pxl-evf-check_typed_event::           check_typed_event/[2,3]
+* pxl-evf-check_typed_window_event::    check_typed_window_event/3
+* pxl-evf-put_back_event::              put_back_event/[1,2]
+* pxl-evf-send_event::                  send_event/[4,5]
+* pxl-evf-send::                        send/[4,5]
+* pxl-evf-get_event_values::            get_event_values/2
+* pxl-evf-put_event_values::            put_event_values/2
+* pxl-evf-get_motion_events::           get_motion_events/4
+
+   Even though the ProXL callback and event handling mechanism is very
+powerful and easy to use, there are occasions when the user wants to
+interact directly with the Display connection and handle the incoming
+events without using the callback mechanism.
+
+   This section documents the functions that allow the user to bypass
+the callback mechanism, as well as a number of "utility" functions to
+examine the state of the Display event queue.
+
+
+File: quintus.info,  Node: pxl-evf-active_windows,  Next: pxl-evf-events_queued,  Up: pxl-evf
+
+`active_windows/[0,1]'
+----------------------
+
+     active_windows
+     active_windows(+DISPLAYABLE)
+
+   Succeed if there are any ProXL Windows with currently registered
+callbacks on the given DISPLAYABLE, which is the default Display, if
+omitted.
+
+
+File: quintus.info,  Node: pxl-evf-events_queued,  Next: pxl-evf-pending,  Prev: pxl-evf-active_windows,  Up: pxl-evf
+
+`events_queued/[2,3]'
+---------------------
+
+     events_queued(+MODE, -NUMBER)
+     events_queued(+DISPLAYABLE, +MODE, -NUMBER)
+
+   Unify NUMBER with an integer giving the number of events queued for
+the given DISPLAYABLE, which if omitted, is the default Display.
+
+   If there are currently any events in Xlib's queue, the predicate
+returns immediately, unifying NUMBER, regardless of the value of MODE.
+Otherwise, it behaves according to the value of MODE:
+`already'
+     Binds NUMBER to 0 and succeeds.
+
+`after_reading'
+     Attempts to read more events from the Display connection to the X
+     server, without flushing the output buffer, and unifies NUMBER to
+     the number of events read.
+
+`after_flushing'
+     Like `after_reading', but also flushes the output buffer.
+
+
+File: quintus.info,  Node: pxl-evf-pending,  Next: pxl-evf-new_event,  Prev: pxl-evf-events_queued,  Up: pxl-evf
+
+`pending/[1,2]'
+---------------
+
+     pending(-NUMBER)
+     pending(+DISPLAYABLE, -NUMBER)
+
+   Unify NUMBER with the number of events that have been received from
+the server, but have not been processed yet, for the given DISPLAYABLE,
+which if omitted, is the default Display.
+
+   If there are no events in the queue, the output buffer is flushed and
+NUMBER is unified with the number of events transferred to the input
+queue as a result of the flush.
+
+
+File: quintus.info,  Node: pxl-evf-new_event,  Next: pxl-evf-dispose_event,  Prev: pxl-evf-pending,  Up: pxl-evf
+
+`new_event/[1,2]'
+-----------------
+
+   Under ProXL, the event structures used by X11 are not Prolog terms,
+but ProXL-specific data structures whose implementation details are not
+visible to the user, and they have to be explicitly allocated and
+de-allocated(1).
+
+   ProXL provides routines to examine and set the contents of these
+structures. The user should not hang on to any of these structures, and
+in particular, should not assert them into the data base.
+
+   All of the event handling predicates documented in this section have
+an XEVENT argument, which is an X11 event structure.
+
+     new_event(-XEVENT)
+     new_event(-XEVENT, +EVENTVALUES)
+
+   Will create a new private, X11 event structure and unify XEVENT with
+it.
+
+   `new_event/1' creates a new, uninitialized event structure.
+
+   `new_event/2' creates a new event structure, and destructively set
+its fields from the values given in EVENTVALUES, which must be a list
+of event fields in the style of the callback mechanism, and unify
+XEVENT with the initialized result. The list of event values must
+specify at least a `type'. If `display' is not specified, the default
+Display is used.
+
+   ---------- Footnotes ----------
+
+   (1) In the current implementation, they are not garbage-collected
+automatically
+
+
+File: quintus.info,  Node: pxl-evf-dispose_event,  Next: pxl-evf-next_event,  Prev: pxl-evf-new_event,  Up: pxl-evf
+
+`dispose_event/1'
+-----------------
+
+     dispose_event(+XEVENT)
+
+   Disposes of the given X11 event structure and returns the storage
+associated with it to the system. References to XEVENT after it has
+been disposed of, will certainly cause disasters. _Be careful_.
+
+
+File: quintus.info,  Node: pxl-evf-next_event,  Next: pxl-evf-peek_event,  Prev: pxl-evf-dispose_event,  Up: pxl-evf
+
+`next_event/[2,3]'
+------------------
+
+     next_event(-TYPE, ?XEVENT)
+     next_event(+DISPLAYABLE, -TYPE, ?XEVENT)
+
+   Return the next event from the given DISPLAYABLE event queue.  If
+DISPLAYABLE is omitted, the next event on any ProXL display is
+returned.  TYPE is unified to the type of event, and the event is
+removed from the head of the queue.
+
+   If there are no events in the queue, `next_event/[2,3]' flushes the
+output queue(s) and blocks until an event is received.  If DISPLAYABLE
+is specified, and events for which callbacks are registered arrive on
+other displays, they will be handled, and `next_event/3' will continue
+to wait for an event on the specified DISPLAYABLE.
+
+   The user can pass an existing XEVENT X11 structure, which is then
+destructively filled with the received event's contents, or an unbound
+variable. In the latter case, `next_event/[2,3]' will unify XEVENT with
+a private, local structure, which the user cannot hang on to, but is
+guaranteed not to change its value until the next call to an event
+getting routine.
+
+
+File: quintus.info,  Node: pxl-evf-peek_event,  Next: pxl-evf-window_event,  Prev: pxl-evf-next_event,  Up: pxl-evf
+
+`peek_event/[2,3]'
+------------------
+
+     peek_event(-TYPE, ?XEVENT)
+     peek_event(+DISPLAYABLE, -TYPE, ?XEVENT)
+
+   Peek at the next event from the given DISPLAYABLE event queue.  If
+DISPLAYABLE is omitted, the next event on any ProXL display is
+examined.  TYPE is unified to the type of event.  The event is not
+removed from the head of the queue.
+
+   If there are no events in the queue, `peek_event/[2,3]' flushes the
+output queue(s) and blocks until an event is received.  If DISPLAYABLE
+is specified, and events for which callbacks are registered arrive on
+other displays, they will be handled, and `peek_event/3' will continue
+to wait for an event on the specified DISPLAYABLE.
+
+   The user can pass an existing XEVENT X11 structure, which is then
+destructively filled with the received event's contents, or an unbound
+variable. In the latter case, `peek_event/[2,3]' will unify XEVENT with
+a prvate, local structure, which the user can not hang on to, but is
+guaranteed not to change its value until the next call to
+`peek_event/[2,3]'.
+
+
+File: quintus.info,  Node: pxl-evf-window_event,  Next: pxl-evf-check_window_event,  Prev: pxl-evf-peek_event,  Up: pxl-evf
+
+`window_event/4'
+----------------
+
+     window_event(+WINDOW, +EVENTMASK, -TYPE, ?XEVENT)
+
+   Searches the event queue for the WINDOW's Display, and removes the
+first event that is intended for WINDOW and is selected by the given
+EVENTMASK. Unifies TYPE with the type of event removed. Other events in
+the queue are not discarded.
+
+   If there is no qualifying event in the queue, `window_event/4'
+flushes the output queue and blocks until one is received.  If events
+for which callbacks are registered arrive on other displays, they will
+be handled, and `window_event/4' will continue to wait for an event on
+WINDOW's display.
+
+   The user can pass an existing XEVENT X11 structure, which is then
+destructively filled with the received event's contents, or an unbound
+variable. In the latter case, `window_event/4' will unify XEVENT with a
+private, local structure, which the user can not hang on to, but is
+guaranteed not to change its value until the next call to an event
+getting routine.
+
+   EVENTMASK is an integer bitmask, that specifies the selected events.
+The predicate `event_list_mask/2' is useful to translate between X11
+event mask names and bitmasks.
+
+
+File: quintus.info,  Node: pxl-evf-check_window_event,  Next: pxl-evf-mask_event,  Prev: pxl-evf-window_event,  Up: pxl-evf
+
+`check_window_event/4'
+----------------------
+
+     check_window_event(+WINDOW, +EVENTMASK, -TYPE, ?XEVENT)
+
+   Is like, `window_event/4', but fails if there is no matching event
+in the queue, and does not block waiting for one. The output buffer is
+flushed only on failure.
+
+   The user can pass an existing XEVENT X11 structure, which is then
+destructively filled with the received event's contents, or an unbound
+variable. In the latter case, `check_window_event/4' will unify XEVENT
+with a private, local structure, which the user can not hang on to, but
+is guaranteed not to change its value until the next call to an event
+getting routine.
+
+   EVENTMASK is an integer bitmask, that specifies the selected events.
+The predicate `event_list_mask/2' is useful to translate between X11
+event mask names and bitmasks.
+
+
+File: quintus.info,  Node: pxl-evf-mask_event,  Next: pxl-evf-check_mask_event,  Prev: pxl-evf-check_window_event,  Up: pxl-evf
+
+`mask_event/[3,4]'
+------------------
+
+     mask_event(+EVENTMASK, -TYPE, ?XEVENT)
+     mask_event(+DISPLAYABLE, +EVENTMASK, -TYPE, ?XEVENT)
+
+   Search the event queue for the given DISPLAYABLE and remove the
+first event that is selected by the given EVENTMASK.  If DISPLAYABLE is
+omitted, the queues for all ProXL displays are searched.  Unifies TYPE
+with the type of event removed.  Other events in the queue are not
+discarded.
+
+   If there is no qualifying event in the queue, `mask_event/[3,4]'
+flushes the output queue and blocks until one is received.  If
+DISPLAYABLE is specified, and events for which callbacks are registered
+arrive on other displays, they will be handled, and `mask_event/3' will
+continue to wait for an event on the specified DISPLAYABLE.
+
+   The user can pass an existing XEVENT X11 structure, which is then
+destructively filled with the received event's contents, or an unbound
+variable. In the latter case, `mask_event/[3,4]' will unify XEVENT with
+a private, local structure, which the user can not hang on to, but is
+guaranteed not to change its value until the next call to an event
+getting routine.
+
+   EVENTMASK is an integer bitmask, that specifies the selected events.
+The predicate `event_list_mask/2' is useful to translate between X11
+event mask names and bitmasks.
+
+
+File: quintus.info,  Node: pxl-evf-check_mask_event,  Next: pxl-evf-check_typed_event,  Prev: pxl-evf-mask_event,  Up: pxl-evf
+
+`check_mask_event/[3,4]'
+------------------------
+
+     check_mask_event(+EVENTMASK, -TYPE, ?XEVENT)
+     check_mask_event(+DISPLAYABLE, +EVENTMASK, -TYPE, ?XEVENT)
+
+   Are like `mask_event/[3,4]', but fail if there is no matching event
+in the queue, and do not block waiting for one. The output buffer is
+flushed only on failure.
+
+   The user can pass an existing XEVENT X11 structure, which is then
+destructively filled with the received event's contents, or an unbound
+variable. In the latter case, `check_mask_event/[3,4]' will unify
+XEVENT with a private, local structure, which the user can not hang on
+to, but is guaranteed not to change its value until the next call to an
+event getting routine.
+
+   EVENTMASK is an integer bitmask, that specifies the selected events.
+The predicate `event_list_mask/2' is useful to translate between X11
+event mask names and bitmasks.
+
+
+File: quintus.info,  Node: pxl-evf-check_typed_event,  Next: pxl-evf-check_typed_window_event,  Prev: pxl-evf-check_mask_event,  Up: pxl-evf
+
+`check_typed_event/[2,3]'
+-------------------------
+
+     check_typed_event(+TYPE, ?XEVENT)
+     check_typed_event(+DISPLAYABLE, +TYPE, ?XEVENT)
+
+   Succeed only if there is an event of the given TYPE in the event
+queue for the given DISPLAYABLE, which if omitted, is the default
+Display. Other events in the queue are not discarded.  If there is no
+matching event in the queue, they fail, and do not block waiting for
+events. The output buffer is flushed only on failure.
+
+   The user can pass an existing XEVENT X11 structure, which is then
+destructively filled with the received event's contents, or an unbound
+variable. In the latter case, `check_typed_event/[2,3]' will unify
+XEVENT with a private, local structure, which the user can not hang on
+to, but is guaranteed not to change its value until the next call to an
+event getting routine.
+
+
+File: quintus.info,  Node: pxl-evf-check_typed_window_event,  Next: pxl-evf-put_back_event,  Prev: pxl-evf-check_typed_event,  Up: pxl-evf
+
+`check_typed_window_event/3'
+----------------------------
+
+     check_typed_window_event(+WINDOW, +TYPE, ?XEVENT)
+
+   Succeeds only if there is an event in the event queue for the
+WINDOW's Display, that is intended for WINDOW and is of the given TYPE.
+Other events in the queue are not discarded. If there is no matching
+event in the queue, it fails and does not block waiting for events. The
+output buffer is flushed only on failure.
+
+   The user can pass an existing XEVENT X11 structure, which is then
+destructively filled with the received event's contents, or an unbound
+variable. In the latter case, `check_typed_window_event/3' will unify
+XEVENT with a private, local structure, which the user can not hang on
+to, but is guaranteed not to change its value until the next call to an
+event getting routine.
+
+
+File: quintus.info,  Node: pxl-evf-put_back_event,  Next: pxl-evf-send_event,  Prev: pxl-evf-check_typed_window_event,  Up: pxl-evf
+
+`put_back_event/[1,2]'
+----------------------
+
+     put_back_event(+XEVENT)
+     put_back_event(+DISPLAYABLE, +XEVENT)
+
+   Pushes back the given XEVENT event structure at the front of the
+event queue for the given DISPLAYABLE, which if omitted, is the default
+Display. No checking of values is performed. _Be careful_.
+
+
+File: quintus.info,  Node: pxl-evf-send_event,  Next: pxl-evf-send,  Prev: pxl-evf-put_back_event,  Up: pxl-evf
+
+`send_event/[4,5]'
+------------------
+
+     send_event(+WINDOWSPEC, +PROPAGATE, +EVENTMASK, +XEVENT)
+     send_event(+DISPLAYABLE, +WINDOWSPEC, +PROPAGATE, +EVENTMASK, +XEVENT)
+
+   Asks the server to send the event XEVENT, an  X11 event structure,
+to the specified window. Fail if XEVENT could not be converted into the
+server format, usually a sign that the event `type' is invalid. The
+delivered event will have a value of `true' in its `send_event' field.
+
+   The argument WINDOWSPEC can be:
+A valid ProXL Window
+     In this case the event will be sent to the Window and its Display
+     is used as the Display connection. If DISPLAYABLE was specified,
+     it must have the same Display as the Window.
+
+`pointer_window'
+     In this case the event will be send to the window that the pointer
+     is in. If DISPLAYABLE was not specified, the default Display is
+     used.
+
+`input_focus'
+     In this case, if the focus window contains the pointer, the event
+     will be sent to the window that contains the pointer. Otherwise,
+     the event will be sent to the focus window.  If DISPLAYABLE was
+     not specified, the default Display is used.
+
+   PROPAGATE is a boolean value and EVENTMASK an integer bitmask that
+specifies the selected events.
+
+   `send_event/[4,5]' uses the PROPAGATE and EVENTMASK arguments to
+determine which clients should receive the specified events as follows:
+If EVENTMASK is 0
+     The event is sent to the client that created the receiving window.
+     If that client no longer exists, no event is sent.
+
+If PROPAGATE is `false'
+     The event is sent to every client selecting any of the event types
+     from EVENTMASK on the receiving window.
+
+If PROPAGATE is `true'
+     The event propagates up the receiving window hierarchy in the
+     normal way.
+
+   The predicate `event_list_mask/2' is useful to translate between X11
+event mask names and bitmasks.
+
+   No checking on the validity of the event contents is performed.
+
+
+File: quintus.info,  Node: pxl-evf-send,  Next: pxl-evf-get_event_values,  Prev: pxl-evf-send_event,  Up: pxl-evf
+
+`send/[4,5]'
+------------
+
+     send(+WINDOWSPEC, +PROPAGATE, +EVENTMASK, +EVENTVALUES)
+     send(+DISPLAYABLE, +WINDOWSPEC, +PROPAGATE, +EVENTMASK, +EVENTVALUES)
+
+   Are analogous to `send_event/[4,5]', except that instead of taking an
+XEVENT event structure argument, take EVENTVALUES, a list of event
+field values in the style of the callback mechanism.
+
+   The elements of EVENTVALUES will be used to fill an X11 event
+structure to send, and must contain at least a `type' field. If no
+`display' is specified, the default Display is used.
+
+   No checking on the validity of the event contents is performed.
+
+
+File: quintus.info,  Node: pxl-evf-get_event_values,  Next: pxl-evf-put_event_values,  Prev: pxl-evf-send,  Up: pxl-evf
+
+`get_event_values/2'
+--------------------
+
+     get_event_values(+XEVENT, +EVENTVALUES)
+
+   Unifies the elements of EVENTVALUES, a list of event field values in
+the style of the callback mechanism, with the contents of the given
+XEVENT event structure.
+
+
+File: quintus.info,  Node: pxl-evf-put_event_values,  Next: pxl-evf-get_motion_events,  Prev: pxl-evf-get_event_values,  Up: pxl-evf
+
+`put_event_values/2'
+--------------------
+
+     put_event_values(+XEVENT, +EVENTVALUES)
+
+   Destructively sets the contents of the given XEVENT event structure
+to the values given by the elements of EVENTVALUES, a list of event
+field values in the style of the callback mechanism.
+
+   EVENTVALUES must at least contain a `type' element, and if the
+`display' is not given, the default Display is used.
+
+   No checking on the validity of the event contents is performed.
+
+
+File: quintus.info,  Node: pxl-evf-get_motion_events,  Prev: pxl-evf-put_event_values,  Up: pxl-evf
+
+`get_motion_events/4'
+---------------------
+
+   If your server supports a motion history buffer, the predicate:
+     get_motion_events(+WINDOW, +START, +STOP, -TIMEEVENTS)
+
+   Unifies TIMEEVENTS with a list of terms of the form
+`time_coord(TIME, X, Y)'.
+
+   This are all the events in the motion history buffer that fall
+between the specified timestamps START and STOP (inclusive), and have
+coordinates that lie within the specified WINDOW.
+
+   The START and STOP arguments should be timestamps, in milliseconds,
+or the constant `current_time'.
+
+
+File: quintus.info,  Node: pxl-eh,  Next: pxl-evf,  Prev: pxl-ev,  Up: pxl
+
+Handling Errors Under ProXL
+===========================
+
+* Menu:
+
+* pxl-eh-bas::                          Introduction
+* pxl-eh-rec::                          Recoverable Errors
+* pxl-eh-fat::                          Fatal Errors
+* pxl-eh-eh::                           The ProXL Error Handler
+* pxl-eh-eho::                          Error Handling Options
+
+   This section discusses how errors are handled under ProXL, how to
+set up the action that you want the system to take when an error occurs
+and how to install your own error handler.
+
+
+File: quintus.info,  Node: pxl-eh-bas,  Next: pxl-eh-rec,  Up: pxl-eh
+
+Introduction
+------------
+
+   Under X11, error messages are usually asynchronous, because of the
+nature of the network connections and the need to batch requests to
+improve performance.
+
+   The server generates error events that are sent to the Display
+connection and handled, as soon as they arrive, by one of two error
+handlers, depending on the severity of the error. It is not possible to
+register callback routines for error handling, because of the
+fundamentally different way from other events that errors are handled
+by under X.
+
+
+File: quintus.info,  Node: pxl-eh-rec,  Next: pxl-eh-fat,  Prev: pxl-eh-bas,  Up: pxl-eh
+
+Recoverable Errors
+------------------
+
+   Recoverable errors are handled by the ProXL Error handler and are
+any of the following types:
+`bad_request'
+     If the request made to the X Server was invalid.
+
+`bad_value'
+     If an integer argument is out of range.
+
+`bad_window'
+     If a Window argument is invalid.
+
+`bad_pixmap'
+     If a Pixmap argument is invalid.
+
+`bad_atom'
+     If an Atom argument is invalid.
+
+`bad_cursor'
+     If a Cursor argument is invalid.
+
+`bad_font'
+     If a Font argument is invalid.
+
+`bad_match'
+     If there is an argument mismatch.
+
+`bad_drawable'
+     If an argument is not a Window or Pixmap.
+
+`bad_access'
+     If the operation can't be performed.
+
+`bad_alloc'
+     If there are insufficient resources.
+
+`bad_color'
+     If there is no such colormap.
+
+`bad_gc'
+     If a GC argument is invalid.
+
+`bad_id_choice'
+     If the choice is not in the appropriate range or is already in use.
+
+`bad_name'
+     If the named Font or Color do not exist.
+
+`bad_length'
+     If the request length is incorrect.
+
+`bad_implementation'
+     If your server is defective.
+
+   ProXL routines do extensive checking of their arguments to try and
+detect invalid parameters before actually making a call to the X
+server. However, it is impossible to cover all the cases, and sometimes
+recoverable errors are signaled by the server.
+
+   Recoverable errors invoke a user-definable error handler. Under
+ProXL, the default error handler provided prints an error message and
+presents a list of options to the user.
+
+   The user can provide her own error handler routine, but it _must_ be
+written in C and follow the guidelines set up for handlers under X11.
+The user should read the Xlib X11 documentation on errors and error
+handling before attempting to do this.
+
+
+File: quintus.info,  Node: pxl-eh-fat,  Next: pxl-eh-eh,  Prev: pxl-eh-rec,  Up: pxl-eh
+
+Fatal Errors
+------------
+
+   Fatal errors under X11 include I/O errors or system call errors,
+such as irrecoverable network problems, attempts to establish a
+connection to non-existent, or non-accessible server, etc.
+
+   Since X automatically exits after detecting a fatal error and gives
+no real chance of correcting the problem, ProXL uses the default X
+fatal error handler, which just prints a message and exists.
+
+   If you feel you need to change this handler, we suggest that you
+consult the X11 documentation.
+
+
+File: quintus.info,  Node: pxl-eh-eh,  Next: pxl-eh-eho,  Prev: pxl-eh-fat,  Up: pxl-eh
+
+The ProXL Error Handler
+-----------------------
+
+   The ProXL error handler, if installed, will print a reasonably
+intelligent error message and then act according to the user-specified
+options.  By default, it presents the following prompt and waits for
+user input:
+     ProXL Error Handler (h for help)?
+
+   Th options available are:
+     ProXL Error options:
+      c continue - do nothing
+      t trace    - debugger will start creeping
+      d debug    - debugger will start leaping
+      a abort    - cause Prolog abort
+      e exit     - irreversible exit from Prolog
+      A Abort    - cause Prolog abort and set this mode as the default
+      h help     - print this message
+
+
+File: quintus.info,  Node: pxl-eh-eho,  Prev: pxl-eh-eh,  Up: pxl-eh
+
+Error Handling Options
+----------------------
+
+* Menu:
+
+* pxl-eh-eho-error_action::             error_action/[2,3]
+* pxl-eh-eho-synchronize::              synchronize/[1,2]
+
+   The user can set error handling modes and enter synchronize mode
+when debugging.
+
+
+File: quintus.info,  Node: pxl-eh-eho-error_action,  Next: pxl-eh-eho-synchronize,  Up: pxl-eh-eho
+
+`error_action/[2,3]'
+....................
+
+   Under ProXL, if the ProXL error handler is installed, it is possible
+to select a per-Display action using:
+     error_action(+DISPLAYABLE, -OLD, +NEW)
+     error_action(-OLD, +NEW)
+
+   If DISPLAYABLE is omitted, the default Display is used.
+
+   OLD is unified with the previous action for the DISPLAY and the new
+value is set from NEW.
+
+   The available options for `error_action' are:
+`user'
+     If the user is installing her own C error handler.
+
+`xhandler'
+     If the user wants the X11 default error handler.
+
+`continue'
+     If the user wants the ProXL error handler installed in 'continue'
+     mode for the given Display.
+
+`trace'
+     If the user wants the ProXL error handler installed in trace mode
+     for the given Display.
+
+`debug'
+     If the user wants the ProXL error handler installed in debug mode
+     for the given Display.
+
+`abort'
+     If the user wants the ProXL error handler installed in abort mode
+     for the given Display.
+
+`exit'
+     If the user wants the ProXL error handler installed in exit mode
+     for the given Display.
+
+`menu'
+     If the user wants the ProXL error handler installed and the show
+     menu mode set for the given Display.
+
+`default'
+     Same as `menu'.
+
+
+File: quintus.info,  Node: pxl-eh-eho-synchronize,  Prev: pxl-eh-eho-error_action,  Up: pxl-eh-eho
+
+`synchronize/[1,2]'
+...................
+
+   Because of the asynchronous nature of X, localizing the source of
+errors can be very difficult. By putting the Display connection in
+"synchronous" mode, the user is certain that requests are carried out
+immediately and that errors will be reported as soon as the offending
+requests are finished. The performance of the ProXL system will be
+severly degraded when operating under this mode, so it should only be
+used for debugging purposes.
+
+     synchronize(+DISPLAYABLE, +GOAL)
+     synchronize(+GOAL)
+
+   If DISPLAYABLE is omitted, the default Display is used.
+
+   When using `synchronize/[1,2]', the DISPLAYABLE connection is put in
+synchronous mode while the given GOAL is executed. Synchronization is
+turned off when GOAL finishes, or if execution is aborted.
+
+
+File: quintus.info,  Node: pxl-wmf,  Next: pxl-col,  Prev: pxl-util,  Up: pxl
+
+Window Manager Functions
+========================
+
+* Menu:
+
+* pxl-wmf-lif::                         Controlling the Lifetime of a Window
+* pxl-wmf-grp::                         Grabbing the Pointer
+* pxl-wmf-grk::                         Grabbing the Keyboard
+* pxl-wmf-grs::                         Grabbing the Server
+* pxl-wmf-misc::                        Miscellaneous Control Functions
+* pxl-wmf-pctl::                        Pointer Control
+* pxl-wmf-kbd::                         Keyboard Control
+* pxl-wmf-ssav::                        Screen Saver Control
+
+   Most of the functions provided here are most often used by Window
+Managers, and not normal applications. Nevertheless, some are useful in
+other situations.
+
+   These functions allow the user to:
+   * Control the lifetime of a window.
+
+   * Grab the pointer.
+
+   * Grab the Keyboard.
+
+   * Grab the server.
+
+   * Control event processing.
+
+   * Manipulate the keyboard and pointer settings.
+
+   * Control the screen saver.
+
+
+File: quintus.info,  Node: pxl-wmf-lif,  Next: pxl-wmf-grp,  Up: pxl-wmf
+
+Controlling the Lifetime of a Window
+------------------------------------
+
+* Menu:
+
+* pxl-wmf-lif-change_save_set::         change_save_set/[2,3]
+
+   The save set of a client is a list of other client's windows, which
+if they are inferiors of one of the client's windows at connection
+close, should not be destroyed, but reparented.
+
+
+File: quintus.info,  Node: pxl-wmf-lif-change_save_set,  Up: pxl-wmf-lif
+
+`change_save_set/[2,3]'
+.......................
+
+     change_save_set(+DISPLAYABLE, +WINDOW, +SAVESETMODE)
+     change_save_set(+WINDOW, +SAVESETMODE)
+
+   Adds or deletes the given WINDOW from the given DISPLAYABLE's save
+set. If DISPLAYABLE is omitted, the default Display is used.
+
+   SAVESETMODE specifies the action:
+`insert'
+     If WINDOW should be added to the Display's save set.
+
+`delete'
+     If WINDOW should be deleted from the Display's save set.
+
+   WINDOW must have been created by another client.
+
+
+File: quintus.info,  Node: pxl-wmf-grp,  Next: pxl-wmf-grk,  Prev: pxl-wmf-lif,  Up: pxl-wmf
+
+Grabbing the Pointer
+--------------------
+
+* Menu:
+
+* pxl-wmf-grp-grab_pointer::            grab_pointer/9
+* pxl-wmf-grp-grab_button::             grab_button/9
+* pxl-wmf-grp-ungrab_button::           ungrab_button/3
+* pxl-wmf-grp-ungrab_pointer::          ungrab_pointer/[0,1,2]
+* pxl-wmf-grp-change_active_pointer_grab::change_active_pointer_grab/[3,4]
+
+   Normally mouse events are delivered as soon as they occur to the
+appropriate window and client, as determined by the window event masks
+and the input focus.  The routines described in this section allow the
+user to grab the mouse.  When a grab is in effect, events are sent to
+the grabbing client, rather than to the normal client who would have
+received the event. If the keyboard or pointer is put in asynchronous
+mode, further mouse and keyboard events will continue to be processed.
+If the keyboard or pointer is put in synchronous mode, no further
+events will be processed until the grabbing client allows them (see
+`allow_events').
+
+   There are two kinds of grabs: active and passive. An active grab
+occurs when a single client grabs the pointer explicitly. Clients can
+also grab a particular pointer button in a window, this is called a
+"passive grab" and activates when the button is actually pressed.
+
+   Many of the operations take a TIME argument, which can be
+`current_time' (the X server current time) or an actual timestamp in
+milliseconds.
+
+
+File: quintus.info,  Node: pxl-wmf-grp-grab_pointer,  Next: pxl-wmf-grp-grab_button,  Up: pxl-wmf-grp
+
+`grab_pointer/9'
+................
+
+     grab_pointer(+WINDOW,
+             +OWNEREVENTS, +EVENTSMASK, +POINTERMODE,
+             +KEYBOARDMODE,
+             +WINDOWCONFINE, +CURSOR, +TIME,
+             -GRABSTATUS)
+
+   This predicate actively grabs control of the pointer and generates
+`enter_notify' and `leave_notify' events as appropriate.
+
+   WINDOW is the ProXL window to which events will be reported while
+the grab is in effect.
+
+   OWNEREVENTS is one of:
+`true'
+     If pointer events should be reported normally.
+
+`false'
+     If pointer events should be reported only to the the grab window.
+
+   EVENTSMASK is an integer bitmask specifying the events that are
+selected and should be reported to the client. The valid event mask
+names are:
+   * `button_press'
+
+   * `button_release'
+
+   * `enter_window'
+
+   * `leave_window'
+
+   * `pointer_motion'
+
+   * `pointer_motion_hint'
+
+   * `button1_motion'
+
+   * `button2_motion'
+
+   * `button3_motion'
+
+   * `button4_motion'
+
+   * `button5_motion'
+
+   * `button_motion'
+
+   * `keymap_state'
+
+   The predicate `event_list_mask/2' is useful to translate between
+event mask names and integer bitmasks.
+
+   POINTERMODE controls further processing of pointer events:
+`async'
+     Pointer event processing continues normally.
+
+`sync'
+     The state of the pointer, as seen by applications, appears to
+     freeze. No further pointer events are generated until the grabbing
+     client calls `allow_events/[1,2,3]' or the pointer grab is
+     released.
+
+   KEYBOARDMODE controls further processing of keyboard events:
+`async'
+     Keyboard event processing continues normally.
+
+`sync'
+     The state of the keyboard, as seen by applications, appears to
+     freeze. No further keyboard events are generated until the
+     grabbing client calls `allow_events/[1,2,3]' or the keyboard grab
+     is released.
+
+   WINDOWCONFINE is the ProXL window to which the pointer will be
+confined while the grab is in effect, or the atom `none'.
+
+   CURSOR is the ProXL cursor to be displayed during the grab, or the
+atom `none'.
+
+   TIME is a timestamp in milliseconds (from an event) or the atom
+`current_time'.
+
+   GRABSTATUS is unified by `grab_pointer/9' with one of:
+`success'
+     If the grab was successful.
+
+`already_grabbed'
+     If the attempt is unsuccessful because the pointer is already
+     actively grabbed  by some other client.
+
+`invalid_time'
+     If the attempt is unsuccessful because the specified TIME is
+     earlier than the last-pointer-grab time, or later than the current
+     server time.
+
+`not_viewable'
+     If the attempt is unsuccessful because either of the grabbing
+     WINDOW or the WINDOWCONFINE is not viewable.
+
+`frozen'
+     If the attempt is unsuccessful because the pointer is frozen by an
+     active grab of another client.
+
+
+File: quintus.info,  Node: pxl-wmf-grp-grab_button,  Next: pxl-wmf-grp-ungrab_button,  Prev: pxl-wmf-grp-grab_pointer,  Up: pxl-wmf-grp
+
+`grab_button/9'
+...............
+
+     grab_button(+BUTTONGRAB, +MODIFIERSMASK,
+             +GRABWINDOW, +OWNEREVENTS, +EVENTSMASK,
+             +POINTERMODE, +KEYBOARDMODE, +WINDOWCONFINE,
+             +CURSOR)
+
+   This predicate establishes a passive grab on the pointer, activated
+when a specified button and set of modifiers are pressed while the
+pointer is in the grab window.
+
+   BUTTONGRAB is the pointer button to be grabbed, possible values are:
+1 to 5
+     The button number.
+
+`any_button'
+   MODIFIERSMASK is one of:
+An integer
+     A bitmask giving the state of the modifier masks. The predicate
+     `modifiers_mask/2' is useful to translate between modifier
+     specifications and bitmasks.
+
+`any_modifier'
+   GRABWINDOW is the ProXL window to which events will be reported while
+the grab is in effect.
+
+   OWNEREVENTS is one of:
+`true'
+     If pointer events should be reported normally.
+
+`false'
+     If pointer events should be reported only to the grab window.
+
+   EVENTSMASK is an integer bitmask specifying the events that are
+selected and should be reported to the client. The valid event mask
+names are:
+   * `button_press'
+
+   * `button_release'
+
+   * `enter_window'
+
+   * `leave_window'
+
+   * `pointer_motion'
+
+   * `pointer_motion_hint'
+
+   * `button1_motion'
+
+   * `button2_motion'
+
+   * `button3_motion'
+
+   * `button4_motion'
+
+   * `button5_motion'
+
+   * `button_motion'
+
+   * `keymap_state'
+
+   The predicate `event_list_mask/2' is useful to translate between
+event mask names and integer bitmasks.
+
+   POINTERMODE controls further processing of pointer events:
+`async'
+     If pointer event processing continues normally.
+
+`sync'
+     If the state of the pointer, as seen by applications, appears to
+     freeze. No further pointer events are generated until the grabbing
+     client calls `allow_events/[1,2,3]' or the pointer grab is
+     released.
+
+   KEYBOARDMODE controls further processing of keyboard events:
+`async'
+     If keyboard event processing continues normally.
+
+`sync'
+     If the state of the keyboard, as seen by applications appears to
+     freeze. No further keyboard events are generated until the
+     grabbing client calls `allow_events/[1,2,3]' or the keyboard grab
+     is released.
+
+   WINDOWCONFINE is the ProXL window to which the pointer will be
+confined during the grab, or the atom `none'.
+
+   CURSOR is the ProXL cursor to be displayed during the grab, or the
+atom `none'.
+
+
+File: quintus.info,  Node: pxl-wmf-grp-ungrab_button,  Next: pxl-wmf-grp-ungrab_pointer,  Prev: pxl-wmf-grp-grab_button,  Up: pxl-wmf-grp
+
+`ungrab_button/3'
+.................
+
+     ungrab_button(+BUTTONUNGRAB, +MODIFIERSMASK, +UNGRABWINDOW)
+
+   Releases the passive button/key combination grab on the specified
+window, if it was grabbed by the client. It has no effect on an active
+grab.
+
+   BUTTONUNGRAB is the pointer button to be released, possible values
+are:
+1 to 5
+
+`any_button'
+   MODIFIERSMASK is one of:
+An integer
+     A bitmask giving the state of the modifier masks. The predicate
+     `modifiers_mask/2' is useful to translate between modifier
+     specifications and bitmasks.
+
+`any_modifier'
+   UNGRABWINDOW is the ProXL window where the grab is in effect.
+
+
+File: quintus.info,  Node: pxl-wmf-grp-ungrab_pointer,  Next: pxl-wmf-grp-change_active_pointer_grab,  Prev: pxl-wmf-grp-ungrab_button,  Up: pxl-wmf-grp
+
+`ungrab_pointer/[0,1,2]'
+........................
+
+     ungrab_pointer
+     ungrab_pointer(+TIME)
+     ungrab_pointer(+DISPLAYABLE, +TIME)
+
+   Release the pointer and any queued events if this client has it
+actively grabbed, unless the TIME specified is earlier that the
+last-pointer-grab time or later than the current server time. It also
+generates `focus_in' and `focus_out' events.
+
+   DISPLAYABLE is the ProXL Displayable. If omitted, the default
+Display is used.
+
+   TIME is a timestamp in milliseconds (from an event) or
+`current_time'. If omitted, `current_time' is used.
+

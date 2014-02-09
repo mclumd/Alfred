@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Side-Effects in Compile-Time Code</h5>
+
+   <p>One other way to add clauses to <code>qpc</code>'s internal database is to
+assert them in an embedded command.  For example, the sequence:
+<pre class="example">     :- asserta(f(x)).
+     :- f(X), write(X), nl.
+     </pre>
+
+   <p>in a file given to <code>qpc</code> will work just as it would if the file
+were compiled into the Development System.
+
+   <p>There are some problems with asserting clauses like this.  One problem
+is that the asserted clauses will not be available at run-time.  If
+the file had been loaded into the Development System, they would be
+available when the program was run.
+
+   <p>Another problem arises if the compilation of one file depends on facts
+that are expected to be asserted into the database during the
+compilation of some other file.  An approach of this sort may be
+useful in the Development System, but it is contradictory to the
+notion of independent compilation (see the first figure), which is
+one of the important features of <code>qpc</code>.  This problem is not
+specific to asserting clauses; it arises with any compile-time
+side-effects that are intended to affect future compilation.
+
+   <p>It is possible to avoid using separate compilation, by always
+recompiling your entire program every time any part of it is modified. 
+It is still not generally safe to use compile-time side-effects in one
+file that affect the compilation of other files.  This is because the
+order in which files are compiled is different in <code>qpc</code>. 
+When <code>qpc</code> finds a command to compile a file, it looks in
+that file immediately to find out whether it is a module-file and if
+so what are its exports.  But it does not actually compile the file
+immediately: it puts it on a queue to be compiled when the current
+file has been finished with.  This is in contrast to compilation in
+the Development System, where embedded <code>compile/1</code> commands are
+processed immediately as they are encountered.
+
+   <p>Therefore, it is strongly recommended that side-effects in
+compile-time code be avoided, or at least restricted so that only the
+compilation of the current file is affected.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-srs-eci-mec.html#sap-srs-eci-mec">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-srs-eci-inf.html#sap-srs-eci-inf">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-srs-eci.html#sap-srs-eci">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">The Cut</h4>
+
+   <p>Besides the sequencing of goals and clauses, Prolog provides one
+other  very  important  facility  for  specifying control information. 
+This is the <dfn>cut</dfn>, written <code>!</code>. 
+It is  inserted  in  the  program
+just  like  a  goal, but is not to be regarded as part of the logic of
+the program and should be ignored as far as the declarative  semantics
+is concerned.
+
+   <p>The  effect  of  the  cut  is  as  follows.   When  first
+encountered  as  a  goal,  cut  succeeds immediately.  If backtracking
+should later return to the cut, the effect  is  to  fail  the  <em>parent
+goal</em>, that goal that matched the head of the clause containing
+the cut, and caused the clause to be activated.  In other  words,  the
+cut  operation <em>commits</em> the system to all choices made since the parent
+goal was invoked, and causes other alternatives to be discarded.   The
+goals  thus  rendered  <em>determinate</em>  are  the parent goal itself, any
+goals occurring before the cut in the clause containing the  cut,  and
+any  subgoals  that  were  executed  during  the  execution  of those
+preceding goals.
+
+   <p>For example, the procedure
+<pre class="example">     member(X, [X|L]).
+     member(X, [Y|L]) :-
+        member(X, L).
+     </pre>
+
+   <p>can be used to test whether a given term is in a list:
+<pre class="example">     | ?- <kbd>member(b, [a,b,c]).</kbd>
+     </pre>
+
+   <p>returns the answer <code>yes</code>. 
+The procedure can also be used to extract elements from a list, as in
+<pre class="example">     | ?- <kbd>member(X, [d,e,f]).</kbd>
+     </pre>
+
+   <p>With backtracking this will successively return each element of the list. 
+Now suppose that the first clause had been written instead:
+<pre class="example">     member(X, [X|L]) :- !.
+     </pre>
+
+   <p>In this case, the second call above would extract only the first element
+of the list (<code>d</code>). 
+On backtracking, the cut would immediately fail the entire procedure.
+
+   <p>Another example:
+<pre class="example">     x :- p, !, q.
+     x :- r.
+     </pre>
+
+   <p>This is analogous to "if p then q else r" in an Algol-like language.
+
+   <p>Note that a cut discards all the alternatives subsequent to
+the parent goal, even when the cut appears within  a  disjunction.  This
+means  that  the normal method for eliminating a disjunction -- by
+defining
+an extra predicate -- cannot be applied to a disjunction containing a
+cut.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-sem-occ.html#ref-sem-occ">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-sem-sec.html#ref-sem-sec">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-sem.html#ref-sem">Up</a>
+</ul>
+</div>
+   </body></html>
+

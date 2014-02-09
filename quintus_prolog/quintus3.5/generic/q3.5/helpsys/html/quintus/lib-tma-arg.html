@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Finding a Term's Arguments -- <code>library(arg)</code></h4>
+
+   <p><code>library(arg)</code> defines seven predicates, all of which are generalizations
+of the built-in predicate <code>arg/3</code>.
+
+     <dl>
+
+     <br><dt><code>arg(</code><var>+ArgNum</var><code>, </code><var>+Term</var><code>, </code><var>-Arg</var><code>)</code>
+     <dd>
+unifies <var>Arg</var> with the <var>ArgNum</var>th argument of <var>Term</var>. 
+<var>Term</var> must not be a variable, but any other kind of term is
+acceptable.  Even a number is acceptable as <var>Term</var>; numbers
+are simply terms that happen to have no arguments. 
+<var>ArgNum</var> must be instantiated to an integer.  If <var>ArgNum</var> is
+less than 1 or greater than the number of arguments of <var>Term</var>,
+<code>arg/3</code> signals an error.  Basically, <code>arg/3</code> pretends to be the
+infinite table
+     <pre class="example">          arg(1, a(X), X).
+          arg(1, a(X,_), X).
+          arg(2, a(_,X), X).
+          ...
+          arg(5, zebra_finch(_,_,_,_,X,_,_,_), X).
+          ...
+          </pre>
+
+     <p>except that it can only be used to
+find the <var>Arg</var> for a given <var>Index</var> and <var>Term</var>, and cannot
+find the <var>Index</var>.  <code>arg/3</code> is a built-in predicate, and is  described
+in the reference pages, not
+actually defined in <code>library(arg)</code>.
+
+     <br><dt><code>arg0(</code><var>+Index</var><code>, </code><var>+Term</var><code>, </code><var>?Arg</var><code>)</code>
+     <dd>
+unifies <var>Arg</var> with the <var>Index</var>th argument of <var>Term</var> if
+<code></code><var>Index</var><code> &gt; 0</code>, or with the principal function symbol of
+<var>Term</var> if <code></code><var>Index</var><code> = 0</code>.  This predicate is supplied because
+some other Prolog implementations have
+made <code>arg/3</code> do this, and this makes it easier to convert
+code originally written for those systems. 
+The one reason you might use <code>arg0/3</code> is that it
+reports errors, while <code>arg/3</code>, for backwards compatibility
+with DEC-10 Prolog, does not.  Examples:
+     <pre class="example">          | ?- <kbd>arg0(2, f(o,x,y), X).</kbd>
+          
+          X = x
+          
+          | ?- <kbd>arg0(0, f(o,x,y), X).</kbd>
+          
+          X = f
+          
+          | ?- <kbd>arg0(N, f(o,x,y), X).</kbd>
+          ! Instantiation error in argument 1 of arg0/3
+          ! goal:  arg0(_732,f(o,x,y),_767)
+          
+          | ?- <kbd>arg0(y, f(o,x,y), N).</kbd>
+          ! Type error in argument 1 of arg0/3
+          ! integer expected, but y found
+          ! goal:  arg0(y,f(o,x,y),_764)
+          </pre>
+
+     <br><dt><code>genarg(</code><var>?Index</var><code>, </code><var>+Term</var><code>, </code><var>?Arg</var><code>)</code>
+     <dd>
+is a version of <code>arg/3</code> that is able to solve for
+<var>Index</var> as well as for <var>Arg</var>.
+     <pre class="example">          | ?- <kbd>arg(N, f(a,b), X).</kbd>
+          
+          no
+          
+          | ?- <kbd>genarg(N, f(a,b), X).</kbd>
+          
+          N = 2,
+          X = b <kbd>;</kbd>
+          
+          N = 1,
+          X = a <kbd>;</kbd>
+          
+          no
+          </pre>
+
+     <pre class="example">          | ?- <kbd>genarg(N, f(1,b,2), X), atom(X).</kbd>
+          
+          N = 2,
+          X = b <kbd>;</kbd>
+          
+          no
+          
+          | ?- <kbd>genarg(3, f(1,b,2), X).</kbd>
+          
+          X = 2
+          </pre>
+
+     <p>If <var>Index</var> is instantiated, <code>genarg/3</code> generates the same result as
+<code>arg/3</code>. 
+If <var>Index</var> is uninstantiated, <code>genarg/3</code> picks out each argument in turn. 
+The order in which the arguments are tried is <em>not</em> defined;
+the current implementation works from right to left, but this order should
+<em>not</em> be relied upon.
+
+     <br><dt><code>genarg0(</code><var>?Index</var><code>, </code><var>+Term</var><code>, </code><var>?Arg</var><code>)</code>
+     <dd>
+is a version of <code>arg0/3</code> that is able to solve for <var>Index</var> as well as
+<var>Arg</var>.
+
+     <br><dt><code>args(</code><var>?Index</var><code>, </code><var>+Terms</var><code>, </code><var>?Args</var><code>)</code>
+     <dd>
+is true when <var>Terms</var> and <var>Args</var> are lists of the same length,
+each element of <var>Terms</var> is instantiated to a term having at
+least <var>Index</var> arguments, and <code>arg(</code><var>Index</var><code>, </code><var>Term</var><code>, </code><var>Arg</var><code>)</code> is
+true for
+each pair <code>&lt;</code><var>Term</var><code>, </code><var>Arg</var><code>&gt;</code> of corresponding elements of
+<code>&lt;</code><var>Terms</var><code>, </code><var>Args</var><code>&gt;</code>. 
+<var>Index</var> is strictly positive, and only arguments are found, not
+principal function symbols.  This is a generalization of <code>genarg/3</code>.  For
+example,
+     <pre class="example">          | ?- <kbd>args(1, [a+b,c-d,e*f,g/h], X).</kbd>
+          
+          X = [a,c,e,g]
+          
+          | ?- <kbd>args(2, [a+A,c-B,e*C,g/D], [b,d,f,h]).</kbd>
+          
+          A = b,
+          B = d,
+          C = f,
+          D = h
+          </pre>
+
+     <pre class="example">          | ?- <kbd>args(I, [1-a,2-b,3-c,4-d], X).</kbd>
+          
+          I = 2,
+          X = [a,b,c,d] <kbd>;</kbd>
+          
+          I = 1,
+          X = [1,2,3,4]
+          </pre>
+
+     <br><dt><code>args0(</code><var>?Index</var><code>, </code><var>+Terms</var><code>, </code><var>?Args</var><code>)</code>
+     <dd>
+is like <code>args/3</code> except that <code></code><var>Index</var><code> = 0</code> selects the principal
+function symbol.
+     <pre class="example">          | ?- <kbd>args0(0, [a+b,c-d,e*f,g/h,27], X).</kbd>
+          
+          X = [+,-,*,/,27]
+          
+          | ?- <kbd>args0(I, [1-a,2-b,3-c,4-d], X).</kbd>
+          
+          I = 2,
+          X = [a,b,c,d] <kbd>;</kbd>
+          
+          I = 1,
+          X = [1,2,3,4] <kbd>;</kbd>
+          
+          I = 0,
+          X = [-,-,-,-]
+          </pre>
+
+     <p>This is a generalization of <code>genarg0/3</code>.
+
+     <br><dt><code>project(</code><var>+Terms</var><code>, </code><var>?Index</var><code>, </code><var>?Args</var><code>)</code>
+     <dd>
+is identical to <code>args0/3</code> except for the argument
+order.  The argument order of <code>project/3</code> is not
+consistent with anything else in the library.  This
+predicate is retained for backwards compatibility. 
+Use <code>args0/3</code> instead in new programs.
+
+     <br><dt><code>path_arg(</code><var>?Path</var><code>, </code><var>+Term</var><code>, </code><var>?SubTerm</var><code>)</code>
+     <dd>
+unifies <var>SubTerm</var> with the subterm of <var>Term</var> found by
+following <var>Path</var>, where <var>Path</var> is a sequence of positive integers.  For
+example, the goal
+     <pre class="example">          path_arg([I,J], MyTerm, MySubTerm)
+          </pre>
+
+     <p>unifies <code>MySubTerm</code> with the <code>J</code>'th argument of the <code>I</code>'th argument of <code>MyTerm</code>. 
+In general, <var>Term</var> should be ground. 
+<code>path_arg/3</code> may be regarded as a generalization of <code>genarg/3</code>. 
+It can be used to find the <var>SubTerm</var> and a known <var>Path</var>, or to
+find a <var>Path</var> to a known <var>SubTerm</var>.  It could have been defined
+as
+     <pre class="example">          path_arg([], Term, Term).
+          path_arg([Index|Indices], Term, SubTerm) :-
+                  genarg(Index, Term, Arg),
+                  path_arg(Indices, Arg, SubTerm).
+          </pre>
+
+     <p>The actual library program is rather more complicated because it
+contains error-reporting code.  Examples of its use include:
+     <pre class="example">          /* Here is a sample table of all the subterms of
+          /* the quadratic formula "(a*x^2) + (b*x) + c = 0"
+          /*
+          []          a*x^2+b*x+c=0
+          [1]         a*x^2+b*x+c
+          [1,1]       a*x^2+b*x
+          [1,1,1]     a*x^2
+          [1,1,1,1]   a
+          [1,1,1,2]     x^2
+          [1,1,1,2,1]   x
+          [1,1,1,2,2]     2
+          [1,1,2]           b*x
+          [1,1,2,1]         b
+          [1,1,2,2]           x
+          [1,2]                 c
+          [2]                     0
+          */
+          
+          | ?- <kbd>path_arg([1,1,2,2],   a*x^2+b*x+c=0, X).</kbd>
+          
+          X = x                              ^
+          </pre>
+
+     <pre class="example">          | ?- <kbd>path_arg([1,1,1,2,2], a*x^2+b*x+c=0, X).</kbd>
+          
+          X = 2                          ^
+          
+          | ?- <kbd>path_arg(Path,        a*x^2+b*x+c=0, b).</kbd>
+          
+          Path = [1,1,2,1]                 ^
+          </pre>
+
+     <p>This notation for locating subtrees of a tree is widely used
+throughout computer science. 
+</dl>
+
+   <p>Note that except for <code>project/3</code>, which is included only in the
+interests of backwards compatibility, all of these predicates
+have the same pattern of arguments:
+     <ul>
+
+     <li>first <var>Index</var> (or its equivalent, <var>Path</var>)
+<li>then <var>Term</var> (or <var>Terms</var>)
+<li>and finally <var>Arg</var> (or <var>Args</var>)
+</ul>
+
+   <p>For consistency,
+we recommend that you use this argument order for "selector" predicates
+generally:  first the argument or arguments that constitute the
+selector or index, then the thing or things that are being selected
+from, and finally the result or results.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-tma-changearg.html#lib-tma-changearg">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-tma-trm.html#lib-tma-trm">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-tma.html#lib-tma">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>prompt/[2,3]</code></h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>prompt(</code><var>-OldPrompt, +NewPrompt</var><code>)</code>
+
+   <p><code>prompt(</code><var>+Stream, -OldPrompt, +NewPrompt</var><code>)</code>
+
+   <p>Queries or changes the prompt string of the current input stream or an
+input stream <var>Stream</var>.
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>Stream</var> <dfn>stream_object</dfn>
+     <dd>a valid Prolog input stream.
+
+     <br><dt><var>OldPrompt</var> <dfn>atom</dfn>
+     <dd>the old prompt atom of the stream.
+
+     <br><dt><var>NewPrompt</var> <dfn>atom</dfn>
+     <dd>the new prompt atom of the stream.
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>A <dfn>prompt atom</dfn> is a sequence of characters that indicates the
+Prolog system is waiting for input when a "Read" or "Get" predicate is
+called.  If an input stream connected to a terminal is waiting for
+input at the beginning of a line (at line position 0), the prompt atom
+of the stream will be printed through an output stream associated with
+the same terminal.
+
+   <p>Prolog sets the prompt of the input stream to <code>|:</code>.  This is the
+prompt that can be changed by invoking <code>prompt/[2,3]</code>. 
+ Unlike state changes
+such as those implemented as prolog flags, the scope of a prompt
+change is a goal typed at the toplevel.  Therefore, the change is in
+force only until returning to the toplevel (prompt = <code>| ?- </code>).
+
+   <p>To <em>query</em> the current prompt atom of a stream, <var>OldPrompt</var> and
+<var>NewPrompt</var> should be the same unbound variable.  For example:
+<pre class="example">     prompt(X, X).  prompt(user_input, X, X).
+     </pre>
+     To <em>set</em> the prompt
+of a stream, <var>NewPrompt</var> should be an instantiated atom. 
+<code>prompt/2</code> queries or changes the prompt on the current Prolog input
+stream.
+
+<h4 class="subheading">Exceptions</h4>
+
+   <p>Stream errors (see <a href="ref-iou-sfh-est.html#ref-iou-sfh-est">ref-iou-sfh-est</a>),
+plus:
+     <dl>
+
+     <br><dt><code>instantiation_error</code>
+     <dd>
+                <var>NewPrompt</var> argument is not instantiated
+
+     <br><dt><code>type_error</code>
+     <dd>
+                <var>NewPrompt</var> is not an atom type
+</dl>
+
+<h4 class="subheading">Comments</h4>
+
+   <p>The "Load" predicates change the prompt of the input
+stream during the time operations are performed: If a built-in loading
+predicate is performed on the module <code>user</code> (such as <code>compile(user)</code>,
+etc.), the prompt string of the standard Prolog input stream,
+<code>user_input</code> (<code>user</code>) is set to <code>| </code>.  This prompt is not affected
+by <code>prompt/[2,3]</code>.
+
+   <p><code>prompt/3</code> succeeds for any valid input stream.  If the input stream
+is not a tty format stream, the Prolog system does not print out the prompt
+string when it is waiting input from the stream.
+
+   <p>Normally prompts only appear on <code>user_error</code> when the system is
+waiting for input on <code>user_input</code>.  These prompts are suppressed
+when <code>user_input</code> is not connected to a terminal, unless the
+<code>+tty</code> option to <code>prolog(1)</code> was specified.  (See
+<a href="fli-ios-tty.html#fli-ios-tty">fli-ios-tty</a>.)
+
+   <p>For prompts to be used on streams other than
+<code>user_input</code> or <code>user_error</code>, the C function <code>QP_add_tty()</code> must
+be used.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>QP_add_tty()</code>, <code>read/[1,2]</code>,
+<code>read_term/[2,3]</code>, <code>get/[1,2]</code>, <code>get0/[1,2]</code>
+<a href="fli-ios.html#fli-ios">fli-ios</a>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="mpg-ref-public.html#mpg-ref-public">Next</a>
+<li><a rel="previous" accesskey="p" href="mpg-ref-prolog_load_context.html#mpg-ref-prolog_load_context">Previous</a>
+<li><a rel="up" accesskey="u" href="mpg-ref.html#mpg-ref">Up</a>
+</ul>
+</div>
+   </body></html>
+

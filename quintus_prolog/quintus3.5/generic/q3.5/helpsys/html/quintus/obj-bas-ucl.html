@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Using Classes</h4>
+
+   <p>Given this definition, the following command creates an instance of
+the point class, assigning values to its <code>x</code> and <code>y</code> slots,
+and prints a description of the point.
+
+<pre class="example">     | ?- <kbd>create(point(3,4), PointObj),
+          PointObj &lt;- print(user).</kbd>
+     </pre>
+
+   <p>The print message prints <code>(3.0,4.0)</code>. The variable
+<code>PointObj</code> is bound to a Prolog term of the form
+
+<pre class="example">     <code>point(</code><var>Address</var><code>)</code>
+     </pre>
+
+   <p>where <var>Address</var> is essentially a pointer to the object.
+
+   <p>In general, an object belonging to a class <var>ClassName</var> will be
+represented by a Prolog term of the form
+
+<pre class="example">     <var>ClassName(Address)</var>
+     </pre>
+
+   <p>The name <var>ClassName</var> must be an atom. This manual refers to such a
+term as if it were the object, not just a pointer to the object. 
+Users are strongly discouraged from attempting to do pointer
+arithmetic with the address.
+
+   <p>After execution of this command, the point object still exists, but
+the variable <code>PointObj</code> can no longer be used to access it. So,
+while objects resemble clauses asserted into the Prolog database in
+their persistence, there is no automatic way to search for an object. 
+Objects are not automatically destroyed when they are no longer
+needed. And, there is no automatic way to save an object from one
+Prolog session to the next. It is the responsibility of the
+programmer to keep track of objects, perhaps calling the
+<code>destroy/1</code> predicate for particular objects that are no longer
+needed or asserting bookkeeping facts into the Prolog database to keep
+track of important objects.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-bas-la.html#obj-bas-la">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-bas-def.html#obj-bas-def">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-bas.html#obj-bas">Up</a>
+</ul>
+</div>
+   </body></html>
+

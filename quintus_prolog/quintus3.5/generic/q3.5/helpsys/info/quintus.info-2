@@ -1,0 +1,1172 @@
+This is info/quintus.info, produced by makeinfo version 4.3 from
+quintus.texi.
+
+INFO-DIR-SECTION Quintus Prolog
+START-INFO-DIR-ENTRY
+* Quintus Prolog Manual: (quintus).             The Quintus Prolog User's Manual.
+END-INFO-DIR-ENTRY
+   Generated 13 January 2004.
+
+
+File: quintus.info,  Node: bas-lod-sty,  Next: bas-lod-srs,  Prev: bas-lod-syn,  Up: bas-lod
+
+Style Warnings
+--------------
+
+   In addition to checking for syntax errors, Quintus Prolog also has a
+style checker, which displays warning messages whenever certain
+stylistic conventions are violated in a program.  Whereas syntax error
+messages indicate clauses that cannot be read into Prolog, style
+warnings simply indicate possible typing mistakes, or program
+construction that doesn't follow Quintus Prolog style conventions.  The
+style conventions for Quintus Prolog are listed below.  If you adhere
+to these conventions, you can use the style warnings to catch simple
+errors very easily.
+
+  1. Define all clauses for a given procedure in one file.  This is
+     essential; the load predicates do not allow the definition of a
+     procedure to be spread across more than one file unless the
+     procedure is declared multifile -- see `multifile/1' for more
+     information on this.  If a non-multifile procedure is defined in
+     more than one file, and all the files in which the procedure is
+     defined are compiled, each definition of the procedure in a new
+     file will wipe out any clauses for the procedure that were defined
+     in previous files.
+
+  2. Make all clauses for a given procedure contiguous in the source
+     file.  This doesn't mean that you should avoid leaving blank space
+     or putting comments between clauses, but simply that clauses for
+     one procedure should not be interspersed with clauses for another
+     procedure.
+
+  3. If a variable appears only once in a clause, either write that
+     variable as the single character `_' (the void variable), or begin
+     the variable name with the character `_'.
+
+   If any of these conditions are not met, you will be warned when the
+file containing the offending clauses is compiled.
+
+   If style convention 1 is violated, Prolog displays a message like
+the one shown below before it compiles each procedure that has been
+defined in another file that has already been loaded:
+     * Procedure foo/2 is being redefined in a different file -
+     *    Previous file: /ufs/george/file1
+     *    New file:      /ufs/george/file2
+     * Do you really want to redefine it? (y,n,p,s, or ?)
+
+   If you type `y', the definition in the file currently being loaded
+replaces the existing procedure definition.  If you type `n', the
+existing definition remains intact, and the definition in the file
+currently being loaded is ignored.  If you type `p' (for proceed), the
+definition in the file currently being loaded replaces the existing
+definition; furthermore, the remaining procedure definitions in the file
+`/ufs/george/file2' will automatically replace any existing definitions
+made by the file `/ufs/george/file1' without displaying any warning
+messages.  If you type `s' (for suppress), the existing definition
+remains intact and the definition in the file currently being loaded is
+ignored; furthermore, the remaining procedure definitions in the file
+`/ufs/george/file2' which attempt to replace definitions made by the
+file `/ufs/george/file1' will be ignored without displaying any warning
+messages.  (These options are particularly useful if you have changed
+the name or location of a file, since it suppresses the warnings you
+would otherwise get for every procedure in the file.)  If you type `?',
+Prolog displays a message that briefly describes each of the options
+above, and then asks you again if you want to redefine the procedure.
+
+   If style convention 2 is violated, you will get a message of the
+form:
+     * Clauses for foo/2 are not together in the source file
+
+   This indicates that between some pair of clauses defining procedure
+`foo/2', there is a clause for some other procedure.  If you followed
+the style conventions in writing your code, this message would indicate
+that some clause in your source file had either a mistyped name or the
+wrong arity, or that the predicate `foo/2' was defined more than once
+in the file.  One other possible cause for this message might be that a
+period was typed in place of a comma, as in
+     foo(X, Y) :-
+        goal1(X, Z),
+        goal2(Z).
+        goal3(X, Y).
+     foo([], []).
+
+   Here the Prolog system will think that you are defining a clause for
+`goal3/2' between the clauses for `foo/2', and will issue a style
+warning.
+
+   If style convention 3 is violated, as in
+     check_state(TheState):-
+        old_state(TheStaye, X),
+        write(TheState),
+        write(X).
+
+   you will get a message of the form:
+     * Singleton variables, clause 1 of check_state/1: TheStaye
+
+   indicating that in the first clause of procedure `check_state/1',
+there is only one occurrence of the variable TheStaye.  If that
+variable is a misspelling, you should correct the source text and
+recompile.  If it was really meant to be a single variable occurrence,
+replace it with the anonymous variable `_' or preface it with `_' as in
+`_TheStaye', and you will no longer get the style warning message.
+
+   It is good programming practice to respond immediately to these
+warnings by correcting the source text.  By doing so, you will get the
+full benefit of the style warning facility in finding many errors
+painlessly.
+
+   By default, all the style warning facilities are turned on.  You can
+turn off any or all of the style warning facilities by typing
+`no_style_check(X).' at the main Prolog prompt, where X represents one
+of the arguments listed below.  To turn on style warning facilities,
+type `style_check(X).' at the main Prolog prompt, where X represents
+one of the arguments listed below.
+
+Argument
+     Function
+
+`all'
+     turns on (or off) all style checking
+
+`single_var'
+     turns on (or off) checking for single variable occurrences
+
+`discontiguous'
+     turns on (or off) checking for discontiguous clauses for procedures
+
+`multiple'
+     turns on (or off) style checking for multiple definitions of same
+     procedures (in different files)
+
+   For example, to turn off all the style warning facilities, you would
+type
+     | ?- no_style_check(all).
+
+
+File: quintus.info,  Node: bas-lod-srs,  Next: bas-lod-uif,  Prev: bas-lod-sty,  Up: bas-lod
+
+Saving and Restoring a Program State
+------------------------------------
+
+* Menu:
+
+* bas-lod-srs-bin::                     Basic Information
+
+
+File: quintus.info,  Node: bas-lod-srs-bin,  Up: bas-lod-srs
+
+Basic Information
+.................
+
+   Once a program has been loaded, its facts and rules are resident in
+the Prolog database.  It is possible to save the current state of the
+database in its compiled form as a QOF file.  This allows you to
+restore the current database at a later time without having to
+re-compile your Prolog source files.
+
+   The built-in predicate `save_program/1' saves the Prolog state.  For
+example,
+     | ?- save_program(myprog).
+
+   You can later reload the file `myprog' into Prolog using the command
+     | ?- [myprog].
+
+   A saved program is a special kind of QOF file, which is capable of
+being run directly from the operating system, as if it were an
+executable file.  To run a saved program from the command prompt, type
+the name of the file containing the saved program at the command
+prompt.  For example,
+     % myprog
+
+   This is equivalent to starting up Prolog and loading `myprog'.
+Under Windows, this only works if the name of the file has the extension
+`bat', e.g. `myprog.bat'.
+
+   You can also specify a goal to be run when a saved program is
+started up.  This is done by:
+     | ?- save_program(myprog, start).
+
+   where `start/0' is the predicate to be called.
+
+
+File: quintus.info,  Node: bas-lod-uif,  Prev: bas-lod-srs,  Up: bas-lod
+
+Using an Initialization File
+----------------------------
+
+   If you use certain customized features often, you might want to
+direct the system to load them every time you start up Prolog.  You can
+do this by creating an initialization file called `prolog.ini' in your
+home directory.  This file is loaded, if it exists, every time you
+start up Prolog.  It may be a Prolog source file or a QOF file.
+
+     *Please note:* if you wish to start up Prolog or a Prolog saved
+     program without loading your `prolog.ini' file you can use the
+     `+f' for "fast start" option.  That is,
+          % prolog +f
+
+     or
+          % myprog +f
+
+     will both start up Prolog without loading your `prolog.ini' file.
+
+
+File: quintus.info,  Node: bas-run,  Prev: bas-lod,  Up: bas
+
+Running Programs
+================
+
+* Menu:
+
+* bas-run-ove::                         Overview
+* bas-run-iep::                         Interrupting the Execution of a Program
+* bas-run-ewi::                         Errors, Warnings and Informational Messages
+* bas-run-und::                         Undefined Predicates
+* bas-run-euc::                         Executing Commands from Prolog
+* bas-run-dpr::                         Dynamic Predicates
+* bas-run-pro::                         Prompts
+
+
+File: quintus.info,  Node: bas-run-ove,  Next: bas-run-iep,  Up: bas-run
+
+Overview
+--------
+
+   This section discusses certain features of Quintus Prolog that you
+will find helpful to know about when you run your programs.
+
+
+File: quintus.info,  Node: bas-run-iep,  Next: bas-run-ewi,  Prev: bas-run-ove,  Up: bas-run
+
+Interrupting the Execution of a Program
+---------------------------------------
+
+   You can interrupt the execution of a Prolog program at any time by
+typing `^c' (`^c^c' under GNU Emacs).  For example, if you submit a
+query to Prolog and then decide you want to stop (abort) the query,
+type `^c' to which Prolog will respond by displaying the message
+
+     Prolog interruption (h for help)?
+
+   At this point, you can either type `h' to see a list of the options
+available to you, as shown below, or you can simply type the letter that
+corresponds to the option you want to select.
+
+   If you type `h', Prolog displays the following list of options:
+     Prolog interrupt options:
+       h  help         - this list
+       c  continue     - do nothing
+       d  debug        - debugger will start leaping
+       t  trace        - debugger will start creeping
+       a  abort        - abort to the current break level
+       q  really abort - abort to the top level
+       e  exit         - exit from Prolog
+     Prolog interruption (h for help)?
+
+   To select an option, type the letter that corresponds to that option
+and press <RET>.  For example, to stop the execution of the current
+query, type `a' followed by <RET>.  Prolog will print
+     ! Execution aborted
+
+   and then return to its top level, displaying the main Prolog prompt.
+
+   Typing `c' causes the current procedure to continue executing as if
+nothing had happened.  Typing `t' turns on the `trace' option of the
+debugger (see *Note dbg-bas-con-tdz::).  Typing `d' turns on the
+`debug' option of the debugger (see *Note dbg-bas-bas::).  Typing `a'
+causes the current query to be aborted and the main Prolog prompt to be
+redisplayed, as shown above.  Typing `e' ends your Prolog session.
+
+
+File: quintus.info,  Node: bas-run-ewi,  Next: bas-run-und,  Prev: bas-run-iep,  Up: bas-run
+
+Errors, Warnings and Informational Messages
+-------------------------------------------
+
+   If your program calls a built-in predicate with arguments that are
+not appropriate for that predicate, the system will display an error
+message.  For example, if your program called the goal
+     | ?- atom_chars(X,a).
+
+   you would get an error message like this
+     ! Type error in argument 2 of atom_chars/2
+     ! list expected, but a found
+     ! goal:  atom_chars(_2016,a)
+
+   since `atom_chars/2' expects a list of characters (or a variable) as
+its second argument.  The `!' prefix to each line signifies that this
+is an error.  The other prefixes that are used are `*' for warnings and
+`%' for informational messages.
+
+   When an error occurs, your program is abandoned and you are returned
+to the top level.  There is an exception handling mechanism, which can
+be used to prevent this in specified parts of your program.  See *Note
+ref-ere-hex:: for more information.
+
+   A warning is less serious than an error; it indicates that something
+might be wrong.  It may save you debugging time later to check it right
+away.
+
+   Informational messages are just messages to let you know what the
+system is doing.
+
+   All these messages can be customized if you wish.  See *Note
+ref-msg:: for how to do this.
+
+
+File: quintus.info,  Node: bas-run-und,  Next: bas-run-euc,  Prev: bas-run-ewi,  Up: bas-run
+
+Undefined Predicates
+--------------------
+
+   By default, calling an undefined predicate is considered to be an
+error unless that predicate is known to be dynamic (see *Note
+bas-run-dpr:: for an explanation of dynamic predicates).  For example,
+     | ?- f(x).
+     ! Existence error in f/1
+     ! procedure user:f/1 does not exist
+     ! goal:  f(x)
+
+   You can change this behavior to make undefined predicates fail
+quietly by means of the built-in predicate `unknown/2'.  There is also a
+facility, which allows you to have a predicate of your own called
+whenever an undefined predicate is called: see
+`unknown_predicate_handler/3'.
+
+
+File: quintus.info,  Node: bas-run-euc,  Next: bas-run-dpr,  Prev: bas-run-und,  Up: bas-run
+
+Executing Commands from Prolog
+------------------------------
+
+   The built-in predicate `unix/1' enables you to execute system
+commands from within the Prolog environment.  With some limitations it
+works also under Windows.
+
+   Under UNIX only, to access a shell (an interactive command
+interpreter) from within Prolog, call
+     | ?- unix(shell).
+
+   This command puts you within a command interpreter, from which you
+can execute any commands you would normally type at a command prompt.
+To return to Prolog, either type your end-of-file character (default:
+`^d'), or else type `exit'.
+
+   Alternatively, on both UNIX and Windows, you can access the shell
+and execute a command all at once:
+     | ?- unix(shell(COMMAND)).
+
+   where COMMAND is a Prolog atom representing the command you want to
+execute.  For example, to obtain a listing of the files in your UNIX
+working directory:
+     | ?- unix(shell(ls)).
+
+   The same example under Windows would be
+     | ?- unix(shell(dir)).
+
+   Under UNIX, `unix(shell).' and `unix(shell(COMMAND)).' use the
+command interpreter defined in your `SHELL' environment variable.  If
+you want `sh(1)' instead, use `unix(system)' or `unix(system(COMMAND)).'
+
+   A special case is made for the common command to change your working
+directory. To do so, call `unix(cd(DIRECTORY))', where DIRECTORY is a
+Prolog atom naming the directory to change to.  For example, to change
+to a directory named `/ufs/albert', you could type:
+     | ?- unix(cd('/ufs/albert')).
+
+   *Notes:*
+  1. The Prolog atom for the directory name `/ufs/albert' is surrounded
+     by single quotes because it contains non-alphanumeric characters.
+
+  2. Under Windows, you can use either backward `\' or forward slash
+     `/'.
+
+  3. This command only affects the current directory while in Prolog;
+     after exiting Prolog, you will be in the directory from which
+     Prolog was invoked.
+
+   The command `unix(cd)'} changes to your home directory.
+
+   For further information see *Note ref-aos:: and the reference page
+for `unix/1'.
+
+
+File: quintus.info,  Node: bas-run-dpr,  Next: bas-run-pro,  Prev: bas-run-euc,  Up: bas-run
+
+Dynamic Predicates
+------------------
+
+   All predicates in Prolog fall into one of two categories:  "static"
+or "dynamic".  Dynamic predicates can be modified when a program is
+running; in contrast, static predicates can be modified only by
+reloading or by `abolish/[1,2]'.
+
+   If a predicate is first defined by being loaded from a file, it is
+static by default.  Sometimes, however, it is necessary to add (assert),
+remove (retract), or inspect (using `clause/[2,3]') clauses for a
+predicate while a program is running.  In order to do that, you must
+declare the predicate to be dynamic.  A predicate can be made dynamic
+by specifically declaring it to be so, as described below,  or by using
+one of the assertion predicates.  For a list of the assertion
+predicates, and for more information on using them, refer to *Note
+ref-mdb-dsp::.
+
+   To make a predicate dynamic, you insert in the file containing the
+predicate a line, which declares the predicate to be dynamic.  The
+format of the line is
+     :- dynamic NAME/ARITY.
+
+   So, for example, the following declarations make the named
+predicates dynamic.
+     :- dynamic exchange_rate/3, spouse_of/2, gravitational_constant/1.
+
+   *Notes:*
+  1. The `:- ' symbol must appear at the beginning of any line with a
+     dynamic declaration, as shown above.
+
+  2. Dynamic declarations can only appear in files; `dynamic/1' cannot
+     be called as a predicate.
+
+  3. The line that declares a predicate to be dynamic must occur before
+     any definition of the predicate itself in the file.
+
+
+File: quintus.info,  Node: bas-run-pro,  Prev: bas-run-dpr,  Up: bas-run
+
+Prompts
+-------
+
+   The prompt `|: ' is displayed instead of the `| ?- ' prompt if your
+program requires input from the terminal.  The built-in predicate
+`prompt/2' can be used to change the form of this prompt.
+
+   If you are typing a term at any Prolog prompt, and your input is
+longer than one line, all lines after the first one are indented five
+spaces.  Sometimes this arises unexpectedly because of a typing error.
+For example, if you type
+     | ?- f('ABC).
+          _
+
+   you will see your cursor positioned where the underscore character
+appears here.  This signifies that you have not completed the input of
+a term: in this case there was no closing quote.  To get back to the
+top level prompt type a closing quote followed by a period and a <RET>.
+This will give a syntax error after which you can type the correct goal.
+
+
+File: quintus.info,  Node: bas-lim,  Next: bas-lod,  Prev: bas-sta,  Up: bas
+
+Limits in Quintus Prolog
+========================
+
+   This section describes the limits pertaining to atoms, functors,
+predicates, and other structures in Quintus Prolog.
+
+   Atoms cannot have more than 65532 characters.
+
+   Functors and predicates cannot have arities greater than 255.
+
+   There are no limits (apart from memory space) on the number of
+procedures or clauses allowed.
+
+   Prolog floating point numbers have 64 bit precision and conform to
+the IEEE 754 standard.  The range of Prolog integers is -2147483648
+(-2^31) to 2147483647 (2^31-1), both inclusive.
+
+   The size of a compiled clause is limited to 2^15 (32,768) bytes of
+compiled code.
+
+   There are internal limits on the size of compiled clauses, which are
+difficult to relate to properties visible to the user.  These are 512
+"temporary variables" (which only occur in the head goal), and 255
+"permanent variables" (non-temporaries, which occur in goals in the
+body).  The compiler will generate warnings if these limits are
+exceeded.  There is no limit on the number of "symbols" (variables,
+atoms, numbers, or functors) in a compiled clause.
+
+   There are no restrictions on the number of variables or symbols in
+dynamic or interpreted clauses.
+
+   Prolog itself has no limit on the number of input/output streams that
+can be open at any one time.  But the underlying Operating System
+might. For instance, some default configurations of UNIX might allow
+only 64 streams to be open at one time.  Three of these streams are
+reserved for standard input, standard output, and error output
+respectively.  These three streams are always open.  Standard input and
+output normally refer to your terminal, but can be redirected from
+outside Prolog by means of operating system facilities.  The error
+stream nearly always refers to the terminal, but can also be redirected.
+
+   Virtual memory for Prolog's data areas must come from the low 1
+gigabyte of virtual memory.  The maximum size of Prolog's data areas is
+also 1 gigabyte.  Prolog expands its data areas as necessary.  These
+areas can be contracted again by calling the built-in predicate
+`trimcore/0'.  This predicate is automatically called on completion of
+every goal typed at the top level.
+
+
+File: quintus.info,  Node: bas-eff,  Next: bas-sta,  Up: bas
+
+Writing Efficient Programs
+==========================
+
+* Menu:
+
+* bas-eff-ove::                         Overview
+* bas-eff-cut::                         The Cut
+* bas-eff-ind::                         Indexing
+* bas-eff-lcd::                         Last Clause Determinacy Detection
+* bas-eff-det::                         The Quintus Determinacy Checker
+* bas-eff-lco::                         Last Call Optimization
+* bas-eff-bdm::                         Building and Dismantling Terms
+* bas-eff-cdi::                         Conditionals and Disjunction
+* bas-eff-xref::                        The Quintus Cross-Referencer
+
+
+File: quintus.info,  Node: bas-eff-ove,  Next: bas-eff-cut,  Up: bas-eff
+
+Overview
+--------
+
+   This section gives a number of tips on how to organize your programs
+for increased efficiency.  A lot of clarity and efficiency is gained by
+sticking to a few basic rules.  This list is necessarily very
+incomplete.  The reader is referred to textbooks such as `The Craft of
+Prolog' by Richard O'Keefe, MIT Press, 1990, a thorough exposition of
+the elements of Prolog programming style and techniques.
+
+   * Don't write code in the first place if there is a library
+     predicate that will do the job.
+
+   * Write clauses representing base case before clauses representing
+     recursive cases.
+
+   * Input arguments before output arguments in clause heads and goals.
+
+   * Use pure data structures instead of database changes.
+
+   * Use cuts sparingly, and _only_ at proper places.  A cut should be
+     placed at the exact point that it is known that the current choice
+     is the correct one: no sooner, no later.
+
+   * Make cuts as local in their effect as possible.  If a predicate is
+     intended to be determinate, define _it_ as such; do not rely on
+     its callers to prevent unintended backtracking.
+
+   * Binding output arguments before a cut is a common source of
+     programming errors, so don't do it.
+
+   * Replace cuts by if-then-else constructs if the test is simple
+     enough.
+
+   * Use disjunctions sparingly, _always_ put parentheses around them,
+     _never_ put parentheses around the individual disjuncts, and
+     _never_ put the `;' at the end of a line.
+
+   * Write the clauses of a predicate so that they discriminate on the
+     principal functor of the first argument (see below).  For maximum
+     efficiency, avoid "defaulty" programming ("catch-all" clauses).
+
+   * Don't use lists (`[...]'), "round lists" (`(...)'), or braces
+     (`{...'}) to represent compound terms, or "tuples", of some fixed
+     arity.  The name of a compound term comes for free.
+
+
+File: quintus.info,  Node: bas-eff-cut,  Next: bas-eff-ind,  Prev: bas-eff-ove,  Up: bas-eff
+
+The Cut
+-------
+
+* Menu:
+
+* bas-eff-cut-ove::                     Overview
+* bas-eff-cut-mpd::                     Making Predicates Determinate
+* bas-eff-cut-cut::                     Placement of Cuts
+* bas-eff-cut-tbl::                     Terminating a Backtracking Loop
+
+
+File: quintus.info,  Node: bas-eff-cut-ove,  Next: bas-eff-cut-mpd,  Up: bas-eff-cut
+
+Overview
+........
+
+   One of the more difficult things to master when learning Prolog is
+the proper use of the cut.  Often, when beginners find unexpected
+backtracking occurring in their programs, they try to prevent it by
+inserting cuts in a rather random fashion.  This makes the programs
+harder to understand and sometimes stops them from working.
+
+   During program development, each predicate in a program should be
+considered _independently_ to determine whether or not it should be
+able to succeed more than once.  In most applications, many predicates
+should at most, succeed only once; that is, they should be
+_determinate_.  Having decided that a predicate should be determinate,
+it should be verified that, in fact, it is.  The debugger can help in
+verifying that a predicate is determinate (see *Note dbg-bas-upe::).
+
+
+File: quintus.info,  Node: bas-eff-cut-mpd,  Next: bas-eff-cut-cut,  Prev: bas-eff-cut-ove,  Up: bas-eff-cut
+
+Making Predicates Determinate
+.............................
+
+   Consider the following predicate, which calculates the factorial of a
+number:
+     fac(0, 1).
+     fac(N, X) :-
+             N1 is N - 1,
+             fac(N1, Y),
+             X is N * Y.
+
+   The factorial of 5 can be found by typing
+     | ?- fac(5, X).
+     
+     X = 120
+
+   However,  backtracking into the above predicate by typing a
+semicolon at this point, causes an infinite loop because the system
+starts attempting to satisfy the goals `fac(-1, X).', `fac(-2, X).',
+etc.  The problem is that there are two clauses that match the goal
+`fac(0, F).', but the effect of the second clause on backtracking has
+not been taken into account.  There are at least three possible ways of
+fixing this:
+
+  1. Efficient solution:  rewrite the first clause as
+
+          fac(0,1) :- !.
+
+     Adding the cut essentially makes the first solution the only one
+     for the factorial of 0 and hence solves the immediate problem.
+     This solution is space-efficient because as soon as Prolog
+     encounters the cut, it knows that the predicate is determinate.
+     Thus, when it tries the second clause, it can throw away the
+     information it would otherwise need in order to backtrack to this
+     point.  Unfortunately, if this solution is implemented, typing
+     `fac(-1, X)' still generates an infinite search.
+
+  2. Robust solution:  rewrite the second clause as
+
+          fac(N, X) :-
+                  N > 0,
+                  N1 is N - 1,
+                  fac(N1, Y),
+                  X is N * Y.
+
+     This also solves the problem, but it is a more robust solution
+     because this way it is impossible to get into an infinite loop.
+
+     This solution makes the predicate _logically_ determinate  --
+     there is only one possible clause for any input -- but the Prolog
+     system is unable to detect this and must waste space for
+     backtracking information.  The space-efficiency point is more
+     important than it may at first seem;  if `fac/2' is called from
+     another determinate predicate, and if the cut is omitted, Prolog
+     cannot detect the fact that `fac/2' is determinate. Therefore, it
+     will not be able to detect the fact that the calling predicate is
+     determinate, and space will be wasted for the calling predicate as
+     well as for `fac/2' itself.  This argument applies again if the
+     calling predicate is itself called by a determinate predicate, and
+     so on, so that the cost of an omitted cut can be very high in
+     certain circumstances.
+
+  3. Preferred solution:  rewrite the entire predicate as the single
+     clause
+          fac(N, X) :-
+              (   N > 0 ->
+                      N1 is N - 1,
+                      fac(N1, Y),
+                      X is N * Y
+              ;   N =:= 0 ->
+                      X = 1
+              ).
+
+     This solution is as robust as solution 2, and more efficient than
+     solution 1, since it exploits conditionals with arithmetic tests
+     (see *Note ref-sem-con::, and *Note bas-eff-cdi::, for more
+     information on optimization using conditionals).
+
+
+File: quintus.info,  Node: bas-eff-cut-cut,  Next: bas-eff-cut-tbl,  Prev: bas-eff-cut-mpd,  Up: bas-eff-cut
+
+Placement of Cuts
+.................
+
+   Programs can often be made more readable by the placing of cuts as
+early as possible in clauses.  For example, consider the predicate
+`p/0' defined by
+     p :- a, b, !, c, d.
+     p :- e, f.
+
+   Suppose that `b/0' is a test that determines which clause of `p/0'
+applies; `a/0' may or may not be a test, but `c/0' and `d/0' are not
+supposed to fail under any circumstances.  A cut is most appropriately
+placed after the call to `b/0'.  If in fact `a/0' is the test and `b/0'
+is not supposed to fail, then it would be much clearer to move the cut
+before the call to `b/0'.
+
+   A tool to aid in determinacy checking is included in the `tools'
+directory.  It is described in depth in *Note bas-eff-det::.
+
+
+File: quintus.info,  Node: bas-eff-cut-tbl,  Prev: bas-eff-cut-cut,  Up: bas-eff-cut
+
+Terminating a Backtracking Loop
+...............................
+
+   Cut is also commonly used in conjunction with the generate-and-test
+programming paradigm.  For example, consider the predicate
+`find_solution/1' defined by
+     find_solution(X) :-
+             candidate_solution(X),
+             test_solution(X),
+             !.
+
+   where `candidate_solution/1' generates possible answers on
+backtracking.  The intent is to stop generating candidates as soon as
+one is found that satisfies `test_solution/1'.  If the cut were
+omitted, a future failure could cause backtracking into this clause and
+restart the generation of candidate solutions.  A similar example is
+shown below:
+
+     process_file(F) :-
+             see(F),
+             repeat,
+                 read(X),
+                 process_and_fail(X),
+             !,
+             seen.
+     
+     process_and_fail(end_of_file) :- !.
+     process_and_fail(X) :-
+             process(X),
+             fail.
+
+   The cut in `process_file/1' is another example of terminating a
+generate-and-test loop.  In general, a cut should always be placed
+after a `repeat/0' so that the backtracking loop is clearly terminated.
+If the cut were omitted in this case, on later backtracking Prolog
+might try to read another term after the end of the file had been
+reached.
+
+   The cut in `process_and_fail/1' might be considered unnecessary
+because, assuming the call shown is the only call to it, the cut in
+`process_file/1' ensures that backtracking into `process_and_fail/1'
+can never happen.  While this is true, it is also a good safeguard to
+include a cut in `process_and_fail/1' because someone may unwittingly
+change `process_file/1' in the future.
+
+
+File: quintus.info,  Node: bas-eff-ind,  Next: bas-eff-lcd,  Prev: bas-eff-cut,  Up: bas-eff
+
+Indexing
+--------
+
+* Menu:
+
+* bas-eff-ind-ove::                     Overview
+* bas-eff-ind-dat::                     Data Tables
+* bas-eff-ind-det::                     Determinacy Detection
+
+
+File: quintus.info,  Node: bas-eff-ind-ove,  Next: bas-eff-ind-dat,  Up: bas-eff-ind
+
+Overview
+........
+
+   In Quintus Prolog, predicates are indexed on their first arguments.
+This means that when a predicate is called  with an instantiated first
+argument, a hash table is used to gain fast access to only those
+clauses having a first argument with the same primary functor as the
+one in the predicate call.  If the first argument is atomic, only
+clauses with a matching first argument are accessed.  Indexes are
+maintained automatically by the built-in predicates manipulating the
+Prolog database (for example, `assert/1', `retract/1', and `compile/1').
+
+   Keeping this feature in mind when writing programs can help speed
+their execution.  Some hints for program structuring that will best use
+the indexing facility are given below.  Note that dynamic predicates as
+well as static predicates are indexed.  The programming hints given in
+this section apply equally to static and dynamic code.
+
+
+File: quintus.info,  Node: bas-eff-ind-dat,  Next: bas-eff-ind-det,  Prev: bas-eff-ind-ove,  Up: bas-eff-ind
+
+Data Tables
+...........
+
+   The major advantage of indexing is that it provides fast access to
+tables of data.  For example, a table of employee records might be
+represented as shown below in order to gain fast access to the records
+by employee name:
+
+     %  employee(LastName,FirstNames,Department,Salary,DateOfBirth)
+     
+     employee('Smith', ['John'], sales,       20000, 1-1-59).
+     employee('Jones', ['Mary'], engineering, 30000, 5-28-56).
+     ...
+
+   If fast access to the data via department is also desired, the data
+can be organized little differently.  The employee records can be
+indexed by some unique identifier, such as employee number, and
+additional tables can be created to facilitate access to this table, as
+shown in the example below.  For example,
+
+     %  employee(Id,LastName,FirstNames,Department,Salary,DateOfBirth)
+     
+     employee(1000000, 'Smith', ['John'], sales,       20000, 1-1-59).
+     employee(1000020, 'Jones', ['Mary'], engineering, 30000, 5-28-56).
+     ...
+     
+     %  employee_name(LastName,EmpId)
+     
+     employee_name('Smith', 1000000).
+     employee_name('Jones', 1000020).
+     ...
+     
+     %  department_member(Department,EmpId)
+     
+     department_member(sales,       1000000).
+     department_member(engineering, 1000020).
+     ...
+
+   Indexing would now allow fast access to the records of every employee
+named Smith, and these could then be backtracked through looking for
+John Smith.  For example:
+     | ?- employee_name('Smith', Id),
+          employee(Id, 'Smith', ['John'], Dept, Sal, DoB).
+
+   Similarly, all the members of the engineering department born since
+1965 could be efficiently found like this:
+     | ?- department_member(engineering, Id),
+          employee(Id, LN, FN, engineering, _, M-D-Y),
+          Y > 65.
+
+
+File: quintus.info,  Node: bas-eff-ind-det,  Prev: bas-eff-ind-dat,  Up: bas-eff-ind
+
+Determinacy Detection
+.....................
+
+   The other advantage of indexing is that it often makes possible early
+detection of determinacy, even if cuts are not included in the program.
+For example, consider the following simple predicate, which joins two
+lists together:
+     concat([], L, L).
+     concat([X|L1], L2, [X|L3]) :- concat(L1, L2, L3).
+
+   If this predicate is called with an instantiated first argument, the
+first argument indexing of Quintus Prolog will recognize that the call
+is determinate -- only one of the two clauses for `concat/3' can
+possibly apply.  Thus, the Prolog system knows it does not have to
+store backtracking information for the call.  This significantly reduces
+memory use and execution time.
+
+   Determinacy detection can also reduce the number of cuts in
+predicates.  In the above example, if there was no indexing, a cut
+would not strictly be needed in the first clause as long as the
+predicate was always to be called with the first argument instantiated.
+If the first clause matched, then the second clause could not possibly
+match; discovery of this fact, however, would be postponed until
+backtracking.  The programmer might thus be tempted to use a cut in the
+first clause to signal determinacy and recover space for backtracking
+information as early as possible.
+
+   With indexing, if the example predicate is always called with its
+first argument instantiated, backtracking information is _never_ stored.
+This gives substantial performance improvements over using a cut rather
+than indexing to force determinacy.  At the same time greater
+flexibility is maintained: the predicate can now be used in a
+nondeterminate fashion as well, as in
+     | ?- concat(L1, L2, [a,b,c,d]).
+
+   which will generate on backtracking all the possible partitions of
+the list [a,b,c,d] on backtracking.  If a cut had been used in the
+first clause, this would not work.
+
+
+File: quintus.info,  Node: bas-eff-lcd,  Next: bas-eff-det,  Prev: bas-eff-ind,  Up: bas-eff
+
+Last Clause Determinacy Detection
+---------------------------------
+
+   Even if the determinacy detection made possible by indexing (see
+*Note bas-eff-ind-det::) is unavailable to a predicate call, Quintus
+Prolog still can detect determinacy before determinate exit from the
+predicate.  Space for backtracking information can thus be recovered as
+early as possible, reducing memory requirements and increasing
+performance.  For instance, the predicate `member/2' (found in the
+Quintus Prolog library) could be defined by:
+     member(Element, [Element|_]).
+     member(Element, [_|Rest]) :-
+             member(Element, Rest).
+
+   `member/2' might be called with an instantiated first argument in
+order to check for membership of the argument in a list, which is
+passed as a second argument, as in
+     | ?- member(4, [1,2,3,4]).
+
+   The first arguments of both clauses of `member/2' are variables, so
+first argument indexing cannot be used.  However, determinacy can still
+be detected before determinate exit from the predicate.  This is
+because on entry to the last clause of a nondeterminate predicate, a
+call becomes effectively determinate; it can tell that it has no more
+clauses to backtrack to.  Thus, backtracking information is no longer
+needed, and its space can be reclaimed.  In the example, each time a
+call fails to match the first clause and backtracks to the second
+(last) clause, backtracking information for the call is automatically
+deleted.
+
+   Because of last clause determinacy detection, a cut is never needed
+as the first subgoal in the last clause of a predicate.  Backtracking
+information will have been deleted before a cut in the last clause is
+executed, so the cut will have no effect except to waste time.
+
+   Note that last clause determinacy detection is exploited by dynamic
+code as well as static code in Quintus Prolog.
+
+
+File: quintus.info,  Node: bas-eff-det,  Next: bas-eff-lco,  Prev: bas-eff-lcd,  Up: bas-eff
+
+The Quintus Determinacy Checker
+-------------------------------
+
+* Menu:
+
+* bas-eff-det-det::                     Using the Determinacy Checker
+* bas-eff-det-dnd::                     Declaring Nondeterminacy
+* bas-eff-det-cou::                     Checker Output
+* bas-eff-det-exa::                     Example
+* bas-eff-det-opt::                     Options
+* bas-eff-det-wha::                     What is Detected
+
+   The Quintus determinacy checker can help you spot unwanted
+nondeterminacy in your programs.  This tool examines your program
+source code and points out places where nondeterminacy may arise.  It
+is not in general possible to find exactly which parts of a program
+will be nondeterminate without actually running the program, but this
+tool can find most unwanted nondeterminacy.  Unintended nondeterminacy
+should be eradicated because
+
+  1. it may give you wrong answers on backtracking
+
+  2. it may cause a lot of memory to be wasted
+
+
+File: quintus.info,  Node: bas-eff-det-det,  Next: bas-eff-det-dnd,  Up: bas-eff-det
+
+Using the Determinacy Checker
+.............................
+
+   There are two different ways to use the determinacy checker, either
+as a stand-alone tool, or during compilation.  You may use it whichever
+way fits best with the way you work.  Either way, it will discover the
+same nondeterminacy in your program.
+
+   The stand-alone determinacy checker is called `qpdet', and is run
+from the shell prompt, specifying the names of the Prolog source files
+you wish to check.  You may omit the `.pl' suffix if you like.
+     % qpdet [-r [-d] [-D] [-i IFILE] FSPEC...]
+
+   The `qpdet' program is placed in the Quintus `tools' directory, and
+is not built by default when Prolog is installed, so you may have to
+build it (by typing `make qpdet' in the `tools' directory) first.  The
+tool takes a number of options:
+
+`-r'
+     Process files recursively, fully checking the specified files and
+     all the files they load.
+
+`-d'
+     Print out declarations that should be added.
+
+`-D'
+     Print out all needed declarations.
+
+`-i IFILE'
+     An initialization file, which is loaded before processing begins.
+
+   The determinacy checker can also be integrated into the compilation
+process, so that you receive warnings about unwanted nondeterminacy
+along with warnings about singleton variables or discontinuous clauses.
+To make this happen, simply insert the line
+     :- load_files(library(detcheck),
+                   [when(compile_time), if(changed)]).
+
+   Once this line is added, every time that file is compiled, whether
+using `qpc' or the compiler in the development system, it will be
+checked for unwanted nondeterminacy.
+
+
+File: quintus.info,  Node: bas-eff-det-dnd,  Next: bas-eff-det-cou,  Prev: bas-eff-det-det,  Up: bas-eff-det
+
+Declaring Nondeterminacy
+........................
+
+   Some predicates are intended to be nondeterminate.  By declaring
+intended nondeterminacy, you avoid warnings about predicates you intend
+to be nondeterminate.  Equally importantly, you also inform the
+determinacy checker about nondeterminate predicates.  It uses this
+information to identify unwanted nondeterminacy.
+
+   Nondeterminacy is declared by putting a declaration of the form
+     :- nondet NAME/ARITY.
+
+   in your source file.  This is similar to a dynamic or discontiguous
+declaration.  You may have multiple `nondet' declarations, and a single
+declaration may mention several predicates, separating them by commas.
+
+   Similarly, a predicate P/N may be classified as nondeterminate by
+the checker, whereas in reality it is determinate.  This may happen
+e.g. if P/N calls a dynamic predicate that in reality never has more
+than one clause.  To prevent false alarms asiring from this, you can
+inform the checker about determinate predicates by declarations of the
+form:
+
+     :- det NAME/ARITY.
+
+   If you wish to include `det' and `nondet' declarations in your file
+and you plan to use the stand-alone determinacy checker, you must
+include the line
+     :- load_files(library(nondetdecl),
+                   [when(compile_time), if(changed)]).
+
+   near the top of each file that contains such declarations.  If you
+use the integrated determinacy checker, you do not need (and should not
+have) this line.
+
+
+File: quintus.info,  Node: bas-eff-det-cou,  Next: bas-eff-det-exa,  Prev: bas-eff-det-dnd,  Up: bas-eff-det
+
+Checker Output
+..............
+
+   The output of the determinacy checker is quite simple.  For each
+clause containing unexpected nondeterminacy, a single line is printed
+showing the module, name, arity, and clause number (counting from 1).
+The form of the information is:
+     * Non-determinate: MODULE:NAME/ARITY (clause NUMBER)
+
+   A second line for each nondeterminate clause indicates the cause of
+the nondeterminacy.  The recognized causes are:
+   * The clause contains a disjunction that is not forced to be
+     determinate with a cut or by ending the clause with a call to
+     `fail/0' or `raise_exception/1'.
+
+   * The clause calls a nondeterminate predicate.  In this case the
+     predicate is named.
+
+   * There is a later clause for the same predicate whose first argument
+     has the same principal functor (or one of the two clauses has a
+     variable for the first argument), and this clause does not contain
+     a cut or end with a call to `fail/0' or `raise_exception/1'.  In
+     this case, the clause number of the other clause is mentioned.
+
+   * If the predicate is multifile, clause indexing is not considered
+     sufficient to ensure determinacy.  This is because other clauses
+     may be added to the predicate in other files, so the determinacy
+     checker cannot be sure it has seen all the clauses for the
+     predicate.  It is good practice to include a cut (or fail) in
+     every clause of a multifile predicate.
+
+   The determinacy checker also occasionally prints warnings when
+declarations are made too late in the file or not at all.  For example,
+if you include a `dynamic', `nondet', or `discontiguous' declaration
+for a predicate after some clauses for that predicate, or if you put a
+`dynamic' or `nondet' declaration for a predicate after a clause that
+includes a call to that predicate, the determinacy checker may have
+missed some nondeterminacy in your program.  The checker also detects
+undeclared discontiguous predicates, which may also have undetected
+nondeterminacy.  Finally, the checker looks for goals in your program
+that indicate that predicates are dynamic; if no `dynamic' declaration
+for those predicates, you will be warned.
+
+   These warnings take the following form:
+     ! warning: predicate module:name/arity is PROPERTY.
+     !          Some nondeterminacy may have been missed.
+     !          Add (or move) the directive~n
+     !              :- PROPERTY module:name/arity.
+     !          near the top of this file.
+
+
+File: quintus.info,  Node: bas-eff-det-exa,  Next: bas-eff-det-opt,  Prev: bas-eff-det-cou,  Up: bas-eff-det
+
+Example
+.......
+
+   Here is an example file:
+     :- load_files(library(detcheck),
+                   [when(compile_time), if(changed)]).
+     
+     parent(abe, rob).
+     parent(abe, sam).
+     parent(betty, rob).
+     parent(betty, sam).
+     
+     is_parent(Parent) :- parent(Parent, _).
+
+   The determinacy checker notices that the first arguments of clauses 1
+and 2 have the same principal functor, and similarly for clauses 3 and
+4.  It reports:
+     * Non-determinate: user:parent/2 (clause 1)
+     *     Indexing cannot distinguish this from clause 2.
+     * Non-determinate: user:parent/2 (clause 3)
+     *     Indexing cannot distinguish this from clause 4.
+
+   In fact, `parent/2' should be nondeterminate, so we should add the
+declaration
+     :- nondet parent/2.
+
+   before the clauses for `parent/2'.  If run again after modifying
+file, the determinacy checker prints:
+     * Non-determinate: user:is_parent/1 (clause 1)
+     *     This clause calls user:parent/2, which may be nondeterminate.
+
+   It no longer complains about `parent/2' being nondeterminate, since
+this is declared.  But now it notices that because `parent/2' is
+nondeterminate, then so is `is_parent/1'.
+
+
+File: quintus.info,  Node: bas-eff-det-opt,  Next: bas-eff-det-wha,  Prev: bas-eff-det-exa,  Up: bas-eff-det
+
+Options
+.......
+
+   When run from the command line, the determinacy checker has a few
+options to control its workings.
+
+   The `-r' option specifies that the checker should recursively check
+files in such a way that it finds nondeterminacy caused by calls to
+other nondeterminate predicates, whether they are declared so or not.
+Also, predicates that appear to determinate will be treated as such,
+whether declared nondet or not.  This option is quite useful when first
+running the checker on a file, as it will find all predicates that
+should be either made determinate or declared nondet at once.  Without
+this option, each time a `nondet' declaration is added, the checker may
+find previously unnoticed nondeterminacy.
+
+   For example, if the original example above, without any `nondet'
+declarations, were checked with the `-r' option, the output would be:
+     * Non-determinate: user:parent/2 (clause 1)
+     *     Indexing cannot distinguish this from clause 2.
+     * Non-determinate: user:parent/2 (clause 3)
+     *     Indexing cannot distinguish this from clause 4.
+     * Non-determinate: user:is_parent/1 (clause 1)
+     *     Calls nondet predicate user:parent/2.
+
+   The `-d' option causes the tool to print out the needed `nondet'
+declarations.  These can be readily pasted into the source files.  Note
+that it only prints the `nondet' declarations that are not already
+present in the files.  However, these declarations should not be pasted
+into your code without each one first being checked to see if the
+reported nondeterminacy is intended.
+
+   The `-D' option is like `-d', except that it prints out all `nondet'
+declarations that should appear, whether they are already in the file
+or not.  This is useful if you prefer to replace all old `nondet'
+declarations with new ones.
+
+   Your code will probably rely on operator declarations and possibly
+term expansion. The determinacy checker handles this in much the same
+way as `qpc(1)': you must supply an initialization file, using the `-i
+IFILE' option.
+

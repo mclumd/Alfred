@@ -1,0 +1,417 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>qld</code> -- QOF link editor</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+<pre class="example">     qld [-cCdDEghkNqrRsSvwWxY] [ -o output ] [ -llibrary ]
+         [ -L library-directory ] [ -a quintus-product ]
+         [ -f path-name:path-spec ]
+         [ -F path-name:path-spec ]
+         [ -p path-name ]
+         [ -P path-name ]
+         filename ... [ -LD ld-options ]
+     </pre>
+
+<h4 class="subheading">Description</h4>
+
+   <p><code>qld</code> links the specified QOF files together with the Kernel QOF
+file.  This results in a single QOF file, which is then consolidated
+into a machine object file. 
+Finally, the native compiler/linker is invoked
+to link this object file with the Kernel object file and produce an
+executable image. 
+The default Kernel QOF file is
+<code></code><var>runtime-directory</var><code>/qprte.qof</code>. 
+Under UNIX, the default Kernel Object file is
+<code></code><var>runtime-directory</var><code>/qprte.o</code>; under Windows it consists of
+<code></code><var>runtime-directory</var><code>/qprte.lib</code> and
+<code></code><var>runtime-directory</var><code>/qpeng.lib</code> (see
+<code>qsetpath(1)</code> and <code>qgetpath(1)</code>).
+
+   <p>If any of the specified files depends on a foreign file, then that
+file will be included in the call to the C compiler or linker if the <code>-d</code> option is
+specified.  A QOF file depends on a foreign file if its source
+contains an embedded <code>load_foreign_files/2</code> or
+<code>load_foreign_executable/1</code> command for that file (the <code>-D</code> option
+of <code>qnm(1)</code> shows the dependencies of a QOF file; see <code>qnm(1)</code>).
+
+   <p>A filename in the command line could be either a QOF file with <code>.qof</code>
+suffix, an object file, a shared object file (UNIX only),
+an import library (Windows only),
+or an archive file.  If the
+filename specified is a machine object file, it will be passed as an argument
+to the C compiler or linker. 
+If the command line file does not exist, the same file
+with a <code>.qof</code> suffix is tried.
+
+   <p>File names may be specified either as regular paths (e.g. <code>file.qof</code>,
+<code>~/home/file.o</code>) or as Prolog file search paths, such as <code>library(file)</code>,
+<code>home(system(file.o))</code>, etc.  Note that the file search path specifications
+may need to be quoted to escape the shell's interpretation of the parentheses.
+
+   <p>The intermediate QOF and object files are deleted when <code>qld</code> exits (unless
+the <code>-k</code> options is specified; see below).  By
+default, these files are stored in the directory <code>/tmp</code>.  The
+environment variable <code>TMPDIR</code> may be set to specify another directory to
+be used instead for temporary files. If <code>TMPDIR</code> is set to a non-existent
+directory or to a directory to which the user does not have read and write
+permissions then the default value of <code>TMPDIR</code> is used for temporary files.
+
+<h4 class="subheading">Options</h4>
+
+     <dl>
+
+     <br><dt><code>-a </code><var>quintus-product</var><code></code>
+     <dd>Specifies that the libraries for a
+particular Quintus product that is sold separately are to be used. 
+These Quintus products are normally installed in the
+<var>quintus-directory</var>.  List this directory to find the valid directory
+names for these products.   This option is equivalent to one or more <code>-L</code>
+switches.  Note that the libraries shipped with Quintus Prolog (<code>qui</code>,
+<code>proxt</code>, and <code>proxl</code>) are automatically available in the system, and,
+therefore, require no <code>-a</code> flag.
+
+     <br><dt><code>-c</code>
+     <dd>If this option is specified, <code>qld</code>
+terminates after producing a machine object file.  It does
+not call the C compiler or linker to produce an executable image.  If an output filename
+is not specified with the <code>-o</code> option, the file is named
+<code>a.o</code> under UNIX and <code>a.obj</code> under Windows.  No
+foreign files, e.g. foreign dependencies, are included in the output file. 
+The resulting object file may be passed to <code>qld</code> again on a different
+command (with <code>-N</code>), or it may be passed directly to the linker.
+
+     <br><dt><code>-d</code>
+     <dd>This flag is always used when <code>qpc(1)</code> calls <code>qld</code>.  It causes
+all QOF files on which any of the specified files depends to be linked
+in as well, and any machine object files on which any of the linked
+QOF files depends to be passed to the C compiler or linker.  A QOF file depends on
+another QOF file if the source for the first contains an embedded
+command to load the source of the second.  A QOF file depends on an
+object file if its source contains an embedded <code>load_foreign_files/2</code>
+or <code>load_foreign_executable/1</code> command of the object file.
+
+     <p><code>-f </code><var>path-name</var><code>:</code><var>path-spec</var><code></code>Similar to the <code>-L</code> option, but
+<var>path-name</var>:<var>path-spec</var> defines a general file search path, which
+instructs <code>qld</code> to look for a file in directory <var>path-spec</var> whenever a
+file specification of the form <code></code><var>path-name</var><code>(</code><var>file-spec</var><code>)</code> is encountered in
+QOF file dependencies or on the command line.  The <var>path-name</var>
+and the directory, <var>path-spec</var>, are separated by a colon (<code>:</code>), and, therefore,
+<var>path-name</var> cannot contain a colon.  If <var>path-spec</var> is given in the
+file search path form (as in <code>library:mylib(library)</code>), then
+the argument must be quoted to escape the shell's interpretation of the
+parentheses.  <var>path-spec</var> may be <code>.</code> or null, in which case <code>.</code> is assumed.
+
+     <p>There may be a list of path definitions (i.e. <code>-f</code> or <code>-F</code> options) for the same
+<var>path-name</var>. 
+<code>qld</code> searches the list, just like <code>prolog</code> and <code>qpc</code>, whenever it needs to
+expand a file search path specification.  The <code>-f</code> options appends (like
+assertz in <code>prolog</code> and <code>qpc</code>) the new path to the end of the list of
+paths for <var>path-name</var>, while <code>-F</code> prepends (like asserta in <code>prolog</code> and <code>qpc</code>).
+
+     <br><dt><code>-g</code>
+     <dd>This option is not used by <code>qld</code>, but is intended for the linker. 
+If some of the specified object files or object dependency files are
+compiled with the debug flag, this option should be specified to preserve
+the debugging information in the executable.
+
+     <br><dt><code>-h</code>
+     <dd>Hides or "locks" the predicates in the file so that they
+are not visible to the debugger.  Such predicates will have
+predicate property "locked" when they are linked or loaded into a
+Prolog system.
+
+     <br><dt><code>-k</code>
+     <dd>With this option, the intermediate files are not deleted.
+
+     <br><dt><code>-l</code><var>library</var><code></code>
+     <dd>This option is not used by <code>qld</code>, but is intended for
+the linker, which is called to link with the specified library to
+product the executable.
+
+     <br><dt><code>-o </code><var>output</var><code></code>
+     <dd>The default output file names may be overridden
+using this option.  For executable files, the default name is
+<code>a.out</code> under UNIX or <code>a.exe</code> under Windows. 
+With the <code>-r</code> or <code>-R</code> options, the default name is <code>a.qof</code>. 
+With the <code>-c</code> or <code>-C</code> options, the default name is
+<code>a.o</code> under UNIX or <code>a.obj</code> under Windows.
+
+     <br><dt><code>-p </code><var>path-name</var><code></code>
+     <dd>The files search path definitions for <var>path-name</var> are
+printed. If <var>path-name</var> is <code>*</code> then all file search path definitions are printed.
+
+     <br><dt><code>-q</code>
+     <dd>Like the <code>-r</code> option but also adds a Kernel QOF file <code>qprte.qof</code>
+or <code>qprel.qof</code>. This option should very rarely be necessary.
+
+     <br><dt><code>-r</code>
+     <dd>
+ If this option is specified, <code>qld</code> terminates after linking
+together all the specified QOF files to make a new QOF file.  No Kernel
+QOF file is not linked in.  If an output filename is not specified with
+the <code>-o</code> option, the file is named <code>a.qof</code>.
+
+     <p>If <code>-d</code> is not used in conjunction with this option, then it is
+recommended that the output file, as specified by the <code>-o</code> option, be in
+the current working directory.  This way, any dependencies of the
+output QOF file on other files will be correct.  Otherwise, the
+dependencies would only be correct when absolute, as opposed to
+relative, paths had been specified in the sources.  This matters only
+if this file is to be used in a future call to <code>qld</code> with the <code>-d</code> option
+specified.
+
+     <br><dt><code>-s</code>
+     <dd>This option is not used by <code>qld</code>, but is intended for the linker,
+which is called to actually generate the executable.  The <code>-s</code>
+option instructs the linker to strip the executable. <strong>Please note:</strong> that
+once the executable is stripped then the dynamic foreign interface
+including the Prolog builtins <code>load_foreign_files/2</code> and
+<code>load_foreign_executables/1</code> cannot work.
+
+     <br><dt><code>-v</code>
+     <dd>When this option is specified, <code>qld</code> echoes its activities,
+including calls to subcomponents and <code>ld.sh</code>
+
+     <br><dt><code>-w</code>
+     <dd>This option suppresses warnings regarding undefined
+procedures.
+
+     <br><dt><code>-x</code>
+     <dd>When this option is specified, <code>qld</code> gives warnings about the
+predicates that are not called, as well as those that are undefined. 
+Also, a warning message will be printed if either of the
+user-definable predicates (<code>portray/1</code> and <code>user_error_handler/4</code>) is
+undefined.  (Such warnings are normally suppressed for these predicates.) 
+The <code>-x</code> option overrides the <code>-w</code> option.
+
+     <br><dt><code>-C</code>
+     <dd>UNIX only. Same as <code>-c</code>, except that the object dependencies of QOF
+files are also linked into the created object file.  The object file
+so produced can be directly passed to the C compiler, linker, or <code>qld -N</code> to generate the executable.
+
+     <br><dt><code>-D</code>
+     <dd>If this option is used, <code>qld</code> links the specified files with
+the Development Kernel rather than the Runtime Kernel. 
+The Development Kernel QOF file, <code></code><var>runtime-directory</var><code>/qprel.qof</code>, is
+linked with the specified QOF file, and the Development Kernel object
+file(s). 
+Under UNIX, the Development Kernel Object file is
+<code></code><var>runtime-directory</var><code>/qprel.o</code>; under Windows it consists of
+<code></code><var>runtime-directory</var><code>/qprel.lib</code> and
+<code></code><var>runtime-directory</var><code>/qpeng.lib</code>. 
+The <code>-D</code> option may not be used in conjunction with the
+<code>-E</code> option.
+
+     <br><dt><code>-E</code>
+     <dd>This option tells <code>qld</code> to link the specified files with
+the Extended Runtime Kernel rather than the Runtime Kernel (see
+<a href="sap-srs.html#sap-srs">sap-srs</a>).  The Extended Runtime Kernel QOF file,
+<code></code><var>runtime-directory</var><code>/qprex.qof</code>, is linked with the specified
+QOF file, and the default Kernel object file. 
+Under UNIX, the default Kernel Object file is
+<code></code><var>runtime-directory</var><code>/qprte.o</code>; under Windows it consists of
+<code></code><var>runtime-directory</var><code>/qprte.lib</code> and
+<code></code><var>runtime-directory</var><code>/qpeng.lib</code>
+The <code>-E</code> option may not be used in conjuction with the <code>-D</code> option.
+
+     <br><dt><code>-F </code><var>path-name</var><code>:</code><var>path-spec</var><code></code>
+     <dd>Similar to <code>-f</code>, but the path is added at
+the front of the list
+of paths for <var>path-name</var>.  Note that <code>-F library:</code><var>library-directory</var><code></code> is identical
+to <code>-L </code><var>library-directory</var><code></code>.
+
+     <br><dt><code>-L </code><var>library-directory</var><code></code>
+     <dd>
+ File specifications of the form <code>library(</code><var>Filespec</var><code>)</code>
+are searched for in the
+library search paths when that file is linked.  The initial search
+paths are the same as in the Development System (see <code>prolog(1)</code>). 
+Additional directories may be prepended to the list of library
+search paths with this option. 
+Note that the command line is parsed from left to right.  Also note
+that the <code>-L</code> must be followed by a space; otherwise, <code>qld</code> assumes that
+the option specifies a library directory for the linker.
+
+     <p>Library directories may also be specified with the <code>-f</code> and <code>-F</code> options. 
+Note that <var>library-directory</var> may be a path to a directory (e.g. <code>dir</code>, <code>~/dir</code>) or a
+file search path specification of the form <code>mylib(library)</code>.  In the latter
+case, the <var>path-name</var> <code>mylib</code> must be defined by a <code>-f</code> or <code>-F</code> option.
+
+     <br><dt><code>-L</code><var>directory</var><code></code>
+     <dd>UNIX only. Same as the <code>-L</code> option to the C compiler and linker, and
+specifies
+a directory in which the linker looks for library files.  This option is simply
+passed to the linker.
+
+     <br><dt><code>-LD</code>
+     <dd>All remaining options are simply passed to the linker.
+
+     <br><dt><code>-N</code>
+     <dd>Don't link in any Kernel files (e.g. <code>qprel.qof</code>/<code>qprel.o</code>,
+<code>qprex.qof</code>/<code>qprte.o</code> or <code>qprte.qof</code>/<code>qprte.o</code>) from the
+runtime directory.  This option is only useful for producing an
+executable image from a machine object file that was created
+from QOF files using <code>qld</code> (see <code>-C</code>).
+
+     <br><dt><code>-P </code><var>path-name</var><code></code>
+     <dd>Similar to <code>-p</code>, but the absolutized versions of the file
+search paths are also printed.
+
+     <br><dt><code>-R</code>
+     <dd>Similar to <code>-r</code>, but it does not include the resulting
+dependencies.  This flag is mainly useful for clearing the
+dependencies from the QOF file (for example, when they get absolutized
+by <code>save_program/[1,2]</code> or <code>save_modules/2</code>).
+
+     <br><dt><code>-S</code>
+     <dd>
+ Use archive files instead of shared object
+files.  Where a qof file contains a dependency on a shared object
+file, if an archive file exists with the same name but with an archive
+file extension, then this is substituted for the shared object file in
+the call to the linker.
+
+     <p>Note that if the shared object file that is being substituted contains
+dependencies to other shared libraries then these have to be included
+in the <code>qld</code> command line.  Running <code>ldd(1)</code> on a shared object file will
+indicate whether it has such dependencies.
+
+     <br><dt><code>-W</code>
+     <dd>Windows only. Pass the argument <code>-subsystem:windows</code>,
+instead of <code>-subsystem:console</code>, to the linker so that a windowed
+executable is built, rather than a console-based one. 
+The window properties of executables built with <code>-W</code> can be controlled by
+the environment variable <code>CONSOLE</code>; see below. 
+Other properties of the Windows component of such executables built with
+<code>-W</code> can be controlled with <dfn>resource files</dfn>.
+
+     <p><code>qld</code> recognizes files with the <code>.res</code> extension as resource files
+and treats them like object files, passing them to the linker. 
+Resource files are generated from <code>.rc</code> files using the <code>rc</code> program
+supplied with Microsoft Visual C++. They contain various information relating to
+the Windows component of an application,
+such as the program name, icon and key bindings. 
+The file <code>messages(system('qpwin.res'))</code> contains such data for the Quintus Prolog
+window. 
+Thus, the <code>qpwin.exe</code> executable can be generated with the command:
+     <pre class="example">          C:\&gt; <kbd>qld -WDdo qpwin.exe messages(system(qpwin.res))</kbd>
+          </pre>
+
+     <p>The Quintus Prolog resource source file is in
+<code></code><var>quintus-directory</var><code>\src\embed\qpwin.rc</code> and this references the icon file
+<code></code><var>quintus-directory</var><code>\src\embed\qp.ico</code>, which <code>rc</code> also incorporates
+into <code>qpwin.res</code>.
+
+     <br><dt><code>-Y</code>
+     <dd>Windows only. Pass the option <code>/dll</code> to the linker.  See
+<a href="sap-rge-dll.html#sap-rge-dll">sap-rge-dll</a> for details.
+
+   </dl>
+
+<h4 class="subheading">Environment</h4>
+
+     <dl>
+
+     <br><dt><code>TMPDIR</code>
+     <dd>Directory for creating temporary files.  The default is
+<code>/usr/tmp</code>.
+
+     <br><dt><code>CONSOLE</code>
+     <dd>
+Windows only. 
+Controls the window properties executables build with <code>-W</code>. 
+The value should be a comma separated list of:
+
+          <dl>
+
+          <br><dt><code>sl:</code><var>INT</var><code></code>
+          <dd>history buffer size (default 200)
+
+          <br><dt><code>cols:</code><var>INT</var><code></code>
+          <dd>number of columns (default 80)
+
+          <br><dt><code>rows:</code><var>INT</var><code></code>
+          <dd>number of rows (default 24)
+
+          <br><dt><code>x:</code><var>INT</var><code></code>
+          <dd>X position in pixels
+
+          <br><dt><code>y:</code><var>INT</var><code></code>
+          <dd>Y position in pixels
+</dl>
+
+     <p>For example, setting <code>CONSOLE</code> to <code>sl:400,rows:32</code> before starting
+<code>qpwin</code> yields a window with 32 rows and a history buffer of size 400.
+
+   </dl>
+
+<h4 class="subheading">Files</h4>
+
+     <dl>
+
+     <br><dt><code>file.qof</code>
+     <dd>Quintus Object File (QOF) files
+
+     <br><dt><code>$TMPDIR/qp*.{qof,o,obj}</code>
+     <dd>intermediate QOF and object files
+
+     <br><dt><code></code><var>runtime-directory</var><code>/qcon</code>
+     <dd>the QOF consolidator
+
+     <br><dt><code></code><var>runtime-directory</var><code>/qprel.{o,lib}</code>
+     <dd>Development Kernel object code
+
+     <br><dt><code></code><var>runtime-directory</var><code>/qprte,{o,lib}</code>
+     <dd>Runtime Kernel object code
+
+     <br><dt><code></code><var>runtime-directory</var><code>/qpeng.lib</code>
+     <dd>Windows only. 
+Common Kernel object code, used with the two previous items
+
+     <br><dt><code></code><var>runtime-directory</var><code>/qprel.qof</code>
+     <dd>Development Kernel QOF code
+
+     <br><dt><code></code><var>runtime-directory</var><code>/qprte.qof</code>
+     <dd>Runtime Kernel QOF code
+
+     <br><dt><code></code><var>runtime-directory</var><code>/qprex.qof</code>
+     <dd>Extended Runtime Kernel QOF code
+
+     <br><dt><code></code><var>runtime-directory</var><code>/ld.sh</code>
+     <dd>Front End script to the UNIX linker
+</dl>
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>cc(1)</code>, <code>ld(1)</code>, <code>qcon(1)</code>,
+<code>qgetpath(1)</code>, <code>qnm(1)</code>, <code>qpc(1)</code>, <code>qsetpath(1)</code>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="too-too-qnm.html#too-too-qnm">Next</a>
+<li><a rel="previous" accesskey="p" href="too-too-qgetpath.html#too-too-qgetpath">Previous</a>
+<li><a rel="up" accesskey="u" href="too-too.html#too-too">Up</a>
+</ul>
+</div>
+   </body></html>
+

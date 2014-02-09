@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">TTY Stream</h4>
+
+   <p>A Prolog stream is a tty stream if the format of the stream is
+<code>QP_DELIM_TTY</code>.  A tty stream is normally associated with
+a terminal device, a pseudo-terminal device or a terminal emulator. 
+A set of tty streams can be grouped together through
+a distinct character string key for each group of tty streams. 
+All the tty streams from the same tty device (emulator) should normally
+be grouped together. 
+A tty stream registers itself to a tty stream group by
+calling <code>QP_add_tty()</code> with the specific character string key for the group.
+
+   <p>There are two services provided automatically by Prolog I/O system
+to each tty stream group. 
+When a tty stream is closed, it is automatically removed from its
+tty group.
+
+     <dl>
+
+     <br><dt>Prompt Handling
+     <dd>There must be at least one output stream in the tty stream group
+in order to write out the prompt string of an input stream in the group. 
+When an input tty stream reads at the beginning of a line,
+the middle layer input function writes out the prompt of the input stream
+to the latest registered output stream in the tty group before the
+bottom layer of the read function of the input stream is called.
+
+     <br><dt>Stream Position
+     <dd>Character count, line count and line position for each stream in the tty
+group are automatically adjusted for each tty group. 
+When the buffer of an output stream is written out (such as the output line
+is terminated, the buffer overflows, or the stream output is flushed),
+the counts of all the output streams in the tty group are brought up to date. 
+When an input streams reads input to its buffer, the counts of all the
+streams in its tty group are updated to the current counts. 
+Linking the counts of tty streams in the tty group makes the count
+of a tty stream correspond to its physical appearance on the tty device. 
+</dl>
+
+   <p>A sample Prolog session demonstrates the special services performed
+for tty streams.  The default <code>open/[3,4]</code> automatically registers
+tty streams to the tty group using filename as the key. 
+After writing <code>write\n</code> to <code>Output1</code>, the counts for
+<code>Output1</code> and <code>Output2</code> are brought up to date.  The counts in Input1
+is not changed since counts in input stream are only updated when
+reading from the input stream.  After reading from Input1, the counts
+for all the three streams are updated.  The prompt <code>INPUT&gt;&gt; </code> is written
+out either through <code>Output1</code> or <code>Output2</code>, so it is included in the counts. 
+The count in Input1 is different from <code>Output1</code> and <code>Output2</code> since
+only character <code>r</code> is consumed in the input of <code>read\n</code>.
+
+<pre class="example">     | ?- <kbd>compile(user).</kbd>
+     | <kbd>write_count(Input, Output1, Output2) :-</kbd>
+          <kbd>character_count(Input, C0), line_count(Input, L0),</kbd>
+              <kbd>line_position(Input, P0),</kbd>
+          <kbd>character_count(Output1, C1), line_count(Output1, L1),</kbd>
+              <kbd>line_position(Output1, P1),</kbd>
+          <kbd>character_count(Output2, C2), line_count(Output2, L2),</kbd>
+              <kbd>line_position(Output2, P2),</kbd>
+          <kbd>format('input   : ~d, ~d, ~d~n', [C0, L0, P0]),</kbd>
+          <kbd>format('output1 : ~d, ~d, ~d~n', [C1, L1, P1]),</kbd>
+          <kbd>format('output2 : ~d, ~d, ~d~n', [C2, L2, P2]).</kbd>
+     | <kbd>^D</kbd>
+     % user compiled in module user, 0.216 sec 384 bytes
+     
+     yes
+     | ?- <kbd>open('/dev/tty', read, Input), prompt(Input, _, 'INPUT&gt;&gt; '),
+          open('/dev/tty', write, Output1),
+          open('/dev/tty', write, Output2),
+          format(Output1, 'write~n', []),
+          write_count(Input, Output1, Output2),
+          get0(Input, _), write_count(Input, Output1, Output2).</kbd>
+     write
+     input   : 0, 1, 0
+     output1 : 6, 2, 0
+     output2 : 6, 2, 0
+     INPUT&gt;&gt; read
+     input   : 15, 2, 9
+     output1 : 19, 3, 0
+     output2 : 19, 3, 0
+     </pre>
+
+   <p>Notice that the I/O in the <code>user_input</code> and <code>user_output</code> are not included in
+the counts although both streams are connected to the same tty. 
+The three default streams (<code>user_input</code>, <code>user_output</code> and <code>user_error</code>)
+are put into a different tty group in
+the embedding initialization function, <code>QU_initio()</code>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-ios-cps.html#fli-ios-cps">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-ios-sst.html#fli-ios-sst">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-ios.html#fli-ios">Up</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Error Classes</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="ref-ere-err-ins.html#ref-ere-err-ins">ref-ere-err-ins</a>:                      Instantiation Errors
+<li><a accesskey="2" href="ref-ere-err-typ.html#ref-ere-err-typ">ref-ere-err-typ</a>:                      Type Errors
+<li><a accesskey="3" href="ref-ere-err-dom.html#ref-ere-err-dom">ref-ere-err-dom</a>:                      Domain Errors
+<li><a accesskey="4" href="ref-ere-err-ran.html#ref-ere-err-ran">ref-ere-err-ran</a>:                      Range Errors
+<li><a accesskey="5" href="ref-ere-err-rep.html#ref-ere-err-rep">ref-ere-err-rep</a>:                      Representation Errors
+<li><a accesskey="6" href="ref-ere-err-exi.html#ref-ere-err-exi">ref-ere-err-exi</a>:                      Existence Errors
+<li><a accesskey="7" href="ref-ere-err-per.html#ref-ere-err-per">ref-ere-err-per</a>:                      Permission Errors
+<li><a accesskey="8" href="ref-ere-err-con.html#ref-ere-err-con">ref-ere-err-con</a>:                      Context Errors
+<li><a accesskey="9" href="ref-ere-err-cns.html#ref-ere-err-cns">ref-ere-err-cns</a>:                      Consistency Errors
+<li><a href="ref-ere-err-syn.html#ref-ere-err-syn">ref-ere-err-syn</a>:                      Syntax Errors
+<li><a href="ref-ere-err-res.html#ref-ere-err-res">ref-ere-err-res</a>:                      Resource Errors
+<li><a href="ref-ere-err-sys.html#ref-ere-err-sys">ref-ere-err-sys</a>:                      System Errors
+</ul>
+
+   <p>Exceptions raised by the Prolog system are called errors.  The set of exception
+classes used by the system has been kept small.  Here is a complete list:
+     <dl>
+
+     <br><dt>Instantiation Error
+     <dd>An input argument is insufficiently instantiated.
+
+     <br><dt>Type Error
+     <dd>An input argument is of the type.
+
+     <br><dt>Domain Error
+     <dd>An input argument is illegal but of the right type.
+
+     <br><dt>Range Error
+     <dd>A value specified for an output argument is illegal.
+
+     <br><dt>Representation Error
+     <dd>A computed value cannot be represented.
+
+     <br><dt>Existence Error
+     <dd>Something does not exist.
+
+     <br><dt>Permission Error
+     <dd>Specified operation is not permitted.
+
+     <br><dt>Context Error
+     <dd>Specified operation is not permitted in this context.
+
+     <br><dt>Consistency Error
+     <dd>Two otherwise correct values are inconsistent with
+each other.
+
+     <br><dt>Syntax Error
+     <dd>Error in reading a term.
+
+     <br><dt>Resource Error
+     <dd>Some resource limit has been exceeded.
+
+     <br><dt>System Error
+     <dd>An error detected by the operating system.
+
+   </dl>
+
+   <p>The exception codes corresponding to these classes are:
+     <ul>
+
+     <li><code>instantiation_error(</code><var>Goal, ArgNo</var><code>)</code>
+<li><code>type_error(</code><var>Goal, ArgNo, TypeName, Culprit</var><code>)</code>
+<li><code>domain_error(</code><var>Goal, ArgNo, DomainName, Culprit, Message</var><code>)</code>
+<li><code>range_error(</code><var>Goal, ArgNo, TypeName, Culprit</var><code>)</code>
+<li><code>representation_error(</code><var>Goal, ArgNo, Message</var><code>)</code>
+<li><code>existence_error(</code><var>Goal, ArgNo, ObjectType, Culprit, Message</var><code>)</code>
+<li><code>permission_error(</code><var>Goal, Operation, ObjectType, Culprit, Message</var><code>)</code>
+<li><code>context_error(</code><var>Goal, ContextType, CommandType</var><code>)</code>
+<li><code>consistency_error(</code><var>Goal, Culprit1, Culprit2, Message</var><code>)</code>
+<li><code>syntax_error(</code><var>Goal, Position, Message, Left, Right</var><code>)</code>
+<li><code>resource_error(</code><var>Goal, Resource, Message</var><code>)</code>
+<li><code>system_error(</code><var>Message</var><code>)</code>
+</ul>
+
+   <p>Most exception codes include a copy of the <var>Goal</var> that raised the
+exception.
+
+   <p>In general, built-in predicates that cause side-effects, such as the opening
+of a stream or asserting a clause into the Prolog database, attempt to do all
+error checking before the side-effect is performed.  Unless otherwise indicated
+in the documentation for a particular predicate or error class, it should be
+assumed that goals that raise exceptions have not performed any side-effect.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-ere-exa.html#ref-ere-exa">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-ere-hex.html#ref-ere-hex">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-ere.html#ref-ere">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

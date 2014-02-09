@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Building DLLs containing Prolog code</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="sap-rge-dll-ini.html#sap-rge-dll-ini">sap-rge-dll-ini</a>:                      Setting up the environment
+<li><a accesskey="2" href="sap-rge-dll-qpc.html#sap-rge-dll-qpc">sap-rge-dll-qpc</a>:                      Compiling the Prolog code
+<li><a accesskey="3" href="sap-rge-dll-cc.html#sap-rge-dll-cc">sap-rge-dll-cc</a>:                       Compiling the C code
+<li><a accesskey="4" href="sap-rge-dll-qld.html#sap-rge-dll-qld">sap-rge-dll-qld</a>:                      Linking the DLL
+</ul>
+
+   <p>This section is only relevant for Windows.
+
+   <p>It is possible to build DLLs containing Prolog code to be linked
+dynamically into applications.  Packaging your code as a DLL promotes
+sharing and is also a requirement for applications where an
+application needs to dynamically link your code. An example
+illustrating this and other techniques that are useful when embedding
+Prolog in C is the Visual Basic interface source code; see
+<code></code><var>quintus-directory</var><code>\src\vbqp</code>.
+
+   <p>Applications typically look for DLLs in the same directory as the
+application itself and also in any directories specified in the <code>PATH</code>
+environment variable.  Applications also look in some system
+directories but that is less useful for our purposes.
+
+   <p>The easiest way to ensure that the DLL (and the Quintus runtime DLLs)
+are found is to put the DLL together with the Quintus runtime DLLs in
+<var>runtime-directory</var> and then ensure that the <code>PATH</code> environment
+variable is set up to include that directory, as described below.
+
+   <p>Another method, especially suitable for running on a machine where
+Quintus Prolog is not installed, is to put all the DLLs in the same
+directory as the application. This includes the DLL built as below and
+the appropriate Quintus runtime DLLs.
+
+   <p>See the Microsoft documentation for more information about DLLs.
+
+   <p>To build a DLL containing Prolog code, follow these steps:
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="sap-rge-iap.html#sap-rge-iap">Next</a>
+<li><a rel="previous" accesskey="p" href="sap-rge-sos.html#sap-rge-sos">Previous</a>
+<li><a rel="up" accesskey="u" href="sap-rge.html#sap-rge">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

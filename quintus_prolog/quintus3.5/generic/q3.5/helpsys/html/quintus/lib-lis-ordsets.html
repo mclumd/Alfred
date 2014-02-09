@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Lists as Ordered Sets -- <code>library(ordsets)</code></h4>
+
+   <p>In this group of predicates, sets are represented by ordered lists with no
+duplicates.  Thus {c,r,a,f,t} would be <code>[a,c,f,r,t]</code>.  The ordering
+is defined by the <code>@&lt;</code> family of term comparison predicates, and
+is the ordering used by the built-in predicates <code>sort/2</code> and <code>setof/3</code>. 
+Note that
+<code>sort/2</code> and <code>setof/3</code> produce
+ordered sets as their results.  See <a href="ref-all.html#ref-all">ref-all</a> for more
+information.
+
+   <p>The benefit of the ordered representation is that the elementary set
+operations can be done in time proportional to the <em>sum</em> of the
+argument sizes rather than their <em>product</em>.
+
+   <p>A number of predicates described elsewhere can be used on unordered sets. 
+Examples are <code>length/2</code> (built-in; see <a href="ref-lte.html#ref-lte">ref-lte</a>),
+<code>member/2</code> (from <code>library(basics)</code>; see <a href="lib-lis-basics-member.html#lib-lis-basics-member">lib-lis-basics-member</a>),
+<code>subseq1/2</code> (from <code>library(lists)</code>; see <a href="lib-lis-lists.html#lib-lis-lists">lib-lis-lists</a>), <code>select/3</code> (from
+<code>library(sets)</code>; see <a href="lib-lis-set-sets.html#lib-lis-set-sets">lib-lis-set-sets</a>), and <code>sublist/3</code>
+(from <code>library(maplist)</code>; see <a href="lib-abs.html#lib-abs">lib-abs</a>).
+
+     <dl>
+
+     <br><dt><code>is_ordset(</code><var>+List</var><code>)</code>
+     <dd>
+is true when <var>List</var> is a proper list of terms [T1,T2, <small class="dots">...</small>,Tn] and the
+terms are strictly increasing:  <code>T1 @&lt; T2 @&lt; ... @&lt; Tn</code>.  The
+output of <code>sort/2</code> and <code>setof/3</code> always satisfies this test. 
+Anything that satisfies this test can be given to the predicates in
+<code>library(ordsets)</code>, regardless of how it was generated.
+
+     <br><dt><code>list_to_ord_set(</code><var>+List</var><code>, </code><var>?Set</var><code>)</code>
+     <dd>
+is true when <var>Set</var> is the ordered representation of the set designated
+by the unordered representation <var>List</var>.  (This is in fact no more than
+an alias for <code>sort/2</code>.)
+
+     <br><dt><code>ord_add_element(</code><var>+Set1</var><code>, </code><var>+Element</var><code>, </code><var>?Set2</var><code>)</code>
+     <dd>
+calculates <code></code><var>Set2</var><code> = </code><var>Set1</var><code> U {</code><var>Element</var><code>}</code>. 
+It only works this way
+ around.  <code>ord_add_element/3</code> is the ordered equivalent of <code>add_element/3</code>
+(<a href="lib-lis-set-sets.html#lib-lis-set-sets">lib-lis-set-sets</a>).
+
+     <br><dt><code>ord_del_element(</code><var>+Set1</var><code>, </code><var>+Element</var><code>, </code><var>?Set2</var><code>)</code>
+     <dd>
+calculates <var>Set2</var> = <var>Set1</var> \ {<var>Element</var>}.  It only works this way
+ around.  <code>ord_del_element/3</code> is the ordered equivalent of <code>del_element/3</code>
+(<a href="lib-lis-set-sets.html#lib-lis-set-sets">lib-lis-set-sets</a>).
+
+     <br><dt><code>ord_disjoint(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>)</code>
+     <dd>
+is true when <var>Set1</var> and <var>Set2</var> have no element in common.  It is
+not defined for unsorted lists.
+
+     <br><dt><code>ord_intersect(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>)</code>
+     <dd>
+is true when <var>Set1</var> and <var>Set2</var> have at least one element in common. 
+Note that the test is <code>==</code> rather than <code>=</code> .
+
+     <br><dt><code>ord_intersect(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Intersection</var><code>)</code>
+     <dd>
+is an obsolete synonym for <code>ord_intersection/3</code>. 
+It should not be used in new programs.
+
+     <br><dt><code>ord_intersection(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Intersection</var><code>)</code>
+     <dd>
+is true when <var>Intersection</var> is the ordered representation of
+the intersection of <var>Set1</var> and <var>Set2</var>, provided that <var>Set1</var> and
+ <var>Set2</var> are ordered sets.
+
+     <br><dt><code>ord_intersection(</code><var>+Sets</var><code>, </code><var>?Intersection</var><code>)</code>
+     <dd>
+is true when <var>Intersection</var> is the ordered representation of the
+intersection of all the sets in <var>Sets</var> (which must be a non-empty
+proper list of ordered sets).
+
+     <br><dt><code>ord_seteq(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>)</code>
+     <dd>
+is true when <var>Set1</var> and <var>Set2</var> represent the same set.  Since they
+are assumed to be ordered representations, <var>Set1</var> and <var>Set2</var>
+must be identical.
+
+     <br><dt><code>ord_setproduct(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Product</var><code>)</code>
+     <dd>
+is true when <var>Product</var> is a sorted list of <var>Elt1</var>-<var>Elt2</var> pairs, with a
+pair for each element <var>Elt1</var> of <var>Set1</var> and each element <var>Elt2</var> of <var>Set2</var>. 
+ <var>Set1</var> and <var>Set2</var> are assumed to be ordered; if they are not, the result
+may not be.
+     <pre class="example">          | ?- <kbd>list_to_ord_set([t,o,y], Set1),</kbd>
+          |    <kbd>list_to_ord_set([d,o,g], Set2),</kbd>
+          |    <kbd>ord_setproduct(Set1, Set2, Product).</kbd>
+          
+          Set1 = [o,t,y],
+          Set2 = [d,g,o],
+          Product = [o-d,o-g,o-o,t-d,t-g,t-o,y-d,y-g,y-o]
+          
+          | ?- <kbd>% but with unordered arguments:</kbd>
+          |    <kbd>ord_setproduct([t,o,y], [d,o,g], Product).</kbd>
+          
+          Product = [t-d,t-o,t-g,o-d,o-o,o-g,y-d,y-o,y-g]
+          </pre>
+
+     <br><dt><code>ord_subset(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>)</code>
+     <dd>
+is true when every element of the ordered set <var>Set1</var> appears in the
+ordered set <var>Set2</var>.  To generate subsets, use a member of the
+<code>subseq0/2</code> family from <code>library(lists)</code> (<a href="lib-lis-lists.html#lib-lis-lists">lib-lis-lists</a>).
+
+     <br><dt><code>ord_subtract(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Difference</var><code>)</code>
+     <dd>
+is true when <var>Difference</var> contains all and only the elements of <var>Set1</var>
+that are not also in <var>Set2</var>.
+
+     <br><dt><code>ord_symdiff(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Difference</var><code>)</code>
+     <dd>
+is true when <var>Difference</var> is the symmetric difference of <var>Set1</var>
+and <var>Set2</var>.
+
+     <br><dt><code>ord_union(</code><var>+Set1</var><code>, </code><var>+Set2</var><code>, </code><var>?Union</var><code>)</code>
+     <dd>
+is true when <var>Union</var> is the union of <var>Set1</var> and <var>Set2</var>.  Note that when
+an element occurs in both <var>Set1</var> and <var>Set2</var>, only one copy is retained.
+
+     <br><dt><code>ord_union(</code><var>+Sets</var><code>, </code><var>?Union</var><code>)</code>
+     <dd>
+is true when <var>Union</var> is the ordered representation of the union of
+all the sets in <var>Sets</var> (which must be a proper list of ordered sets). 
+This is quite efficient.  In fact <code>ord_union/2</code> can be seen as
+a generalization of <code>sort/2</code>.
+
+     <br><dt><code>ord_union(</code><var>+OldSet</var><code>, </code><var>+NewSet</var><code>, </code><var>?Union</var><code>, </code><var>?ReallyNew</var><code>)</code>
+     <dd>is true
+when <var>Union</var> is <var>NewSet</var> U <var>OldSet</var>, and <var>ReallyNew</var> is
+<var>NewSet</var> \ <var>OldSet</var>.  This is useful when you have
+an iterative problem, and you're adding some possibly new elements
+(<var>NewSet</var>) to a set (<var>OldSet</var>), and as well as getting the updated set
+(<var>Union</var>) you would like to know which if any of the "new" elements
+didn't already occur in the set (<var>ReallyNew</var>).
+
+   </dl>
+
+   <p>If operations on ordered sets or ordered lists are useful to you,
+you may also find <code>library(ordered)</code> (<a href="lib-abs.html#lib-abs">lib-abs</a>)
+or <code>library(ordprefix)</code> (<a href="lib-abs.html#lib-abs">lib-abs</a>)
+of interest.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="lib-lis-listparts.html#lib-lis-listparts">Next</a>
+<li><a rel="previous" accesskey="p" href="lib-lis-set.html#lib-lis-set">Previous</a>
+<li><a rel="up" accesskey="u" href="lib-lis.html#lib-lis">Up</a>
+</ul>
+</div>
+   </body></html>
+

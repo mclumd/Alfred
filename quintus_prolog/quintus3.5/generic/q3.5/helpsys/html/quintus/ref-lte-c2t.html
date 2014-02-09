@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">Converting between Constants and Text</h4>
+
+   <p>Three predicates convert between constants and lists of ASCII
+character codes:  <code>atom_chars/2</code>, <code>number_chars/2</code>, and <code>name/2</code>.
+
+   <p>There is a general convention that a predicate that
+converts objects of type <var>foo</var> to objects of type
+<var>baz</var> should have one of these forms:
+
+<pre class="example">     <var>foo</var>_to_<var>baz</var>(<var>+Foo</var>, <var>-Baz</var>) (1)
+     
+     <var>foo</var>_<var>baz</var>(<var>?Foo</var>, <var>?Baz</var>) (2)
+     </pre>
+
+   <p>Use (1) if the conversion works only one way, or (2) if for any
+<var>Foo</var> there is exactly one related <var>Baz</var> and for any
+<var>Baz</var> at most one <var>Foo</var>.
+
+   <p>The type name used for lists of ASCII character codes
+is <dfn>chars</dfn> thus, the predicate that relates an atom to its name is
+<code>atom_chars(</code><var>?Atom</var><code>, </code><var>?Chars</var><code>)</code>, and the predicate that
+relates a number to its textual representation is
+<code>number_chars(</code><var>?Number</var><code>, </code><var>?Chars</var><code>)</code>.
+
+   <p><code>atom_chars</code>(<var>Atom</var>, <var>Chars</var>) is
+a relation between an atom <var>Atom</var> and a list <var>Chars</var>
+consisting of the ASCII character codes comprising the printed
+representation of <var>Atom</var>.  Initially, either <var>Atom</var> must be
+instantiated to an atom, or <var>Chars</var> must be instantiated to
+a proper list of character codes.
+
+   <p><code>number_chars</code>(<var>Number</var>, <var>Chars</var>) is a relation between a
+number <var>Number</var> and a list <var>Chars</var> consisting of the
+ASCII character codes comprising the printed representation of
+<var>Number</var>.  Initially, either <var>Number</var> must be instantiated to
+a number, or <var>Chars</var> must be instantiated to a proper list of
+character codes.
+
+   <p><code>name/2</code> converts from any sort of constant to a chars
+representation.  Given a chars value, <code>name/2</code> will
+convert it to a number if it can, otherwise to an atom. 
+This means that there are atoms that can be constructed
+by <code>atom_chars/2</code> but not by <code>name/2</code>. 
+<code>name/2</code> is retained for backwards compatibility with
+DEC-10 Prolog and C-Prolog.  New programs should use
+<code>atom_chars/2</code> or <code>number_chars/2</code> as
+appropriate.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-lte-anv.html#ref-lte-anv">Next</a>
+<li><a rel="previous" accesskey="p" href="ref-lte-acl.html#ref-lte-acl">Previous</a>
+<li><a rel="up" accesskey="u" href="ref-lte.html#ref-lte">Up</a>
+</ul>
+</div>
+   </body></html>
+

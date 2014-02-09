@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>handle_events/[0,1,2,3]</code></h5>
+
+   <p>To wait while callbacks are being handled, use one of:
+<pre class="example">     handle_events
+     handle_events(<var>-ExitCond</var>)
+     handle_events(<var>-ExitCond</var>, <var>+Context</var>)
+     </pre>
+
+   <p><code>handle_events</code> will enter a failure-driven loop listening for
+events on all open ProXL displays, and executing callbacks.  It exits
+when either any of the callbacks binds its <dfn>exit variable</dfn> to a
+value that unifies with <var>ExitCond</var>, or when all ProXL Windows that
+have associated callbacks have been destroyed (in which case ExitCond
+will be unified with <code>none</code>).
+
+   <p>If the <var>Displayable</var> is omitted, the default Display is used.
+
+   <p>If <var>ExitCond</var> is omitted, it defaults to <code>none</code>.
+
+   <p><var>Context</var> is passed to any callbacks that want it, and may be used
+to cause callbacks to behave differently in different contexts. 
+If omitted, it defaults to an anonymous variable.
+
+   <p>For backward compatibility,
+<pre class="example">     handle_events(<var>+Displayable</var>, <var>-ExitCond</var>, <var>+Context</var>)
+     </pre>
+
+   <p>is equivalent to <code>handle_events(ExitCond, Context)</code>.  The
+Displayable is ignored.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-ev-act-dispatch_event.html#pxl-ev-act-dispatch_event">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-ev-act.html#pxl-ev-act">Up</a>
+</ul>
+</div>
+   </body></html>
+

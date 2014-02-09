@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Accumulating Lists</h5>
+
+   <p>This technique becomes much more important when extended to lists, as
+in this case it can save much building of unneeded lists through
+unnecessary calls to append sublists together.  For example, the naive
+way to reverse a list is:
+
+<pre class="example">     nreverse([], []).
+     nreverse([H|T], L) :-
+             nreverse(T, L1),
+             append(L1, [H], L).
+     </pre>
+
+   <p>This is very wasteful, since each call to <code>append/3</code> copies the initial
+part of the list, and adds one element to it.  Fortunately, this can be
+very easily rewritten to use an accumulating parameter:
+
+<pre class="example">     reverse(L1, L2) :- reverse(L1, [], L2).
+     
+     %  reverse(+X, +Y, -Z)
+     %  Z is X reversed, followed by Y
+     reverse([], Z, Z).
+     reverse([H|T], L0, L) :-
+             reverse(T, [H|L0], L).
+     </pre>
+
+   <p>This version of reverse is many times faster than the naive version, and
+uses much less memory.  The key to understanding the behavior of this
+predicate is the observation made earlier:  using an accumulating
+parameter, we build the result backwards.
+
+   <p>Don't let this confuse you.  Building a list forward is easy.  For
+example, a predicate that returns a list <var>L</var> of consecutive numbers from
+1 to <var>N</var> could be written in two different ways:  counting up and
+collecting the resulting list forward, or counting down and
+accumulating the result backward.
+
+<pre class="example">     iota1(N, L) :- iota1(1, N, L).
+     
+     iota1(N, Max, L) :-
+             (   N &gt; Max -&gt;
+                     L = []
+             ;   N1 is N+1,
+                 L = [N|L1],
+                 iota1(N1, Max, L1)
+             ).
+     </pre>
+
+   <p>or,
+
+<pre class="example">     iota2(N, L) :- iota2(N, [], L).
+     
+     iota2(N, L0, L) :-
+             (   N =&lt; 0 -&gt;
+                     L = L0
+             ;   N1 is N-1,
+                 iota2(N1, [N|L0], L)
+             ).
+     </pre>
+
+   <p>Both versions generate the same results, and neither waste any space. 
+The second version is slightly faster.  Choose whichever approach you
+prefer.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="bas-eff-lco-acp.html#bas-eff-lco-acp">Previous</a>
+<li><a rel="up" accesskey="u" href="bas-eff-lco.html#bas-eff-lco">Up</a>
+</ul>
+</div>
+   </body></html>
+

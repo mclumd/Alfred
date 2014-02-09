@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection"><code>class/1</code> directive</h4>
+
+<h4 class="subheading">Synopsis</h4>
+
+   <p><code>:- class </code><var>ClassName</var><code>.</code>
+
+   <p><code>:- class </code><var>ClassName</var><code> = [</code><var>SlotDef</var><code>, </code><var><small class="dots">...</small></var><code>].</code>
+
+   <p><code>:- class </code><var>ClassName</var><code> = </code><var>Super</var><code>.</code>
+
+   <p><code>:- class </code><var>ClassName</var><code> = [</code><var>SlotDef</var><code>, </code><var><small class="dots">...</small></var><code>] + </code><var>Super</var><code> + </code><var><small class="dots">...</small></var><code>.</code>
+
+   <p><code>:- class </code><var>ClassName</var><code> = term(</code><var>Term</var><code>).</code>
+
+   <p><code>:- class </code><var>ClassName</var><code> = term(</code><var>Term</var><code>, </code><var>Goal</var><code>).</code>
+
+   <p><code>:- class </code><var>ClassName</var><code> = term(</code><var>Term</var><code>, </code><var>Goal</var><code>, </code><var>Essence</var><code>).</code>
+
+<h4 class="subheading">Arguments</h4>
+
+     <dl>
+
+     <br><dt><var>ClassName</var>
+     <dd><dfn>atom</dfn>
+
+     <br><dt><var>SlotDef</var>
+     <dd><dfn>term</dfn>
+
+     <br><dt><var>Super</var>
+     <dd><dfn>atom</dfn>
+
+   </dl>
+
+<h4 class="subheading">Description</h4>
+
+   <p>The definition of class <var>ClassName</var> begins
+with this <code>class/1</code> directive and ends with the next <code>class/1</code>
+directive, the next <code>end_class/[0,1]</code> directive, or the end of the file,
+whichever comes first.  All clauses that look like method
+definitions within the scope of the class definition (that is,
+which have one of <code>&lt;-/2</code>, <code>&lt;&lt;/2</code> or <code>&gt;&gt;/2</code> as the principal
+functors of their heads) are considered method definitions of
+the class.
+
+   <p>You may provide as many slot definitions (<var>SlotDef</var>) and
+superclasses (<var>Super</var>) as you like. All superclasses must be
+previously defined classes.
+
+   <p>A slot definition (SlotDef) has the form
+
+<pre class="example">     <var>Visibility</var> <var>SlotName</var>:<var>Type</var> = <var>InitialValue</var>
+     </pre>
+
+   <p>where <var>Visibility</var> and <code>= </code><var>InitialValue</var><code></code> are optional.
+
+   <p><var>Visibility</var> is either <code>public</code>, <code>protected</code>, or
+<code>private</code>. If it is omitted, the slot is private.
+
+   <p><var>SlotName</var> must be an atom.
+
+   <p><var>SlotType</var> must be one of the following:
+
+     <dl>
+
+     <br><dt><code>integer</code>
+     <dd>32-bit signed integer
+
+     <br><dt><code>short</code>
+     <dd>16-bit signed integer
+
+     <br><dt><code>char</code>
+     <dd>8-bit signed integer
+
+     <br><dt><code>unsigned_short</code>
+     <dd>16-bit unsigned integer
+
+     <br><dt><code>unsigned_char</code>
+     <dd>8-bit unsigned integer
+
+     <br><dt><code>float</code>
+     <dd>32-bit floating point number
+
+     <br><dt><code>double</code>
+     <dd>64-bit floating point number
+
+     <br><dt><code>atom</code>
+     <dd>Prolog atom (32-bit pointer)
+
+     <br><dt><code>address</code>
+     <dd>32-bit address
+
+     <br><dt><code>term</code>
+     <dd>Prolog term
+
+     <br><dt><var>Class</var>
+     <dd>32-bit pointer to an instance of <var>Class</var>, which must be a
+previously defined class
+
+     <br><dt><code>pointer(</code><var>Type</var><code>)</code>
+     <dd>like <code>address</code>, except that access to this slot
+yields, and update of this slot expects, a unary term whose functor
+is <var>Type</var>
+</dl>
+
+   <p><var>InitialValue</var> may be any constant appropriate for the slot's type.
+
+   <p><var>Term</var>, if specified, is any compound Prolog term.  Class
+declarations of any of the last three forms introduce a <dfn>term
+class</dfn>, which defines any term that unifies with <var>Term</var> as an
+instance of the class being defined.
+
+   <p><var>Goal</var>, if specified, is any Prolog goal.  This goal may be used
+to restrict which terms that unify with <var>Term</var> will be considered to
+be instance of the class being defined.  The default <var>Goal</var> is
+<code>true</code>.  Other than when it is <code>true</code>, <var>Goal</var> will usually share
+variables with <var>Term</var>.
+
+   <p><var>Essence</var>, if specified, is a list of terms of the form
+<pre class="example">     <var>Variable</var>:<var>Type</var>
+     </pre>
+
+   <p>where <var>Variable</var> is a variable apprearing somewhere in <var>Term</var> and
+<var>Type</var> is one of the possible <var>Slottype</var> types listed above. 
+There should be a <var>Variable</var><code>:</code><var>Type</var> pair for every variable in
+<var>Term</var>.  By specifying an essence, you permit much more space- and
+time-efficient storage of and access to term slots.
+
+<h4 class="subheading">Caveat</h4>
+
+   <p>Note that every class for which you want to be
+able to create instances must define at least one create method.
+
+<h4 class="subheading">Examples</h4>
+
+   <p>The following class definition is for a class
+named <code>point</code>, with two public slots, named <code>x</code> and <code>y</code>. Both
+slots are of type <code>integer</code> and have initial values of 1 and 2,
+respectively.
+
+<pre class="example">     :- class point =
+             [public x:integer=1,
+              public y:integer=2].
+     
+     Self &lt;- create.
+     :- end_class point.
+     </pre>
+
+   <p>Because the slots are public, they have get and put methods
+generated automatically. Because the class has a create method
+defined, it is possible to create an instance with the command
+
+<pre class="example">     | ?- <kbd>create(point, PointObj).</kbd>
+     </pre>
+
+   <p>which creates a <code>point</code> object and binds the variable <code>PointObj</code> to it.
+
+   <p>Using the <code>point</code> class, we could create a class, <code>named_point</code>, which has
+an extra public slot, <code>name</code>.
+
+<pre class="example">     :- class named_point =
+             [public name:atom] + point.
+     
+     Self &lt;- create(Name, X, Y) :-
+             Self &lt;&lt; name(Name),
+             Self &lt;&lt; x(X),
+             Self &lt;&lt; y(Y).
+     
+     :- end_class named_point.
+     </pre>
+
+   <p>The only way to create a <code>named_point</code> object requires specifying values
+for all three slots.
+
+<h4 class="subheading">See Also</h4>
+
+   <p><code>end_class/[0,1]</code>
+
+   <a href="obj-scl.html#obj-scl">obj-scl</a>, <a href="obj-tcl.html#obj-tcl">obj-tcl</a>.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="obj-exp-class_ancestor.html#obj-exp-class_ancestor">Next</a>
+<li><a rel="previous" accesskey="p" href="obj-exp-get.html#obj-exp-get">Previous</a>
+<li><a rel="up" accesskey="u" href="obj-exp.html#obj-exp">Up</a>
+</ul>
+</div>
+   </body></html>
+

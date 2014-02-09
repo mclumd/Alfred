@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Basic Information</h5>
+
+   <p>Once a program has been loaded, its facts and
+rules are resident in the Prolog database.  It is possible to
+save the current state of the
+database in its compiled form as a QOF file. 
+This allows you to restore the current database
+at a later time without having to re-compile your Prolog
+source files.
+
+   <p>The built-in predicate <code>save_program/1</code> saves the Prolog state. 
+For example,
+<pre class="example">     | ?- <kbd>save_program(myprog).</kbd>
+     </pre>
+
+   <p>You can later reload the file <code>myprog</code> into Prolog using the command
+<pre class="example">     | ?- <kbd>[myprog].</kbd>
+     </pre>
+
+   <p>A saved program is a special kind of QOF file, which is capable of being
+run directly from the operating system, as if it were an executable file. 
+To run a saved program from the command prompt, type the name of the
+file containing the saved program at the command prompt.  For example,
+<pre class="example">     % <kbd>myprog</kbd>
+     </pre>
+
+   <p>This is equivalent to starting up Prolog and loading <code>myprog</code>. 
+Under Windows, this only works if the name of the file has the extension
+<code>bat</code>, e.g. <code>myprog.bat</code>.
+
+   <p>You can also specify a goal to be run when a saved program is started up. 
+This is done by:
+<pre class="example">     | ?- <kbd>save_program(myprog, start).</kbd>
+     </pre>
+
+   <p>where <code>start/0</code> is the predicate to be called.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="up" accesskey="u" href="bas-lod-srs.html#bas-lod-srs">Up</a>
+</ul>
+</div>
+   </body></html>
+

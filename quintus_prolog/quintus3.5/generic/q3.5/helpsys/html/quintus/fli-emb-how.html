@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h4 class="subsection">How Embedding Works</h4>
+
+<a name="Menu"></a>
+<ul class="menu">
+<li><a accesskey="1" href="fli-emb-how-mai.html#fli-emb-how-mai">fli-emb-how-mai</a>:                      Defining your own main()
+<li><a accesskey="2" href="fli-emb-how-mem.html#fli-emb-how-mem">fli-emb-how-mem</a>:                      The Embedding Functions for Memory Management
+<li><a accesskey="3" href="fli-emb-how-iou.html#fli-emb-how-iou">fli-emb-how-iou</a>:                      The Embedding Functions For Input/Output
+</ul>
+
+   <p>The next three sections describe the major areas of Prolog that can
+be redefined to facilitate the embedding of Prolog code in foreign
+language applications:
+
+     <ul>
+
+     <li>Initialization, i.e. <code>main()</code>
+<li>Memory management
+<li>Input/Output
+</ul>
+
+   <p>Consider the details presented in these sections in the context of this
+overview of the process of creating a program with a Prolog component:
+
+     <ol type=1 start=1>
+
+     <li>Write the foreign code (<code>prog.c</code>) and the Prolog code (<code>component.pl</code>),
+using the steps for the C calling Prolog interface described in
+<a href="fli-ffp-bas-sum.html#fli-ffp-bas-sum">fli-ffp-bas-sum</a> to call the Prolog predicates.  Most likely you will
+be defining a <code>main()</code> routine; in this case be sure to call
+<code>QP_initialize()</code>.  An example is found in the reference page. 
+<li>Determine whether it is necessary to customize any of the API
+modules for initialization, memory management or
+input/output.  This is discussed in <a href="fli-emb-how-mai.html#fli-emb-how-mai">fli-emb-how-mai</a>,
+<a href="fli-emb-how-mem.html#fli-emb-how-mem">fli-emb-how-mem</a>, and <a href="fli-emb-how-iou.html#fli-emb-how-iou">fli-emb-how-iou</a>. 
+<li>If customization is required, and it seldom will be, rewrite the
+relevant modules. 
+<li>Produce the executable:
+          <ol type=a start=1>
+
+          <li>Compile <code>component.pl</code> using <kbd>qpc -c component.pl</kbd>
+<li>Compile <code>prog.c</code> using e.g. <kbd>cc -c prog.c</kbd>
+<li>Link the two using <code>qld</code>.  A typical call would be:
+          <pre class="example">               % qld -Dd component.qof prog.o -o BigApplication
+               </pre>
+
+          <p>You may also want to link in QUI in order to be able to use the
+debugger, as described in <a href="dbg-sld.html#dbg-sld">dbg-sld</a>.  The process
+of linking QUI into an application is discussed in <a href="sap-srs-qui.html#sap-srs-qui">sap-srs-qui</a>. 
+</p><li>Run BigApplication.  Debug, using standard debugging tools
+such as <code>gdb(1)</code> for C code, and Prolog debugging tools for Prolog code.
+          </ol>
+
+        </ol>
+
+   <p>Quintus Prolog provides defaults for interfacing the operating system.  If
+customization is necessary in this area, a user must completely
+redefine, not just extend, the supplied functions.
+
+   <blockquote>
+
+        <p><strong>Please note:</strong>  The default OS interface functions that can be redefined all have
+names beginning with the prefix <code>QU_</code>.
+
+        <p>The QU_ functions are like hooks in the sense that they provide you with a
+place to insert code that changes Prolog's behavior.  However, we do
+not include Prolog hooks such as <code>message_hook/3</code> in this discussion
+because the point of embedding is to call Prolog code from foreign
+programs.  The Prolog hooks are used independently of embedding. 
+</blockquote>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="fli-emb-sum.html#fli-emb-sum">Next</a>
+<li><a rel="previous" accesskey="p" href="fli-emb-lay.html#fli-emb-lay">Previous</a>
+<li><a rel="up" accesskey="u" href="fli-emb.html#fli-emb">Up</a>
+<li><a href="#Menu">Node Menu</a>
+</ul>
+</div>
+   </body></html>
+

@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Invoking Emacs-Lisp Functions from Prolog</h5>
+
+   <p>Prolog talks to GNU Emacs by writing a sequence of one or more
+Emacs-Lisp function calls (including the parentheses) to the standard
+output stream, where this sequence is delimited by two special
+character codes.  When GNU Emacs detects one of these delimited
+"packets" (as they are referred to in the Emacs-Lisp code) being
+written, it executes the function calls that occur between the
+delimiters.  The packet start character is ASCII 30 and the packet end
+character is ASCII 29.
+
+   <p>As an  example,  define and call the predicate
+<pre class="example">     to_emacs :-
+             put(30),
+             write('(message "hello") (sit-for 50)'),
+             put(29).
+     </pre>
+
+   <blockquote>
+
+        <p>WARNING: Attempting to debug or interrupt (with <kbd>^c ^c</kbd>)
+this predicate, thus submitting only a partial packet to GNU Emacs,
+will cause subsequent output to be considered as a continuation of the
+current packet and disaster will ensue.  If such a situation occurs,
+try typing the command
+
+     <pre class="example">          <kbd>put(29).</kbd>
+          </pre>
+
+        <p>to terminate the packet.  You may want to consider using a critical region
+to prevent this problem, see <code>library(critical)</code>. 
+</blockquote>
+
+   <p>You will notice that after the message (<code>hello</code>) is printed out in the
+message buffer (also called the minibuffer in GNU Emacs literature)
+and the "sit-for" period expires, it then disappears.  This is a
+side-effect of the design of the GNU Emacs interface.  Any Emacs-Lisp
+function that is called by Prolog should display messages using the
+function
+<pre class="example">     (&amp;qp-message <var>message-string</var>)
+     </pre>
+
+   <p>where <var>message-string</var> must be a single string (this is unlike
+<code>message</code>, which can take multiple strings; use the Emacs-Lisp
+function <code>concat</code> to make a single string out of multiple strings). 
+This string will be displayed in the message buffer after GNU Emacs
+has processed the current "packet" from Prolog.  Therefore, if you
+redefine the predicate as
+<pre class="example">     to_emacs :-
+             put(30),
+             write('(&amp;qp-message "hello")'),
+             put(29).
+     </pre>
+
+   <p>and reinvoke it, you will find that the message remains in the message
+buffer.
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="previous" accesskey="p" href="ema-emi-pge-gqu.html#ema-emi-pge-gqu">Previous</a>
+<li><a rel="up" accesskey="u" href="ema-emi-pge.html#ema-emi-pge">Up</a>
+</ul>
+</div>
+   </body></html>
+

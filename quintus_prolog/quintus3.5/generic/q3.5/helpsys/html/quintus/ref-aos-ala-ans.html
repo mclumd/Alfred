@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection">Arguments as Numbers or as Strings</h5>
+
+   <p>The difference between using <code>argv</code> and <code>args</code> is evident when
+Prolog is invoked with numbers as arguments.
+
+   <p>The objects returned by <code>unix(argv(_))</code> are Prolog objects; that
+is, if the command line argument is a number, then it will be returned
+as a number.  Thus:
+<pre class="example">     % <kbd>prolog 1</kbd>
+         .
+         .
+         .
+     | ?- <kbd>unix(argv([1])).</kbd>
+     
+     yes
+     | ?- <kbd>unix(argv(['1'])).</kbd>
+     
+     no
+     | ?- <kbd>unix(args(['1'])).</kbd>
+     
+     yes
+     </pre>
+
+<pre class="example">     % <kbd>prolog 1 6.999999</kbd>
+         .
+         .
+         .
+     
+     | ?- <kbd>unix(argv(X)).</kbd>
+     
+     X = [1, 6.9999999E+00]
+     
+     | ?- <kbd>unix(args(X)).</kbd>
+     
+     X = ['1', '6.999999']
+     </pre>
+
+   <p>So if your program treats the command line argument as a number, use
+the form with <code>argv</code>, but if it is to be treated as a string, use
+<code>args</code>.  For example if the program is called with a number and
+performs some arithmetic operation on the argument then displays the
+result, use <code>argv</code>.
+
+<pre class="example">     | ?- <kbd>[user].</kbd>
+     | <kbd>runtime_entry(start) :-</kbd>
+          <kbd>unix(argv([A])),</kbd>
+          <kbd>Y is A+1,</kbd>
+          <kbd>display(Y).</kbd>
+     | <kbd>^D</kbd>
+     % user compiled in module user, 0.083 sec 8 bytes
+     
+     yes
+     | ?- <kbd>runtime_entry(start).</kbd>
+     46
+     yes
+     </pre>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="ref-aos-ala-aac.html#ref-aos-ala-aac">Next</a>
+<li><a rel="up" accesskey="u" href="ref-aos-ala.html#ref-aos-ala">Up</a>
+</ul>
+</div>
+   </body></html>
+

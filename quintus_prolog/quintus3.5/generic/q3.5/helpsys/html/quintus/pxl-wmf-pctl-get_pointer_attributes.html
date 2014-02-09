@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+<title>Quintus Prolog</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Quintus Prolog">
+<meta name="generator" content="makeinfo 4.3">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home">
+<link href="texinfo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h5 class="subsubsection"><code>get_pointer_attributes/[1,2]</code></h5>
+
+<pre class="example">     get_pointer_attributes(+<var>AttributeList</var>)
+     get_pointer_attributes(+<var>Screenable</var>, +<var>AttributeList</var>)
+     </pre>
+
+   <p>Allows the user to find the state of the pointer.
+
+   <p><var>Screenable</var> is a ProXL Screenable. If omitted, the default Screen
+is used.
+
+   <p><var>AttributeList</var> is a List of pointer attributes, whose elements will
+be unified with the actual state of the pointer. Valid attributes
+are:
+     <dl>
+
+     <br><dt><code>acceleration(</code><var>A</var><code>)</code>
+     <dd>Unifies <var>A</var> with a term of the form
+<var>N/D</var>, where <var>N</var> and <var>D</var> are integers, the <b>numerator</b> and
+<b>denominator</b> of the pointer acceleration multiplier.
+
+     <br><dt><code>threshold(</code><var>T</var><code>)</code>
+     <dd>Unifies <var>T</var> with the integer value of the
+pointer threshold parameter.
+
+     <br><dt><code>mapping(</code><var>B1</var><code>, </code><var>B2</var><code>, </code><var>B3</var><code>, </code><var>B4</var><code>, </code><var>B5</var><code>)</code>
+     <dd>Unifies
+<var>B1</var> to <var>B5</var> with integers in the range <code>0</code> to <code>5</code>,
+denoting the current mapping of physical pointer buttons to
+logical pointer buttons. The nominal mapping is <var>Bi = i</var>. 
+A value of <code>0</code>, means that the button is disabled.
+
+     <br><dt><code>root_position(</code><var>X</var><code>, </code><var>Y</var><code>)</code>
+     <dd>Unifies <var>X</var> and <var>Y</var> with the
+current pointer coordinates, relative to the root window origin.
+
+     <br><dt><code>window(</code><var>W</var><code>, </code><var>X</var><code>, </code><var>Y</var><code>)</code>
+     <dd>Unifies <var>W</var> with a
+ProXL window the pointer is inside of, and <var>X</var> and <var>Y</var> to the pointer
+coordinates, relative to the window's origin. If <var>W</var> is unbound,
+<code>get_pointer_attributes</code> will backtrack over all windows in the
+hierarchy that contain the pointer, except for the root window.
+
+     <br><dt><code>deepest(</code><var>W</var><code>, </code><var>X</var><code>, </code><var>Y</var><code>)</code>
+     <dd>Unifies <var>W</var> with the innermost
+ProXL window the pointer is inside of, and <var>X</var> and <var>Y</var> to the pointer
+coordinates, relative to the window's origin.
+
+     <br><dt><code>state(</code><var>B</var><code>, </code><var>M</var><code>)</code>
+     <dd>Unifies <var>B</var> with a term describing the
+state of the pointer buttons, and <var>M</var> with a term describing the
+state of the modifier keys. The predicates <code>state_mask/2</code>,
+<code>buttons_mask/2</code> and <code>modifiers_mask/2</code> are useful for
+translating
+between buttons and modifiers representations and bitmasks.
+
+   </dl>
+
+<div class="logo">
+<a href="http://www.sics.se/quintus/">
+<table><tr><td>&nbsp;</td></tr></table>
+</a>
+</div>
+<div class="node">
+<ul class="node">
+<li><a href="index.html#Top">User's Manual</a>
+<hr>
+<li><a href="index.html#TOC">Table of Contents</a>
+<li><a rel="next" accesskey="n" href="pxl-wmf-pctl-put_pointer_attributes.html#pxl-wmf-pctl-put_pointer_attributes">Next</a>
+<li><a rel="up" accesskey="u" href="pxl-wmf-pctl.html#pxl-wmf-pctl">Up</a>
+</ul>
+</div>
+   </body></html>
+
