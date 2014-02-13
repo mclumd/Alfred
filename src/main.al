@@ -294,6 +294,23 @@ fif(and(equil(Item1,Item2),
 					structure(_,_,_,_)], Asserts), []))),
 conclusion(call(ac_action(a, alfred, [update, I, Item2, Item1]), Asserts, a))).
 
+fif(and(equil(name,CurrUser),
+	and(curr_user(PrevUser),
+		eval_bound(switch_user(PrevUser,CurrUser),[PrevUser,CurrUser]))),
+conclusion(curr_user(CurrUser))).
+
+fif(and(equil(user,Item2),
+	eval_bound(df(equil(user,Item2)), [Item2])),
+conclusion(curr_user(Item2))).
+
+fif(and(equil(Item1,user),
+	eval_bound(df(equil(Item1,user)), [Item1])),
+conclusion(curr_user(Item1))).
+
+fif(and(equil(name,Item2),
+	eval_bound(df(equil(name,Item2)), [Item2])),
+conclusion(curr_user(Item2))).
+
 fif(failed(ac_action(Utt,_,List),_,Utt),
 conclusion(call(ac_report_fail(Utt,[action,List]),[], Utt))).
 

@@ -4,7 +4,7 @@ isa(train, 'Metroliner').
 
 isa(train, 'Bullet').
 
-isa(train, 'NorthStar').
+isa(train, 'Northstar').
 
 isa(city, 'Baltimore').
 

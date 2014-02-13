@@ -111,6 +111,11 @@ update_wait_time(Step, _, _, ExpPause, CurrWait,_) :-
 	format('~N 2. CurrWait = ~d ~N', [NewWait]),
 	NewWait > ExpPause.
 
+switch_user(PrevUser, CurrUser) :-
+	\+ (CurrUser = PrevUser),
+	df(curr_user(PrevUser)),
+	df(equil(_,CurrUser)).
+
 revise_expectation(MaxViol, ExpPause, LocalViol, GlobViol, CurrUttStep) :-
 	%GlobViol >= MaxViol,
 	pos_int_u(utt_on_time(UttOnTime)),
