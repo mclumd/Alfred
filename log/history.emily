@@ -59,7 +59,7 @@ add(link(X383, X384, X385, X386) & unused_cost(X383, X387, X388) & done(ac_find_
 add(failed(ac_parse_phrase(X391, X392), X393, X391) -f-> conclusion(fix_link_length(X391, 2)))  59  []
 add(done(ac_find_links(X394), X395, X394) & eval_bound(mult_gather_all([value_of(X394, X400, X401), isa(X398, X399), equil(X396, X397)], X402), [X394]) & eval_bound(\+(pos_int_u(link(X394, X403, X404, X405))), [X394]) & eval_bound(\+(pos_int_u(response(X406, X407, X394))), [X394]) -f-> conclusion(call(ac_parse_phrase(X394, ), X402, X394)))  58  []
 add(response(X408, X409, X410) & done(ac_find_links(X410), X411, X410) & eval_bound(mult_gather_all([value_of(X410, X416, X417), isa(X414, X415), equil(X412, X413)], X418), [X410]) & eval_bound(\+(pos_int_u(link(X410, X419, X420, X421))), [X410]) -f-> conclusion(call(ac_parse_phrase(X410, X409), X418, X410)))  57  []
-add(eval_bound(mult_gather_all([links(X422, X425, X426, X427, X428), value_of(X422, X423, X424)], X429), [X422]) & end_of_parse(X422) -f-> conclusion(call(ac_find_links(X422), X429, X422)))  56  []
+add(eval_bound(mult_gather_all([links(X422, X425, X426, X427, X428), value_of(X422, X423, X424)], X429), [X422]) & eval_bound(add_user_to_utt(X422), [X422]) & end_of_parse(X422) -f-> conclusion(call(ac_find_links(X422), X429, X422)))  56  []
 add(expect(X430, X431) & eval_bound(compare(>, X432, X430), [X432, X430]) & eval_bound(\+(pos_int_u(response(X430, X431, X433))), [X430, X431]) & utterance(X432) -f-> conclusion(response(X430, X431, X432)))  55  []
 add(update_utt_list(X434, X435) & eval_bound(update_current_utterance(X434, X436), [X434, X436]) & eval_bound(update_global_violations(X436), [X436]) & eval_bound(pos_int_u(now(X436)), ) & eval_bound(df(utt_list(X435)), [X435]) -f-> conclusion(utt_list([X434, X435])))  54  []
 add(eval_bound(pos_int_u(now(X437)), ) & eval_bound(\+(member(X438, X439)), [X438, X439]) & utterance(X438) & utt_list(X439) -f-> conclusion(update_utt_list(X438, X439)))  53  []
@@ -418,903 +418,1597 @@ delete(now(46))  204  []
 End of Step----------------------------------
 
 step(48)
-add(end_of_parse(s1))  223  []
-add(verb(s1, val3))  222  []
-add(links(s1, l0, val3, val4, Ost))  221  []
-add(links(s1, l0, val2, val3, Ss))  220  []
-add(links(s1, l0, val1, val2, Ds))  219  []
-add(links(s1, l0, val0, val2, Wd))  218  []
-add(links(s1, l0, val0, val5, RW))  217  []
-add(value_of(s1, val5, RIGHT-WALL))  216  []
-add(value_of(s1, val4, Emily))  215  []
-add(value_of(s1, val3, is))  214  []
-add(value_of(s1, val2, name))  213  []
-add(value_of(s1, val1, my))  212  []
-add(value_of(s1, val0, LEFT-WALL))  211  []
-add(unused_cost(s1, l0, 0))  210  []
-add(utterance(s1))  209  []
+add(idling(48))  209  []
 add(now(48))  208  []
+delete(curr_wait_time(23))  206  []
 delete(now(47))  207  []
 End of Step----------------------------------
 
 step(49)
-add(now(49))  227  []
-add(call(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val2, Wd), links(s1, l0, val1, val2, Ds), links(s1, l0, val2, val3, Ss), links(s1, l0, val3, val4, Ost), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  226  [[56,223]]
-add(parsed(s1))  225  [[65,210]]
-add(update_utt_list(s1, ))  224  [[53,209,34]]
-delete(utt_on_time(0))  46  []
-delete(curr_wait_time(23))  206  []
-delete(currUtt(0, 0))  37  []
-delete(utt_list())  34  []
+add(now(49))  211  []
+add(curr_wait_time(24))  210  []
 delete(now(48))  208  []
 End of Step----------------------------------
 
 step(50)
-add(now(50))  235  []
-add(doing(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val2, Wd), links(s1, l0, val1, val2, Ds), links(s1, l0, val2, val3, Ss), links(s1, l0, val3, val4, Ost), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  234  []
-add(call(ac_main_verb(s1), [verb(s1, val3), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  233  [[66,225,222]]
-add(utt_list([s1]))  232  [[54,224]]
-add(utt_on_time(1))  231  []
-add(curr_wait_time(0))  230  []
-add(currUtt(s1, 49))  229  []
-delete(now(49))  227  []
+add(idling(50))  213  []
+add(now(50))  212  []
+delete(curr_wait_time(24))  210  []
+delete(now(49))  211  []
 End of Step----------------------------------
 
 step(51)
-add(done(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val2, Wd), links(s1, l0, val1, val2, Ds), links(s1, l0, val2, val3, Ss), links(s1, l0, val3, val4, Ost), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  242  []
-add(link(s1, val3, val4, Ost))  241  []
-add(link(s1, val2, val3, Ss))  240  []
-add(link(s1, val1, val2, Ds))  239  []
-add(link(s1, val0, val2, Wd))  238  []
-add(now(51))  237  []
-add(doing(ac_main_verb(s1), [verb(s1, val3), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  236  []
-delete(doing(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val2, Wd), links(s1, l0, val1, val2, Ds), links(s1, l0, val2, val3, Ss), links(s1, l0, val3, val4, Ost), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  234  []
-delete(now(50))  235  []
+add(now(51))  215  []
+add(curr_wait_time(25))  214  []
+delete(now(50))  212  []
 End of Step----------------------------------
 
 step(52)
-add(main_verb(s1, is))  244  []
-add(now(52))  243  []
-delete(now(51))  237  []
+add(idling(52))  217  []
+add(now(52))  216  []
+delete(curr_wait_time(25))  214  []
+delete(now(51))  215  []
 End of Step----------------------------------
 
 step(53)
-add(now(53))  246  []
-add(call(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), main_verb(s1, is)], s1))  245  [[68,244]]
-delete(now(52))  243  []
+add(now(53))  219  []
+add(curr_wait_time(26))  218  []
+delete(now(52))  216  []
 End of Step----------------------------------
 
 step(54)
-add(now(54))  248  []
-add(doing(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), main_verb(s1, is)], s1))  247  []
-delete(now(53))  246  []
+add(idling(54))  221  []
+add(now(54))  220  []
+delete(curr_wait_time(26))  218  []
+delete(now(53))  219  []
 End of Step----------------------------------
 
 step(55)
-add(done(ac_main_verb(s1), [verb(s1, val3), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  250  []
-add(now(55))  249  []
-delete(doing(ac_main_verb(s1), [verb(s1, val3), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  236  []
-delete(now(54))  248  []
+add(now(55))  223  []
+add(curr_wait_time(27))  222  []
+delete(now(54))  220  []
 End of Step----------------------------------
 
 step(56)
-add(done(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), main_verb(s1, is)], s1))  253  []
-add(alfred_command(s1, is, is))  252  []
-add(now(56))  251  []
-delete(doing(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), main_verb(s1, is)], s1))  247  []
-delete(now(55))  249  []
+add(idling(56))  225  []
+add(now(56))  224  []
+delete(curr_wait_time(27))  222  []
+delete(now(55))  223  []
 End of Step----------------------------------
 
 step(57)
-add(now(57))  255  []
-add(satisfiedallneeds(s1))  254  [[70,253]]
-delete(now(56))  251  []
+add(now(57))  227  []
+add(curr_wait_time(28))  226  []
+delete(now(56))  224  []
 End of Step----------------------------------
 
 step(58)
-add(now(58))  257  []
-add(call(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val1, val2, Ds), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  256  [[73,254,252]]
-delete(now(57))  255  []
+add(idling(58))  229  []
+add(now(58))  228  []
+delete(curr_wait_time(28))  226  []
+delete(now(57))  227  []
 End of Step----------------------------------
 
 step(59)
-add(now(59))  259  []
-add(doing(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val1, val2, Ds), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  258  []
-delete(now(58))  257  []
+add(now(59))  231  []
+add(curr_wait_time(29))  230  []
+delete(now(58))  228  []
 End of Step----------------------------------
 
 step(60)
-add(error(s1, EXTRA_LINK, [val1, val2, Ds]))  261  []
-add(now(60))  260  []
-delete(now(59))  259  []
+add(idling(60))  233  []
+add(now(60))  232  []
+delete(curr_wait_time(29))  230  []
+delete(now(59))  231  []
 End of Step----------------------------------
 
 step(61)
-add(now(61))  263  []
-add(need(s1, [fix_xlink, val1, val2, Ds]))  262  [[79,261]]
-delete(now(60))  260  []
+add(now(61))  235  []
+add(curr_wait_time(30))  234  []
+delete(now(60))  232  []
 End of Step----------------------------------
 
 step(62)
-add(not(satisfiedallneeds(s1)))  264  [[82,262,254]]
-add(done(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val1, val2, Ds), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  289  []
-add(error(LINK_NF, s1, [X]))  288  []
-add(now(62))  287  []
-add(call(ac_think(s1, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s1, val3), value_of(s1, val0, LEFT-WALL), value_of(s1, val1, my), value_of(s1, val2, name), value_of(s1, val3, is), value_of(s1, val4, Emily), value_of(s1, val5, RIGHT-WALL), link(s1, val0, val2, Wd), link(s1, val1, val2, Ds), link(s1, val2, val3, Ss), link(s1, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s1))  265  [[100,262,31]]
-delete(doing(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val1, val2, Ds), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  258  []
-delete(now(61))  263  []
+add(idling(62))  237  []
+add(now(62))  236  []
+delete(curr_wait_time(30))  234  []
+delete(now(61))  235  []
 End of Step----------------------------------
 
 step(63)
-add(now(63))  294  []
-add(doing(ac_think(s1, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s1, val3), value_of(s1, val0, LEFT-WALL), value_of(s1, val1, my), value_of(s1, val2, name), value_of(s1, val3, is), value_of(s1, val4, Emily), value_of(s1, val5, RIGHT-WALL), link(s1, val0, val2, Wd), link(s1, val1, val2, Ds), link(s1, val2, val3, Ss), link(s1, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s1))  293  []
-add(contra(264, 254, 62))  290  [[264,254]]
-add(distrusted(264, 62))  292  [[254]]
-add(distrusted(254, 62))  291  [[264]]
-delete(now(62))  287  []
+add(now(63))  239  []
+add(curr_wait_time(31))  238  []
+delete(now(62))  236  []
 End of Step----------------------------------
 
 step(64)
-add(done(ac_think(s1, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s1, val3), value_of(s1, val0, LEFT-WALL), value_of(s1, val1, my), value_of(s1, val2, name), value_of(s1, val3, is), value_of(s1, val4, Emily), value_of(s1, val5, RIGHT-WALL), link(s1, val0, val2, Wd), link(s1, val1, val2, Ds), link(s1, val2, val3, Ss), link(s1, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s1))  298  []
-add(satisfied(s1, [fix_xlink, val1, val2, Ds]))  297  []
-add(now(64))  296  []
-add(not(satisfiedallneeds(s1)))  295  [[114,290]]
-delete(doing(ac_think(s1, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s1, val3), value_of(s1, val0, LEFT-WALL), value_of(s1, val1, my), value_of(s1, val2, name), value_of(s1, val3, is), value_of(s1, val4, Emily), value_of(s1, val5, RIGHT-WALL), link(s1, val0, val2, Wd), link(s1, val1, val2, Ds), link(s1, val2, val3, Ss), link(s1, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s1))  293  []
-delete(link(s1, val1, val2, Ds))  239  []
-delete(now(63))  294  []
+add(idling(64))  241  []
+add(now(64))  240  []
+delete(curr_wait_time(31))  238  []
+delete(now(63))  239  []
 End of Step----------------------------------
 
 step(65)
-add(satisfiedallneeds(s1))  299  [[81,297]]
-add(now(65))  301  []
-delete(now(64))  296  []
+add(now(65))  243  []
+add(curr_wait_time(32))  242  []
+delete(now(64))  240  []
 End of Step----------------------------------
 
 step(66)
-add(now(66))  307  []
-add(distrusted(300, 65))  306  [[295]]
-add(contra(300, 295, 65))  305  [[300,295]]
-add(contra(299, 295, 65))  302  [[299,295]]
-add(distrusted(299, 65))  304  [[295]]
-add(distrusted(295, 65))  303  [[299]]
-delete(now(65))  301  []
+add(end_of_parse(s1))  259  []
+add(verb(s1, val3))  258  []
+add(links(s1, l0, val3, val4, Ost))  257  []
+add(links(s1, l0, val2, val3, Ss))  256  []
+add(links(s1, l0, val1, val2, Ds))  255  []
+add(links(s1, l0, val0, val2, Wd))  254  []
+add(links(s1, l0, val0, val5, RW))  253  []
+add(value_of(s1, val5, RIGHT-WALL))  252  []
+add(value_of(s1, val4, Emily))  251  []
+add(value_of(s1, val3, is))  250  []
+add(value_of(s1, val2, name))  249  []
+add(value_of(s1, val1, my))  248  []
+add(value_of(s1, val0, LEFT-WALL))  247  []
+add(unused_cost(s1, l0, 0))  246  []
+add(utterance(s1))  245  []
+add(now(66))  244  []
+delete(now(65))  243  []
 End of Step----------------------------------
 
 step(67)
-add(now(67))  310  []
-add(satisfiedallneeds(s1))  308  [[114,302]]
-delete(now(66))  307  []
+add(now(67))  264  []
+add(call(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val2, Wd), links(s1, l0, val1, val2, Ds), links(s1, l0, val2, val3, Ss), links(s1, l0, val3, val4, Ost), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  263  [[56,259]]
+add(user_utt(s1, none))  262  []
+add(parsed(s1))  261  [[65,246]]
+add(update_utt_list(s1, ))  260  [[53,245,34]]
+delete(utt_on_time(0))  46  []
+delete(curr_wait_time(32))  242  []
+delete(currUtt(0, 0))  37  []
+delete(utt_list())  34  []
+delete(now(66))  244  []
 End of Step----------------------------------
 
 step(68)
-add(now(68))  312  []
-add(call(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  311  [[73,308,252]]
-delete(now(67))  310  []
+add(now(68))  272  []
+add(doing(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val2, Wd), links(s1, l0, val1, val2, Ds), links(s1, l0, val2, val3, Ss), links(s1, l0, val3, val4, Ost), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  271  []
+add(call(ac_main_verb(s1), [verb(s1, val3), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  270  [[66,261,258]]
+add(utt_list([s1]))  269  [[54,260]]
+add(utt_on_time(1))  268  []
+add(curr_wait_time(0))  267  []
+add(currUtt(s1, 67))  266  []
+delete(now(67))  264  []
 End of Step----------------------------------
 
 step(69)
-add(now(69))  314  []
-add(doing(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  313  []
-delete(now(68))  312  []
+add(done(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val2, Wd), links(s1, l0, val1, val2, Ds), links(s1, l0, val2, val3, Ss), links(s1, l0, val3, val4, Ost), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  279  []
+add(link(s1, val3, val4, Ost))  278  []
+add(link(s1, val2, val3, Ss))  277  []
+add(link(s1, val1, val2, Ds))  276  []
+add(link(s1, val0, val2, Wd))  275  []
+add(now(69))  274  []
+add(doing(ac_main_verb(s1), [verb(s1, val3), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  273  []
+delete(doing(ac_find_links(s1), [links(s1, l0, val0, val5, RW), links(s1, l0, val0, val2, Wd), links(s1, l0, val1, val2, Ds), links(s1, l0, val2, val3, Ss), links(s1, l0, val3, val4, Ost), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  271  []
+delete(now(68))  272  []
 End of Step----------------------------------
 
 step(70)
-add(val(s1, v0, val2))  316  []
-add(now(70))  315  []
-delete(now(69))  314  []
+add(main_verb(s1, is))  281  []
+add(now(70))  280  []
+delete(now(69))  274  []
 End of Step----------------------------------
 
 step(71)
-add(done(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  320  []
-add(intention(s1, alfred, [equil, name, Emily]))  319  []
-add(type(s1, v0, unknown))  318  []
-add(now(71))  317  []
-delete(doing(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  313  []
-delete(now(70))  315  []
+add(now(71))  283  []
+add(call(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), main_verb(s1, is)], s1))  282  [[68,281]]
+delete(now(70))  280  []
 End of Step----------------------------------
 
 step(72)
-add(now(72))  323  []
-add(call(ac_action(s1, alfred, [equil, name, Emily], 71), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s1))  322  [[87,319]]
-add(belief(alfred, [equil, name, Emily]))  321  [[83,319]]
-delete(now(71))  317  []
+add(now(72))  285  []
+add(doing(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), main_verb(s1, is)], s1))  284  []
+delete(now(71))  283  []
 End of Step----------------------------------
 
 step(73)
-add(now(73))  325  []
-add(doing(ac_action(s1, alfred, [equil, name, Emily], 71), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s1))  324  []
-delete(now(72))  323  []
+add(done(ac_main_verb(s1), [verb(s1, val3), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  287  []
+add(now(73))  286  []
+delete(doing(ac_main_verb(s1), [verb(s1, val3), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL)], s1))  273  []
+delete(now(72))  285  []
 End of Step----------------------------------
 
 step(74)
-add(equil(name, Emily))  327  []
-add(now(74))  326  []
-delete(equil(name, Emily))  327  []
-delete(now(73))  325  []
+add(done(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), main_verb(s1, is)], s1))  290  []
+add(alfred_command(s1, is, is))  289  []
+add(now(74))  288  []
+delete(doing(ac_find_command(s1), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), main_verb(s1, is)], s1))  284  []
+delete(now(73))  286  []
 End of Step----------------------------------
 
 step(75)
-add(now(75))  329  []
-add(curr_user(Emily))  328  [[94,327]]
-delete(now(74))  326  []
+add(now(75))  292  []
+add(satisfiedallneeds(s1))  291  [[70,290]]
+delete(now(74))  288  []
 End of Step----------------------------------
 
 step(76)
-add(done(ac_action(s1, alfred, [equil, name, Emily], 71), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s1))  331  []
-add(now(76))  330  []
-delete(doing(ac_action(s1, alfred, [equil, name, Emily], 71), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s1))  324  []
-delete(now(75))  329  []
+add(now(76))  294  []
+add(call(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val1, val2, Ds), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  293  [[73,291,289]]
+delete(now(75))  292  []
 End of Step----------------------------------
 
 step(77)
-add(idling(77))  333  []
-add(now(77))  332  []
-delete(curr_wait_time(0))  230  []
-delete(now(76))  330  []
+add(now(77))  296  []
+add(doing(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val1, val2, Ds), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  295  []
+delete(now(76))  294  []
 End of Step----------------------------------
 
 step(78)
-add(now(78))  335  []
-add(curr_wait_time(1))  334  []
-delete(now(77))  332  []
+add(error(s1, EXTRA_LINK, [val1, val2, Ds]))  298  []
+add(now(78))  297  []
+delete(now(77))  296  []
 End of Step----------------------------------
 
 step(79)
-add(idling(79))  337  []
-add(now(79))  336  []
-delete(curr_wait_time(1))  334  []
-delete(now(78))  335  []
+add(now(79))  300  []
+add(need(s1, [fix_xlink, val1, val2, Ds]))  299  [[79,298]]
+delete(now(78))  297  []
 End of Step----------------------------------
 
 step(80)
-add(now(80))  339  []
-add(curr_wait_time(2))  338  []
-delete(now(79))  336  []
+add(not(satisfiedallneeds(s1)))  301  [[82,299,291]]
+add(done(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val1, val2, Ds), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  326  []
+add(error(LINK_NF, s1, [X]))  325  []
+add(now(80))  324  []
+add(call(ac_think(s1, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s1, val3), value_of(s1, val0, LEFT-WALL), value_of(s1, val1, my), value_of(s1, val2, name), value_of(s1, val3, is), value_of(s1, val4, Emily), value_of(s1, val5, RIGHT-WALL), link(s1, val0, val2, Wd), link(s1, val1, val2, Ds), link(s1, val2, val3, Ss), link(s1, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s1))  302  [[100,299,31]]
+delete(doing(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val1, val2, Ds), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  295  []
+delete(now(79))  300  []
 End of Step----------------------------------
 
 step(81)
-add(idling(81))  341  []
-add(now(81))  340  []
-delete(curr_wait_time(2))  338  []
-delete(now(80))  339  []
+add(now(81))  331  []
+add(doing(ac_think(s1, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s1, val3), value_of(s1, val0, LEFT-WALL), value_of(s1, val1, my), value_of(s1, val2, name), value_of(s1, val3, is), value_of(s1, val4, Emily), value_of(s1, val5, RIGHT-WALL), link(s1, val0, val2, Wd), link(s1, val1, val2, Ds), link(s1, val2, val3, Ss), link(s1, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s1))  330  []
+add(contra(301, 291, 80))  327  [[301,291]]
+add(distrusted(301, 80))  329  [[291]]
+add(distrusted(291, 80))  328  [[301]]
+delete(now(80))  324  []
 End of Step----------------------------------
 
 step(82)
-add(now(82))  343  []
-add(curr_wait_time(3))  342  []
-delete(now(81))  340  []
+add(done(ac_think(s1, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s1, val3), value_of(s1, val0, LEFT-WALL), value_of(s1, val1, my), value_of(s1, val2, name), value_of(s1, val3, is), value_of(s1, val4, Emily), value_of(s1, val5, RIGHT-WALL), link(s1, val0, val2, Wd), link(s1, val1, val2, Ds), link(s1, val2, val3, Ss), link(s1, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s1))  335  []
+add(satisfied(s1, [fix_xlink, val1, val2, Ds]))  334  []
+add(now(82))  333  []
+add(not(satisfiedallneeds(s1)))  332  [[114,327]]
+delete(doing(ac_think(s1, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s1, val3), value_of(s1, val0, LEFT-WALL), value_of(s1, val1, my), value_of(s1, val2, name), value_of(s1, val3, is), value_of(s1, val4, Emily), value_of(s1, val5, RIGHT-WALL), link(s1, val0, val2, Wd), link(s1, val1, val2, Ds), link(s1, val2, val3, Ss), link(s1, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s1))  330  []
+delete(link(s1, val1, val2, Ds))  276  []
+delete(now(81))  331  []
 End of Step----------------------------------
 
 step(83)
-add(idling(83))  345  []
-add(now(83))  344  []
-delete(curr_wait_time(3))  342  []
-delete(now(82))  343  []
+add(satisfiedallneeds(s1))  336  [[81,334]]
+add(now(83))  338  []
+delete(now(82))  333  []
 End of Step----------------------------------
 
 step(84)
-add(now(84))  347  []
-add(curr_wait_time(4))  346  []
-delete(now(83))  344  []
+add(now(84))  344  []
+add(distrusted(337, 83))  343  [[332]]
+add(contra(337, 332, 83))  342  [[337,332]]
+add(contra(336, 332, 83))  339  [[336,332]]
+add(distrusted(336, 83))  341  [[332]]
+add(distrusted(332, 83))  340  [[336]]
+delete(now(83))  338  []
 End of Step----------------------------------
 
 step(85)
-add(idling(85))  349  []
-add(now(85))  348  []
-delete(curr_wait_time(4))  346  []
-delete(now(84))  347  []
+add(now(85))  347  []
+add(satisfiedallneeds(s1))  345  [[114,339]]
+delete(now(84))  344  []
 End of Step----------------------------------
 
 step(86)
-add(now(86))  351  []
-add(curr_wait_time(5))  350  []
-delete(now(85))  348  []
+add(now(86))  349  []
+add(call(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  348  [[73,345,289]]
+delete(now(85))  347  []
 End of Step----------------------------------
 
 step(87)
-add(idling(87))  353  []
-add(now(87))  352  []
-delete(curr_wait_time(5))  350  []
-delete(now(86))  351  []
+add(now(87))  351  []
+add(doing(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  350  []
+delete(now(86))  349  []
 End of Step----------------------------------
 
 step(88)
-add(now(88))  355  []
-add(curr_wait_time(6))  354  []
-delete(now(87))  352  []
+add(val(s1, v0, val2))  353  []
+add(now(88))  352  []
+delete(now(87))  351  []
 End of Step----------------------------------
 
 step(89)
-add(idling(89))  357  []
-add(now(89))  356  []
-delete(curr_wait_time(6))  354  []
-delete(now(88))  355  []
+add(done(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  357  []
+add(intention(s1, alfred, [equil, name, Emily]))  356  []
+add(type(s1, v0, unknown))  355  []
+add(now(89))  354  []
+delete(doing(ac_find_intention(s1, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s1, val3, val4, Ost), link(s1, val2, val3, Ss), link(s1, val0, val2, Wd), value_of(s1, val5, RIGHT-WALL), value_of(s1, val4, Emily), value_of(s1, val3, is), value_of(s1, val2, name), value_of(s1, val1, my), value_of(s1, val0, LEFT-WALL), verb(s1, val3)], s1))  350  []
+delete(now(88))  352  []
 End of Step----------------------------------
 
 step(90)
-add(now(90))  359  []
-add(curr_wait_time(7))  358  []
-delete(now(89))  356  []
+add(now(90))  360  []
+add(call(ac_action(s1, alfred, [equil, name, Emily], 89), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s1))  359  [[87,356]]
+add(belief(alfred, [equil, name, Emily]))  358  [[83,356]]
+delete(now(89))  354  []
 End of Step----------------------------------
 
 step(91)
-add(idling(91))  361  []
-add(now(91))  360  []
-delete(curr_wait_time(7))  358  []
-delete(now(90))  359  []
+add(now(91))  362  []
+add(doing(ac_action(s1, alfred, [equil, name, Emily], 89), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s1))  361  []
+delete(now(90))  360  []
 End of Step----------------------------------
 
 step(92)
+add(equil(name, Emily))  364  []
 add(now(92))  363  []
-add(curr_wait_time(8))  362  []
-delete(now(91))  360  []
+delete(equil(name, Emily))  364  []
+delete(now(91))  362  []
 End of Step----------------------------------
 
 step(93)
-add(idling(93))  365  []
-add(now(93))  364  []
-delete(curr_wait_time(8))  362  []
+add(now(93))  366  []
+add(curr_user(Emily))  365  [[94,364]]
 delete(now(92))  363  []
 End of Step----------------------------------
 
 step(94)
+add(done(ac_action(s1, alfred, [equil, name, Emily], 89), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s1))  368  []
 add(now(94))  367  []
-add(curr_wait_time(9))  366  []
-delete(now(93))  364  []
+delete(doing(ac_action(s1, alfred, [equil, name, Emily], 89), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s1))  361  []
+delete(now(93))  366  []
 End of Step----------------------------------
 
 step(95)
-add(idling(95))  369  []
-add(now(95))  368  []
-delete(curr_wait_time(9))  366  []
+add(idling(95))  370  []
+add(now(95))  369  []
+delete(curr_wait_time(0))  267  []
 delete(now(94))  367  []
 End of Step----------------------------------
 
 step(96)
-add(now(96))  371  []
-add(curr_wait_time(10))  370  []
-delete(now(95))  368  []
+add(now(96))  372  []
+add(curr_wait_time(1))  371  []
+delete(now(95))  369  []
 End of Step----------------------------------
 
 step(97)
-add(idling(97))  373  []
-add(now(97))  372  []
-delete(curr_wait_time(10))  370  []
-delete(now(96))  371  []
+add(idling(97))  374  []
+add(now(97))  373  []
+delete(curr_wait_time(1))  371  []
+delete(now(96))  372  []
 End of Step----------------------------------
 
 step(98)
-add(now(98))  375  []
-add(curr_wait_time(11))  374  []
-delete(now(97))  372  []
+add(now(98))  376  []
+add(curr_wait_time(2))  375  []
+delete(now(97))  373  []
 End of Step----------------------------------
 
 step(99)
-add(idling(99))  377  []
-add(now(99))  376  []
-delete(curr_wait_time(11))  374  []
-delete(now(98))  375  []
+add(idling(99))  378  []
+add(now(99))  377  []
+delete(curr_wait_time(2))  375  []
+delete(now(98))  376  []
 End of Step----------------------------------
 
 step(100)
-add(now(100))  379  []
-add(curr_wait_time(12))  378  []
-delete(now(99))  376  []
+add(now(100))  380  []
+add(curr_wait_time(3))  379  []
+delete(now(99))  377  []
 End of Step----------------------------------
 
 step(101)
-add(idling(101))  381  []
-add(now(101))  380  []
-delete(curr_wait_time(12))  378  []
-delete(now(100))  379  []
+add(idling(101))  382  []
+add(now(101))  381  []
+delete(curr_wait_time(3))  379  []
+delete(now(100))  380  []
 End of Step----------------------------------
 
 step(102)
-add(now(102))  383  []
-add(curr_wait_time(13))  382  []
-delete(now(101))  380  []
+add(now(102))  384  []
+add(curr_wait_time(4))  383  []
+delete(now(101))  381  []
 End of Step----------------------------------
 
 step(103)
-add(idling(103))  385  []
-add(now(103))  384  []
-delete(curr_wait_time(13))  382  []
-delete(now(102))  383  []
+add(idling(103))  386  []
+add(now(103))  385  []
+delete(curr_wait_time(4))  383  []
+delete(now(102))  384  []
 End of Step----------------------------------
 
 step(104)
-add(now(104))  387  []
-add(curr_wait_time(14))  386  []
-delete(now(103))  384  []
+add(now(104))  388  []
+add(curr_wait_time(5))  387  []
+delete(now(103))  385  []
 End of Step----------------------------------
 
 step(105)
-add(idling(105))  389  []
-add(now(105))  388  []
-delete(curr_wait_time(14))  386  []
-delete(now(104))  387  []
+add(idling(105))  390  []
+add(now(105))  389  []
+delete(curr_wait_time(5))  387  []
+delete(now(104))  388  []
 End of Step----------------------------------
 
 step(106)
-add(now(106))  391  []
-add(curr_wait_time(15))  390  []
-delete(now(105))  388  []
+add(now(106))  392  []
+add(curr_wait_time(6))  391  []
+delete(now(105))  389  []
 End of Step----------------------------------
 
 step(107)
-add(idling(107))  393  []
-add(now(107))  392  []
-delete(curr_wait_time(15))  390  []
-delete(now(106))  391  []
+add(idling(107))  394  []
+add(now(107))  393  []
+delete(curr_wait_time(6))  391  []
+delete(now(106))  392  []
 End of Step----------------------------------
 
 step(108)
-add(now(108))  395  []
-add(curr_wait_time(16))  394  []
-delete(now(107))  392  []
+add(now(108))  396  []
+add(curr_wait_time(7))  395  []
+delete(now(107))  393  []
 End of Step----------------------------------
 
 step(109)
-add(idling(109))  397  []
-add(now(109))  396  []
-delete(curr_wait_time(16))  394  []
-delete(now(108))  395  []
+add(idling(109))  398  []
+add(now(109))  397  []
+delete(curr_wait_time(7))  395  []
+delete(now(108))  396  []
 End of Step----------------------------------
 
 step(110)
-add(now(110))  399  []
-add(curr_wait_time(17))  398  []
-delete(now(109))  396  []
+add(now(110))  400  []
+add(curr_wait_time(8))  399  []
+delete(now(109))  397  []
 End of Step----------------------------------
 
 step(111)
-add(idling(111))  401  []
-add(now(111))  400  []
-delete(curr_wait_time(17))  398  []
-delete(now(110))  399  []
+add(idling(111))  402  []
+add(now(111))  401  []
+delete(curr_wait_time(8))  399  []
+delete(now(110))  400  []
 End of Step----------------------------------
 
 step(112)
-add(now(112))  403  []
-add(curr_wait_time(18))  402  []
-delete(now(111))  400  []
+add(now(112))  404  []
+add(curr_wait_time(9))  403  []
+delete(now(111))  401  []
 End of Step----------------------------------
 
 step(113)
-add(idling(113))  405  []
-add(now(113))  404  []
-delete(curr_wait_time(18))  402  []
-delete(now(112))  403  []
+add(idling(113))  406  []
+add(now(113))  405  []
+delete(curr_wait_time(9))  403  []
+delete(now(112))  404  []
 End of Step----------------------------------
 
 step(114)
-add(now(114))  407  []
-add(curr_wait_time(19))  406  []
-delete(now(113))  404  []
+add(now(114))  408  []
+add(curr_wait_time(10))  407  []
+delete(now(113))  405  []
 End of Step----------------------------------
 
 step(115)
-add(idling(115))  409  []
-add(now(115))  408  []
-delete(curr_wait_time(19))  406  []
-delete(now(114))  407  []
+add(idling(115))  410  []
+add(now(115))  409  []
+delete(curr_wait_time(10))  407  []
+delete(now(114))  408  []
 End of Step----------------------------------
 
 step(116)
-add(now(116))  411  []
-add(curr_wait_time(20))  410  []
-delete(now(115))  408  []
+add(now(116))  412  []
+add(curr_wait_time(11))  411  []
+delete(now(115))  409  []
 End of Step----------------------------------
 
 step(117)
-add(idling(117))  413  []
-add(now(117))  412  []
-delete(curr_wait_time(20))  410  []
-delete(now(116))  411  []
+add(idling(117))  414  []
+add(now(117))  413  []
+delete(curr_wait_time(11))  411  []
+delete(now(116))  412  []
 End of Step----------------------------------
 
 step(118)
-add(now(118))  415  []
-add(curr_wait_time(21))  414  []
-delete(now(117))  412  []
+add(now(118))  416  []
+add(curr_wait_time(12))  415  []
+delete(now(117))  413  []
 End of Step----------------------------------
 
 step(119)
-add(idling(119))  417  []
-add(now(119))  416  []
-delete(curr_wait_time(21))  414  []
-delete(now(118))  415  []
+add(idling(119))  418  []
+add(now(119))  417  []
+delete(curr_wait_time(12))  415  []
+delete(now(118))  416  []
 End of Step----------------------------------
 
 step(120)
-add(now(120))  419  []
-add(curr_wait_time(22))  418  []
-delete(now(119))  416  []
+add(now(120))  420  []
+add(curr_wait_time(13))  419  []
+delete(now(119))  417  []
 End of Step----------------------------------
 
 step(121)
-add(idling(121))  421  []
-add(now(121))  420  []
-delete(curr_wait_time(22))  418  []
-delete(now(120))  419  []
+add(idling(121))  422  []
+add(now(121))  421  []
+delete(curr_wait_time(13))  419  []
+delete(now(120))  420  []
 End of Step----------------------------------
 
 step(122)
-add(now(122))  423  []
-add(curr_wait_time(23))  422  []
-delete(now(121))  420  []
+add(now(122))  424  []
+add(curr_wait_time(14))  423  []
+delete(now(121))  421  []
 End of Step----------------------------------
 
 step(123)
-add(idling(123))  425  []
-add(now(123))  424  []
-delete(curr_wait_time(23))  422  []
-delete(now(122))  423  []
+add(idling(123))  426  []
+add(now(123))  425  []
+delete(curr_wait_time(14))  423  []
+delete(now(122))  424  []
 End of Step----------------------------------
 
 step(124)
-add(now(124))  427  []
-add(curr_wait_time(24))  426  []
-delete(now(123))  424  []
+add(now(124))  428  []
+add(curr_wait_time(15))  427  []
+delete(now(123))  425  []
 End of Step----------------------------------
 
 step(125)
-add(idling(125))  429  []
-add(now(125))  428  []
-delete(curr_wait_time(24))  426  []
-delete(now(124))  427  []
+add(idling(125))  430  []
+add(now(125))  429  []
+delete(curr_wait_time(15))  427  []
+delete(now(124))  428  []
 End of Step----------------------------------
 
 step(126)
-add(now(126))  431  []
-add(curr_wait_time(25))  430  []
-delete(now(125))  428  []
+add(now(126))  432  []
+add(curr_wait_time(16))  431  []
+delete(now(125))  429  []
 End of Step----------------------------------
 
 step(127)
-add(idling(127))  433  []
-add(now(127))  432  []
-delete(curr_wait_time(25))  430  []
-delete(now(126))  431  []
+add(idling(127))  434  []
+add(now(127))  433  []
+delete(curr_wait_time(16))  431  []
+delete(now(126))  432  []
 End of Step----------------------------------
 
 step(128)
-add(now(128))  435  []
-add(curr_wait_time(26))  434  []
-delete(now(127))  432  []
+add(now(128))  436  []
+add(curr_wait_time(17))  435  []
+delete(now(127))  433  []
 End of Step----------------------------------
 
 step(129)
-add(end_of_parse(s2))  451  []
-add(verb(s2, val3))  450  []
-add(links(s2, l0, val3, val4, Ost))  449  []
-add(links(s2, l0, val2, val3, Ss))  448  []
-add(links(s2, l0, val1, val2, Ds))  447  []
-add(links(s2, l0, val0, val2, Wd))  446  []
-add(links(s2, l0, val0, val5, RW))  445  []
-add(value_of(s2, val5, RIGHT-WALL))  444  []
-add(value_of(s2, val4, Jessica))  443  []
-add(value_of(s2, val3, is))  442  []
-add(value_of(s2, val2, name))  441  []
-add(value_of(s2, val1, my))  440  []
-add(value_of(s2, val0, LEFT-WALL))  439  []
-add(unused_cost(s2, l0, 0))  438  []
-add(utterance(s2))  437  []
-add(now(129))  436  []
-delete(now(128))  435  []
+add(idling(129))  438  []
+add(now(129))  437  []
+delete(curr_wait_time(17))  435  []
+delete(now(128))  436  []
 End of Step----------------------------------
 
 step(130)
-add(now(130))  455  []
-add(call(ac_find_links(s2), [links(s2, l0, val0, val5, RW), links(s2, l0, val0, val2, Wd), links(s2, l0, val1, val2, Ds), links(s2, l0, val2, val3, Ss), links(s2, l0, val3, val4, Ost), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL)], s2))  454  [[56,451]]
-add(parsed(s2))  453  [[65,438]]
-add(update_utt_list(s2, [s1]))  452  [[53,437,232]]
-delete(utt_on_time(1))  231  []
-delete(curr_wait_time(26))  434  []
-delete(currUtt(s1, 49))  229  []
-delete(utt_list([s1]))  232  [[54,224]]
-delete(now(129))  436  []
+add(now(130))  440  []
+add(curr_wait_time(18))  439  []
+delete(now(129))  437  []
 End of Step----------------------------------
 
 step(131)
-add(now(131))  463  []
-add(doing(ac_find_links(s2), [links(s2, l0, val0, val5, RW), links(s2, l0, val0, val2, Wd), links(s2, l0, val1, val2, Ds), links(s2, l0, val2, val3, Ss), links(s2, l0, val3, val4, Ost), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL)], s2))  462  []
-add(call(ac_main_verb(s2), [verb(s2, val3), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL)], s2))  461  [[66,453,450]]
-add(utt_list([s2, s1]))  460  [[54,452]]
-add(utt_on_time(2))  459  []
-add(curr_wait_time(0))  458  []
-add(currUtt(s2, 130))  457  []
-add(prev_utt_time(49))  456  []
-delete(now(130))  455  []
+add(idling(131))  442  []
+add(now(131))  441  []
+delete(curr_wait_time(18))  439  []
+delete(now(130))  440  []
 End of Step----------------------------------
 
 step(132)
-add(done(ac_find_links(s2), [links(s2, l0, val0, val5, RW), links(s2, l0, val0, val2, Wd), links(s2, l0, val1, val2, Ds), links(s2, l0, val2, val3, Ss), links(s2, l0, val3, val4, Ost), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL)], s2))  470  []
-add(link(s2, val3, val4, Ost))  469  []
-add(link(s2, val2, val3, Ss))  468  []
-add(link(s2, val1, val2, Ds))  467  []
-add(link(s2, val0, val2, Wd))  466  []
-add(now(132))  465  []
-add(doing(ac_main_verb(s2), [verb(s2, val3), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL)], s2))  464  []
-delete(doing(ac_find_links(s2), [links(s2, l0, val0, val5, RW), links(s2, l0, val0, val2, Wd), links(s2, l0, val1, val2, Ds), links(s2, l0, val2, val3, Ss), links(s2, l0, val3, val4, Ost), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL)], s2))  462  []
-delete(now(131))  463  []
+add(now(132))  444  []
+add(curr_wait_time(19))  443  []
+delete(now(131))  441  []
 End of Step----------------------------------
 
 step(133)
-add(main_verb(s2, is))  472  []
-add(now(133))  471  []
-delete(now(132))  465  []
+add(idling(133))  446  []
+add(now(133))  445  []
+delete(curr_wait_time(19))  443  []
+delete(now(132))  444  []
 End of Step----------------------------------
 
 step(134)
-add(now(134))  474  []
-add(call(ac_find_command(s2), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), main_verb(s2, is)], s2))  473  [[68,472]]
-delete(now(133))  471  []
+add(now(134))  448  []
+add(curr_wait_time(20))  447  []
+delete(now(133))  445  []
 End of Step----------------------------------
 
 step(135)
-add(now(135))  476  []
-add(doing(ac_find_command(s2), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), main_verb(s2, is)], s2))  475  []
-delete(now(134))  474  []
+add(idling(135))  450  []
+add(now(135))  449  []
+delete(curr_wait_time(20))  447  []
+delete(now(134))  448  []
 End of Step----------------------------------
 
 step(136)
-add(done(ac_main_verb(s2), [verb(s2, val3), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL)], s2))  478  []
-add(now(136))  477  []
-delete(doing(ac_main_verb(s2), [verb(s2, val3), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL)], s2))  464  []
-delete(now(135))  476  []
+add(now(136))  452  []
+add(curr_wait_time(21))  451  []
+delete(now(135))  449  []
 End of Step----------------------------------
 
 step(137)
-add(done(ac_find_command(s2), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), main_verb(s2, is)], s2))  481  []
-add(alfred_command(s2, is, is))  480  []
-add(now(137))  479  []
-delete(doing(ac_find_command(s2), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), main_verb(s2, is)], s2))  475  []
-delete(now(136))  477  []
+add(idling(137))  454  []
+add(now(137))  453  []
+delete(curr_wait_time(21))  451  []
+delete(now(136))  452  []
 End of Step----------------------------------
 
 step(138)
-add(now(138))  483  []
-add(satisfiedallneeds(s2))  482  [[70,481]]
-delete(now(137))  479  []
+add(now(138))  456  []
+add(curr_wait_time(22))  455  []
+delete(now(137))  453  []
 End of Step----------------------------------
 
 step(139)
-add(now(139))  485  []
-add(call(ac_find_intention(s2, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s2, val1, val2, Ds), link(s2, val3, val4, Ost), link(s2, val2, val3, Ss), link(s2, val0, val2, Wd), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), verb(s2, val3)], s2))  484  [[73,482,480]]
-delete(now(138))  483  []
+add(idling(139))  458  []
+add(now(139))  457  []
+delete(curr_wait_time(22))  455  []
+delete(now(138))  456  []
 End of Step----------------------------------
 
 step(140)
-add(now(140))  487  []
-add(doing(ac_find_intention(s2, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s2, val1, val2, Ds), link(s2, val3, val4, Ost), link(s2, val2, val3, Ss), link(s2, val0, val2, Wd), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), verb(s2, val3)], s2))  486  []
-delete(now(139))  485  []
+add(now(140))  460  []
+add(curr_wait_time(23))  459  []
+delete(now(139))  457  []
 End of Step----------------------------------
 
 step(141)
-add(error(s2, EXTRA_LINK, [val1, val2, Ds]))  489  []
-add(now(141))  488  []
-delete(now(140))  487  []
+add(idling(141))  462  []
+add(now(141))  461  []
+delete(curr_wait_time(23))  459  []
+delete(now(140))  460  []
 End of Step----------------------------------
 
 step(142)
-add(now(142))  491  []
-add(need(s2, [fix_xlink, val1, val2, Ds]))  490  [[79,489]]
-delete(now(141))  488  []
+add(now(142))  464  []
+add(curr_wait_time(24))  463  []
+delete(now(141))  461  []
 End of Step----------------------------------
 
 step(143)
-add(not(satisfiedallneeds(s2)))  492  [[82,490,482]]
-add(done(ac_find_intention(s2, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s2, val1, val2, Ds), link(s2, val3, val4, Ost), link(s2, val2, val3, Ss), link(s2, val0, val2, Wd), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), verb(s2, val3)], s2))  517  []
-add(error(LINK_NF, s2, [X]))  516  []
-add(now(143))  515  []
-add(call(ac_think(s2, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s2, val3), value_of(s2, val0, LEFT-WALL), value_of(s2, val1, my), value_of(s2, val2, name), value_of(s2, val3, is), value_of(s2, val4, Jessica), value_of(s2, val5, RIGHT-WALL), link(s2, val0, val2, Wd), link(s2, val1, val2, Ds), link(s2, val2, val3, Ss), link(s2, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s2))  493  [[100,490,31]]
-delete(doing(ac_find_intention(s2, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s2, val1, val2, Ds), link(s2, val3, val4, Ost), link(s2, val2, val3, Ss), link(s2, val0, val2, Wd), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), verb(s2, val3)], s2))  486  []
-delete(now(142))  491  []
+add(idling(143))  466  []
+add(now(143))  465  []
+delete(curr_wait_time(24))  463  []
+delete(now(142))  464  []
 End of Step----------------------------------
 
 step(144)
-add(now(144))  522  []
-add(doing(ac_think(s2, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s2, val3), value_of(s2, val0, LEFT-WALL), value_of(s2, val1, my), value_of(s2, val2, name), value_of(s2, val3, is), value_of(s2, val4, Jessica), value_of(s2, val5, RIGHT-WALL), link(s2, val0, val2, Wd), link(s2, val1, val2, Ds), link(s2, val2, val3, Ss), link(s2, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s2))  521  []
-add(contra(492, 482, 143))  518  [[492,482]]
-add(distrusted(492, 143))  520  [[482]]
-add(distrusted(482, 143))  519  [[492]]
-delete(now(143))  515  []
+add(now(144))  468  []
+add(curr_wait_time(25))  467  []
+delete(now(143))  465  []
 End of Step----------------------------------
 
 step(145)
-add(done(ac_think(s2, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s2, val3), value_of(s2, val0, LEFT-WALL), value_of(s2, val1, my), value_of(s2, val2, name), value_of(s2, val3, is), value_of(s2, val4, Jessica), value_of(s2, val5, RIGHT-WALL), link(s2, val0, val2, Wd), link(s2, val1, val2, Ds), link(s2, val2, val3, Ss), link(s2, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s2))  526  []
-add(satisfied(s2, [fix_xlink, val1, val2, Ds]))  525  []
-add(now(145))  524  []
-add(not(satisfiedallneeds(s2)))  523  [[114,518]]
-delete(doing(ac_think(s2, [fix_xlink, val1, val2, Ds]), [isa(acommand, is), isa(acommand, no), isa(city, Atlanta), isa(city, Baltimore), isa(city, Buffalo), isa(city, Newark), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Washington), isa(conjunct, and), isa(dcommand, find), isa(dcommand, send), isa(domain, trains), isa(end, to), isa(lw, LEFT-WALL), isa(observation, location), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(train, Bullet), isa(train, Metroliner), isa(train, Northstar), verb(s2, val3), value_of(s2, val0, LEFT-WALL), value_of(s2, val1, my), value_of(s2, val2, name), value_of(s2, val3, is), value_of(s2, val4, Jessica), value_of(s2, val5, RIGHT-WALL), link(s2, val0, val2, Wd), link(s2, val1, val2, Ds), link(s2, val2, val3, Ss), link(s2, val3, val4, Ost), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(no, , , [undo]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5])], s2))  521  []
-delete(link(s2, val1, val2, Ds))  467  []
-delete(now(144))  522  []
+add(idling(145))  470  []
+add(now(145))  469  []
+delete(curr_wait_time(25))  467  []
+delete(now(144))  468  []
 End of Step----------------------------------
 
 step(146)
-add(satisfiedallneeds(s2))  527  [[81,525]]
-add(now(146))  529  []
-delete(now(145))  524  []
+add(now(146))  472  []
+add(curr_wait_time(26))  471  []
+delete(now(145))  469  []
 End of Step----------------------------------
 
 step(147)
-add(now(147))  535  []
-add(distrusted(528, 146))  534  [[523]]
-add(contra(528, 523, 146))  533  [[528,523]]
-add(contra(527, 523, 146))  530  [[527,523]]
-add(distrusted(527, 146))  532  [[523]]
-add(distrusted(523, 146))  531  [[527]]
-delete(now(146))  529  []
+add(idling(147))  474  []
+add(now(147))  473  []
+delete(curr_wait_time(26))  471  []
+delete(now(146))  472  []
 End of Step----------------------------------
 
 step(148)
-add(now(148))  538  []
-add(satisfiedallneeds(s2))  536  [[114,530]]
-delete(now(147))  535  []
+add(now(148))  476  []
+add(curr_wait_time(27))  475  []
+delete(now(147))  473  []
 End of Step----------------------------------
 
 step(149)
-add(now(149))  540  []
-add(call(ac_find_intention(s2, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s2, val3, val4, Ost), link(s2, val2, val3, Ss), link(s2, val0, val2, Wd), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), verb(s2, val3)], s2))  539  [[73,536,480]]
-delete(now(148))  538  []
+add(idling(149))  478  []
+add(now(149))  477  []
+delete(curr_wait_time(27))  475  []
+delete(now(148))  476  []
 End of Step----------------------------------
 
 step(150)
-add(now(150))  542  []
-add(doing(ac_find_intention(s2, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s2, val3, val4, Ost), link(s2, val2, val3, Ss), link(s2, val0, val2, Wd), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), verb(s2, val3)], s2))  541  []
-delete(now(149))  540  []
+add(now(150))  480  []
+add(curr_wait_time(28))  479  []
+delete(now(149))  477  []
 End of Step----------------------------------
 
 step(151)
-add(val(s2, v0, val2))  544  []
-add(now(151))  543  []
-delete(now(150))  542  []
+add(idling(151))  482  []
+add(now(151))  481  []
+delete(curr_wait_time(28))  479  []
+delete(now(150))  480  []
 End of Step----------------------------------
 
 step(152)
-add(done(ac_find_intention(s2, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s2, val3, val4, Ost), link(s2, val2, val3, Ss), link(s2, val0, val2, Wd), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), verb(s2, val3)], s2))  548  []
-add(intention(s2, alfred, [equil, name, Jessica]))  547  []
-add(type(s2, v0, unknown))  546  []
-add(now(152))  545  []
-delete(doing(ac_find_intention(s2, alfred, is), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), link(s2, val3, val4, Ost), link(s2, val2, val3, Ss), link(s2, val0, val2, Wd), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Jessica), value_of(s2, val3, is), value_of(s2, val2, name), value_of(s2, val1, my), value_of(s2, val0, LEFT-WALL), verb(s2, val3)], s2))  541  []
-delete(now(151))  543  []
+add(now(152))  484  []
+add(curr_wait_time(29))  483  []
+delete(now(151))  481  []
 End of Step----------------------------------
 
 step(153)
-add(now(153))  551  []
-add(call(ac_action(s2, alfred, [equil, name, Jessica], 152), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s2))  550  [[87,547]]
-add(belief(alfred, [equil, name, Jessica]))  549  [[83,547]]
-delete(now(152))  545  []
+add(idling(153))  486  []
+add(now(153))  485  []
+delete(curr_wait_time(29))  483  []
+delete(now(152))  484  []
 End of Step----------------------------------
 
 step(154)
-add(now(154))  553  []
-add(doing(ac_action(s2, alfred, [equil, name, Jessica], 152), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s2))  552  []
-delete(now(153))  551  []
+add(now(154))  488  []
+add(curr_wait_time(30))  487  []
+delete(now(153))  485  []
 End of Step----------------------------------
 
 step(155)
-add(equil(name, Jessica))  555  []
-add(now(155))  554  []
-delete(equil(name, Jessica))  555  []
-delete(curr_user(Emily))  328  [[94,327]]
-delete(now(154))  553  []
+add(idling(155))  490  []
+add(now(155))  489  []
+delete(curr_wait_time(30))  487  []
+delete(now(154))  488  []
 End of Step----------------------------------
 
 step(156)
-add(now(156))  558  []
-add(curr_user(Jessica))  556  [[91,555,328]]
-delete(now(155))  554  []
+add(now(156))  492  []
+add(curr_wait_time(31))  491  []
+delete(now(155))  489  []
 End of Step----------------------------------
 
 step(157)
-add(done(ac_action(s2, alfred, [equil, name, Jessica], 152), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s2))  560  []
-add(now(157))  559  []
-delete(doing(ac_action(s2, alfred, [equil, name, Jessica], 152), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), structure(no, , , [undo]), structure(is, [[v0, v4, X], [v0, v1, W], [v1, v2, S], [v2, v3, O]], [[v0, lw], [v1, qnword], [v2, verb], [v4, qnmark]], [what, v3]), structure(is, [[v0, v1, S], [v1, v2, O]], [[v1, verb]], [equil, v0, v2]), structure(is, [[v0, v1, S], [v1, v3, O], [v2, v3, s^], [v3, v4, s^]], [[v1, verb], [v3, conjunct]], [compose, v0, v2, v4]), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), structure(find, [[v0, v1, O]], [[v0, verb], [v1, train]], [v0, v1])], s2))  552  []
-delete(now(156))  558  []
+add(idling(157))  494  []
+add(now(157))  493  []
+delete(curr_wait_time(31))  491  []
+delete(now(156))  492  []
 End of Step----------------------------------
 
 step(158)
-add(idling(158))  562  []
-add(now(158))  561  []
-delete(curr_wait_time(0))  458  []
-delete(now(157))  559  []
+add(now(158))  496  []
+add(curr_wait_time(32))  495  []
+delete(now(157))  493  []
 End of Step----------------------------------
 
 step(159)
-add(now(159))  564  []
-add(curr_wait_time(1))  563  []
-delete(now(158))  561  []
+add(idling(159))  498  []
+add(now(159))  497  []
+delete(curr_wait_time(32))  495  []
+delete(now(158))  496  []
 End of Step----------------------------------
 
 step(160)
-add(idling(160))  566  []
-add(now(160))  565  []
-delete(curr_wait_time(1))  563  []
-delete(now(159))  564  []
+add(now(160))  500  []
+add(curr_wait_time(33))  499  []
+delete(now(159))  497  []
 End of Step----------------------------------
 
 step(161)
-add(now(161))  568  []
-add(curr_wait_time(2))  567  []
-delete(now(160))  565  []
+add(idling(161))  502  []
+add(now(161))  501  []
+delete(curr_wait_time(33))  499  []
+delete(now(160))  500  []
 End of Step----------------------------------
 
 step(162)
-add(idling(162))  570  []
-add(now(162))  569  []
-delete(curr_wait_time(2))  567  []
-delete(now(161))  568  []
+add(now(162))  504  []
+add(curr_wait_time(34))  503  []
+delete(now(161))  501  []
 End of Step----------------------------------
 
 step(163)
-add(now(163))  572  []
-add(curr_wait_time(3))  571  []
-delete(now(162))  569  []
+add(idling(163))  506  []
+add(now(163))  505  []
+delete(curr_wait_time(34))  503  []
+delete(now(162))  504  []
 End of Step----------------------------------
 
 step(164)
-add(idling(164))  574  []
-add(now(164))  573  []
-delete(curr_wait_time(3))  571  []
-delete(now(163))  572  []
+add(now(164))  508  []
+add(curr_wait_time(35))  507  []
+delete(now(163))  505  []
 End of Step----------------------------------
 
 step(165)
-add(now(165))  576  []
-add(curr_wait_time(4))  575  []
-delete(now(164))  573  []
+add(idling(165))  510  []
+add(now(165))  509  []
+delete(curr_wait_time(35))  507  []
+delete(now(164))  508  []
 End of Step----------------------------------
 
 step(166)
-add(idling(166))  578  []
-add(now(166))  577  []
-delete(curr_wait_time(4))  575  []
-delete(now(165))  576  []
+add(now(166))  512  []
+add(curr_wait_time(36))  511  []
+delete(now(165))  509  []
 End of Step----------------------------------
 
 step(167)
-add(now(167))  580  []
-add(curr_wait_time(5))  579  []
-delete(now(166))  577  []
+add(idling(167))  514  []
+add(now(167))  513  []
+delete(curr_wait_time(36))  511  []
+delete(now(166))  512  []
 End of Step----------------------------------
 
 step(168)
-add(idling(168))  582  []
-add(now(168))  581  []
-delete(curr_wait_time(5))  579  []
-delete(now(167))  580  []
+add(now(168))  516  []
+add(curr_wait_time(37))  515  []
+delete(now(167))  513  []
 End of Step----------------------------------
 
 step(169)
-add(now(169))  584  []
-add(curr_wait_time(6))  583  []
-delete(now(168))  581  []
+add(idling(169))  518  []
+add(now(169))  517  []
+delete(curr_wait_time(37))  515  []
+delete(now(168))  516  []
 End of Step----------------------------------
 
 step(170)
-add(idling(170))  586  []
-add(now(170))  585  []
-delete(curr_wait_time(6))  583  []
-delete(now(169))  584  []
+add(now(170))  520  []
+add(curr_wait_time(38))  519  []
+delete(now(169))  517  []
 End of Step----------------------------------
 
 step(171)
-add(now(171))  588  []
-add(curr_wait_time(7))  587  []
-delete(now(170))  585  []
+add(idling(171))  522  []
+add(now(171))  521  []
+delete(curr_wait_time(38))  519  []
+delete(now(170))  520  []
 End of Step----------------------------------
 
 step(172)
-add(idling(172))  590  []
-add(now(172))  589  []
-delete(curr_wait_time(7))  587  []
-delete(now(171))  588  []
+add(now(172))  524  []
+add(curr_wait_time(39))  523  []
+delete(now(171))  521  []
 End of Step----------------------------------
 
 step(173)
-add(now(173))  592  []
-add(curr_wait_time(8))  591  []
-delete(now(172))  589  []
+add(idling(173))  526  []
+add(now(173))  525  []
+delete(curr_wait_time(39))  523  []
+delete(now(172))  524  []
+End of Step----------------------------------
+
+step(174)
+add(now(174))  528  []
+add(curr_wait_time(40))  527  []
+delete(now(173))  525  []
+End of Step----------------------------------
+
+step(175)
+add(idling(175))  530  []
+add(now(175))  529  []
+delete(curr_wait_time(40))  527  []
+delete(now(174))  528  []
+End of Step----------------------------------
+
+step(176)
+add(now(176))  532  []
+add(curr_wait_time(41))  531  []
+delete(now(175))  529  []
+End of Step----------------------------------
+
+step(177)
+add(idling(177))  534  []
+add(now(177))  533  []
+delete(curr_wait_time(41))  531  []
+delete(now(176))  532  []
+End of Step----------------------------------
+
+step(178)
+add(now(178))  536  []
+add(curr_wait_time(42))  535  []
+delete(now(177))  533  []
+End of Step----------------------------------
+
+step(179)
+add(idling(179))  538  []
+add(now(179))  537  []
+delete(curr_wait_time(42))  535  []
+delete(now(178))  536  []
+End of Step----------------------------------
+
+step(180)
+add(now(180))  540  []
+add(curr_wait_time(43))  539  []
+delete(now(179))  537  []
+End of Step----------------------------------
+
+step(181)
+add(idling(181))  542  []
+add(now(181))  541  []
+delete(curr_wait_time(43))  539  []
+delete(now(180))  540  []
+End of Step----------------------------------
+
+step(182)
+add(now(182))  544  []
+add(curr_wait_time(44))  543  []
+delete(now(181))  541  []
+End of Step----------------------------------
+
+step(183)
+add(idling(183))  546  []
+add(now(183))  545  []
+delete(curr_wait_time(44))  543  []
+delete(now(182))  544  []
+End of Step----------------------------------
+
+step(184)
+add(now(184))  548  []
+add(curr_wait_time(45))  547  []
+delete(now(183))  545  []
+End of Step----------------------------------
+
+step(185)
+add(idling(185))  550  []
+add(now(185))  549  []
+delete(curr_wait_time(45))  547  []
+delete(now(184))  548  []
+End of Step----------------------------------
+
+step(186)
+add(now(186))  552  []
+add(curr_wait_time(46))  551  []
+delete(now(185))  549  []
+End of Step----------------------------------
+
+step(187)
+add(idling(187))  554  []
+add(now(187))  553  []
+delete(curr_wait_time(46))  551  []
+delete(now(186))  552  []
+End of Step----------------------------------
+
+step(188)
+add(now(188))  556  []
+add(curr_wait_time(47))  555  []
+delete(now(187))  553  []
+End of Step----------------------------------
+
+step(189)
+add(idling(189))  558  []
+add(now(189))  557  []
+delete(curr_wait_time(47))  555  []
+delete(now(188))  556  []
+End of Step----------------------------------
+
+step(190)
+add(now(190))  560  []
+add(curr_wait_time(48))  559  []
+delete(now(189))  557  []
+End of Step----------------------------------
+
+step(191)
+add(idling(191))  562  []
+add(now(191))  561  []
+delete(curr_wait_time(48))  559  []
+delete(now(190))  560  []
+End of Step----------------------------------
+
+step(192)
+add(now(192))  564  []
+add(curr_wait_time(49))  563  []
+delete(now(191))  561  []
+End of Step----------------------------------
+
+step(193)
+add(idling(193))  566  []
+add(now(193))  565  []
+delete(curr_wait_time(49))  563  []
+delete(now(192))  564  []
+End of Step----------------------------------
+
+step(194)
+add(now(194))  568  []
+add(curr_wait_time(50))  567  []
+delete(now(193))  565  []
+End of Step----------------------------------
+
+step(195)
+add(idling(195))  570  []
+add(now(195))  569  []
+delete(curr_wait_time(50))  567  []
+delete(now(194))  568  []
+End of Step----------------------------------
+
+step(196)
+add(now(196))  572  []
+add(curr_wait_time(51))  571  []
+delete(now(195))  569  []
+End of Step----------------------------------
+
+step(197)
+add(end_of_parse(s2))  588  []
+add(verb(s2, val1))  587  []
+add(links(s2, l0, val3, val4, Js))  586  []
+add(links(s2, l0, val1, val2, Os))  585  []
+add(links(s2, l0, val1, val3, MVp))  584  []
+add(links(s2, l0, val0, val1, Wi))  583  []
+add(links(s2, l0, val0, val5, RW))  582  []
+add(value_of(s2, val5, RIGHT-WALL))  581  []
+add(value_of(s2, val4, Baltimore))  580  []
+add(value_of(s2, val3, to))  579  []
+add(value_of(s2, val2, Metroliner))  578  []
+add(value_of(s2, val1, send))  577  []
+add(value_of(s2, val0, LEFT-WALL))  576  []
+add(unused_cost(s2, l0, 0))  575  []
+add(utterance(s2))  574  []
+add(now(197))  573  []
+delete(now(196))  572  []
+End of Step----------------------------------
+
+step(198)
+add(now(198))  593  []
+add(call(ac_find_links(s2), [links(s2, l0, val0, val5, RW), links(s2, l0, val0, val1, Wi), links(s2, l0, val1, val3, MVp), links(s2, l0, val1, val2, Os), links(s2, l0, val3, val4, Js), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL)], s2))  592  [[56,588]]
+add(user_utt(s2, Emily))  591  []
+add(parsed(s2))  590  [[65,575]]
+add(update_utt_list(s2, [s1]))  589  [[53,574,269]]
+delete(utt_on_time(1))  268  []
+delete(curr_wait_time(51))  571  []
+delete(currUtt(s1, 67))  266  []
+delete(utt_list([s1]))  269  [[54,260]]
+delete(now(197))  573  []
+End of Step----------------------------------
+
+step(199)
+add(now(199))  601  []
+add(doing(ac_find_links(s2), [links(s2, l0, val0, val5, RW), links(s2, l0, val0, val1, Wi), links(s2, l0, val1, val3, MVp), links(s2, l0, val1, val2, Os), links(s2, l0, val3, val4, Js), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL)], s2))  600  []
+add(call(ac_main_verb(s2), [verb(s2, val1), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL)], s2))  599  [[66,590,587]]
+add(utt_list([s2, s1]))  598  [[54,589]]
+add(utt_on_time(2))  597  []
+add(curr_wait_time(0))  596  []
+add(currUtt(s2, 198))  595  []
+add(prev_utt_time(67))  594  []
+delete(now(198))  593  []
+End of Step----------------------------------
+
+step(200)
+add(done(ac_find_links(s2), [links(s2, l0, val0, val5, RW), links(s2, l0, val0, val1, Wi), links(s2, l0, val1, val3, MVp), links(s2, l0, val1, val2, Os), links(s2, l0, val3, val4, Js), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL)], s2))  608  []
+add(link(s2, val3, val4, Js))  607  []
+add(link(s2, val1, val2, Os))  606  []
+add(link(s2, val1, val3, MVp))  605  []
+add(link(s2, val0, val1, Wi))  604  []
+add(now(200))  603  []
+add(doing(ac_main_verb(s2), [verb(s2, val1), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL)], s2))  602  []
+delete(doing(ac_find_links(s2), [links(s2, l0, val0, val5, RW), links(s2, l0, val0, val1, Wi), links(s2, l0, val1, val3, MVp), links(s2, l0, val1, val2, Os), links(s2, l0, val3, val4, Js), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL)], s2))  600  []
+delete(now(199))  601  []
+End of Step----------------------------------
+
+step(201)
+add(done(ac_main_verb(s2), [verb(s2, val1), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL)], s2))  611  []
+add(main_verb(s2, send))  610  []
+add(now(201))  609  []
+delete(doing(ac_main_verb(s2), [verb(s2, val1), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL)], s2))  602  []
+delete(now(200))  603  []
+End of Step----------------------------------
+
+step(202)
+add(now(202))  613  []
+add(call(ac_find_command(s2), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL), main_verb(s2, send)], s2))  612  [[68,610]]
+delete(now(201))  609  []
+End of Step----------------------------------
+
+step(203)
+add(now(203))  615  []
+add(doing(ac_find_command(s2), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL), main_verb(s2, send)], s2))  614  []
+delete(now(202))  613  []
+End of Step----------------------------------
+
+step(204)
+add(domain_command(s2, send, send))  617  []
+add(now(204))  616  []
+delete(now(203))  615  []
+End of Step----------------------------------
+
+step(205)
+add(done(ac_find_command(s2), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL), main_verb(s2, send)], s2))  619  []
+add(now(205))  618  []
+delete(doing(ac_find_command(s2), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL), main_verb(s2, send)], s2))  614  []
+delete(now(204))  616  []
+End of Step----------------------------------
+
+step(206)
+add(now(206))  621  []
+add(satisfiedallneeds(s2))  620  [[70,619]]
+delete(now(205))  618  []
+End of Step----------------------------------
+
+step(207)
+add(now(207))  623  []
+add(call(ac_find_intention(s2, domain, send), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list(), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), link(s2, val1, val3, MVp), link(s2, val1, val2, Os), link(s2, val3, val4, Js), link(s2, val0, val1, Wi), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL), verb(s2, val1)], s2))  622  [[72,620,617]]
+delete(now(206))  621  []
+End of Step----------------------------------
+
+step(208)
+add(now(208))  625  []
+add(doing(ac_find_intention(s2, domain, send), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list(), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), link(s2, val1, val3, MVp), link(s2, val1, val2, Os), link(s2, val3, val4, Js), link(s2, val0, val1, Wi), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL), verb(s2, val1)], s2))  624  []
+delete(now(207))  623  []
+End of Step----------------------------------
+
+step(209)
+add(val(s2, v0, val1))  627  []
+add(now(209))  626  []
+delete(now(208))  625  []
+End of Step----------------------------------
+
+step(210)
+add(done(ac_find_intention(s2, domain, send), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list(), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), link(s2, val1, val3, MVp), link(s2, val1, val2, Os), link(s2, val3, val4, Js), link(s2, val0, val1, Wi), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL), verb(s2, val1)], s2))  631  []
+add(intention(s2, domain, [send, Metroliner, Baltimore]))  630  []
+add(type(s2, v0, verb))  629  []
+add(now(210))  628  []
+delete(doing(ac_find_intention(s2, domain, send), [isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list(), structure(send, [[v0, v1, O], [v0, v2, MV], [v2, v3, J]], [[v0, verb], [v1, train], [v2, end], [v3, city]], [v0, v1, v3]), structure(send, [[v0, v2, O], [v1, v2, A]], [[v0, verb], [v1, train], [v2, city]], [v0, v1, v2]), structure(send, [[v0, v4, 0], [v0, v4, MV], [v1, v3, D], [v2, v3, AN], [v4, v5, J]], [[v0, verb], [v2, v3, train], [v4, end], [v5, city]], [v0, v2, v3, v5]), link(s2, val1, val3, MVp), link(s2, val1, val2, Os), link(s2, val3, val4, Js), link(s2, val0, val1, Wi), value_of(s2, val5, RIGHT-WALL), value_of(s2, val4, Baltimore), value_of(s2, val3, to), value_of(s2, val2, Metroliner), value_of(s2, val1, send), value_of(s2, val0, LEFT-WALL), verb(s2, val1)], s2))  624  []
+delete(now(209))  626  []
+End of Step----------------------------------
+
+step(211)
+add(now(211))  634  []
+add(call(ac_action(s2, domain, [5, [send, Metroliner, Baltimore]]), , s2))  633  [[88,630]]
+add(belief(domain, [send, Metroliner, Baltimore]))  632  [[83,630]]
+delete(now(210))  628  []
+End of Step----------------------------------
+
+step(212)
+add(now(212))  636  []
+add(doing(ac_action(s2, domain, [5, [send, Metroliner, Baltimore]]), , s2))  635  []
+delete(now(211))  634  []
+End of Step----------------------------------
+
+step(213)
+add(send_to_domain(s2, 5, [[send, Metroliner, Baltimore]]))  638  []
+add(now(213))  637  []
+delete(now(212))  636  []
+End of Step----------------------------------
+
+step(214)
+add(now(214))  640  []
+add(sent_to_domain(s2, 5, [[send, Metroliner, Baltimore]]))  639  [[96,638]]
+delete(now(213))  637  []
+End of Step----------------------------------
+
+step(215)
+add(now(215))  643  []
+add(call(ac_report_action([[send, Metroliner, Baltimore]]), , s2))  642  [[98,639]]
+add(call(ac_post_process(s2, [[send, Metroliner, Baltimore]]), [result(find, location), isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list()], s2))  641  [[97,639]]
+delete(now(214))  640  []
+End of Step----------------------------------
+
+step(216)
+add(now(216))  646  []
+add(doing(ac_post_process(s2, [[send, Metroliner, Baltimore]]), [result(find, location), isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list()], s2))  645  []
+add(doing(ac_report_action([[send, Metroliner, Baltimore]]), , s2))  644  []
+delete(now(215))  643  []
+End of Step----------------------------------
+
+step(217)
+add(done(ac_action(s2, domain, [5, [send, Metroliner, Baltimore]]), , s2))  648  []
+add(now(217))  647  []
+delete(doing(ac_action(s2, domain, [5, [send, Metroliner, Baltimore]]), , s2))  635  []
+delete(now(216))  646  []
+End of Step----------------------------------
+
+step(218)
+add(done(ac_post_process(s2, [[send, Metroliner, Baltimore]]), [result(find, location), isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list()], s2))  650  []
+add(now(218))  649  []
+delete(doing(ac_post_process(s2, [[send, Metroliner, Baltimore]]), [result(find, location), isa(end, to), isa(city, Atlanta), isa(city, Washington), isa(city, Pittsburgh), isa(city, Richmond), isa(city, Buffalo), isa(city, Baltimore), isa(train, Northstar), isa(train, Bullet), isa(city, Newark), isa(train, Metroliner), isa(domain, trains), isa(observation, location), isa(dcommand, find), isa(dcommand, send), isa(conjunct, and), isa(acommand, no), isa(lw, LEFT-WALL), isa(qnmark, ?), isa(qnword, what), isa(start, from), isa(acommand, is), domain_list()], s2))  645  []
+delete(now(217))  647  []
+End of Step----------------------------------
+
+step(219)
+add(done(ac_report_action([[send, Metroliner, Baltimore]]), , s2))  652  []
+add(now(219))  651  []
+delete(doing(ac_report_action([[send, Metroliner, Baltimore]]), , s2))  644  []
+delete(now(218))  649  []
+End of Step----------------------------------
+
+step(220)
+add(idling(220))  654  []
+add(now(220))  653  []
+delete(curr_wait_time(0))  596  []
+delete(now(219))  651  []
+End of Step----------------------------------
+
+step(221)
+add(now(221))  656  []
+add(curr_wait_time(1))  655  []
+delete(now(220))  653  []
+End of Step----------------------------------
+
+step(222)
+add(idling(222))  658  []
+add(now(222))  657  []
+delete(curr_wait_time(1))  655  []
+delete(now(221))  656  []
+End of Step----------------------------------
+
+step(223)
+add(now(223))  660  []
+add(curr_wait_time(2))  659  []
+delete(now(222))  657  []
+End of Step----------------------------------
+
+step(224)
+add(idling(224))  662  []
+add(now(224))  661  []
+delete(curr_wait_time(2))  659  []
+delete(now(223))  660  []
+End of Step----------------------------------
+
+step(225)
+add(now(225))  664  []
+add(curr_wait_time(3))  663  []
+delete(now(224))  661  []
+End of Step----------------------------------
+
+step(226)
+add(idling(226))  666  []
+add(now(226))  665  []
+delete(curr_wait_time(3))  663  []
+delete(now(225))  664  []
+End of Step----------------------------------
+
+step(227)
+add(now(227))  668  []
+add(curr_wait_time(4))  667  []
+delete(now(226))  665  []
+End of Step----------------------------------
+
+step(228)
+add(idling(228))  670  []
+add(now(228))  669  []
+delete(curr_wait_time(4))  667  []
+delete(now(227))  668  []
+End of Step----------------------------------
+
+step(229)
+add(now(229))  672  []
+add(curr_wait_time(5))  671  []
+delete(now(228))  669  []
+End of Step----------------------------------
+
+step(230)
+add(idling(230))  674  []
+add(now(230))  673  []
+delete(curr_wait_time(5))  671  []
+delete(now(229))  672  []
+End of Step----------------------------------
+
+step(231)
+add(now(231))  676  []
+add(curr_wait_time(6))  675  []
+delete(now(230))  673  []
+End of Step----------------------------------
+
+step(232)
+add(idling(232))  678  []
+add(now(232))  677  []
+delete(curr_wait_time(6))  675  []
+delete(now(231))  676  []
+End of Step----------------------------------
+
+step(233)
+add(now(233))  680  []
+add(curr_wait_time(7))  679  []
+delete(now(232))  677  []
+End of Step----------------------------------
+
+step(234)
+add(idling(234))  682  []
+add(now(234))  681  []
+delete(curr_wait_time(7))  679  []
+delete(now(233))  680  []
+End of Step----------------------------------
+
+step(235)
+add(now(235))  684  []
+add(curr_wait_time(8))  683  []
+delete(now(234))  681  []
+End of Step----------------------------------
+
+step(236)
+add(idling(236))  686  []
+add(now(236))  685  []
+delete(curr_wait_time(8))  683  []
+delete(now(235))  684  []
+End of Step----------------------------------
+
+step(237)
+add(now(237))  688  []
+add(curr_wait_time(9))  687  []
+delete(now(236))  685  []
+End of Step----------------------------------
+
+step(238)
+add(idling(238))  690  []
+add(now(238))  689  []
+delete(curr_wait_time(9))  687  []
+delete(now(237))  688  []
+End of Step----------------------------------
+
+step(239)
+add(now(239))  692  []
+add(curr_wait_time(10))  691  []
+delete(now(238))  689  []
+End of Step----------------------------------
+
+step(240)
+add(idling(240))  694  []
+add(now(240))  693  []
+delete(curr_wait_time(10))  691  []
+delete(now(239))  692  []
+End of Step----------------------------------
+
+step(241)
+add(now(241))  696  []
+add(curr_wait_time(11))  695  []
+delete(now(240))  693  []
+End of Step----------------------------------
+
+step(242)
+add(idling(242))  698  []
+add(now(242))  697  []
+delete(curr_wait_time(11))  695  []
+delete(now(241))  696  []
+End of Step----------------------------------
+
+step(243)
+add(now(243))  700  []
+add(curr_wait_time(12))  699  []
+delete(now(242))  697  []
+End of Step----------------------------------
+
+step(244)
+add(idling(244))  702  []
+add(now(244))  701  []
+delete(curr_wait_time(12))  699  []
+delete(now(243))  700  []
+End of Step----------------------------------
+
+step(245)
+add(now(245))  704  []
+add(curr_wait_time(13))  703  []
+delete(now(244))  701  []
+End of Step----------------------------------
+
+step(246)
+add(idling(246))  706  []
+add(now(246))  705  []
+delete(curr_wait_time(13))  703  []
+delete(now(245))  704  []
+End of Step----------------------------------
+
+step(247)
+add(now(247))  708  []
+add(curr_wait_time(14))  707  []
+delete(now(246))  705  []
+End of Step----------------------------------
+
+step(248)
+add(idling(248))  710  []
+add(now(248))  709  []
+delete(curr_wait_time(14))  707  []
+delete(now(247))  708  []
+End of Step----------------------------------
+
+step(249)
+add(now(249))  712  []
+add(curr_wait_time(15))  711  []
+delete(now(248))  709  []
+End of Step----------------------------------
+
+step(250)
+add(idling(250))  714  []
+add(now(250))  713  []
+delete(curr_wait_time(15))  711  []
+delete(now(249))  712  []
+End of Step----------------------------------
+
+step(251)
+add(now(251))  716  []
+add(curr_wait_time(16))  715  []
+delete(now(250))  713  []
+End of Step----------------------------------
+
+step(252)
+add(idling(252))  718  []
+add(now(252))  717  []
+delete(curr_wait_time(16))  715  []
+delete(now(251))  716  []
+End of Step----------------------------------
+
+step(253)
+add(now(253))  720  []
+add(curr_wait_time(17))  719  []
+delete(now(252))  717  []
+End of Step----------------------------------
+
+step(254)
+add(idling(254))  722  []
+add(now(254))  721  []
+delete(curr_wait_time(17))  719  []
+delete(now(253))  720  []
+End of Step----------------------------------
+
+step(255)
+add(now(255))  724  []
+add(curr_wait_time(18))  723  []
+delete(now(254))  721  []
+End of Step----------------------------------
+
+step(256)
+add(idling(256))  726  []
+add(now(256))  725  []
+delete(curr_wait_time(18))  723  []
+delete(now(255))  724  []
+End of Step----------------------------------
+
+step(257)
+add(now(257))  728  []
+add(curr_wait_time(19))  727  []
+delete(now(256))  725  []
+End of Step----------------------------------
+
+step(258)
+add(idling(258))  730  []
+add(now(258))  729  []
+delete(curr_wait_time(19))  727  []
+delete(now(257))  728  []
+End of Step----------------------------------
+
+step(259)
+add(now(259))  732  []
+add(curr_wait_time(20))  731  []
+delete(now(258))  729  []
+End of Step----------------------------------
+
+step(260)
+add(idling(260))  734  []
+add(now(260))  733  []
+delete(curr_wait_time(20))  731  []
+delete(now(259))  732  []
+End of Step----------------------------------
+
+step(261)
+add(now(261))  736  []
+add(curr_wait_time(21))  735  []
+delete(now(260))  733  []
+End of Step----------------------------------
+
+step(262)
+add(idling(262))  738  []
+add(now(262))  737  []
+delete(curr_wait_time(21))  735  []
+delete(now(261))  736  []
+End of Step----------------------------------
+
+step(263)
+add(now(263))  740  []
+add(curr_wait_time(22))  739  []
+delete(now(262))  737  []
+End of Step----------------------------------
+
+step(264)
+add(idling(264))  742  []
+add(now(264))  741  []
+delete(curr_wait_time(22))  739  []
+delete(now(263))  740  []
+End of Step----------------------------------
+
+step(265)
+add(now(265))  744  []
+add(curr_wait_time(23))  743  []
+delete(now(264))  741  []
+End of Step----------------------------------
+
+step(266)
+add(idling(266))  746  []
+add(now(266))  745  []
+delete(curr_wait_time(23))  743  []
+delete(now(265))  744  []
+End of Step----------------------------------
+
+step(267)
+add(now(267))  748  []
+add(curr_wait_time(24))  747  []
+delete(now(266))  745  []
+End of Step----------------------------------
+
+step(268)
+add(idling(268))  750  []
+add(now(268))  749  []
+delete(curr_wait_time(24))  747  []
+delete(now(267))  748  []
+End of Step----------------------------------
+
+step(269)
+add(now(269))  752  []
+add(curr_wait_time(25))  751  []
+delete(now(268))  749  []
+End of Step----------------------------------
+
+step(270)
+add(idling(270))  754  []
+add(now(270))  753  []
+delete(curr_wait_time(25))  751  []
+delete(now(269))  752  []
+End of Step----------------------------------
+
+step(271)
+add(now(271))  756  []
+add(curr_wait_time(26))  755  []
+delete(now(270))  753  []
+End of Step----------------------------------
+
+step(272)
+add(idling(272))  758  []
+add(now(272))  757  []
+delete(curr_wait_time(26))  755  []
+delete(now(271))  756  []
+End of Step----------------------------------
+
+step(273)
+add(now(273))  760  []
+add(curr_wait_time(27))  759  []
+delete(now(272))  757  []
+End of Step----------------------------------
+
+step(274)
+add(idling(274))  762  []
+add(now(274))  761  []
+delete(curr_wait_time(27))  759  []
+delete(now(273))  760  []
+End of Step----------------------------------
+
+step(275)
+add(now(275))  764  []
+add(curr_wait_time(28))  763  []
+delete(now(274))  761  []
+End of Step----------------------------------
+
+step(276)
+add(idling(276))  766  []
+add(now(276))  765  []
+delete(curr_wait_time(28))  763  []
+delete(now(275))  764  []
+End of Step----------------------------------
+
+step(277)
+add(now(277))  768  []
+add(curr_wait_time(29))  767  []
+delete(now(276))  765  []
+End of Step----------------------------------
+
+step(278)
+add(idling(278))  770  []
+add(now(278))  769  []
+delete(curr_wait_time(29))  767  []
+delete(now(277))  768  []
+End of Step----------------------------------
+
+step(279)
+add(now(279))  772  []
+add(curr_wait_time(30))  771  []
+delete(now(278))  769  []
+End of Step----------------------------------
+
+step(280)
+add(idling(280))  774  []
+add(now(280))  773  []
+delete(curr_wait_time(30))  771  []
+delete(now(279))  772  []
+End of Step----------------------------------
+
+step(281)
+add(now(281))  776  []
+add(curr_wait_time(31))  775  []
+delete(now(280))  773  []
 End of Step----------------------------------

@@ -81,9 +81,10 @@ fif(and(utterance(Utt),
 conclusion(response(U,Need,Utt))).
 
 fif(and(end_of_parse(Utt),
-	eval_bound(mult_gather_all([links(Utt,_,_,_,_), 
+	and(eval_bound(mult_gather_all([links(Utt,_,_,_,_), 
 				   value_of(Utt,_,_)],
-				   Asserts), [Utt])),
+				   Asserts), [Utt]),
+		eval_bound(add_user_to_utt(Utt), [Utt]))),
 conclusion(call(ac_find_links(Utt), Asserts, Utt))).    
 
 

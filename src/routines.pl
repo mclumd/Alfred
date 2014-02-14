@@ -116,6 +116,13 @@ switch_user(PrevUser, CurrUser) :-
 	df(curr_user(PrevUser)),
 	df(equil(_,CurrUser)).
 
+add_user_to_utt(Utt) :-
+	pos_int_u(curr_user(Username)), !,
+	af(user_utt(Utt,Username)).
+
+add_user_to_utt(Utt) :-
+	af(user_utt(Utt,none)).
+
 revise_expectation(MaxViol, ExpPause, LocalViol, GlobViol, CurrUttStep) :-
 	%GlobViol >= MaxViol,
 	pos_int_u(utt_on_time(UttOnTime)),
