@@ -16,8 +16,8 @@ Todo: split the initialization into a real_init and a save_parm_init and
 % toplevel.pl
 %added by anna 1/9/07
 %:- ensure_loaded(library(shlib).
-:- ensure_loaded(library(ask)).
-:- ensure_loaded(library(tcp)).
+%:- ensure_loaded(library(ask)).
+%:- ensure_loaded(library(tcp)).
 :- ensure_loaded(library(date)).
 :- ensure_loaded(library(lists)).
 :- compile(['dbman/dbman.pl', ds, 'res/res.pl', 'interfaces/ui.pl', 
@@ -374,7 +374,7 @@ dump_file(X):-
     repeat,
       get0(Z),
       put(Z),
-      at_end_of_file, !,
+      at_end_of_stream, !,
     close(S).
 
 load_alma_files:- 

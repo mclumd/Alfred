@@ -33,7 +33,7 @@
 #include "link-includes.h"
 #include "command-line.h"
 #include <errno.h>
-#include "/home/emily/Desktop/ALFRED/darsana_alfred/LinkParser/tcp/tcp.h"
+#include "../tcp/tcp.h"
 
 #define MAXINPUT 1024
 #define DISPLAY_MAX 1024
