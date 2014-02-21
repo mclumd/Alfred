@@ -13,6 +13,7 @@ Darsana Purushothaman Josyula*/
 :- consult('fixlinkage.pl').
 :- consult('misc.pl').
 :- consult('postprocess.pl').
+:- consult('addparselink.pl').
 
 :- ensure_loaded(library(basics)).
 :- ensure_loaded(library(strings)).
@@ -24,6 +25,9 @@ Darsana Purushothaman Josyula*/
 
 ac_find_links(U) :-
     find_links(U).
+
+ac_add_parse_link(Utt) :-
+	add_parse_link(Utt).
 
 /*change later*************************/
 

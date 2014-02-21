@@ -33,6 +33,12 @@ fif(and(idling(Step),
 					eval_bound(revise_expectation(MaxViolations,ExpPause,LocalViol,GlobViol,CurrUttStep),[MaxViolations,ExpPause,LocalViol,GlobViol,CurrUttStep])))))),
 conclusion(exp_revised(Step))).
 
+/*Convert Parser Links to Alfred*/
+fif(and(done(ac_find_links(Utt),_,Utt),
+	eval_bound(mult_gather_all([link(Utt,_,_,_), 
+				   value_of(Utt,_,_), verb(Utt,_)],
+				   Asserts), [Utt])),
+conclusion(call(ac_add_parse_link(Utt), Asserts, Utt))).
 
 /*PROCESS OBSERVATIONS FROM THE DOMAIN*/
 fif(and(observation(O,A),
