@@ -24,6 +24,6 @@ structure('find',
 
 isa(observation, 'location').
 
-syntax('location', [v0, city]).
+syntax('location', [v0, train, city]).
 
 result(find, location).

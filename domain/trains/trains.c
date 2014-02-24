@@ -34,11 +34,22 @@ int findindex(char *ptr, char *infoarray[MAXINP], int num) {
   return -1;
 }
 
-void showtrain(char *ptr, int n, myXwin *window) {
+void showtrain(char *ptr, int n, myXwin *window, char** locations) {
   char bufcpy[MAXINP];
   char city[MAXINP];
   char *tmp;
   int train,k,j, jval;
+  int index = -1;
+  int i=0;
+
+  char ptrcpy[20];
+  while(ptr[i+7] != ',')
+  {
+	ptrcpy[i] = ptr[i+7];
+	i++;
+  }
+  ptrcpy[i] = '\0';
+
 
   strncpy(bufcpy, ptr, n);
   bufcpy[n] = '\0';
@@ -74,30 +85,71 @@ void showtrain(char *ptr, int n, myXwin *window) {
   myXdrawto(window, .1, .4);
   myXdrawto(window, .1, .2);
   myXprint(window,0.4,0.6,city);
+
+  /*printf("%s\n",ptrcpy);*/
+  if(strcmp(ptrcpy,"Metroliner") == 0)
+  {
+	index = 0;
+  }
+  else if(strcmp(ptrcpy,"Bullet") == 0)
+  {
+	index = 1;
+  }
+  else if(strcmp(ptrcpy,"Northstar") == 0)
+  {
+	index = 2;
+  }
+
+	//Bad memory business
+  locations[index] = NULL;
+  locations[index] = malloc(strlen(ptrcpy)*sizeof(char));
+  strcpy(locations[index],city);
 }
 
 
-void findtrain(char *ptr, int n, int FD) {
+void findtrain(char *ptr, int n, int FD, char **locations) {
   char bufcpy[MAXINP];
   char alma_str[MAXINP];
 
   char *tmp;
-  int k, index;
+  int k, index=-1;
+  int i=0;
 
-  strncpy(bufcpy, ptr, n);
-  bufcpy[n] = '\0';
+  char ptrcpy[20];
+  while(ptr[i+7] != ']')
+  {
+	ptrcpy[i] = ptr[i+7];
+	i++;
+  }
+  ptrcpy[i] = '\0';
+
+/*  printf("%s\n",ptrcpy);*/
+  if(strcmp(ptrcpy,"Metroliner") == 0)
+  {
+	index = 0;
+  }
+  else if(strcmp(ptrcpy,"Bullet") == 0)
+  {
+	index = 1;
+  }
+  else if(strcmp(ptrcpy,"Northstar") == 0)
+  {
+	index = 2;
+  }
+/*  strncpy(bufcpy, ptr, n);
+  bufcpy[n] = '\0';*/
   /*  printf("%s\n", bufcpy);*/
 
-  tmp = strtok(bufcpy, " ,[]\n");
+/*  tmp = strtok(bufcpy, " ,[]\n");
   while (tmp != NULL){
     k = findindex(tmp, TRAINS, NUM_TRAINS);
     if (k>=0) 
       tmp = NULL;
     else
       tmp = strtok(NULL, " ,[]\n");
-  }
-  index = position[k];
-  sprintf(alma_str, "%s%s%s\n", "term(af(observation(location,'", CITIES[index], "'))).");
+  }*/
+  /*index = position[k];*/
+  sprintf(alma_str, "%s%s%s%s%s\n", "term(af(observation(location,'", ptrcpy, "', '", locations[index], "'))).");
   write(FD, alma_str, strlen(alma_str));
 }
 
@@ -112,6 +164,8 @@ char *argv[];
     int FD;
     char *Host;
     int i;
+
+	char *locations[] = {"Buffalo", "Baltimore", "Richmond"};
 
     myXwin *window; /* Window to draw the trains */
 
@@ -174,10 +228,10 @@ char *argv[];
 		      printf("\n");
 
 		      if (!strncmp(buf,"[[send",6)) {
-			showtrain(buf,n, window);
+			showtrain(buf,n, window,locations);
 		      }
 		      if (!strncmp(buf,"[[find",6)) {
-			findtrain(buf,n,FD);
+			findtrain(buf,n,FD,locations);
 		      }
 		    }
 		}
