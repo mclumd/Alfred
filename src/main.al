@@ -41,28 +41,30 @@ fif(and(done(ac_find_links(Utt),_,Utt),
 conclusion(call(ac_add_parse_link(Utt), Asserts, Utt))).
 
 /*PROCESS OBSERVATIONS FROM THE DOMAIN*/
-fif(and(observation(O,A),
+fif(and(observation(O,A,B),
 	and(eval_bound(pos_int_u(now(T)), []),
-	    eval_bound(df(observation(O,A)), [O,A]))),
-conclusion(observation(O,A,T))).
+		and(eval_bound(delete_previous_observations(O,A), [O,A]),
+	    	eval_bound(df(observation(O,A,B)), [O,A,B])))),
+conclusion(observation(O,A,B,T))).
 
-fif(and(observation(O, A, T),
+fif(and(observation(O, A, B, T),
 	and(domain_expect(Utt, [observation,O]),
 	    eval_bound(\+ pos_int_u(satisfied(Utt, [observation,O])), [Utt,O]))),
 conclusion(satisfied(Utt, [observation,O]))).
 
 fif(and(desire(Utt,[inform,O,Type]),
-	and(observation(O,_,_),
+	and(observation(O,A,_,_),
 	    and(eval_bound(\+ pos_int_u(satisfied(Utt, [inform,O, Type])), 
 			   [Utt,O,Type]),
-		eval_bound(mult_gather_all([observation(O,_,_), 
+		eval_bound(mult_gather_all([observation(O,A,_,_), 
 					    isa(_,_),
 					    equil(_,_)],
 					    Asserts), [O])))),
-conclusion(call(ac_report_observation(Utt, O, Type),Asserts,Utt))).
+conclusion(call(ac_report_observation(Utt, O, A, Type),Asserts,Utt))).
 
-fif(and(done(ac_report_observation(Utt, O, _),_,Utt),
-	desire(Utt,[inform,O,Type])),
+fif(and(done(ac_report_observation(Utt, O, _, _),_,Utt),
+	and(desire(Utt,[inform,O,Type]),
+		eval_bound(df(desire(Utt,[inform,O,Type])),[Utt,O,Type]))),
 conclusion(satisfied(Utt,[inform,O,Type]))).
 
 /*BEGIN****************Maintaining utterance structure**************************/

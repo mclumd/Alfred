@@ -113,15 +113,17 @@ ac_report_fail(_, List) :-
 ac_report_action(List) :-
     report_action(List).
 
-ac_report_observation(_,O,current) :-
-    setof(T, observation(O,_,T), Times),
-    last(_,Last,Times),
-    observation(O,R,Last),
-    report_observation(O,R).
+ac_report_observation(_,O, A, current) :-
+ %   findall(T, observation(O,_,_,T), Times),
+  %  last(_,Last,Times),
+    observation(O,A,S,_), !,
+    report_observation(O,A,S).
 
-ac_report_observation(_,O,all) :-
-    observation(O,R,_),
-    report_observation(O,R).
+%ac_report_observation(_,_,_,current).
+
+ac_report_observation(_,O, _, all) :-
+    observation(O,R,S,_),
+    report_observation(O,R,S).
 
 ac_post_process(Utt, List) :-
     post_process(Utt, List).

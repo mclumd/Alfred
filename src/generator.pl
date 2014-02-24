@@ -7,8 +7,8 @@ ask([help]) :-
 prompt(Step) :-
     format('~N Please tell me what you want me to do now: ~d ~N',[Step]).
 
-report_observation(O, R) :-
-    format('~N The ~p is ~p. ~N', [O, R]).
+report_observation(O, R, S) :-
+    format('~N The ~p of ~p is ~p. ~N', [O, R, S]).
 
 report_action(List) :-
     format('~N Ok. Command ~p issued to domain ~N', [List]).

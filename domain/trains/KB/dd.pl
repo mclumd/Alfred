@@ -11,4 +11,8 @@ isa(city, 'Newark').
 isa(city, 'Atlanta').
 isa(start, 'from').
 isa(end, 'to').
+
+origin('Metroliner','Buffalo').
+origin('Bullet', 'Baltimore').
+origin('Northstar', 'Richmond').
     

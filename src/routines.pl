@@ -190,4 +190,9 @@ compute_new_expectation(Avg) :-
 	Avg is L/VTotal,
 	format('~N GLOBAL VIOLATIONS = ~d ~N', [VList]).
 
+delete_previous_observations(_,A) :-
+	pos_int_u(observation(U,O1,A1,B,T)),
+	(A1=A), !,
+	df(observation(U,O1,A1,B,T)).
 
+delete_previous_observations(_,_).

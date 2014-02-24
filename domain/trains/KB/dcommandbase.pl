@@ -6,6 +6,11 @@ structure('send',
 	[v0,v1,v3]).
 
 structure('send', 
+	[[v0,v1,'O'], [v0,v2,'MV'], [v2,v3,'J'], [v0,v4,'MV'], [v4,v5,'J']], 
+	[[v0,verb], [v1, train], [v2, start], [v3, city], [v4, end], [v5, city]],
+	[v0,v1,v5]).
+
+structure('send', 
 	[[v0,v2,'O'], [v1,v2,'A']], 
 	[[v0,verb], [v1, train], [v2, city]],
 	[v0,v1,v2]).
