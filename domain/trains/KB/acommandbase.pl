@@ -16,7 +16,6 @@ structure('is',
 	[[v1,verb], [v3, conjunct]],
 	[compose, v0, v2, v4]).
 
-
 isa(qnword, 'what').
 
 isa(qnmark, '?').

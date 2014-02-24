@@ -1,4 +1,4 @@
-#include "/fs/erewhon/anhan/quintus_prolog/quintus3.5/generic/qplib3.5/IPC/TCP/tcp.h"
+#include "../../quintus_prolog/quintus3.5/generic/qplib3.5/IPC/TCP/tcp.h"
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
@@ -10,7 +10,7 @@
 #define MAXINP 2048
 
 const char *TRAINS[] = {"Metroliner", "Bullet", "Northstar"};
-const char *CITIES[] = {"Baltimore", "Buffalo", "Richmond", "Pittsburgh", "Washington", "Newark", "Atlanta"};
+const char *CITIES[] = {"Buffalo", "Baltimore", "Richmond", "Pittsburgh", "Washington", "Newark", "Atlanta"};
 
 #define NUM_TRAINS (sizeof(TRAINS)/sizeof(TRAINS[0]))
 #define NUM_CITIES (sizeof(CITIES)/sizeof(CITIES[0]))
