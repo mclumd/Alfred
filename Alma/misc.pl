@@ -13,7 +13,7 @@
 
 */
 
-:- ensure_loaded(library(strings)).
+%:- ensure_loaded(library(strings)).
 
 print_agenda(S, X):- !,
     print_task(S, X).

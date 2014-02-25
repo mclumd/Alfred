@@ -9,9 +9,9 @@ Todo: rationalize the detection and handling of contras.
 
 */
 
-:- ensure_loaded(library(basics)).
+%:- ensure_loaded(library(basics)).
 :- ensure_loaded(library(ordsets)).
-:- ensure_loaded(library(strings)).
+%:- ensure_loaded(library(strings)).
 
 
 % is_contra_node(+N)

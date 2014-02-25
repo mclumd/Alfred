@@ -8,8 +8,8 @@ Todo: use makefiles.
 
 */
 
-:- ensure_loaded(library(sets)).
-:- ensure_loaded(library(subsumes)).
+%:- ensure_loaded(library(sets)).
+%:- ensure_loaded(library(subsumes)).
 :- compile([access, makenodes, history, index, delete, cleaning, assumptions,
 	    misc]).
 

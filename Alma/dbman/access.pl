@@ -8,7 +8,7 @@ Todo: try to remove disorder
 
 */
 
-:- ensure_loaded(library(sets)).
+%:- ensure_loaded(library(sets)).
 
 % access from the formula to the node.
 % ASSUMES that the formula provided ends up as a single clause.

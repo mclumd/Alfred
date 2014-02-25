@@ -24,8 +24,8 @@ Todo: index first arg too
 
 %% Indentation reworked by M. Covington 2011/1/9 to improve readability of '->' notation.
 
-:- ensure_loaded(library(arg)).
-:- ensure_loaded(library(sets)).
+%:- ensure_loaded(library(arg)).
+%:- ensure_loaded(library(sets)).
 
 
 %% The purpose of these predicates is to create and use the indexing system,

@@ -187,8 +187,8 @@ runtime_entry(start):-
 	  , nl(DBGS)); true),    
     load_alma_files,
     (verbose(true) -> print(L), nl; true),
-    (verbose(true) -> print_compiled; true),
-    (keyboard(true) -> print_compiled; true),
+%    (verbose(true) -> print_compiled; true),
+%    (keyboard(true) -> print_compiled; true),
     (run(true) -> almar; almanr).
 
 

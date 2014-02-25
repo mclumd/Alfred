@@ -8,7 +8,7 @@ Todo: ?
 */
 
 
-:- ensure_loaded(library(basics)).
+%:- ensure_loaded(library(basics)).
 :- compile([loop, addndel]).
 
 
@@ -277,7 +277,8 @@ dodbg(X):-
     assert(debug_stream(S)).
 
 
-
+% TODO: figure out how to fix this / why it is used (see loop.pl)
+/*
 print_time(SS):- !,
     tcp:tcp_now(timeval(Seconds, MicroSeconds)),
     tcp_date_timeval(Date,timeval(Seconds, MicroSeconds)),
@@ -293,6 +294,7 @@ print_time(SS):- !,
     append(NN, [58|Nmicro], XCX),
     name(Stamps, XCX),
     print(SS, Stamps), nl(SS).
+*/
 
 get_stamp(date(_, _, _, X, Y, _), Z):- !,
     name(X, XN),

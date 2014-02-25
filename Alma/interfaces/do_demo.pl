@@ -17,7 +17,7 @@ to print a line and a newline: println(term)
 
 */
 
-:- ensure_loaded(library(prompt)).
+%:- ensure_loaded(library(prompt)).
 
 
 do_demo(F):- !,
@@ -47,13 +47,13 @@ demo_process(Term):- !,
   this will print Q on the screen and wait for the user to enter y or n
   and if y, will do T else will do F
 */
-yesorno(Q, D, T, F):- !,
+/*yesorno(Q, D, T, F):- !,
     name(Q, NQ),
     name(WQ, [63, 32 |NQ]),
     (yesno(WQ, D) ->
 	 call(T);
          call(F)).
-
+*/
 
 println(T):- !,
     print('% '),

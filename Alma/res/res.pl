@@ -10,9 +10,9 @@ What: main file for resolution
 
 :- dynamic skolem_count/1.
 :- dynamic var_count/1.
-:- ensure_loaded(library(basics)).
+%:- ensure_loaded(library(basics)).
 :- ensure_loaded(library(ordsets)).
-:- ensure_loaded(library(strings)).
+%:- ensure_loaded(library(strings)).
 :- compile([process_lits, misc, eval, production, process_tasks, fcres, bcres, resolve]).
 
 res_init:-
