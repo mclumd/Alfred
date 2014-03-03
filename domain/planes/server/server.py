@@ -1,7 +1,11 @@
 import sys, os
-os.chdir("../")
 sys.path.append(".")
-import active2 as active, flyplanes as planes, datetime, display, math, pygame, flygen, flydisplay
+try:
+	import active2 as active, flyplanes as planes, datetime, display, math, pygame, flygen, flydisplay
+except ImportError:
+	os.chdir("../")
+	sys.path.append(".")
+	import active2 as active, flyplanes as planes, datetime, display, math, pygame, flygen, flydisplay
 from pygame.locals import *
 import threading
 import sock
@@ -51,18 +55,19 @@ if len(sys.argv) == 3:
 elif len(sys.argv) == 2:
 	port = sys.argv[1]
 	
-print host, port
 serve = sock.Server(host, port)
-threading.Thread(target = serve.listen_continuously)
+serviceThread = threading.Thread(target = serve.listen_continuously)
+serviceThread.start()
 
 while 1:
 	
 	cmd = serve.get_cmd()
 	if cmd:
+		print cmd
 		op = None
 		args = []
 		if cmd[0] not in ["fly", "load", "unload"]:
-			serve.respond("instruction" + cmd[0] + "not recognized. Ignoring.")
+			serve.respond("instruction " + cmd[0] + " not recognized. Ignoring.")
 		elif cmd[0] == "fly":
 			if len(cmd) != 3:
 				serve.respond("fly command requires two args. Got " + str(cmd))
@@ -71,10 +76,10 @@ while 1:
 				arg2 = world.get_obj_by_name(cmd[2])
 				valid = True
 				if arg1 == None or arg1.type != "plane":
-					serve.respond("plane" + cmd[1] + "not found. Ignoring command" + str(cmd))
+					serve.respond("plane " + cmd[1] + " not found. Ignoring command" + str(cmd))
 					valid = False
-				if  arg2 == None or arg1.type != "city":
-					serve.respond("city" + cmd[2] + "not found. Ignoring command" + str(cmd))
+				if  arg2 == None or arg2.type != "city":
+					serve.respond("city " + cmd[2] + " not found. Ignoring command" + str(cmd))
 					valid = False
 				if valid:
 					op = planes.flyop 
@@ -87,10 +92,10 @@ while 1:
 				arg2 = world.get_obj_by_name(cmd[2])
 				valid = True
 				if arg1 == None or arg1.type != "package":
-					serve.respond("package" + cmd[1] + "not found. Ignoring command" + str(cmd))
+					serve.respond("package " + cmd[1] + " not found. Ignoring command" + str(cmd))
 					valid = False
-				if  arg2 == None or arg1.type != "plane":
-					serve.respond("plane" + cmd[2] + "not found. Ignoring command" + str(cmd))
+				if  arg2 == None or arg2.type != "plane":
+					serve.respond("plane " + cmd[2] + " not found. Ignoring command" + str(cmd))
 					valid = False
 				if valid:
 					op = planes.loadop 
@@ -101,7 +106,7 @@ while 1:
 			else:
 				arg1 = world.get_obj_by_name(cmd[1])
 				if arg1 == None or arg1.type != "package":
-					serve.respond("package" + cmd[1] + "not found. Ignoring command" + str(cmd))
+					serve.respond("package " + cmd[1] + " not found. Ignoring command" + str(cmd))
 				else:
 					op = planes.unloadop 
 					args = [arg1]
@@ -137,6 +142,7 @@ while 1:
 			if event.key == K_ESCAPE:
 				#print plane1x.get_changes()#, map(plane1x.second_der, [i for i in range(2, len(plane1x.vals))])
 				print active.log
+				serve.done = True
 				sys.exit(0)
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1: #left button, select plane or package

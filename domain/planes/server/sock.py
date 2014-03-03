@@ -44,16 +44,23 @@ class Server:
 	
 	def listen_continuously(self):
 		print "waiting for connection"
-		clientsock, addr = serversock.accept()
+		clientsock, addr = self.sock.accept()
 		self.clientsock = clientsock
 		print "connected"
-		while True:
+		while not self.done:
 			msg = self.clientsock.recv(1024)
 			while self.msg:
 				time.sleep(1) #do not overwrite old message before it is read
 			self.lock.acquire()		
 			self.msg = msg
 			self.lock.release()
+		'''
+		this does not seem to work properly:
+		self.clientsock.shutdown(socket.SHUT_RDWR)	
+		self.clientsock.close()
+		self.sock.shutdown(socket.SHUT_RDWR)	
+		self.sock.close()
+		'''
 	
 	def get_cmd(self):
 		if not self.msg:
