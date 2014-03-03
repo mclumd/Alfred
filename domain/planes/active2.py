@@ -75,9 +75,17 @@ class SimpleActionExecutor:
 		self.actionlist = []
 		self.actionmem = {}
 	
+	def remove_conflicting_actions(self, action):
+		removed = [oldAction for oldAction in self.actionlist if oldAction.args[0] == action.args[0] and oldAction != action]
+		for oldAction in removed:
+			oldAction.end()
+		self.actionlist = [oldAction for oldAction in self.actionlist if oldAction not in removed]
+	
 	def add_action(self, action, time):
 		action.start(time)
 		self.actionlist.append(action)
+		#removing conflicting actions. So, no queueing of destinations, for example.
+		self.remove_conflicting_actions(action)
 		self.actionmem[time] = action
 		log.log_msg(time, "Action added.", action)
 	
@@ -116,6 +124,9 @@ class Domain:
 	
 	def valid_action(self, operator, args):
 		return Action(operator, args, self.world).valid().val
+	
+	def reason_invalid(self, operator, args):
+		return Action(operator, args, self.world).valid().msg
 	
 	def add_action_(self, action, checkvalid = False):
 		if not checkvalid or action.valid().val:

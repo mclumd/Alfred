@@ -123,8 +123,8 @@ def fly_valid(world, args):
 		return (False, str(plane) + " is not a plane.")
 	if not hasattr(city, "type") or city.type != "city":
 		return (False, str(city) + " is not a city.")
-	if plane.dest and plane.dest != city:
-		return (False, str(plane) + " is already scheduled to fly to " + str(plane.dest))
+	#if plane.dest and plane.dest != city:
+		#return (False, str(plane) + " is already scheduled to fly to " + str(plane.dest))
 	if plane.beingloaded:
 		return (False, str(plane) + " is currently being loaded with package " + str(plane.beingloaded))
 	if plane.beingunloaded:
@@ -183,7 +183,7 @@ def load_valid(world, args):
 		else:
 			return (False, str(package) + " is in " + str(package.container) + ", " + str(plane) + " is at " + str(plane.loc))
 	if plane.dest:
-		return (False, str(plane) + " is scheduled to fly to " + str(plane.dest))
+		return (False, str(plane) + " is flying to " + str(plane.dest))
 	if plane.beingunloaded:
 		return (False, str(plane.beingunloaded) + " is being unloaded from " + str(plane))
 	if plane.beingloaded and plane.beingloaded != package:
@@ -240,7 +240,7 @@ def unload_valid(world, args):
 	if plane.city != city:
 		return (False, str(package) + " is in " + str(plane) + ", which is at " + str(plane.city))			
 	if plane.dest:
-		return (False, str(plane) + " is scheduled to fly to " + str(plane.dest))
+		return (False, str(plane) + " is flying to to " + str(plane.dest))
 	if plane.beingloaded:
 		return (False, str(plane.beingloaded) + " is being loaded onto " + str(plane))
 	if plane.beingunloaded and plane.beingunloaded != package:
