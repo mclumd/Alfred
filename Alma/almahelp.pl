@@ -49,5 +49,5 @@ alma_help(predicates):- !,
     print('Predicates:'), nl,
     print('  now/1'), nl.
 
-alma_help(X):-
+alma_help(_):-
     alma_help.

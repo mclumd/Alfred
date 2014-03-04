@@ -27,7 +27,6 @@ Todo: index first arg too
 %:- ensure_loaded(library(arg)).
 %:- ensure_loaded(library(sets)).
 
-
 %% The purpose of these predicates is to create and use the indexing system,
 %% which consists of clauses like these:
 %%
@@ -239,7 +238,7 @@ insert_one(Name, not(N)):- %% For NEGATIVE literals
             name(Fu, FUNC), append(FUNC, [36, 36], FVAR), name(F, FVAR),  %% should be concat_atom
             (retract(node_index(F, PL, MI)) ->
                 (
-                    add_element(Name, MI, MII),
+                    append([Name], MI, MII),
                     assert(node_index(F, PL, MII))   %% node_index for this hash exists, so add the nodename to the SECOND list
                     %% Was a step left out?  Should we also be doing pred2hash in this situation, like below?
                 )
@@ -248,7 +247,7 @@ insert_one(Name, not(N)):- %% For NEGATIVE literals
                     assert(node_index(F, [], [Name])),   %% node_index for this hash does not exist, so create a new node_index clause
                     (retract(pred2hash(Fu, P2H)) ->      %% and also see if a pred2hash clause is needed
                         (
-                            add_element(F, P2H, PP2H),
+                            append([F], P2H, PP2H),
                             assert(pred2hash(Fu, PP2H))
                         )
                     ;
@@ -263,12 +262,12 @@ insert_one(Name, not(N)):- %% For NEGATIVE literals
         (
             (retract(node_index(H, PH, MH)) ->   %% Like the above, but using the hash code rather than the functor with $$
                 (
-                    add_element(Name, MH, MMH),
+                    append([Name], MH, MMH),
                     assert(node_index(H, PH, MMH)),
                     functor(N, F, _),
                     (retract(pred2hash(F, F2H)) ->
                         (
-                           add_element(H, F2H, FFH),
+                           append([H], F2H, FFH),
                             assert(pred2hash(F, FFH))
                         )
                     ;
@@ -283,7 +282,7 @@ insert_one(Name, not(N)):- %% For NEGATIVE literals
                     functor(N, F, _),
                     (retract(pred2hash(F, F2H)) ->
                         (
-                            add_element(H, F2H, FFH),
+                            append([H], F2H, FFH),
                             assert(pred2hash(F, FFH))
                         )
                     ;
@@ -316,7 +315,7 @@ insert_one(Name, N):-  %% for POSITIVE literals.  N is not of the form not(...).
             name(Fu, FUNC), append(FUNC, [36, 36], FVAR), name(F, FVAR),
             (retract(node_index(F, PL, MI)) ->
                 (
-                    add_element(Name, PL, PLL),
+                    append([Name], PL, PLL),
                     assert(node_index(F, PLL, MI))
                 )
             ;
@@ -324,7 +323,7 @@ insert_one(Name, N):-  %% for POSITIVE literals.  N is not of the form not(...).
                     assert(node_index(F, [Name], [])),
                     (retract(pred2hash(Fu, P2H)) ->
                         (
-                            add_element(F, P2H, PP2H),
+                            append([F], P2H, PP2H),
                             assert(pred2hash(Fu, PP2H))
                         )
                     ;
@@ -339,7 +338,7 @@ insert_one(Name, N):-  %% for POSITIVE literals.  N is not of the form not(...).
         (
             (retract(node_index(H, PH, MH)) ->
                 (
-                    add_element(Name, PH, PPH),
+                    append([Name], PH, PPH),
                     assert(node_index(H, PPH, MH)),
                     functor(N, F, _),
                     %
@@ -347,7 +346,7 @@ insert_one(Name, N):-  %% for POSITIVE literals.  N is not of the form not(...).
                     %
                     (retract(pred2hash(F, Fh)) -> 
                         (
-                            add_element(H, Fh, Fhh),
+                            append([H], Fh, Fhh),
                             assert(pred2hash(F, Fhh))
                         )
                     ;
@@ -360,7 +359,7 @@ insert_one(Name, N):-  %% for POSITIVE literals.  N is not of the form not(...).
                 functor(N, F, _),
                 (retract(pred2hash(F, F2H)) ->
                     (
-                        add_element(H, F2H, FFH),
+                        append([H], F2H, FFH),
                         assert(pred2hash(F, FFH))
                     )
                 ;
@@ -410,7 +409,7 @@ insert_new_one(Name, not(N)):- !,
             name(Fu, FUNC), append(FUNC, [36, 36], FVAR), name(F, FVAR),
             (retract(new_node_index(F, PL, MI)) ->
                 (
-                    add_element(Name, MI, MII),
+                    append([Name], MI, MII),
                     assert(new_node_index(F, PL, MII))
                 )
             ;
@@ -418,7 +417,7 @@ insert_new_one(Name, not(N)):- !,
                     assert(new_node_index(F, [], [Name])),
                     (retract(newpred2hash(Fu, P2H)) ->
                         (   
-                            add_element(F, P2H, PP2H),
+                            append([F], P2H, PP2H),
                             assert(newpred2hash(Fu, PP2H))
                         )
                     ;
@@ -433,12 +432,12 @@ insert_new_one(Name, not(N)):- !,
         (
             (retract(new_node_index(H, PH, MH)) ->
             (
-                add_element(Name, MH, MMH),
+                append([Name], MH, MMH),
                 assert(new_node_index(H, PH, MMH)),
                 functor(N, F, _),
                 (retract(newpred2hash(F, F2H)) ->
                     (
-                        add_element(H, F2H, FFH),
+                        append([H], F2H, FFH),
                         assert(newpred2hash(F, FFH))
                     )
                 ;
@@ -454,7 +453,7 @@ insert_new_one(Name, not(N)):- !,
                 (
                     retract(newpred2hash(F, F2H)) ->
                     (
-                        add_element(H, F2H, FFH),
+                        append([H], F2H, FFH),
                         assert(newpred2hash(F, FFH))
                     )
                 ;
@@ -483,7 +482,7 @@ insert_new_one(Name, N):- !,
             name(Fu, FUNC), append(FUNC, [36, 36], FVAR), name(F, FVAR),
             (retract(new_node_index(F, PL, MI)) ->
                 (
-                    add_element(Name, PL, PLL),
+                    append([Name], PL, PLL),
                     assert(new_node_index(F, PLL, MI))
                 )
             ;
@@ -491,7 +490,7 @@ insert_new_one(Name, N):- !,
                     assert(new_node_index(F, [Name], [])),
                     (retract(newpred2hash(Fu, P2H)) ->
                         (
-                            add_element(F, P2H, PP2H),
+                            append([F], P2H, PP2H),
                             assert(newpred2hash(Fu, PP2H))
                         )
                     ;
@@ -506,12 +505,12 @@ insert_new_one(Name, N):- !,
         (
             (retract(new_node_index(H, PH, MH)) ->
             (
-                add_element(Name, PH, PPH),
+                append([Name], PH, PPH),
                 assert(new_node_index(H, PPH, MH)),
                 functor(N, F, _),
                 (retract(newpred2hash(F, Fh)) -> 
                     (
-                        add_element(H, Fh, Fhh),
+                        append([H], Fh, Fhh),
                         assert(newpred2hash(F, Fhh))
                     )
                 ;
@@ -524,7 +523,7 @@ insert_new_one(Name, N):- !,
                 functor(N, F, _),
                 (retract(newpred2hash(F, F2H)) ->
                     (
-                        add_element(H, F2H, FFH),
+                        append([H], F2H, FFH),
                         assert(newpred2hash(F, FFH))
                     )
                 ;
@@ -718,18 +717,43 @@ intersect_new_nodes(_, []).
 
 */
 
+/* dumping quintus source here for now */
+%   intersection(+ListOfSets, ?Intersection)
+%   is true when Intersection is the intersection of all the sets in
+%   ListOfSets.  The order of elements in Intersection is taken from
+%   the first set in ListOfSets.  This has been turned inside out to
+%   minimise the storage turnover.
+
+intersection([Set|Sets], Intersection) :-
+	intersection1(Set, Sets, Intersection).
+
+intersection1([], _, []).
+intersection1([Element|Elements], Sets, Intersection) :-
+	memberchk_all(Sets, Element),
+	!,
+	Intersection = [Element|Rest],
+	intersection1(Elements, Sets, Rest).
+intersection1([_|Elements], Sets, Intersection) :-
+	intersection1(Elements, Sets, Intersection).
+
+memberchk_all([], _).
+memberchk_all([Set|Sets], Element) :-
+	memberchk(Element, Set),
+	memberchk_all(Sets, Element).
+/* end dumping quintus source here for now */
+
 %% intersectnodes:  called from index.pl, addndel.pl, access.pl, cleaning.pl, delete.pl
 
 intersectnodes(Form, Intersect):- 
     getallsets(Form, [], SP), !,
-    intersection(SP, Intersect).
+    intersection(SP, Intersect). % SP is set of sets; /3's are same
 intersectnodes(_, []).
 
 %% intersectnewnodes:  called from index.pl, cleaning.pl
 
 intersectnewnodes(Form, Intersect):- 
     getallnewsets(Form, [], SP), !,
-    intersection(SP, Intersect).
+    intersection(SP, Intersect). %
 intersectnewnodes(_, []).
 
 
@@ -939,11 +963,13 @@ unindexone([not(F)|FR], Name):- !,
           functor(F, Fu, _),
           name(Fu, FUNC), append(FUNC, [36, 36], FVAR), name(Ff, FVAR), 
           retract(node_index(Ff, Sp, S1)), 
-          del_element(Name, S1, S2),
+          %del_element(Name, S1, S2),
+          delete(S1, Name, S1),
           ((Sp = [], S2 = []) -> 
               (
                    retract(pred2hash(Fu, P2h1)),
-                   del_element(Ff, P2h1, P2h2),
+                   %del_element(Ff, P2h1, P2h2),
+                   delete(P2h1, Ff, P2h2),
                    assert(node_index(Ff, Sp, S2)),
                    assert(pred2hash(Fu, P2h2))
               )
@@ -954,12 +980,14 @@ unindexone([not(F)|FR], Name):- !,
     ;
        (
           retract(node_index(H, Sp, S1)),
-          del_element(Name, S1, S2),
+          %del_element(Name, S1, S2),
+          delete(S1, Name, S2),
           ((Sp = [], S2 = []) -> 
              (
                 functor(F, Fun, _),
                 retract(pred2hash(Fun, P2h1)),
-                del_element(H, P2h1, P2h2),
+                %del_element(H, P2h1, P2h2),
+                delete(P2h1, H, P2h2),
                 assert(node_index(H, Sp, S2)),
                 assert(pred2hash(Fun, P2h2))
              )
@@ -979,11 +1007,13 @@ unindexone([F|FR], Name):-
             functor(F, Fu, _),
             name(Fu, FUNC), append(FUNC, [36, 36], FVAR), name(Ff, FVAR), 
             retract(node_index(Ff, S1, Sm)), 
-            del_element(Name, S1, S2),
+            %del_element(Name, S1, S2),
+            delete(S1, Name, S2),
             ((Sm = [], S2 = []) -> 
                 (
                     retract(pred2hash(Fu, P2h1)),
-                    del_element(Ff, P2h1, P2h2),
+                    %del_element(Ff, P2h1, P2h2),
+                    delete(P2h1, Ff, P2h2),
                     assert(node_index(Ff, S2, Sm)),
                     assert(pred2hash(Fu, P2h2))
                 )
@@ -994,12 +1024,13 @@ unindexone([F|FR], Name):-
     ;
         (
             retract(node_index(H, S1, Sm)),
-            del_element(Name, S1, S2),
+            %del_element(Name, S1, S2),
+            delete(S1, Name, S2),
             ((Sm = [], S2 = []) -> 
                 (
                     functor(F, Fun, _),
                     retract(pred2hash(Fun, P2h1)),
-                    del_element(H, P2h1, P2h2),
+                    delete(P2h1, H, P2h2),
                     assert(node_index(H, S2, Sm)),
                     assert(pred2hash(Fun, P2h2))
                 )
@@ -1036,11 +1067,11 @@ unindexnewone([not(F)|FR], Name):- !,
             functor(F, Fu, _),
             name(Fu, FUNC), append(FUNC, [36, 36], FVAR), name(Ff, FVAR),
             retract(new_node_index(Ff, Sp, S1)), 
-            del_element(Name, S1, S2),
+            delete(S1, Name, S2),
             ((Sp = [] , S2 = []) -> 
                 (
                     retract(newpred2hash(Fu, P2h1)),
-                    del_element(Ff, P2h1, P2h2),
+                    delete(P2h1, Ff, P2h2),
                     assert(newpred2hash(Fu, P2h2)),
                     assert(new_node_index(Ff, Sp, S2))
                     % we need to have this above coz there can be many occurrences of the same
@@ -1054,12 +1085,12 @@ unindexnewone([not(F)|FR], Name):- !,
     ;
         (
             retract(new_node_index(H, Sp, S1)),
-            del_element(Name, S1, S2),
+            delete(S1, Name, S2),
             ((Sp = [] , S2 = []) -> 
                 (
                     functor(F, Fun, _),
                     retract(newpred2hash(Fun, P2h1)),
-                    del_element(H, P2h1, P2h2),
+                    delete(P2h1, H, P2h2),
                     assert(new_node_index(H, Sp, S2)),
                     assert(newpred2hash(Fun, P2h2))
                 )
@@ -1078,11 +1109,11 @@ unindexnewone([F|FR], Name):- !,
             functor(F, Fu, _),
             name(Fu, FUNC), append(FUNC, [36, 36], FVAR), name(Ff, FVAR),
             retract(new_node_index(Ff, S1, Sm)), 
-            del_element(Name, S1, S2),
+            delete(S1, Name, S2),
             ((Sm = [] , S2 = []) -> 
                 (
                     retract(newpred2hash(Fu, P2h1)),
-                    del_element(Ff, P2h1, P2h2),
+                    delete(P2h1, Ff, P2h2),
                     assert(new_node_index(Ff, S2, Sm)),
                     assert(newpred2hash(Fu, P2h2))
                 )
@@ -1093,12 +1124,12 @@ unindexnewone([F|FR], Name):- !,
     ;
         (
             retract(new_node_index(H, S1, Sm)),
-            del_element(Name, S1, S2),
+            delete(S1, Name, S2),
             ((Sm = [] , S2 = []) -> 
                 (
                     functor(F, Fun, _),
                     retract(newpred2hash(Fun, P2h1)),
-                    del_element(H, P2h1, P2h2),
+                    delete(P2h1, H, P2h2),
                     assert(new_node_index(H, S2, Sm)),
                     assert(newpred2hash(Fun, P2h2))
                 )

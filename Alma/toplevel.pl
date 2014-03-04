@@ -334,7 +334,7 @@ handle_args([memlimit, T|X]):-
     retract(memlimit(_)),
     assert(memlimit(T)),
     handle_args(X).
-handle_args([demo, F|X]):-!, 
+handle_args([demo, F|_]):-!, 
     do_demo(F).
 handle_args([prompt, A|X]):- !,
     retractall(alma_prompt(_)),

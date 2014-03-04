@@ -126,7 +126,7 @@ handle_each_action([], X, X).
 handle_each_action([X|Y], Z, A):-
     have_doing(X), !,
     slave_tag(Tag),
-    tcp_send(Tag, X),
+    write(Tag, X),
     ((debug_level(1); debug_level(2); debug_level(3)) -> 
 	  (debug_stream(DS), print(DS, 'Sending '),
 	   print(DS, X), nl(DS)); true),

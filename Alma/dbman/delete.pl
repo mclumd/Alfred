@@ -39,7 +39,7 @@ delete_bs_tree(Form):-
     get_name(Var, Name),
     retract(tree_to_delete(TTD)),
 %    get_name(Bigger, NodeName),
-    add_element(Name, TTD, TTT),
+    append([Name], TTD, TTT),
     assert(tree_to_delete(TTT)),
     af(deleted_tree(Form)).
 

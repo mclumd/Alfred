@@ -69,7 +69,7 @@ add_bc_conc(New0, Old0):-
     (delete_trees(true) ->
 	 (retract(tree_to_delete(TTD)),
 	  get_name(Node, NodeName),
-	  add_element(NodeName, TTD, TTT),
+	  append([NodeName], TTD, TTT),
 	  assert(tree_to_delete(TTT)));
     true).
 
@@ -91,7 +91,7 @@ add_bc_conc(New0, Old0):-
     (delete_trees(true) ->
 	 (retract(tree_to_delete(TTD)),
 	  get_name(Bigger, NodeName),
-	  add_element(NodeName, TTD, TTT),
+	  append([NodeName], TTD, TTT),
 	  assert(tree_to_delete(TTT)));
     true).
 

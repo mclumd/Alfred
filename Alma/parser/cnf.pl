@@ -46,7 +46,7 @@ What: conversion to normal form for res.pl
 % mar 7 99: convert list of clauses to an ordered set.
 %
 
-:- ensure_loaded(library(ordsets)).
+:- use_module(library(ordsets)).
 
 convert_form(FF, CNF, Typ):-
     clean_bs(FF, F),

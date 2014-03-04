@@ -10,7 +10,7 @@ Todo: rationalize the detection and handling of contras.
 */
 
 %:- ensure_loaded(library(basics)).
-:- ensure_loaded(library(ordsets)).
+:- use_module(library(ordsets)).
 %:- ensure_loaded(library(strings)).
 
 

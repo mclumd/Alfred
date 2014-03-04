@@ -9,6 +9,7 @@ Todo: ?
 
 
 %:- ensure_loaded(library(basics)).
+ensure_loaded(library(socket)).
 :- compile([loop, addndel]).
 
 
@@ -92,7 +93,7 @@ load_action_file(F):-
 
 load_action_file(F):-
     slave_tag(Tag), !,
-    tcp_send(Tag, load_actions(F)).
+    write(Tag, load_actions(F)).
 /*
 connect_slave(SF):-
     (verbose(true) -> print('Connecting to slave'), nl; true),
@@ -139,7 +140,7 @@ print('Connecting to history'),nl,
     really_connect(SF, Tag),
     (verbose(true) -> (print('File: '), print(SF), print(' Socket: '), 
      print(Tag), nl); true),
-    tcp_output_stream(Tag, Stream),
+    tcp_open_socket(Tag, _, Stream), % updated in later swipl versions to have /2 function version
     (verbose(true) -> (print('Gotten Stream '), nl); true), 
     retract(history_dump(_)),
     assert(history_dump(true)),
@@ -148,20 +149,6 @@ print('Connecting to history'),nl,
     write_term(Stream, step(foo), [max_depth(0)]), nl(Stream),
     flush_output(Stream).
 connect_history(_).
-
-/*connect_mcl(SF):-
-    (verbose(true) -> print('Connecting to MCL'), nl; true),
-print('Connecting to MCL'),nl,
-    really_connect(SF, Tag),
-print('Connecting to MCL 2'),nl,
-    retract(mcl_tag(_)),
-print('Connecting to MCL 3'),nl,
-	af(mcl_tag(Tag)),
-print('Connecting to MCL 4'),nl,
-    assert(mcl_tag(Tag)),
-print('Connecting to MCL 5'),nl.
-connect_mcl(_).
-*/
 
 really_connect(SF, Tag):-
     unix(system('sleep 1')), print('Trying...'), nl,
@@ -172,36 +159,29 @@ really_disconnect:-
     disconnect_slave,
     disconnect_parser,
     disconnect_domain.
-/*    disconnect_mcl.*/
 
 disconnect_slave:-
     retract(slave_tag(Tag)),
     ((Tag \== false,
-      tcp_send(Tag, quit));
+      write(Tag, quit));
      true),
     assert(slave_tag(false)).
 
 disconnect_parser:-
     retract(parser_tag(Tag)),
     ((Tag \== false,
-      tcp_send(Tag, quit));
+      write(Tag, quit));
      true),
     assert(parser_tag(false)).
 
 disconnect_domain:-
     retract(domain_tag(Tag)),
     ((Tag \== false,
-      tcp_send(Tag, quit));
+      write(Tag, quit));
      true),
     assert(domain_tag(false)).
 
-/*disconnect_mcl:-
-    retract(mcl_tag(Tag)),
-    ((Tag \== false,
-      tcp_send(Tag, quit));
-     true),
-    assert(mcl_tag(false)).
-*/
+
 handle_no_connect(Err, SF):- !,
     print(Err), nl, print('Failed to connect. Retrying...'), nl,
     unix(system('sleep 1')),
@@ -277,14 +257,16 @@ dodbg(X):-
     assert(debug_stream(S)).
 
 
-% TODO: figure out how to fix this / why it is used (see loop.pl)
-/*
 print_time(SS):- !,
-    tcp:tcp_now(timeval(Seconds, MicroSeconds)),
-    tcp_date_timeval(Date,timeval(Seconds, MicroSeconds)),
-%    print(Date), nl, 
-%    time_stamp(Date,'%02c:%02i:', Stamp),
-%    print(Stamp), nl,
+    %tcp:tcp_now(timeval(Seconds, MicroSeconds)),
+    %tcp_date_timeval(Date,timeval(Seconds, MicroSeconds)),
+    get_time(Z),
+    stamp_date_time(Z, T, 'UTC'),
+    format_time(atom(CT), '%A %B %d %Y %H:%M', T),
+    print(Date), nl, 
+    %time_stamp(Date,'%02c:%02i:', Stamp), %HH:MM in 24 hr time
+    format_time(Stamp, '%H:%M:', Date),
+    print(Stamp), nl,
     get_stamp(Date, Stamp),
     Date = date(_, _, _, _, _, S),
     name(S, NSec),
@@ -294,7 +276,7 @@ print_time(SS):- !,
     append(NN, [58|Nmicro], XCX),
     name(Stamps, XCX),
     print(SS, Stamps), nl(SS).
-*/
+
 
 get_stamp(date(_, _, _, X, Y, _), Z):- !,
     name(X, XN),

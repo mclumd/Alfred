@@ -4,33 +4,16 @@ By: kpurang
 
 What:
 Used so that the executable alma knows when it has been compiled.
-
-
 */
 
-
-:- ensure_loaded(library(date)).
-%:- use_module(library(tcp)).
-
-
-:- dynamic ctime/1.
-
-%cdtime(timeval(Seconds, MicroSeconds)):-
-%    tcp_date_timeval(Date,timeval(Seconds, MicroSeconds)),
-%    time_stamp(Date,'%W %M %02d %y %02c:%02i', Stamp),
-%    assert(ctime(Stamp)).
-
-
-% quintus-specific function, updated for SWI-Prolog
-%:- tcp:tcp_now(Z), cdtime(Z).
-
+:- use_module(library(date)).
 
 write_comp_date:-
     open('compdate.pl', 'write', S),
     get_time(Z),
     stamp_date_time(Z, T, 'UTC'),
     format_time(atom(CT), '%A %B %d %Y %H:%M', T),
-    ctime(CT),
+    %ctime(CT),
     name(CT, Date),
     name('print(''Compiled on ', F), 
     append(F, Date, IG),
@@ -41,7 +24,4 @@ write_comp_date:-
     close(S).
 
 :- write_comp_date.
-
-
-
 

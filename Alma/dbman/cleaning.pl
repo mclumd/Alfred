@@ -146,7 +146,8 @@ is_new_old(N):- !,				  % is a new duplicate
     get_formula(N, F),
     intersectnewnodes(F, XIN),		  % potential candidates
     get_name(N, NNAme),
-    del_element(NNAme, XIN, IN),			  % remove myself
+    %del_element(NNAme, XIN, IN),			  % remove myself
+    delete(XIN, NNAme, IN), % delete NNAme from XIN, may need library(lists)
     get_actual_new_nodes(IN, INN),		  % get em
     variant_nodes(N, INN, VX),			  % one or more the same
     one_not_done(VX, NDX),			  % i am not the first

@@ -10,7 +10,7 @@ Todo: why are the loops so big?
 
 % do this if run is true
 almar:-
-    (keyboard(true)-> tcp_watch_user(_, on); true),
+    %(keyboard(true)-> tcp_watch_user(_, on); true),
     repeat,
     sr,
     fail, !,
@@ -27,8 +27,7 @@ sr:- !,
     increment_step,
     step_number(Step),
     ((debug_level(1); debug_level(2); debug_level(3)) -> 
-     (debug_stream(DBGS), nl(DBGS), print(DBGS, 'Step'),
-%	  (debug_stream(DBGS), nl(DBGS), print_time(DBGS), print(DBGS, 'Step'),
+	  (debug_stream(DBGS), nl(DBGS), print_time(DBGS), print(DBGS, 'Step'),
 	   print(DBGS, Step), nl(DBGS)); true),
     df(now(PStep)),
     get_new_node_name(StepName),
@@ -45,7 +44,9 @@ sr:- !,
                     Step, 1, [], [], [if])), 
     unindex_new_done,
     retractall(done_new(_)),
-      (tcp_select(Deetee, Ans) -> respond_input(Ans); true),
+    % tcp select here gets user_input. timeout, term
+    %  (tcp_select(Deetee, Ans) -> respond_input(Ans); true),
+      (wait_for_input([user_input], [Ans], Deetee) -> respond_input(Ans); true),
     handle_action_list,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,8 +65,7 @@ sr:- !,
     do_tasks(Olot),
     his_deletes,
     ((debug_level(1); debug_level(2); debug_level(3)) -> 
-     (debug_stream(DBGS3), nl(DBGS3)); true),
-%	  (debug_stream(DBGS3), nl(DBGS3), print_time(DBGS3)); true),
+     (debug_stream(DBGS3), nl(DBGS3), print_time(DBGS3)); true),
     ((debug_level(3); debug_level(2); statistics(true)) ->
 	 (debug_stream(DBGS4), statistics(runtime, [_, Exec_Time]),
 	 format(DBGS4, 'Filter time: ~dms~n', Filter_Time),
@@ -93,7 +93,8 @@ assert_idle(_,Step) :-
 
 respond_input(A):- 
     respond_input1(A),
-    tcp_select(0, term(X, Y)), !,
+    %tcp_select(0, term(X, Y)), !,
+    wait_for_input([user_input], [term(X,Y)], 0), !,
     respond_input(term(X, Y)).
 respond_input(_):- !.
 
@@ -159,7 +160,8 @@ s:- !,
     unindex_new_done,
     retractall(done_new(_)),
     (slave_tag(false) -> true;
-      (tcp_select(DT, Ans) -> answer_process(Ans); true)),
+      %(tcp_select(DT, Ans) -> answer_process(Ans); true)),
+      (wait_for_input([user_input], [Ans], DT) -> answer_process(Ans); true)),
     handle_action_list,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,15 +217,4 @@ sts:-
     do_tasks(Lt),
     print('new nodes after applying rules:'), nl,
     listing(new_node/10).
-
-
-
-
-
-
-
-
-
-
-
 
