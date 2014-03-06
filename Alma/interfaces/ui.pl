@@ -212,7 +212,7 @@ checklimits:-
     statistics(memory, [Y, _]),
     X > Y, !.
 checklimits:- !,
-    timelimit(X), 
+    timelimit(X), % here????
     statistics(memory, [Y, _]),
     X < Y , print('Memory limit.'), nl, halt.
 checklimits:- !.

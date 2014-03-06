@@ -20,9 +20,9 @@ Mods:
 
 af(named(Form, Name), Pri):- !,
     convert_form(Form, Forms, Y),
-    ((debug_level(2); debug_level(3)) -> 
-	  (debug_stream(DS), 
-	   print(DS, 'Adding '), print(DS, Form), nl(DS)); true),
+    %((debug_level(2); debug_level(3)) -> 
+	%  (debug_stream(DS), 
+	%   print(DS, 'Adding '), print(DS, Form), nl(DS)); true),
     (var(Y) -> Y = if; true),
     merge_forms(Forms, MForms),
     assert_new_nodes_named(MForms, Y, Pri, Name).
@@ -30,9 +30,9 @@ af(named(Form, Name), Pri):- !,
 
 af(Form, Pri):- !,
     convert_form(Form, Forms, Y),
-    ((debug_level(2); debug_level(3)) -> 
-	  (debug_stream(DS), 
-	   print(DS, 'Adding '), print(DS, Form), nl(DS)); true),
+    %((debug_level(2); debug_level(3)) -> 
+	%  (debug_stream(DS), 
+	%   print(DS, 'Adding '), print(DS, Form), nl(DS)); true),
     (var(Y) -> Y = if; true),
     merge_forms(Forms, MForms),
     assert_new_nodes(MForms, Y, Pri).

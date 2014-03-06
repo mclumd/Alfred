@@ -81,9 +81,11 @@ name_nodes([new_node(A0 ,A1, A2, A3, A4, A5, A6, A7, A8, A9)|X], Y, Z):- !,
 
 % get_new_name(-Name) returns a new node name.
 get_new_name(X):-
-        retract(node_count(X)),
-        Y is X + 1,
-        assert(node_count(Y)),
+assert(node_count(0)),
+	retract(node_count(X)), % FAILS HERE but above line 'fixes'
+	Y is X + 1,
+	assert(node_count(Y)),
+assert(number_of_nodes(0)), % same as above 
 	retract(number_of_nodes(NON)),
 	NONN is NON + 1,
 	assert(number_of_nodes(NONN)).
