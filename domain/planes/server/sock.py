@@ -78,4 +78,6 @@ class Server:
 			
 	
 	def respond(self, response):
-		self.clientsock.send(response)
+		#response = response.replace('.','')
+		print response
+		#self.clientsock.send("term(af(" + response + ")).")

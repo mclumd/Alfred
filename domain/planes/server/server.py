@@ -5,6 +5,8 @@ try:
 except ImportError:
 	os.chdir("../")
 	sys.path.append(".")
+	os.chdir("domain/planes/")
+	sys.path.append(".")
 	import active2 as active, flyplanes as planes, datetime, display, math, pygame, flygen, flydisplay
 from pygame.locals import *
 import threading
@@ -29,7 +31,7 @@ def create_alf_host_file(f, host, port):
 
 create_alf_host_file(serverFile, host, port)
 	
-worldfile = "/Users/swordofmorning/Documents/_programming/repos/Alfred/domain/planes/KB/dd.pl"
+worldfile = "KB/dd.pl"
 #world = flygen.create_random_world()
 world = flygen.create_world_from_alf_file(worldfile)
 
