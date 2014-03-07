@@ -10,7 +10,28 @@ from pygame.locals import *
 import threading
 import sock
 
-world = flygen.create_random_world()
+host = 'localhost' #change to getHostName or something
+port = 5150
+if len(sys.argv) < 2:
+	raise Exception("Usage: server.py serverFilePath")
+try:
+	serverFile = open(sys.argv[1], 'w')
+except Exception:
+	print "failed to open server file for write. Exiting."
+	sys.exit()
+
+def create_alf_host_file(f, host, port):
+	s = "port " + str(port) + "\n"
+	s += "host " + str(host) + "\n"
+	s += "process " + str(2887)
+	f.write(s)
+	f.close()
+
+create_alf_host_file(serverFile, host, port)
+	
+worldfile = "/Users/swordofmorning/Documents/_programming/repos/Alfred/domain/planes/KB/dd.pl"
+#world = flygen.create_random_world()
+world = flygen.create_world_from_alf_file(worldfile)
 
 domain = active.Domain(world, active.SimpleActionExecutor())
 domain.add_change_rule(planes.flight_arg_select, planes.flight_change_func)
@@ -45,18 +66,10 @@ lasttime = datetime.datetime.today()
 steps = 0
 selectedplane = None
 selectedpackage = None
-
-host = 'localhost'
-port = 5150
-
-if len(sys.argv) == 3:
-	host = sys.argv[1]
-	port = sys.argv[2]
-elif len(sys.argv) == 2:
-	port = sys.argv[1]
 	
 serve = sock.Server(host, port)
 serviceThread = threading.Thread(target = serve.listen_continuously)
+serviceThread.setDaemon(True)
 serviceThread.start()
 
 while 1:

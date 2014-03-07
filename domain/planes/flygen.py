@@ -59,6 +59,44 @@ def create_random_world(citygen = city_gen, planegen = create_random_planes, pac
 	packages = packagegen(cities, planes)
 	return flyplanes.FlightWorld(cities, planes, packages)
 
+#very ad-hoc. Do not use this is domain file formats have changed at all.
+def create_world_from_alf_file(filename):
+	f = open(filename)
+	lines = f.readlines()
+	cityNames = []
+	planeNames = []
+	packageNames = []
+	
+	for line in lines:
+		if "isa(plane" in line:
+			nameStart = line.index("'") + 1
+			planeNames.append(line[nameStart:line.index("'", nameStart)])
+		if "isa(city" in line:
+			nameStart = line.index("'") + 1
+			cityNames.append(line[nameStart:line.index("'", nameStart)])
+		if "isa(pkg" in line:
+			nameStart = line.index("'") + 1
+			packageNames.append(line[nameStart:line.index("'", nameStart)])
+	
+	cities = create_random_cities(len(cityNames), defs["mincoords"], defs["maxcoords"], defs["mindist"], defs["maxtries"])
+	assert len(cities) == len(cityNames)
+	for i in range(len(cities)):
+		cities[i].name = cityNames[i]
+	vals["minplanes"] = len(planeNames)
+	vals["maxplanes"] = len(planeNames)
+	planes = create_random_planes(cities)
+	assert len(planes) == len(planeNames)
+	for i in range(len(planes)):
+		planes[i].name = planeNames[i]
+	vals["minpackages"] = len(packageNames)
+	vals["maxpackages"] = len(packageNames)
+	packages = create_random_packages(cities, planes)
+	assert len(packages) == len(packageNames)
+	for i in range(len(packages)):
+		packages[i].name = packageNames[i]
+	return flyplanes.FlightWorld(cities, planes, packages)
+	
+
 def reset_defaults():
 	vals = defs.copy()
 
