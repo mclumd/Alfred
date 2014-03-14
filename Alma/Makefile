@@ -1,2 +1,2 @@
 all:    toplevel.pl
-	swipl -o alma -c toplevel.pl
+	swipl --goal=main -o alma -c toplevel.pl

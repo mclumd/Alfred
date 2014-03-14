@@ -8,7 +8,6 @@ Todo: ?
 */
 
 
-%:- ensure_loaded(library(basics)).
 ensure_loaded(library(socket)).
 :- compile([loop, addndel]).
 

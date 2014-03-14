@@ -17,10 +17,10 @@ almar:-
     true.
 
 sr:- !,
-   %((debug_level(2); debug_level(3); statistics(true)) -> statistics(runtime, [_, _]); true),
+   ((debug_level(2); debug_level(3); statistics(true)) -> statistics(runtime, [_, _]); true),
     ((statistics(true)) -> statistics(runtime, [_, _]); true),
-    checklimits, %fails?
-    retract(almagenda(ALMAGENDA)),
+    checklimits,
+    %retract(almagenda(ALMAGENDA)),
     retract(almagenda(_)),
     assert(almagenda([])),
     do_almagenda(ALMAGENDA),
@@ -28,9 +28,9 @@ sr:- !,
     step_number(PStep),
     increment_step,
     step_number(Step),
-    %((debug_level(1); debug_level(2); debug_level(3)) -> 
-	%  (debug_stream(DBGS), nl(DBGS), print_time(DBGS), print(DBGS, 'Step'),
-	%   print(DBGS, Step), nl(DBGS)); true),
+    ((debug_level(1); debug_level(2); debug_level(3)) -> 
+	  (debug_stream(DBGS), nl(DBGS), print_time(DBGS), print(DBGS, 'Step'),
+	   print(DBGS, Step), nl(DBGS)); true),
     df(now(PStep)),
     get_new_node_name(StepName),
 %
@@ -46,9 +46,12 @@ sr:- !,
                     Step, 1, [], [], [if])), 
     unindex_new_done,
     retractall(done_new(_)),
+    print('before select'),nl,
     % tcp select here gets user_input. timeout, term
     %  (tcp_select(Deetee, Ans) -> respond_input(Ans); true),
-      (wait_for_input([user_input], [Ans], Deetee) -> respond_input(Ans); true),
+    % this is where it is freezing up, what was tcp_select here for??
+    %  (wait_for_input([user_input], [Ans], Deetee) -> respond_input(Ans); true),
+  	print('after select loljk'),nl,
     handle_action_list,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,15 +61,14 @@ sr:- !,
     clean_new_nodes(Cnn),	
     delete_bad_trees,
     historicize(Cnn),
-    %((debug_level(2); debug_level(3); statistics(true)) -> statistics(runtime, [_, Filter_Time]); true),
+    ((debug_level(2); debug_level(3); statistics(true)) -> statistics(runtime, [_, Filter_Time]); true),
     list_tasks(Cnn, Lot),
     order_tasks(Lot, Olot),
-    %((debug_level(2); debug_level(3)) -> (debug_stream(DBGS2), 
-    %                                      print(DBGS2, 'Agenda'), nl(DBGS2), 
-	%				  print_agenda(DBGS2, Olot)); true),
+    ((debug_level(2); debug_level(3)) -> (debug_stream(DBGS2), 
+                                          print(DBGS2, 'Agenda'), nl(DBGS2), 
+					  print_agenda(DBGS2, Olot)); true),
     do_tasks(Olot),
-    his_deletes.
-    /*
+    his_deletes,
     ((debug_level(1); debug_level(2); debug_level(3)) -> 
      (debug_stream(DBGS3), nl(DBGS3), print_time(DBGS3)); true),
     ((debug_level(3); debug_level(2); statistics(true)) ->
@@ -80,7 +82,8 @@ sr:- !,
 	 agenda(AN), length(AN, ALN),
 	 format(DBGS4, 'Length of agenda: ~d~n', ALN)); true),
    ((debug_level(1); debug_level(2); debug_level(3)) -> 
-    debug_stream(DBGS5), flush_output(DBGS5); true).*/
+    debug_stream(DBGS5), flush_output(DBGS5); true),
+    print('done with sr'),nl.
 
 
 assert_idle([], Step) :-

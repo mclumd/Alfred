@@ -177,21 +177,19 @@ nodrawgraph:-
     retract(draw_graph(_)),
     assert(draw_graph(false)).
 
-runtime_entry(start):- 
+main:- 
     initialize,
     unix(argv(L)),
-    statistics(_, _),
+    statistics(_),
     handle_args(L),
     ((debug_level(1); debug_level(2); debug_level(3)) -> 
 	  (debug_stream(DBGS), print(DBGS,'Args: '), print(DBGS, L)
-	  , nl(DBGS)); true),    
+	  , nl(DBGS)); true),
     load_alma_files,
     (verbose(true) -> print(L), nl; true),
-%    (verbose(true) -> print_compiled; true),
-%    (keyboard(true) -> print_compiled; true),
+    (verbose(true) -> print_compiled; true),
+    (keyboard(true) -> print_compiled; true),
     (run(true) -> almar; almanr).
-
-
 
 /* 
 List of arguments:
@@ -385,4 +383,6 @@ real_laf([]):- !, true.
 real_laf([X|Y]):-
     lf(X),!,
     real_laf(Y).
-    
+
+%:-runtime_entry(start).
+
