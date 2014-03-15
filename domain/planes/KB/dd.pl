@@ -1,6 +1,6 @@
 isa(domain, 'planes').
-isa(pkg, 'gold')
-isa(pkg, 'balloons')
+isa(pkg, 'gold').
+isa(pkg, 'balloons').
 isa(plane, 'Metroliner').
 isa(plane, 'Bullet').
 isa(plane, 'Northstar').

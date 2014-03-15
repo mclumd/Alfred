@@ -1,0 +1,323 @@
+import java.io.*;
+import java.util.*;
+import java.net.*;
+
+public class Director extends Thread{
+	private String alfredBase = "/fs/disco/group/systems/Alfred";
+//	private Domain lights;
+	//private CommandsList cmdList = new CommandsList();
+	private Socket hseSocket = null;
+	private Socket trainSocket = null;
+	private MyComponent comp = new MyComponent();
+	
+	Director(){
+		
+	}
+	
+	public void show(){
+		comp.init();
+	}
+	
+	public void hide(){
+		comp.hideFrame();
+	}
+	
+	public void runline(String cmd){
+		StringTokenizer tok = new StringTokenizer(cmd, " [],");
+		
+		String first = tok.nextToken();
+		
+		if(first.equals("house")){
+		
+			try {
+				PrintWriter hOut = new PrintWriter(hseSocket.getOutputStream(),
+						true);
+
+				String thecmd = new String(cmd.substring(6, (cmd.length())));
+
+				thecmd.trim();
+				// if(cmdList.isHouseCmdValid(thecmd)){
+
+				if (thecmd.equals("[[quit]]")) {
+					comp.icon5.setEnabled(true);
+					quitHouse();
+				}
+
+				hOut.println(thecmd);
+
+				System.out.println("ran: " + thecmd);
+				System.out.flush();
+
+				// }
+				// else{
+				// System.out.println("Invalid command: "+thecmd);
+				// }
+			} catch (IOException e) {
+				System.out.println("Socket output stream error.");
+				e.printStackTrace();
+			}
+			catch(Exception e){
+				System.out.println("something stupid happened.");
+				e.printStackTrace();
+			}
+		}
+		else if(first.equals("trains")){
+			
+			try{
+				PrintWriter pw = new PrintWriter(trainSocket.getOutputStream(), true);
+				BufferedReader input = new BufferedReader(new InputStreamReader(trainSocket.getInputStream()));
+				
+				String theCmd = new String(cmd.substring(7, (cmd.length())));
+			
+				theCmd.trim();
+				if(theCmd.equals("[[quit]]")){
+					comp.icon4.setEnabled(true);
+					//quitTrains();
+				}
+				
+				pw.println(theCmd);
+				pw.flush();
+				String cmdline = null;
+				while((cmdline = input.readLine()) != null){
+					System.out.println("line from trains domain: "+cmdline);
+				}
+				
+				System.out.println("ran in trains: "+theCmd);
+				
+			} catch (Exception e){
+				System.out.println("something stupid happened.");
+				e.printStackTrace();
+			}
+		}
+		else if(first.equals("draughts")){
+			String theCmd = new String(cmd.substring(9, (cmd.length())));
+			
+			theCmd.trim();
+			if(theCmd.equals("[[quit]]")){
+				comp.icon2.setEnabled(true);
+			}
+		}
+		else if(first.equals("chess")){
+			String theCmd = new String(cmd.substring(6, (cmd.length())));
+			
+			theCmd.trim();
+			if(theCmd.equals("[[quit]]")){
+				comp.icon1.setEnabled(true);
+			}
+		}
+		else if(first.equals("restaurant")){
+			String theCmd = new String(cmd.substring(11, (cmd.length())));
+			
+			theCmd.trim();
+			if(theCmd.equals("[[quit]]")){
+				comp.icon7.setEnabled(true);
+			}
+		}
+		else if(first.equals("email")){
+			String thecmd = new String(cmd.substring(6, (cmd.length())));
+			
+			thecmd.trim();
+			if(thecmd.equals("[[quit]]")){
+				comp.icon3.setEnabled(true);
+			}
+		}
+		else if(first.equals("movies")){
+			String thecmd = new String(cmd.substring(7, (cmd.length())));
+			
+			thecmd.trim();
+			if(thecmd.equals("[[quit]]")){
+				comp.icon6.setEnabled(true);
+			}
+		}
+		else {
+			System.out.println("Invalid command..Try again.");
+		}
+	}
+	
+	public void startDomain(String name){
+		if(name.equals("house")){
+			runHouse();
+		}
+		else if(name.equals("trains")){
+			runTrains();
+		}
+		else if(name.equals("draughts")){
+			runChkers();
+		}
+		else if(name.equals("restaurant")){
+			runRest();
+		}
+		else if(name.equals("movies")){
+			runMovie();
+		}
+		else if(name.equals("email")){
+			runEmail();
+		}
+		else if(name.equals("chess")){
+			runChess();
+		}
+	}
+	
+	private void runChess(){
+		comp.icon1.setEnabled(false);
+	}
+
+	private void runChkers(){
+		comp.icon2.setEnabled(false);
+	}
+
+	private void runEmail(){
+		comp.icon3.setEnabled(false);
+	}
+	
+	private void runTrains() {
+		String domain = "/domain/trains/rd.trains";
+		// disbale icon
+		comp.icon4.setEnabled(false);
+
+		try {
+			// start up the program
+			Runtime.getRuntime().exec(alfredBase + domain);
+		} catch (IOException e) {
+			System.out.println("Exception: " + e);
+			e.printStackTrace();
+		}
+
+		try {
+			sleep(15000);
+		} catch (Exception e) {
+			System.out.println("Interupted Exception: " + e);
+			e.printStackTrace();
+		}
+
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(alfredBase
+					+ "/etc/domainhost." + getLogName()));
+			String connectInfo = null;
+			Integer port = new Integer(0);
+			String host = "";
+
+			while ((connectInfo = in.readLine()) != null) {
+				StringTokenizer tok = new StringTokenizer(connectInfo, " [],",
+						false);
+				String first = tok.nextToken();
+				first.toLowerCase();
+				if (first.equals("port") || first.equals("port:")) {
+					port = new Integer(tok.nextToken());
+				} else if (first.equals("host") || first.equals("host:")) {
+					host = new String(tok.nextToken());
+
+				}
+			}
+
+			System.out.println("port is: " + port + "host is: " + host);
+
+			trainSocket = new Socket(host, port.intValue());
+
+			new Domain("trains", port.intValue(), host);
+			in.close();
+			trainSocket.setKeepAlive(true);
+		} catch (Exception e) {
+			System.out.println("Exception: " + e);
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void runHouse() {
+
+		String domain = "/domain/house/rd.house";
+
+		/*
+		 * if(lgtSocket.isBound()){ System.out.println("A House domain is
+		 * already open."); return; }
+		 */
+		// disable icon
+		comp.icon5.setEnabled(false);
+
+		try {
+			// start up the program
+			Runtime.getRuntime().exec(alfredBase + domain);
+		} catch (IOException e) {
+			System.out.println("Exception: " + e);
+			e.printStackTrace();
+		}
+
+		try {
+			sleep(15000);
+		} catch (Exception e) {
+			System.out.println("Interupted Exception: " + e);
+			e.printStackTrace();
+		}
+
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(alfredBase
+					+ "/etc/domainhost." + getLogName()));
+			String connectInfo = null;
+			Integer port = new Integer(0);
+			String host = "";
+
+			while ((connectInfo = in.readLine()) != null) {
+				StringTokenizer tok = new StringTokenizer(connectInfo, " [],",
+						false);
+				String first = tok.nextToken();
+				first.toLowerCase();
+				if (first.equals("port") || first.equals("port:")) {
+					port = new Integer(tok.nextToken());
+				} else if (first.equals("host") || first.equals("host:")) {
+					host = new String(tok.nextToken());
+
+				}
+			}
+
+			System.out.println("port is: " + port + "host is: " + host);
+
+			hseSocket = new Socket(host, port.intValue());
+
+			new Domain("lights", port.intValue(), host);
+			in.close();
+			hseSocket.setKeepAlive(true);
+		} catch (Exception e) {
+			System.out.println("Exception: " + e);
+			e.printStackTrace();
+		}
+	}
+	
+	private void runMovie(){
+		comp.icon6.setEnabled(false);
+	}
+	
+	private void runRest(){
+		comp.icon7.setEnabled(false);
+	}
+	
+	private void quitHouse(){
+
+		try{
+			PrintWriter out = new PrintWriter(hseSocket.getOutputStream(), true);
+		
+			out.println("quit");
+			System.out.flush();
+			out.close();
+			hseSocket.close();
+		}
+		catch(IOException e){
+			System.out.println("Problem communicating with House domain socket.");
+			e.printStackTrace();
+		}
+		System.out.println("exitting House...");
+		
+	}
+	
+	private String getLogName()
+	{	
+		String logName = System.getProperty("user.name");
+		if(logName == null)
+		{
+			System.out.println("log name does not exist");
+			System.exit(1);
+		}
+
+		return logName;
+	}
+}

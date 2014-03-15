@@ -78,7 +78,6 @@ while 1:
 	
 	cmd = serve.get_cmd()
 	if cmd:
-		print cmd
 		op = None
 		args = []
 		if cmd[0] not in ["fly", "load", "unload"]:

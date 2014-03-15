@@ -80,4 +80,4 @@ class Server:
 	def respond(self, response):
 		#response = response.replace('.','')
 		print response
-		#self.clientsock.send("term(af(" + response + ")).")
+		#self.clientsock.send()
