@@ -66,7 +66,10 @@ def create_world_from_alf_file(filename):
 	cityNames = []
 	planeNames = []
 	packageNames = []
-	
+	f.close()
+
+	cnt = 0
+
 	for line in lines:
 		if "isa(plane" in line:
 			nameStart = line.index("'") + 1
@@ -74,10 +77,16 @@ def create_world_from_alf_file(filename):
 		if "isa(city" in line:
 			nameStart = line.index("'") + 1
 			cityNames.append(line[nameStart:line.index("'", nameStart)])
+			cnt = cnt+1
 		if "isa(pkg" in line:
 			nameStart = line.index("'") + 1
 			packageNames.append(line[nameStart:line.index("'", nameStart)])
-	
+
+#	f = open('planecityfile.txt','w')
+#	for item in cityNames:
+#	  f.write("%s\n" % item)
+#	f.close()
+
 	cities = create_random_cities(len(cityNames), defs["mincoords"], defs["maxcoords"], defs["mindist"], defs["maxtries"])
 	assert len(cities) == len(cityNames)
 	for i in range(len(cities)):

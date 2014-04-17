@@ -78,6 +78,5 @@ class Server:
 			
 	
 	def respond(self, response):
-		#response = response.replace('.','')
+		self.clientsock.send(response)
 		print response
-		#self.clientsock.send()

@@ -54,12 +54,12 @@ structure('find',
 	  [[v0,verb], [v1, pkg]],
 	  [v0,v1]).
 
-isa(observation, 'location').
+isa(observation, 'planelocation').
 
-syntax('location', [v0, plane, city]).
-syntax('location', [v0, pkg, city]).
-isa(observation, 'location').
+syntax('planelocation', [v0, plane, city]).
+%syntax('location', [v0, pkg, city]).
+%isa(observation, 'location').
 
-syntax('location', [v0, plane, city]).
+%syntax('location', [v0, plane, city]).
 
-result(find, location).
+result(find, planelocation).

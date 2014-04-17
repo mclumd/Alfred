@@ -81,55 +81,69 @@ while 1:
 		op = None
 		args = []
 		if cmd[0] not in ["fly", "load", "unload"]:
-			serve.respond("instruction " + cmd[0] + " not recognized. Ignoring.")
+			#serve.respond("instruction " + cmd[0] + " not recognized. Ignoring.")
+			serve.respond("term(af(not_recognized_command(planes)))." + "\n")
 		elif cmd[0] == "fly":
 			if len(cmd) != 3:
-				serve.respond("fly command requires two args. Got " + str(cmd))
+				#serve.respond("fly command requires two args. Got " + str(cmd))
+				serve.respond("term(af(fly_requires_two_args(planes)))." + "\n")
 			else:
+				tmpcmd = cmd[2].split("]")[0]#cmd[2].replace("]", "")
 				arg1 = world.get_obj_by_name(cmd[1])
-				arg2 = world.get_obj_by_name(cmd[2])
+				arg2 = world.get_obj_by_name(tmpcmd)
 				valid = True
 				if arg1 == None or arg1.type != "plane":
-					serve.respond("plane " + cmd[1] + " not found. Ignoring command" + str(cmd))
+					#serve.respond("plane " + cmd[1] + " not found. Ignoring command" + str(cmd))
+					serve.respond("term(af(plane_not_found('" + arg1 + "')))." + "\n")
 					valid = False
 				if  arg2 == None or arg2.type != "city":
-					serve.respond("city " + cmd[2] + " not found. Ignoring command" + str(cmd))
+					#serve.respond("city " + cmd[2] + " not found. Ignoring command" + str(cmd))
+					serve.respond("term(af(city_not_found('" + tmpcmd + "')))." + "\n")
 					valid = False
 				if valid:
 					op = planes.flyop 
 					args = [arg1, arg2]
 		elif cmd[0] == "load":
 			if len(cmd) != 3:
-				serve.respond("load command requires two args. Got " + str(cmd))
+				#serve.respond("load command requires two args. Got " + str(cmd))
+				serve.respond("term(af(load_requires_two_args(planes)))." + "\n")
 			else:
+				tmpcmd = cmd[2].split("]")[0]
 				arg1 = world.get_obj_by_name(cmd[1])
-				arg2 = world.get_obj_by_name(cmd[2])
+				arg2 = world.get_obj_by_name(tmpcmd)
 				valid = True
 				if arg1 == None or arg1.type != "package":
-					serve.respond("package " + cmd[1] + " not found. Ignoring command" + str(cmd))
+					#serve.respond("package " + cmd[1] + " not found. Ignoring command" + str(cmd))
+					serve.respond("term(af(package_not_found(planes)))." + "\n")
 					valid = False
 				if  arg2 == None or arg2.type != "plane":
-					serve.respond("plane " + cmd[2] + " not found. Ignoring command" + str(cmd))
+					#serve.respond("plane " + cmd[2] + " not found. Ignoring command" + str(cmd))
+					serve.respond("term(af(plane_not_found('" + tmpcmd + "')))." + "\n")
 					valid = False
 				if valid:
 					op = planes.loadop 
 					args = [arg1, arg2]
 		elif cmd[0] == "unload":
 			if len(cmd) != 2:
-				serve.respond("unload command requires one arg (the package). Got " + str(cmd))
+				#serve.respond("unload command requires one arg (the package). Got " + str(cmd))
+				serve.respond("term(af(unload_requires_one_arg(planes)))." + "\n")
 			else:
-				arg1 = world.get_obj_by_name(cmd[1])
+				tmpcmd = cmd[1].split("]")[0]
+				arg1 = world.get_obj_by_name(tmpcmd)
 				if arg1 == None or arg1.type != "package":
-					serve.respond("package " + cmd[1] + " not found. Ignoring command" + str(cmd))
+					#serve.respond("package " + cmd[1] + " not found. Ignoring command" + str(cmd))
+					serve.respond("term(af(package_not_found('" + tmpcmd + "')))." + "\n")
 				else:
 					op = planes.unloadop 
 					args = [arg1]
 		if op:
 			actionValid = domain.add_action(op, args, checkvalid = True)
 			if actionValid:
-				serve.respond("ok.")
+				#serve.respond("ok.")
+				serve.respond("term(af(plane_command_sent('" + tmpcmd + "')))." + "\n")
 			else:
-				serve.respond("action invalid:" + str(domain.reason_invalid(op, args)))
+				#serve.respond("action invalid:" + str(domain.reason_invalid(op, args)))
+				serve.respond("term(af(invalid_plane_command(planes)))." + "\n")
 	
 	screen.blit(vis.draw(), (0, 0))
 	pygame.display.flip()

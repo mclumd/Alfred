@@ -96,6 +96,9 @@ class FlightWorld:
 			self.packages[package.name] = package
 	
 	def get_obj_by_name(self, name):
+		f = open('objbynamefile.txt','w')
+		f.write(name)
+		f.close()
 		if name in self.cities:
 			return self.cities[name]
 		elif name in self.planes:
