@@ -159,8 +159,6 @@ public class Director extends Thread{
 			
 				theCmd.trim();
 				theCmd = "["+theCmd;
-
-			//	System.out.println("sent "+theCmd+" to train socket");
 				
 				pw.println(theCmd);
 				pw.flush();
@@ -193,15 +191,12 @@ public class Director extends Thread{
 
 				theCmd.trim();
 				theCmd = "["+theCmd;
-				System.out.println("theCmdBefore: " + theCmd);
 
-				//theCmd = theCmd.substring(0, theCmd.length() - 1);
-
-				System.out.println("theCmdAfter: " + newCmd);
-				
 				pw.println(theCmd);
 				pw.flush();
-
+//PrintWriter writer = new PrintWriter("thecommand.txt", "UTF-8");
+//writer.println(theCmd);
+//writer.close();
 				try {
 				    sleep(10000);
 				} catch (Exception e) {
@@ -210,8 +205,8 @@ public class Director extends Thread{
 				}
 
 				fromDomain = readFromSocket(planeSocket);
-				//System.out.println("ran in planes: "+theCmd);
-				//System.out.println("fromDomain: "+fromDomain);
+				System.out.println("ran in planes: "+theCmd);
+				System.out.println("fromDomain: "+fromDomain);
 			} catch (Exception e){
 				System.out.println("something stupid happened.");
 				e.printStackTrace();
