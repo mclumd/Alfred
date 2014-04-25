@@ -46,12 +46,12 @@ sr:- !,
                     Step, 1, [], [], [if])), 
     unindex_new_done,
     retractall(done_new(_)),
-    print('before select'),nl,
+    %print('before select'),nl,
     % tcp select here gets user_input. timeout, term
     %  (tcp_select(Deetee, Ans) -> respond_input(Ans); true),
     % this is where it is freezing up, what was tcp_select here for??
     %  (wait_for_input([user_input], [Ans], Deetee) -> respond_input(Ans); true),
-  	print('after select loljk'),nl,
+  	%print('after select loljk'),nl,
     handle_action_list,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

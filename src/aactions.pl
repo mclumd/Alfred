@@ -1,6 +1,6 @@
 :-dynamic newVVal/2.
 :-discontiguous alfred_action/2.
-:-ensure_loaded(library(listparts)).
+%:-ensure_loaded(library(listparts)).
 
 alfred_action([equil, Item1, Item2], _) :-
     (equate(Item1,Item2); equate(Item2,Item1)),!,
@@ -189,7 +189,7 @@ construct_struct_type(I, T, [V|VList], PT, PS, C, C1) :-
 construct_struct_type(I, T, [V|VList], PT, PS, C, C1) :-
     NewC is C + 1,
     construct_struct_type(I, T, VList, PT1, PS1, NewC, C1),
-    string_append(v, _, V),
+    string_concat(v, _, V),
     concat(v, C, NewV),
     assert(newVVal(V,NewV)),
     append([NewV], PS1, PS),

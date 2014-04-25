@@ -33,14 +33,15 @@ predicates for domain_pred1 and domain_pred2
 comma([44|Rest],Rest).
 -------**
 */
-:- ensure_loaded(library(tcp)).
+%:- ensure_loaded(library(tcp)).
 :- ensure_loaded(library(date)).
-:- ensure_loaded(library(basics)).
+%:- ensure_loaded(library(basics)).
 :- ensure_loaded(library(lists)).
 %:- ensure_loaded(kqml).
 %:- ensure_loaded('/fs/that/cfa/res/dialog/dm/kqml1.pl').
 %:- ensure_loaded('/tmp/kqml.pl').
 %% load the kqml converter thing
+:- ensure_loaded(library(socket)).
 
 :- dynamic failure/1.
 :- dynamic tag/1.
@@ -54,8 +55,8 @@ comma([44|Rest],Rest).
 :- dynamic new_message/1.
 :- dynamic new_message/2.
 :- dynamic new_message_kv/2.
-:- prolog_flag(fileerrors,_,on).
-:- prolog_flag(syntax_errors,_,error).
+%:- prolog_flag(fileerrors,_,on).
+%:- prolog_flag(syntax_errors,_,error).
 
 %
 % here we intialize things in the case of running at the keyboard.
@@ -67,7 +68,7 @@ qinitialize(L):-
     initialize,
     process_args(L),
     sfile(SF),
-    tcp_listen(SF).
+    tcp_listen(SF, 5).
 
 % do loop  once
 %
@@ -76,14 +77,16 @@ qs:-
     debug(true), !,
     delay(T),
     debug_stream(DS),
-    tcp_select(T, X),
+    %tcp_select(T, X),
+    wait_for_input([user_input], X, T),
     process(X),
     flush_output(DS),
     try_n_get_a_line_dbg(DS).
 qs:-
     debug(false), !,
     delay(T),
-    tcp_select(T, X),
+    %tcp_select(T, X),
+    wait_for_input([user_input], X, T),
     process(X),
     try_n_get_a_line_ndbg.
 qs:- true.
@@ -128,11 +131,52 @@ initialize:-
     true.
 
 go:-
+    tcp_socket(Socket),
+    tcp_bind(Socket, Port),
+    tcp_listen(Socket, 5),
+    tcp_open_socket(Socket, In, _Out),
+    %add_stream_to_pool(In, accept(Socket)),
+    %stream_pool_main_loop,
+    (initfile(nul) -> true ; dump_init_file),
+    %tcp_watch_user(_, on),
+    debug(true)-> loopv; loopnv.
+
+goOld:-
+    %sfile(SF),
+    % this is a server
+    print('test 1'),nl,
+    Host='localhost:9999',
+    Port='9999',
+    %tcp_address_from_file(SF, Add),
+    tcp_socket(Sock),
+	print('test 1.5'),nl,
+    %tcp_connect(Sock, Host),
+    tcp_bind(Sock, Host),
+	print('test 1.8'),nl,
+	tcp_listen(Sock, 5),
+    print('test 1.9'),nl,
+    tcp_open_socket(Sock, StreamIn, StreamOut),
+	print('test 2'),nl,
+    tcp_accept(Sock, Slave, Peer),
+    print('test 3'),nl,
+    tcp_open_socket(Slave, In, Out),
+    %add_stream_to_pool(In, client(In, Out, Peer)).
+    print('test 4'),nl,
+    (initfile(nul) -> true ; dump_init_file),
+    print('test 5'),nl,
+    %tcp_watch_user(_, on),
+    debug(true)-> loopv; loopnv.
+    
+    /*
+    original:
+
     sfile(SF),
     tcp_listen(SF),
     (initfile(nul) -> true ; dump_init_file),
     tcp_watch_user(_, on),
     debug(true)-> loopv; loopnv.
+    
+    */
 
 % get the filename, print contents to stdout
 
@@ -146,7 +190,7 @@ dump_file(X):-
     repeat,
       get0(Z),
       put(Z),
-      at_end_of_file, !,
+      at_end_of_stream, !,
     close(S).
 
 /**
@@ -166,7 +210,8 @@ loopv:-
     debug_stream(DS),
     repeat,
 %     nl(DS),
-      tcp_select(T, X),
+%      tcp_select(T, X),
+      wait_for_input([user_input], [X], T),
       process(X),
       debug_stream(NS),
       flush_output(NS),
@@ -176,7 +221,8 @@ loopv:-
 loopnv:-
     delay(T),
     repeat,
-      tcp_select(T, X),
+      %tcp_select(T, X),
+      wait_for_input([user_input], [X], T),
       process(X),
     fail.
 
@@ -250,28 +296,31 @@ fail_call:-
 reply(Tag, T, TC, K):-
     failure(false), debug(true), debug_stream(DS), !,
     print(DS, 'Sending '), print(DS, done(T, TC)), nl(DS),
-    tcp_send(Tag, done(T, TC, K)).
+    %tcp_send(Tag, done(T, TC, K)).
+    write(Tag, done(T, TC, K)).
 
 reply(Tag, T, TC, K):-
     failure(false), debug(false), !,
-    tcp_send(Tag, done(T, TC, K)).
+    %tcp_send(Tag, done(T, TC, K)).
+    write(Tag, done(T, TC, K)).
 
 reply(Tag, T, TC, K):-
     failure(true), debug(true), debug_stream(DS), !, 
     print(DS, error(T, TC, K)), nl(DS),
-    tcp_send(Tag, error(T, TC, K)),
+    %tcp_send(Tag, error(T, TC, K)),
+    write(Tag, error(T, TC, K)),
     retract(failure(_)),
     assert(failure(false)).
 
 reply(Tag, T, TC, K):-
     failure(true), debug(false), !, 
-    tcp_send(Tag, error(T, TC, K)),
+    write(Tag, error(T, TC, K)),
     retract(failure(_)),
     assert(failure(false)).
 
 reply_failed(Tag, T, TC, K):-
     debug(true) -> (debug_stream(DS), print(DS, failed(T, TC)), nl(DS), print_time(DS); true),
-    tcp_send(Tag, failed(T, TC, K)).
+    write(Tag, failed(T, TC, K)).
 
 % there is input at stdin (a kqml thing)
 handle_stdin:-
@@ -338,7 +387,7 @@ you_dummy:-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % entry 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-runtime_entry(start):- 
+main:- 
     initialize,
     unix(argv(Args)),
 %    print(Args), nl,
@@ -494,13 +543,13 @@ af(X):-
     almatag(T),
     (debug(true)-> debug_stream(DS), 
      print(DS, 'Sending '), print(DS, af(X)), nl(DS), print_time(DS); true),
-    tcp_send(T, af(X)).
+    write(T, af(X)).
 
 df(X):-
     almatag(T),
     (debug(true)-> debug_stream(DS), 
      print(DS, 'Send '), print(DS, df(X)), nl(DS), print_time(DS); true),
-    tcp_send(T, df(X)).
+    write(T, df(X)).
 
 %
 % cdebug(+X), where X is a term corresponding to a pathname (with trailing
@@ -532,9 +581,14 @@ cdebug(X):-
 
 
 print_time(SS):-
-    tcp:tcp_now(timeval(Seconds, MicroSeconds)),
-    tcp_date_timeval(Date,timeval(Seconds, MicroSeconds)),
-    time_stamp(Date,'%02c:%02i:', Stamp),
+    get_time(Z),
+    stamp_date_time(Z, T, 'UTC'),
+    format_time(atom(CT), '%A %B %d %Y %H:%M', T),
+    %print(Date), nl, 
+    %time_stamp(Date,'%02c:%02i:', Stamp), %HH:MM in 24 hr time
+    format_time(Stamp, '%H:%M:', Date),
+    %print(Stamp), nl,
+    %get_stamp(Date, Stamp),
     Date = date(_, _, _, _, _, S),
     name(S, NSec),
     name(MicroSeconds, Nmicro),

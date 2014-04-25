@@ -14,13 +14,13 @@ Darsana Purushothaman Josyula*/
 :- consult('misc.pl').
 :- consult('postprocess.pl').
 
-:- ensure_loaded(library(basics)).
-:- ensure_loaded(library(strings)).
+%:- ensure_loaded(library(basics)).
+%:- ensure_loaded(library(strings)).
 :- ensure_loaded(library(ctypes)).
 :- ensure_loaded( library(lists)).
-:- ensure_loaded(library(caseconv)).
-:- ensure_loaded( library(listparts)).
-:- ensure_loaded(library(tcp)).
+%:- ensure_loaded(library(caseconv)).
+%:- ensure_loaded( library(listparts)).
+:- ensure_loaded(library(socket)).
 
 ac_find_links(U) :-
     find_links(U).
@@ -55,7 +55,8 @@ ac_fix_linkage(Utt,Length) :-
 
 mcl_respond(Tag) :-     /* failed/ignored/used */
     format('~Nused~N',[]),
-    tcp_output_stream(Tag, S),
+    %tcp_output_stream(Tag, S),
+    tcp_open_socket(Tag, _, S),
     format(S, 'used', []).
 
 /* change to use utt_struct */

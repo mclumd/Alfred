@@ -151,8 +151,10 @@ connect_history(_).
 
 really_connect(SF, Tag):-
     unix(system('sleep 1')), print('Trying...'), nl,
-    on_exception(_, tcp_address_from_file(SF, Add), no_taff(SF)),
-    on_exception(_, tcp_connect(Add, Tag), really_connect(SF, Tag)).
+    %on_exception(_, tcp_address_from_file(SF, Add), no_taff(SF)),
+    Add='localhost:9999',
+    tcp_connect(Add, Tag).
+%    on_exception(_, tcp_connect(Add, Tag), really_connect(SF, Tag)).
 
 really_disconnect:-
     disconnect_slave,
@@ -256,12 +258,12 @@ dodbg(X):-
     assert(debug_stream(S)).
 
 
-print_time(SS):- !,
+print_time(SS):- !.
     %tcp:tcp_now(timeval(Seconds, MicroSeconds)),
     %tcp_date_timeval(Date,timeval(Seconds, MicroSeconds)),
-    get_time(Z),
-    stamp_date_time(Z, T, 'UTC'),
-    format_time(atom(CT), '%A %B %d %Y %H:%M', T),
+    /*get_time(Time),
+    stamp_date_time(Time, Date, 'UTC'),
+    format_time(atom(CT), '%A %B %d %Y %H:%M', Date),
     print(Date), nl, 
     %time_stamp(Date,'%02c:%02i:', Stamp), %HH:MM in 24 hr time
     format_time(Stamp, '%H:%M:', Date),
@@ -274,7 +276,7 @@ print_time(SS):- !,
     append(NS, NSec, NN),
     append(NN, [58|Nmicro], XCX),
     name(Stamps, XCX),
-    print(SS, Stamps), nl(SS).
+    print(SS, Stamps), nl(SS)*/
 
 
 get_stamp(date(_, _, _, X, Y, _), Z):- !,

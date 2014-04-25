@@ -59,8 +59,8 @@ equate_simple(Word1, Word2) :-
     Word1 == Word2,!.
 
 equate_simple(Word1, Word2) :-
-    lower(Word1,Worda),
-    lower(Word2,Wordb),
+    string_lower(Word1,Worda),
+    string_lower(Word2,Wordb),
     Worda == Wordb,!.
 
 equate_equil(Word1, Word2) :-
@@ -68,10 +68,10 @@ equate_equil(Word1, Word2) :-
 
 equate_equil(Word1, Word2) :-
     clause(equil(Worda, Wordb), true),
-    lower(Worda, Wordas),
-    lower(Wordb, Wordbs),
-    lower(Word1, Wordas),
-    lower(Word2, Wordbs),!.
+    string_lower(Worda, Wordas),
+    string_lower(Wordb, Wordbs),
+    string_lower(Word1, Wordas),
+    string_lower(Word2, Wordbs),!.
 
 
 isa(number, T) :-

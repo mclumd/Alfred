@@ -1,2 +1,2 @@
 all:	carne.pl
-	swipl -o carne -c carne.pl
+	swipl --goal=main -o carne -c carne.pl
