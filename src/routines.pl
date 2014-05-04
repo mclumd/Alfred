@@ -4,6 +4,7 @@
 :- ensure_loaded(library(sets)).
 :- consult('readdata.pl').
 :- consult('domain.pl').
+:- consult('readlinguistics.pl').
 :- consult('introspectmatch.pl').
 
 mult_gather_all([S|Schemae],Asserts) :-
@@ -54,7 +55,6 @@ asked(Utt,Need, Asserts):-
 asking(Utt,Need, Asserts):-
     pos_int_u(doing(ac_ask(Utt, Need), Asserts,Utt)).
 
-
 sending_to_domain(Tag, List) :-
     tcp_output_stream(Tag,S),
     print(S,List), nl(S), nl(S),
@@ -63,34 +63,6 @@ sending_to_domain(Tag, List) :-
 print_pauselen(PauseLength) :-
 	format('~N pauselength = ~d ~N', [PauseLength]).
 
-/*update_pauselen(Step, CurrUttStep, PromptStep, PrevPause, _) :-
-	step_number(Step),
-	CurrUttStep > PromptStep,!,
-	Pause is Step - CurrUttStep,
-	Discrep is CurrUttStep-PromptStep,
-	format('~N 1. Pause = ~d ~N', [Pause]),
-	format('~N 1. Discrep = ~d ~N', [Discrep]),
-	NewPause is PrevPause + Discrep,
-	df(expected_pause(PrevPause)),
-	af(expected_pause(NewPause)).
-
-update_pauselen(Step, _, PromptStep, _, CurrWait) :-
-	step_number(Step),
-	PromptPause is Step - PromptStep,
-	NewWait is CurrWait + 1,
-	df(curr_wait_time(CurrWait)),
-	af(curr_wait_time(NewWait)),
-	format('~N 2. CurrWait = ~d ~N', [NewWait]),
-	format('~N 2. Pause = ~d ~N', [PromptPause]).
-*/
-
-/*update_wait_time(Step, CurrUttStep, _, _, CurrWait,_) :-
-	CurrUttStep = Step-2, !,
-	step_number(Step),
-	df(curr_wait_time(CurrWait)),
-	af(curr_wait_time(0)),
-	format('~N 1. WAIT RESET = 0 ~N', []).
-*/
 update_wait_time(Step, _, _, ExpPause, CurrWait,LocalViol) :-
 	step_number(Step),
 	NewWait is CurrWait + 1,
@@ -111,10 +83,25 @@ update_wait_time(Step, _, _, ExpPause, CurrWait,_) :-
 	format('~N 2. CurrWait = ~d ~N', [NewWait]),
 	NewWait > ExpPause.
 
-switch_user(PrevUser, CurrUser) :-
+switch_user_1_name(PrevUser, CurrUser) :-
 	\+ (CurrUser = PrevUser),
 	df(curr_user(PrevUser)),
-	df(equil(_,CurrUser)).
+	df(equil(name, CurrUser)).
+
+switch_user_2_name(PrevUser, CurrUser) :-
+	\+ (CurrUser = PrevUser),
+	df(curr_user(PrevUser)),
+	df(equil(CurrUser, name)).
+
+switch_user_1_user(PrevUser, CurrUser) :-
+	\+ (CurrUser = PrevUser),
+	df(curr_user(PrevUser)),
+	df(equil(user, CurrUser)).
+
+switch_user_2_user(PrevUser, CurrUser) :-
+	\+ (CurrUser = PrevUser),
+	df(curr_user(PrevUser)),
+	df(equil(CurrUser, user)).
 
 add_user_to_utt(Utt) :-
 	pos_int_u(curr_user(Username)), !,
@@ -191,8 +178,23 @@ compute_new_expectation(Avg) :-
 	format('~N GLOBAL VIOLATIONS = ~d ~N', [VList]).
 
 delete_previous_observations(_,A) :-
-	pos_int_u(observation(U,O1,A1,B,T)),
+	pos_int_u(observation(O1,A1,B,T)),
 	(A1=A), !,
-	df(observation(U,O1,A1,B,T)).
+	df(observation(O1,A1,B,T)).
 
 delete_previous_observations(_,_).
+
+% Linguistics stuff
+find_linguistic_verb(Utt, Verb) :-
+	pos_int_u(l_isa(L_Verb, Verb)),
+	pos_int_u(l_isa(C_Verb, L_Verb)),
+	pos_int_u(l_isa(_, C_Verb)),
+	af(main_linguistic_verb(Utt, C_Verb)).
+
+% Domain stuff
+find_domain_command(Utt, Command) :-
+	pos_int_u(d_isa(L_Command, Command)),
+	pos_int_u(d_isa(C_Command, L_Command)),
+	pos_int_u(d_isa(_, C_Command)),
+	af(main_domain_command(Utt, C_Command)).
+

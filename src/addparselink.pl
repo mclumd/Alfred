@@ -48,4 +48,5 @@ check_parse_link(U,_,V2,L) :-
 isIndirObj('Js').
 isDirObj('Os').
 isPrep('MVp').
-isModifer('AN').
+isModifier('AN').
+isModifier('A').

@@ -3,6 +3,7 @@
 expect_list([]).
 utt_list([]).
 domain_list([]).
+user_utt_list(none, []).
 
 expected_pause(130).
 currUtt(0,0).
@@ -15,6 +16,7 @@ prev_prompt_time(0).
 curr_wait_time(0).
 violation_density(0).
 utt_on_time(0).
+curr_user(none).	
 
 fif(and(idling(Step),
 		and(expected_pause(PauseTime),
@@ -67,7 +69,7 @@ fif(and(done(ac_report_observation(Utt, O, _, _),_,Utt),
 		eval_bound(df(desire(Utt,[inform,O,Type])),[Utt,O,Type]))),
 conclusion(satisfied(Utt,[inform,O,Type]))).
 
-/*BEGIN****************Maintaining utterance structure**************************/
+/*BEGIN************************************Maintaining utterance structure****************************************/
 /* if Utt is an utterance and utterance list is Ulist and Utt in Ulist: update_utt_list */
 fif(and(utterance(Utt), 
         and(utt_list(Ulist),
@@ -75,12 +77,41 @@ fif(and(utterance(Utt),
 				eval_bound(\+ member(Utt,Ulist),[Utt, Ulist])))),
 conclusion(update_utt_list(Utt,Ulist))).
 
+fif(and(utterance(Utt),
+		and(curr_user(Speaker),
+			and(user_utt_list(Speaker,Ulist),
+				and(utt_list(Ulistall),
+					and(eval_bound(pos_int_u(now(T)), []),
+						eval_bound(\+ member(Utt,Ulistall),[Utt, Ulistall])))))),
+conclusion(update_user_utt_list(Speaker,Utt,Ulist))).
+
+fif(and(utterance(Utt),
+		and(main_verb(Utt, Verb),
+			eval_bound(find_linguistic_verb(Utt,Verb), [Utt, Verb]))),
+conclusion(added_linguistic_verb(Verb))).
+
+fif(and(utterance(Utt),
+		and(main_verb(Utt, Command),
+			eval_bound(find_domain_command(Utt,Command), [Utt, Command]))),
+conclusion(added_domain_command(Command))).
+
+fif(and(utterance(Utt),
+		and(main_linguistic_verb(Utt, L_Verb),
+			and(main_domain_command(Utt, D_Command),
+				eval_bound(\+ pos_int_u(connection(D_Command, L_Verb)), [D_Command, L_Verb])))),
+conclusion(connection(D_Command, L_Verb))).
+
 fif(and(update_utt_list(Utt,Ulist),
         and(eval_bound(df(utt_list(Ulist)),[Ulist]),
 			and(eval_bound(pos_int_u(now(T)), []),
 				and(eval_bound(update_global_violations(T),[T]),
 					eval_bound(update_current_utterance(Utt,T),[Utt,T]))))),
 conclusion(utt_list([Utt|Ulist]))).
+
+fif(and(update_user_utt_list(Speaker,Utt,Ulist),
+		and(eval_bound(df(user_utt_list(Speaker,Ulist)),[Ulist]),
+			eval_bound(pos_int_u(now(T)),[]))),
+conclusion(user_utt_list(Speaker,[Utt|Ulist]))).
 
 fif(and(utterance(Utt),
         and(expect(U,Need),
@@ -305,20 +336,41 @@ conclusion(call(ac_action(a, alfred, [update, I, Item2, Item1]), Asserts, a))).
 
 fif(and(equil(name,CurrUser),
 	and(curr_user(PrevUser),
-		eval_bound(switch_user(PrevUser,CurrUser),[PrevUser,CurrUser]))),
+		and(eval_bound(switch_user_1_name(PrevUser,CurrUser),[PrevUser,CurrUser]),
+			eval_bound(af(user_utt_list(CurrUser,[])),[CurrUser])))),
 conclusion(curr_user(CurrUser))).
 
-fif(and(equil(user,Item2),
-	eval_bound(df(equil(user,Item2)), [Item2])),
-conclusion(curr_user(Item2))).
+fif(and(equil(CurrUser,name),
+	and(curr_user(PrevUser),
+		and(eval_bound(switch_user_2_name(PrevUser,CurrUser),[PrevUser,CurrUser]),
+			eval_bound(af(user_utt_list(CurrUser,[])),[CurrUser])))),
+conclusion(curr_user(CurrUser))).
 
-fif(and(equil(Item1,user),
-	eval_bound(df(equil(Item1,user)), [Item1])),
-conclusion(curr_user(Item1))).
+fif(and(equil(user,CurrUser),
+	and(curr_user(PrevUser),
+		and(eval_bound(switch_user_1_user(PrevUser,CurrUser),[PrevUser,CurrUser]),
+			eval_bound(af(user_utt_list(CurrUser,[])),[CurrUser])))),
+conclusion(curr_user(CurrUser))).
 
-fif(and(equil(name,Item2),
-	eval_bound(df(equil(name,Item2)), [Item2])),
-conclusion(curr_user(Item2))).
+fif(and(equil(CurrUser,user),
+	and(curr_user(PrevUser),
+		and(eval_bound(switch_user_2_user(PrevUser,CurrUser),[PrevUser,CurrUser]),
+			eval_bound(af(user_utt_list(CurrUser,[])),[CurrUser])))),
+conclusion(curr_user(CurrUser))).
+
+%fif(and(equil(user,Item2),
+%	and(eval_bound(df(equil(user,Item2)), [Item2]),
+%		eval_bound(af(user_utt_list(Item2, [])), [Item2]))),
+%conclusion(curr_user(Item2))).
+
+%fif(and(equil(Item1,user),
+%	and(eval_bound(df(equil(Item1,user)), [Item1]),
+%		eval_bound(af(user_utt_list(Item1, [])), [Item1]))),
+%conclusion(curr_user(Item1))).
+
+%fif(and(equil(name,Item2),
+%	eval_bound(df(equil(name,Item2)), [Item2])),
+%conclusion(curr_user(Item2))).
 
 fif(failed(ac_action(Utt,_,List),_,Utt),
 conclusion(call(ac_report_fail(Utt,[action,List]),[], Utt))).

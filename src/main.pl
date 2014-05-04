@@ -42,26 +42,6 @@ ac_mclask(Tag, Step) :-
 ac_fix_linkage(Utt,Length) :-
    fix_linkage(Utt, Length).
 
-/*mcl_update(Tag, Step) :-
-    format('~N Sending pauselen ~d and tag ~d to MCL ~N', 
-[Step, Tag]),
-    tcp_output_stream(Tag, S),
-	format('~N testing ~N', []),
-    format(S, 'monitor(name,{pauselen=~d})', [Step]),
-	format('~N testing two ~N', []),
-    flush_output(S).*/
-    /* todo: receive actual output via ruby script here */
-    /*tcp_input_stream(?socket, -stream)*/
-/*    tcp_input_stream(Tag, Sin),
-    set_input(Sin),
-    af(try_again).*/
-/* todo: if statements */
-
-mcl_respond(Tag) :-     /* failed/ignored/used */
-    format('~Nused~N',[]),
-    tcp_output_stream(Tag, S),
-    format(S, 'used', []).
-
 /* change to use utt_struct */
 ac_main_verb(U) :-
     verb(U,Verb),
