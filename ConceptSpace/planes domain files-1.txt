@@ -1,0 +1,69 @@
+#structure of "fly" command
+dcommand(planes, fly, durationFunction).
+
+structure(fly, [v_plane1, v_city1]).
+type(v_plane1, c_plane).
+type(v_city1, c_city).
+
+#structure of "load" command
+dcommand(planes, load, durationFunction).
+
+structure(load, [v_plane2, v_package1]).
+type(v_plane2, c_plane).
+type(v_package1, c_package).
+
+#structure of "unload" command
+dcommand(planes, unload, durationFunction).
+
+structure(unload, [v_plane3, v_package2]).
+type(v_plane3, c_plane).
+type(v_package2, c_package).
+
+#lexical links for type concepts
+refers(l_plane, c_plane, ALF).
+refers(l_city, c_city, ALF).
+refers(l_package, c_package, ALF).
+
+refers("plane", l_plane, USERS).
+refers("city", l_city, USERS).
+refers("package", l_package, USERS).
+
+#declare plane instance concepts
+isa(c_P1, c_plane).
+isa(c_P2, c_plane).
+
+#lexical links for plane instances
+refers(l_P1, c_P1, ALF).
+refers("P1", l_P1, planes). 
+refers("P1", l_P1, USERS).
+refers("Plane 1", l_P1, Beth)
+
+refers(l_P2, c_P2, ALF).
+refers("P2", l_P2, planes). 
+refers("P2", l_P2, USERS).
+refers("Plane 2", l_P2, Beth)
+
+#to illustrate the usage of the domain "refers" link, imagine a domain
+#is set up to call cities generically C1, C2..., whereas we want to use
+#them as US cities and refer to them by name (e.g. Chicago, Boston, etc.)
+#Then we would want something like this:
+
+isa(c_Chicago, c_city)
+
+refers(l_Chicago, c_Chicago, ALF).
+refers("C1", l_Chicago, planes). 
+refers("Chicago", l_Chicago, USERS).
+refers("The windy city", l_Chicago, USERS).
+
+#then when we call domain commands, we can have Alfred use these refers
+#links to determine what values to send to the domain for each object.
+#So for user command "Fly P1 to Chicago", Alfred would actually give the
+#command "fly(P1, C1)", because it knows that is how the domain refers to
+#l_Chicago.
+
+#Question: do we want something like this for each command? :
+
+dcommand(planes, c_fly, durationFunction).
+refers(l_fly, c_fly, "ALF").
+refers("fly", l_fly, planes).
+refers("fly", l_fly, USERS).

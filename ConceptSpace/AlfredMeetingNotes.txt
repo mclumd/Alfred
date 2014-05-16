@@ -1,0 +1,23 @@
+Ex: s1 = utterance "send Metroliner to Baltimore"
+
+Link parser sends Alfred the links from the utterance.
+
+Alfred takes the links (only a few of them so far) and converts them to Alfred predicates.
+"Mv" -> parse(s1, verb, send)
+and so on. We use this format so we can use a gatherall to collect all the data associated with one utterance.
+
+From here we need to do the following:
+
+ac_find_command: have this converted to use the parse predicates instead of the links, but still using "matchwords"
+				domain_command(s1, send, send) being added
+
+ac_find_intention: grabs the structure of the domain command from the domain file, checks if the links match, creates and asserts intentions
+	-the structure of domain commands need to be changed to no longer rely directly on links but instead on alfred parse predicates
+	-the checklinksmatch needs to be changed to check if the parse predicates match
+	-intention(s1, domain, [send, Metroliner, Baltimore]) is being added currently with type(s1, v0, verb) and val(s1, v0, val1)
+	-ac_action(s1, domain, [5, [send, Metroliner, Baltimore]]) is called which just adds: send_to_domain(s1, 5, [[send, Metroliner, Baltimore]]) 5 is the tag?
+
+Then it does ac_report_action and ac_post_process? Haven't looked into these yet
+
+
+Need to take care of "is" statements "Metro is Metroliner" (Alfred_action, ac_action fails)

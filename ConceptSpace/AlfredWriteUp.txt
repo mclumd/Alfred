@@ -1,0 +1,17 @@
+
+Alfred takes the links from the Link Parser and converts them to nicer predicates so that nothing else has to rely directly on the Link Parser links.
+
+The domains (Trains and Planes) are now using the nice predicates from Alfred instead of directly relying on Link Parser links.
+
+There is a linguistic and domain file for trains that are loaded and used to find a connection when a command comes in.
+
+Next Steps:
+1. Get Alfred commands working with the nice predicates instead of links.
+2. Make a file with Link Parser links and corresponding predicates that Alfred can use. This file can be made once and used from now on. It will be a bit tedious, and you don't need to put every link, but you should come up with a list of different sentences that you want to work in Alfred and then use those links and make nice predicates for them.
+3. Change the isa links in the domain and linguistic files to refers links.
+4. When a new word is uttered ("Metro") we need to go through the user utterances and look to see if that user has used that word before. If not, we need to ask about it. (Use the refers links)
+5. When a command comes in, Alfred looks in the linguistic file and domain file to make sure that it is a word it knows and that it's a word in the domain file. 
+6. The domain commands need to be [d_send, ....] instead of ['send' ...]
+7. Need to handle definite descriptions (change the reasoning about command structure and linguistic structure in order to determine that "the Chicago train" is the direct object and further reasoning needs to be done to determine what is meant by "the Chicago train") This is a big one...
+
+
