@@ -34,13 +34,14 @@ int findindex(char *ptr, char *infoarray[MAXINP], int num) {
   return -1;
 }
 
-void showtrain(char *ptr, int n, myXwin *window, char** locations) {
+void showtrain(char *ptr, int n, myXwin *window, char** locations, int FD) {
   char bufcpy[MAXINP];
   char city[MAXINP];
   char *tmp;
   int train,k,j, jval;
   int index = -1;
   int i=0;
+  char alma_str[MAXINP];
 
   char ptrcpy[20];
   while(ptr[i+7] != ',')
@@ -104,6 +105,10 @@ void showtrain(char *ptr, int n, myXwin *window, char** locations) {
   locations[index] = NULL;
   locations[index] = malloc(strlen(ptrcpy)*sizeof(char));
   strcpy(locations[index],city);
+
+  /*sprintf(alma_str, "term(af(nonsense(trains))).\n");*//*, "term(af(observation(location,'", ptrcpy, "', '", locations[index], "'))).");*/
+  /*printf(alma_str);
+  write(FD, alma_str, strlen(alma_str));*/
 }
 
 
@@ -150,6 +155,7 @@ void findtrain(char *ptr, int n, int FD, char **locations) {
   }*/
   /*index = position[k];*/
   sprintf(alma_str, "%s%s%s%s%s\n", "term(af(observation(location,'", ptrcpy, "', '", locations[index], "'))).");
+  printf(alma_str);
   write(FD, alma_str, strlen(alma_str));
 }
 
@@ -228,7 +234,7 @@ char *argv[];
 		      printf("\n");
 
 		      if (!strncmp(buf,"[[send",6)) {
-			showtrain(buf,n, window,locations);
+			showtrain(buf,n, window,locations,FD);
 		      }
 		      if (!strncmp(buf,"[[find",6)) {
 			findtrain(buf,n,FD,locations);
