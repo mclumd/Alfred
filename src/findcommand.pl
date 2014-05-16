@@ -4,17 +4,31 @@ error(``Verb\_NF\_in\_DD'', Verb, Utt)
  */
 
 find_command(Utt) :-
+	parse(Utt,verb, Verb),
+	matchwords(Verb,Match, acommand),
+	af(alfred_command(Utt,Verb,Match)),
+	change_main_verb(Utt, Verb, Match).
+
+find_command(Utt) :- 
+    parse(Utt,verb, Verb),
+    matchwords(Verb,Match,dcommand),
+    af(domain_command(Utt,Verb,Match)),
+    change_main_verb(Utt, Verb, Match).
+
+/*
+find_command(Utt) :-
     main_verb(Utt, Verb),
     matchwords(Verb,Match,acommand),
     af(alfred_command(Utt,Verb,Match)),
     change_main_verb(Utt, Verb, Match).
-
+*/
+/*
 find_command(Utt) :- 
     main_verb(Utt, Verb),
     matchwords(Verb,Match,dcommand),
     af(domain_command(Utt,Verb,Match)),
     change_main_verb(Utt, Verb, Match).
-
+*/
 find_command(Utt) :- 
     main_verb(Utt, Verb),
     matchwords(Verb,Match,ccommand),

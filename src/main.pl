@@ -43,11 +43,11 @@ ac_fix_linkage(Utt,Length) :-
    fix_linkage(Utt, Length).
 
 /* change to use utt_struct */
-ac_main_verb(U) :-
+/*ac_main_verb(U) :-
     verb(U,Verb),
     value_of(U,Verb,Val),
     af(main_verb(U,Val)).
-
+*/
 ac_parse_phrase(Utt,Need) :-
     parse_phrase(Utt, Need).
 

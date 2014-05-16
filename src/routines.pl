@@ -198,3 +198,12 @@ find_domain_command(Utt, Command) :-
 	pos_int_u(d_isa(_, C_Command)),
 	af(main_domain_command(Utt, C_Command)).
 
+/*construct_domain_command(Utt, C_Command) :-
+	gather_all(parse(Utt,_,_), PList),
+*/	
+
+
+
+
+
+

@@ -12,7 +12,14 @@ These complex instructions are all alfred commands. Therefore, for alfred type o
 	
 
 /* First check if the current intention applies to the domain that has the current focus*/
+/*find_intention_new(Utt, Type, Command) :-
+	structure_new(Command, Elements, Types, Command_Struct),
+	Struct = [Domain|_],
+	isa(domain, Domain),
+	clause(domain_list([Domain|_]), true),
+*/	
 
+/*
 find_intention(Utt, Type, Command) :-
     structure(Command, Links, Types, Struct),
     Struct = [Domain|_],
@@ -25,10 +32,35 @@ find_intention(Utt, Type, Command) :-
     addformulas(val(Utt,_,_)), 
     addformulas(type(Utt,_,_)),
     assert_intentions(Utt, Intentions).
+*/
 
+find_intention(Utt, Type, Command) :-
+	structure(Command, Links, Types, Struct),
+	checklinksmatch2(Utt, Links),
+	%check_links2(Utt, Links, Types),
+	%check_struct(Utt, Struct, Types),
+	domain_command(Utt, Command, Command),
+    find_errors2(Utt, Links, Types).
+
+find_intention(Utt, Type, Command) :-
+	structure(Command, Links, Types, Struct),
+	checklinksmatch2(Utt, Links),
+	%check_links2(Utt, Links, Types),
+	%check_struct(Utt, Struct, Types),
+	domain_command(Utt, Command, Command),
+	create_intentions2(Utt, Struct, Type, Intentions),
+    assert_intentions(Utt, Intentions).
+
+find_intention(Utt, Type, Command) :-
+	structure(Command, Links, Types, Struct),
+	checklinksmatch2(Utt, Links),
+	%check_links2(Utt, Links, Types),
+	%check_struct(Utt, Struct, Types),
+	create_intentions2(Utt, Struct, Type, Intentions), !,
+    assert_intentions(Utt, Intentions).
 
 /* then check whether it applies to some domain that does not have the current focus*/
-find_intention(Utt, Type, Command) :-
+/*find_intention(Utt, Type, Command) :-
     structure(Command, Links, Types, Struct),
     checklinksmatch(Utt, Links),
     check_links(Utt, Links, Types),
@@ -37,9 +69,10 @@ find_intention(Utt, Type, Command) :-
     addformulas(val(Utt,_,_)), 
     addformulas(type(Utt,_,_)),
     assert_intentions(Utt, Intentions).
-
+*/
 /* if a perfect match is not found, note the errors for disambiguating. Again test the domain that has the current focus first*/
-find_intention(Utt, _, Command) :-
+
+/*find_intention(Utt, _, Command) :-
     structure(Command, Links, Types, Struct),
     Struct = [Domain|_],
     isa(domain, Domain),
@@ -49,10 +82,10 @@ find_intention(Utt, _, Command) :-
     find_errors(Utt, Links, Types),
     find_struct_errors(Utt,Struct,Types),
     addformulas(val(Utt,_,_)), 
-    addformulas(type(Utt,_,_)).
+    addformulas(type(Utt,_,_)).*/
 
 /* if not test the other domains and then assert errors*/
-find_intention(Utt, _, Command) :-
+/*find_intention(Utt, _, Command) :-
     structure(Command, Links, Types, Struct),
     checklinksmatch(Utt, Links),!,
 %print(fi2),nl,
@@ -60,9 +93,9 @@ find_intention(Utt, _, Command) :-
     find_struct_errors(Utt,Struct,Types),
     addformulas(val(Utt,_,_)), 
     addformulas(type(Utt,_,_)).
-
-find_intention(Utt,_, Command):-
+*/
 /*do match links, if links do not match then, needs disambiguation*/
+/*find_intention(Utt,_, Command):-
     structure(Command, Links, _, _),
     deleteformulas(val(Utt,_,_)), 
     deleteformulas(type(Utt,_,_)),
@@ -70,7 +103,7 @@ find_intention(Utt,_, Command):-
     retractall(type(Utt,_,_)),
 %print(fi3),nl,    
     extra_links(Utt,Links),!.
-
+*/
 assert_intentions(Utt, [[Type, Intention]|Intentions]) :-
     af(intention(Utt, Type, Intention)),
     assert_intentions(Utt, Intentions).
@@ -86,6 +119,11 @@ extra_links(Utt,Links) :-
 checklinksmatch(Utt, Links):-
     findall([Var1,Var2,Link], link(Utt, Var1, Var2, Link), LinkList),
     match_links(Utt, Links,LinkList,Result),
+    Result == true.
+
+checklinksmatch2(Utt, Links):-
+    findall([Var1,Link], parse(Utt, Link, Var1), LinkList),
+    match_links2(Utt, Links, LinkList, Result),
     Result == true.
 
 delete_link([[_,_,DLink]|Links],DLink,Input,Result) :-
@@ -135,6 +173,20 @@ match_links(Utt, Links,[[_,_,Link]|LinkList],Result) :-
 match_links(_,[],[], true).
 match_links(_,[],[], false).
 
+/*
+match_links2(Utt, Links,[[_,_,Link]|LinkList],Result) :-
+    stripchars(Link,'abcdefghijklmnopqrstuvwxyz*',DLink),
+    delete_link(Links,DLink,[],RemLinks),!,
+    match_links2(Utt, RemLinks,LinkList,Result).
+
+match_links2(Utt, Links,[[_,_,Link]|LinkList],Result) :-
+    stripchars(Link,'abcdefghijklmnopqrstuvwxyz*',DLink),
+    (DLink == 'RW'; DLink == 'W'),!,
+    match_links2(Utt, Links, LinkList,Result).
+*/
+match_links2(_,_,_, true).
+/*match_links2(_,[],[], false).*/
+
 
 construct_intention(_, [], []).
 
@@ -169,6 +221,58 @@ create_intentions(Utt, [S|Struct], Type, Intentions) :-
     Intentions = [[Type, Intention]].
 
 create_intentions(_,[],_,[]).
+
+
+%New Stuff **********************************************************************
+construct_intention2(_, [], []).
+
+construct_intention2(Utt, [V|Struct], Intention) :-
+	parse(Utt, V, Val),
+	\+ isa(Something, Val),
+	equil(Val, Val2), !,
+    construct_intention2(Utt, Struct, Intent1),
+    append([Val2], Intent1, Intention).
+
+construct_intention2(Utt, [V|Struct], Intention) :-
+	parse(Utt, V, Val),
+	isa(Something, Val), !,
+	construct_intention2(Utt, Struct, Intent1),
+	append([Val], Intent1, Intention).
+
+construct_intention2(Utt, [V|Struct], Intention) :-
+	parse(Utt, V, Val), !,
+    construct_intention2(Utt, Struct, Intent1),
+    append([Val], Intent1, Intention).
+
+construct_intention2(Utt, [V,Struct], Intention) :-
+    isa(domain, V),!,
+    construct_intention2(Utt, Struct, Intent1),
+    append([V], [Intent1], Intention).
+
+construct_intention2(Utt, [V|Struct], Intention) :-
+    construct_intention2(Utt, Struct, Intent1),
+    append([V], Intent1, Intention).
+
+create_intentions2(Utt, [[dcommand,S]|Struct], complex, Intentions) :-
+    construct_intention2(Utt, S, Intent1),
+    create_intentions2(Utt, Struct, complex, Intents),
+    append([[domain,Intent1]], Intents, Intentions).
+
+create_intentions2(Utt, [[acommand,S]|Struct], complex, Intentions) :-
+    construct_intention2(Utt, S, Intent1),
+    create_intentions2(Utt, Struct, complex, Intents),
+    append([[alfred,Intent1]], Intents, Intentions).
+
+create_intentions2(Utt, [S|Struct], Type, Intentions) :-
+    construct_intention2(Utt,[S|Struct], Intention),
+    Intentions = [[Type, Intention]].
+
+create_intentions2(_,[],_,[]).
+
+%*****************************************************************************************
+
+
+
 
 check_item(Utt, Var, Link, Var1) :-
     link(Utt, Var, Var1, Link),!.
@@ -249,6 +353,74 @@ check_links(Utt,[[V1,V2,Link]|MoreLinks], Types) :-
 check_links(_,_,_) :-
     fail.
 
+/* **************************New Stuff*************************** */
+
+check_links2(_, [],_).
+
+check_links2(Utt,[[V1,V2,Link]|MoreLinks], Types) :-
+	clause(val(Utt, V1, Item1), true),
+	clause(val(Utt, V2, Item2), true), !,
+%    print(V1), print(V2), print(Item1), print(Item2), nl,
+	check_item(Utt, Item1, Link, Item2),
+	check_links2(Utt, MoreLinks, Types).
+
+check_links2(Utt,[[V1,V2,Link]|MoreLinks], Types) :-
+	clause(val(Utt, V1, Item1), true),!,
+	check_item(Utt, Item1, Link, Item2),
+        value_of(Utt, Item2, Val2),
+
+	find_type(V2, Types, Type2),
+	(Type2 == unknown;
+	 Type2 == verb;
+	 isa(Type2, Val2)),
+ %   print(V1), print(V2), print(Item1), print(Item2), nl,	
+	assert(val(Utt, V2, Item2)),
+        assert(type(Utt, V2, Type2)),
+	check_links2(Utt, MoreLinks, Types).
+
+check_links2(Utt,[[V1,V2,Link]|MoreLinks], Types) :-
+
+	clause(val(Utt, V2, Item2), true),!,
+	check_item(Utt, Item1, Link, Item2),
+	value_of(Utt, Item1, Val1),
+
+	find_type(V1, Types, Type1),
+	(Type1 == unknown;
+	 Type1 == verb;
+	 isa(Type1, Val1)),
+%	    print(V1), print(V2), print(Item1), print(Item2), nl,
+	assert(val(Utt, V1, Item1)),
+        assert(type(Utt, V1, Type1)),
+	check_links2(Utt, MoreLinks, Types).
+
+check_links2(Utt,[[V1,V2,Link]|MoreLinks], Types) :-
+
+    find_type(V1, Types, Type1),
+    find_type(V2, Types, Type2),
+    check_item(Utt, Item1, Link, Item2),
+    value_of(Utt, Item1, Val1),
+    value_of(Utt, Item2, Val2),
+    
+    (Type1 == unknown;
+     Type1 == verb;
+     isa(Type1, Val1)),
+    
+    (Type2 == unknown;
+     Type2 == verb;
+     isa(Type2, Val2)),
+
+%    print(V1), print(V2), print(Item1), print(Item2), nl,  
+    assert(val(Utt, V1, Item1)),
+    assert(val(Utt, V2, Item2)),
+    assert(type(Utt, V1, Type1)),
+    assert(type(Utt, V2, Type2)),
+    check_links2(Utt, MoreLinks, Types).
+
+check_links2(_,_,_) :-
+    fail.
+
+/*********************************************************************/
+
 /* check whether all variables in the struct are bound */
 
 check_struct(_, [[unknown|_]|_], _):- 
@@ -286,6 +458,39 @@ check_struct(Utt, [_|Struct], Types) :-
     check_struct(Utt, Struct, Types).
 
 check_struct(_,[],_).
+
+/************************************New Find Errors **************************/
+find_errors2(_, [],_,_).
+
+find_errors2(Utt,[V1LingType|MoreLinks], Types) :-
+	find_type2(Utt, V1LingType, Types, Type1),!,
+	parse(Utt, V1LingType, Val1),
+	find_errors2(Utt, MoreLinks, Types).
+
+find_type2(Utt, VLingType, [Type|_], Type2) :-
+	parse(Utt, VLingType, Word),
+	isa(Type, Word), !,
+	Type2 = Type.
+
+find_type2(Utt, VLingType, [], unknown) :- 
+	!,
+	parse(Utt, VLingType, Word),
+	structure(Command, Links, Types, Struct),
+	find_expected_type(VLingType, Links, Types, Result), 
+	af(error(Utt, 'Item_NF', [Result, Word])).
+
+find_type2(Utt, Find, [_|Types], Result) :-
+	 find_type2(Utt, Find, Types, Result).
+
+find_expected_type(VLingType, [Link1|Links], [Type1|Types], Result) :-
+	VLingType == Link1, !,
+	Result = Type1.
+
+find_expected_type(VLingType, [Link1|Links], [Type1|Types], Result) :-
+	find_expected_type(VLingType, Links, Types, Result).
+
+/*******************************************************************************/
+
 
 find_errors(_, [],_).
 

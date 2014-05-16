@@ -86,12 +86,12 @@ fif(and(utterance(Utt),
 conclusion(update_user_utt_list(Speaker,Utt,Ulist))).
 
 fif(and(utterance(Utt),
-		and(main_verb(Utt, Verb),
+		and(verb(Utt, Verb),
 			eval_bound(find_linguistic_verb(Utt,Verb), [Utt, Verb]))),
 conclusion(added_linguistic_verb(Verb))).
 
 fif(and(utterance(Utt),
-		and(main_verb(Utt, Command),
+		and(verb(Utt, Command),
 			eval_bound(find_domain_command(Utt,Command), [Utt, Command]))),
 conclusion(added_domain_command(Command))).
 
@@ -187,20 +187,21 @@ conclusion(call(ac_find_unused_cost(Utt), Asserts, Utt))).
 fif(unused_cost(U,_,0),  
 conclusion(parsed(U))).
 
-fif(and(parsed(U),
+/*fif(and(parsed(U),
 	and(verb(U,_),
 	        eval_bound(mult_gather_all([verb(U,_), value_of(U,_,_)], 
 				Asserts), [U]))),
 conclusion(call(ac_main_verb(U), Asserts, U))).
-
+*/
+/*
 fif(failed(ac_main_verb(Utt),_,Utt),
 conclusion(call(ac_report_fail(Utt,[main_verb]),[], Utt))).
-
+*/
 /*Once we have the main_verb, look for the corresponding command in the data 
 dictionary.*/
 
 fif(and(or(satisfiedallneeds(Utt),
-	   main_verb(Utt,Verb)),
+	   parse(Utt,verb,Verb)),
         and(eval_bound(\+ pos_int_u(domain_command(Utt,_,_)), [Utt]),
 	    and(eval_bound(\+ pos_int_u(alfred_command(Utt,_,_)), [Utt]),
 		and(eval_bound(\+ pos_int_u(complex_command(Utt,_,_)), [Utt]),
@@ -208,7 +209,7 @@ fif(and(or(satisfiedallneeds(Utt),
 			eval_bound(mult_gather_all([isa(_,_),
 						    value_of(Utt,_,_),
 						    equil(_,_),
-						    main_verb(Utt,_)],
+						    parse(Utt,verb,_)],
 						   Asserts),[Utt])))))),
 conclusion(call(ac_find_command(Utt), Asserts,Utt))).
 
@@ -230,9 +231,11 @@ fif(and(satisfiedallneeds(Utt),
         	    eval_bound(mult_gather_all([isa(_,_),
 						domain_list(_),
 						structure(Command,_,_,_),
-						link(Utt,_,_,_), 
-						value_of(Utt,_,_),
-						verb(Utt,_)], 
+						parse(Utt,_,_),
+						verb(Utt,_),
+						equil(_,_),
+						domain_command(Utt,_,_),
+						alfred_command(Utt,_,_)], 
 				Asserts),[Utt,Command]))))),
 conclusion(call(ac_find_intention(Utt,domain,Command),Asserts,Utt))).
 
@@ -242,9 +245,11 @@ fif(and(satisfiedallneeds(Utt),
 		and(eval_bound(\+ pos_int_u(doing(ac_think(Utt,_),_, Utt)), [Utt]),
         	    eval_bound(mult_gather_all([isa(_,_),
 						structure(Command,_,_,_),
-						link(Utt,_,_,_),
-						value_of(Utt,_,_),
-						verb(Utt,_)], 
+						parse(Utt,_,_),
+						verb(Utt,_),
+						equil(_,_),
+						domain_command(Utt,_,_),
+						alfred_command(Utt,_,_)], 
 				Asserts),[Utt, Command]))))),
 conclusion(call(ac_find_intention(Utt,alfred,Command),Asserts,Utt))).
 
@@ -254,11 +259,11 @@ fif(and(satisfiedallneeds(Utt),
 		and(eval_bound(\+ pos_int_u(doing(ac_think(Utt,_),_, Utt)), [Utt]),
         	    eval_bound(mult_gather_all([isa(_,_),
 						structure(Command,_,_,_),
-						link(Utt,_,_,_), 
-						value_of(Utt,_,_)], 
+						parse(Utt,_,_),
+						domain_command(Utt,_,_),
+						alfred_command(Utt,_,_)], 
 				Asserts),[Utt, Command]))))),
 conclusion(call(ac_find_intention(Utt,complex,Command),Asserts,Utt))).
-
 
 fif(failed(ac_find_intention(Utt,_,_),_,Utt),
 conclusion(call(ac_report_fail(Utt,[find_intention]),[], Utt))).
@@ -357,20 +362,6 @@ fif(and(equil(CurrUser,user),
 		and(eval_bound(switch_user_2_user(PrevUser,CurrUser),[PrevUser,CurrUser]),
 			eval_bound(af(user_utt_list(CurrUser,[])),[CurrUser])))),
 conclusion(curr_user(CurrUser))).
-
-%fif(and(equil(user,Item2),
-%	and(eval_bound(df(equil(user,Item2)), [Item2]),
-%		eval_bound(af(user_utt_list(Item2, [])), [Item2]))),
-%conclusion(curr_user(Item2))).
-
-%fif(and(equil(Item1,user),
-%	and(eval_bound(df(equil(Item1,user)), [Item1]),
-%		eval_bound(af(user_utt_list(Item1, [])), [Item1]))),
-%conclusion(curr_user(Item1))).
-
-%fif(and(equil(name,Item2),
-%	eval_bound(df(equil(name,Item2)), [Item2])),
-%conclusion(curr_user(Item2))).
 
 fif(failed(ac_action(Utt,_,List),_,Utt),
 conclusion(call(ac_report_fail(Utt,[action,List]),[], Utt))).
