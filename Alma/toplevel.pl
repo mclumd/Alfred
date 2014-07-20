@@ -185,8 +185,10 @@ main:-
     ((debug_level(1); debug_level(2); debug_level(3)) -> 
 	  (debug_stream(DBGS), print(DBGS,'Args: '), print(DBGS, L)
 	  , nl(DBGS)); true),
-    load_alma_files,
-    (verbose(true) -> print(L), nl; true),
+    debug_stream(DBGS),nl(DBGS),print(DBGS, 'before loading'),nl(DBGS),
+	load_alma_files,
+    debug_stream(DBGS),nl(DBGS),print(DBGS, 'loaded files'),nl(DBGS),
+	(verbose(true) -> print(L), nl; true),
     (verbose(true) -> print_compiled; true),
     (keyboard(true) -> print_compiled; true),
     (run(true) -> almar; almanr).
@@ -280,6 +282,7 @@ handle_args([sfile, F|X]):- !,
     (verbose(true) -> print('connecting'), nl; true),
     handle_args(X).
 handle_args([histocket, F|X]):- !,
+	print('connecting to history toplevel'),nl,
     connect_history(F),
     (verbose(true) -> print('connecting'), nl; true),
     handle_args(X).
@@ -382,6 +385,7 @@ load_alma_files:-
 real_laf([]):- !, true.
 real_laf([X|Y]):-
     lf(X),!,
+    print('done loading lf'),nl,
     real_laf(Y).
 
 %:-runtime_entry(start).

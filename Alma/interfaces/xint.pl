@@ -25,37 +25,42 @@ What: external interface- to other processes
 */
 
 handle_call(alocal(X), _):-
+	print('handle call one'),nl,
     (on_exception(_, call(X), error_call) -> 
       succeed_call(X) ; fail_call(X)).
 
 handle_call(X, _):-
+	print('handle call two'),nl,
+	slave_tag(Y),print('slave tag ='),print(Y),nl, %%%
     slave_tag(false), !,
     (on_exception(_, call(X), error_call) -> 
       succeed_call(X) ; fail_call(X)).
 
 handle_call(X, Asserts, DD):- 
+	print('handle call three'),nl,
     slave_tag(Tag),
     get_new_node_name(StepName),
     assert(new_node(StepName, [doing(X, Asserts, DD)], fc, [], [], 
                     Step, 1, [], [], [if])), 
     index_new_node(new_node(StepName, [doing(X, Asserts, DD)], fc, [], [], 
                     Step, 1, [], [], [if])), 
-%    ((debug_level(1); debug_level(2); debug_level(3))-> 
-%	  (debug_stream(DS), print(DS, 'Asserted '), print(DS, StepName),
-%	   print(DS, ': '), print(DS, [doing(X, Asserts, DD)]), nl(DS)); true),
+    ((debug_level(1); debug_level(2); debug_level(3))-> 
+	  (debug_stream(DS), print(DS, 'Asserted '), print(DS, StepName),
+	   print(DS, ': '), print(DS, [doing(X, Asserts, DD)]), nl(DS)); true),
     retract(action_list(AKL)),
     assert(action_list([call(X, Asserts, DD)|AKL])).
 
 handle_call(X, DD):- 
+	print('handle call four'),nl,
     slave_tag(Tag),
     get_new_node_name(StepName),
     assert(new_node(StepName, [doing(X, DD)], fc, [], [], 
                     Step, 1, [], [], [if])), 
     index_new_node(new_node(StepName, [doing(X, DD)], fc, [], [], 
                     Step, 1, [], [], [if])), 
-%    ((debug_level(1); debug_level(2); debug_level(3))-> 
-%	  (debug_stream(DS), print(DS, 'Asserted '), print(DS, StepName),
-%	   print(DS, ': '), print(DS, [doing(X, DD)]), nl(DS)); true),
+    ((debug_level(1); debug_level(2); debug_level(3))-> 
+	  (debug_stream(DS), print(DS, 'Asserted '), print(DS, StepName),
+	   print(DS, ': '), print(DS, [doing(X, DD)]), nl(DS)); true),
     retract(action_list(AKL)),
     assert(action_list([call(X, DD)|AKL])).
 

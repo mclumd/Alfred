@@ -132,9 +132,13 @@ initialize:-
 
 go:-
     tcp_socket(Socket),
+    print('socket'),print(Socket),nl,
     tcp_bind(Socket, Port),
+    print('bind'), print(Socket),print(Port),nl,
     tcp_listen(Socket, 5),
+    print('listen'),
     tcp_open_socket(Socket, In, _Out),
+    print('opened socket'),nl, %%% this is where I ended work!!! this stuff maybe isn't working??? alma cannot connect
     %add_stream_to_pool(In, accept(Socket)),
     %stream_pool_main_loop,
     (initfile(nul) -> true ; dump_init_file),

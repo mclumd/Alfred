@@ -200,6 +200,7 @@ index_nodes([Node1|Y]):- !,
 index_new_node(Node1):- !,
     get_formula(Node1, F),
     get_name(Node1, A0),
+    debug_stream(DBGS), print(DBGS, 'insert new node table'), nl(DBGS),
     insert_new_node_table(A0, F).
 
 %% Performs insert_new_node on the node and all its literals.    
@@ -382,6 +383,7 @@ insert_new_node_table(_, []):- !.
 
 insert_new_node_table(N, [F1|Fn]):- !,
     insert_new_one(N, F1),
+    debug_stream(DBGS), print(DBGS, 'insert new one'),nl(DBGS),print(DBGS, 'N = '),print(DBGS,N),nl(DBGS),print(DBGS, 'F1 = '),print(DBGS,F1),nl(DBGS),print(DBGS, 'Fn = '),print(DBGS, Fn),nl(DBGS),
     insert_new_node_table(N, Fn).
 
 % just the above for one literal
@@ -478,6 +480,7 @@ insert_new_one(Name, N):- !,
     ),    
     (var(H) -> 
         (
+        	debug_stream(DBGS), print(DBGS, 'variable'),nl(DBGS),
             functor(N, Fu, _),
             name(Fu, FUNC), append(FUNC, [36, 36], FVAR), name(F, FVAR),
             (retract(new_node_index(F, PL, MI)) ->
@@ -503,32 +506,40 @@ insert_new_one(Name, N):- !,
         )
     ;  %% not var(H)...
         (
+        	debug_stream(DBGS), print(DBGS,'not variable'),nl(DBGS),
             (retract(new_node_index(H, PH, MH)) ->
             (
+            	debug_stream(DBGS), print(DBGS, 'after retract new node'),nl(DBGS),
                 append([Name], PH, PPH),
                 assert(new_node_index(H, PPH, MH)),
                 functor(N, F, _),
                 (retract(newpred2hash(F, Fh)) -> 
                     (
+                    	debug_stream(DBGS), print(DBGS,'retract newpred2hash'),nl(DBGS),
                         append([H], Fh, Fhh),
                         assert(newpred2hash(F, Fhh))
                     )
-                ;
+                ; (
+                debug_stream(DBGS), print(DBGS,'not retract hash'),nl(DBGS),
                     assert(newpred2hash(F, [H]))
+                    )
                 )
             )
             ;
             (
+            	debug_stream(DBGS), print(DBGS, 'no new nodes to retract'),nl(DBGS),
                 assert(new_node_index(H, [Name], [])),
                 functor(N, F, _),
                 (retract(newpred2hash(F, F2H)) ->
                     (
+                        debug_stream(DBGS), print(DBGS,'retract newpred2hash'),nl(DBGS),
                         append([H], F2H, FFH),
                         assert(newpred2hash(F, FFH))
                     )
                 ;
                     (
-                        assert(newpred2hash(F, [H]))
+                        debug_stream(DBGS), print(DBGS,'not retract hash'),nl(DBGS),
+                		assert(newpred2hash(F, [H]))
                     )
                 )
             )

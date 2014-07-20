@@ -34,9 +34,11 @@ ensure_loaded(library(socket)).
 % load_forms(+Fname)
 % Fname contains prolog formulas that are input as new nodes.
 lf(Fname):-
+    print('lf: '),print(Fname),nl,
     open(Fname, read, S),
     repeat,
     read(S, Term),
+    print('reading term'),nl,
     (\+ Term = end_of_file ->
 	 (af(Term)); true),
     Term = end_of_file, !,
@@ -109,10 +111,12 @@ connect_slave(_).
 
 connect_slave(SF):-
     (verbose(true) -> print('Connecting to slave'), nl; true),
-print('Connecting to slave'),nl,
+print('Connecting to slave, sf='),print(SF),nl,
     really_connect(SF, Tag),
+    print('SF: '),print(SF),print(' and Tag: '),print(Tag),nl,
     retract(slave_tag(_)),
-    assert(slave_tag(Tag)).
+    assert(slave_tag(Tag)),
+    print('Slave tag: '),print(Tag),nl.
 connect_slave(_).
 
 connect_parser(SF):-
@@ -135,7 +139,7 @@ connect_domain(_).
 
 connect_history(SF):-
     /*(verbose(true) -> print('Connecting to history'), nl; true),*/
-print('Connecting to history'),nl,
+print('Connecting to history sf='), print(SF),nl,
     really_connect(SF, Tag),
     (verbose(true) -> (print('File: '), print(SF), print(' Socket: '), 
      print(Tag), nl); true),
@@ -152,9 +156,18 @@ connect_history(_).
 really_connect(SF, Tag):-
     unix(system('sleep 1')), print('Trying...'), nl,
     %on_exception(_, tcp_address_from_file(SF, Add), no_taff(SF)),
-    Add='localhost:9999',
-    tcp_connect(Add, Tag).
-%    on_exception(_, tcp_connect(Add, Tag), really_connect(SF, Tag)).
+    %Add='localhost:9999',
+    Host='localhost',
+    Port='9999',
+    print('really connect'),nl,
+    % tcp_socket(-SocketId)
+    /*tcp_socket(Socket),
+     tcp_connect(Socket, Host:Port)*/
+    tcp_socket(Tag),
+    print('tcp socket, tag='),print(Tag),nl, % $socket(0) 
+    % tcp_connect(+Socket, +Host:+Port)
+    on_exception(_, tcp_connect(Tag, Host:Port), really_connect(SF, Tag)),
+    print('Connected to SF: '),print(SF),nl.
 
 really_disconnect:-
     disconnect_slave,
@@ -213,7 +226,7 @@ checklimits:-
     statistics(memory, [Y, _]),
     X > Y, !.
 checklimits:- !,
-    timelimit(X), % here????
+    timelimit(X),
     statistics(memory, [Y, _]),
     X < Y , print('Memory limit.'), nl, halt.
 checklimits:- !.

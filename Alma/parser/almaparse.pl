@@ -32,7 +32,9 @@ cf(Fname):-
 
 
 af(Form):-
+	print('af'),nl,
     convert_form(Form, Forms, Y),
+    print('convert form'),nl,
     (var(Y) -> Y = if; true),
     merge_forms(Forms, MForms),
     write(user_output, MForms), nl.

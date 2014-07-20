@@ -17,6 +17,8 @@ almar:-
     true.
 
 sr:- !,
+    debug_stream(DBGS),nl(DBGS),print(DBGS, 'sr0'),nl(DBGS),
+    print('sr0'),nl,
    ((debug_level(2); debug_level(3); statistics(true)) -> statistics(runtime, [_, _]); true),
     ((statistics(true)) -> statistics(runtime, [_, _]); true),
     checklimits,
@@ -24,6 +26,7 @@ sr:- !,
     retract(almagenda(_)),
     assert(almagenda([])),
     do_almagenda(ALMAGENDA),
+    debug_stream(DBGS),nl(DBGS),print(DBGS, 'sr1'),nl(DBGS),
     delay(DT),
     step_number(PStep),
     increment_step,
@@ -31,8 +34,12 @@ sr:- !,
     ((debug_level(1); debug_level(2); debug_level(3)) -> 
 	  (debug_stream(DBGS), nl(DBGS), print_time(DBGS), print(DBGS, 'Step'),
 	   print(DBGS, Step), nl(DBGS)); true),
+    print('sr 1'),nl,
     df(now(PStep)),
-    get_new_node_name(StepName),
+    print('pstep '),print(PStep),nl,
+    get_new_node_name(StepName), %%%
+    print('StepName '),print(StepName),nl,
+    debug_stream(DBGS),nl(DBGS),print(DBGS, 'sr'),nl(DBGS),
 %
 % reacts immediately if there is something to work on, else sleeps
 %  ignores that agenda might someday be nonempty
@@ -40,13 +47,14 @@ sr:- !,
 %    listing(new_node),
     (new_node(DTN, DTF, _, _, _, _, _, _, _, _) -> 
     Deetee = 0 ; Deetee = DT),
-    assert(new_node(StepName, [now(Step)], fc, [], [], 
+    print('new node before assert'),nl,
+    assert(new_node(StepName, [now(Step)], fc, [], [], % updating NOW here
                     Step, 1, [], [], [if])), 
     index_new_node(new_node(StepName, [now(Step)], fc, [], [], 
                     Step, 1, [], [], [if])), 
     unindex_new_done,
     retractall(done_new(_)),
-    %print('before select'),nl,
+    print('added new node step'), print(Step),nl,
     % tcp select here gets user_input. timeout, term
     %  (tcp_select(Deetee, Ans) -> respond_input(Ans); true),
     % this is where it is freezing up, what was tcp_select here for??
@@ -82,8 +90,8 @@ sr:- !,
 	 agenda(AN), length(AN, ALN),
 	 format(DBGS4, 'Length of agenda: ~d~n', ALN)); true),
    ((debug_level(1); debug_level(2); debug_level(3)) -> 
-    debug_stream(DBGS5), flush_output(DBGS5); true),
-    print('done with sr'),nl.
+    debug_stream(DBGS5), flush_output(DBGS5); true).
+    %print('done with sr'),nl.
 
 
 assert_idle([], Step) :-

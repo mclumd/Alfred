@@ -19,7 +19,9 @@ Mods:
 % shoudl change these so that af returns the name of the node it asserted.
 
 af(named(Form, Name), Pri):- !,
+	print('af name 1'),nl,
     convert_form(Form, Forms, Y),
+    print('af convert name 1'),nl,
     %((debug_level(2); debug_level(3)) -> 
 	%  (debug_stream(DS), 
 	%   print(DS, 'Adding '), print(DS, Form), nl(DS)); true),
@@ -29,7 +31,9 @@ af(named(Form, Name), Pri):- !,
 
 
 af(Form, Pri):- !,
+	print('af pri 1:'),print(Form),nl,
     convert_form(Form, Forms, Y),
+    print('convert form 1'),nl,
     %((debug_level(2); debug_level(3)) -> 
 	%  (debug_stream(DS), 
 	%   print(DS, 'Adding '), print(DS, Form), nl(DS)); true),
